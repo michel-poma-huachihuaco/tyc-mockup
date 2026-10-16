@@ -38,7 +38,7 @@ Escenario: Enviar el correo de asignación
 - Entidades/campos que LEE: SVC_TICKET_ASIGNACION, líder del gestor (NEXUS)
 - Entidades/campos que ESCRIBE o modifica: registro de envío de correo de asignación
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

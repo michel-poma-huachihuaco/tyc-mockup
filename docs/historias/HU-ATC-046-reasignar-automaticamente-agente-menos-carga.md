@@ -38,7 +38,7 @@ Escenario: Reasignar por saturación del responsable
 - Entidades/campos que LEE: SVC_TICKET_ASIGNACION, disponibilidad y carga por gestor
 - Entidades/campos que ESCRIBE o modifica: SVC_TICKET_ASIGNACION (fila REASSIGNMENT_CARGA)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

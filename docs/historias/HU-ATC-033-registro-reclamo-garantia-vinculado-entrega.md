@@ -49,7 +49,7 @@ Escenario: Rechazar un reclamo sin Acta de Entrega
 - Entidades/campos que LEE: CONTRACT_UNIT_HANDOVER (Contratos y Activos)
 - Entidades/campos que ESCRIBE o modifica: SVC_WARRANTY_CLAIM (tipo de defecto, vínculo al Acta de Entrega)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Rechazado - CONTRACT_UNIT_HANDOVER (el Acta de Entrega) es una entidad de otro dominio (Postventa/Contratos), fuera de este modelo de datos; docs/datos/er.md ya anota esta FK externa pero no existe contrato (API/evento) definido para consultarla - vacio de definicion MAYOR
 
 ## DoR (G4) - no entra al sprint sin esto
 

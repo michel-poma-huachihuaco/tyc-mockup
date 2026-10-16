@@ -49,7 +49,7 @@ Escenario: Rechazar un cupo sin capacidad
 - Entidades/campos que LEE: aforo disponible por bus y horario
 - Entidades/campos que ESCRIBE o modifica: SVC_TICKET (tipo reserva de bus), SVC_BUS_SEAT_RESERVATION, lista de espera
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - nomenclatura a reconciliar con docs/datos/diccionario.md: la HU dice 'SVC_BUS_SEAT_RESERVATION', el diccionario de F4 lo llama 'SVC_EVENT_BUS_BOOKING' (mismo concepto) - desviacion MENOR de CAD-F5 (nomenclatura)
 
 ## DoR (G4) - no entra al sprint sin esto
 

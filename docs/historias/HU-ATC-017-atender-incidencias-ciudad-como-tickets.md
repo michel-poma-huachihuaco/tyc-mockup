@@ -38,7 +38,7 @@ Escenario: Vincular una incidencia de ciudad a un contrato de cobro
 - Entidades/campos que LEE: contrato/unidad (dominio Contratos y Activos)
 - Entidades/campos que ESCRIBE o modifica: SVC_TICKET.ContractID (CITY_SERVICE_FEE), tipo CITY_INCIDENT
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Rechazado - CITY_SERVICE_FEE no esta definido en docs/datos/diccionario.md (CITY_INCIDENT si figura como valor de ejemplo de TicketTypeID) - vacio de definicion MAYOR: falta modelar el contrato de cobro CITY_SERVICE_FEE antes de G4
 
 ## DoR (G4) - no entra al sprint sin esto
 

@@ -38,7 +38,7 @@ Escenario: Sincronizar un ticket derivado a Eje 3
 - Entidades/campos que LEE: SVC_TICKET_HANDOFF
 - Entidades/campos que ESCRIBE o modifica: sincronización con la herramienta de Legal (estado, resolución)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

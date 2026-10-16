@@ -44,7 +44,7 @@ Escenario: Generar el informe diario
 - Entidades/campos que LEE: SVC_TICKET, KPI Engine
 - Entidades/campos que ESCRIBE o modifica: ninguna (solo lectura/generación de reporte)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

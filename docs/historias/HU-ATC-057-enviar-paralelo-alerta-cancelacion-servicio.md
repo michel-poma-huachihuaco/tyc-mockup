@@ -38,7 +38,7 @@ Escenario: Enviar la alerta de cancelación al crear el caso
 - Entidades/campos que LEE: SVC_TICKET (caso de resolución)
 - Entidades/campos que ESCRIBE o modifica: constancia de envío de la alerta (correo, WhatsApp, Mi Portal)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

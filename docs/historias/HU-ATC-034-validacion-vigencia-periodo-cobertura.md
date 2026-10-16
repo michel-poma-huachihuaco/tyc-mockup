@@ -38,7 +38,7 @@ Escenario: Rechazar automáticamente un reclamo fuera de cobertura
 - Entidades/campos que LEE: SVC_WARRANTY_CLAIM, CONTRACT_UNIT_HANDOVER, MAE_WARRANTY_COVERAGE_PERIOD
 - Entidades/campos que ESCRIBE o modifica: SVC_WARRANTY_CLAIM.Status (no procedente)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Rechazado - MAE_WARRANTY_COVERAGE_PERIOD no esta definido en docs/datos/diccionario.md, y CONTRACT_UNIT_HANDOVER es de otro dominio sin contrato de consulta definido (ver HU-ATC-033) - vacio de definicion MAYOR
 
 ## DoR (G4) - no entra al sprint sin esto
 

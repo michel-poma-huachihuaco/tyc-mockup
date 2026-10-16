@@ -38,7 +38,7 @@ Escenario: Alertar una sola vez por tipo y ciclo
 - Entidades/campos que LEE: SVC_TICKET (vencimientos)
 - Entidades/campos que ESCRIBE o modifica: SVC_TICKET_ALERTA_SLA
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - entidades presentes en docs/datos/diccionario.md, pero el modelo de F4 sigue en estado: draft y Gobierno de Datos no ha corrido la puerta formal F4 todavia
 
 ## DoR (G4) - no entra al sprint sin esto
 

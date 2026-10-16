@@ -44,7 +44,7 @@ Escenario: Publicar un flujo nuevo
 - Entidades/campos que LEE: catálogo de tipos de ticket y áreas
 - Entidades/campos que ESCRIBE o modifica: SVC_WORKFLOW_CONFIG (pasos, estados, responsables, aprobaciones, SLA por paso)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - nomenclatura a reconciliar con docs/datos/diccionario.md: la HU dice 'SVC_WORKFLOW_CONFIG', el diccionario de F4 lo llama 'SVC_WORKFLOW_DEFINITION' (mismo concepto) - desviacion MENOR de CAD-F5 (nomenclatura)
 
 ## DoR (G4) - no entra al sprint sin esto
 

@@ -123,6 +123,31 @@ configurable es un conjunto de sub-pasos dentro de `IN_PROGRESS` o reemplaza
 el campo `Status` de `SVC_TICKET` para el area que lo define. — Tomada por:
 IA; pendiente de resolucion PO+TL antes de refinamiento.
 
+**D-10** — 2026-10-16 — **El checklist CAD-F5 escala a bloqueante por numero
+de desviaciones menores**, no solo por severidad individual. Al contrastar
+las 60 HU contra `docs/datos/diccionario.md` (F4): 5 HU (`HU-ATC-043`, `044`,
+`047`, `048`, `060`) declaran un nombre de entidad distinto del que fijo el
+diccionario para el mismo concepto (`SVC_WORKFLOW_CONFIG`,
+`SVC_SOLUTION_GUIDE`, `SVC_IA_SUGGESTION`, `SVC_BUS_SEAT_RESERVATION` vs. los
+nombres del diccionario) — desviacion tipificada como MENOR en
+`.agents/templates/checklist-cad-f5.md`. Ese mismo template dice textualmente:
+"Tres menores abiertas en la iniciativa: escala y bloquea". Con 5 menores
+abiertas, el umbral ya esta cruzado. — Impacto: Gobierno de Datos debe tratar
+esto como una desviacion que bloquea (no como 5 notas sueltas) antes de que
+F4 pueda darse por cerrado para esas HU; afecta a `FT-ATC-18` (`HU-ATC-043`,
+`044`), `FT-ATC-19` (`HU-ATC-047`, `048`) y `FT-ATC-23` (`HU-ATC-060`). —
+Ademas, 3 HU quedaron en `Rechazado` por vacio de definicion MAYOR:
+`HU-ATC-017` y `HU-ATC-033`/`034` referencian entidades
+(`CITY_SERVICE_FEE`, `MAE_WARRANTY_COVERAGE_PERIOD`) que no estan en el
+diccionario, y `HU-ATC-033` depende de `CONTRACT_UNIT_HANDOVER`, una entidad
+de otro dominio (Postventa/Contratos) sin contrato de consulta definido —
+esto es exactamente el tipo de caso que motivo la pregunta del usuario sobre
+si "otros proyectos" comparten el modelo de datos (ver conversacion de esta
+sesion): aqui el vacio es que `aybar-atc` no tiene todavia definido COMO
+consulta ese dato de otro dominio (API, evento, o aun sin decidir). — Tomada
+por: IA (dos forks independientes de F5); pendiente de resolucion de
+Gobierno de Datos antes de G4.
+
 ---
 
 ## Precedencia (recordatorio del marco)

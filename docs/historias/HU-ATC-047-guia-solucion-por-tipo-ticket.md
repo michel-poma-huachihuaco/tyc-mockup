@@ -44,7 +44,7 @@ Escenario: Consultar la guía de un tipo de ticket
 - Entidades/campos que LEE: SVC_SOLUTION_GUIDE (por tipo de ticket, versionada)
 - Entidades/campos que ESCRIBE o modifica: ninguna (solo lectura para el gestor; la mantiene el administrador funcional)
 - Migración / backfill / borrado: no
-- Checklist CAD-F5: [pendiente - se completa en F4]
+- Checklist CAD-F5: Aprobado con observaciones - nomenclatura a reconciliar con docs/datos/diccionario.md: la HU dice 'SVC_SOLUTION_GUIDE', el diccionario de F4 lo llama 'SVC_KNOWLEDGE_ARTICLE' (mismo concepto) - desviacion MENOR de CAD-F5 (nomenclatura)
 
 ## DoR (G4) - no entra al sprint sin esto
 
