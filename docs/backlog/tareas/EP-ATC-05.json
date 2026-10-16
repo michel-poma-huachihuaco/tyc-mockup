@@ -1,0 +1,198 @@
+{
+  "epica": "EP-ATC-05",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-033",
+      "tareas": [
+        {
+          "id": "HU-ATC-033-T01",
+          "titulo": "BLOQUEADO por CAD-F5 (ver docs/analisis/decisiones.md D-10): CONTRACT_UNIT_HANDOVER es de otro dominio (Postventa/Contratos) sin contrato de consulta definido. Previo a esta tarea, Gobierno de Datos debe decidir el mecanismo (API/evento) para consultarla. Una vez resuelto: entidad SVC_WARRANTY_CLAIM (tipo de defecto, vinculo al Acta de Entrega) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-033-T02",
+          "titulo": "Migracion Flyway V24__crear_tabla_warranty_claim.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T01"]
+        },
+        {
+          "id": "HU-ATC-033-T03",
+          "titulo": "Caso de uso RegistrarReclamoGarantiaUseCase, vinculado obligatoriamente a la entrega de la unidad",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T02"]
+        },
+        {
+          "id": "HU-ATC-033-T04",
+          "titulo": "Endpoint POST /api/v1/reclamos-garantia",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T03"]
+        },
+        {
+          "id": "HU-ATC-033-T05",
+          "titulo": "Un test por cada TC de HU-ATC-033 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-033-T04"]
+        },
+        {
+          "id": "HU-ATC-033-T06",
+          "titulo": "Pantalla de registro de reclamo de garantia tipificado (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 3,
+          "depende_de": ["HU-ATC-033-T04"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-034",
+      "tareas": [
+        {
+          "id": "HU-ATC-034-T01",
+          "titulo": "BLOQUEADO por CAD-F5 (D-10): MAE_WARRANTY_COVERAGE_PERIOD no esta en docs/datos/diccionario.md. Previo a esta tarea, Gobierno de Datos debe aprobar la entidad. Una vez resuelto: migracion Flyway V25__crear_tabla_mae_warranty_coverage_period_y_columna_status.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T02"]
+        },
+        {
+          "id": "HU-ATC-034-T02",
+          "titulo": "Caso de uso ValidarVigenciaGarantiaUseCase (rechaza automaticamente fuera de cobertura, contra fecha real de entrega)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-034-T01"]
+        },
+        {
+          "id": "HU-ATC-034-T03",
+          "titulo": "Un test por cada TC de HU-ATC-034 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-034-T02"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-035",
+      "tareas": [
+        {
+          "id": "HU-ATC-035-T01",
+          "titulo": "Entidad SVC_WARRANTY_INSPECTION (evidencia, resultado) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T01"]
+        },
+        {
+          "id": "HU-ATC-035-T02",
+          "titulo": "Migracion Flyway V26__crear_tabla_warranty_inspection.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-035-T01"]
+        },
+        {
+          "id": "HU-ATC-035-T03",
+          "titulo": "Caso de uso RegistrarInspeccionYResolverReclamoUseCase (aprobar/rechazar/resolver con trazabilidad) y endpoint POST /api/v1/reclamos-garantia/{id}/inspeccion",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-035-T02"]
+        },
+        {
+          "id": "HU-ATC-035-T04",
+          "titulo": "Un test por cada TC de HU-ATC-035 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-035-T03"]
+        },
+        {
+          "id": "HU-ATC-035-T05",
+          "titulo": "Pantalla de inspeccion tecnica con evidencia documental (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-035-T03"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-036",
+      "tareas": [
+        {
+          "id": "HU-ATC-036-T01",
+          "titulo": "Migracion Flyway V27__agregar_columna_escalated_to_legal_warranty_claim.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-033-T02"]
+        },
+        {
+          "id": "HU-ATC-036-T02",
+          "titulo": "Caso de uso EscalarGarantiaYReincorporarUseCase (escala a Eje 3 reutilizando SVC_TICKET_HANDOFF, gestiona reincorporacion contractual por adenda)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-036-T01", "HU-ATC-027-T01"]
+        },
+        {
+          "id": "HU-ATC-036-T03",
+          "titulo": "Endpoint POST /api/v1/reclamos-garantia/{id}/escalamiento",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-036-T02"]
+        },
+        {
+          "id": "HU-ATC-036-T04",
+          "titulo": "Un test por cada TC de HU-ATC-036 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-036-T03"]
+        },
+        {
+          "id": "HU-ATC-036-T05",
+          "titulo": "Pantalla de escalamiento y adenda contractual (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-036-T03"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "epica": "EP-ATC-08",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-037",
+      "tareas": [
+        {
+          "id": "HU-ATC-037-T01",
+          "titulo": "Entidad SVC_EVENT_SENSITIVE_CASE (clasificacion de riesgo, secuencia de Frases Ancla 4/5/6) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-037-T02",
+          "titulo": "Migracion Flyway V30__crear_tabla_event_sensitive_case.sql y endpoint POST /api/v1/entregafest/casos",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-037-T01"]
+        },
+        {
+          "id": "HU-ATC-037-T03",
+          "titulo": "Un test por cada TC de HU-ATC-037 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-037-T02"]
+        },
+        {
+          "id": "HU-ATC-037-T04",
+          "titulo": "Pantalla rapida para el moderador: registrar clasificacion y secuencia aplicada (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-037-T02"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-038",
+      "tareas": [
+        {
+          "id": "HU-ATC-038-T01",
+          "titulo": "Migracion Flyway V31__agregar_columna_derived_to_station4_event_sensitive_case.sql y endpoint POST /api/v1/entregafest/casos/{id}/derivacion",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-037-T02"]
+        },
+        {
+          "id": "HU-ATC-038-T02",
+          "titulo": "Caso de uso RegistrarDerivacionInmediataEstacion4UseCase",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-038-T01"]
+        },
+        {
+          "id": "HU-ATC-038-T03",
+          "titulo": "Un test por cada TC de HU-ATC-038 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-038-T02"]
+        },
+        {
+          "id": "HU-ATC-038-T04",
+          "titulo": "Boton de derivacion inmediata a Estacion 4, sin debate en sala (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-038-T02"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-039",
+      "tareas": [
+        {
+          "id": "HU-ATC-039-T01",
+          "titulo": "Migracion Flyway V32__agregar_columna_tag_event_sensitive_case.sql y endpoint GET/POST /api/v1/entregafest/registro-casos-sensibles",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-037-T02"]
+        },
+        {
+          "id": "HU-ATC-039-T02",
+          "titulo": "Caso de uso RegistrarCasoConEtiquetaEstandarUseCase (etiqueta: Atencion especial - derivacion a Legal)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-039-T01"]
+        },
+        {
+          "id": "HU-ATC-039-T03",
+          "titulo": "Un test por cada TC de HU-ATC-039 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-039-T02"]
+        },
+        {
+          "id": "HU-ATC-039-T04",
+          "titulo": "Vista del Registro de Casos Sensibles del evento (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-039-T02"]
+        }
+      ]
+    }
+  ]
+}

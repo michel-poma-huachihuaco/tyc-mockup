@@ -1,0 +1,248 @@
+{
+  "epica": "EP-ATC-01",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-001",
+      "tareas": [
+        {
+          "id": "HU-ATC-001-T01",
+          "titulo": "Crear la entidad de dominio Ticket (SVC_TICKET) y el puerto TicketRepository en domain.port.out, segun docs/datos/diccionario.md (fundacion)",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-001-T02",
+          "titulo": "Migracion Flyway V2__crear_tabla_ticket.sql (expand) con tipo, prioridad, empresa, linea de negocio, establecimiento; reversion probada",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T01"]
+        },
+        {
+          "id": "HU-ATC-001-T03",
+          "titulo": "Caso de uso RegistrarTicketUseCase: valida empresa/linea obligatorias, consulta cliente en SIGDA/TAXON por puerto ClienteExternoPort",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T01"]
+        },
+        {
+          "id": "HU-ATC-001-T04",
+          "titulo": "Endpoint POST /api/v1/tickets segun docs/arquitectura/aybar-atc.openapi.yaml, errores ProblemDetail RFC7807",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-001-T02", "HU-ATC-001-T03"]
+        },
+        {
+          "id": "HU-ATC-001-T05",
+          "titulo": "Un test por cada TC de HU-ATC-001 en docs/pruebas/test-plan.md, con datos sinteticos",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-001-T04"]
+        },
+        {
+          "id": "HU-ATC-001-T06",
+          "titulo": "Pantalla de registro de ticket en frontend/ con @aybarcorp/http: campos obligatorios/opcionales, estados vacio/carga/error/sin permisos de G2 (ui: true, estimacion separada del backend: ver resumen)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 4,
+          "depende_de": ["HU-ATC-001-T04"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-002",
+      "tareas": [
+        {
+          "id": "HU-ATC-002-T01",
+          "titulo": "Migracion Flyway V3__indice_unico_ticket_number_por_empresa.sql (constraint UNIQUE TicketNumber x CompanyID)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T02"]
+        },
+        {
+          "id": "HU-ATC-002-T02",
+          "titulo": "Logica de generacion del correlativo por CompanyID dentro de RegistrarTicketUseCase (secuencia o lock optimista)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-001-T03", "HU-ATC-002-T01"]
+        },
+        {
+          "id": "HU-ATC-002-T03",
+          "titulo": "Un test por cada TC de HU-ATC-002 en docs/pruebas/test-plan.md (concurrencia del correlativo incluida)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-002-T02"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-004",
+      "tareas": [
+        {
+          "id": "HU-ATC-004-T01",
+          "titulo": "Entidad SVC_TICKET_ESTADO_HISTORIAL (append-only) y puerto TicketEstadoHistorialRepository en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T01"]
+        },
+        {
+          "id": "HU-ATC-004-T02",
+          "titulo": "Migracion Flyway V4__crear_tabla_ticket_estado_historial.sql (expand, FK a ticket)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-004-T01"]
+        },
+        {
+          "id": "HU-ATC-004-T03",
+          "titulo": "Caso de uso CambiarEstadoTicketUseCase: valida transicion de los 7 estados, inserta fila nueva sin sobrescribir",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-004-T01"]
+        },
+        {
+          "id": "HU-ATC-004-T04",
+          "titulo": "Endpoint PATCH /api/v1/tickets/{id}/estado segun el contrato OpenAPI",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-004-T02", "HU-ATC-004-T03"]
+        },
+        {
+          "id": "HU-ATC-004-T05",
+          "titulo": "Un test por cada TC de HU-ATC-004 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-004-T04"]
+        },
+        {
+          "id": "HU-ATC-004-T06",
+          "titulo": "Accion de cambio de estado e historial visible en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 3,
+          "depende_de": ["HU-ATC-004-T04"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-005",
+      "tareas": [
+        {
+          "id": "HU-ATC-005-T01",
+          "titulo": "Entidad SVC_TICKET_INTERACCION (canal, autor, visibilidad, adjuntos) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T01"]
+        },
+        {
+          "id": "HU-ATC-005-T02",
+          "titulo": "Migracion Flyway V5__crear_tabla_ticket_interaccion.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-005-T01"]
+        },
+        {
+          "id": "HU-ATC-005-T03",
+          "titulo": "Caso de uso RegistrarInteraccionUseCase, incluye subida de evidencia multimedia a object storage (ver ADR-006)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-005-T01"]
+        },
+        {
+          "id": "HU-ATC-005-T04",
+          "titulo": "Endpoint POST /api/v1/tickets/{id}/interacciones, adaptador de subida a object storage (adapters.outbound.external, con simulador segun ADR-007)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-005-T02", "HU-ATC-005-T03"]
+        },
+        {
+          "id": "HU-ATC-005-T05",
+          "titulo": "Un test por cada TC de HU-ATC-005 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-005-T04"]
+        },
+        {
+          "id": "HU-ATC-005-T06",
+          "titulo": "Timeline de interacciones (nota interna vs visible al cliente) con adjuntos en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 3,
+          "depende_de": ["HU-ATC-005-T04"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-006",
+      "tareas": [
+        {
+          "id": "HU-ATC-006-T01",
+          "titulo": "Migracion Flyway V6__agregar_columnas_hitos_ticket.sql (FirstResponseDateTime, FirstResolvedDateTime, LastResolvedDateTime, ClosedDateTime en SVC_TICKET, expand)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 1,
+          "depende_de": ["HU-ATC-001-T02"]
+        },
+        {
+          "id": "HU-ATC-006-T02",
+          "titulo": "Logica de registro de hitos temporales en CambiarEstadoTicketUseCase (FirstResolvedDateTime inmutable tras reapertura)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 2,
+          "depende_de": ["HU-ATC-004-T03", "HU-ATC-006-T01"]
+        },
+        {
+          "id": "HU-ATC-006-T03",
+          "titulo": "Un test por cada TC de HU-ATC-006 en docs/pruebas/test-plan.md (incluye caso de reapertura)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-ATC-006-T02"]
+        }
+      ]
+    }
+  ]
+}
