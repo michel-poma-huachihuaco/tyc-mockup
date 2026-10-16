@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "bash .agents/scripts/arranque.sh --hook cursor",
+        "timeout": 30
+      }
+    ]
+  }
+}

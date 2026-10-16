@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Hook pre-commit del marco Aybar (G4): en una rama feature/<TICKET>-<slug>,
+# un commit que toca codigo exige el paquete Definir aprobado en origin/main
+# (docs/gates/<TICKET>/G4.md y, si existe, G3.md). Los commits que solo tocan
+# docs/ pasan. Delega en el validador, que tambien usan la etapa "Gates
+# listos" del pipeline y el hook del agente: un solo validador, tres asientos.
+# Es cortesia local; la barrera real es la CI.
+set -euo pipefail
+AQUI="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$AQUI/../validar-gate-listo.sh" --staged

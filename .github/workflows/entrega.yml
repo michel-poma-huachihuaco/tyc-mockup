@@ -1,0 +1,217 @@
+# Pipeline del marco de entrega (etapas 1-3 del pipeline de referencia).
+# La etapa de estructura va primera: cuesta segundos y evita gastar minutos
+# de build en un cambio que ya incumple. Los gates G6/G7/G8 son decisiones
+# humanas con evidencia: este workflow prepara, no aprueba.
+#
+# OJO con la sintaxis: las expresiones de GitHub van SIEMPRE con espacios
+# internos tras las llaves de apertura y antes de las de cierre. El generador
+# del SDK interpola tokens de doble llave SIN espacios y se comeria una
+# expresion escrita pegada.
+name: entrega
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop, 'release/**']
+
+jobs:
+  estructura:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Los valores de github.* entran por env: y se leen como variables de
+      # shell. Interpolarlos directo en run: es inyeccion: GitHub sustituye la
+      # expresion DENTRO del script antes de ejecutarlo, y el nombre de una
+      # rama de PR lo escribe quien abre el PR.
+      - name: Nombre de rama y formato de commits
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          case "$BASE_REF$HEAD_REF" in
+            *[!A-Za-z0-9._/-]*) echo "[x] ref con caracteres fuera de [A-Za-z0-9._/-]" >&2; exit 1 ;;
+          esac
+          BASE="origin/${BASE_REF}"
+          [ "$EVENT_NAME" = "pull_request" ] || BASE=""
+          if [ -n "$BASE" ]; then
+            git fetch -q origin "$BASE_REF"
+            .guardianes/validar-nombre-rama.sh "$HEAD_REF"
+            .guardianes/validar-mensaje-commit.sh --rango "$BASE..HEAD"
+          else
+            git log -1 --format=%B | .guardianes/validar-mensaje-commit.sh
+          fi
+      # Gates listos (G4; G3 y G2 si existen; G2 tambien si la feature tiene
+      # HU con pantalla): un PR desde feature/<TICKET>-*
+      # que toca codigo exige el paquete Definir aprobado EN MAIN, es decir,
+      # el PR del gate ya mergeado con la revision de su CODEOWNER. Es la
+      # barrera real: el pre-commit y el hook del agente son cortesia local y
+      # se saltan. Lo que el PR trae en su rama no cuenta como aprobacion.
+      # hotfix/, bugfix/ y release/ quedan exentos (validar-gate-listo.sh).
+      # Ojo: corre el validador que trae el PR. Que nadie lo afloje en el
+      # mismo PR lo garantiza CODEOWNERS sobre .guardianes/ y .github/.
+      - name: Gates listos (G4, G3 y G2 aprobados en main)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          case "$BASE_REF$HEAD_REF" in
+            *[!A-Za-z0-9._/-]*) echo "[x] ref con caracteres fuera de [A-Za-z0-9._/-]" >&2; exit 1 ;;
+          esac
+          git fetch -q origin "$BASE_REF"
+          bash .guardianes/validar-gate-listo.sh --rama "$HEAD_REF" \
+            --rango "origin/${BASE_REF}...HEAD" --fetch --informar
+      # Evidencia de gates: cada docs/gates/<TICKET>/G<n>.md que trae el PR
+      # tiene el frontmatter del marco, su id coincide con la ruta y, si pasa
+      # a approved, declara sus firmas (dos en G2, G7 y G8). QUIEN firma no
+      # se comprueba aqui: revisiones y equipos son estado del servidor, y lo
+      # garantiza la proteccion de main con "Require review from Code
+      # Owners" (ver .github/CODEOWNERS, gates de dos roles incluidos).
+      - name: Evidencia de gates (forma del archivo)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          case "$BASE_REF" in
+            *[!A-Za-z0-9._/-]*) echo "[x] ref con caracteres fuera de [A-Za-z0-9._/-]" >&2; exit 1 ;;
+          esac
+          git fetch -q origin "$BASE_REF"
+          bash .guardianes/validar-evidencia-gates.sh --informar --rango "origin/${BASE_REF}...HEAD"
+      - name: Evals de los guardianes
+        run: .agents/evals/guardianes.sh
+
+  # Paquete Definir certificado (.agents/scripts/arranque.sh --estricto, el
+  # mismo informe que ven los agentes al abrir el repositorio). Sin paquete en
+  # docs/ no hay nada que certificar. Dos niveles:
+  #   - Siempre, sin secretos: el explorador (docs/explorador.html) esta al dia
+  #     con docs/. Se comprueba por su huella con coreutils, sin la CLI.
+  #   - Con la CLI aybar: ademas, aybar paquete validar sin errores. La CLI sale
+  #     del release privado del SDK, asi que hacen falta el secreto
+  #     AYBAR_SDK_TOKEN (lectura de ese repositorio) y la variable
+  #     AYBAR_SDK_REPO (ORG/REPO). Sin ellos la validacion queda avisada, no
+  #     cortada. Con una version de desarrollo (-SNAPSHOT, -dev) se usa el
+  #     ultimo release publicado.
+  paquete-definir:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: CLI aybar (si estan AYBAR_SDK_TOKEN y AYBAR_SDK_REPO)
+        env:
+          GH_TOKEN: ${{ secrets.AYBAR_SDK_TOKEN }}
+          AYBAR_SDK_REPO: ${{ vars.AYBAR_SDK_REPO }}
+          SDK_VERSION: '0.7.1'
+        run: |
+          if ! bash .agents/scripts/arranque.sh --hay-paquete; then
+            echo "docs/ sin paquete Definir: nada que certificar."
+            exit 0
+          fi
+          if [ -z "$GH_TOKEN" ] || [ -z "$AYBAR_SDK_REPO" ]; then
+            echo "::notice::Sin AYBAR_SDK_TOKEN y AYBAR_SDK_REPO no se instala la CLI aybar: se comprueba el explorador por su huella, pero aybar paquete validar no corre en CI."
+            exit 0
+          fi
+          case "$SDK_VERSION" in
+            *-SNAPSHOT|*-dev*) etiqueta="" ;;   # sin release propio: el ultimo publicado
+            *) etiqueta="v$SDK_VERSION" ;;
+          esac
+          if ! gh release download $etiqueta --repo "$AYBAR_SDK_REPO" --pattern install.sh --dir "$RUNNER_TEMP/aybar"; then
+            echo "::warning::No pude bajar install.sh del release ${etiqueta:-mas reciente} de $AYBAR_SDK_REPO: aybar paquete validar no corre en CI."
+            exit 0
+          fi
+          bash "$RUNNER_TEMP/aybar/install.sh" --yes --solo-backend
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Paquete Definir certificado (explorador al dia y, con la CLI, validar)
+        run: bash .agents/scripts/arranque.sh --estricto
+
+  build-y-pruebas:
+    needs: estructura
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      # verify corre unitarias y ArchUnit; el esqueleto generado no trae IT.
+      # Los IT que el servicio añada (failsafe/Testcontainers) corren aqui
+      # mismo: los runners de GitHub traen Docker.
+      - name: Build y pruebas (verify)
+        run: ./mvnw -B -ntp verify
+
+  dependencias:
+    needs: estructura
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: dependency-check (G7; exige el secreto NVD_API_KEY)
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: .agents/scripts/dependencias-check.sh --backend || [ $? -eq 2 ]
+
+  estatico:
+    needs: estructura
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Sonar (si esta configurado el secreto)
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .agents/scripts/sonar-check.sh || [ $? -eq 2 ]
+
+  # Frontend (frontend/): mismo pipeline, otras herramientas. Los @aybarcorp/*
+  # estan en frontend/paquetes/ (commiteados, file: en package.json, integridad
+  # fijada en el lockfile): npm ci no habla con GitHub Packages, asi que el job
+  # no necesita credenciales, ni tokens, ni permisos de paquetes (AYB-1052).
+  frontend:
+    needs: estructura
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      # npm ci exige el package-lock.json commiteado: instala exactamente lo
+      # que se reviso, nunca "lo ultimo que cumpla el rango".
+      - name: Dependencias (npm ci)
+        run: npm ci
+      - name: Lint (si el proyecto lo declara)
+        run: npm run lint --if-present
+      - name: Pruebas (si el proyecto las declara)
+        run: npm run test --if-present
+      - name: Build
+        run: npm run build
+      # Solo existe en un remoto: el modulo federado que monta el shell.
+      - name: Build del modulo federado (remoto)
+        run: npm run build:remoto --if-present
+      # G7: dependencias con vulnerabilidades altas o criticas cortan aqui.
+      - name: Dependencias con CVE (npm audit, G7)
+        run: npm audit --audit-level=high

@@ -1,0 +1,7 @@
+# Configuracion de Codex para este proyecto (solo se carga si el proyecto es de
+# confianza). Servidores MCP: se arrancan con la CLI aybar, sin rutas absolutas
+# ni secretos; los tokens viven en ~/.aybar/<nombre>.env (aybar mcp <nombre> configurar).
+
+[mcp_servers.nexora]
+command = "aybar"
+args = ["mcp", "nexora"]

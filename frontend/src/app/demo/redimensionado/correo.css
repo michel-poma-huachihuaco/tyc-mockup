@@ -1,0 +1,213 @@
+/*
+ * La bandeja de correo de /demo/redimensionado: un Splitter dentro de otro (carpetas |
+ * lista | lectura). Desde 768px los paneles van lado a lado; antes, apilados. Prefijo
+ * gl-correo; solo tokens --aybar-*. La misma hoja en React y en Angular.
+ */
+
+/* En Angular es el elemento del componente: un bloque, como el div de React. */
+.gl-correo {
+  display: block;
+  block-size: calc(var(--aybar-space-4) * 34);
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+@media (max-width: 767.98px) {
+  .gl-correo {
+    block-size: calc(var(--aybar-space-4) * 46);
+  }
+}
+
+.gl-correo .ay-splitter,
+.gl-correo__resto {
+  block-size: 100%;
+}
+
+.gl-correo__carpetas {
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--aybar-space-3);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-correo__lista-carpetas,
+.gl-correo__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-correo__lista-carpetas {
+  display: grid;
+  gap: var(--aybar-space-1);
+}
+
+/* Carpetas y mensajes son botones: con el teclado se recorren con Tab y se abren con Intro. */
+.gl-correo__carpeta,
+.gl-correo__mensaje {
+  box-sizing: border-box;
+  inline-size: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--aybar-color-fg-default);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-correo__carpeta {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  min-block-size: var(--aybar-touch-target);
+  padding: var(--aybar-space-2) var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-correo__carpeta-nombre {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-correo__carpeta:hover,
+.gl-correo__mensaje:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-default) 6%, transparent);
+}
+
+/* La elegida: fondo de acento y una barra al inicio (la marca no depende solo del color). */
+.gl-correo__carpeta[aria-current='true'],
+.gl-correo__mensaje[aria-current='true'] {
+  background: var(--aybar-color-bg-accent-subtle);
+  box-shadow: inset var(--aybar-border-width-thick) 0 0 var(--aybar-color-border-accent);
+}
+
+.gl-correo__carpeta[aria-current='true'] {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-correo__carpeta:focus-visible,
+.gl-correo__mensaje:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-correo__mensaje {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: var(--aybar-space-3);
+  row-gap: var(--aybar-space-1);
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-correo__mensaje > .ay-avatar {
+  grid-row: span 3;
+  align-self: start;
+}
+
+.gl-correo__remitente,
+.gl-correo__asunto,
+.gl-correo__extracto {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-correo__remitente {
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-correo__fecha {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  white-space: nowrap;
+}
+
+.gl-correo__asunto {
+  grid-column: 2 / -1;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-correo__extracto {
+  grid-column: 2 / -1;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* Sin leer: en negrita (y «Sin leer» para el lector, en el propio botón). */
+.gl-correo__mensaje[data-sin-leer] :is(.gl-correo__remitente, .gl-correo__asunto) {
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.gl-correo__vacio {
+  padding: var(--aybar-space-6) var(--aybar-space-4);
+}
+
+.gl-correo__lectura {
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--aybar-space-6);
+}
+
+.gl-correo__articulo {
+  display: grid;
+  gap: var(--aybar-space-4);
+}
+
+.gl-correo__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  line-height: var(--aybar-font-leading-snug);
+  overflow-wrap: anywhere;
+}
+
+.gl-correo__de {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  min-inline-size: 0;
+}
+
+.gl-correo__de-texto {
+  display: grid;
+  min-inline-size: 0;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-correo__de-texto > span {
+  overflow: hidden;
+  color: var(--aybar-color-fg-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-correo__cuerpo {
+  display: grid;
+  gap: var(--aybar-space-3);
+  max-inline-size: calc(var(--aybar-space-4) * 38);
+  padding-block-start: var(--aybar-space-4);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-correo__cuerpo p {
+  margin: 0;
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-correo__carpeta,
+  .gl-correo__mensaje {
+    transition: none;
+  }
+}

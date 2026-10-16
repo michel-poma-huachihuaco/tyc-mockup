@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "bash .agents/scripts/arranque.sh --hook copilot",
+        "powershell": "bash .agents/scripts/arranque.sh --hook copilot",
+        "cwd": ".",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}

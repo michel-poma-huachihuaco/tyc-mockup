@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nexora": {
+      "command": "aybar",
+      "args": ["mcp", "nexora"]
+    }
+  }
+}

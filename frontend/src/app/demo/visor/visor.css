@@ -1,0 +1,285 @@
+/*
+ * El visor 3D de la galería (/demo/3d). Llega con su pantalla, en su chunk: el resto de la
+ * galería no la carga. Clases gl-maqueta__*, solo tokens --aybar-*: ningún color suelto. Los
+ * colores de los estados no están aquí: salen de TOKEN_ESTADO (plano.ts) para que el 3D,
+ * el 2D y la leyenda usen el mismo token. Las medidas de maquetación son múltiplos de
+ * --aybar-space-4 (1rem). Mismo archivo en React y en Angular.
+ */
+
+.gl-maqueta {
+  container: gl-maqueta / inline-size;
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+
+/* Las tramas viven en un SVG sin tamaño: solo sus <pattern> cuentan. */
+.gl-maqueta__tramas {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+
+.gl-maqueta__punto {
+  fill: var(--aybar-color-bg-surface);
+  opacity: 0.8;
+}
+
+.gl-maqueta__raya {
+  fill: none;
+  stroke: var(--aybar-color-bg-surface);
+  stroke-width: 0.7;
+  opacity: 0.8;
+}
+
+/* Una nota corta bajo un bloque: la de la leyenda, la del teclado en la lista. */
+.gl-maqueta__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+/* ── Mandos: filtros y vista ─────────────────────────────────────────────── */
+
+.gl-maqueta__mandos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--aybar-space-4) var(--aybar-space-6);
+}
+
+.gl-maqueta__filtros {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-4);
+}
+
+.gl-maqueta__filtros > * {
+  flex: 1 1 calc(var(--aybar-space-4) * 11);
+  max-inline-size: calc(var(--aybar-space-4) * 16);
+}
+
+/* El Form Field separa un campo del anterior pensando en una columna; aquí van en fila. */
+.gl-maqueta .gl-maqueta__filtros > :is(.ay-field, ay-form-field) {
+  margin-block-start: 0;
+}
+
+/* ── Leyenda ─────────────────────────────────────────────────────────────── */
+
+.gl-maqueta__leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-3) var(--aybar-space-6);
+}
+
+.gl-maqueta__estados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2) var(--aybar-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-maqueta__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  font-size: var(--aybar-font-size-sm);
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-maqueta__muestra {
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+  flex: none;
+}
+
+.gl-maqueta__cuenta {
+  min-inline-size: var(--aybar-space-6);
+  padding: 0 var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ── Cuerpo: el plano (3D o 2D) y, al lado o debajo, la ficha y la lista ────── */
+
+.gl-maqueta__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--aybar-space-6);
+  align-items: start;
+}
+
+.gl-maqueta__escenario,
+.gl-maqueta__lateral {
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+/* Los hijos de la rejilla pueden encogerse: en Angular el plano 2D va dentro de su propio
+   elemento (gl-plano-2d), y con el min-inline-size automático de la rejilla tomaba el ancho
+   mínimo del SVG y sacaba la página de la pantalla en un celular. El SVG se desplaza dentro
+   de .gl-maqueta__plano. */
+.gl-maqueta__escenario > * {
+  min-inline-size: 0;
+}
+
+@container gl-maqueta (min-width: 56rem) {
+  .gl-maqueta__cuerpo {
+    grid-template-columns: minmax(0, 1fr) minmax(calc(var(--aybar-space-4) * 18), calc(var(--aybar-space-4) * 22));
+  }
+
+  .gl-maqueta__escenario {
+    position: sticky;
+    inset-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-4));
+  }
+}
+
+/*
+ * El plano es mucho más ancho que hondo (436 × 92 m): un lienzo apaisado lo encuadra sin
+ * dejar media caja vacía. El 2D tiene la misma caja, así cambiar de vista no mueve nada.
+ */
+.gl-maqueta__lienzo,
+.gl-maqueta__plano {
+  box-sizing: border-box;
+  /* Un elemento de rejilla con aspect-ratio no se estira solo: sin esto, el alto mínimo le
+     daría un ancho mayor que la columna en un celular. */
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  min-block-size: calc(var(--aybar-space-4) * 16);
+  max-block-size: calc(var(--aybar-space-4) * 36);
+}
+
+.gl-maqueta__lienzo {
+  position: relative;
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-canvas);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-maqueta__webgl {
+  position: absolute;
+  inset: 0;
+}
+
+.gl-maqueta__carga {
+  position: absolute;
+  inset: 0;
+  display: grid;
+}
+
+.gl-maqueta__carga > * {
+  grid-area: 1 / 1;
+}
+
+.gl-maqueta__spinner {
+  place-self: center;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+/* El plano 2D: ancho mínimo legible; en una pantalla estrecha se desplaza de lado. */
+.gl-maqueta__plano {
+  display: grid;
+  align-content: center;
+  overflow-x: auto;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface-sunken);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-maqueta__plano:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-maqueta__svg {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: calc(var(--aybar-space-4) * 32);
+  block-size: auto;
+}
+
+.gl-maqueta__suelo {
+  fill: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-maqueta__manzana {
+  fill: var(--aybar-color-bg-surface);
+  stroke: var(--aybar-color-border-subtle);
+  stroke-width: 0.4;
+}
+
+.gl-maqueta__rotulo {
+  fill: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-heading);
+  font-size: 6px;
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-maqueta__lote > rect:first-of-type {
+  stroke: var(--aybar-color-bg-surface);
+  stroke-width: 0.6;
+}
+
+.gl-maqueta__lote:not(.is-fuera) {
+  cursor: pointer;
+}
+
+.gl-maqueta__lote.is-fuera {
+  opacity: 0.16;
+}
+
+.gl-maqueta__trama {
+  pointer-events: none;
+}
+
+.gl-maqueta__marca {
+  fill: none;
+  stroke: var(--aybar-color-border-focus);
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.gl-maqueta__marca--elegido {
+  stroke-width: 3px;
+}
+
+.gl-maqueta__marca--foco {
+  stroke-width: 2px;
+  stroke-dasharray: 4 3;
+}
+
+/* La lista: altura acotada, con su propio desplazamiento. */
+.gl-maqueta__arbol {
+  max-block-size: calc(var(--aybar-space-4) * 24);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Colores forzados: el plano 2D se dibuja con los colores del sistema. */
+@media (forced-colors: active) {
+  .gl-maqueta__lote > rect:first-of-type {
+    stroke: CanvasText;
+  }
+
+  .gl-maqueta__marca {
+    stroke: Highlight;
+  }
+}

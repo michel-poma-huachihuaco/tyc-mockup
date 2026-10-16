@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "nexora": {
+      "type": "stdio",
+      "command": "aybar",
+      "args": ["mcp", "nexora"]
+    }
+  }
+}

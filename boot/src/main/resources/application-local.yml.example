@@ -1,0 +1,20 @@
+# Copia a application-local.yml (gitignored). Sin passwords de producción.
+
+aybar:
+  security:
+    # Igual que application-local.yml: bienvenida, Swagger y sondas de Actuator sin
+    # JWT. Sin /actuator/health/** las sondas responden 401 y el orquestador
+    # reinicia el contenedor una y otra vez.
+    rutas-publicas: /, /swagger-ui.html, /swagger-ui/**, /v3/api-docs, /v3/api-docs/**, /actuator/health, /actuator/health/**
+
+
+spring:
+  kafka:
+    bootstrap-servers: ${AYBAR_KAFKA_BOOTSTRAP:localhost:9094}
+
+
+# CORS para el frontend de este repositorio en local (Vite 5173, Angular 4200).
+# Lo aplica aybar-starter-security; sin ese starter no hace nada.
+aybar.security.cors.origenes-permitidos:
+  - http://localhost:5173
+  - http://localhost:4200

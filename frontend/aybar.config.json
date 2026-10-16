@@ -1,0 +1,17 @@
+{
+  "version": "0.3.0",
+  "papel": "app",
+  "anfitrion": "angular",
+  "tema": {
+    "predeterminado": "sistema"
+  },
+  "autenticacion": {
+    "emisor": "https://emisor.aybar.local",
+    "clienteId": "aybar-web",
+    "audiencia": "aybar-api",
+    "alcance": "openid profile"
+  },
+  "api": {
+    "baseUrl": "https://api.aybar.local"
+  }
+}

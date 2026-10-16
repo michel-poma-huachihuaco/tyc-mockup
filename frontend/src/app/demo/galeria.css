@@ -1,0 +1,3064 @@
+/*
+ * La hoja de la galería de demostración. Solo existe con `ng serve`: la carga GaleriaRaiz
+ * (raiz.ts), sin encapsular, y `npm run demo:quitar` la borra con el resto de src/app/demo/.
+ *
+ * Reglas, las mismas que la plantilla: prefijo `gl-` (nada choca con las `ay-` del sistema
+ * de diseño ni con las `pl-` de la plantilla), solo tokens `--aybar-*` —ni un color ni una
+ * medida sueltos: las proporciones multiplican tokens— y movimiento con
+ * `--aybar-motion-*`, quieto con prefers-reduced-motion. Las media queries no admiten var():
+ * 480px es --aybar-breakpoint-xs, 640px sm, 768px md, 1024px lg, 1280px xl y 1536px 2xl.
+ */
+
+/* ═══ Piezas comunes ═════════════════════════════════════════════════════ */
+
+.gl {
+  display: block;
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-icono {
+  display: inline-flex;
+  flex: none;
+  inline-size: var(--gl-icono, var(--aybar-space-5));
+  block-size: var(--gl-icono, var(--aybar-space-5));
+}
+
+.gl-icono svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* El rótulo sobre un título: un punto de acento y mayúsculas espaciadas. */
+.gl-sobretitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.gl-sobretitulo__punto {
+  inline-size: var(--aybar-space-2);
+  block-size: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-action-accent-bg);
+  box-shadow: 0 0 0 var(--aybar-space-1) color-mix(in oklab, var(--aybar-color-action-accent-bg) 25%, transparent);
+}
+
+/* Una pantalla de la galería: su cabecera (rótulo, título, texto) y sus bloques. */
+.gl-pagina {
+  display: grid;
+  gap: var(--aybar-space-10);
+  min-inline-size: 0;
+}
+
+/* Los hijos de una rejilla no crecen hasta su contenido mínimo (unas pestañas que no caben,
+   una tabla ancha): se encogen y lo que desborda se desplaza dentro de su caja. */
+.gl-pagina > *,
+.gl-portada > *,
+.gl-heroe > *,
+.gl-heroe__contenido > * {
+  min-inline-size: 0;
+}
+
+.gl-pagina--centrada {
+  place-items: center;
+  min-block-size: calc(100dvh - var(--gl-navbar-alto, 0px) - var(--aybar-space-24));
+}
+
+.gl-cabecera {
+  display: grid;
+  gap: var(--aybar-space-3);
+  max-inline-size: calc(var(--aybar-space-24) * 8);
+}
+
+.gl-titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: clamp(var(--aybar-font-size-3xl), 2.2vw + var(--aybar-font-size-base), var(--aybar-font-size-4xl));
+  font-weight: var(--aybar-font-weight-display);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  text-wrap: balance;
+}
+
+.gl-texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-lg);
+  line-height: var(--aybar-font-leading-relaxed);
+  text-wrap: pretty;
+}
+
+.gl-bloque {
+  display: grid;
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+}
+
+.gl-bloque__cabecera {
+  display: grid;
+  gap: var(--aybar-space-2);
+  max-inline-size: calc(var(--aybar-space-24) * 7.5);
+}
+
+.gl-bloque__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-bloque__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  line-height: var(--aybar-font-leading-relaxed);
+  text-wrap: pretty;
+}
+
+/* Una superficie de la galería: borde de un pelo, radio grande y sombra en capas. */
+.gl-superficie {
+  min-inline-size: 0;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+/* Enlaces y botones con forma de botón (los <ay-button> son <button>; estos navegan). */
+.gl-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-2);
+  box-sizing: border-box;
+  min-block-size: calc(var(--aybar-control-height-lg) + var(--aybar-space-1));
+  padding-inline: var(--aybar-space-6);
+  border: var(--aybar-border-width-thin) solid transparent;
+  border-radius: var(--aybar-radius-lg);
+  font: inherit;
+  font-size: var(--aybar-font-size-base);
+  font-weight: var(--aybar-font-weight-semibold);
+  line-height: var(--aybar-font-leading-tight);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    translate var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-accion:hover {
+  translate: 0 calc(var(--aybar-space-px) * -1 * var(--aybar-style-lift));
+}
+
+.gl-accion:active {
+  translate: 0;
+}
+
+.gl-accion:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+  box-shadow: 0 0 0 calc(var(--aybar-focus-ring-width) + var(--aybar-focus-ring-offset) + var(--aybar-space-1)) var(--aybar-color-focus-halo);
+}
+
+.gl-accion--primaria {
+  background-color: var(--aybar-color-action-primary-bg);
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--aybar-color-fg-on-brand) var(--aybar-style-fill-sheen), transparent),
+    transparent
+  );
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow:
+    inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-fg-on-brand) var(--aybar-style-fill-edge), transparent),
+    0 var(--aybar-space-2) var(--aybar-space-6) calc(var(--aybar-space-2) * -1.25)
+      color-mix(in oklab, var(--aybar-color-action-primary-bg) calc(70% * var(--aybar-style-fill-glow)), transparent);
+}
+
+.gl-accion--primaria:hover {
+  background-color: var(--aybar-color-action-primary-bg-hover);
+  color: var(--aybar-color-action-primary-fg);
+}
+
+.gl-accion--secundaria {
+  border-color: var(--aybar-color-border-default);
+  background: var(--aybar-color-action-secondary-bg);
+  color: var(--aybar-color-action-secondary-fg);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-accion--secundaria:hover {
+  background: var(--aybar-color-action-secondary-bg-hover);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-accion--vidrio {
+  border-color: color-mix(in oklab, var(--aybar-color-border-default) 70%, transparent);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) var(--aybar-depth-glass-opacity), transparent);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-sm);
+  -webkit-backdrop-filter: blur(var(--aybar-depth-glass-blur));
+  backdrop-filter: blur(var(--aybar-depth-glass-blur));
+}
+
+.gl-accion--vidrio:hover {
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-accion--sm {
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-md);
+  font-size: var(--aybar-font-size-sm);
+}
+
+/* Una tecla: «Ctrl K». */
+.gl-tecla {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--aybar-space-2);
+  min-block-size: var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-block-end-width: var(--aybar-border-width-thick);
+  border-radius: var(--aybar-radius-sm);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-medium);
+  line-height: 1;
+}
+
+/* Botón cuadrado de solo icono que navega (los ay-icon-button son <button>). */
+.gl-boton-icono {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-control-height-md);
+  block-size: var(--aybar-control-height-md);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-default);
+  text-decoration: none;
+  transition: background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-boton-icono:hover {
+  background: var(--aybar-color-action-secondary-bg-hover);
+}
+
+.gl-boton-icono:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+/* Visible solo con espacio: en pantallas estrechas el texto queda para el lector. */
+@media (max-width: 1023.98px) {
+  .gl-solo-ancho {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* ═══ El marco ═══════════════════════════════════════════════════════════ */
+
+.gl-marco {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+}
+
+/* La galería usa todo el ancho, como una documentación. */
+.gl-marco .ay-navbar__inner {
+  max-inline-size: none;
+  column-gap: var(--aybar-space-4);
+}
+
+.gl-marco .ay-navbar__search {
+  flex: 1 1 calc(var(--aybar-space-24) * 2.5);
+  max-inline-size: calc(var(--aybar-space-24) * 4.5);
+}
+
+.gl-marca {
+  gap: var(--aybar-space-3);
+  font-size: var(--aybar-font-size-lg);
+  white-space: nowrap;
+}
+
+.gl-marca__simbolo {
+  flex: none;
+  inline-size: var(--aybar-space-8);
+  block-size: var(--aybar-space-8);
+  color: var(--aybar-color-bg-brand);
+}
+
+.gl-marca__letra {
+  fill: var(--aybar-color-fg-on-brand);
+}
+
+.gl-marca__pastilla {
+  padding: calc(var(--aybar-space-px) * 2) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-medium);
+  letter-spacing: 0;
+}
+
+/* El buscador de la Navbar: un botón con forma de campo que abre la paleta (Ctrl K). */
+.gl-buscador__boton {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: var(--aybar-space-3) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: color-mix(in oklab, var(--aybar-color-bg-canvas) 70%, var(--aybar-color-bg-surface));
+  color: var(--aybar-color-fg-muted);
+  font: inherit;
+  font-size: var(--aybar-font-size-sm);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-buscador__boton:hover {
+  border-color: var(--aybar-color-border-strong);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-buscador__boton:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-buscador__icono {
+  flex: none;
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+}
+
+.gl-buscador__texto {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-buscador__atajo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--aybar-space-2);
+  min-block-size: var(--aybar-space-6);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-sm);
+  background: var(--aybar-color-bg-surface);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-2xs);
+  line-height: 1;
+}
+
+.gl-marco .ay-navbar__actions {
+  gap: var(--aybar-space-2);
+}
+
+/* El Avatar sm (24px) ocupa el hueco del glifo del Icon Button. */
+.gl-usuario .ay-iconbtn {
+  --button-glyph: var(--aybar-space-6);
+}
+
+.gl-icono {
+  vertical-align: middle;
+}
+
+.gl-marco__cuerpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  flex: 1;
+  min-block-size: 0;
+}
+
+/* La Sidebar y el panel Personalizar se quedan a la vista al desplazar, bajo la Navbar. */
+.gl-marco__lateral {
+  position: sticky;
+  inset-block-start: var(--gl-navbar-alto, 0px);
+  align-self: start;
+  block-size: calc(100dvh - var(--gl-navbar-alto, 0px));
+}
+
+.gl-marco__lateral .ay-sidebar {
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.gl-marco .ay-sidepanel:not([data-compacto]) {
+  position: sticky;
+  inset-block-start: var(--gl-navbar-alto, 0px);
+  align-self: start;
+  box-sizing: border-box;
+  block-size: calc(100dvh - var(--gl-navbar-alto, 0px));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.gl-personalizar__intro {
+  margin: 0 0 var(--aybar-space-5);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-personalizar__pie {
+  display: flex;
+  justify-content: flex-end;
+  inline-size: 100%;
+}
+
+.gl-principal {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-4), 3vw, var(--aybar-space-12)) var(--aybar-space-20);
+  scroll-margin-block-start: var(--gl-navbar-alto, 0px);
+}
+
+.gl-principal:focus {
+  outline: none;
+}
+
+.gl-principal--embebido {
+  padding-block-start: var(--aybar-space-6);
+}
+
+.gl-principal__migas {
+  margin-block-end: var(--aybar-space-6);
+}
+
+/* La navegación del Drawer en el celular. */
+.gl-nav-movil {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+.gl-nav-movil__grupo {
+  margin: var(--aybar-space-3) 0 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.gl-nav-movil__lista {
+  display: grid;
+  gap: var(--aybar-space-px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-nav-movil__enlace {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--aybar-touch-min);
+  padding-inline: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-default);
+  font-weight: var(--aybar-font-weight-medium);
+  text-decoration: none;
+}
+
+.gl-nav-movil__enlace:hover {
+  background: var(--aybar-color-action-secondary-bg-hover);
+}
+
+.gl-nav-movil__enlace[aria-current='page'] {
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-nav-movil__enlace:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-nav-movil__ver-como {
+  margin-block-start: var(--aybar-space-6);
+}
+
+.gl-ver-como__fijo {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  white-space: nowrap;
+}
+
+.gl-ver-como__fijo strong {
+  color: var(--aybar-color-fg-default);
+}
+
+@media (max-width: 1279.98px) {
+  .gl-ver-como {
+    display: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .gl-marco__lateral {
+    display: none;
+  }
+
+  .gl-marca__texto,
+  .gl-marca__pastilla,
+  .gl-buscador__atajo {
+    display: none;
+  }
+
+  /* Solo la lupa a la vista: el texto queda como nombre del botón. */
+  .gl-buscador__texto {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .gl-marco .ay-navbar__search {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+
+  .gl-buscador__boton {
+    inline-size: var(--aybar-control-height-md);
+    padding: 0;
+    justify-content: center;
+    border-radius: var(--aybar-radius-md);
+  }
+
+  .gl-buscador__icono {
+    inline-size: var(--aybar-space-5);
+    block-size: var(--aybar-space-5);
+  }
+
+  .gl-marco .ay-navbar__actions {
+    margin-inline-start: 0;
+  }
+
+  .gl-principal {
+    padding-block-start: var(--aybar-space-4);
+  }
+}
+
+/* ═══ Portada ════════════════════════════════════════════════════════════ */
+
+.gl-portada {
+  display: grid;
+  gap: var(--aybar-space-12);
+}
+
+.gl-heroe {
+  --gl-heroe-a: var(--aybar-color-primary-500);
+  --gl-heroe-b: var(--aybar-color-secondary-400);
+  --gl-heroe-c: var(--aybar-color-primary-300);
+
+  position: relative;
+  display: grid;
+  gap: var(--aybar-space-12);
+  padding: clamp(var(--aybar-space-8), 6vw, var(--aybar-space-16)) clamp(var(--aybar-space-5), 4vw, var(--aybar-space-12))
+    clamp(var(--aybar-space-6), 4vw, var(--aybar-space-12));
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-2xl);
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--aybar-color-bg-brand) 14%, transparent), transparent 60%),
+    var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-md);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.gl-heroe__fondo,
+.gl-heroe__formas {
+  position: absolute;
+  inset: calc(var(--aybar-space-16) * -1);
+  pointer-events: none;
+}
+
+.gl-heroe__mancha {
+  position: absolute;
+  border-radius: var(--aybar-radius-full);
+  filter: blur(var(--aybar-space-16));
+  opacity: 0.55;
+}
+
+.gl-heroe__mancha--a {
+  inset-block-start: 4%;
+  inset-inline-end: 6%;
+  inline-size: 38%;
+  aspect-ratio: 1;
+  background: var(--gl-heroe-a);
+}
+
+.gl-heroe__mancha--b {
+  inset-block-end: 2%;
+  inset-inline-start: 12%;
+  inline-size: 30%;
+  aspect-ratio: 1;
+  background: var(--gl-heroe-b);
+  opacity: 0.4;
+}
+
+.gl-heroe__mancha--c {
+  inset-block-start: 38%;
+  inset-inline-end: 34%;
+  inline-size: 22%;
+  aspect-ratio: 1;
+  background: var(--gl-heroe-c);
+  opacity: 0.35;
+}
+
+/* Rejilla fina que se desvanece hacia abajo: textura sin ruido. */
+.gl-heroe__rejilla {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--aybar-color-border-default) 40%, transparent) var(--aybar-space-px), transparent var(--aybar-space-px)),
+    linear-gradient(90deg, color-mix(in oklab, var(--aybar-color-border-default) 40%, transparent) var(--aybar-space-px), transparent var(--aybar-space-px));
+  background-size: var(--aybar-space-12) var(--aybar-space-12);
+  /* La máscara solo usa la opacidad: cualquier color opaco sirve, y así no hay literales. */
+  -webkit-mask-image: radial-gradient(45% 40% at 25% 18%, var(--aybar-color-fg-default), transparent);
+  mask-image: radial-gradient(45% 40% at 25% 18%, var(--aybar-color-fg-default), transparent);
+}
+
+.gl-heroe__anillo {
+  position: absolute;
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-border-accent) 45%, transparent);
+  border-radius: var(--aybar-radius-full);
+}
+
+.gl-heroe__anillo--a {
+  inset-block-start: 10%;
+  inset-inline-end: 10%;
+  inline-size: calc(var(--aybar-space-24) * 2.5);
+  aspect-ratio: 1;
+}
+
+.gl-heroe__anillo--b {
+  inset-block-start: 18%;
+  inset-inline-end: 16%;
+  inline-size: calc(var(--aybar-space-24) * 1.25);
+  aspect-ratio: 1;
+  border-style: dashed;
+}
+
+.gl-heroe__punto {
+  position: absolute;
+  inline-size: var(--aybar-space-3);
+  block-size: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-action-accent-bg);
+  box-shadow: 0 0 0 var(--aybar-space-2) color-mix(in oklab, var(--aybar-color-action-accent-bg) 20%, transparent);
+}
+
+.gl-heroe__punto--a {
+  inset-block-start: 22%;
+  inset-inline-end: 30%;
+}
+
+.gl-heroe__punto--b {
+  inset-block-start: 48%;
+  inset-inline-end: 12%;
+  background: var(--aybar-color-bg-brand);
+  box-shadow: 0 0 0 var(--aybar-space-2) color-mix(in oklab, var(--aybar-color-bg-brand) 20%, transparent);
+}
+
+.gl-heroe__contenido {
+  position: relative;
+  display: grid;
+  gap: var(--aybar-space-5);
+  max-inline-size: calc(var(--aybar-space-24) * 8.5);
+}
+
+.gl-heroe__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: clamp(var(--aybar-font-size-3xl), 3.4vw + var(--aybar-font-size-sm), var(--aybar-font-size-5xl));
+  font-weight: var(--aybar-font-weight-display);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  text-wrap: balance;
+}
+
+.gl-heroe__resalte {
+  background: linear-gradient(100deg, var(--aybar-color-fg-link), color-mix(in oklab, var(--aybar-color-fg-link) 55%, var(--aybar-color-fg-accent)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (forced-colors: active) {
+  .gl-heroe__resalte {
+    color: CanvasText;
+  }
+}
+
+.gl-heroe__texto {
+  margin: 0;
+  max-inline-size: 62ch;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-lg);
+  line-height: var(--aybar-font-leading-relaxed);
+  text-wrap: pretty;
+}
+
+.gl-heroe__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-3);
+  margin-block-start: var(--aybar-space-2);
+}
+
+.gl-cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--aybar-space-24) * 1.4), 1fr));
+  gap: var(--aybar-space-4) var(--aybar-space-8);
+  margin: var(--aybar-space-4) 0 0;
+  max-inline-size: calc(var(--aybar-space-24) * 7);
+}
+
+.gl-cifras__item {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--aybar-space-1);
+  padding-inline-start: var(--aybar-space-4);
+  border-inline-start: var(--aybar-border-width-thick) solid color-mix(in oklab, var(--aybar-color-border-accent) 60%, transparent);
+}
+
+.gl-cifras__etiqueta {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-cifras__valor {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-3xl);
+  font-weight: var(--aybar-font-weight-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.gl-heroe__secciones {
+  position: relative;
+}
+
+.gl-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-24) * 2.9)), 1fr));
+  gap: var(--aybar-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-tarjetas__item {
+  display: flex;
+  min-inline-size: 0;
+}
+
+.gl-tarjetas__inclinable {
+  display: flex;
+  flex: 1;
+}
+
+.gl-tarjetas__inclinable > ay-card,
+.gl-tarjetas__inclinable .ay-card {
+  flex: 1;
+}
+
+.gl-tarjetas .ay-card {
+  block-size: 100%;
+  box-sizing: border-box;
+}
+
+.gl-tarjetas__icono {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-tarjetas__insignia {
+  display: flex;
+}
+
+.gl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+.gl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+  font: inherit;
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  cursor: pointer;
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    translate var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-chip:hover {
+  border-color: var(--aybar-color-border-strong);
+  box-shadow: var(--aybar-shadow-sm);
+  translate: 0 calc(var(--aybar-space-px) * -1 * var(--aybar-style-lift));
+}
+
+.gl-chip[aria-pressed='true'] {
+  border-color: var(--aybar-color-border-accent);
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+  box-shadow: inset 0 0 0 var(--aybar-space-px) var(--aybar-color-border-accent);
+}
+
+.gl-chip:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-chip__muestra {
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-full);
+  background: var(--gl-muestra, var(--aybar-color-bg-brand));
+  box-shadow: inset 0 0 0 var(--aybar-space-px) color-mix(in oklab, var(--aybar-color-fg-default) 15%, transparent);
+}
+
+.gl-chip--accion {
+  border-style: dashed;
+  --gl-icono: var(--aybar-space-4);
+}
+
+/* ═══ Vitrina ════════════════════════════════════════════════════════════ */
+
+.gl-vitrina {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--aybar-space-8);
+  align-items: start;
+}
+
+.gl-vitrina__lateral,
+.gl-vitrina__indice {
+  display: none;
+}
+
+.gl-vitrina__contenido {
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+
+.gl-vitrina__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+}
+
+.gl-vitrina__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--aybar-space-1) var(--aybar-space-4);
+}
+
+.gl-vitrina__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-vitrina__resumen {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-vitrina__marco {
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-vitrina__lienzo {
+  min-inline-size: 0;
+}
+
+/* La navegación de familias: compacta, como un índice de documentación. */
+.gl-familias {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-familias__buscar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  --gl-icono: var(--aybar-space-4);
+}
+
+.gl-familias__buscar .gl-icono {
+  position: absolute;
+  inset-inline-start: var(--aybar-space-3);
+  color: var(--aybar-color-fg-subtle);
+  pointer-events: none;
+}
+
+.gl-familias__campo {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: calc(var(--aybar-space-3) * 2 + var(--aybar-space-4)) var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+  font: inherit;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-familias__campo::placeholder {
+  color: var(--aybar-color-fg-subtle);
+}
+
+.gl-familias__campo:focus-visible {
+  border-color: var(--aybar-color-border-focus);
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-familias__vacio {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-familias__grupo {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+.gl-familias__familia {
+  justify-self: start;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-bold);
+  text-decoration: none;
+}
+
+.gl-familias__familia:hover,
+.gl-familias__familia[aria-current='page'] {
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-familias__lista {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-inline-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  list-style: none;
+}
+
+.gl-familias__componente {
+  display: block;
+  margin-inline-start: calc(var(--aybar-border-width-thin) * -1);
+  padding: calc(var(--aybar-space-1) + var(--aybar-space-px)) var(--aybar-space-3);
+  border-inline-start: var(--aybar-border-width-thin) solid transparent;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  text-decoration: none;
+  transition:
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-familias__componente:hover {
+  border-inline-start-color: var(--aybar-color-border-strong);
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-familias__componente[aria-current='page'] {
+  border-inline-start-color: var(--aybar-color-fg-link);
+  color: var(--aybar-color-fg-link);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-familias__familia:focus-visible,
+.gl-familias__componente:focus-visible,
+.gl-indice__enlace:focus-visible {
+  border-radius: var(--aybar-radius-sm);
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-space-px);
+}
+
+/* «En esta página». */
+.gl-indice__titulo {
+  margin: 0 0 var(--aybar-space-3);
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-indice__lista {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-indice__lista--casos {
+  margin-block-start: var(--aybar-space-3);
+  padding-inline-start: var(--aybar-space-5);
+  list-style: decimal;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-indice__enlace {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-snug);
+  text-decoration: none;
+}
+
+.gl-indice__enlace:hover {
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-indice__enlace[aria-current='location'] {
+  color: var(--aybar-color-fg-link);
+  font-weight: var(--aybar-font-weight-medium);
+}
+
+.gl-indice__casos {
+  margin-block-start: var(--aybar-space-6);
+  padding-block-start: var(--aybar-space-5);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-indice__resumen {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .gl-vitrina {
+    grid-template-columns: calc(var(--aybar-space-24) * 2.2) minmax(0, 1fr);
+  }
+
+  .gl-vitrina__lateral {
+    position: sticky;
+    inset-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+    display: block;
+    max-block-size: calc(100dvh - var(--gl-navbar-alto, 0px) - var(--aybar-space-12));
+    overflow-y: auto;
+    padding-inline-end: var(--aybar-space-2);
+    scrollbar-width: thin;
+  }
+
+  .gl-vitrina__abrir {
+    display: none;
+  }
+}
+
+@media (min-width: 1536px) {
+  .gl-vitrina {
+    grid-template-columns: calc(var(--aybar-space-24) * 2.2) minmax(0, 1fr) calc(var(--aybar-space-24) * 2.1);
+  }
+
+  .gl-vitrina__indice {
+    position: sticky;
+    inset-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+    display: block;
+    max-block-size: calc(100dvh - var(--gl-navbar-alto, 0px) - var(--aybar-space-12));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+/* ═══ Caso a pantalla completa ═══════════════════════════════════════════ */
+
+.gl-caso {
+  display: block;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+}
+
+.gl-barra-flotante {
+  position: sticky;
+  inset-block-start: var(--aybar-space-3);
+  z-index: var(--aybar-z-sticky);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+  inline-size: fit-content;
+  max-inline-size: calc(100% - var(--aybar-space-6));
+  box-sizing: border-box;
+  margin: var(--aybar-space-3) auto 0;
+  padding: var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) var(--aybar-depth-glass-opacity), transparent);
+  box-shadow: var(--aybar-shadow-lg);
+  -webkit-backdrop-filter: blur(var(--aybar-depth-glass-blur));
+  backdrop-filter: blur(var(--aybar-depth-glass-blur));
+}
+
+.gl-barra-flotante__volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+  text-decoration: none;
+  --gl-icono: var(--aybar-space-4);
+}
+
+.gl-barra-flotante__volver:hover {
+  text-decoration: underline;
+}
+
+.gl-barra-flotante__volver:focus-visible {
+  border-radius: var(--aybar-radius-sm);
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-barra-flotante__titulo {
+  display: grid;
+  margin: 0;
+  padding-inline: var(--aybar-space-3);
+  border-inline: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  line-height: var(--aybar-font-leading-snug);
+}
+
+.gl-barra-flotante__etiqueta {
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-barra-flotante__contador {
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-barra-flotante__pasos {
+  display: flex;
+  gap: var(--aybar-space-1);
+}
+
+.gl-caso__lienzo {
+  box-sizing: border-box;
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-3), 3vw, var(--aybar-space-10)) var(--aybar-space-12);
+}
+
+.gl-caso__lienzo:focus {
+  outline: none;
+}
+
+.gl-caso__vacio {
+  margin: var(--aybar-space-16) auto;
+  max-inline-size: 60ch;
+  text-align: center;
+}
+
+/* Solo el caso elegido: la vitrina pinta la página entera del componente. */
+.gl-caso .ay-vitrina-componente__cabecera,
+.gl-caso ay-vitrina-api,
+.gl-caso ay-vitrina-grupo:not([data-gl-con-elegido]),
+.gl-caso ay-vitrina-caso:not([data-gl-elegido]),
+.gl-caso .ay-vitrina-grupo__titulo,
+.gl-caso .ay-vitrina-grupo__nota,
+.gl-caso .ay-vitrina-caso__etiqueta {
+  display: none !important;
+}
+
+.gl-caso ay-vitrina-caso[data-gl-elegido] {
+  flex: 1 1 100%;
+}
+
+.gl-caso ay-vitrina-caso[data-gl-elegido] .ay-vitrina-caso__lienzo {
+  display: grid;
+  place-items: center;
+  min-block-size: calc(100dvh - var(--aybar-space-24) * 2);
+  max-block-size: none;
+  overflow: auto;
+}
+
+/* ═══ Movimiento reducido ════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-accion,
+  .gl-accion:hover,
+  .gl-chip,
+  .gl-chip:hover {
+    translate: none;
+    transition-property: background-color, border-color, box-shadow, color;
+  }
+}
+
+/* ═══ Ingreso: piezas comunes ════════════════════════════════════════════ */
+
+/* La maqueta se dispone según el ancho de su pantalla, no el de la ventana: así la
+   miniatura del índice (1280 px escalados) se ve como la de escritorio en cualquier
+   ventana. Por eso container queries y no media queries. 64rem = 1024px, 48rem = 768px. */
+.gl-variante,
+.gl-miniatura__lienzo {
+  container: pantalla / inline-size;
+}
+
+.gl-variante {
+  display: block;
+}
+
+.gl-acceso {
+  position: relative;
+  display: grid;
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  overflow: clip;
+}
+
+/* La barra flotante va abajo y fija: lo que se centra en la maqueta le deja su sitio. */
+.gl-variante:not(.gl-variante--embebida) {
+  --gl-hueco-barra: var(--aybar-space-20);
+}
+
+.gl-acceso__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  text-wrap: balance;
+}
+
+.gl-acceso__titulo:focus {
+  outline: none;
+}
+
+.gl-acceso__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  line-height: var(--aybar-font-leading-relaxed);
+  text-wrap: pretty;
+}
+
+.gl-form {
+  display: grid;
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+}
+
+/* La hoja del framework separa dos Form Field seguidos; aquí ya los separa el gap (lo
+   mismo que hace ella dentro de ay-form). */
+.gl-form > :is(.ay-field, ay-form-field) + :is(.ay-field, ay-form-field) {
+  margin-block-start: 0;
+}
+
+.gl-acceso__secundarias {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--aybar-space-2);
+}
+
+.gl-acceso__secundarias--columna {
+  display: grid;
+}
+
+.gl-sin-corte {
+  overflow-wrap: anywhere;
+  color: var(--aybar-color-fg-default);
+}
+
+/* Enlace de texto, y un botón que se ve como enlace (cambia de vista, no navega). */
+.gl-enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--aybar-color-fg-link);
+  font: inherit;
+  font-weight: var(--aybar-font-weight-semibold);
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.gl-enlace:hover {
+  text-decoration-thickness: var(--aybar-border-width-thick);
+}
+
+.gl-enlace:focus-visible {
+  border-radius: var(--aybar-radius-sm);
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-enlace--boton {
+  justify-self: center;
+  font-size: var(--aybar-font-size-sm);
+}
+
+/* «o con tu correo»: una línea a cada lado. */
+.gl-separador {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-separador::before,
+.gl-separador::after {
+  content: '';
+  flex: 1;
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-marca-acceso {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-display);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-marca-acceso__simbolo {
+  inline-size: var(--aybar-space-8);
+  block-size: var(--aybar-space-8);
+  color: var(--aybar-color-bg-brand);
+}
+
+.gl-marca-acceso__letra {
+  fill: var(--aybar-color-fg-on-brand);
+}
+
+.gl-marca-acceso__producto {
+  padding: calc(var(--aybar-space-px) * 2) var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+  font-family: var(--aybar-family-sans);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: 0;
+}
+
+.gl-marca-acceso--inversa,
+.gl-marca-acceso--inversa .gl-marca-acceso__producto {
+  color: var(--aybar-color-fg-on-brand);
+}
+
+.gl-marca-acceso--inversa .gl-marca-acceso__simbolo {
+  color: var(--aybar-color-fg-on-brand);
+}
+
+.gl-marca-acceso--inversa .gl-marca-acceso__letra {
+  fill: var(--aybar-color-bg-brand);
+}
+
+.gl-marca-acceso--inversa .gl-marca-acceso__producto {
+  background: color-mix(in oklab, var(--aybar-color-fg-on-brand) 16%, transparent);
+}
+
+/* La barra flotante de las maquetas: abajo, centrada, de vidrio. */
+.gl-barra-flotante--abajo {
+  position: fixed;
+  inset-block: auto var(--aybar-space-4);
+  inset-inline: auto var(--aybar-space-4);
+  margin: 0;
+}
+
+@media (max-width: 639.98px) {
+  .gl-barra-flotante--abajo {
+    inset-inline: var(--aybar-space-3);
+    max-inline-size: none;
+    justify-content: space-between;
+  }
+}
+
+/* ═══ Ingreso: índice ════════════════════════════════════════════════════ */
+
+.gl-indice-ingreso {
+  display: block;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+}
+
+.gl-cabecera-publica {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--aybar-z-sticky);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-3) clamp(var(--aybar-space-4), 3vw, var(--aybar-space-12));
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 82%, transparent);
+  -webkit-backdrop-filter: blur(var(--aybar-space-3));
+  backdrop-filter: blur(var(--aybar-space-3));
+}
+
+.gl-cabecera-publica__marca {
+  border-radius: var(--aybar-radius-sm);
+  text-decoration: none;
+}
+
+.gl-cabecera-publica__marca:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-cabecera-publica__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+}
+
+.gl-indice-ingreso__principal {
+  display: grid;
+  gap: var(--aybar-space-10);
+  padding: var(--aybar-space-12) clamp(var(--aybar-space-4), 4vw, var(--aybar-space-16)) var(--aybar-space-20);
+}
+
+.gl-indice-ingreso__principal:focus {
+  outline: none;
+}
+
+.gl-miniaturas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-24) * 3.4)), 1fr));
+  gap: var(--aybar-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-miniaturas__item {
+  display: flex;
+  min-inline-size: 0;
+}
+
+.gl-miniaturas__item > ay-card {
+  display: flex;
+  flex: 1;
+}
+
+.gl-miniaturas .ay-card {
+  flex: 1;
+  overflow: hidden;
+}
+
+.gl-miniaturas__numero {
+  color: var(--aybar-color-fg-subtle);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* La miniatura: la maqueta a 1280 × 800, escalada al ancho de la tarjeta (--gl-escala). */
+.gl-miniatura {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  margin: calc(var(--aybar-space-px) * -1) calc(var(--aybar-space-px) * -1) var(--aybar-space-2);
+  overflow: hidden;
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-canvas);
+  pointer-events: none;
+}
+
+.gl-miniatura__lienzo {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: calc(var(--aybar-space-24) * 13.3333);
+  block-size: calc(var(--aybar-space-24) * 8.3333);
+  transform: scale(var(--gl-escala, 0.25));
+  transform-origin: 0 0;
+}
+
+.gl-miniatura .gl-acceso {
+  min-block-size: 100%;
+  block-size: 100%;
+}
+
+.ay-card--interactive:hover .gl-miniatura__lienzo {
+  filter: saturate(1.08);
+}
+
+/* ═══ Ingreso: partido ═══════════════════════════════════════════════════ */
+
+.gl-partido {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gl-partido__marca {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-6);
+  padding: var(--aybar-space-6);
+  background:
+    radial-gradient(90% 70% at 80% 10%, color-mix(in oklab, var(--aybar-color-primary-500) 55%, transparent), transparent 70%),
+    linear-gradient(160deg, var(--aybar-color-primary-700), var(--aybar-color-primary-900));
+  color: var(--aybar-color-fg-on-brand);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gl-partido__topo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+  stroke: color-mix(in oklab, var(--aybar-color-fg-on-brand) 16%, transparent);
+  stroke-width: 1.2;
+}
+
+.gl-partido__mensaje {
+  display: grid;
+  gap: var(--aybar-space-3);
+  max-inline-size: 30rem;
+}
+
+.gl-partido__lema {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-display);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  text-wrap: balance;
+}
+
+.gl-partido__texto {
+  margin: 0;
+  color: color-mix(in oklab, var(--aybar-color-fg-on-brand) 82%, transparent);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-partido__cita {
+  display: none;
+  margin: 0;
+  padding: var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-fg-on-brand) 20%, transparent);
+  border-radius: var(--aybar-radius-lg);
+  background: color-mix(in oklab, var(--aybar-color-fg-on-brand) 8%, transparent);
+  -webkit-backdrop-filter: blur(var(--aybar-depth-glass-blur));
+  backdrop-filter: blur(var(--aybar-depth-glass-blur));
+}
+
+.gl-partido__cita blockquote {
+  margin: 0 0 var(--aybar-space-2);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-medium);
+  line-height: var(--aybar-font-leading-snug);
+}
+
+.gl-partido__cita figcaption {
+  color: color-mix(in oklab, var(--aybar-color-fg-on-brand) 75%, transparent);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-partido__lado {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-8) var(--aybar-space-4) max(var(--aybar-space-8), var(--gl-hueco-barra, 0px));
+}
+
+@container pantalla (min-width: 64rem) {
+  .gl-partido {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+
+  .gl-partido__marca {
+    justify-content: space-between;
+    padding: var(--aybar-space-12);
+  }
+
+  .gl-partido__lema {
+    font-size: var(--aybar-font-size-4xl);
+  }
+
+  .gl-partido__cita {
+    display: block;
+  }
+}
+
+/* ═══ Ingreso: minimal ═══════════════════════════════════════════════════ */
+
+.gl-minimal {
+  grid-template-rows: auto 1fr;
+}
+
+.gl-minimal__cabecera {
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-5), 5cqi, var(--aybar-space-16));
+}
+
+.gl-minimal__principal {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-6) var(--aybar-space-5) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+.gl-minimal__columna {
+  display: grid;
+  gap: var(--aybar-space-5);
+  inline-size: min(100%, 26rem);
+}
+
+.gl-minimal__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: clamp(var(--aybar-font-size-4xl), 7cqi, calc(var(--aybar-font-size-5xl) * 1.35));
+  font-weight: var(--aybar-font-weight-display);
+  line-height: 1;
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 2);
+}
+
+.gl-minimal__texto {
+  margin: 0 0 var(--aybar-space-4);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-lg);
+}
+
+.gl-minimal__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--aybar-space-2);
+  margin: var(--aybar-space-4) 0 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-sm);
+}
+
+/* ═══ Ingreso: animado ═══════════════════════════════════════════════════ */
+
+.gl-animado {
+  grid-template-rows: auto 1fr;
+  background: linear-gradient(180deg, var(--aybar-color-bg-canvas), color-mix(in oklab, var(--aybar-color-bg-brand) 10%, var(--aybar-color-bg-canvas)));
+}
+
+.gl-animado__fondo {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+
+.gl-animado__luz {
+  filter: blur(calc(var(--aybar-space-16) * 1.5));
+  animation: gl-flotar calc(var(--aybar-motion-duration-slow) * 50) var(--aybar-motion-easing-standard) infinite alternate;
+}
+
+.gl-animado__luz--a {
+  fill: color-mix(in oklab, var(--aybar-color-primary-400) 55%, transparent);
+}
+
+.gl-animado__luz--b {
+  fill: color-mix(in oklab, var(--aybar-color-secondary-300) 45%, transparent);
+  animation-duration: calc(var(--aybar-motion-duration-slow) * 65);
+  animation-direction: alternate-reverse;
+}
+
+.gl-animado__luz--c {
+  fill: color-mix(in oklab, var(--aybar-color-primary-200) 50%, transparent);
+  animation-duration: calc(var(--aybar-motion-duration-slow) * 40);
+}
+
+.gl-animado__onda {
+  /* Cada onda mide dos anchos de la escena: correr la mitad de su caja la deja igual. */
+  transform-box: fill-box;
+  animation: gl-ola calc(var(--aybar-motion-duration-slow) * 60) linear infinite;
+}
+
+.gl-animado__onda--a {
+  fill: color-mix(in oklab, var(--aybar-color-primary-500) 18%, transparent);
+}
+
+.gl-animado__onda--b {
+  fill: color-mix(in oklab, var(--aybar-color-primary-600) 22%, transparent);
+  animation-duration: calc(var(--aybar-motion-duration-slow) * 85);
+  animation-direction: reverse;
+}
+
+.gl-animado__onda--c {
+  fill: color-mix(in oklab, var(--aybar-color-primary-700) 26%, transparent);
+  animation-duration: calc(var(--aybar-motion-duration-slow) * 110);
+}
+
+.gl-animado[data-pausado] .gl-animado__luz,
+.gl-animado[data-pausado] .gl-animado__onda {
+  animation-play-state: paused;
+}
+
+@keyframes gl-flotar {
+  to {
+    transform: translate(calc(var(--aybar-space-16) * 2), var(--aybar-space-12)) scale(1.15);
+  }
+}
+
+@keyframes gl-ola {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.gl-animado__cabecera {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-5), 5cqi, var(--aybar-space-16));
+  --gl-icono: var(--aybar-space-4);
+}
+
+.gl-animado__centro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-6) var(--aybar-space-4) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+/* ═══ Ingreso: vidrio ════════════════════════════════════════════════════ */
+
+.gl-vidrio__escena {
+  position: relative;
+  display: grid;
+  min-block-size: inherit;
+  background:
+    radial-gradient(70% 60% at 15% 10%, var(--aybar-color-primary-400), transparent 70%),
+    radial-gradient(60% 60% at 90% 90%, var(--aybar-color-secondary-300), transparent 70%),
+    linear-gradient(135deg, var(--aybar-color-primary-600), var(--aybar-color-primary-800));
+  overflow: hidden;
+}
+
+.gl-vidrio__degradado,
+.gl-vidrio__formas {
+  position: absolute;
+  inset: calc(var(--aybar-space-12) * -1);
+}
+
+.gl-vidrio__orbe {
+  position: absolute;
+  border-radius: var(--aybar-radius-full);
+  filter: blur(var(--aybar-space-12));
+}
+
+.gl-vidrio__orbe--a {
+  inset-block-start: 10%;
+  inset-inline-start: 18%;
+  inline-size: 30%;
+  aspect-ratio: 1;
+  background: color-mix(in oklab, var(--aybar-color-primary-300) 70%, transparent);
+}
+
+.gl-vidrio__orbe--b {
+  inset-block-end: 6%;
+  inset-inline-end: 14%;
+  inline-size: 34%;
+  aspect-ratio: 1;
+  background: color-mix(in oklab, var(--aybar-color-secondary-400) 65%, transparent);
+}
+
+.gl-vidrio__orbe--c {
+  inset-block-start: 40%;
+  inset-inline-end: 40%;
+  inline-size: 18%;
+  aspect-ratio: 1;
+  background: color-mix(in oklab, var(--aybar-color-primary-200) 60%, transparent);
+}
+
+.gl-vidrio__forma {
+  position: absolute;
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-fg-on-brand) 35%, transparent);
+  border-radius: var(--aybar-radius-2xl);
+  background: color-mix(in oklab, var(--aybar-color-fg-on-brand) 10%, transparent);
+  -webkit-backdrop-filter: blur(var(--aybar-space-2));
+  backdrop-filter: blur(var(--aybar-space-2));
+}
+
+.gl-vidrio__forma--a {
+  inset-block-start: 18%;
+  inset-inline-start: 12%;
+  inline-size: calc(var(--aybar-space-24) * 1.6);
+  aspect-ratio: 1;
+  rotate: -12deg;
+}
+
+.gl-vidrio__forma--b {
+  inset-block-end: 16%;
+  inset-inline-end: 12%;
+  inline-size: calc(var(--aybar-space-24) * 2.2);
+  aspect-ratio: 1.4;
+  rotate: 9deg;
+  border-radius: var(--aybar-radius-full);
+}
+
+.gl-vidrio__centro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-10) var(--aybar-space-4) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+.gl-vidrio__inclinable {
+  inline-size: min(100%, 27rem);
+}
+
+.gl-vidrio__tarjeta {
+  display: grid;
+  gap: var(--aybar-space-5);
+  padding: var(--aybar-space-3) var(--aybar-space-2);
+}
+
+.gl-vidrio__cabecera {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+.gl-vidrio__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-vidrio__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+}
+
+/* ═══ Ingreso: celular ═══════════════════════════════════════════════════ */
+
+.gl-celular {
+  grid-template-columns: minmax(0, 1fr);
+  background:
+    radial-gradient(60% 50% at 0% 100%, color-mix(in oklab, var(--aybar-color-bg-brand) 12%, transparent), transparent 70%),
+    var(--aybar-color-bg-canvas);
+}
+
+.gl-celular__ilustracion {
+  display: none;
+}
+
+.gl-celular__lado {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-10) var(--aybar-space-4) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+.gl-celular__panel {
+  display: grid;
+  gap: var(--aybar-space-6);
+  inline-size: min(100%, 25rem);
+}
+
+.gl-celular__cabecera {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+.gl-telefono {
+  position: relative;
+  inline-size: calc(var(--aybar-space-24) * 2.7);
+  aspect-ratio: 9 / 18.5;
+  padding: var(--aybar-space-3);
+  border-radius: calc(var(--aybar-radius-2xl) * 1.6);
+  background: var(--aybar-color-bg-inverse);
+  box-shadow: var(--aybar-shadow-xl), inset 0 0 0 var(--aybar-border-width-thick) color-mix(in oklab, var(--aybar-color-fg-inverse) 18%, transparent);
+  rotate: -4deg;
+}
+
+.gl-telefono__isla {
+  position: absolute;
+  inset-block-start: var(--aybar-space-5);
+  inset-inline: 0;
+  inline-size: 30%;
+  block-size: var(--aybar-space-5);
+  margin-inline: auto;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-inverse);
+  z-index: 1;
+}
+
+.gl-telefono__pantalla {
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-4);
+  block-size: 100%;
+  box-sizing: border-box;
+  padding: var(--aybar-space-12) var(--aybar-space-3) var(--aybar-space-3);
+  border-radius: calc(var(--aybar-radius-2xl) * 1.3);
+  background:
+    radial-gradient(80% 50% at 50% 0%, color-mix(in oklab, var(--aybar-color-primary-400) 60%, transparent), transparent),
+    linear-gradient(180deg, var(--aybar-color-primary-700), var(--aybar-color-primary-900));
+  color: var(--aybar-color-fg-on-brand);
+}
+
+.gl-telefono__hora {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-4xl);
+  font-weight: var(--aybar-font-weight-bold);
+  text-align: center;
+}
+
+.gl-telefono__sms {
+  padding: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-lg);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 92%, transparent);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-lg);
+  animation: gl-aparecer var(--aybar-motion-duration-slow) var(--aybar-motion-easing-decelerate) both;
+}
+
+.gl-telefono__remitente {
+  margin: 0 0 var(--aybar-space-1);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  text-transform: uppercase;
+}
+
+.gl-telefono__mensaje {
+  margin: 0;
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-snug);
+}
+
+@keyframes gl-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--aybar-space-4) * -1)) scale(0.96);
+  }
+}
+
+@container pantalla (min-width: 64rem) {
+  .gl-celular {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .gl-celular__ilustracion {
+    display: grid;
+    place-items: center;
+    border-inline-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+    background:
+      radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--aybar-color-bg-brand) 14%, transparent), transparent 70%),
+      var(--aybar-color-bg-surface-sunken);
+  }
+}
+
+/* ═══ Ingreso: enlace mágico, SSO, dos pasos, recuperar y bloqueo ═══════ */
+
+.gl-magico,
+.gl-sso,
+.gl-dos-pasos,
+.gl-recuperar {
+  background:
+    radial-gradient(50% 40% at 50% 0%, color-mix(in oklab, var(--aybar-color-bg-brand) 12%, transparent), transparent 70%),
+    var(--aybar-color-bg-canvas);
+}
+
+.gl-magico__centro,
+.gl-sso__centro,
+.gl-dos-pasos__centro,
+.gl-recuperar__centro,
+.gl-bloqueo__centro {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-10) var(--aybar-space-4) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+.gl-magico__tarjeta,
+.gl-sso__tarjeta,
+.gl-dos-pasos__tarjeta,
+.gl-recuperar__tarjeta,
+.gl-bloqueo__tarjeta {
+  display: grid;
+  gap: var(--aybar-space-5);
+  box-sizing: border-box;
+  inline-size: min(100%, 27rem);
+  padding: clamp(var(--aybar-space-6), 4cqi, var(--aybar-space-10));
+  border-radius: var(--aybar-radius-2xl);
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.gl-recuperar__tarjeta {
+  inline-size: min(100%, 30rem);
+}
+
+.gl-magico__sello,
+.gl-dos-pasos__sello {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-12);
+  block-size: var(--aybar-space-12);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+  --gl-icono: var(--aybar-space-6);
+}
+
+.gl-magico__sobre {
+  display: grid;
+  place-items: center;
+  inline-size: var(--aybar-space-20);
+  block-size: var(--aybar-space-20);
+  margin-inline: auto;
+  border-radius: var(--aybar-radius-full);
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--aybar-color-action-accent-bg) 30%, transparent), transparent 60%),
+    var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+  box-shadow: 0 0 0 var(--aybar-space-3) color-mix(in oklab, var(--aybar-color-bg-brand-subtle) 50%, transparent);
+  animation: gl-aparecer var(--aybar-motion-duration-slow) var(--aybar-motion-easing-decelerate) both;
+  --gl-icono: var(--aybar-space-10);
+}
+
+.gl-sso__proveedores {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+/* Glifos neutros de los proveedores: formas con currentColor, no los logotipos. */
+.gl-sso__glifo {
+  display: inline-block;
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+  background: currentColor;
+}
+
+.gl-sso__glifo[data-glifo='circulo'] {
+  border-radius: var(--aybar-radius-full);
+  -webkit-mask: radial-gradient(circle, transparent 35%, var(--aybar-color-fg-default) 37%);
+  mask: radial-gradient(circle, transparent 35%, var(--aybar-color-fg-default) 37%);
+}
+
+.gl-sso__glifo[data-glifo='cuadros'] {
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 45% 45% no-repeat,
+    linear-gradient(currentColor, currentColor) 100% 0 / 45% 45% no-repeat,
+    linear-gradient(currentColor, currentColor) 0 100% / 45% 45% no-repeat,
+    linear-gradient(currentColor, currentColor) 100% 100% / 45% 45% no-repeat;
+}
+
+.gl-sso__glifo[data-glifo='hoja'] {
+  border-radius: 0 var(--aybar-radius-full) 0 var(--aybar-radius-full);
+}
+
+.gl-sso__legal {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  text-align: center;
+}
+
+.gl-dos-pasos__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+}
+
+.gl-dos-pasos__paso {
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ═══ Ingreso: registro ══════════════════════════════════════════════════ */
+
+.gl-registro {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gl-registro__lado {
+  display: none;
+}
+
+.gl-registro__principal {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-10) var(--aybar-space-4) max(var(--aybar-space-16), var(--gl-hueco-barra, 0px));
+}
+
+.gl-registro__columna {
+  display: grid;
+  gap: var(--aybar-space-5);
+  inline-size: min(100%, 28rem);
+}
+
+.gl-registro__lema {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-3xl);
+  font-weight: var(--aybar-font-weight-display);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-registro__ventajas {
+  display: grid;
+  gap: var(--aybar-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-registro__ventajas li {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  color: color-mix(in oklab, var(--aybar-color-fg-on-brand) 88%, transparent);
+}
+
+@container pantalla (min-width: 64rem) {
+  .gl-registro {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+
+  .gl-registro__lado {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--aybar-space-8);
+    padding: var(--aybar-space-12);
+    background:
+      radial-gradient(80% 60% at 0% 100%, color-mix(in oklab, var(--aybar-color-secondary-400) 35%, transparent), transparent 70%),
+      linear-gradient(200deg, var(--aybar-color-primary-600), var(--aybar-color-primary-900));
+    color: var(--aybar-color-fg-on-brand);
+  }
+}
+
+/* ═══ Ingreso: bloqueo ═══════════════════════════════════════════════════ */
+
+.gl-bloqueo {
+  grid-template-rows: auto 1fr;
+  background:
+    radial-gradient(50% 40% at 50% 0%, color-mix(in oklab, var(--aybar-color-feedback-warning-bg) 70%, transparent), transparent 70%),
+    var(--aybar-color-bg-canvas);
+}
+
+.gl-bloqueo__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-5), 5cqi, var(--aybar-space-16));
+}
+
+.gl-bloqueo__candado {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-12);
+  block-size: var(--aybar-space-12);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-feedback-warning-bg);
+  color: var(--aybar-color-feedback-warning-fg);
+  box-shadow: 0 0 0 var(--aybar-space-2) color-mix(in oklab, var(--aybar-color-feedback-warning-bg) 50%, transparent);
+  --gl-icono: var(--aybar-space-6);
+}
+
+.gl-bloqueo__tiempo {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-5);
+  padding: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-bloqueo__cuenta {
+  display: grid;
+  margin: 0;
+}
+
+.gl-bloqueo__cifra {
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-4xl);
+  font-weight: var(--aybar-font-weight-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.gl-bloqueo__nota {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-animado__luz,
+  .gl-animado__onda,
+  .gl-telefono__sms,
+  .gl-magico__sobre {
+    animation: none;
+  }
+}
+
+/* ═══ Formularios y secciones de la cuenta y la administración ══════════ */
+
+.gl-seccion {
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+
+.gl-seccion:focus {
+  outline: none;
+}
+
+.gl-subtitulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-subtitulo:focus {
+  outline: none;
+}
+
+.gl-nota {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+/* Dos columnas cuando la tarjeta tiene sitio (container query: la tarjeta, no la ventana). */
+.gl-seccion .ay-card__body {
+  container-type: inline-size;
+}
+
+@container (min-width: 36rem) {
+  .gl-form--dos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--aybar-space-6);
+  }
+
+  .gl-form--dos > .gl-form__ancho {
+    grid-column: 1 / -1;
+  }
+}
+
+.gl-form--estrecho {
+  max-inline-size: 28rem;
+}
+
+.gl-form__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--aybar-space-2);
+}
+
+.gl-form__pie--inicio {
+  justify-content: flex-start;
+}
+
+.gl-grupo {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.gl-rejilla-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--aybar-space-6);
+}
+
+/* ═══ Cuenta ═════════════════════════════════════════════════════════════ */
+
+.gl-cuenta__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-6);
+}
+
+.gl-cuenta__roles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+}
+
+.gl-cuenta__nota {
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-perfil__foto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-5);
+}
+
+.gl-perfil__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+.gl-muestra-formato {
+  margin: 0;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-muestra-formato strong {
+  color: var(--aybar-color-fg-default);
+  font-variant-numeric: tabular-nums;
+}
+
+/* La tabla no se aplasta en el celular: se desplaza dentro de su caja. */
+.gl-tabla-avisos .ay-table {
+  min-inline-size: 30rem;
+}
+
+.gl-tabla-avisos__titulo {
+  display: block;
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-tabla-avisos__descripcion {
+  display: block;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-regular);
+}
+
+/* En la tabla, la columna ya dice el canal: el texto del Switch queda para el lector. */
+.gl-tabla-avisos .ay-switch__text {
+  position: absolute;
+  inline-size: var(--aybar-space-px);
+  block-size: var(--aybar-space-px);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.gl-tabla-avisos .ay-switch {
+  gap: 0;
+}
+
+.gl-avisos {
+  margin: 0;
+  padding: 0;
+}
+
+.gl-avisos__vacio {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-4) 0;
+  color: var(--aybar-color-fg-muted);
+  list-style: none;
+}
+
+.gl-dos-factores {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-qr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-6);
+}
+
+.gl-qr__imagen {
+  flex: none;
+  inline-size: calc(var(--aybar-space-24) * 1.75);
+  aspect-ratio: 1;
+  padding: var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-neutral-0);
+  fill: var(--aybar-color-neutral-1000);
+  shape-rendering: crispEdges;
+}
+
+.gl-qr__texto {
+  display: grid;
+  flex: 1 1 18rem;
+  gap: var(--aybar-space-3);
+}
+
+.gl-clave {
+  justify-self: start;
+  padding: var(--aybar-space-2) var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-sunken);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  overflow-wrap: anywhere;
+}
+
+.gl-codigos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+  list-style: none;
+  counter-reset: codigo;
+}
+
+.gl-codigos li {
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-sesion__icono {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+}
+
+/* ═══ Administración ═════════════════════════════════════════════════════ */
+
+.gl-prohibido {
+  align-content: center;
+  justify-items: center;
+}
+
+.gl-prohibido ay-alert {
+  max-inline-size: 36rem;
+}
+
+.gl-barras {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-barras__fila {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) minmax(0, 1fr) var(--aybar-space-8);
+  align-items: center;
+  gap: var(--aybar-space-3);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-barras__etiqueta {
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-barras__pista {
+  block-size: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface-sunken);
+  overflow: hidden;
+}
+
+.gl-barras__valor {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--aybar-color-primary-500), var(--aybar-color-action-primary-bg));
+  transition: inline-size var(--aybar-motion-duration-slow) var(--aybar-motion-easing-decelerate);
+}
+
+.gl-barras__cifra {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--aybar-font-weight-semibold);
+  text-align: end;
+}
+
+/* Los estados de un lote: los mismos colores en las barras, la leyenda, el plano y el 3D. */
+[data-estado='disponible'] {
+  --gl-estado: var(--aybar-color-feedback-success-border);
+}
+
+[data-estado='reservado'] {
+  --gl-estado: var(--aybar-color-feedback-warning-border);
+}
+
+[data-estado='vendido'] {
+  --gl-estado: var(--aybar-color-primary-600);
+}
+
+[data-estado='bloqueado'] {
+  --gl-estado: var(--aybar-color-neutral-450);
+}
+
+.gl-apilada {
+  display: flex;
+  gap: var(--aybar-space-px);
+  block-size: var(--aybar-space-5);
+  margin-block-end: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-full);
+  overflow: hidden;
+}
+
+.gl-apilada__tramo {
+  flex-basis: 0;
+  background: var(--gl-estado);
+}
+
+.gl-leyenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--aybar-space-3);
+  margin: 0 0 var(--aybar-space-4);
+}
+
+.gl-leyenda__item dt {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-leyenda__item dd {
+  margin: 0 0 0 calc(var(--aybar-space-3) + var(--aybar-space-2));
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-leyenda__muestra {
+  inline-size: var(--aybar-space-3);
+  block-size: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-sm);
+  background: var(--gl-estado);
+}
+
+.gl-usuarios__reparto {
+  block-size: min(46rem, calc(100dvh - var(--gl-navbar-alto, 0px) - var(--aybar-space-16)));
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  overflow: hidden;
+}
+
+.gl-usuarios__reparto ay-splitter,
+.gl-usuarios__reparto .ay-splitter {
+  block-size: 100%;
+}
+
+.gl-usuarios__panel {
+  box-sizing: border-box;
+  block-size: 100%;
+  min-inline-size: 0;
+  overflow: auto;
+}
+
+/* En el reparto, la rejilla llena su panel: su propio scroll, sin el alto máximo de la hoja
+   (32rem) ni el marco, que ya pone el contenedor. */
+.gl-usuarios__panel:has(.ay-grid__scroll) {
+  overflow: hidden;
+}
+
+.gl-usuarios__panel .ay-grid__scroll {
+  block-size: 100%;
+  max-block-size: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* La rejilla no se aplasta: en un panel estrecho se desplaza en horizontal. */
+.gl-usuarios .ay-grid {
+  min-inline-size: 50rem;
+}
+
+.gl-usuarios__detalle {
+  padding: var(--aybar-space-6);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-persona {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  min-inline-size: 0;
+}
+
+.gl-persona__texto {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.gl-persona__nombre {
+  justify-self: start;
+  text-align: start;
+  text-decoration: none;
+}
+
+.gl-persona__nombre:hover {
+  text-decoration: underline;
+}
+
+.gl-persona__correo {
+  overflow: hidden;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-insignias {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-1);
+}
+
+.gl-detalle {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-detalle__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-4);
+}
+
+.gl-detalle__cabecera > div {
+  display: grid;
+  gap: var(--aybar-space-1);
+  justify-items: start;
+}
+
+.gl-roles {
+  display: grid;
+  gap: var(--aybar-space-6);
+  align-items: start;
+}
+
+.gl-roles__lista ul {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-roles__rol {
+  display: grid;
+  gap: var(--aybar-space-1);
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-roles__rol:hover {
+  border-color: var(--aybar-color-border-strong);
+}
+
+.gl-roles__rol[aria-current='true'] {
+  border-color: var(--aybar-color-border-accent);
+  background: var(--aybar-color-bg-brand-subtle);
+  box-shadow: inset var(--aybar-border-width-thick) 0 0 var(--aybar-color-fg-link);
+}
+
+.gl-roles__rol:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-roles__nombre {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-roles__nombre code {
+  margin-inline-start: var(--aybar-space-1);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-roles__meta {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+@media (min-width: 1024px) {
+  .gl-roles {
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  }
+}
+
+.gl-filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  align-items: end;
+  gap: var(--aybar-space-5);
+  padding: var(--aybar-space-5);
+}
+
+.gl-filtros__chips {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.gl-auditoria__resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+}
+
+.gl-auditoria__linea {
+  padding: var(--aybar-space-6);
+}
+
+/* ═══ Personalización ════════════════════════════════════════════════════ */
+
+.gl-personalizacion {
+  display: grid;
+  gap: var(--aybar-space-8);
+  align-items: start;
+}
+
+.gl-personalizacion__panel {
+  padding: var(--aybar-space-6);
+}
+
+.gl-personalizacion__vista {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-vista-previa {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--aybar-space-4);
+}
+
+/* Cada lado lleva su tema local (tema-local.ts): sus tokens, su fondo y su texto. */
+.gl-vista-previa__lado {
+  display: grid;
+  gap: var(--aybar-space-5);
+  align-content: start;
+  min-inline-size: 0;
+  padding: var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-vista-previa__rotulo {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.gl-vista-previa__botones,
+.gl-vista-previa__insignias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+.gl-vista-previa__campos,
+.gl-vista-previa__alertas {
+  display: grid;
+  gap: var(--aybar-space-3);
+}
+
+.gl-vista-previa__campos > ay-form-field + ay-form-field {
+  margin-block-start: 0;
+}
+
+.gl-codigo {
+  display: grid;
+  gap: var(--aybar-space-4);
+  padding: var(--aybar-space-5);
+}
+
+.gl-codigo__texto {
+  margin: 0;
+  padding: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-relaxed);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.gl-codigo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+@media (min-width: 1280px) {
+  .gl-personalizacion {
+    grid-template-columns: minmax(20rem, 24rem) minmax(0, 1fr);
+  }
+
+  .gl-personalizacion__panel {
+    position: sticky;
+    inset-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+  }
+}
+
+/* ═══ Profundidad ════════════════════════════════════════════════════════ */
+
+.gl-profundidad__eje {
+  margin-block-start: var(--aybar-space-2);
+}
+
+.gl-escena {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-block-size: 30rem;
+  padding: var(--aybar-space-10) var(--aybar-space-5);
+  border-radius: var(--aybar-radius-2xl);
+  background: linear-gradient(180deg, var(--aybar-color-primary-200), var(--aybar-color-primary-50));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gl-escena__cielo,
+.gl-escena__colinas,
+.gl-escena__parcelas {
+  position: absolute;
+  inset: calc(var(--aybar-space-8) * -1);
+}
+
+.gl-escena__sol {
+  position: absolute;
+  inset-block-start: 14%;
+  inset-inline-end: 18%;
+  inline-size: calc(var(--aybar-space-24) * 1.1);
+  aspect-ratio: 1;
+  border-radius: var(--aybar-radius-full);
+  background: radial-gradient(circle, var(--aybar-color-secondary-300), color-mix(in oklab, var(--aybar-color-secondary-400) 40%, transparent) 70%);
+  box-shadow: 0 0 var(--aybar-space-16) var(--aybar-color-secondary-300);
+}
+
+.gl-escena__colinas {
+  inset-block-start: auto;
+  block-size: 55%;
+  border-start-start-radius: 60% 100%;
+  border-start-end-radius: 40% 80%;
+}
+
+.gl-escena__colinas--lejos {
+  inset-inline: -10% 20%;
+  background: color-mix(in oklab, var(--aybar-color-primary-400) 70%, var(--aybar-color-primary-200));
+}
+
+.gl-escena__colinas--cerca {
+  inset-inline: 25% -15%;
+  block-size: 42%;
+  background: var(--aybar-color-primary-600);
+}
+
+.gl-escena__parcelas {
+  inset-block: auto -2rem;
+  block-size: 32%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-3);
+  transform: perspective(var(--aybar-space-24)) rotateX(8deg);
+  background: var(--aybar-color-primary-800);
+}
+
+.gl-escena__parcela {
+  border-radius: var(--aybar-radius-sm);
+  background: var(--gl-estado);
+  opacity: 0.9;
+}
+
+.gl-escena__frente {
+  position: relative;
+  inline-size: min(100%, 26rem);
+}
+
+.gl-inclinables {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--aybar-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-inclinables__precio {
+  margin: 0 0 var(--aybar-space-3);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-banda {
+  position: relative;
+  display: grid;
+  padding: var(--aybar-space-10) var(--aybar-space-5);
+  border-radius: var(--aybar-radius-2xl);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gl-banda__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+}
+
+.gl-banda__fondo span:nth-child(1) {
+  background: var(--aybar-color-primary-700);
+}
+
+.gl-banda__fondo span:nth-child(2) {
+  background: var(--aybar-color-secondary-400);
+}
+
+.gl-banda__fondo span:nth-child(3) {
+  background: linear-gradient(135deg, var(--aybar-color-primary-300), var(--aybar-color-primary-500));
+}
+
+.gl-banda__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--aybar-space-5);
+}
+
+.gl-condiciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--aybar-space-4);
+  margin: 0;
+}
+
+.gl-condiciones__item {
+  display: grid;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-4);
+}
+
+.gl-condiciones__item dt {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-condiciones__item dd {
+  display: grid;
+  gap: var(--aybar-space-2);
+  justify-items: start;
+  margin: 0;
+}

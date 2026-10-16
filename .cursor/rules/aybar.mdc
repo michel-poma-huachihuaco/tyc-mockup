@@ -1,0 +1,32 @@
+---
+description: Contexto Aybar de este microservicio. La fuente es AGENTS.md; esto es el minimo que no se negocia.
+alwaysApply: true
+---
+
+# Aybar
+
+La fuente del contexto es `AGENTS.md`, en la raiz: leelo antes de cambiar nada.
+Al empezar, su primera seccion: el informe de `.agents/scripts/arranque.sh` (lo
+corre el hook de `.cursor/hooks.json`), `docs/explorador.html` y lo que falta,
+contado al humano antes de tocar codigo.
+Lo que no se negocia (el detalle y el porque estan en AGENTS.md):
+
+- `domain` es Java puro: sin Spring, JPA, Jakarta ni Kafka. Del SDK solo
+  `com.aybarsac.sdk.common` y `com.aybarsac.sdk.data.cqrs`. Lo verifica
+  `NormaHexagonalTest` (`aybar verify arquitectura`).
+- No reimplementes login, `SecurityFilterChain`, RFC 7807, OpenAPI/springdoc,
+  auditoria ni el cliente HTTP corporativo: los traen los starters.
+- Antes de usar un starter, lee su contrato en `docs/skills/aybar-starter-<x>.md`;
+  manda sobre las skills generales de `.agents/skills/`.
+- Variables y secretos: `docs/VARIABLES.md`. Cero `password:` en YAML y nada de
+  PII en logs ni en eventos.
+- Las dependencias que gobierna el SDK van sin `<version>`.
+- `frontend/` no importa nada de fuera de `frontend/`, ningun modulo se importa
+  por URL y un remoto no importa `@aybarcorp/shell` ni `@aybarcorp/auth`. Lo
+  corta `.guardianes/agente/guardian-arquitectura.sh`.
+- No reimplementes el sistema de diseño, el login OIDC, la federacion ni el
+  cliente HTTP: los traen `@aybarcorp/ui` o `@aybarcorp/ui-elements`,
+  `@aybarcorp/auth`, `@aybarcorp/shell` y `@aybarcorp/remote`, y `@aybarcorp/http`.
+- Un componente no llama a la red: la llamada va en un servicio con
+  `@aybarcorp/http`. Ningun secreto en el front: lo que se compila, se publica.
+- Los `@aybarcorp/*` van con version exacta, todos en la misma.

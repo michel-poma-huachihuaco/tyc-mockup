@@ -1,0 +1,186 @@
+/*
+ * /demo/accesibilidad. Prefijo gl-axe; solo tokens --aybar-*. La misma hoja en React y en
+ * Angular. Nada se desplaza dentro de un recuadro (el código y el HTML parten línea): así
+ * ninguna zona necesita foco propio para leerse con el teclado.
+ */
+
+.gl-axe {
+  display: grid;
+  gap: var(--aybar-space-8);
+  min-inline-size: 0;
+}
+
+.gl-axe__formulario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--aybar-space-4);
+}
+
+.gl-axe__campo {
+  flex: 1 1 calc(var(--aybar-space-4) * 18);
+  max-inline-size: calc(var(--aybar-space-4) * 32);
+  min-inline-size: 0;
+}
+
+.gl-axe__estado {
+  margin: var(--aybar-space-3) 0 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-axe__estado:empty {
+  display: none;
+}
+
+/* La pantalla analizada, al ancho de la columna: lo que se analiza es lo que se ve aquí. */
+.gl-axe__vista {
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-canvas);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-axe__marco {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(var(--aybar-space-4) * 36);
+  border: 0;
+}
+
+.gl-axe__resultado {
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+
+.gl-axe__cabecera {
+  display: grid;
+  gap: var(--aybar-space-1);
+}
+
+.gl-axe__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  overflow-wrap: anywhere;
+}
+
+.gl-axe__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-axe__cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-4) * 9)), 1fr));
+  gap: var(--aybar-space-4);
+  padding: var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-axe__grupo {
+  display: grid;
+  gap: var(--aybar-space-3);
+}
+
+.gl-axe__grupo-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-axe__lista,
+.gl-axe__lista-nodos {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-axe__violacion {
+  display: grid;
+  gap: var(--aybar-space-3);
+  justify-items: start;
+}
+
+.gl-axe__descripcion {
+  margin: 0;
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-axe__enlace {
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  text-underline-offset: 0.2em;
+}
+
+.gl-axe__enlace:focus-visible,
+.gl-axe__nodos > summary:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+  border-radius: var(--aybar-radius-sm);
+}
+
+.gl-axe__nodos {
+  inline-size: 100%;
+}
+
+.gl-axe__nodos > summary {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--aybar-touch-target);
+  cursor: pointer;
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-axe__nodo {
+  display: grid;
+  gap: var(--aybar-space-2);
+  padding-block-start: var(--aybar-space-3);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-axe__selector {
+  font-size: var(--aybar-font-size-xs);
+  overflow-wrap: anywhere;
+}
+
+.gl-axe__html,
+.gl-axe__codigo {
+  margin: 0;
+  padding: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-relaxed);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.gl-axe__codigo {
+  margin-block-end: var(--aybar-space-3);
+}
+
+.gl-axe__resumen {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  white-space: pre-line;
+}
