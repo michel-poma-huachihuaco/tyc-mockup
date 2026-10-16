@@ -75,5 +75,6 @@ Permite configurar, sin desarrollo, el flujo de trabajo de cada tipo de ticket p
 | P-01 | ¿La asignación es automática (push) o el gestor toma el siguiente (pull)? | PO | por definir | Sí |
 | P-02 | ¿Quiénes pueden marcar el rayo? | PO | por definir | Sí |
 | P-03 | ¿Cómo se mide la carga de cada gestor? | PO | por definir | Sí |
+| P-04 | `HU-ATC-043` permite configurar, por área y tipo, "pasos, estados, responsables y aprobaciones" sin desarrollo. `FT-ATC-02`/`HU-ATC-004` fija 7 estados homogéneos (`RF-SVC-004`) para todo ticket. ¿El flujo configurable aquí define sub-pasos dentro del estado `IN_PROGRESS`, o reemplaza el modelo de 7 estados para el área que lo define? Ver la misma pregunta en `FT-ATC-02` P-03 y `docs/analisis/decisiones.md` D-09 | PO + TL | por definir | Sí |
 
 Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente

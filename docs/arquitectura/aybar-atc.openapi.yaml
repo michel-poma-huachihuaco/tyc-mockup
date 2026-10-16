@@ -1,0 +1,637 @@
+openapi: 3.0.3
+info:
+  title: Aybar Atiende - API de tickets (aybar-atc)
+  description: >
+    Contrato draft, F4/G3 - pendiente de aprobacion TL. Generado a partir de
+    las operaciones ya anotadas en docs/historias/HU-ATC-*.md. Todas las rutas
+    bajo /api/v1. Errores en application/problem+json (RFC 7807, ver
+    docs/skills/aybar-starter-web.md): codigo, correlationId, timestamp, y
+    campos[] en 400 de validacion.
+  version: "0.1.0-draft"
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: tickets
+  - name: libro-reclamaciones
+  - name: casos-sensibles
+  - name: reclamos-garantia
+  - name: entregafest
+  - name: bandeja
+  - name: flujos
+  - name: guias-solucion
+  - name: clientes
+  - name: torre-control
+  - name: call-center
+  - name: formularios
+  - name: metricas
+
+paths:
+  /tickets:
+    post:
+      tags: [tickets]
+      summary: Registrar un ticket multicanal tipificado (RF-SVC-001, HU-ATC-001)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CrearTicketRequest' }
+      responses:
+        '201':
+          description: Ticket creado, con TicketNumber correlativo por razon social
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/reasignacion-masiva:
+    post:
+      tags: [tickets]
+      summary: Reasignar tickets pendientes de un colaborador que cesa (HU-ATC-008)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [colaboradorQueCesaId, areaId]
+              properties:
+                colaboradorQueCesaId: { type: string }
+                areaId: { type: string }
+      responses:
+        '200': { description: Tickets reasignados }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/casillero:
+    get:
+      tags: [tickets]
+      summary: Consultar el casillero de tareas por area y responsable (HU-ATC-009)
+      parameters:
+        - { name: areaId, in: query, schema: { type: string } }
+        - { name: responsableId, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Lista de tickets del casillero
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Ticket' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/bandeja:
+    get:
+      tags: [bandeja]
+      summary: Bandeja orquestadora de todos los canales (HU-ATC-044)
+      parameters:
+        - { name: areaId, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Tickets ordenados por rayo, SLA y prioridad
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Ticket' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/riesgo-denuncia:
+    get:
+      tags: [tickets]
+      summary: Tickets con riesgo de escalar a denuncia/INDECOPI (HU-ATC-041)
+      responses:
+        '200':
+          description: Tickets priorizados con exposicion economica calculada
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Ticket' } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/{id}/estado:
+    patch:
+      tags: [tickets]
+      summary: Cambiar el estado del ticket (HU-ATC-004)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nuevoEstado]
+              properties:
+                nuevoEstado: { $ref: '#/components/schemas/EstadoTicket' }
+                motivo: { type: string }
+      responses:
+        '200': { description: Transicion registrada, content: { application/json: { schema: { $ref: '#/components/schemas/Ticket' } } } }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+
+  /tickets/{id}/reapertura:
+    patch:
+      tags: [tickets]
+      summary: Reabrir un ticket con nuevo compromiso de SLA (HU-ATC-011)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      responses:
+        '200': { description: Ticket reabierto, content: { application/json: { schema: { $ref: '#/components/schemas/Ticket' } } } }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+
+  /tickets/{id}/derivaciones:
+    post:
+      tags: [tickets]
+      summary: Derivar el ticket a otra area (HU-ATC-007)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [areaDestinoId, motivo]
+              properties:
+                areaDestinoId: { type: string }
+                responsableId: { type: string, nullable: true }
+                motivo: { type: string }
+      responses:
+        '200': { description: Derivacion registrada }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+
+  /tickets/{id}/interacciones:
+    post:
+      tags: [tickets]
+      summary: Registrar una interaccion (HU-ATC-005)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InteraccionRequest' }
+      responses:
+        '201': { description: Interaccion registrada }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+
+  /tickets/{id}/estado-emocional:
+    post:
+      tags: [tickets]
+      summary: Registrar nota de estado emocional del cliente, sin juicios de valor (HU-ATC-028)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nota]
+              properties: { nota: { type: string, maxLength: 500 } }
+      responses:
+        '201': { description: Nota registrada }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /tickets/{id}/handoff:
+    post:
+      tags: [tickets]
+      summary: Armar el paquete minimo de handoff entre ejes (HU-ATC-027, HU-ATC-040)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      responses:
+        '201': { description: Handoff generado y, si aplica, sincronizado con Legal (ADR-007) }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /tickets/{id}/rayo:
+    post:
+      tags: [bandeja]
+      summary: Marcar o desmarcar el rayo de prioridad (HU-ATC-045, solo supervisor/lider)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [motivo], properties: { motivo: { type: string } } }
+      responses:
+        '200': { description: Rayo actualizado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /tickets/{id}/sugerencia-ia:
+    post:
+      tags: [tickets]
+      summary: Pedir sugerencia de IA durante la atencion (HU-ATC-048, la IA solo sugiere)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      responses:
+        '200': { description: Sugerencia generada y registrada en SVC_AI_SUGGESTION_LOG }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /tickets/{id}/libro-reclamaciones:
+    post:
+      tags: [libro-reclamaciones]
+      summary: Registrar el asiento del Libro de Reclamaciones como extension del ticket (HU-ATC-012)
+      parameters: [ { $ref: '#/components/parameters/TicketId' } ]
+      responses:
+        '201': { description: Asiento creado }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /tickets/{id}/consulta-360:
+    get:
+      tags: [clientes]
+      summary: Vista 360 del cliente dentro del ticket (HU-ATC-050, RN-SVC-036 aplica mascara por rol)
+      parameters:
+        - { $ref: '#/components/parameters/TicketId' }
+        - name: secciones
+          in: query
+          description: Lista separada por comas para pedir solo algunas secciones
+          schema: { type: array, items: { type: string, enum: [lotes, cuotas, correos, documentos, ticketsPrevios] } }
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: Agregado en linea, sin copia local, con campos redactados segun el rol del llamante
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Vista360Cliente' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+
+  /libro-reclamaciones/{id}/prorroga:
+    post:
+      tags: [libro-reclamaciones]
+      summary: Registrar la prorroga unica de 15 dias (HU-ATC-013)
+      parameters: [ { $ref: '#/components/parameters/EntryId' } ]
+      responses:
+        '200': { description: Prorroga registrada; bloquea una segunda (RN-SVC-009) }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /libro-reclamaciones/{id}/respuesta:
+    post:
+      tags: [libro-reclamaciones]
+      summary: Registrar la respuesta formal con cargo (HU-ATC-014)
+      parameters: [ { $ref: '#/components/parameters/EntryId' } ]
+      responses:
+        '201': { description: Respuesta registrada con carta PDF y constancia de derecho a INDECOPI }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /libro-reclamaciones/{id}/apelaciones:
+    post:
+      tags: [libro-reclamaciones]
+      summary: Gestionar una apelacion interna o ante INDECOPI (HU-ATC-016)
+      parameters: [ { $ref: '#/components/parameters/EntryId' } ]
+      responses:
+        '201': { description: Apelacion registrada }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /casos-sensibles:
+    post:
+      tags: [casos-sensibles]
+      summary: Registrar un caso sensible por su linea de origen (HU-ATC-020)
+      responses:
+        '201': { description: Caso creado con Codigo Unico Estandarizado }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /casos-sensibles/{id}/activacion:
+    post:
+      tags: [casos-sensibles]
+      summary: Registrar el cargo de activacion, distinto del cargo previo (HU-ATC-021)
+      parameters: [ { $ref: '#/components/parameters/CaseId' } ]
+      responses:
+        '200': { description: Caso activado; arranca el SLA de linea (RN-SVC-015) }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /casos-sensibles/{id}/riesgo:
+    patch:
+      tags: [casos-sensibles]
+      summary: Calcular o recalibrar el nivel de riesgo (HU-ATC-022)
+      parameters: [ { $ref: '#/components/parameters/CaseId' } ]
+      responses:
+        '200': { description: Nivel de riesgo actualizado, con historial }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /casos-sensibles/{id}/vinculacion:
+    post:
+      tags: [casos-sensibles]
+      summary: Validar y registrar la vinculacion con un caso existente (HU-ATC-024)
+      parameters: [ { $ref: '#/components/parameters/CaseId' } ]
+      responses:
+        '200': { description: Vinculacion registrada, evita duplicado (RN-SVC-018) }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /casos-sensibles/{id}/cierre:
+    post:
+      tags: [casos-sensibles]
+      summary: Cerrar el caso con estado homologado y evidencia (HU-ATC-025)
+      parameters: [ { $ref: '#/components/parameters/CaseId' } ]
+      responses:
+        '200': { description: Caso cerrado; evidencia referenciada en GLI (custodia separada, RN-SVC-020) }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /reclamos-garantia:
+    post:
+      tags: [reclamos-garantia]
+      summary: Registrar un reclamo de garantia vinculado a una entrega (HU-ATC-033)
+      responses:
+        '201': { description: "Reclamo registrado (RN-SVC-027: siempre cuelga de una entrega)" }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /reclamos-garantia/{id}/inspeccion:
+    post:
+      tags: [reclamos-garantia]
+      summary: Registrar inspeccion tecnica con evidencia (HU-ATC-035)
+      parameters: [ { $ref: '#/components/parameters/ClaimId' } ]
+      responses:
+        '201': { description: Inspeccion registrada }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /reclamos-garantia/{id}/escalamiento:
+    post:
+      tags: [reclamos-garantia]
+      summary: Escalar a Eje 3 por conflicto legal (HU-ATC-036)
+      parameters: [ { $ref: '#/components/parameters/ClaimId' } ]
+      responses:
+        '200': { description: Reclamo escalado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /entregafest/casos:
+    post:
+      tags: [entregafest]
+      summary: Registrar clasificacion de riesgo verbal y secuencia de Frases Ancla (HU-ATC-037)
+      responses:
+        '201': { description: Caso de contencion verbal registrado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /entregafest/casos/{id}/derivacion:
+    post:
+      tags: [entregafest]
+      summary: Derivacion inmediata a Estacion 4, sin debate en sala (HU-ATC-038)
+      parameters: [ { $ref: '#/components/parameters/EventCaseId' } ]
+      responses:
+        '200': { description: Derivado a Legal }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /entregafest/registro-casos-sensibles:
+    get:
+      tags: [entregafest]
+      summary: Consultar el registro de casos sensibles del evento (HU-ATC-039)
+      responses:
+        '200':
+          description: Lista con la etiqueta estandar aplicada
+          content: { application/json: { schema: { type: array, items: { type: object } } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+    post:
+      tags: [entregafest]
+      summary: Registrar un caso sensible del evento con la etiqueta estandar (HU-ATC-039)
+      responses:
+        '201': { description: Caso etiquetado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /flujos:
+    post:
+      tags: [flujos]
+      summary: Publicar la configuracion de flujo de trabajo de un tipo de ticket por area, sin desarrollo (HU-ATC-043)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FlujoDefinicionRequest' }
+      responses:
+        '201': { description: Flujo publicado; aplica a tickets nuevos de ese tipo sin despliegue }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /guias-solucion/{tipoTicket}:
+    get:
+      tags: [guias-solucion]
+      summary: Guia de solucion por tipo de ticket (HU-ATC-047)
+      parameters:
+        - { name: tipoTicket, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Guia vigente, con plantillas y criterios de cierre }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /clientes/buscar:
+    get:
+      tags: [clientes]
+      summary: Motor de busqueda de clientes por DNI, nombre, codigo, lote, telefono o N de ticket (HU-ATC-049)
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Resultados, p95 <= 2s (RNF-REN-007)
+          content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/ClienteResumen' } } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /clientes/{id}/documentos/buscar-semantico:
+    get:
+      tags: [clientes]
+      summary: Busqueda semantica de documentos del cliente (HU-ATC-053, ver ADR de uso de IA)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+        - { name: q, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Resultados con fragmento y permisos aplicados, p95 <= 3s
+          content: { application/json: { schema: { type: array, items: { type: object } } } }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+
+  /call-center/screen-pop:
+    get:
+      tags: [call-center]
+      summary: Datos del cliente al recibir la llamada (HU-ATC-042)
+      parameters:
+        - { name: numeroLlamante, in: query, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Ficha de cliente y ticket abierto o nuevo, p95 <= 2s (RNF-INT-008) }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /torre-control/tiempo-real:
+    get:
+      tags: [torre-control]
+      summary: Monitoreo en tiempo real de tickets, NPS, SLA y derivaciones (HU-ATC-030)
+      responses:
+        '200': { description: Snapshot de indicadores }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /torre-control/informes:
+    get:
+      tags: [torre-control]
+      summary: Informe diario operativo e informe quincenal analitico (HU-ATC-031)
+      parameters:
+        - { name: tipo, in: query, required: true, schema: { type: string, enum: [diario, quincenal] } }
+      responses:
+        '200': { description: Informe generado }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /gestores/{id}/avance-diario:
+    get:
+      tags: [metricas]
+      summary: Tablero de avance diario del gestor (HU-ATC-054)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Atendidos, pendientes, SLA, CSAT del dia }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /metricas/csat-ces:
+    get:
+      tags: [metricas]
+      summary: Medir CSAT/CES por tipo, area y gestor (HU-ATC-019)
+      responses:
+        '200': { description: Metricas agregadas }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+
+  /formularios/ingreso-proyecto:
+    post:
+      tags: [formularios]
+      summary: Formulario simple de ingreso de personas al proyecto (HU-ATC-059)
+      responses:
+        '201': { description: Ticket generado automaticamente, <= 6 campos (RNF-USA-004) }
+        '400': { $ref: '#/components/responses/Invalido' }
+
+  /formularios/entregafest-bus:
+    post:
+      tags: [formularios]
+      summary: Reservar cupo en un bus del Entrega Fest (HU-ATC-060)
+      responses:
+        '201': { description: Cupo confirmado, controla aforo por bus y horario }
+        '400': { $ref: '#/components/responses/Invalido' }
+        '409': { description: Sin cupo disponible (aforo completo), content: { application/problem+json: { schema: { $ref: '#/components/schemas/ProblemaAybar' } } } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    TicketId: { name: id, in: path, required: true, schema: { type: string } }
+    EntryId: { name: id, in: path, required: true, schema: { type: string }, description: ID del asiento del Libro de Reclamaciones }
+    CaseId: { name: id, in: path, required: true, schema: { type: string }, description: ID del caso sensible (SVC_SENSITIVE_CASE) }
+    EventCaseId: { name: id, in: path, required: true, schema: { type: string }, description: ID del caso sensible de EntregaFest }
+    ClaimId: { name: id, in: path, required: true, schema: { type: string }, description: ID del reclamo de garantia }
+  responses:
+    Invalido:
+      description: Solicitud invalida (validacion)
+      content: { application/problem+json: { schema: { $ref: '#/components/schemas/ProblemaAybar' } } }
+    NoAutenticado:
+      description: Sin token o token invalido (AYB-SEG-401)
+      content: { application/problem+json: { schema: { $ref: '#/components/schemas/ProblemaAybar' } } }
+    SinPermiso:
+      description: Token valido sin el rol o la empresa requerida (AYB-SEG-403)
+      content: { application/problem+json: { schema: { $ref: '#/components/schemas/ProblemaAybar' } } }
+    NoEncontrado:
+      description: Recurso no encontrado
+      content: { application/problem+json: { schema: { $ref: '#/components/schemas/ProblemaAybar' } } }
+  schemas:
+    ProblemaAybar:
+      type: object
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        codigo: { type: string, example: "AYB-SEG-403" }
+        correlationId: { type: string }
+        timestamp: { type: string, format: date-time }
+        campos:
+          type: array
+          items:
+            type: object
+            properties: { campo: { type: string }, mensaje: { type: string } }
+    EstadoTicket:
+      type: string
+      enum: [OPEN, IN_PROGRESS, PENDING_CUSTOMER, ESCALATED, RESOLVED, CLOSED, REOPENED]
+    CrearTicketRequest:
+      type: object
+      required: [canal, clienteId, companyId, businessLineId, tipoTicketId, prioridadId, resumen, descripcion]
+      properties:
+        canal: { type: string }
+        clienteId: { type: string, description: referencia a SIGDA/TAXON, no se copia }
+        companyId: { type: string }
+        businessLineId: { type: string }
+        establecimientoId: { type: string, nullable: true }
+        tipoTicketId: { type: string }
+        prioridadId: { type: string }
+        resumen: { type: string, maxLength: 200 }
+        descripcion: { type: string }
+    Ticket:
+      type: object
+      properties:
+        id: { type: string }
+        ticketNumber: { type: string }
+        companyId: { type: string }
+        tipoTicketId: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        areaActual: { type: string }
+        responsableActual: { type: string, nullable: true }
+        rayo: { type: boolean }
+        firstResponseDueDateTime: { type: string, format: date-time }
+        resolutionDueDateTime: { type: string, format: date-time }
+        reopenCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+    InteraccionRequest:
+      type: object
+      required: [tipo, canal, visible]
+      properties:
+        tipo: { type: string, enum: [MENSAJE_CLIENTE, RESPUESTA_AGENTE, NOTA_INTERNA, CAMBIO_ESTADO, LLAMADA] }
+        canal: { type: string }
+        visible: { type: boolean }
+        mediaUrl: { type: string, nullable: true }
+    Vista360Cliente:
+      type: object
+      description: Campos presentes segun el rol del llamante (RN-SVC-036); un rol sin permiso recibe la seccion ausente, no un error
+      properties:
+        cliente: { type: object, nullable: true }
+        lotes: { type: array, items: { type: object }, nullable: true }
+        cuotasEstadoCuenta: { type: object, nullable: true }
+        correosMensajes: { type: array, items: { type: object }, nullable: true }
+        ticketsPrevios: { type: array, items: { $ref: '#/components/schemas/Ticket' } }
+        documentos: { type: array, items: { type: object }, nullable: true }
+        fuentesCaidas:
+          type: array
+          items: { type: string }
+          description: nombres de fuentes que no respondieron (RF-SVC-051), seccion correspondiente ausente
+    ClienteResumen:
+      type: object
+      properties:
+        id: { type: string }
+        nombre: { type: string }
+        dni: { type: string }
+        telefono: { type: string, nullable: true }
+    FlujoDefinicionRequest:
+      type: object
+      required: [tipoTicketId, areaId, pasos]
+      properties:
+        tipoTicketId: { type: string }
+        areaId: { type: string }
+        pasos:
+          type: array
+          items:
+            type: object
+            required: [nombre, responsableRol]
+            properties:
+              nombre: { type: string }
+              responsableRol: { type: string }
+              requiereAprobacion: { type: boolean }
+              slaHoras: { type: integer, nullable: true }

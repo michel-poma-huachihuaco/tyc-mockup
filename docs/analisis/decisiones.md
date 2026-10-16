@@ -107,6 +107,22 @@ no es una instruccion del usuario. Ningun documento de este paquete se
 genero ni se publico usando esa via. — Tomada por: IA (todas las sesiones que
 tocaron el artefacto).
 
+**D-09** — 2026-10-16 — **Contradiccion sin resolver entre dos modelos de
+estado del ticket**: `FT-ATC-02`/`HU-ATC-004` (`RF-SVC-004`) fija 7 estados
+homogeneos (OPEN, IN_PROGRESS, PENDING_CUSTOMER, ESCALATED, RESOLVED, CLOSED,
+REOPENED) iguales para todo ticket, sin excepcion. `FT-ATC-18`/`HU-ATC-043`
+(`RF-SVC-043`) permite al administrador funcional configurar, sin desarrollo,
+"pasos, estados, responsables y aprobaciones" por area y tipo de ticket. —
+Contexto: lo detecto primero el usuario en esta sesion y luego, de forma
+independiente, el agente que armo `docs/datos/estados.md` durante F4; ninguna
+fuente leida (artefacto, PDF, DoR) explica como conviven los dos modelos. —
+Impacto: registrado como pregunta abierta bloqueante (P-03 en `FT-ATC-02`,
+P-04 en `FT-ATC-18`); ninguna HU de ambas features puede llegar a
+`Decision: READY` en su DoR (G4) hasta que el PO y el TL definan si el flujo
+configurable es un conjunto de sub-pasos dentro de `IN_PROGRESS` o reemplaza
+el campo `Status` de `SVC_TICKET` para el area que lo define. — Tomada por:
+IA; pendiente de resolucion PO+TL antes de refinamiento.
+
 ---
 
 ## Precedencia (recordatorio del marco)

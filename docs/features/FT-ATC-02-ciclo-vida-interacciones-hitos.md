@@ -73,5 +73,6 @@ Gestiona los estados del ticket con historial inmutable, registra cada interacci
 |---|---|---|---|---|
 | P-01 | ¿Qué tipos de archivo y tamaño máximo se aceptan como evidencia? | PO | por definir | Sí |
 | P-02 | ¿Cuánto tiempo después de RESOLVED pasa a CLOSED si el cliente no responde? | PO | por definir | Sí |
+| P-03 | Esta feature fija 7 estados homogéneos para todo ticket (`RF-SVC-004`). `FT-ATC-18`/`HU-ATC-043` permite configurar "pasos, estados, responsables y aprobaciones" por área y tipo, sin desarrollo. ¿Los pasos configurables son sub-estados dentro de `IN_PROGRESS` (el campo `Status` de `SVC_TICKET` no cambia), o un área puede sustituir estos 7 estados por los suyos? Hallazgo técnico de dos agentes independientes en la misma sesión (ver `docs/datos/estados.md` y `docs/analisis/decisiones.md` D-09) — ninguna fuente documental lo resuelve | PO + TL | por definir | Sí |
 
 Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
