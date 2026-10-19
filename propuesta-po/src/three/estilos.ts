@@ -139,6 +139,13 @@ const CSS = `
 .pt-herr__vacio{padding:6px 16px 18px;color:var(--v3-mu);font-size:12.5px}
 
 /* ---------------------------------------------------------------- inicio: consulta 360 y vista en vivo */
+.pt-grafo__busca{align-items:start;row-gap:var(--aybar-space-1,4px)}
+.pt-grafo__busca>.ay-field{display:contents}
+.pt-grafo__busca>.ay-field>*{grid-column:1}
+.pt-grafo__busca>.ay-field>.ay-label{grid-row:1}
+.pt-grafo__busca>.ay-field>:nth-child(2){grid-row:2}
+.pt-grafo__busca>.ay-field>.ay-error:empty{display:none}
+.pt-grafo__busca>.ay-btn{grid-column:2;grid-row:2}
 .pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:8px;align-items:center;padding:10px 24px;background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}
 .pt-inicio__ancla button{font:600 12.5px/1 inherit;font-family:inherit;padding:8px 14px;border-radius:999px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
 .pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}
