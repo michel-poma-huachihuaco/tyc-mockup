@@ -96,8 +96,7 @@ function construir(root: HTMLElement): Estado {
   const panel = h('article', 'v3-estados'); panel.setAttribute('role', 'group'); panel.setAttribute('aria-label', 'Tickets por estado')
   const cab = h('header', 'v3-est-cab'); const tit = h('span', 'v3-k-lbl'); tit.textContent = 'Tickets por estado'; nodos.totalEst = h('span', 'v3-est-total'); cab.append(tit, nodos.totalEst)
   const lista = h('ul', 'v3-est-lista'); nodos.listaEst = lista
-  const nota = h('p', 'v3-est-nota'); nota.textContent = 'Sin «cancelados»: ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO.'
-  panel.append(cab, lista, nota); grid.append(panel)
+  panel.append(cab, lista); grid.append(panel)
   return { t: { act, sla, csat, niv, nps }, prev: null, hist: [], ultimaMuestra: 0, nodos, est: new Map() }
 }
 
@@ -188,15 +187,19 @@ export function actualizarHud(root: HTMLElement, p: HudProps) {
   nodos.racha!.title = 'Tickets seguidos dentro del SLA'
   nodos.faltan!.textContent = `faltan ${Math.max(0, p.meta - p.xp)} XP`
 
+  // --- notas de revisión (van al panel «Notas», no a la pantalla)
+  ;(globalThis as { __ptNota?: (t: string) => void }).__ptNota?.('Tickets por estado: no incluye «cancelados». Ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO.')
+  ;(globalThis as { __ptNota?: (t: string) => void }).__ptNota?.(p.nps.real ? 'NPS real: pregunta «¿Recomendarías…?» de 0 a 10 agregada a la encuesta de cierre (propuesta del PO, sin HU aprobada). Su relación con el NPS-C (DEP-10) está por definir.' : 'NPS preliminar derivado del CSAT hasta contar con el KPI Engine (DEP-10).')
+
   // --- NPS
   const npsV = p.nps.valor
   t.nps.el.dataset.estado = npsV == null ? 'pri' : npsV >= 30 ? 'ok' : npsV >= 0 ? 'warn' : 'bad'
   t.nps.el.querySelector('.v3-k-lbl')!.textContent = p.nps.real ? 'NPS' : 'NPS preliminar'
   numero(t.nps, npsV, fmt.signed)
-  chip(nodos.chipNps!, p.nps.real ? `Real · n=${p.nps.n}` : 'Supuesto · desde CSAT', p.nps.real ? 'ok' : 'warn')
+  chip(nodos.chipNps!, p.nps.real ? `Encuesta · n=${p.nps.n}` : 'Estimado desde CSAT', p.nps.real ? 'ok' : 'warn')
   nodos.cuentaNps!.textContent = p.nps.n ? `▲${p.nps.prom} ●${p.nps.pas} ▼${p.nps.det}` : 'Sin respuestas'
   nodos.cuentaNps!.title = 'Promotores · pasivos · detractores'
-  t.nps.el.title = p.nps.real ? 'NPS = % que responde 9–10 menos % que responde 0–6 a «¿Recomendarías…?» (propuesta del PO, sin HU aprobada).' : 'NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).'
+  t.nps.el.title = p.nps.real ? 'NPS = % que responde 9–10 menos % que responde 0–6 a «¿Recomendarías…?».' : 'NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor).'
 
   // --- tickets por estado
   const maxE = Math.max(1, ...p.estados.map((e) => e.v)), totalE = p.estados.reduce((a, e) => a + e.v, 0)

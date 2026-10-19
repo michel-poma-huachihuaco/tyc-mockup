@@ -13522,7 +13522,7 @@ function md(e, t, r, i, a, o) {
 }
 //#endregion
 //#region src/three/estilos.ts
-var hd = "\n.v3-hud,.v3-ficha,.v3-entradas{\n  --v3-ok:var(--aybar-color-feedback-success-border,#2e8b57);--v3-warn:var(--aybar-color-feedback-warning-border,#e39b1c);\n  --v3-bad:var(--aybar-color-feedback-danger-border,#c0453a);--v3-acc:var(--aybar-color-secondary-400,#f6a42c);\n  --v3-fg:var(--aybar-color-fg-default,#e8f0f2);--v3-mu:var(--aybar-color-fg-muted,#9db4ba);\n  --v3-sf:var(--aybar-color-bg-surface,#1b2a31);--v3-sk:var(--aybar-color-bg-surface-sunken,#142026);--v3-ln:var(--aybar-color-border-subtle,#2d4048);\n  --v3-pri:var(--aybar-color-primary-500,#2b8a9c);font-family:inherit}\n\n/* ---------------------------------------------------------------- HUD de estadísticas */\n.v3-hud-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}\n@media(max-width:1100px){.v3-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:520px){.v3-hud-grid{grid-template-columns:minmax(0,1fr)}}\n.v3-k{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;padding:14px 16px;border-radius:14px;background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg);overflow:hidden;isolation:isolate;transition:border-color .3s,box-shadow .3s}\n.v3-k::before{content:\"\";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 22%,transparent),transparent 60%);opacity:.9}\n.v3-k[data-estado=ok]{--v3-tono:var(--v3-ok)}.v3-k[data-estado=warn]{--v3-tono:var(--v3-warn)}.v3-k[data-estado=bad]{--v3-tono:var(--v3-bad)}.v3-k[data-estado=acc]{--v3-tono:var(--v3-acc)}.v3-k[data-estado=pri]{--v3-tono:var(--v3-pri)}\n.v3-k-ic{position:relative;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--v3-tono) 38%,transparent)}\n.v3-k-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n.v3-k-lbl{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--v3-mu)}\n.v3-k-val{display:block;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--v3-fg)}\n.v3-k-val small{font-size:14px;font-weight:700;color:var(--v3-mu);margin-left:3px}\n.v3-k-sub{grid-column:1/-1;margin-top:10px;display:flex;align-items:center;gap:8px;min-height:20px;font-size:12px;color:var(--v3-mu);flex-wrap:nowrap;white-space:nowrap}\n.v3-k-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 14%,transparent);border:1px solid color-mix(in srgb,var(--v3-tono) 35%,transparent)}\n.v3-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}\n.v3-k-chip.pulsa .v3-dot{animation:v3-latido 1.1s ease-in-out infinite}\n.v3-spark{margin-left:auto;width:72px;min-width:40px;height:28px;flex:0 1 auto}\n.v3-spark path{fill:none;stroke:var(--v3-tono);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}\n.v3-spark .area{fill:color-mix(in srgb,var(--v3-tono) 20%,transparent);stroke:none}\n.v3-tend{font-weight:800;color:var(--v3-mu)}.v3-tend.sube{color:var(--v3-warn)}.v3-tend.baja{color:var(--v3-ok)}\n/* anillo de SLA */\n.v3-anillo{position:relative;width:56px;height:56px;flex:none;grid-row:1/2}\n.v3-anillo svg{width:56px;height:56px;transform:rotate(-90deg)}\n.v3-anillo circle{fill:none;stroke-width:5;stroke-linecap:round}\n.v3-anillo .base{stroke:var(--v3-ln)}.v3-anillo .arco{stroke:var(--v3-tono);transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .3s}\n.v3-anillo .meta{stroke:var(--v3-fg);opacity:.6;stroke-width:2.5;stroke-dasharray:1.6 999;stroke-linecap:butt}\n.v3-anillo .ic{position:absolute;inset:0;display:grid;place-items:center;color:var(--v3-tono)}\n.v3-anillo .ic svg{width:22px;height:22px;transform:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n/* estrellas de CSAT */\n.v3-estrellas{position:relative;display:inline-block;height:16px;width:90px;line-height:0}\n.v3-estrellas svg{width:90px;height:16px;display:block}\n.v3-estrellas .fondo{color:var(--v3-ln)}.v3-estrellas .lleno{position:absolute;left:0;top:0;width:90px;color:var(--v3-acc);clip-path:inset(0 var(--r,100%) 0 0);transition:clip-path .9s cubic-bezier(.2,.8,.2,1)}\n.v3-estrellas .lleno svg{width:90px}\n/* nivel del equipo */\n.v3-hex{position:relative;width:46px;height:46px;display:grid;place-items:center;color:var(--v3-acc);font-weight:800;font-size:19px}\n.v3-hex svg{position:absolute;inset:0;width:46px;height:46px;fill:color-mix(in srgb,var(--v3-acc) 18%,var(--v3-sk));stroke:var(--v3-acc);stroke-width:2;stroke-linejoin:round}\n.v3-hex b{position:relative}\n.v3-xp{grid-column:1/-1;margin-top:10px;height:8px;border-radius:99px;background:var(--v3-ln);overflow:hidden;position:relative}\n.v3-xp i{display:block;height:100%;width:100%;border-radius:99px;background:linear-gradient(90deg,var(--v3-acc),color-mix(in srgb,var(--v3-acc) 60%,#fff));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}\n.v3-xp i::after{content:\"\";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:v3-brillo 2.6s ease-in-out infinite}\n.v3-racha{display:inline-flex;align-items:center;gap:4px;font-weight:800;color:var(--v3-mu)}\n.v3-racha svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}\n.v3-racha.viva{color:var(--v3-acc)}.v3-racha.viva svg{fill:color-mix(in srgb,var(--v3-acc) 55%,transparent);animation:v3-llama .9s ease-in-out infinite alternate;transform-origin:50% 90%}\n.v3-nps-cuenta{font-weight:700;letter-spacing:.02em}\n/* tickets por estado */\n.v3-estados{grid-column:span 3;padding:14px 16px;border-radius:14px;background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg)}\n@media(max-width:1100px){.v3-estados{grid-column:1/-1}}\n.v3-est-cab{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}.v3-est-total{font-size:12px;color:var(--v3-mu)}\n.v3-est-lista{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}\n@media(max-width:1100px){.v3-est-lista{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:520px){.v3-est-lista{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.v3-est{--c:var(--v3-pri);position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:7px;align-items:center;padding:8px 10px 10px;border-radius:11px;background:color-mix(in srgb,var(--c) 9%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}\n.v3-est.sep{border-style:dashed}\n.v3-est[data-e=OPEN]{--c:var(--v3-pri)}.v3-est[data-e=IN_PROGRESS]{--c:var(--v3-acc)}.v3-est[data-e=PENDING_CUSTOMER]{--c:var(--v3-warn)}.v3-est[data-e=ESCALATED]{--c:var(--v3-bad)}.v3-est[data-e=REOPENED]{--c:#b98ae0}.v3-est[data-e=RESOLVED]{--c:color-mix(in srgb,var(--v3-ok) 70%,#fff)}.v3-est[data-e=CLOSED]{--c:var(--v3-ok)}\n.v3-est .v3-dot{color:var(--c)}.v3-est b{font-size:20px;line-height:1;font-variant-numeric:tabular-nums}\n.v3-est>span:nth-of-type(2){grid-column:1/-1;font-size:11.5px;color:var(--v3-mu);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.v3-est-pista{grid-column:1/-1;margin-top:6px;height:5px;border-radius:99px;background:var(--v3-ln);overflow:hidden}\n.v3-est-pista i{display:block;height:100%;width:100%;border-radius:99px;background:var(--c);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .7s cubic-bezier(.2,.8,.2,1)}\n.v3-est.sube,.v3-est.baja{animation:v3-destello-c .9s ease-out}\n.v3-est-nota{margin:10px 0 0;font-size:11.5px;color:var(--v3-mu)}\n@keyframes v3-destello-c{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 65%,transparent)}100%{box-shadow:0 0 0 10px transparent}}\n/* retroalimentación al cambiar un valor */\n.v3-k.sube,.v3-k.baja,.v3-k.sube-bien,.v3-k.baja-mal{animation:v3-destello .9s ease-out}\n.v3-k-val.pop{animation:v3-pop .45s cubic-bezier(.25,1,.5,1)}\n.v3-delta{position:absolute;right:14px;top:10px;font-size:12px;font-weight:800;padding:1px 8px;border-radius:999px;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));animation:v3-delta 1.4s ease-out forwards;pointer-events:none}\n.v3-k.nivel-up{animation:v3-nivel 1.4s ease-out}\n.v3-chispa{position:absolute;left:30px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--v3-acc);animation:v3-chispa 1.1s ease-out forwards;pointer-events:none}\n@keyframes v3-latido{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.45}}\n@keyframes v3-brillo{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}\n@keyframes v3-llama{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.18) rotate(3deg)}}\n@keyframes v3-destello{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--v3-tono) 70%,transparent);border-color:var(--v3-tono)}100%{box-shadow:0 0 0 14px transparent}}\n@keyframes v3-pop{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1);opacity:1}}\n@keyframes v3-delta{0%{opacity:0;transform:translateY(8px)}18%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}\n@keyframes v3-nivel{0%{box-shadow:0 0 0 0 var(--v3-acc)}40%{box-shadow:0 0 0 18px transparent,0 0 40px 6px color-mix(in srgb,var(--v3-acc) 60%,transparent)}100%{box-shadow:none}}\n@keyframes v3-chispa{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}\n\n/* ---------------------------------------------------------------- ficha del ticket */\n.v3-ficha{position:absolute;z-index:6;top:14px;right:14px;width:min(360px,calc(100% - 28px));max-height:calc(100% - 28px);overflow:auto;border-radius:16px;background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 30%,transparent);color:var(--v3-fg);outline:none;animation:v3-entra .32s cubic-bezier(.2,.9,.3,1.1)}\n.v3-ficha[data-nivel=ok],.v3-ficha[data-nivel=cumplido]{--v3-tono:var(--v3-ok)}.v3-ficha[data-nivel=riesgo]{--v3-tono:var(--v3-warn)}.v3-ficha[data-nivel=vencido]{--v3-tono:var(--v3-bad)}\n@keyframes v3-entra{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}\n@media(max-width:640px){.v3-ficha{top:auto;bottom:10px;right:10px;left:10px;width:auto;animation-name:v3-sube}@keyframes v3-sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}}\n.v3-f-cab{display:flex;align-items:flex-start;gap:10px;padding:14px 14px 10px;border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 16%,transparent),transparent)}\n.v3-f-num{font:700 17px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}\n.v3-f-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}\n.v3-f-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;display:grid;place-items:center}\n.v3-f-x:hover{color:var(--v3-fg);border-color:var(--v3-mu)}.v3-f-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}\n.v3-f-res{margin:0;padding:12px 14px 0;font-size:13.5px;line-height:1.45}\n.v3-f-sla{padding:12px 14px 4px}.v3-f-sla-t{display:flex;justify-content:space-between;font-size:12px;color:var(--v3-mu);margin-bottom:6px}.v3-f-sla-t b{color:var(--v3-fg)}\n.v3-f-barra{height:8px;border-radius:99px;background:var(--v3-ln);overflow:hidden}.v3-f-barra i{display:block;height:100%;width:100%;border-radius:99px;background:var(--v3-tono,var(--v3-ok));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .5s cubic-bezier(.2,.8,.2,1)}\n.v3-f-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:0;padding:12px 14px}\n.v3-f-fila{min-width:0}.v3-f-fila dt{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}.v3-f-fila dd{margin:2px 0 0;font-size:13px;font-weight:600;overflow-wrap:anywhere}\n.v3-f-hist{margin:0;padding:0 14px 6px;list-style:none;border-left:0}\n.v3-f-hist li{position:relative;padding:4px 0 4px 16px;font-size:12px;color:var(--v3-mu)}\n.v3-f-hist li::before{content:\"\";position:absolute;left:3px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--v3-ln);box-shadow:0 0 0 2px var(--v3-sf)}\n.v3-f-hist li:first-child::before{background:var(--v3-tono,var(--v3-pri))}.v3-f-hist li:first-child{color:var(--v3-fg)}\n.v3-f-t{margin:0;padding:6px 14px 4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}\n.v3-f-acc{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--v3-ln)}\n\n/* ---------------------------------------------------------------- selector de entradas */\n.v3-entradas{position:absolute;z-index:4;left:14px;bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:calc(100% - 28px);padding:6px 8px;border-radius:12px;background:color-mix(in srgb,var(--v3-sf) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--v3-ln)}\n.v3-entradas span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--v3-mu);margin-right:2px}\n.v3-entradas button{font-family:inherit;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer}\n.v3-entradas button:hover{border-color:var(--v3-acc)}\n.v3-entradas button[aria-pressed=true]{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.v3-entradas button:focus-visible,.v3-f-x:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n\n@media(prefers-reduced-motion:reduce){.v3-hud *,.v3-ficha,.v3-ficha *{animation:none!important;transition:none!important}}\n", gd = !1;
+var hd = "\n.v3-hud,.v3-ficha,.v3-entradas,.pt-herr,.pt-bot,.pt-usuario,.pt-inicio__ancla{\n  --v3-ok:var(--aybar-color-feedback-success-border,#2e8b57);--v3-warn:var(--aybar-color-feedback-warning-border,#e39b1c);\n  --v3-bad:var(--aybar-color-feedback-danger-border,#c0453a);--v3-acc:var(--aybar-color-secondary-400,#f6a42c);\n  --v3-fg:var(--aybar-color-fg-default,#e8f0f2);--v3-mu:var(--aybar-color-fg-muted,#9db4ba);\n  --v3-sf:var(--aybar-color-bg-surface,#1b2a31);--v3-sk:var(--aybar-color-bg-surface-sunken,#142026);--v3-ln:var(--aybar-color-border-subtle,#2d4048);\n  --v3-pri:var(--aybar-color-primary-500,#2b8a9c);font-family:inherit}\n\n/* ---------------------------------------------------------------- HUD de estadísticas */\n.v3-hud-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}\n@media(max-width:1100px){.v3-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:520px){.v3-hud-grid{grid-template-columns:minmax(0,1fr)}}\n.v3-k{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;padding:14px 16px;border-radius:14px;background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg);overflow:hidden;isolation:isolate;transition:border-color .3s,box-shadow .3s}\n.v3-k::before{content:\"\";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 22%,transparent),transparent 60%);opacity:.9}\n.v3-k[data-estado=ok]{--v3-tono:var(--v3-ok)}.v3-k[data-estado=warn]{--v3-tono:var(--v3-warn)}.v3-k[data-estado=bad]{--v3-tono:var(--v3-bad)}.v3-k[data-estado=acc]{--v3-tono:var(--v3-acc)}.v3-k[data-estado=pri]{--v3-tono:var(--v3-pri)}\n.v3-k-ic{position:relative;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--v3-tono) 38%,transparent)}\n.v3-k-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n.v3-k-lbl{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--v3-mu)}\n.v3-k-val{display:block;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--v3-fg)}\n.v3-k-val small{font-size:14px;font-weight:700;color:var(--v3-mu);margin-left:3px}\n.v3-k-sub{grid-column:1/-1;margin-top:10px;display:flex;align-items:center;gap:8px;min-height:20px;font-size:12px;color:var(--v3-mu);flex-wrap:nowrap;white-space:nowrap}\n.v3-k-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 14%,transparent);border:1px solid color-mix(in srgb,var(--v3-tono) 35%,transparent)}\n.v3-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}\n.v3-k-chip.pulsa .v3-dot{animation:v3-latido 1.1s ease-in-out infinite}\n.v3-spark{margin-left:auto;width:72px;min-width:40px;height:28px;flex:0 1 auto}\n.v3-spark path{fill:none;stroke:var(--v3-tono);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}\n.v3-spark .area{fill:color-mix(in srgb,var(--v3-tono) 20%,transparent);stroke:none}\n.v3-tend{font-weight:800;color:var(--v3-mu)}.v3-tend.sube{color:var(--v3-warn)}.v3-tend.baja{color:var(--v3-ok)}\n/* anillo de SLA */\n.v3-anillo{position:relative;width:56px;height:56px;flex:none;grid-row:1/2}\n.v3-anillo svg{width:56px;height:56px;transform:rotate(-90deg)}\n.v3-anillo circle{fill:none;stroke-width:5;stroke-linecap:round}\n.v3-anillo .base{stroke:var(--v3-ln)}.v3-anillo .arco{stroke:var(--v3-tono);transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .3s}\n.v3-anillo .meta{stroke:var(--v3-fg);opacity:.6;stroke-width:2.5;stroke-dasharray:1.6 999;stroke-linecap:butt}\n.v3-anillo .ic{position:absolute;inset:0;display:grid;place-items:center;color:var(--v3-tono)}\n.v3-anillo .ic svg{width:22px;height:22px;transform:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n/* estrellas de CSAT */\n.v3-estrellas{position:relative;display:inline-block;height:16px;width:90px;line-height:0}\n.v3-estrellas svg{width:90px;height:16px;display:block}\n.v3-estrellas .fondo{color:var(--v3-ln)}.v3-estrellas .lleno{position:absolute;left:0;top:0;width:90px;color:var(--v3-acc);clip-path:inset(0 var(--r,100%) 0 0);transition:clip-path .9s cubic-bezier(.2,.8,.2,1)}\n.v3-estrellas .lleno svg{width:90px}\n/* nivel del equipo */\n.v3-hex{position:relative;width:46px;height:46px;display:grid;place-items:center;color:var(--v3-acc);font-weight:800;font-size:19px}\n.v3-hex svg{position:absolute;inset:0;width:46px;height:46px;fill:color-mix(in srgb,var(--v3-acc) 18%,var(--v3-sk));stroke:var(--v3-acc);stroke-width:2;stroke-linejoin:round}\n.v3-hex b{position:relative}\n.v3-xp{grid-column:1/-1;margin-top:10px;height:8px;border-radius:99px;background:var(--v3-ln);overflow:hidden;position:relative}\n.v3-xp i{display:block;height:100%;width:100%;border-radius:99px;background:linear-gradient(90deg,var(--v3-acc),color-mix(in srgb,var(--v3-acc) 60%,#fff));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}\n.v3-xp i::after{content:\"\";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:v3-brillo 2.6s ease-in-out infinite}\n.v3-racha{display:inline-flex;align-items:center;gap:4px;font-weight:800;color:var(--v3-mu)}\n.v3-racha svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}\n.v3-racha.viva{color:var(--v3-acc)}.v3-racha.viva svg{fill:color-mix(in srgb,var(--v3-acc) 55%,transparent);animation:v3-llama .9s ease-in-out infinite alternate;transform-origin:50% 90%}\n.v3-nps-cuenta{font-weight:700;letter-spacing:.02em}\n/* tickets por estado */\n.v3-estados{grid-column:span 3;padding:14px 16px;border-radius:14px;background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg)}\n@media(max-width:1100px){.v3-estados{grid-column:1/-1}}\n.v3-est-cab{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}.v3-est-total{font-size:12px;color:var(--v3-mu)}\n.v3-est-lista{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}\n@media(max-width:1100px){.v3-est-lista{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:520px){.v3-est-lista{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.v3-est{--c:var(--v3-pri);position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:7px;align-items:center;padding:8px 10px 10px;border-radius:11px;background:color-mix(in srgb,var(--c) 9%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}\n.v3-est.sep{border-style:dashed}\n.v3-est[data-e=OPEN]{--c:var(--v3-pri)}.v3-est[data-e=IN_PROGRESS]{--c:var(--v3-acc)}.v3-est[data-e=PENDING_CUSTOMER]{--c:var(--v3-warn)}.v3-est[data-e=ESCALATED]{--c:var(--v3-bad)}.v3-est[data-e=REOPENED]{--c:#b98ae0}.v3-est[data-e=RESOLVED]{--c:color-mix(in srgb,var(--v3-ok) 70%,#fff)}.v3-est[data-e=CLOSED]{--c:var(--v3-ok)}\n.v3-est .v3-dot{color:var(--c)}.v3-est b{font-size:20px;line-height:1;font-variant-numeric:tabular-nums}\n.v3-est>span:nth-of-type(2){grid-column:1/-1;font-size:11.5px;color:var(--v3-mu);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.v3-est-pista{grid-column:1/-1;margin-top:6px;height:5px;border-radius:99px;background:var(--v3-ln);overflow:hidden}\n.v3-est-pista i{display:block;height:100%;width:100%;border-radius:99px;background:var(--c);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .7s cubic-bezier(.2,.8,.2,1)}\n.v3-est.sube,.v3-est.baja{animation:v3-destello-c .9s ease-out}\n@keyframes v3-destello-c{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 65%,transparent)}100%{box-shadow:0 0 0 10px transparent}}\n/* retroalimentación al cambiar un valor */\n.v3-k.sube,.v3-k.baja,.v3-k.sube-bien,.v3-k.baja-mal{animation:v3-destello .9s ease-out}\n.v3-k-val.pop{animation:v3-pop .45s cubic-bezier(.25,1,.5,1)}\n.v3-delta{position:absolute;right:14px;top:10px;font-size:12px;font-weight:800;padding:1px 8px;border-radius:999px;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));animation:v3-delta 1.4s ease-out forwards;pointer-events:none}\n.v3-k.nivel-up{animation:v3-nivel 1.4s ease-out}\n.v3-chispa{position:absolute;left:30px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--v3-acc);animation:v3-chispa 1.1s ease-out forwards;pointer-events:none}\n@keyframes v3-latido{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.45}}\n@keyframes v3-brillo{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}\n@keyframes v3-llama{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.18) rotate(3deg)}}\n@keyframes v3-destello{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--v3-tono) 70%,transparent);border-color:var(--v3-tono)}100%{box-shadow:0 0 0 14px transparent}}\n@keyframes v3-pop{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1);opacity:1}}\n@keyframes v3-delta{0%{opacity:0;transform:translateY(8px)}18%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}\n@keyframes v3-nivel{0%{box-shadow:0 0 0 0 var(--v3-acc)}40%{box-shadow:0 0 0 18px transparent,0 0 40px 6px color-mix(in srgb,var(--v3-acc) 60%,transparent)}100%{box-shadow:none}}\n@keyframes v3-chispa{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}\n\n/* ---------------------------------------------------------------- ficha del ticket */\n.v3-ficha{position:absolute;z-index:6;top:14px;right:14px;width:min(360px,calc(100% - 28px));max-height:calc(100% - 28px);overflow:auto;border-radius:16px;background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 30%,transparent);color:var(--v3-fg);outline:none;animation:v3-entra .32s cubic-bezier(.2,.9,.3,1.1)}\n.v3-ficha[data-nivel=ok],.v3-ficha[data-nivel=cumplido]{--v3-tono:var(--v3-ok)}.v3-ficha[data-nivel=riesgo]{--v3-tono:var(--v3-warn)}.v3-ficha[data-nivel=vencido]{--v3-tono:var(--v3-bad)}\n@keyframes v3-entra{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}\n@media(max-width:640px){.v3-ficha{top:auto;bottom:10px;right:10px;left:10px;width:auto;animation-name:v3-sube}@keyframes v3-sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}}\n.v3-f-cab{display:flex;align-items:flex-start;gap:10px;padding:14px 14px 10px;border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 16%,transparent),transparent)}\n.v3-f-num{font:700 17px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}\n.v3-f-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}\n.v3-f-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;display:grid;place-items:center}\n.v3-f-x:hover{color:var(--v3-fg);border-color:var(--v3-mu)}.v3-f-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}\n.v3-f-res{margin:0;padding:12px 14px 0;font-size:13.5px;line-height:1.45}\n.v3-f-sla{padding:12px 14px 4px}.v3-f-sla-t{display:flex;justify-content:space-between;font-size:12px;color:var(--v3-mu);margin-bottom:6px}.v3-f-sla-t b{color:var(--v3-fg)}\n.v3-f-barra{height:8px;border-radius:99px;background:var(--v3-ln);overflow:hidden}.v3-f-barra i{display:block;height:100%;width:100%;border-radius:99px;background:var(--v3-tono,var(--v3-ok));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .5s cubic-bezier(.2,.8,.2,1)}\n.v3-f-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:0;padding:12px 14px}\n.v3-f-fila{min-width:0}.v3-f-fila dt{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}.v3-f-fila dd{margin:2px 0 0;font-size:13px;font-weight:600;overflow-wrap:anywhere}\n.v3-f-hist{margin:0;padding:0 14px 6px;list-style:none;border-left:0}\n.v3-f-hist li{position:relative;padding:4px 0 4px 16px;font-size:12px;color:var(--v3-mu)}\n.v3-f-hist li::before{content:\"\";position:absolute;left:3px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--v3-ln);box-shadow:0 0 0 2px var(--v3-sf)}\n.v3-f-hist li:first-child::before{background:var(--v3-tono,var(--v3-pri))}.v3-f-hist li:first-child{color:var(--v3-fg)}\n.v3-f-t{margin:0;padding:6px 14px 4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}\n.v3-f-acc{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--v3-ln)}\n\n/* ---------------------------------------------------------------- selector de entradas */\n.v3-entradas{position:absolute;z-index:4;left:14px;bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:calc(100% - 28px);padding:6px 8px;border-radius:12px;background:color-mix(in srgb,var(--v3-sf) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--v3-ln)}\n.v3-entradas span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--v3-mu);margin-right:2px}\n.v3-entradas button{font-family:inherit;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer}\n.v3-entradas button:hover{border-color:var(--v3-acc)}\n.v3-entradas button[aria-pressed=true]{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.v3-entradas button:focus-visible,.v3-f-x:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n\n\n/* ---------------------------------------------------------------- usuario en la barra superior */\n.pt-usuario{display:flex;align-items:center;gap:10px;color:var(--v3-fg);font-size:13px}\n.pt-usuario__av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;letter-spacing:.02em;background:color-mix(in srgb,var(--v3-pri) 28%,var(--v3-sk));color:var(--v3-fg);box-shadow:inset 0 0 0 1px var(--v3-ln)}\n.pt-usuario__txt{display:flex;flex-direction:column;line-height:1.2}.pt-usuario__txt b{font-weight:600}.pt-usuario__txt small{color:var(--v3-mu);font-size:11.5px}\n@media(max-width:700px){.pt-usuario__txt{display:none}}\n\n/* ---------------------------------------------------------------- herramientas flotantes (ver como, tema, apariencia, simulación, notas) */\n.pt-herr{position:fixed;left:16px;bottom:16px;z-index:60}\n.pt-herr__fab{width:46px;height:46px;border-radius:50%;border:1px solid var(--v3-ln);background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--v3-fg);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-herr__fab:hover,.pt-herr__fab[aria-expanded=true]{border-color:var(--v3-acc);transform:rotate(45deg)}\n.pt-herr__fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}\n.pt-herr__fab:focus-visible,.pt-herr button:focus-visible,.pt-bot button:focus-visible,.pt-inicio__ancla button:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n.pt-herr__panel{position:absolute;left:0;bottom:58px;width:min(360px,calc(100vw - 32px));max-height:min(72vh,640px);overflow:auto;border-radius:16px;background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 22px 60px rgba(0,0,0,.5);color:var(--v3-fg);animation:v3-arriba .24s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-arriba{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}\n.pt-herr__cab{display:flex;align-items:center;gap:8px;padding:14px 16px 10px}.pt-herr__cab h2{margin:0;font-size:15px;font-weight:700}.pt-herr__cab small{display:block;color:var(--v3-mu);font-size:11.5px;margin-top:2px}\n.pt-herr__atras{border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);border-radius:9px;width:30px;height:30px;cursor:pointer;font-size:16px}\n.pt-herr__sec{padding:6px 16px 10px}.pt-herr__sec>b{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu);margin-bottom:6px}\n.pt-herr__filas{display:grid;gap:6px;padding:4px 12px 14px}\n.pt-herr__fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-herr__fila:hover{border-color:var(--v3-acc)}.pt-herr__fila b{display:block;font-size:13px}.pt-herr__fila small{display:block;color:var(--v3-mu);font-size:11.5px}.pt-herr__fila i{font-style:normal;color:var(--v3-mu);font-size:18px}\n.pt-herr__cuenta{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f);font-size:11px;font-weight:800;margin-left:6px}\n.pt-herr__notas{display:grid;gap:8px;padding:4px 16px 16px}.pt-herr__nota{padding:10px 12px;border-radius:12px;background:var(--v3-sk);border:1px solid var(--v3-ln);font-size:12.5px;line-height:1.45}\n.pt-herr__vacio{padding:6px 16px 18px;color:var(--v3-mu);font-size:12.5px}\n\n/* ---------------------------------------------------------------- inicio: consulta 360 y vista en vivo */\n.pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:8px;align-items:center;padding:10px 24px;background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}\n.pt-inicio__ancla button{font:600 12.5px/1 inherit;font-family:inherit;padding:8px 14px;border-radius:999px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}\n.pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}\n.pt-inicio__ancla button[aria-current=true]{color:var(--aybar-color-bg-canvas,#0f1a1f);background:var(--v3-acc);border-color:var(--v3-acc)}\n.pt-inicio section{scroll-margin-top:calc(var(--pt-navbar-alto,0px) + 56px)}\n.pt-inicio__vivo{margin-top:28px;padding-top:12px;border-top:1px solid var(--v3-ln)}\n.pt-inicio__ficha{font-size:13px}\n\n/* ---------------------------------------------------------------- asistente flotante */\n.pt-bot{position:fixed;right:20px;bottom:20px;z-index:60}\n.pt-bot__fab{position:relative;display:block;width:78px;height:78px;padding:0;border-radius:50%;border:1px solid var(--v3-ln);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sf)),var(--v3-sk));cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,.5);overflow:hidden;transition:transform .3s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-bot__fab:hover{transform:translateY(-3px);border-color:var(--v3-acc)}.pt-bot__fab canvas{width:100%;height:100%;display:block}\n.pt-bot__globo{position:absolute;right:88px;bottom:22px;max-width:220px;padding:9px 12px;border-radius:14px 14px 4px 14px;background:var(--v3-sf);border:1px solid var(--v3-ln);box-shadow:0 10px 28px rgba(0,0,0,.4);font-size:12.5px;line-height:1.35;color:var(--v3-fg);cursor:pointer;animation:v3-arriba .3s cubic-bezier(.25,1,.5,1);text-align:left}\n.pt-bot__panel{position:absolute;right:0;bottom:92px;width:min(410px,calc(100vw - 32px));height:min(620px,calc(100vh - 150px));display:flex;flex-direction:column;border-radius:18px;background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 24px 70px rgba(0,0,0,.55);color:var(--v3-fg);overflow:hidden;animation:v3-arriba .28s cubic-bezier(.25,1,.5,1)}\n.pt-bot__cab{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-acc) 14%,transparent),transparent)}\n.pt-bot__av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 25%,var(--v3-sf)),var(--v3-sk));border:1px solid var(--v3-ln)}.pt-bot__av canvas{width:100%;height:100%;display:block}\n.pt-bot__cab h2{margin:0;font-size:14.5px;font-weight:700}.pt-bot__cab small{display:block;color:var(--v3-mu);font-size:11.5px;margin-top:1px}\n.pt-bot__x{margin-left:auto;width:30px;height:30px;border-radius:9px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer}.pt-bot__x:hover{color:var(--v3-fg)}\n.pt-bot__msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}\n.pt-bot__m{max-width:94%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.5;white-space:pre-wrap;animation:v3-msg .28s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-msg{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}\n.pt-bot__m--bot{align-self:flex-start;background:var(--v3-sk);border:1px solid var(--v3-ln);border-bottom-left-radius:4px}\n.pt-bot__m--yo{align-self:flex-end;background:color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--v3-acc) 40%,transparent);border-bottom-right-radius:4px}\n.pt-bot__m h3{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--v3-acc)}\n.pt-bot__m ul,.pt-bot__m ol{margin:6px 0 0;padding-left:18px}.pt-bot__m li{margin:3px 0}\n.pt-bot__texto{margin:6px 0;padding:10px 12px;border-radius:10px;background:var(--v3-sf);border:1px dashed var(--v3-ln);white-space:pre-wrap}\n.pt-bot__acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}\n.pt-bot__btn{font-family:inherit;font-size:12px;font-weight:600;padding:6px 11px;border-radius:999px;border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-bot__btn:hover{border-color:var(--v3-acc)}.pt-bot__btn--p{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__btn[aria-pressed=true]{background:color-mix(in srgb,var(--v3-acc) 22%,transparent);border-color:var(--v3-acc)}\n.pt-bot__h{display:flex;gap:8px;align-items:flex-start;margin:4px 0}.pt-bot__h i{font-style:normal;flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__h[data-n=ok] i{background:var(--v3-ok)}.pt-bot__h[data-n=aviso] i{background:var(--v3-warn)}.pt-bot__h[data-n=alto] i{background:var(--v3-bad)}\n.pt-bot__chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px;border-top:1px solid var(--v3-ln)}\n.pt-bot__form{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--v3-ln)}\n.pt-bot__form input{flex:1;min-width:0;font:500 13px inherit;font-family:inherit;padding:9px 12px;border-radius:999px;border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg)}\n.pt-bot__form input:focus{outline:2px solid var(--v3-acc);outline-offset:1px}\n.pt-bot__puntos{display:inline-flex;gap:4px;padding:2px 0}.pt-bot__puntos i{width:6px;height:6px;border-radius:50%;background:var(--v3-mu);animation:v3-punto 1s ease-in-out infinite}.pt-bot__puntos i:nth-child(2){animation-delay:.15s}.pt-bot__puntos i:nth-child(3){animation-delay:.3s}\n@keyframes v3-punto{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}\n@media(max-width:640px){.pt-bot{right:12px;bottom:12px}.pt-bot__panel{bottom:88px;height:calc(100vh - 130px)}}\n\n@media(prefers-reduced-motion:reduce){.pt-herr *,.pt-bot *,.pt-inicio__ancla *{animation:none!important;transition:none!important}}\n@media(prefers-reduced-motion:reduce){.v3-hud *,.v3-ficha,.v3-ficha *{animation:none!important;transition:none!important}}\n", gd = !1;
 function _d() {
 	if (gd || typeof document > "u" || (gd = !0, document.getElementById("v3-estilos"))) return;
 	let e = document.createElement("style");
@@ -14947,9 +14947,7 @@ function Ef(e) {
 	let _ = Tf("header", "v3-est-cab"), v = Tf("span", "v3-k-lbl");
 	v.textContent = "Tickets por estado", n.totalEst = Tf("span", "v3-est-total"), _.append(v, n.totalEst);
 	let y = Tf("ul", "v3-est-lista");
-	n.listaEst = y;
-	let b = Tf("p", "v3-est-nota");
-	return b.textContent = "Sin «cancelados»: ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO.", g.append(_, y, b), t.append(g), {
+	return n.listaEst = y, g.append(_, y), t.append(g), {
 		t: {
 			act: a,
 			sla: l,
@@ -15008,9 +15006,9 @@ function Nf(e, t) {
 	let c = n.hist.length > 6 ? n.hist[n.hist.length - 7] : n.hist[0] ?? t.act, l = t.act - c;
 	i.tend.textContent = l === 0 ? "→" : l > 0 ? `▲ ${l}` : `▼ ${-l}`, i.tend.className = "v3-tend " + (l > 0 ? "sube" : l < 0 ? "baja" : ""), i.tend.title = "Diferencia frente a hace unos segundos";
 	let u = t.sla, d = u == null ? "pri" : u >= 90 ? "ok" : u >= 70 ? "warn" : "bad";
-	r.sla.el.dataset.estado = d, Df(r.sla, u, Cf.pct, "%"), i.arco.setAttribute("stroke-dashoffset", String(144.5 * (1 - (u ?? 0) / 100))), jf(i.chipMeta, "Meta 90 %", d === "ok" ? "ok" : "warn"), i.subSla.textContent = t.res ? `${t.enSla} de ${t.res} en plazo` : "Aún sin resueltos", r.csat.el.dataset.estado = t.csat == null ? "pri" : t.csat >= 4 ? "acc" : t.csat >= 3 ? "warn" : "bad", Df(r.csat, t.csat, Cf.dec, "/5"), i.estrellas.querySelector(".lleno").style.setProperty("--r", `${100 - (t.csat ?? 0) / 5 * 100}%`), i.subCsat.textContent = t.nCsat ? `${t.nCsat} respuesta${t.nCsat === 1 ? "" : "s"}` : "Sin respuestas", r.niv.el.dataset.estado = "acc", i.hexN.textContent = String(t.nivel), r.niv.actual == null || a == null ? (r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`) : (t.xp !== a.xp || t.nivel !== a.nivel) && (cancelAnimationFrame(r.niv.raf), r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`, r.niv.val.classList.remove("pop"), r.niv.val.offsetWidth, r.niv.val.classList.add("pop")), i.xp.style.setProperty("--p", String(Math.min(1, t.xp / t.meta))), i.racha.className = "v3-racha" + (t.racha > 0 ? " viva" : ""), i.racha.lastElementChild.textContent = `racha ${t.racha}`, i.racha.title = "Tickets seguidos dentro del SLA", i.faltan.textContent = `faltan ${Math.max(0, t.meta - t.xp)} XP`;
+	r.sla.el.dataset.estado = d, Df(r.sla, u, Cf.pct, "%"), i.arco.setAttribute("stroke-dashoffset", String(144.5 * (1 - (u ?? 0) / 100))), jf(i.chipMeta, "Meta 90 %", d === "ok" ? "ok" : "warn"), i.subSla.textContent = t.res ? `${t.enSla} de ${t.res} en plazo` : "Aún sin resueltos", r.csat.el.dataset.estado = t.csat == null ? "pri" : t.csat >= 4 ? "acc" : t.csat >= 3 ? "warn" : "bad", Df(r.csat, t.csat, Cf.dec, "/5"), i.estrellas.querySelector(".lleno").style.setProperty("--r", `${100 - (t.csat ?? 0) / 5 * 100}%`), i.subCsat.textContent = t.nCsat ? `${t.nCsat} respuesta${t.nCsat === 1 ? "" : "s"}` : "Sin respuestas", r.niv.el.dataset.estado = "acc", i.hexN.textContent = String(t.nivel), r.niv.actual == null || a == null ? (r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`) : (t.xp !== a.xp || t.nivel !== a.nivel) && (cancelAnimationFrame(r.niv.raf), r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`, r.niv.val.classList.remove("pop"), r.niv.val.offsetWidth, r.niv.val.classList.add("pop")), i.xp.style.setProperty("--p", String(Math.min(1, t.xp / t.meta))), i.racha.className = "v3-racha" + (t.racha > 0 ? " viva" : ""), i.racha.lastElementChild.textContent = `racha ${t.racha}`, i.racha.title = "Tickets seguidos dentro del SLA", i.faltan.textContent = `faltan ${Math.max(0, t.meta - t.xp)} XP`, globalThis.__ptNota?.("Tickets por estado: no incluye «cancelados». Ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO."), globalThis.__ptNota?.(t.nps.real ? "NPS real: pregunta «¿Recomendarías…?» de 0 a 10 agregada a la encuesta de cierre (propuesta del PO, sin HU aprobada). Su relación con el NPS-C (DEP-10) está por definir." : "NPS preliminar derivado del CSAT hasta contar con el KPI Engine (DEP-10).");
 	let f = t.nps.valor;
-	r.nps.el.dataset.estado = f == null ? "pri" : f >= 30 ? "ok" : f >= 0 ? "warn" : "bad", r.nps.el.querySelector(".v3-k-lbl").textContent = t.nps.real ? "NPS" : "NPS preliminar", Df(r.nps, f, Cf.signed), jf(i.chipNps, t.nps.real ? `Real · n=${t.nps.n}` : "Supuesto · desde CSAT", t.nps.real ? "ok" : "warn"), i.cuentaNps.textContent = t.nps.n ? `▲${t.nps.prom} ●${t.nps.pas} ▼${t.nps.det}` : "Sin respuestas", i.cuentaNps.title = "Promotores · pasivos · detractores", r.nps.el.title = t.nps.real ? "NPS = % que responde 9–10 menos % que responde 0–6 a «¿Recomendarías…?» (propuesta del PO, sin HU aprobada)." : "NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).";
+	r.nps.el.dataset.estado = f == null ? "pri" : f >= 30 ? "ok" : f >= 0 ? "warn" : "bad", r.nps.el.querySelector(".v3-k-lbl").textContent = t.nps.real ? "NPS" : "NPS preliminar", Df(r.nps, f, Cf.signed), jf(i.chipNps, t.nps.real ? `Encuesta · n=${t.nps.n}` : "Estimado desde CSAT", t.nps.real ? "ok" : "warn"), i.cuentaNps.textContent = t.nps.n ? `▲${t.nps.prom} ●${t.nps.pas} ▼${t.nps.det}` : "Sin respuestas", i.cuentaNps.title = "Promotores · pasivos · detractores", r.nps.el.title = t.nps.real ? "NPS = % que responde 9–10 menos % que responde 0–6 a «¿Recomendarías…?»." : "NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor).";
 	let p = Math.max(1, ...t.estados.map((e) => e.v)), m = t.estados.reduce((e, t) => e + t.v, 0);
 	i.totalEst.textContent = `${m} en total`, t.estados.forEach((e, t) => {
 		let r = n.est.get(e.id);
@@ -15031,4 +15029,353 @@ function Nf(e, t) {
 	}), a && (t.act !== a.act && (Of(r.act.el, t.act > a.act ? "sube" : "baja"), kf(r.act.el, `${t.act > a.act ? "+" : ""}${t.act - a.act}`)), u != null && a.sla != null && u !== a.sla && (Of(r.sla.el, u > a.sla ? "sube-bien" : "baja-mal"), kf(r.sla.el, `${u > a.sla ? "+" : ""}${u - a.sla} pp`)), t.csat != null && a.csat != null && Math.abs(t.csat - a.csat) >= .05 && (Of(r.csat.el, t.csat > a.csat ? "sube-bien" : "baja-mal"), kf(r.csat.el, `${t.csat > a.csat ? "+" : ""}${(t.csat - a.csat).toFixed(1).replace(".", ",")}`)), t.nivel > a.nivel ? (Of(r.niv.el, "nivel-up"), Af(r.niv.el), kf(r.niv.el, `¡Nivel ${t.nivel}!`)) : t.xp > a.xp && kf(r.niv.el, `+${t.xp - a.xp} XP`), t.racha > 0 && t.racha % 10 == 0 && t.racha !== a.racha && Af(r.niv.el)), n.prev = { ...t };
 }
 //#endregion
-export { Nf as actualizarHud, _d as inyectarEstilos, _f as montarGrafo, Kd as montarVivo };
+//#region src/three/bot.ts
+var Pf = [
+	{
+		id: "empatico",
+		n: "Empático"
+	},
+	{
+		id: "formal",
+		n: "Formal"
+	},
+	{
+		id: "breve",
+		n: "Breve"
+	}
+], Ff = {
+	CTA: "tu consulta sobre tu estado de cuenta",
+	PED: "tu pedido",
+	VIS: "la visita técnica que solicitaste",
+	QUE: "tu queja",
+	REC: "tu reclamo",
+	GAR: "tu reclamo de garantía",
+	CIT: "el reporte de la incidencia en tu zona",
+	RES: "el proceso sobre tu contrato",
+	ING: "tu solicitud de ingreso al proyecto",
+	RSV: "tu reserva de bus"
+}, If = (e) => (e.cliente ?? "cliente").split(" ")[0], Lf = (e) => Ff[e.tipoId] ?? "tu solicitud";
+function Rf(e, t = !1) {
+	let n = Lf(e);
+	switch (e.estadoId) {
+		case "OPEN": return t ? "ya la recibimos y la estamos asignando" : `hemos registrado ${n} y la estamos asignando al equipo de ${e.area}.`;
+		case "IN_PROGRESS": return t ? "estamos trabajando en ello" : `estamos trabajando en ${n} con el equipo de ${e.area}.`;
+		case "PENDING_CUSTOMER": return t ? "necesitamos un dato tuyo para avanzar" : `para avanzar con ${n} necesitamos que nos confirmes la información que te pedimos.`;
+		case "ESCALATED": return t ? "lo derivamos a un equipo especializado" : `hemos derivado ${n} a un equipo especializado para que lo revise con prioridad.`;
+		case "RESOLVED": return t ? "ya lo resolvimos; confírmanos que todo está bien" : `ya resolvimos ${n}. ¿Podrías confirmarnos en Mi Portal que todo quedó conforme?`;
+		case "CLOSED": return t ? "quedó cerrado" : `${n} quedó cerrado. Si algo no te convence, puedes pedirnos reabrirlo.`;
+		case "REOPENED": return t ? "lo reabrimos y lo estamos revisando de nuevo" : `reabrimos ${n} y lo estamos revisando de nuevo, con un nuevo plazo.`;
+		default: return `estamos atendiendo ${n}.`;
+	}
+}
+function zf(e, t = !1) {
+	return e.estadoId === "CLOSED" ? "" : e.sla.nivel === "vencido" || e.sla.nivel === "fuera" ? t ? "Lamentamos la demora: ya lo priorizamos." : "Lamentamos la demora: ya lo estamos priorizando y te escribiremos hoy mismo con novedades." : e.sla.nivel === "cumplido" ? "" : t ? `Te respondemos antes del ${e.sla.vence}.` : `Te daremos una respuesta a más tardar el ${e.sla.vence}.`;
+}
+function Bf(e, t) {
+	if (!e) return "Abre un ticket y te redacto la respuesta con su contexto.";
+	let n = e.usuario, r = e.cliente ?? "cliente", i = zf(e), a = Rf(e);
+	if (t === "formal") return `Estimado(a) ${r}:\n\nEn relación con ${Lf(e)} (ticket ${e.numero}), ${a}${i ? `\n\n${i}` : ""}\n\nQuedamos atentos a cualquier consulta.\n\nAtentamente,\n${n}\nAtención al Cliente · Aybar`;
+	if (t === "breve") return `Hola ${If(e)}, sobre ${Lf(e)} (${e.numero}): ${Rf(e, !0)}. ${zf(e, !0)} — ${n}`.replace(/\s+—/, " —").replace(". .", ".");
+	let o = e.sla.nivel === "vencido" || e.estadoId === "REOPENED" ? "Sentimos mucho el inconveniente y te agradecemos tu paciencia." : `Gracias por escribirnos; sabemos que ${Lf(e)} es importante para ti.`;
+	return `Hola ${If(e)}, ${o}\n\n${a[0].toUpperCase() + a.slice(1)}${i ? `\n\n${i}` : ""}\n\nSi necesitas algo más mientras tanto, aquí estoy para ayudarte.\n\nUn saludo cordial,\n${n}`;
+}
+function Vf(e) {
+	if (!e) return {
+		titulo: "Sin ticket abierto",
+		lineas: ["Abre un ticket desde la bandeja o la vista en vivo y te lo resumo."]
+	};
+	let t = [
+		`${e.tipo} por ${e.canal}${e.cliente ? ` · cliente: ${e.cliente}` : ""}.`,
+		`Está «${e.estado}» en ${e.area}${e.responsable ? ` con ${e.responsable}` : ", sin responsable"}${e.rayo ? " y tiene rayo" : ""}.`,
+		e.estadoId === "CLOSED" ? "El SLA ya no corre." : `SLA de ${e.sla.hito}: ${e.sla.nivel === "vencido" ? "vencido" : e.sla.nivel === "riesgo" ? "en riesgo" : "en plazo"}, vence el ${e.sla.vence} (${e.sla.restante}).`,
+		e.historial[0] ? `Último movimiento: ${e.historial[0].texto} (${e.historial[0].fecha}).` : "Aún no tiene movimientos de estado.",
+		`${e.mensajes} mensaje${e.mensajes === 1 ? "" : "s"} al cliente y ${e.notas} nota${e.notas === 1 ? "" : "s"} interna${e.notas === 1 ? "" : "s"}.`
+	];
+	return e.reaperturas && t.push(`Se reabrió ${e.reaperturas} vez${e.reaperturas === 1 ? "" : "es"}: conviene revisar qué falló antes.`), {
+		titulo: `${e.numero} · ${e.resumen}`,
+		lineas: t
+	};
+}
+var Hf = {
+	REC: ["Asiento del Libro de Reclamaciones registrado", "Respuesta formal con cargo de entrega"],
+	QUE: ["Asiento del Libro de Reclamaciones registrado", "Respuesta formal con cargo de entrega"],
+	GAR: ["Inspección técnica registrada", "Resolución comunicada al cliente"],
+	CTA: ["Datos de cuenta verificados con el cliente"],
+	VIS: ["Visita realizada y constancia adjunta"]
+};
+function Uf(e) {
+	if (!e) return {
+		accion: "Abrir un ticket",
+		motivo: "No hay un ticket en pantalla.",
+		pasos: ["Elige uno en la bandeja o en la vista en vivo."],
+		criterios: []
+	};
+	let t = [
+		"Respuesta enviada al cliente",
+		...Hf[e.tipoId] ?? [],
+		"Cliente informado del cierre"
+	];
+	return e.sla.nivel === "vencido" && e.estadoId !== "CLOSED" ? {
+		accion: "Priorizar y avisar al cliente",
+		motivo: "El SLA ya venció.",
+		pasos: [
+			"Escribe al cliente reconociendo la demora y dando una nueva fecha.",
+			"Si no puedes resolverlo hoy, pide apoyo al supervisor (rayo) o deriva.",
+			"Deja una nota interna con el motivo del retraso."
+		],
+		criterios: t
+	} : e.estadoId === "OPEN" && !e.primeraRespuesta ? {
+		accion: "Registrar la primera respuesta",
+		motivo: "Sin primera respuesta el ticket sigue en «Abierto» y corre el SLA de respuesta.",
+		pasos: ["Responde al cliente con lo que ya sabes.", "El ticket pasa solo a «En atención»."],
+		criterios: t
+	} : e.estadoId === "PENDING_CUSTOMER" ? {
+		accion: "Recordar al cliente lo que falta",
+		motivo: "Estamos esperando su respuesta.",
+		pasos: ["Envía un recordatorio amable por el mismo canal.", "Si no responde en 2 días hábiles, cierra la espera y avisa a tu líder."],
+		criterios: t
+	} : e.estadoId === "ESCALATED" ? {
+		accion: "Dar seguimiento al área",
+		motivo: "El caso está en otro equipo.",
+		pasos: ["Consulta el avance con el área responsable.", "Informa al cliente con una fecha probable."],
+		criterios: t
+	} : e.estadoId === "RESOLVED" ? {
+		accion: "Esperar la confirmación del cliente",
+		motivo: "El cierre formal lo confirma el cliente en Mi Portal.",
+		pasos: ["Pídele confirmar en Mi Portal.", "Cuando confirme, el ticket pasa a «Cerrado» y se envía la encuesta."],
+		criterios: t
+	} : e.estadoId === "CLOSED" ? {
+		accion: "Nada pendiente",
+		motivo: "El ticket está cerrado.",
+		pasos: ["Si el cliente rechaza la solución, reábrelo con un nuevo plazo."],
+		criterios: []
+	} : e.estadoId === "REOPENED" ? {
+		accion: "Revisar por qué se reabrió",
+		motivo: "Un ticket reabierto tiene un nuevo SLA.",
+		pasos: ["Lee la última respuesta del cliente.", "Evita repetir lo ya intentado y propón una solución distinta."],
+		criterios: t
+	} : e.sla.nivel === "riesgo" ? {
+		accion: "Adelantar la resolución",
+		motivo: "El SLA está por vencer.",
+		pasos: ["Resuelve hoy o deriva al área que puede hacerlo.", "Avisa al cliente del avance."],
+		criterios: t
+	} : {
+		accion: "Avanzar hacia la resolución",
+		motivo: "El ticket está en atención y dentro del plazo.",
+		pasos: [
+			"Revisa la guía de solución del tipo de ticket.",
+			"Si otra área puede resolverlo, derívalo con el motivo.",
+			"Cuando lo resuelvas, responde al cliente y cambia el estado."
+		],
+		criterios: t
+	};
+}
+var Wf = [
+	[/\bmentiros[oa]\b/gi, "incorrecto"],
+	[/\bculpa (tuya|suya|del cliente)\b/gi, "una confusión"],
+	[/\bincompetente(s)?\b/gi, "poco claro"],
+	[/\babsurd[oa]\b/gi, "difícil de entender"],
+	[/\bexager(a|ando|ación)\b/gi, "considera mucho"]
+];
+function Gf(e, t) {
+	let n = t.trim();
+	if (!n) return {
+		hallazgos: [{
+			nivel: "aviso",
+			texto: "Aún no hay borrador: escribe el mensaje y vuelve a pedirme la revisión."
+		}],
+		corregido: "",
+		anonimizados: 0
+	};
+	let r = [], i = n, a = 0;
+	i = i.replace(/(?<!\d)(?:\d[ -]?){13,19}(?!\d)/g, () => (a++, "tarjeta ••••")), i = i.replace(/(?<!\d)\d{8}(?!\d)/g, () => (a++, "DNI ••••••")), a && r.push({
+		nivel: "alto",
+		texto: `Hay ${a} dato${a === 1 ? "" : "s"} personal${a === 1 ? "" : "es"} (DNI o tarjeta). No viajan a ningún modelo: ya los oculté en la versión corregida.`
+	});
+	for (let [e, t] of Wf) e.test(i) && (r.push({
+		nivel: "aviso",
+		texto: `Evita juicios de valor como «${(i.match(e) ?? [""])[0]}»: suena a reproche.`
+	}), i = i.replace(e, t));
+	let o = i.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ]/g, "");
+	o.length > 20 && o.replace(/[^A-ZÁÉÍÓÚÑ]/g, "").length / o.length > .35 && (r.push({
+		nivel: "aviso",
+		texto: "Demasiadas mayúsculas: se lee como si gritaras."
+	}), i = i.charAt(0) + i.slice(1).toLowerCase()), (i.match(/!/g) ?? []).length > 2 && (r.push({
+		nivel: "aviso",
+		texto: "Muchos signos de exclamación; baja el tono."
+	}), i = i.replace(/!{2,}/g, "!"));
+	let s = e ? If(e) : "cliente";
+	return /\b(hola|estimad[oa]|buen[oa]s)\b/i.test(i) || (r.push({
+		nivel: "aviso",
+		texto: "Falta un saludo."
+	}), i = `Hola ${s}, ${i.charAt(0).toLowerCase()}${i.slice(1)}`), !/\d{1,2}\s?(de|\/)|horas|días|plazo|hoy|mañana|antes del/i.test(i) && e && e.estadoId !== "CLOSED" && (r.push({
+		nivel: "aviso",
+		texto: "No dices cuándo tendrá novedades."
+	}), i += `\n\n${zf(e)}`.trimEnd()), /saludos|atentamente|gracias|quedamos|cualquier consulta/i.test(i) || (r.push({
+		nivel: "aviso",
+		texto: "Falta un cierre cordial."
+	}), i += `\n\nQuedamos atentos a cualquier consulta.${e ? `\n${e.usuario}` : ""}`), n.length < 40 && r.push({
+		nivel: "aviso",
+		texto: "Es muy breve: añade qué se hizo y qué sigue."
+	}), n.length > 700 && r.push({
+		nivel: "aviso",
+		texto: "Es largo: el cliente lee mejor mensajes cortos con un solo pedido."
+	}), r.length || r.push({
+		nivel: "ok",
+		texto: "Se ve bien: tono correcto, claro y con siguiente paso."
+	}), {
+		hallazgos: r,
+		corregido: r.length === 1 && r[0].nivel === "ok" ? n : i,
+		anonimizados: a
+	};
+}
+var Kf = "Hola, soy tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.";
+function qf(e, t) {
+	let n = t.toLowerCase();
+	return /redact|respuesta|escrib|mensaje/.test(n) ? {
+		texto: "Claro, elige el tono y te lo redacto.",
+		accion: "redactar"
+	} : /resum|qué pas|cómo va|situaci/.test(n) ? {
+		texto: "Te lo resumo.",
+		accion: "resumir"
+	} : /siguiente|qué hago|ahora|paso|recomiend/.test(n) ? {
+		texto: "Esto es lo que haría.",
+		accion: "paso"
+	} : /revis|borrador|corrig|tono/.test(n) ? {
+		texto: "Reviso lo que escribiste.",
+		accion: "revisar"
+	} : !e && /ticket|cliente|plazo|sla/.test(n) ? { texto: "Ahora no hay un ticket abierto. Entra a uno y te respondo con su contexto." } : /plazo|sla|vence|cuánto tiempo/.test(n) && e ? { texto: e.estadoId === "CLOSED" ? "Este ticket ya está cerrado: no corre SLA." : `El SLA de ${e.sla.hito} vence el ${e.sla.vence} (${e.sla.restante}). Está ${e.sla.nivel === "vencido" ? "vencido" : e.sla.nivel === "riesgo" ? "en riesgo" : "en plazo"}.` } : /cliente|quién es/.test(n) && e ? { texto: e.cliente ? `El cliente es ${e.cliente}. Escribió por ${e.canal} por «${e.resumen}».` : "Este ticket se registró con datos mínimos y todavía no está ligado a un cliente." } : /cerrar|cierre/.test(n) && e ? { texto: `Para cerrar: ${Uf(e).criterios.join("; ") || "ya está cerrado"}. El cierre formal lo confirma el cliente en Mi Portal.` } : /rayo/.test(n) ? { texto: "El rayo sube un ticket al tope de la bandeja. Solo lo marca un supervisor o líder, con motivo, y el área tiene un tope del 10 %." } : /deriv|escal/.test(n) ? { texto: "Deriva a otra área si no es tu competencia o falta información de ella; escala a Eje 3 si hay señal de conflicto. En ambos casos indica el motivo." } : /gracias/.test(n) ? { texto: "¡Con gusto! Aquí sigo." } : /hola|buen[oa]s/.test(n) ? { texto: Kf } : { texto: "Aún no sé responder eso, pero puedo redactar la respuesta, resumir el ticket, sugerir el siguiente paso o revisar tu borrador." };
+}
+var Jf = (e, t) => {
+	try {
+		let t = document.createElement("i");
+		t.style.color = `var(--aybar-color-${e})`, document.body.append(t);
+		let n = getComputedStyle(t).color;
+		t.remove();
+		let r = document.createElement("canvas");
+		r.width = r.height = 1;
+		let i = r.getContext("2d", { willReadFrequently: !0 });
+		i.fillStyle = "#000", i.fillStyle = n, i.fillRect(0, 0, 1, 1);
+		let a = i.getImageData(0, 0, 1, 1).data;
+		return [
+			a[0],
+			a[1],
+			a[2]
+		];
+	} catch {
+		return t;
+	}
+};
+function Yf(e, t) {
+	let n = {
+		teal: Jf("primary-700", [
+			2,
+			66,
+			78
+		]),
+		teal2: Jf("primary-500", [
+			43,
+			97,
+			108
+		]),
+		orange: Jf("secondary-400", [
+			246,
+			164,
+			44
+		]),
+		ok: Jf("feedback-success-border", [
+			46,
+			139,
+			87
+		]),
+		warn: Jf("feedback-warning-border", [
+			227,
+			155,
+			28
+		]),
+		bad: Jf("feedback-danger-border", [
+			192,
+			69,
+			58
+		]),
+		line: Jf("border-subtle", [
+			45,
+			64,
+			72
+		]),
+		muted: Jf("fg-muted", [
+			157,
+			180,
+			186
+		]),
+		texto: Jf("fg-default", [
+			232,
+			240,
+			242
+		]),
+		superficie: Jf("bg-surface", [
+			27,
+			42,
+			49
+		]),
+		suelo: Jf("bg-surface-sunken", [
+			20,
+			32,
+			38
+		]),
+		lienzo: Jf("bg-canvas", [
+			15,
+			26,
+			31
+		])
+	}, r = new Wu({
+		canvas: e,
+		antialias: !0,
+		alpha: !0
+	});
+	r.setPixelRatio(Math.min(2, devicePixelRatio || 1)), r.toneMapping = 4, r.toneMappingExposure = 1.25;
+	let i = new Nn(), a = new es(26, 1, .1, 20);
+	i.add(new Ho(16774374, 2112068, 1.9));
+	let o = new rs(16777215, 2.4);
+	o.position.set(1.5, 2.5, 3), i.add(o);
+	let s = cd(new od(n), {
+		cuerpo: $(n.orange, n.teal2, .45),
+		acento: n.orange,
+		escala: 1,
+		fase: 1.3
+	});
+	i.add(s.g), a.position.set(0, 1, 3.05), a.lookAt(0, .98, 0);
+	let c = () => {
+		let t = e.clientWidth, n = e.clientHeight;
+		t && n && (r.setSize(t, n, !1), a.aspect = t / n, a.updateProjectionMatrix());
+	}, l = new ResizeObserver(c);
+	l.observe(e), c();
+	let u = "reposo", d = 0, f = 0, p = 0, m = (t) => {
+		let n = e.getBoundingClientRect();
+		f = Math.max(-1, Math.min(1, (t.clientX - (n.left + n.width / 2)) / 400)), p = Math.max(-1, Math.min(1, (t.clientY - (n.top + n.height / 2)) / 400));
+	};
+	t.reducido || addEventListener("pointermove", m);
+	let h = $u(t.reducido, (e) => {
+		let n = e / 1e3;
+		if (n - d, ld(s, n, t.reducido, u === "pensando" ? 3 : u === "hablando" ? 2 : 1), !t.reducido) {
+			let e = u === "pensando", t = u === "hablando", r = u === "feliz";
+			s.cabeza.rotation.y += ((e ? Math.sin(n * 3) * .35 : f * .5) - s.cabeza.rotation.y) * .1, s.cabeza.rotation.x += ((e ? -.2 : 0) + p * .25 + (t ? Math.sin(n * 12) * .05 : 0) - s.cabeza.rotation.x) * .1, s.g.position.y = Math.sin(n * 1.6) * .02 + (r ? Math.abs(Math.sin(n * 9)) * .06 : 0), s.ojos.forEach((i) => {
+				i.scale.y += ((r ? .35 : e ? .7 : i.scale.y > .95 ? 1 : i.scale.y) - i.scale.y) * .3, i.scale.x = t ? 1 + Math.sin(n * 14) * .18 : 1;
+			}), s.bd.p.rotation.z = -.3 + (r ? Math.sin(n * 10) * .5 : 0);
+		}
+		d = n, r.render(i, a);
+	});
+	return {
+		setEstado: (e) => {
+			u = e;
+		},
+		dispose: () => {
+			h(), l.disconnect(), removeEventListener("pointermove", m), i.traverse((e) => {
+				let t = e;
+				t.isMesh && (Array.isArray(t.material) ? t.material : [t.material]).forEach((e) => e.dispose());
+			}), r.dispose();
+		}
+	};
+}
+//#endregion
+export { Kf as SALUDO, Pf as TONOS, Nf as actualizarHud, qf as conversar, _d as inyectarEstilos, Yf as montarBot, _f as montarGrafo, Kd as montarVivo, Bf as redactar, Vf as resumir, Gf as revisar, Uf as siguientePaso };

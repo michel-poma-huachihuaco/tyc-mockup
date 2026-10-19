@@ -102,3 +102,11 @@ detractor; marcado como supuesto hasta contar con el KPI Engine, DEP-10). El NPS
 | **P3. Estado final de cancelado** | Nuevo estado terminal (por ejemplo «Desistido»), con motivo, cuándo aplica y quién lo decide. Permite embudo completo y NPS por resultado (conforme, reabierto, desistido) | Toca RF-004 (7 a 8 estados), la matriz de transiciones, HU-004, los flujos de HU-043, los informes y la escena | Alto |
 
 **Recomendación:** P1 ahora; P2 como HU nueva cuando el PO responda cómo se relaciona con NPS-C; P3 solo si el PO define qué es «cancelado».
+
+## Limpieza del prototipo (UI final)
+
+- Fuera de la interfaz: insignia «PO», «What-if · propuesta del PO», el aviso del What-if, «Propuesta del PO · FT-…», «Meta p95 (propuesta del PO)», «Supuesto», «(simulado)», «persona ficticia» y los códigos RN/RF/DEP/FT.
+- Las notas explicativas (supuestos, datos ficticios, pendientes) no se pierden: van al panel **Notas** de las herramientas, por pantalla.
+- **Herramientas flotantes** (botón abajo a la izquierda): Ver como, Tema, Apariencia, Simulación y Notas. La barra superior queda con la marca y el usuario.
+- **Inicio** (antes «Vista en vivo»): Consulta 360 arriba y Vista en vivo debajo, en una sola página con anclas fijas. El 360 arranca con un cliente preseleccionado (cli-001) para mostrar el grafo; en la ficha del 360 se quitaron «Ver como» y «Simular caída», que duplicaban las herramientas.
+- **Asistente de IA** (robot 3D, abajo a la derecha; no aparece para Control de acceso ni Cliente): redactar respuesta (Empático/Formal/Breve → «Insertar en el mensaje»), resumir ticket, siguiente paso y revisar borrador. Todo es plantilla local; reemplaza la tarjeta «Asistente de IA» del detalle del ticket.
