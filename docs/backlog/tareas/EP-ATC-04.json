@@ -11,7 +11,7 @@
           "titulo": "Entidad SVC_SENSITIVE_CASE (5 lineas de origen, Codigo Unico Estandarizado) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
           "depende_de": []
         },
@@ -20,45 +20,56 @@
           "titulo": "Migracion Flyway V16__crear_tabla_sensitive_case.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T01"]
+          "depende_de": [
+            "HU-ATC-020-T01"
+          ]
         },
         {
           "id": "HU-ATC-020-T03",
           "titulo": "Caso de uso RegistrarCasoSensibleUseCase (Indecopi, Libro de Reclamaciones, Cartas Notariales, Legal Atiende, Backlog Historico)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T01"]
+          "depende_de": [
+            "HU-ATC-020-T01"
+          ]
         },
         {
           "id": "HU-ATC-020-T04",
           "titulo": "Endpoint POST /api/v1/casos-sensibles",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T02", "HU-ATC-020-T03"]
+          "depende_de": [
+            "HU-ATC-020-T02",
+            "HU-ATC-020-T03"
+          ]
         },
         {
           "id": "HU-ATC-020-T05",
           "titulo": "Un test por cada TC de HU-ATC-020 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-020-T04"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-020-T04"
+          ]
         },
         {
           "id": "HU-ATC-020-T06",
           "titulo": "Pantalla de registro de caso sensible con Codigo Unico (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 3,
-          "depende_de": ["HU-ATC-020-T04"]
+          "depende_de": [
+            "HU-ATC-020-T04"
+          ]
         }
       ]
     },
@@ -70,45 +81,55 @@
           "titulo": "Migracion Flyway V17__agregar_columnas_activacion_sensitive_case.sql (PreAssignmentChargeDate, ActivationChargeDate)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T02"]
+          "depende_de": [
+            "HU-ATC-020-T02"
+          ]
         },
         {
           "id": "HU-ATC-021-T02",
           "titulo": "Caso de uso ActivarCasoUseCase (cargo previo vs cargo de activacion como eventos distintos; el SLA de linea arranca solo con la activacion)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-021-T01"]
+          "depende_de": [
+            "HU-ATC-021-T01"
+          ]
         },
         {
           "id": "HU-ATC-021-T03",
           "titulo": "Endpoint POST /api/v1/casos-sensibles/{id}/activacion",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-021-T02"]
+          "depende_de": [
+            "HU-ATC-021-T02"
+          ]
         },
         {
           "id": "HU-ATC-021-T04",
           "titulo": "Un test por cada TC de HU-ATC-021 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-021-T03"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-021-T03"
+          ]
         },
         {
           "id": "HU-ATC-021-T05",
           "titulo": "Accion de activacion formal del caso en pantalla (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-021-T03"]
+          "depende_de": [
+            "HU-ATC-021-T03"
+          ]
         }
       ]
     },
@@ -120,54 +141,66 @@
           "titulo": "Servicio de dominio MatrizRiesgoObjetiva (criterios ponderados, recalibrable) en domain",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T01"]
+          "depende_de": [
+            "HU-ATC-020-T01"
+          ]
         },
         {
           "id": "HU-ATC-022-T02",
           "titulo": "Migracion Flyway V18__agregar_columna_risk_level_sensitive_case.sql (historial de recalibracion)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-022-T01"]
+          "depende_de": [
+            "HU-ATC-022-T01"
+          ]
         },
         {
           "id": "HU-ATC-022-T03",
           "titulo": "Caso de uso CalcularYRecalibrarRiesgoUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-022-T02"]
+          "depende_de": [
+            "HU-ATC-022-T02"
+          ]
         },
         {
           "id": "HU-ATC-022-T04",
           "titulo": "Endpoint PATCH /api/v1/casos-sensibles/{id}/riesgo",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-022-T03"]
+          "depende_de": [
+            "HU-ATC-022-T03"
+          ]
         },
         {
           "id": "HU-ATC-022-T05",
           "titulo": "Un test por cada TC de HU-ATC-022 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-022-T04"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-022-T04"
+          ]
         },
         {
           "id": "HU-ATC-022-T06",
           "titulo": "Vista de clasificacion de riesgo y recalibracion en pantalla (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-022-T04"]
+          "depende_de": [
+            "HU-ATC-022-T04"
+          ]
         }
       ]
     },
@@ -179,45 +212,55 @@
           "titulo": "Entidad SVC_SENSITIVE_CASE_ESCALATION (nivel, fecha) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-022-T01"]
+          "depende_de": [
+            "HU-ATC-022-T01"
+          ]
         },
         {
           "id": "HU-ATC-023-T02",
           "titulo": "Migracion Flyway V19__crear_tabla_sensitive_case_escalation.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-023-T01"]
+          "depende_de": [
+            "HU-ATC-023-T01"
+          ]
         },
         {
           "id": "HU-ATC-023-T03",
           "titulo": "Caso de uso EscalarCasoUseCase: cadena sin saltar niveles (alerta temprana, memorandum a jefatura, Comite, Directorio)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-023-T02"]
+          "depende_de": [
+            "HU-ATC-023-T02"
+          ]
         },
         {
           "id": "HU-ATC-023-T04",
           "titulo": "Job batch idempotente (ADR-005) que detecta incumplimiento de SLA de linea e invoca EscalarCasoUseCase",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-023-T03"]
+          "depende_de": [
+            "HU-ATC-023-T03"
+          ]
         },
         {
           "id": "HU-ATC-023-T05",
           "titulo": "Un test por cada TC de HU-ATC-023 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-023-T04"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-023-T04"
+          ]
         }
       ]
     },
@@ -229,54 +272,66 @@
           "titulo": "Entidad SVC_SENSITIVE_CASE_LINK (caso origen, caso vinculado) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T01"]
+          "depende_de": [
+            "HU-ATC-020-T01"
+          ]
         },
         {
           "id": "HU-ATC-024-T02",
           "titulo": "Migracion Flyway V20__crear_tabla_sensitive_case_link.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-024-T01"]
+          "depende_de": [
+            "HU-ATC-024-T01"
+          ]
         },
         {
           "id": "HU-ATC-024-T03",
           "titulo": "Caso de uso ValidarCasoVinculadoUseCase (evita registrar como independiente un caso cruzado)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-024-T02"]
+          "depende_de": [
+            "HU-ATC-024-T02"
+          ]
         },
         {
           "id": "HU-ATC-024-T04",
           "titulo": "Endpoint POST /api/v1/casos-sensibles/{id}/vinculacion",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-024-T03"]
+          "depende_de": [
+            "HU-ATC-024-T03"
+          ]
         },
         {
           "id": "HU-ATC-024-T05",
           "titulo": "Un test por cada TC de HU-ATC-024 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-024-T04"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-024-T04"
+          ]
         },
         {
           "id": "HU-ATC-024-T06",
           "titulo": "Alerta de caso vinculado al registrar uno nuevo (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-024-T04"]
+          "depende_de": [
+            "HU-ATC-024-T04"
+          ]
         }
       ]
     },
@@ -288,45 +343,55 @@
           "titulo": "Migracion Flyway V21__agregar_columna_closure_state_sensitive_case.sql (8 estados homologados, referencia al GLI)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-020-T02"]
+          "depende_de": [
+            "HU-ATC-020-T02"
+          ]
         },
         {
           "id": "HU-ATC-025-T02",
           "titulo": "Caso de uso CerrarCasoTipificadoUseCase (custodia del original probatorio en el GLI, separado de la plataforma operativa)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-025-T01"]
+          "depende_de": [
+            "HU-ATC-025-T01"
+          ]
         },
         {
           "id": "HU-ATC-025-T03",
           "titulo": "Endpoint POST /api/v1/casos-sensibles/{id}/cierre",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-025-T02"]
+          "depende_de": [
+            "HU-ATC-025-T02"
+          ]
         },
         {
           "id": "HU-ATC-025-T04",
           "titulo": "Un test por cada TC de HU-ATC-025 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-025-T03"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-025-T03"
+          ]
         },
         {
           "id": "HU-ATC-025-T05",
           "titulo": "Pantalla de cierre tipificado con evidencia documentada (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-025-T03"]
+          "depende_de": [
+            "HU-ATC-025-T03"
+          ]
         }
       ]
     },
@@ -338,27 +403,35 @@
           "titulo": "Servicio de dominio GateDerivacionEje3 (detecta senal de conflicto: carta notarial, INDECOPI/fiscalia, abogado externo, prensa)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-026-T02",
           "titulo": "Caso de uso ValidarGateDerivacionEje3UseCase: impide que el ticket permanezca o se resuelva en Eje 1/2, integrado a CambiarEstadoTicketUseCase y DerivarTicketUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-026-T01", "HU-ATC-004-T03", "HU-ATC-007-T03"]
+          "depende_de": [
+            "HU-ATC-026-T01",
+            "HU-ATC-004-T03",
+            "HU-ATC-007-T03"
+          ]
         },
         {
           "id": "HU-ATC-026-T03",
           "titulo": "Un test por cada TC de HU-ATC-026 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-026-T02"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-026-T02"
+          ]
         }
       ]
     },
@@ -370,54 +443,66 @@
           "titulo": "Entidad SVC_TICKET_HANDOFF (6 elementos del paquete minimo) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-027-T02",
           "titulo": "Migracion Flyway V22__crear_tabla_ticket_handoff.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-027-T01"]
+          "depende_de": [
+            "HU-ATC-027-T01"
+          ]
         },
         {
           "id": "HU-ATC-027-T03",
           "titulo": "Caso de uso ArmarPaqueteHandoffUseCase (KYC via SIGDA/TAXON, estado de cuenta via Cobranza DEP-08) y confirmacion de recepcion",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-027-T02"]
+          "depende_de": [
+            "HU-ATC-027-T02"
+          ]
         },
         {
           "id": "HU-ATC-027-T04",
           "titulo": "Endpoint POST /api/v1/tickets/{id}/handoff",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-027-T03"]
+          "depende_de": [
+            "HU-ATC-027-T03"
+          ]
         },
         {
           "id": "HU-ATC-027-T05",
           "titulo": "Un test por cada TC de HU-ATC-027 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-027-T04"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-027-T04"
+          ]
         },
         {
           "id": "HU-ATC-027-T06",
           "titulo": "Pantalla de confirmacion de recepcion del handoff en el eje destino (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 3,
-          "depende_de": ["HU-ATC-027-T04"]
+          "depende_de": [
+            "HU-ATC-027-T04"
+          ]
         }
       ]
     },
@@ -429,36 +514,44 @@
           "titulo": "Entidad SVC_TICKET_NOTA_EMOCIONAL y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-028-T02",
           "titulo": "Migracion Flyway V23__crear_tabla_ticket_nota_emocional.sql y endpoint POST /api/v1/tickets/{id}/estado-emocional",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-028-T01"]
+          "depende_de": [
+            "HU-ATC-028-T01"
+          ]
         },
         {
           "id": "HU-ATC-028-T03",
           "titulo": "Un test por cada TC de HU-ATC-028 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-028-T02"]
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-028-T02"
+          ]
         },
         {
           "id": "HU-ATC-028-T04",
           "titulo": "Campo de nota de estado emocional, sin juicios de valor, en la pantalla de ticket (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Jesús (Dev 2)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-028-T02"]
+          "depende_de": [
+            "HU-ATC-028-T02"
+          ]
         }
       ]
     }

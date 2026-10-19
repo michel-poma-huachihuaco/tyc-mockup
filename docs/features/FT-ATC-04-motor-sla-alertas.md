@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Motor SLA y alertas"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-02", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-04-motor-sla-alertas.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador · requiere DEP-03 al 21-oct |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 17 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 2 · mié 21-oct · Jesús) | 17 h (4 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -58,12 +58,12 @@ Selecciona la política SLA vigente al abrir el ticket, congela los vencimientos
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-003 | HU-ATC-003 | DEP-03 matriz SLA, DEP-04 calendario | R-01 |
-| RF-SVC-010 | HU-ATC-010 | DEP-03, DEP-04 | R-01 |
-| RF-SVC-011 | HU-ATC-011 | DEP-03, DEP-04 | R-01 |
-| RF-SVC-029 | HU-ATC-029 | DEP-03, DEP-04 | R-01 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-003 | HU-ATC-003 — Congelar el SLA del ticket al abrirlo | 6 h · Dev 2 (Jesús) (2026-10-21 → 2026-10-21) | DEP-03 (Decisión de negocio: matriz SLA por tipo y prioridad y plazos de línea de la Mesa SGD (RNF-REN-003)), DEP-04 (Calendario MAE_TIME + MAE_HOLIDAY por geografía) | R-01 |
+| RF-SVC-010 | HU-ATC-010 — Recibir una sola alerta por incumplimiento de SLA | 5 h · Dev 2 (Jesús) (2026-10-21 → 2026-10-22) | HU-ATC-003 | R-01 |
+| RF-SVC-011 | HU-ATC-011 — Reabrir un ticket con un nuevo compromiso sin borrar el original | 3 h · Dev 2 (Jesús) (2026-10-22 → 2026-10-22) | HU-ATC-010 | R-01 |
+| RF-SVC-029 | HU-ATC-029 — Medir el cierre end-to-end de la experiencia | 3 h · Dev 2 (Jesús) (2026-10-23 → 2026-10-23) | HU-ATC-003 | R-01 |
 
 ## 6 Fuera de alcance
 
@@ -78,4 +78,4 @@ Selecciona la política SLA vigente al abrir el ticket, congela los vencimientos
 | P-02 | ¿Cuál es el horario hábil por sede? | PO | 2026-10-21 | Sí |
 | P-03 | ¿Por qué canal llegan las alertas (correo, notificación en consola)? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

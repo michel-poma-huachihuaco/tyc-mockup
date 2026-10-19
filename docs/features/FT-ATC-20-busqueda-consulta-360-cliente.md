@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-10", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-20-busqueda-consulta-360-cliente.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 20 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 4 · lun 19-oct · Daniel) | 20 h (5 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -56,13 +56,13 @@ Motor de búsqueda del cliente por DNI, nombre, código, lote, teléfono o N.º 
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-049 | HU-ATC-049 | DEP-01 SIGDA/TAXON, DEP-13 motor de José | R-02, R-07 |
-| RF-SVC-050 | HU-ATC-050 | DEP-01, DEP-13 | R-02, R-07 |
-| RF-SVC-051 | HU-ATC-051 | DEP-01, DEP-13 | R-02, R-07 |
-| RF-SVC-052 | HU-ATC-052 | DEP-01, DEP-13 | R-02, R-07 |
-| RF-SVC-053 | HU-ATC-053 | DEP-01, DEP-13 | R-02, R-07 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-049 | HU-ATC-049 — Buscar al cliente y llamarlo desde su ficha | 4 h · Dev 4 (Daniel) (2026-10-19 → 2026-10-19) | DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)), DEP-11 (Plataforma del call center: API/CTI para screen pop, registro de llamadas, grabación y click-to-call) | R-02, R-07 |
+| RF-SVC-050 | HU-ATC-050 — Ver la consulta 360 del cliente dentro del ticket | 5 h · Dev 4 (Daniel) (2026-10-20 → 2026-10-20) | HU-ATC-049, DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)), DEP-08 (Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h)) | R-02, R-07 |
+| RF-SVC-051 | HU-ATC-051 — Continuar la atención cuando la consulta del cliente falla | 3 h · Dev 4 (Daniel) (2026-10-20 → 2026-10-21) | HU-ATC-049, DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)) | R-02, R-07 |
+| RF-SVC-052 | HU-ATC-052 — Consultar datos específicos con el motor de José | 3 h · Dev 4 (Daniel) (2026-10-21 → 2026-10-21) | HU-ATC-050, DEP-13 (Motor de consultas de José: contrato de API y responsable de mantenimiento) | R-02, R-07 |
+| RF-SVC-053 | HU-ATC-053 — Buscar documentos del cliente por significado | 5 h · Dev 4 (Daniel) (2026-10-21 → 2026-10-22) | HU-ATC-049, DEP-06 (Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI), DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales) | R-02, R-07 |
 
 ## 6 Fuera de alcance
 
@@ -77,4 +77,4 @@ Motor de búsqueda del cliente por DNI, nombre, código, lote, teléfono o N.º 
 | P-02 | ¿Qué sistemas alimentan cada sección de la consulta 360? | PO | por definir | Sí |
 | P-03 | ¿Qué repositorios de documentos se indexan para la búsqueda semántica? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

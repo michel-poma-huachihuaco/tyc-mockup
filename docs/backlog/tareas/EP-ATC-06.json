@@ -11,27 +11,33 @@
           "titulo": "BLOQUEADO (ver docs/dor/DOR-FT-ATC-11-*.md: NO READY, patrocinador no confirma si UrbeMind entra al alcance, R-06/DEP-09). Previo a construir: confirmacion de alcance. Una vez resuelto: migracion Flyway V28__agregar_columna_contract_id_opcional_ticket.sql (vinculacion opcional a contrato/unidad, tipo CITY_INCIDENT)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T02"]
+          "depende_de": [
+            "HU-ATC-001-T02"
+          ]
         },
         {
           "id": "HU-ATC-017-T02",
           "titulo": "Logica de vinculacion opcional a CONTRACT_UNIT_HANDOVER y, si deriva en cobro, a un contrato CITY_SERVICE_FEE (entidades de otro dominio, sin contrato de consulta definido - ver D-10)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-017-T01"]
+          "depende_de": [
+            "HU-ATC-017-T01"
+          ]
         },
         {
           "id": "HU-ATC-017-T03",
           "titulo": "Un test por cada TC de HU-ATC-017 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-017-T02"]
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-017-T02"
+          ]
         }
       ]
     },
@@ -43,7 +49,7 @@
           "titulo": "BLOQUEADO (mismo motivo que HU-ATC-017-T01: FT-ATC-11 NO READY). Puerto UrbeMindPort en domain.port.out (ADR-004: solo por API/eventos, sin JOIN fisico)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 1,
           "depende_de": []
         },
@@ -52,27 +58,34 @@
           "titulo": "Adaptador de exposicion API/evento hacia UrbeMind (adapters.outbound.external + adapters.outbound.messaging), con simulador (ADR-007), tratandola como canal mas",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-018-T01"]
+          "depende_de": [
+            "HU-ATC-018-T01"
+          ]
         },
         {
           "id": "HU-ATC-018-T03",
           "titulo": "Caso de uso ExponerTicketApiEventoUrbeMindUseCase (creacion y consulta de tickets reutilizando RegistrarTicketUseCase)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-018-T02", "HU-ATC-001-T03"]
+          "depende_de": [
+            "HU-ATC-018-T02",
+            "HU-ATC-001-T03"
+          ]
         },
         {
           "id": "HU-ATC-018-T04",
           "titulo": "Un test por cada TC de HU-ATC-018 en docs/pruebas/test-plan.md (incluye verificar 0 accesos fuera de API/evento, RNF-INT-003)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-018-T03"]
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-018-T03"
+          ]
         }
       ]
     }

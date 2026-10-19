@@ -4,10 +4,10 @@ tipo: epica
 titulo: "Resolución por morosidad y formularios simples"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [epica, plt-02]
 ---
@@ -20,9 +20,9 @@ Va en `docs/epicas/EP-ATC-11-resolucion-morosidad-formularios-simples.md`.
 |---|---|---|
 | EP-ATC-11 | Resolución por morosidad y formularios simples | Aybar Atiende · Plataforma de Atención al Cliente |
 | **Product Owner** | **Sponsor** | **Prioridad (MoSCoW)** |
-| Eddie Huamaní | Gerencia de Cobranza · Gerencia Comercial (por confirmar) | Debe |
-| **Horizonte** | **Estado** | **Fecha / Version** |
-| Siguiente | Borrador | 2026-10-15 / v0.1 |
+| Eddie Huamaní | Gerencia de Cobranza · Gerencia Comercial | Debe |
+| **Horizonte / Plan** | **Estado** | **Fecha / Version** |
+| Ahora · Iteración 2 (2026-10-26 → 2026-10-28 · 17 h · Dev 4 (Daniel)) | Borrador (Valor de negocio) | 2026-10-19 / v0.2 |
 
 ## 1 Contexto
 
@@ -75,4 +75,4 @@ Features:
 | Sponsor | | | |
 | Lider tecnico | | | |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad para RF/RN/RNF/HU) y del PDF `02_Epicas_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

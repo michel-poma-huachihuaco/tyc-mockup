@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Registro multicanal y tipificación"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-01", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-01-registro-multicanal-tipificacion.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 9 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 1 · lun 19-oct · Brayan) | 9 h (2 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,10 +53,10 @@ Permite al gestor de tickets registrar cada solicitud que llega por teléfono, W
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-001 | HU-ATC-001 | DEP-01 SIGDA/TAXON | R-04, R-05 |
-| RF-SVC-002 | HU-ATC-002 | DEP-01 SIGDA/TAXON | R-04, R-05 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-001 | HU-ATC-001 — Registrar un ticket tipificado desde cualquier canal | 6 h · Dev 1 (Brayan) (2026-10-19 → 2026-10-20) | DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)) | R-04, R-05 |
+| RF-SVC-002 | HU-ATC-002 — Entregar al cliente un número de ticket por razón social | 3 h · Dev 1 (Brayan) (2026-10-20 → 2026-10-20) | HU-ATC-001 | R-04, R-05 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Permite al gestor de tickets registrar cada solicitud que llega por teléfono, W
 | P-02 | ¿Cuál es el formato del N.º visible al cliente (prefijo por RUC)? | PO | por definir | Sí |
 | P-03 | ¿Quién registra a un interesado sin rol contractual (ACT-003)? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` (asignación de RF/RNF/RN por feature) — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

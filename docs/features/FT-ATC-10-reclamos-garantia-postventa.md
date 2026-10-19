@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Reclamos de garantía postventa"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-05", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-10-reclamos-garantia-postventa.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debería | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 12 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 1 · mar 27-oct · Brayan) | 12 h (4 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,12 +53,12 @@ Registra reclamos de garantía vinculados al Acta de Entrega, valida la vigencia
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-033 | HU-ATC-033 | DEP-07 Contratos y Activos | R-05 |
-| RF-SVC-034 | HU-ATC-034 | DEP-07 | R-05 |
-| RF-SVC-035 | HU-ATC-035 | DEP-07 | R-05 |
-| RF-SVC-036 | HU-ATC-036 | DEP-07 | R-05 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-033 | HU-ATC-033 — Registrar un reclamo de garantía vinculado a la entrega | 4 h · Dev 1 (Brayan) (2026-10-27 → 2026-10-28) | DEP-07 (Contratos y Activos: API de contrato, unidad, Acta de Entrega y cobertura) | R-05 |
+| RF-SVC-034 | HU-ATC-034 — Validar la vigencia de la garantía contra la cobertura | 2 h · Dev 1 (Brayan) (2026-10-28 → 2026-10-28) | HU-ATC-033, DEP-07 (Contratos y Activos: API de contrato, unidad, Acta de Entrega y cobertura) | R-05 |
+| RF-SVC-035 | HU-ATC-035 — Registrar la inspección técnica antes de resolver | 3 h · Dev 1 (Brayan) (2026-10-28 → 2026-10-28) | HU-ATC-033 | R-05 |
+| RF-SVC-036 | HU-ATC-036 — Escalar la garantía a Eje 3 y gestionar la adenda | 3 h · Dev 1 (Brayan) (2026-10-28 → 2026-10-29) | HU-ATC-035 | R-05 |
 
 ## 6 Fuera de alcance
 
@@ -73,4 +73,4 @@ Registra reclamos de garantía vinculados al Acta de Entrega, valida la vigencia
 | P-01 | ¿Los periodos de cobertura varían por tipo de defecto? | PO | por definir | Sí |
 | P-02 | ¿La inspección la registra Postventa o un tercero? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

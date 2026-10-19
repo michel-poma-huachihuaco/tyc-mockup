@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-23 Formularios simples: ingreso al proyecto y Entrega Fest"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-23", "EP-ATC-11", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,13 @@ Va en `docs/dor/DOR-FT-ATC-23-formularios-simples-ingreso-proyecto-entregafest.m
 | 9 | Estimada por el equipo | [ ] | 7 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-059 | Registrar el ingreso de una persona al proyecto | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 4 (Daniel) | 2026-10-27 → 2026-10-28 | CON CONDICIONES (Alcance de «buses» · conectividad) |
+| HU-ATC-060 | Reservar un cupo en el bus del Entrega Fest | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-28 → 2026-10-28 | CON CONDICIONES (Alcance de «buses» · conectividad) |
 
 ## 2 Dependencias
 
@@ -74,4 +81,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

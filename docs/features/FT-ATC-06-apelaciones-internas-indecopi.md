@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Apelaciones internas e INDECOPI"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-03", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-06-apelaciones-internas-indecopi.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 3 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 1 · mar 27-oct · Brayan) | 3 h (1 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -49,9 +49,9 @@ Registra la apelación del consumidor en segunda instancia interna o ante INDECO
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-016 | HU-ATC-016 | DEP-06 S3/GLI | R-03 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-016 | HU-ATC-016 — Dar seguimiento a apelaciones internas y ante INDECOPI | 3 h · Dev 1 (Brayan) (2026-10-27 → 2026-10-27) | HU-ATC-015 | R-03 |
 
 ## 6 Fuera de alcance
 
@@ -63,4 +63,4 @@ Registra la apelación del consumidor en segunda instancia interna o ante INDECO
 |---|---|---|---|---|
 | P-01 | ¿Cuál es el plazo interno para resolver la segunda instancia? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

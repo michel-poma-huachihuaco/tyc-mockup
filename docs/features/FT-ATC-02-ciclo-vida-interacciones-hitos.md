@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Ciclo de vida, interacciones e hitos"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-01", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-02-ciclo-vida-interacciones-hitos.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 13 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 1 · mar 20-oct · Brayan) | 13 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -56,11 +56,11 @@ Gestiona los estados del ticket con historial inmutable, registra cada interacci
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-004 | HU-ATC-004 | DEP-02 NEXUS | R-07 |
-| RF-SVC-005 | HU-ATC-005 | DEP-02 NEXUS | R-07 |
-| RF-SVC-006 | HU-ATC-006 | DEP-02 NEXUS | R-07 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-004 | HU-ATC-004 — Cambiar el estado del ticket con historial inmutable | 5 h · Dev 1 (Brayan) (2026-10-20 → 2026-10-21) | HU-ATC-002 | R-07 |
+| RF-SVC-005 | HU-ATC-005 — Registrar interacciones visibles o internas con evidencia | 5 h · Dev 1 (Brayan) (2026-10-21 → 2026-10-22) | HU-ATC-004 | R-07 |
+| RF-SVC-006 | HU-ATC-006 — Conservar los hitos temporales probatorios | 3 h · Dev 1 (Brayan) (2026-10-22 → 2026-10-22) | HU-ATC-004 | R-07 |
 
 ## 6 Fuera de alcance
 
@@ -75,4 +75,4 @@ Gestiona los estados del ticket con historial inmutable, registra cada interacci
 | P-02 | ¿Cuánto tiempo después de RESOLVED pasa a CLOSED si el cliente no responde? | PO | por definir | Sí |
 | P-03 | Esta feature fija 7 estados homogéneos para todo ticket (`RF-SVC-004`). `FT-ATC-18`/`HU-ATC-043` permite configurar "pasos, estados, responsables y aprobaciones" por área y tipo, sin desarrollo. ¿Los pasos configurables son sub-estados dentro de `IN_PROGRESS` (el campo `Status` de `SVC_TICKET` no cambia), o un área puede sustituir estos 7 estados por los suyos? Hallazgo técnico de dos agentes independientes en la misma sesión (ver `docs/datos/estados.md` y `docs/analisis/decisiones.md` D-09) — ninguna fuente documental lo resuelve | PO + TL | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

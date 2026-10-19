@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Gate de derivación a Eje 3 y handoff"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-04", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-07-gate-derivacion-eje3-handoff.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 9 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 2 · vie 23-oct · Jesús) | 9 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,11 +53,11 @@ Impide que un ticket con señal de conflicto se resuelva en Eje 1/2, exige el pa
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-026 | HU-ATC-026 | DEP-01 SIGDA/TAXON, DEP-08 Cobranza | R-05 |
-| RF-SVC-027 | HU-ATC-027 | DEP-01, DEP-08 | R-05 |
-| RF-SVC-028 | HU-ATC-028 | DEP-01, DEP-08 | R-05 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-026 | HU-ATC-026 — Bloquear la resolución en Eje 1/2 ante señal de conflicto | 3 h · Dev 2 (Jesús) (2026-10-23 → 2026-10-23) | HU-ATC-029 | R-05 |
+| RF-SVC-027 | HU-ATC-027 — Armar el paquete mínimo de handoff y confirmar su recepción | 4 h · Dev 2 (Jesús) (2026-10-23 → 2026-10-26) | HU-ATC-026, DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)), DEP-08 (Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h)) | R-05 |
+| RF-SVC-028 | HU-ATC-028 — Registrar la nota de estado emocional sin juicios de valor | 2 h · Dev 2 (Jesús) (2026-10-26 → 2026-10-26) | HU-ATC-026 | R-05 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Impide que un ticket con señal de conflicto se resuelva en Eje 1/2, exige el pa
 | P-01 | ¿Qué rol puede retirar una señal de conflicto marcada por error? | PO | por definir | Sí |
 | P-02 | ¿El historial de pagos se adjunta o solo se enlaza en el handoff? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

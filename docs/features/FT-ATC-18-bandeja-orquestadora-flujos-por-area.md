@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Bandeja orquestadora y flujos por área"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-09", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-18-bandeja-orquestadora-flujos-por-area.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 17 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · lun 19-oct · Michel) | 17 h (4 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -56,12 +56,12 @@ Permite configurar, sin desarrollo, el flujo de trabajo de cada tipo de ticket p
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-043 | HU-ATC-043 | DEP-02 NEXUS (roles y disponibilidad) | R-01, R-04 |
-| RF-SVC-044 | HU-ATC-044 | DEP-02 | R-01, R-04 |
-| RF-SVC-045 | HU-ATC-045 | DEP-02 | R-01, R-04 |
-| RF-SVC-046 | HU-ATC-046 | DEP-02 | R-01, R-04 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-043 | HU-ATC-043 — Configurar el flujo de trabajo de un tipo de ticket por área | 6 h · Dev 3 (Michel) (2026-10-19 → 2026-10-20) | — | R-01, R-04 |
+| RF-SVC-044 | HU-ATC-044 — Trabajar desde una bandeja única ordenada por urgencia | 5 h · Dev 3 (Michel) (2026-10-20 → 2026-10-20) | HU-ATC-043 | R-01, R-04 |
+| RF-SVC-045 | HU-ATC-045 — Marcar un ticket crítico con el rayo de prioridad | 2 h · Dev 3 (Michel) (2026-10-21 → 2026-10-21) | HU-ATC-044 | R-01, R-04 |
+| RF-SVC-046 | HU-ATC-046 — Reasignar automáticamente al gestor con menos carga | 4 h · Dev 3 (Michel) (2026-10-21 → 2026-10-21) | HU-ATC-044, DEP-02 (NEXUS (tercero): identidad de colaboradores, SSO y roles) | R-01, R-04 |
 
 ## 6 Fuera de alcance
 
@@ -77,4 +77,4 @@ Permite configurar, sin desarrollo, el flujo de trabajo de cada tipo de ticket p
 | P-03 | ¿Cómo se mide la carga de cada gestor? | PO | por definir | Sí |
 | P-04 | `HU-ATC-043` permite configurar, por área y tipo, "pasos, estados, responsables y aprobaciones" sin desarrollo. `FT-ATC-02`/`HU-ATC-004` fija 7 estados homogéneos (`RF-SVC-004`) para todo ticket. ¿El flujo configurable aquí define sub-pasos dentro del estado `IN_PROGRESS`, o reemplaza el modelo de 7 estados para el área que lo define? Ver la misma pregunta en `FT-ATC-02` P-03 y `docs/analisis/decisiones.md` D-09 | PO + TL | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

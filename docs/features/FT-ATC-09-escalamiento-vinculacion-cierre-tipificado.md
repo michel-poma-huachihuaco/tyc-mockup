@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Escalamiento, vinculación y cierre tipificado"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-04", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-09-escalamiento-vinculacion-cierre-tipificado.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 12 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 2 · mié 28-oct · Jesús) | 12 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -54,11 +54,11 @@ Escala en cadena los casos que incumplen su SLA de línea, valida si un caso nue
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-023 | HU-ATC-023 | DEP-06 GLI | R-06 |
-| RF-SVC-024 | HU-ATC-024 | DEP-06 GLI | R-06 |
-| RF-SVC-025 | HU-ATC-025 | DEP-06 GLI | R-06 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-023 | HU-ATC-023 — Escalar en cadena un caso que incumple su SLA | 5 h · Dev 2 (Jesús) (2026-10-28 → 2026-10-28) | HU-ATC-022 | R-06 |
+| RF-SVC-024 | HU-ATC-024 — Validar casos cruzados o vinculados antes de registrar | 4 h · Dev 2 (Jesús) (2026-10-29 → 2026-10-29) | — | R-06 |
+| RF-SVC-025 | HU-ATC-025 — Cerrar el caso con estado homologado y evidencia | 3 h · Dev 2 (Jesús) (2026-10-29 → 2026-10-29) | HU-ATC-023, HU-ATC-024, DEP-06 (Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI) | R-06 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Escala en cadena los casos que incumplen su SLA de línea, valida si un caso nue
 | P-01 | ¿Qué umbrales de tiempo separan cada nivel de escalamiento? | PO | por definir | Sí |
 | P-02 | ¿Qué criterio define que dos casos "coinciden en hechos"? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Asistencia al gestor: guía e IA"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-09", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-19-asistencia-gestor-guia-ia.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debería | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 9 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · mié 21-oct · Michel) | 9 h (2 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -51,10 +51,10 @@ Muestra la guía de solución de cada tipo de ticket y usa IA para sugerir respu
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-047 | HU-ATC-047 | DEP-14 proveedor de IA aprobado | R-07 |
-| RF-SVC-048 | HU-ATC-048 | DEP-14 | R-07 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-047 | HU-ATC-047 — Consultar la guía de solución del tipo de ticket | 4 h · Dev 3 (Michel) (2026-10-21 → 2026-10-22) | — | R-07 |
+| RF-SVC-048 | HU-ATC-048 — Recibir retroalimentación de IA mientras atiendo y cierro | 5 h · Dev 3 (Michel) (2026-10-22 → 2026-10-23) | HU-ATC-047, DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales) | R-07 |
 
 ## 6 Fuera de alcance
 
@@ -68,4 +68,4 @@ Muestra la guía de solución de cada tipo de ticket y usa IA para sugerir respu
 | P-01 | ¿Qué proveedor de IA aprueban TI y Seguridad? | PO | 2026-10-21 | Sí |
 | P-02 | ¿Quién redacta y aprueba las guías por área? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

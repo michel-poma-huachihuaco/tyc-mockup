@@ -4,10 +4,10 @@ tipo: epica
 titulo: "Núcleo de tickets omnicanal"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [epica, plt-02]
 ---
@@ -20,9 +20,9 @@ Va en `docs/epicas/EP-ATC-01-nucleo-tickets-omnicanal.md`.
 |---|---|---|
 | EP-ATC-01 | Núcleo de tickets omnicanal | Aybar Atiende · Plataforma de Atención al Cliente |
 | **Product Owner** | **Sponsor** | **Prioridad (MoSCoW)** |
-| Eddie Huamaní | Gerencia de Experiencia del Cliente (por confirmar) | Debe |
-| **Horizonte** | **Estado** | **Fecha / Version** |
-| Ahora | Borrador | 2026-10-15 / v0.1 |
+| Eddie Huamaní | Gerencia de Experiencia del Cliente | Debe |
+| **Horizonte / Plan** | **Estado** | **Fecha / Version** |
+| Ahora · Iteración 1 (2026-10-19 → 2026-10-22 · 22 h · Dev 1 (Brayan)) | Borrador (Habilitadora) | 2026-10-19 / v0.2 |
 
 ## 1 Contexto
 
@@ -75,4 +75,4 @@ Features:
 | Sponsor | | | |
 | Lider tecnico | | | |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora "Aybar Atiende" (fuente de verdad para RF/RN/RNF/HU) y del PDF `02_Epicas_Plataforma_ATC_AYBARCORP.pdf` (nombre, contexto y alcance) — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

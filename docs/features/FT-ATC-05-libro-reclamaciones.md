@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Libro de Reclamaciones"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-03", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-05-libro-reclamaciones.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 18 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 1 · jue 22-oct · Brayan) | 18 h (4 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -59,12 +59,12 @@ Crea el asiento QUEJA/RECLAMO como extensión del ticket, calcula el plazo legal
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-012 | HU-ATC-012 | DEP-05 Legal, DEP-06 S3/GLI | R-03 |
-| RF-SVC-013 | HU-ATC-013 | DEP-05, DEP-06 | R-03 |
-| RF-SVC-014 | HU-ATC-014 | DEP-05, DEP-06 | R-03 |
-| RF-SVC-015 | HU-ATC-015 | DEP-05, DEP-06 | R-03 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-012 | HU-ATC-012 — Registrar el asiento del Libro de Reclamaciones | 4 h · Dev 1 (Brayan) (2026-10-22 → 2026-10-23) | HU-ATC-006, DEP-05 (Validación legal: formato del asiento, textos y plazos del Libro) | R-03 |
+| RF-SVC-013 | HU-ATC-013 — Calcular el plazo legal y gestionar la prórroga única | 6 h · Dev 1 (Brayan) (2026-10-23 → 2026-10-23) | HU-ATC-012, DEP-04 (Calendario MAE_TIME + MAE_HOLIDAY por geografía) | R-03 |
+| RF-SVC-014 | HU-ATC-014 — Registrar la respuesta formal con cargo | 4 h · Dev 1 (Brayan) (2026-10-26 → 2026-10-26) | HU-ATC-012, DEP-06 (Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI) | R-03 |
+| RF-SVC-015 | HU-ATC-015 — Vigilar el plazo legal y detectar reclamos huérfanos | 4 h · Dev 1 (Brayan) (2026-10-26 → 2026-10-27) | HU-ATC-013 | R-03 |
 
 ## 6 Fuera de alcance
 
@@ -78,4 +78,4 @@ Crea el asiento QUEJA/RECLAMO como extensión del ticket, calcula el plazo legal
 | P-01 | ¿El libro virtual actual de la web se integra o se reemplaza? | PO | por definir | Sí |
 | P-02 | ¿Quién firma la carta de respuesta por cada razón social? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

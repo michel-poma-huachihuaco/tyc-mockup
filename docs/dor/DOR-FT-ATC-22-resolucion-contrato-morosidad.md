@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-22 Resolución de contrato por morosidad"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-22", "EP-ATC-11", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,14 @@ Va en `docs/dor/DOR-FT-ATC-22-resolucion-contrato-morosidad.md`.
 | 9 | Estimada por el equipo | [ ] | 10 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-056 | Abrir el caso de resolución por 3 meses impagos | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 4 (Daniel) | 2026-10-26 → 2026-10-26 | CON CONDICIONES (DEP-08 · DEP-15 · causal legal) |
+| HU-ATC-057 | Enviar al cliente la alerta de cancelación en paralelo | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-26 → 2026-10-27 | CON CONDICIONES (DEP-08 · DEP-15 · causal legal) |
+| HU-ATC-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-27 → 2026-10-27 | CON CONDICIONES (DEP-08 · DEP-15 · causal legal) |
 
 ## 2 Dependencias
 
@@ -75,4 +83,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

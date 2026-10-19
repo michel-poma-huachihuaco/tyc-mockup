@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-19 Asistencia al gestor: guía e IA"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-19", "EP-ATC-09", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,13 @@ Va en `docs/dor/DOR-FT-ATC-19-asistencia-gestor-guia-ia.md`.
 | 9 | Estimada por el equipo | [ ] | 9 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-047 | Consultar la guía de solución del tipo de ticket | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 3 (Michel) | 2026-10-21 → 2026-10-22 | CON CONDICIONES (DEP-14 proveedor de IA) |
+| HU-ATC-048 | Recibir retroalimentación de IA mientras atiendo y cierro | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 3 (Michel) | 2026-10-22 → 2026-10-23 | CON CONDICIONES (DEP-14 proveedor de IA) |
 
 ## 2 Dependencias
 
@@ -74,4 +81,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

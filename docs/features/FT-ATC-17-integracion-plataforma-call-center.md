@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Integración con la plataforma del call center"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-10", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-17-integracion-plataforma-call-center.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 5 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 4 · jue 22-oct · Daniel) | 5 h (1 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -48,9 +48,9 @@ Conecta la plataforma telefónica del call center con el ticket: muestra la fich
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-042 | HU-ATC-042 | DEP-11 plataforma de call center | R-02 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-042 | HU-ATC-042 — Atender la llamada con la ficha del cliente y registrarla en el ticket | 5 h · Dev 4 (Daniel) (2026-10-22 → 2026-10-22) | HU-ATC-053, DEP-11 (Plataforma del call center: API/CTI para screen pop, registro de llamadas, grabación y click-to-call) | R-02 |
 
 ## 6 Fuera de alcance
 
@@ -64,4 +64,4 @@ Conecta la plataforma telefónica del call center con el ticket: muestra la fich
 | P-01 | ¿Qué proveedor y versión de call center se usa? | PO | por definir | Sí |
 | P-02 | ¿Expone API o CTI para screen pop y grabaciones? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

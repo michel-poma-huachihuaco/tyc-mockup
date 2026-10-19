@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-01 Registro multicanal y tipificación"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-01", "EP-ATC-01", "HU-ATC-001", "HU-ATC-002", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,13 @@ Va en `docs/dor/DOR-FT-ATC-01-registro-multicanal-tipificacion.md`.
 | 9 | Estimada por el equipo | [ ] | FT-ATC-01: 9 h (talla M) es estimación de producto (PLT-01/03), no confirmada por el equipo en refinamiento (acuerdo 1, pendiente al 16-oct) |
 | 10 | Cabe en un sprint | [x] | 9 h caben holgadamente en la iteración 1 |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Pendiente — "Revisado por: pendiente" en todos los documentos fuente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-001 | Registrar un ticket tipificado desde cualquier canal | 4 (CA-01, CA-02, CA-03, CA-04) | 6 h | Dev 1 (Brayan) | 2026-10-19 → 2026-10-20 | CON CONDICIONES (DEP-01 contrato + simulador) |
+| HU-ATC-002 | Entregar al cliente un número de ticket por razón social | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 1 (Brayan) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (DEP-01 contrato + simulador) |
 
 ## 2 Dependencias
 
@@ -84,4 +91,4 @@ Propuesta IA: si DEP-01 se resuelve y el equipo confirma la estimación el 16-oc
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo, a partir de FT-ATC-01, el PDF PLT-05 (DoR) y el roadmap — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

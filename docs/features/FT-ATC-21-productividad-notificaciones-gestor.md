@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Productividad y notificaciones del gestor"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-09", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-21-productividad-notificaciones-gestor.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debería | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 6 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · vie 23-oct · Michel) | 6 h (2 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -50,10 +50,10 @@ Tablero de avance diario para cada gestor de tickets y su líder, y correo de as
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-054 | HU-ATC-054 | DEP-02 NEXUS (líder de cada gestor) | R-01 |
-| RF-SVC-055 | HU-ATC-055 | DEP-02 | R-01 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-054 | HU-ATC-054 — Ver mi avance diario y el de mi equipo | 4 h · Dev 3 (Michel) (2026-10-23 → 2026-10-23) | HU-ATC-046, DEP-02 (NEXUS (tercero): identidad de colaboradores, SSO y roles) | R-01 |
+| RF-SVC-055 | HU-ATC-055 — Recibir un correo al asignarme un ticket, con copia a mi líder | 2 h · Dev 3 (Michel) (2026-10-23 → 2026-10-23) | DEP-02 (NEXUS (tercero): identidad de colaboradores, SSO y roles) | R-01 |
 
 ## 6 Fuera de alcance
 
@@ -67,4 +67,4 @@ Tablero de avance diario para cada gestor de tickets y su líder, y correo de as
 | P-01 | ¿Qué metas diarias tiene cada gestor? | PO | por definir | No |
 | P-02 | ¿El correo incluye datos del cliente o solo el enlace al ticket? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

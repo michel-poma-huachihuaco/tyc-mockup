@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Mesa SGD: recepción, activación y riesgo"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-04", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-08-mesa-sgd-recepcion-activacion-riesgo.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 11 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 2 · lun 26-oct · Jesús) | 11 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,11 +53,11 @@ Registra los casos sensibles de las 5 líneas de ingreso con Código Único, sep
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-020 | HU-ATC-020 | Modelo de datos SGD | R-06, R-08 |
-| RF-SVC-021 | HU-ATC-021 | Modelo de datos SGD | R-06, R-08 |
-| RF-SVC-022 | HU-ATC-022 | Modelo de datos SGD | R-06, R-08 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-020 | HU-ATC-020 — Registrar un caso sensible con Código Único | 4 h · Dev 2 (Jesús) (2026-10-26 → 2026-10-27) | HU-ATC-028 | R-06, R-08 |
+| RF-SVC-021 | HU-ATC-021 — Emitir cargo previo y cargo de activación por separado | 3 h · Dev 2 (Jesús) (2026-10-27 → 2026-10-27) | HU-ATC-020 | R-06, R-08 |
+| RF-SVC-022 | HU-ATC-022 — Clasificar el riesgo del caso con matriz objetiva | 4 h · Dev 2 (Jesús) (2026-10-27 → 2026-10-28) | HU-ATC-020 | R-06, R-08 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Registra los casos sensibles de las 5 líneas de ingreso con Código Único, sep
 | P-02 | ¿Qué criterios y ponderaciones tiene la matriz de riesgo? | PO | por definir | Sí |
 | P-03 | ¿Cuál es el formato del Código Único? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

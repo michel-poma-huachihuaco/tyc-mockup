@@ -55,17 +55,15 @@ evidencia, sin exposicion ante INDECOPI."
 
 ## 3 Alcance
 
-### Dentro (IN) — "Ahora"
+### Dentro (IN) — División en Etapa 1 y Etapa 2 (`RN-SVC-043`)
 
-Las 60 historias de usuario del plan vigente (11 epicas, 22 funcionalidades
-FT-01..FT-23), incluyendo: registro multicanal de tickets, SLA con
-congelamiento y alertas, derivacion y reasignacion entre areas, Libro de
-Reclamaciones y apelaciones (INDECOPI), Mesa de Casos sensibles con gate
-legal obligatorio a Eje 3, postventa de garantias, integracion UrbeMind,
-encuestas post-atencion, monitoreo y reporting, bandeja orquestadora con
-asistencia de IA al agente, consulta 360 del cliente, resolucion de contrato
-por morosidad de 3 meses y formularios simples (control de acceso, buses del
-Entrega Fest).
+El catálogo oficial (`ATC_requerimientos.xlsx.ods`) comprende **63 historias de usuario** (`HU-ATC-001`..`063`), **11 épicas** y **23 funcionalidades** (`FT-ATC-01`..`FT-ATC-24`, sin `FT-ATC-12`), estructuradas en dos etapas (`RN-SVC-043`):
+
+- **Etapa 1 · Salida 30-oct-2026 (58 HU)**: Todo el alcance funcional de ATC operando con usuarios, roles y líderes locales (`HU-ATC-001`, `008`, `046`, `054`, `055`) y sin bloquearse por plataformas de terceros en construcción. Incluye: registro multicanal de tickets, SLA con congelamiento y alertas, derivación y reasignación entre áreas, Libro de Reclamaciones y apelaciones (INDECOPI), Mesa de Casos sensibles con gate legal obligatorio a Eje 3, postventa de garantías, encuestas post-atención, monitoreo y reporting, bandeja orquestadora con asistencia de IA al gestor, consulta 360 del cliente (`HU-ATC-050` sin sección comercial DAEDALUS en Etapa 1), resolución de contrato por morosidad de 3 meses y formularios simples (control de acceso, buses del Entrega Fest).
+- **Etapa 2 · Cierre estimado 15-dic-2026 (5 HU)**: Integraciones con plataformas corporativas y de terceros aún en construcción (`CAP-SVC-018` / `PROC-SVC-023` y `PROC-SVC-007`):
+  - **NEXUS (`ACT-050`)**: `HU-ATC-061` (`RF-SVC-061` — SSO, identidad, rol y área) y `HU-ATC-062` (`RF-SVC-062` — estructura organizacional: líder, área, disponibilidad y ceses en `SVC_IDENTITY_LINK`).
+  - **DAEDALUS (`ACT-051`)**: `HU-ATC-063` (`RF-SVC-063` — propuesta comercial y reserva en línea en la consulta 360).
+  - **UrbeMind (`PROC-SVC-007` / `FT-ATC-11`)**: `HU-ATC-017` (`RF-SVC-017`), `HU-ATC-018` (`RF-SVC-018`) y `RNF-INT-003`.
 
 ### Flexible — primero que sale si el control de alcance (27-oct) muestra atraso
 
@@ -76,7 +74,7 @@ v1.0 si se recorta.
 ### Fuera (OUT) — "Despues"
 
 Conectores automaticos de WhatsApp y correo (ingreso manual/API simulada en
-esta version); cualquier funcionalidad no listada en las 60 HU del catalogo
+esta version); cualquier funcionalidad no listada en las 63 HU del catalogo
 vigente.
 
 ## 4 Riesgos y supuestos

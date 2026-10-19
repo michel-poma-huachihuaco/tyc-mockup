@@ -42,17 +42,17 @@ Horizonte corto (2 semanas) sin trimestres: se usa el campo T1 como
 | EP-ATC-02 | Enrutamiento, SLA y alertas | Debe | 19→23 oct | | 28 | Dev 2 | Ahora |
 | EP-ATC-03 | Libro de Reclamaciones y apelaciones | Debe | 22→27 oct (cruza) | x | 21 | Dev 1 | Ahora |
 | EP-ATC-04 | Gate legal Eje 3 y Mesa de Casos sensibles | Debe | 23→29 oct (cruza) | x | 32 | Dev 2 | Ahora |
-| EP-ATC-05 | Postventa: reclamos de garantia | Deberia | | 27→29 oct | 12 | Dev 1 | Ahora |
-| EP-ATC-06 | Integracion UrbeMind | Deberia | | 28→29 oct | 7 | Dev 4 | Ahora |
-| EP-ATC-07 | Calidad de atencion y Torre de Control CX | Deberia | | 26→28 oct | 16 | Dev 3 | Ahora |
-| EP-ATC-08 | EntregaFest: contencion y derivacion en vivo | Podria | | 28→29 oct | 6 | Dev 3 | Ahora |
-| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | 19→23 oct | | 32 | Dev 3 | Ahora |
-| EP-ATC-10 | Consulta 360 e integraciones operativas | Debe | 19→26 oct (cruza) | x | 34 | Dev 4 | Ahora |
-| EP-ATC-11 | Resolucion por morosidad y formularios simples | Debe | | 26→28 oct | 17 | Dev 4 | Ahora |
+| EP-ATC-05 | Postventa: reclamos de garantia | Deberia | | 27→29 oct | 12 | Dev 1 | Etapa 1 (Ahora) |
+| EP-ATC-06 | Integracion UrbeMind (`PROC-SVC-007`) | Deberia | | Etapa 2 (15-dic) | 7 | Dev 4 | Etapa 2 (`RN-SVC-043`) |
+| EP-ATC-07 | Calidad de atencion y Torre de Control CX | Deberia | | 26→28 oct | 16 | Dev 3 | Etapa 1 (Ahora) |
+| EP-ATC-08 | EntregaFest: contencion y derivacion en vivo | Podria | | 28→29 oct | 6 | Dev 3 | Etapa 1 (Ahora) |
+| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | 19→23 oct | | 32 | Dev 3 | Etapa 1 (Ahora) |
+| EP-ATC-10 | Consulta 360 e integraciones operativas (+ `FT-ATC-24` NEXUS/DAEDALUS en Etapa 2) | Debe | 19→26 oct (Etapa 1) | +Etapa 2 (15-dic) | 34 + 14 (E2) | Dev 4 | Etapa 1 + Etapa 2 |
+| EP-ATC-11 | Resolucion por morosidad y formularios simples | Debe | | 26→28 oct | 17 | Dev 4 | Etapa 1 (Ahora) |
 
-Total: 11 epicas, 22 funcionalidades (`FT-01`..`FT-23`, sin `FT-12`), 60 HU,
-227 h comprometidas de 240 h de capacidad del equipo (95%), 4 desarrolladores
-asistidos por IA.
+Total: **11 epicas**, **23 funcionalidades** (`FT-ATC-01`..`FT-ATC-24`, sin `FT-ATC-12`), **63 HU** divididas según `RN-SVC-043`:
+- **Etapa 1 · Salida 30-oct-2026**: 58 HU (220 h en Iteración 1 y 2), con usuarios, roles y líderes locales y sin bloqueo por terceros.
+- **Etapa 2 · Cierre estimado 15-dic-2026**: 5 HU (21 h: `HU-ATC-017`, `018` de UrbeMind y `HU-ATC-061`, `062`, `063` de NEXUS y DAEDALUS en `FT-ATC-24`).
 
 Patrocinadores por epica (por confirmar segun PLT-01): EP-ATC-01/02/09
 Gerencia de Experiencia del Cliente; EP-ATC-03 Gerencia Legal; EP-ATC-04
@@ -68,8 +68,9 @@ Hitos:
 | H-01 | 2026-10-19 | Kick-off y base tecnica arrancada | Todas |
 | H-02 | 2026-10-23 | Demo de iteracion 1 | EP-ATC-01, 02, 09, parte de 03/04/10 |
 | H-03 | 2026-10-27 | Control de alcance (decide si se activa el alcance "Flexible") | Todas |
-| H-04 | 2026-10-29 (18:00) | Congelamiento de codigo | Todas |
-| H-05 | 2026-10-30 | UAT, demo final y decision Go/No-Go | Todas |
+| H-04 | 2026-10-29 (18:00) | Congelamiento de codigo Etapa 1 | Etapa 1 |
+| H-05 | 2026-10-30 | UAT, demo final y salida Etapa 1 (usuarios, roles y líderes locales) | Etapa 1 (58 HU) |
+| H-06 | 2026-12-15 | Cierre estimado Etapa 2: integraciones NEXUS (`RF-061, 062`), DAEDALUS (`RF-063`) y UrbeMind (`RF-017, 018`) | EP-ATC-06, EP-ATC-10 (`FT-ATC-24`) |
 
 - **Ahora**: las 11 epicas / 60 HU del plan vigente, todas con fecha.
 - **Flexible**: RF-048, RF-053, RF-037 a RF-039 — primero que sale si el

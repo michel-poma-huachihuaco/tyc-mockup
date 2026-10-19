@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Encuesta post-atención"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-07", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-13-encuesta-post-atencion.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 3 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · lun 26-oct · Michel) | 3 h (1 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -48,9 +48,9 @@ Dispara la encuesta POST_TRANSACTION al cerrar el ticket y permite medir CSAT/CE
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-019 | HU-ATC-019 | DEP-10 KPI Engine | R-08 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-019 | HU-ATC-019 — Disparar la encuesta al cerrar el ticket | 3 h · Dev 3 (Michel) (2026-10-26 → 2026-10-26) | HU-ATC-029, DEP-10 (KPI Engine + SVY_SURVEY_RESPONSE (encuestas)) | R-08 |
 
 ## 6 Fuera de alcance
 
@@ -64,4 +64,4 @@ Dispara la encuesta POST_TRANSACTION al cerrar el ticket y permite medir CSAT/CE
 | P-01 | ¿Por qué canal se envía la encuesta (WhatsApp, correo, SMS)? | PO | por definir | Sí |
 | P-02 | ¿Qué pasa si el ticket se reabre después de responder la encuesta? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

@@ -4,10 +4,10 @@ tipo: epica
 titulo: "Postventa: reclamos de garantía"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [epica, plt-02]
 ---
@@ -20,9 +20,9 @@ Va en `docs/epicas/EP-ATC-05-postventa-reclamos-garantia.md`.
 |---|---|---|
 | EP-ATC-05 | Postventa: reclamos de garantía | Aybar Atiende · Plataforma de Atención al Cliente |
 | **Product Owner** | **Sponsor** | **Prioridad (MoSCoW)** |
-| Eddie Huamaní | Gerencia de Postventa (por confirmar) | Debería |
-| **Horizonte** | **Estado** | **Fecha / Version** |
-| Ahora | Borrador | 2026-10-15 / v0.1 |
+| Eddie Huamaní | Gerencia de Postventa | Debería |
+| **Horizonte / Plan** | **Estado** | **Fecha / Version** |
+| Ahora · Iteración 2 (2026-10-27 → 2026-10-29 · 12 h · Dev 1 (Brayan)) | Borrador (Valor de negocio) | 2026-10-19 / v0.2 |
 
 ## 1 Contexto
 
@@ -73,4 +73,4 @@ Features:
 | Sponsor | | | |
 | Lider tecnico | | | |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad para RF/RN/RNF/HU) y del PDF `02_Epicas_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

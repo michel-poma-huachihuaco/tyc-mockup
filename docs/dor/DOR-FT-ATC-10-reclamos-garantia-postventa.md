@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-10 Reclamos de garantía postventa"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-10", "EP-ATC-05", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,15 @@ Va en `docs/dor/DOR-FT-ATC-10-reclamos-garantia-postventa.md`.
 | 9 | Estimada por el equipo | [ ] | 12 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-033 | Registrar un reclamo de garantía vinculado a la entrega | 2 (CA-01, CA-02) | 4 h | Dev 1 (Brayan) | 2026-10-27 → 2026-10-28 | CON CONDICIONES (DEP-07 Contratos) |
+| HU-ATC-034 | Validar la vigencia de la garantía contra la cobertura | 2 (CA-01, CA-02) | 2 h | Dev 1 (Brayan) | 2026-10-28 → 2026-10-28 | CON CONDICIONES (DEP-07 Contratos) |
+| HU-ATC-035 | Registrar la inspección técnica antes de resolver | 2 (CA-01, CA-02) | 3 h | Dev 1 (Brayan) | 2026-10-28 → 2026-10-28 | CON CONDICIONES (DEP-07 Contratos) |
+| HU-ATC-036 | Escalar la garantía a Eje 3 y gestionar la adenda | 2 (CA-01, CA-02) | 3 h | Dev 1 (Brayan) | 2026-10-28 → 2026-10-29 | CON CONDICIONES (DEP-07 Contratos) |
 
 ## 2 Dependencias
 
@@ -74,4 +83,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

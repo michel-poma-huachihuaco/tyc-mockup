@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Derivación, reasignación y casillero"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-02", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-03-derivacion-reasignacion-casillero.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 11 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 2 · lun 19-oct · Jesús) | 11 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -52,11 +52,11 @@ Permite derivar tickets entre las 6 áreas del flujo (con o sin persona asignada
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-007 | HU-ATC-007 | DEP-02 NEXUS | R-05 |
-| RF-SVC-008 | HU-ATC-008 | DEP-02 NEXUS | R-05 |
-| RF-SVC-009 | HU-ATC-009 | DEP-02 NEXUS | R-05 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-007 | HU-ATC-007 — Derivar un ticket a otra área con motivo tipificado | 4 h · Dev 2 (Jesús) (2026-10-19 → 2026-10-19) | — | R-05 |
+| RF-SVC-008 | HU-ATC-008 — Reasignar en bloque los tickets de un colaborador que cesa | 4 h · Dev 2 (Jesús) (2026-10-20 → 2026-10-20) | HU-ATC-007 | R-05 |
+| RF-SVC-009 | HU-ATC-009 — Ver mi casillero de tareas por área y responsable | 3 h · Dev 2 (Jesús) (2026-10-20 → 2026-10-20) | HU-ATC-007 | R-05 |
 
 ## 6 Fuera de alcance
 
@@ -70,4 +70,4 @@ Permite derivar tickets entre las 6 áreas del flujo (con o sin persona asignada
 | P-01 | ¿Quién puede reasignar en bloque: solo el supervisor o también el jefe de área? | PO | por definir | Sí |
 | P-02 | ¿Hay un catálogo cerrado de motivos de derivación? | PO | por definir | No |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

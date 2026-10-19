@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-11 Integración UrbeMind (CITY_INCIDENT)"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-11", "EP-ATC-06", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,13 @@ Va en `docs/dor/DOR-FT-ATC-11-integracion-urbemind-city-incident.md`.
 | 9 | Estimada por el equipo | [ ] | 7 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-017 | Atender incidencias de ciudad como tickets | 2 (CA-01, CA-02) | 2 h | Dev 4 (Daniel) | 2026-10-28 → 2026-10-28 | NO LISTO (Alcance de UrbeMind (R-06) · DEP-09) |
+| HU-ATC-018 | Exponer tickets a UrbeMind por API y eventos | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 4 (Daniel) | 2026-10-29 → 2026-10-29 | NO LISTO (Alcance de UrbeMind (R-06) · DEP-09) |
 
 ## 2 Dependencias
 
@@ -76,4 +83,4 @@ Esta es la feature en peor estado de las 22: a diferencia de las demás (bloquea
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

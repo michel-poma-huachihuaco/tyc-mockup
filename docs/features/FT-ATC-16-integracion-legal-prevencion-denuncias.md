@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Integración con Legal y prevención de denuncias"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-10", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-16-integracion-legal-prevencion-denuncias.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 9 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 4 · vie 23-oct · Daniel) | 9 h (2 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,10 +53,10 @@ Sincroniza los tickets del Eje 3 con la herramienta del equipo de Legal y calcul
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-040 | HU-ATC-040 | DEP-12 herramienta de Legal | R-02, R-06 |
-| RF-SVC-041 | HU-ATC-041 | DEP-12 | R-02, R-06 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-040 | HU-ATC-040 — Sincronizar con Legal los tickets derivados a Eje 3 | 5 h · Dev 4 (Daniel) (2026-10-23 → 2026-10-23) | DEP-12 (Herramienta de Legal (responsable: Rosario): API o intercambio para sincronizar casos de Eje 3) | R-02, R-06 |
+| RF-SVC-041 | HU-ATC-041 — Priorizar los reclamos con riesgo de denuncia por su exposición | 4 h · Dev 4 (Daniel) (2026-10-23 → 2026-10-26) | DEP-12 (Herramienta de Legal (responsable: Rosario): API o intercambio para sincronizar casos de Eje 3) | R-02, R-06 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Sincroniza los tickets del Eje 3 con la herramienta del equipo de Legal y calcul
 | P-02 | ¿La tasa del 8% es la que Legal quiere usar? | Legal | por definir | Sí |
 | P-03 | ¿Qué señales definen "riesgo de denuncia"? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

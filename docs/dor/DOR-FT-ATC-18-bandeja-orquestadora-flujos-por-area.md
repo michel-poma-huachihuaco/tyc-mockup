@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-18 Bandeja orquestadora y flujos por área"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-18", "EP-ATC-09", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,15 @@ Va en `docs/dor/DOR-FT-ATC-18-bandeja-orquestadora-flujos-por-area.md`.
 | 9 | Estimada por el equipo | [ ] | 17 h de producto, sin confirmar |
 | 10 | Cabe en un sprint | [x] | Ajustado |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-043 | Configurar el flujo de trabajo de un tipo de ticket por área | 3 (CA-01, CA-02, CA-03) | 6 h | Dev 3 (Michel) | 2026-10-19 → 2026-10-20 | CON CONDICIONES (Push o pull · quién marca el rayo) |
+| HU-ATC-044 | Trabajar desde una bandeja única ordenada por urgencia | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 3 (Michel) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (Push o pull · quién marca el rayo) |
+| HU-ATC-045 | Marcar un ticket crítico con el rayo de prioridad | 3 (CA-01, CA-02, CA-03) | 2 h | Dev 3 (Michel) | 2026-10-21 → 2026-10-21 | CON CONDICIONES (Push o pull · quién marca el rayo) |
+| HU-ATC-046 | Reasignar automáticamente al gestor con menos carga | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 3 (Michel) | 2026-10-21 → 2026-10-21 | CON CONDICIONES (Push o pull · quién marca el rayo) |
 
 ## 2 Dependencias
 
@@ -75,4 +84,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

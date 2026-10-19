@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-03 Derivación, reasignación y casillero"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-03", "EP-ATC-02", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,14 @@ Va en `docs/dor/DOR-FT-ATC-03-derivacion-reasignacion-casillero.md`.
 | 9 | Estimada por el equipo | [ ] | 11 h de producto, sin confirmar (acuerdo 1) |
 | 10 | Cabe en un sprint | [x] | Sí |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-007 | Derivar un ticket a otra área con motivo tipificado | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 2 (Jesús) | 2026-10-19 → 2026-10-19 | CON CONDICIONES (DEP-02) |
+| HU-ATC-008 | Reasignar en bloque los tickets de un colaborador que cesa | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 2 (Jesús) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (DEP-02) |
+| HU-ATC-009 | Ver mi casillero de tareas por área y responsable | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 2 (Jesús) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (DEP-02) |
 
 ## 2 Dependencias
 
@@ -76,4 +84,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

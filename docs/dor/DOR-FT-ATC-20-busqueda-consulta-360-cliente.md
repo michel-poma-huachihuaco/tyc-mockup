@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready (G4) - FT-ATC-20 Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
-owner: "[Product Owner]"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-19"
 relacionados: ["FT-ATC-20", "EP-ATC-10", "AYB-0001"]
 tags: [dor, plt-05, g4]
 ---
@@ -37,6 +37,16 @@ Va en `docs/dor/DOR-FT-ATC-20-busqueda-consulta-360-cliente.md`.
 | 9 | Estimada por el equipo | [ ] | 20 h de producto (talla L), sin confirmar |
 | 10 | Cabe en un sprint | [x] | Ajustado |
 | IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-049 | Buscar al cliente y llamarlo desde su ficha | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 4 (Daniel) | 2026-10-19 → 2026-10-19 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-050 | Ver la consulta 360 del cliente dentro del ticket | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 4 (Daniel) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-051 | Continuar la atención cuando la consulta del cliente falla | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-20 → 2026-10-21 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-052 | Consultar datos específicos con el motor de José | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-21 → 2026-10-21 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-053 | Buscar documentos del cliente por significado | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 4 (Daniel) | 2026-10-21 → 2026-10-22 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
 
 ## 2 Dependencias
 
@@ -76,4 +86,4 @@ Condiciones pendientes:
 | QA (consultivo) | | | |
 | UX (consultivo) | | | |
 
-Generado por IA: documento completo — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

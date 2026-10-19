@@ -260,6 +260,7 @@ no se copian, mismo patrón que SIGDA/TAXON vía `ADR-003`).
 | ENT-SVC-018 | `SVC_CONTRACT_DEFAULT_ALERT` | TicketID, Canal (correo/WhatsApp/MiPortal), ConstanciaEnvioAt | morosidad 3 meses (HU-ATC-056..058) |
 | ENT-SVC-019 | `SVC_SIMPLE_FORM_DEFINITION` | FormTypeID, Campos (≤ 6, JSON) | formularios simples (HU-ATC-059, 060) |
 | ENT-SVC-020 | `SVC_BUS_SEAT_RESERVATION` | BusID, Horario, Aforo, ListaEspera | Entrega Fest (HU-ATC-060) |
+| ENT-SVC-021 | `SVC_IDENTITY_LINK` | UserID, NexusSubjectID, RoleCode, AreaID, LeaderUserID, AvailabilityStatus, SyncedAt | Vínculo entre el usuario de ATC y su identidad en NEXUS: rol, área y líder sincronizados — Etapa 2 (HU-ATC-061, HU-ATC-062) |
 
 ### SVY_SURVEY_RESPONSE
 | Campo | Tipo | Oblig. | Nota |
@@ -277,9 +278,11 @@ Gobierno de Datos (`CAD-F5` por HU, ya iniciado en cada `docs/historias/HU-*.md`
 
 ## 9 Sistemas externos referenciados (no se modelan aquí, solo se integran)
 
-SIGDA/TAXON (cliente, KYC, lotes, cuotas), NEXUS (colaboradores, roles, SSO),
-Cobranza (estado de cuenta, historial de pagos), motor de consultas de José,
-herramienta de Legal, plataforma del call center (CTI), UrbeMind, KPI Engine,
+SIGDA/TAXON (cliente, KYC, lotes, cuotas), NEXUS (`ACT-050`: colaboradores, SSO,
+roles, estructura organizacional y ceses — Etapa 2), DAEDALUS (`ACT-051`:
+propuesta comercial y reserva 1:1 en Consulta 360 — Etapa 2), Cobranza (estado de
+cuenta, historial de pagos), motor de consultas de José, herramienta de Legal,
+plataforma del call center (CTI), UrbeMind (`PROC-SVC-007` — Etapa 2), KPI Engine,
 GLI. Cada uno con su adaptador y simulador contract-first (`ADR-007`).
 
 Generado por IA: contenido completo, a partir del DoR PLT-05 (modelado de

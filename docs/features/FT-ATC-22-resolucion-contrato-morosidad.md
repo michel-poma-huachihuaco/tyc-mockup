@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Resolución de contrato por morosidad"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-11", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-22-resolucion-contrato-morosidad.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debe | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 10 h (talla M) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 4 · lun 26-oct · Daniel) | 10 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,11 +53,11 @@ Crea el caso de resolución cuando un contrato acumula 3 meses impagos, envía e
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-056 | HU-ATC-056 | DEP-08 Cobranza, DEP-15 responsables de proyecto | R-06 |
-| RF-SVC-057 | HU-ATC-057 | DEP-08, DEP-15 | R-06 |
-| RF-SVC-058 | HU-ATC-058 | DEP-08, DEP-15 | R-06 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-056 | HU-ATC-056 — Abrir el caso de resolución por 3 meses impagos | 4 h · Dev 4 (Daniel) (2026-10-26 → 2026-10-26) | HU-ATC-006, DEP-08 (Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h)) | R-06 |
+| RF-SVC-057 | HU-ATC-057 — Enviar al cliente la alerta de cancelación en paralelo | 3 h · Dev 4 (Daniel) (2026-10-26 → 2026-10-27) | HU-ATC-056, DEP-08 (Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h)) | R-06 |
+| RF-SVC-058 | HU-ATC-058 — Enviar la carta de alerta al responsable del proyecto y su supervisor | 3 h · Dev 4 (Daniel) (2026-10-27 → 2026-10-27) | HU-ATC-056, DEP-15 (Maestro de responsables de proyecto y supervisores (fuente única)) | R-06 |
 
 ## 6 Fuera de alcance
 
@@ -72,4 +72,4 @@ Crea el caso de resolución cuando un contrato acumula 3 meses impagos, envía e
 | P-02 | ¿Se suspende la resolución si hay un reclamo abierto? | Legal | por definir | Sí |
 | P-03 | ¿Qué plazo se da para regularizar? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

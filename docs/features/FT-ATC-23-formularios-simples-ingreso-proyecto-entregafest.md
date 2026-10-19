@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Formularios simples: ingreso al proyecto y Entrega Fest"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-11", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-23-formularios-simples-ingreso-proyecto-entregafest.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debería | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 7 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 4 · mar 27-oct · Daniel) | 7 h (2 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -50,10 +50,10 @@ Formularios de máximo 6 campos, desde celular, que crean un ticket: registro de
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-059 | HU-ATC-059 | Conectividad en el proyecto | R-06 |
-| RF-SVC-060 | HU-ATC-060 | Conectividad en el proyecto | R-06 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-059 | HU-ATC-059 — Registrar el ingreso de una persona al proyecto | 4 h · Dev 4 (Daniel) (2026-10-27 → 2026-10-28) | — | R-06 |
+| RF-SVC-060 | HU-ATC-060 — Reservar un cupo en el bus del Entrega Fest | 3 h · Dev 4 (Daniel) (2026-10-28 → 2026-10-28) | — | R-06 |
 
 ## 6 Fuera de alcance
 
@@ -67,4 +67,4 @@ Formularios de máximo 6 campos, desde celular, que crean un ticket: registro de
 | P-01 | ¿Todo ingreso al proyecto es un ticket? | PO | por definir | No |
 | P-02 | ¿La reserva de buses es del cliente o logística con el proveedor? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

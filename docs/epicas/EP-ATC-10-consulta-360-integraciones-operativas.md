@@ -4,10 +4,10 @@ tipo: epica
 titulo: "Consulta 360 e integraciones operativas"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [epica, plt-02]
 ---
@@ -20,9 +20,9 @@ Va en `docs/epicas/EP-ATC-10-consulta-360-integraciones-operativas.md`.
 |---|---|---|
 | EP-ATC-10 | Consulta 360 e integraciones operativas | Aybar Atiende · Plataforma de Atención al Cliente |
 | **Product Owner** | **Sponsor** | **Prioridad (MoSCoW)** |
-| Eddie Huamaní | Gerencia de TI / Gerencia Legal (por confirmar) | Debe |
-| **Horizonte** | **Estado** | **Fecha / Version** |
-| Siguiente | Borrador | 2026-10-15 / v0.1 |
+| Eddie Huamaní | Gerencia de TI · Gerencia Legal | Debe |
+| **Horizonte / Plan** | **Estado** | **Fecha / Version** |
+| Ahora · Iteración 1y2 (2026-10-19 → 2026-10-26 · 34 h · Dev 4 (Daniel)) | Borrador (Habilitadora) | 2026-10-19 / v0.2 |
 
 ## 1 Contexto
 
@@ -54,14 +54,16 @@ Objetivos del usuario:
 | Motor de búsqueda del cliente y consulta 360 (lotes, cuotas, correos, documentos) | Reemplazo de la plataforma de call center |
 | Excepciones de consulta (cliente no encontrado, sistema caído) | |
 | Reutilización del motor de consultas de José y búsqueda semántica en documentos | |
+| Integración Etapa 2 con NEXUS (SSO, roles y estructura organizacional) y DAEDALUS (propuesta comercial en Consulta 360) (`RN-SVC-043`) | |
 
 Features:
 
 | ID | Feature | Prioridad (MoSCoW) | Release objetivo |
 |---|---|---|---|
-| FT-ATC-16 | Integración con Legal y prevención de denuncias | Debe | v1.0 - 30-oct-2026 |
-| FT-ATC-17 | Integración con la plataforma del call center | Debe | v1.0 - 30-oct-2026 |
-| FT-ATC-20 | Búsqueda y consulta 360 del cliente | Debe | v1.0 - 30-oct-2026 |
+| FT-ATC-16 | Integración con Legal y prevención de denuncias | Debe | Etapa 1 · v1.0 - 30-oct-2026 |
+| FT-ATC-17 | Integración con la plataforma del call center | Debe | Etapa 1 · v1.0 - 30-oct-2026 |
+| FT-ATC-20 | Búsqueda y consulta 360 del cliente | Debe | Etapa 1 · v1.0 - 30-oct-2026 |
+| FT-ATC-24 | Integraciones de plataforma: NEXUS y DAEDALUS (Etapa 2) | Debe / Debería | Etapa 2 · v1.1 - 15-dic-2026 |
 
 - **Supuestos**: las integraciones se construyen contra contratos de interfaz y simuladores; la conexión real se activa cuando cada sistema externo entregue su API.
 - **Restricciones**: Ley 29733: la búsqueda respeta los permisos del sistema de origen (RN-SVC-036); la tasa del 8% es referencial hasta que Legal la valide (RN-SVC-034).
@@ -76,4 +78,4 @@ Features:
 | Sponsor | | | |
 | Lider tecnico | | | |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad para RF/RN/RNF/HU) y del PDF `02_Epicas_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

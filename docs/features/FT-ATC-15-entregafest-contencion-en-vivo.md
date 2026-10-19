@@ -4,10 +4,10 @@ tipo: feature
 titulo: "EntregaFest: contención en vivo"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-08", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-15-entregafest-contencion-en-vivo.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Podría | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 6 h (talla S) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · mié 28-oct · Michel) | 6 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -53,11 +53,11 @@ Registra la clasificación de riesgo verbal y la secuencia de Frases Ancla, dete
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-037 | HU-ATC-037 | EP-ATC-04 (gate legal) | R-04 |
-| RF-SVC-038 | HU-ATC-038 | EP-ATC-04 | R-04 |
-| RF-SVC-039 | HU-ATC-039 | EP-ATC-04 | R-04 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-037 | HU-ATC-037 — Registrar el riesgo verbal y la secuencia de Frases Ancla | 2 h · Dev 3 (Michel) (2026-10-28 → 2026-10-28) | HU-ATC-025 | R-04 |
+| RF-SVC-038 | HU-ATC-038 — Derivar de inmediato a la Estación 4 sin debate | 2 h · Dev 3 (Michel) (2026-10-28 → 2026-10-28) | HU-ATC-037 | R-04 |
+| RF-SVC-039 | HU-ATC-039 — Registrar el caso con la etiqueta estándar | 2 h · Dev 3 (Michel) (2026-10-28 → 2026-10-29) | HU-ATC-038 | R-04 |
 
 ## 6 Fuera de alcance
 
@@ -71,4 +71,4 @@ Registra la clasificación de riesgo verbal y la secuencia de Frases Ancla, dete
 | P-01 | ¿El registro lo hace el moderador o el personal de apoyo? | PO | por definir | No |
 | P-02 | ¿Funciona sin conexión en el recinto? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

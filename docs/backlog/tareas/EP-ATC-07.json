@@ -11,45 +11,56 @@
           "titulo": "Entidad SVY_SURVEY_RESPONSE y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-019-T02",
           "titulo": "Migracion Flyway V29__crear_tabla_survey_response.sql y listener de cierre de ticket que dispara la encuesta POST_TRANSACTION",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-019-T01", "HU-ATC-004-T03"]
+          "depende_de": [
+            "HU-ATC-019-T01",
+            "HU-ATC-004-T03"
+          ]
         },
         {
           "id": "HU-ATC-019-T03",
           "titulo": "Caso de uso MedirCsatCesUseCase y endpoint GET /api/v1/metricas/csat-ces (por tipo de ticket, area y gestor)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-019-T02"]
+          "depende_de": [
+            "HU-ATC-019-T02"
+          ]
         },
         {
           "id": "HU-ATC-019-T04",
           "titulo": "Un test por cada TC de HU-ATC-019 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-019-T03"]
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-019-T03"
+          ]
         },
         {
           "id": "HU-ATC-019-T05",
           "titulo": "Vista de CSAT/CES por tipo, area y gestor (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-019-T03"]
+          "depende_de": [
+            "HU-ATC-019-T03"
+          ]
         }
       ]
     },
@@ -61,54 +72,67 @@
           "titulo": "Value objects de metricas (tickets activos, NPS, tiempos, SLA, derivaciones en curso) en domain",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-030-T02",
           "titulo": "Repositorio de lectura CQRS (Mongo) agregando SVC_TICKET, SLA_BREACH_ALERT y SVC_TICKET_ASIGNACION en tiempo real",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-030-T01", "HU-ATC-010-T02"]
+          "depende_de": [
+            "HU-ATC-030-T01",
+            "HU-ATC-010-T02"
+          ]
         },
         {
           "id": "HU-ATC-030-T03",
           "titulo": "Caso de uso ObtenerMonitoreoTiempoRealUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-030-T02"]
+          "depende_de": [
+            "HU-ATC-030-T02"
+          ]
         },
         {
           "id": "HU-ATC-030-T04",
           "titulo": "Endpoint GET /api/v1/torre-control/tiempo-real",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-030-T03"]
+          "depende_de": [
+            "HU-ATC-030-T03"
+          ]
         },
         {
           "id": "HU-ATC-030-T05",
           "titulo": "Un test por cada TC de HU-ATC-030 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-030-T04"]
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-030-T04"
+          ]
         },
         {
           "id": "HU-ATC-030-T06",
           "titulo": "Dashboard de Torre de Control CX en tiempo real (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 4,
-          "depende_de": ["HU-ATC-030-T04"]
+          "depende_de": [
+            "HU-ATC-030-T04"
+          ]
         }
       ]
     },
@@ -120,36 +144,44 @@
           "titulo": "Caso de uso GenerarInformesUseCase (informe diario operativo e informe quincenal analitico, adopcion de Mi Portal)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-030-T02"]
+          "depende_de": [
+            "HU-ATC-030-T02"
+          ]
         },
         {
           "id": "HU-ATC-031-T02",
           "titulo": "Endpoint GET /api/v1/torre-control/informes con generacion de reporte exportable",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-031-T01"]
+          "depende_de": [
+            "HU-ATC-031-T01"
+          ]
         },
         {
           "id": "HU-ATC-031-T03",
           "titulo": "Un test por cada TC de HU-ATC-031 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-031-T02"]
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-031-T02"
+          ]
         },
         {
           "id": "HU-ATC-031-T04",
           "titulo": "Vista de informes diario y quincenal (ui: true, estimacion separada del backend)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-031-T02"]
+          "depende_de": [
+            "HU-ATC-031-T02"
+          ]
         }
       ]
     },
@@ -161,27 +193,33 @@
           "titulo": "Caso de uso AuditarRegistrosParalelosUseCase (detecta registros paralelos del dato de cliente fuera de SIGDA/TAXON, RN-SVC-026)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 2,
-          "depende_de": ["HU-ATC-001-T01"]
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
         },
         {
           "id": "HU-ATC-032-T02",
           "titulo": "Job batch quincenal idempotente (ADR-005) que invoca AuditarRegistrosParalelosUseCase",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": null,
+          "responsable": "Michel (Dev 3)",
           "estimacion_horas": 1,
-          "depende_de": ["HU-ATC-032-T01"]
+          "depende_de": [
+            "HU-ATC-032-T01"
+          ]
         },
         {
           "id": "HU-ATC-032-T03",
           "titulo": "Un test por cada TC de HU-ATC-032 en docs/pruebas/test-plan.md",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": null,
-          "estimacion_horas": null,
-          "depende_de": ["HU-ATC-032-T02"]
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-032-T02"
+          ]
         }
       ]
     }

@@ -4,10 +4,10 @@ tipo: feature
 titulo: "Torre de Control CX"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.1"
+version: "0.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-15"
+fecha: "2026-10-19"
 relacionados: ["EP-ATC-07", "AYB-0001"]
 tags: [feature, plt-03]
 ---
@@ -22,7 +22,7 @@ Va en `docs/features/FT-ATC-14-torre-control-cx.md`.
 | **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |
 | Eddie Huamaní | Debería | Borrador |
 | **Release objetivo** | **Estimacion** | **Fecha / Version** |
-| v1.0 - 30-oct-2026 | 13 h (talla L) | 2026-10-15 / v0.1 |
+| v1.0 - 30-oct-2026 (Dev 3 · lun 26-oct · Michel) | 13 h (3 HU) | 2026-10-19 / v0.2 |
 
 ## 1 Descripción y valor
 
@@ -52,11 +52,11 @@ Muestra en tiempo real tickets activos, NPS, tiempos, SLA y derivaciones en curs
 
 ## 5 Trazabilidad
 
-| RF | HU | Dependencia | Riesgo |
-|---|---|---|---|
-| RF-SVC-030 | HU-ATC-030 | DEP-10 KPI Engine | R-08 |
-| RF-SVC-031 | HU-ATC-031 | DEP-10 | R-08 |
-| RF-SVC-032 | HU-ATC-032 | DEP-10 | R-08 |
+| RF | HU (PLT-04 v1.2) | Horas / Asignación | Dependencia | Riesgo |
+|---|---|---|---|---|
+| RF-SVC-030 | HU-ATC-030 — Monitorear en tiempo real y corregir antes del incumplimiento | 6 h · Dev 3 (Michel) (2026-10-26 → 2026-10-27) | HU-ATC-019 | R-08 |
+| RF-SVC-031 | HU-ATC-031 — Generar el informe diario y el quincenal | 4 h · Dev 3 (Michel) (2026-10-27 → 2026-10-27) | HU-ATC-030, DEP-10 (KPI Engine + SVY_SURVEY_RESPONSE (encuestas)) | R-08 |
+| RF-SVC-032 | HU-ATC-032 — Auditar registros paralelos del dato de cliente | 3 h · Dev 3 (Michel) (2026-10-27 → 2026-10-28) | DEP-01 (API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato)) | R-08 |
 
 ## 6 Fuera de alcance
 
@@ -70,4 +70,4 @@ Muestra en tiempo real tickets activos, NPS, tiempos, SLA y derivaciones en curs
 | P-01 | ¿Quiénes reciben el informe diario? | PO | por definir | No |
 | P-02 | ¿Qué frecuencia de actualización se considera "tiempo real" (≤ 1 min)? | PO | por definir | Sí |
 
-Generado por IA: contenido completo, a partir del artefacto de Nexora (fuente de verdad del texto de RF/HU) y del PDF `03_Funcionalidades_Catalogo_Requerimientos_Plataforma_ATC_AYBARCORP.pdf` — Revisado por: pendiente
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

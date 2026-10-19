@@ -148,6 +148,31 @@ consulta ese dato de otro dominio (API, evento, o aun sin decidir). — Tomada
 por: IA (dos forks independientes de F5); pendiente de resolucion de
 Gobierno de Datos antes de G4.
 
+**D-11** — 2026-10-19 — **División del proyecto en Etapa 1 y Etapa 2
+(`RN-SVC-043`) e incorporación de 3 nuevas historias (`HU-ATC-061`..`063`,
+total 63 HU y 23 features)**: a partir del archivo actualizado
+`ATC_requerimientos.xlsx.ods` compartido por el usuario, el alcance se divide
+oficialmente en dos etapas sin bloquear la salida inicial:
+- **Etapa 1 · salida 30-oct-2026 (58 HU)**: todo el alcance funcional de ATC
+  operando con usuarios, roles y maestro de gestores/líderes locales
+  (`HU-ATC-001`, `008`, `046`, `054`, `055`), sin la sección de propuesta
+  comercial en la consulta 360 (`HU-ATC-050`) y sin UrbeMind.
+- **Etapa 2 · cierre estimado 15-dic-2026 (5 HU)**: integraciones con
+  tecnologías de terceros aún en construcción:
+  1. **NEXUS (`ACT-050`)**: `HU-ATC-061` (`RF-SVC-061` — SSO, identidad y
+     roles) y `HU-ATC-062` (`RF-SVC-062` — estructura organizacional: líder,
+     área, disponibilidad y ceses), vinculadas mediante la nueva entidad
+     `ENT-SVC-021` (`SVC_IDENTITY_LINK`).
+  2. **DAEDALUS (`ACT-051`)**: `HU-ATC-063` (`RF-SVC-063` — propuesta comercial
+     y reserva en línea en la consulta 360).
+  3. **UrbeMind (`PROC-SVC-007` / `FT-ATC-11`)**: `HU-ATC-017` (`RF-SVC-017`),
+     `HU-ATC-018` (`RF-SVC-018`) y `RNF-INT-003`.
+— Contexto: instrucción explícita del usuario al sincronizar con
+`ATC_requerimientos.xlsx.ods`. — Impacto: se crea `FT-ATC-24` (`PROC-SVC-023` /
+`CAP-SVC-018`) bajo `EP-ATC-10`, su `DOR-FT-ATC-24` y las historias
+`HU-ATC-061`..`063`. Ninguna funcionalidad de la Etapa 1 queda bloqueada por
+NEXUS, DAEDALUS ni UrbeMind. — Tomada por: PO / usuario (humano), 2026-10-19.
+
 ---
 
 ## Precedencia (recordatorio del marco)
