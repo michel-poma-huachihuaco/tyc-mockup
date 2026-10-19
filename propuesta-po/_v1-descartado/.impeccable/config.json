@@ -1,0 +1,32 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "primary font: montserrat",
+        "createdAt": "2026-10-16T15:40:15.079Z",
+        "reason": "Tipografia de marca del artifact del PO; la replica debe ser fiel (modo fiel elegido por el usuario). No se descarga: cae a la fuente del sistema"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-16T15:40:21.456Z",
+        "reason": "Banda de marca de la cabecera, no una tarjeta con borde lateral; identidad del artifact del PO (replica fiel pedida)"
+      },
+      {
+        "rule": "all-caps-body",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-16T15:40:21.627Z",
+        "reason": "Eyebrows y titulo de marca cortos (etiquetas, no parrafos); estilo del artifact del PO (replica fiel pedida)"
+      }
+    ]
+  }
+}

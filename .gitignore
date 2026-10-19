@@ -1,0 +1,24 @@
+target/
+*.class
+*.log
+.idea/
+*.iml
+.vscode/*
+# Servidores MCP para Copilot en VS Code: comun al equipo, sin secretos.
+!.vscode/mcp.json
+.DS_Store
+.env
+.env.*
+!.env.example
+application-local.yml
+config/*-local.yml
+.claude/settings.local.json
+# Frontend (frontend/): dependencias, salidas de build y caches. Van aqui, en el
+# .gitignore protegido de la raiz, y no en uno de frontend/: un .gitignore
+# anidado puede des-ignorar lo que este ignora (!.env) sin que nadie lo note.
+node_modules/
+dist/
+.angular/
+coverage/
+*.tsbuildinfo
+*.local

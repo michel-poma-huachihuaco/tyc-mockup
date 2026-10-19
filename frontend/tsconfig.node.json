@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* La configuracion de Vite corre en Node, no en el navegador */
+    "module": "nodenext",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Rigor */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts", "vite.*.config.ts", "pruebas"],
+  "exclude": [
+    // aybar:demo:inicio — las pruebas del visor 3D de la galería cargan código del navegador
+    // (DOM, three.js) escrito para el empaquetador: ese código lo comprueba tsconfig.app.json,
+    // no esta configuración de Node. npm run demo:quitar borra la región con las pruebas.
+    "pruebas/demo-tres-d.test.ts",
+    "pruebas/demo-tres-d-escena.test.ts",
+    // aybar:demo:fin
+  ]
+}

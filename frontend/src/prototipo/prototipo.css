@@ -1,0 +1,615 @@
+/*
+ * Prototipo G2 de «Aybar Atiende» (solo `npm run dev` y su build aparte). Clases con
+ * prefijo pt-, para no chocar con las ay- del sistema de diseño. Solo tokens --aybar-*:
+ * ningún color ni medida suelta; las medidas de maquetación son múltiplos de
+ * --aybar-space-4 (1rem). Las media queries no admiten var(): 640px es
+ * --aybar-breakpoint-sm, 768px md, 1024px lg y 1280px xl.
+ */
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+.pt {
+  --pt-navbar-alto: calc(var(--aybar-space-12) + var(--aybar-space-2));
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.pt :where(code) {
+  font-family: var(--aybar-family-mono);
+  font-size: 0.875em;
+}
+
+.pt-texto {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  line-height: var(--aybar-font-leading-relaxed);
+  overflow-wrap: anywhere;
+}
+
+.pt-texto-chico {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pt-alerta__codigo {
+  margin: var(--aybar-space-1) 0 0;
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.pt-en-linea {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2);
+}
+
+.pt-pila {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.pt-pila--chica {
+  gap: var(--aybar-space-2);
+}
+
+.pt-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--aybar-space-2);
+}
+
+.pt-acciones--inicio {
+  justify-content: flex-start;
+}
+
+.pt-lista-simple {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ── Supuestos del PO, visibles en la pantalla ───────────────────────────── */
+
+.pt-supuesto {
+  display: flex;
+  align-items: baseline;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-2) var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pt-supuesto > .ay-tag {
+  flex: none;
+}
+
+/* ── Marco: Navbar, barra lateral y contenido ────────────────────────────── */
+
+.pt-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  white-space: nowrap;
+}
+
+.pt-marca__nombre {
+  font-family: var(--aybar-family-heading);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.pt-marca__etiqueta {
+  padding: var(--aybar-space-px) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-fg-link) 30%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent);
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.pt-desde-md {
+  display: contents;
+}
+
+.pt-ver-como .ay-field {
+  margin: 0;
+}
+
+/* «Ver como» junto a su selector: la columna de 16ch del campo horizontal es para formularios. */
+.pt-ver-como .ay-field--horizontal {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--aybar-space-2);
+}
+
+.pt-alerta__texto,
+.pt-alerta__codigo {
+  display: block;
+}
+
+.pt-cuerpo {
+  align-items: start;
+}
+
+.pt-columnas {
+  display: flex;
+  align-items: flex-start;
+  min-inline-size: 0;
+}
+
+.pt-columnas > .ay-sidebar,
+.pt-cuerpo > .ay-sidepanel:not([data-compacto]) {
+  position: sticky;
+  inset-block-start: var(--pt-navbar-alto);
+  flex: none;
+  box-sizing: border-box;
+  block-size: calc(100dvh - var(--pt-navbar-alto));
+}
+
+.pt-principal {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  min-block-size: calc(100dvh - var(--pt-navbar-alto));
+}
+
+.pt-principal:focus {
+  outline: none;
+}
+
+.pt-barra__pie {
+  margin: 0;
+  padding: var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.ay-sidebar--collapsed .pt-barra__pie {
+  display: none;
+}
+
+/* El cajón de navegación del celular. */
+.pt-cajon {
+  display: grid;
+  gap: var(--aybar-space-6);
+}
+
+.pt-cajon__grupo {
+  display: grid;
+  gap: var(--aybar-space-1);
+}
+
+.pt-cajon__titulo {
+  margin: 0;
+  padding-inline: var(--aybar-space-3);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.pt-cajon__lista {
+  display: grid;
+  gap: var(--aybar-space-px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pt-cajon__enlace {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  min-block-size: var(--aybar-touch-min);
+  padding: 0 var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  text-decoration: none;
+}
+
+.pt-cajon__enlace:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 6%, transparent);
+  color: var(--aybar-color-fg-default);
+}
+
+.pt-cajon__enlace[aria-current='page'] {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 10%, transparent);
+  color: var(--aybar-color-fg-link);
+}
+
+.pt-cajon__icono {
+  display: inline-flex;
+  color: var(--aybar-color-fg-subtle);
+}
+
+.pt-cajon__insignia {
+  margin-inline-start: auto;
+}
+
+/* ── Página ──────────────────────────────────────────────────────────────── */
+
+.pt-pagina {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--aybar-space-5);
+  inline-size: 100%;
+  /* 1280px */
+  max-inline-size: calc(var(--aybar-space-4) * 80);
+  margin-inline: auto;
+  padding: 0 clamp(var(--aybar-space-4), 3vw, var(--aybar-space-8)) var(--aybar-space-16);
+}
+
+.pt-pagina--ancha {
+  /* 1536px */
+  max-inline-size: calc(var(--aybar-space-4) * 96);
+}
+
+.pt .ay-pageheader {
+  background: transparent;
+}
+
+.pt .ay-pageheader > :not(.ay-pageheader__tabs) {
+  padding-inline: 0;
+}
+
+/* Contenido principal y lateral; el lateral baja debajo en tableta y celular. */
+.pt-dos-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, calc(var(--aybar-space-4) * 24));
+  align-items: start;
+  gap: var(--aybar-space-5);
+}
+
+.pt-lateral {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.pt-rejilla-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--aybar-space-4);
+}
+
+.pt-opciones-en-linea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2) var(--aybar-space-6);
+}
+
+/* ── Bandeja ─────────────────────────────────────────────────────────────── */
+
+/* La barra de herramientas del SDK se diseñó pegada a la tabla: sin borde inferior ni esquinas
+   abajo, cerrada por el borde de arriba de la tabla. Aquí se quiere como una pieza propia que
+   flota sobre la tabla, así que se cierra: borde abajo y esquinas redondas, con aire entre ambas. */
+.pt-bandeja {
+  display: grid;
+  gap: var(--aybar-space-3);
+  min-inline-size: 0;
+}
+
+.pt-bandeja > .ay-toolbar {
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-end-start-radius: var(--aybar-radius-lg);
+  border-end-end-radius: var(--aybar-radius-lg);
+}
+
+/* La barra de selección (con filas marcadas) conserva el borde de petróleo que le da el SDK. */
+.pt-bandeja > .ay-toolbar--selection {
+  border-color: color-mix(in oklab, var(--aybar-color-action-primary-bg) 35%, var(--aybar-color-border-subtle));
+}
+
+/* El enlace de una celda de la rejilla: una sola parada de tabulación por celda. */
+.pt-enlace-celda {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--aybar-color-fg-link);
+  font: inherit;
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+  text-align: start;
+  text-decoration: underline;
+  text-underline-offset: var(--aybar-space-1);
+  cursor: pointer;
+}
+
+.pt-celda-doble {
+  display: grid;
+  justify-items: start;
+  gap: var(--aybar-space-1);
+  min-inline-size: 0;
+}
+
+.pt-celda-doble__principal {
+  overflow-wrap: anywhere;
+}
+
+.pt-celda-doble__secundaria {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* Tarjetas de la bandeja en el celular. */
+.pt-tarjetas {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pt-tarjeta {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+.pt-tarjeta__cabeza,
+.pt-tarjeta__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-2);
+}
+
+.pt-tarjeta__pie {
+  justify-content: flex-start;
+}
+
+.pt-tarjeta__numero {
+  color: var(--aybar-color-fg-link);
+  font-family: var(--aybar-family-mono);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.pt-tarjeta__resumen {
+  margin: 0;
+  font-weight: var(--aybar-font-weight-medium);
+}
+
+.pt-tarjeta__accion {
+  margin-inline-start: auto;
+}
+
+/* ── Nuevo ticket ────────────────────────────────────────────────────────── */
+
+.pt-registrado {
+  display: grid;
+  justify-items: center;
+  gap: var(--aybar-space-3);
+  padding-block: var(--aybar-space-4);
+  text-align: center;
+}
+
+.pt-registrado__numero {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-3xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+}
+
+/* ── Detalle ─────────────────────────────────────────────────────────────── */
+
+/* Un hito de la conversación: la cabecera y, debajo, el texto del mensaje. */
+.pt-hito,
+.pt-hito__texto {
+  display: block;
+}
+
+.pt-hito__texto {
+  margin-block-start: var(--aybar-space-1);
+  color: var(--aybar-color-fg-default);
+  font-weight: var(--aybar-font-weight-regular);
+  line-height: var(--aybar-font-leading-relaxed);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.pt-adjuntos {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ── Libro de Reclamaciones ──────────────────────────────────────────────── */
+
+.pt-huella {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  overflow-wrap: anywhere;
+}
+
+.pt-narrativa {
+  margin: 0;
+  white-space: pre-line;
+  line-height: var(--aybar-font-leading-relaxed);
+  overflow-wrap: anywhere;
+}
+
+/* ── Panel de simulación ─────────────────────────────────────────────────── */
+
+.pt-panel {
+  display: grid;
+  gap: var(--aybar-space-6);
+}
+
+.pt-panel__seccion {
+  display: grid;
+  gap: var(--aybar-space-3);
+  padding-block-start: var(--aybar-space-4);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.pt-panel__titulo {
+  margin: 0;
+  font-size: var(--aybar-font-size-base);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.pt-registro {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.pt-registro__datos {
+  margin: var(--aybar-space-1) 0 0;
+  padding: var(--aybar-space-2);
+  overflow-x: auto;
+  border-radius: var(--aybar-radius-sm);
+  background: var(--aybar-color-bg-surface-sunken);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 1279.98px) {
+  .pt-dos-columnas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .pt-desde-md {
+    display: none;
+  }
+
+  .pt-rejilla-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 639.98px) {
+  /* El nombre queda para el lector de pantalla: el enlace de la marca no se queda sin nombre. */
+  .pt-marca__nombre {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .pt-marca__etiqueta {
+    display: none;
+  }
+
+  .pt .ay-navbar__inner {
+    column-gap: var(--aybar-space-2);
+  }
+
+  .pt .ay-navbar__actions {
+    gap: var(--aybar-space-1);
+  }
+}
+
+/* Llamada entrante (ola 7): ocupa el ancho del contenido, sobre la pantalla */
+.pt-llamada {
+  padding: var(--aybar-space-4) var(--aybar-space-4) 0;
+  min-inline-size: 0;
+}
+
+/*
+ * Paleta tonal del prototipo (solo variaciones de color, sin tocar componentes): los grises
+ * puros de fondo, zona hundida y borde se mezclan con la rampa de la paleta elegida, como
+ * hace el SDK con su estilo sobrio. Contraste medido: fondo/tarjeta 1.15 (claro) y 1.22
+ * (oscuro), texto atenuado sobre el fondo 7.7:1 y 8.2:1. Al cambiar la paleta en
+ * «Apariencia», el tinte la sigue.
+ */
+:root:not([data-theme='dark']) {
+  --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-100) 85%, var(--aybar-color-neutral-100));
+  --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-200) 85%, var(--aybar-color-neutral-200));
+  --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-300) 85%, var(--aybar-color-neutral-300));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-900) 70%, var(--aybar-color-neutral-1000));
+    --aybar-color-bg-surface: color-mix(in oklab, var(--aybar-color-primary-800) 60%, var(--aybar-color-neutral-850));
+    --aybar-color-bg-surface-raised: color-mix(in oklab, var(--aybar-color-primary-700) 55%, var(--aybar-color-neutral-800));
+    --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-900) 50%, var(--aybar-color-neutral-1000));
+    --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-600) 50%, var(--aybar-color-neutral-700));
+  }
+}
+
+:root[data-theme='dark'] {
+  --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-900) 70%, var(--aybar-color-neutral-1000));
+  --aybar-color-bg-surface: color-mix(in oklab, var(--aybar-color-primary-800) 60%, var(--aybar-color-neutral-850));
+  --aybar-color-bg-surface-raised: color-mix(in oklab, var(--aybar-color-primary-700) 55%, var(--aybar-color-neutral-800));
+  --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-900) 50%, var(--aybar-color-neutral-1000));
+  --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-600) 50%, var(--aybar-color-neutral-700));
+}
+
+/* El elegido a mano manda sobre el sistema: sin esto, con el sistema en oscuro y el tema claro,
+   las barras de desplazamiento y los controles nativos salen oscuros sobre fondo claro. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/*
+ * Sidebar de marca (solo tema claro): zona de tokens, no un componente nuevo. Dentro del
+ * sidebar los tokens semánticos valen lo del petróleo oscuro y el acento mandarina marca el
+ * ítem activo y el foco; los componentes siguen leyendo los mismos tokens de siempre. Texto
+ * sobre el fondo: 8.6:1 a 12.9:1. En oscuro el sidebar ya queda tintado por la paleta tonal.
+ * Sigue la paleta de «Apariencia» porque usa sus rampas.
+ */
+:root[data-theme='light'] .pt .ay-sidebar {
+  --aybar-color-bg-surface: var(--aybar-color-primary-800);
+  --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
+  --aybar-color-fg-default: var(--aybar-color-primary-50);
+  --aybar-color-fg-muted: var(--aybar-color-primary-200);
+  --aybar-color-fg-subtle: var(--aybar-color-primary-300);
+  --aybar-color-fg-link: var(--aybar-color-secondary-300);
+  --aybar-color-border-subtle: var(--aybar-color-primary-700);
+  --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
+  --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
+  --aybar-color-border-focus: var(--aybar-color-secondary-400);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .pt .ay-sidebar {
+    --aybar-color-bg-surface: var(--aybar-color-primary-800);
+    --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
+    --aybar-color-fg-default: var(--aybar-color-primary-50);
+    --aybar-color-fg-muted: var(--aybar-color-primary-200);
+    --aybar-color-fg-subtle: var(--aybar-color-primary-300);
+    --aybar-color-fg-link: var(--aybar-color-secondary-300);
+    --aybar-color-border-subtle: var(--aybar-color-primary-700);
+    --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
+    --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
+    --aybar-color-border-focus: var(--aybar-color-secondary-400);
+  }
+}

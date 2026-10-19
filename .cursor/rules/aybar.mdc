@@ -1,0 +1,22 @@
+---
+description: Contexto Aybar de este proyecto. La fuente es AGENTS.md; esto es el minimo que no se negocia.
+alwaysApply: true
+---
+
+# Aybar
+
+La fuente del contexto es `AGENTS.md`, en la raiz: leelo antes de cambiar nada.
+Al empezar, su primera seccion: el informe de `.agents/scripts/arranque.sh` (lo
+corre el hook de `.cursor/hooks.json`), `docs/explorador.html` y lo que falta,
+contado al humano antes de tocar codigo.
+Lo que no se negocia (el detalle y el porque estan en AGENTS.md):
+
+- `frontend/` no importa nada de fuera de `frontend/`, ningun modulo se importa
+  por URL y un remoto no importa `@aybarcorp/shell` ni `@aybarcorp/auth`. Lo
+  corta `.guardianes/agente/guardian-arquitectura.sh`.
+- No reimplementes el sistema de diseño, el login OIDC, la federacion ni el
+  cliente HTTP: los traen `@aybarcorp/ui` o `@aybarcorp/ui-elements`,
+  `@aybarcorp/auth`, `@aybarcorp/shell` y `@aybarcorp/remote`, y `@aybarcorp/http`.
+- Un componente no llama a la red: la llamada va en un servicio con
+  `@aybarcorp/http`. Ningun secreto en el front: lo que se compila, se publica.
+- Los `@aybarcorp/*` van con version exacta, todos en la misma.

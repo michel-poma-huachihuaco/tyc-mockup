@@ -1,0 +1,31 @@
+{
+  "context": {
+    "fileName": [
+      "AGENTS.md"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "aybar-arranque",
+            "type": "command",
+            "command": "bash \"$GEMINI_PROJECT_DIR/.agents/scripts/arranque.sh\" --hook gemini",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "nexora": {
+      "command": "aybar",
+      "args": [
+        "mcp",
+        "nexora"
+      ]
+    }
+  }
+}

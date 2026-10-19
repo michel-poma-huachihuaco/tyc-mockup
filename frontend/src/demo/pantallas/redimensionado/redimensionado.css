@@ -1,0 +1,170 @@
+/*
+ * /demo/redimensionado: las secciones y los dos Splitter sencillos (código | vista previa y
+ * tabla / registro). Prefijo gl-redim; solo tokens --aybar-*. La bandeja, las tarjetas con
+ * container queries y la vista previa llevan su hoja (correo.css, contenedor.css,
+ * vista-previa.css). Las mismas hojas en React y en Angular.
+ */
+
+.gl-redim {
+  display: grid;
+  gap: var(--aybar-space-12);
+  min-inline-size: 0;
+}
+
+.gl-redim__seccion {
+  display: grid;
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+}
+
+.gl-redim__cabecera {
+  display: grid;
+  gap: var(--aybar-space-2);
+  max-inline-size: calc(var(--aybar-space-4) * 46);
+}
+
+.gl-redim__titulo {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-redim__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  line-height: var(--aybar-font-leading-relaxed);
+  text-wrap: pretty;
+}
+
+.gl-redim__texto kbd {
+  padding: 0 var(--aybar-space-1);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-sm);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* Las dos demostraciones, lado a lado cuando caben (dos de 26rem), si no una sobre otra. */
+.gl-redim__par {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 26)), 1fr));
+  gap: var(--aybar-space-6);
+}
+
+.gl-redim__demo {
+  display: grid;
+  gap: var(--aybar-space-3);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.gl-redim__leyenda {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-redim__leyenda strong {
+  color: var(--aybar-color-fg-default);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+/* El marco de cada Splitter: superficie, borde fino, sombra suave y un alto fijo, que el
+   vertical necesita para repartir. */
+.gl-redim__marco {
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-redim__marco > .ay-splitter {
+  block-size: calc(var(--aybar-space-4) * 21);
+}
+
+.gl-redim__codigo {
+  box-sizing: border-box;
+  min-block-size: 100%;
+  margin: 0;
+  padding: var(--aybar-space-4);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-relaxed);
+  white-space: pre;
+}
+
+.gl-redim__muestra {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--aybar-space-5);
+  background: var(--aybar-color-bg-canvas);
+}
+
+.gl-redim__muestra > * {
+  inline-size: 100%;
+  max-inline-size: calc(var(--aybar-space-4) * 20);
+}
+
+.gl-redim__precio {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-redim__tabla {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-redim__tabla :is(th, td) {
+  padding: var(--aybar-space-2) var(--aybar-space-4);
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.gl-redim__tabla thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--aybar-z-raised);
+  background: var(--aybar-color-bg-surface-raised);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-redim__tabla .gl-redim__cifra {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-redim__registro {
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-1);
+  box-sizing: border-box;
+  min-block-size: 100%;
+  margin: 0;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  list-style: none;
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-redim__registro time {
+  color: var(--aybar-color-fg-default);
+}

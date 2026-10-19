@@ -1,0 +1,166 @@
+/*
+ * Las tarjetas de /demo/redimensionado que cambian de disposición con su contenedor (el
+ * panel del Splitter), no con la ventana. Los umbrales, 22rem y 36rem, son los de
+ * UMBRALES_REM en modelo.ts (una container query no admite var()):
+ *
+ *   < 22rem   apilada  una columna; la cifra encima de la etiqueta y la barra
+ *   ≥ 22rem   en fila  una columna; la cifra a un lado, la etiqueta y la barra al otro
+ *   ≥ 36rem   amplia   dos columnas, con el desglose por manzana
+ *
+ * Prefijo gl-cq; solo tokens --aybar-*. La misma hoja en React y en Angular.
+ */
+
+/* En Angular es el elemento del componente: un bloque, como el div de React. */
+.gl-cq {
+  display: block;
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-cq > .ay-splitter {
+  min-block-size: calc(var(--aybar-space-4) * 22);
+}
+
+.gl-cq__panel {
+  container: gl-cq-panel / inline-size;
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-3);
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--aybar-space-4);
+}
+
+.gl-cq__medida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-cq__disposicion {
+  padding: 0 var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-accent-subtle);
+  color: var(--aybar-color-fg-default);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-cq__tarjetas {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-cq__tarjetas > li {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.gl-cq__contenido {
+  display: grid;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+.gl-cq__numero {
+  margin: 0;
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-3xl);
+  font-weight: var(--aybar-font-weight-display);
+  line-height: var(--aybar-font-leading-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-cq__detalle {
+  display: grid;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+.gl-cq__etiqueta {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-cq__barra {
+  overflow: hidden;
+  block-size: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-cq__relleno {
+  display: block;
+  block-size: 100%;
+  inline-size: var(--gl-cq-porcentaje, 0%);
+  border-radius: inherit;
+  background: var(--aybar-color-fg-muted);
+}
+
+.gl-cq__contenido[data-estado='disponible'] .gl-cq__relleno {
+  background: var(--aybar-color-feedback-success-fg);
+}
+
+.gl-cq__contenido[data-estado='reservado'] .gl-cq__relleno {
+  background: var(--aybar-color-feedback-warning-fg);
+}
+
+.gl-cq__contenido[data-estado='vendido'] .gl-cq__relleno {
+  background: var(--aybar-color-feedback-info-fg);
+}
+
+.gl-cq__desglose {
+  display: none;
+  gap: var(--aybar-space-1);
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-cq__desglose > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--aybar-space-2);
+}
+
+.gl-cq__desglose :is(dt, dd) {
+  margin: 0;
+}
+
+.gl-cq__desglose dd {
+  color: var(--aybar-color-fg-default);
+  font-variant-numeric: tabular-nums;
+}
+
+@container gl-cq-panel (min-width: 22rem) {
+  .gl-cq__contenido {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--aybar-space-5);
+  }
+}
+
+@container gl-cq-panel (min-width: 36rem) {
+  .gl-cq__tarjetas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gl-cq__contenido {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .gl-cq__desglose {
+    display: grid;
+  }
+}

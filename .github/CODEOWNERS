@@ -1,0 +1,74 @@
+# CODEOWNERS del servicio: quien aprueba que (marco de entrega Aybar).
+# Forma acordada en docs/especificaciones/evidencia-de-gates.md del SDK (5).
+#
+# La aprobacion de un gate ES el PR que mergea su archivo
+# docs/gates/<TICKET>/G<n>.md con estado: approved, revisado por el CODEOWNER
+# del rol. Los guardianes (pre-commit, hook del agente y las etapas "Gates
+# listos" y "Evidencia de gates" del pipeline) leen y validan ese archivo;
+# QUIEN lo aprobo lo garantiza este fichero junto con la proteccion de main.
+#
+# TODO VA COMENTADO A PROPOSITO. El SDK no conoce los equipos de cada
+# servicio, y una regla con un handle que no existe no protege nada. Para
+# activarlo:
+#   1. cambia <org> y los equipos de ejemplo por los handles reales
+#      (@org/equipo o @usuario) y quita el '# ' del principio de cada regla;
+#   2. en la proteccion de main (o en un ruleset) activa: PR obligatorio,
+#      "Require review from Code Owners", checks en verde (incluidos
+#      "Gates listos" y "Evidencia de gates"), sin force-push, sin borrado y
+#      sin excepcion administrativa.
+#
+# Como lo lee GitHub:
+#   - gana la ULTIMA regla que coincide: lo general arriba, lo concreto abajo;
+#   - varios dueños en una linea significa "cualquiera de ellos", no "todos".
+#
+# GATES DE DOS ROLES (G2: PO y UX; G7: DevOps y TL; G8: TL y PO). Con
+# CODEOWNERS a GitHub le basta la aprobacion de UNO de los equipos de la
+# linea. La CI comprueba que el archivo DECLARA dos firmas, pero no puede
+# comprobar de forma fiable a que equipo pertenece cada revisor (el token del
+# workflow no lee equipos de la organizacion). Exigir los dos roles es
+# configuracion del servidor: una regla de revisores requeridos por ruta en
+# un ruleset, si la plataforma la ofrece, que pida una aprobacion de cada
+# equipo sobre docs/gates/*/G2.md, G7.md y G8.md. Sin esa regla, el equipo lo
+# verifica a mano antes de mergear. Una sola firma no cierra un gate de dos
+# roles.
+#
+# Roles por gate: G0, G1 y G4 PO; G2 PO y UX; G3 TL; G5 TL o revisor (nunca
+# el autor); G6 QA; G7 DevOps y TL; G8 TL y PO; G9 TL.
+
+# --- Por defecto: todo cambio lo revisa el equipo (G5) -----------------------
+# *                              @<org>/revisores
+
+# --- Frontend: el equipo de frontend revisa su codigo (G5) -------------------
+# Dependencias: el equipo de frontend o el TL (cualquiera de los dos, como
+# toda linea con varios dueños). El registro de remotos de un shell (que
+# remoto carga y en que version) es arquitectura: solo el TL.
+# /frontend/                     @<org>/frontend
+# /frontend/package.json         @<org>/frontend @<org>/technical-leads
+# /frontend/package-lock.json    @<org>/frontend @<org>/technical-leads
+# /frontend/public/remotos.json  @<org>/technical-leads
+
+# --- La barrera misma: guardianes, pipeline, configuracion del agente --------
+# Quien cambia esto cambia lo que se vigila (y, en un PR, el validador que
+# corre la propia CI): lo revisa el TL.
+# /.guardianes/                  @<org>/technical-leads
+# /.aybar-guardianes.conf        @<org>/technical-leads
+# /.github/                      @<org>/technical-leads @<org>/devops
+# /.claude/settings.json         @<org>/technical-leads
+# /.agents/evals/                @<org>/technical-leads
+
+# --- Paquete Definir y decisiones --------------------------------------------
+# /docs/adr/                     @<org>/technical-leads
+# /docs/dor/                     @<org>/product-owners
+# /docs/analisis/decisiones.md   @<org>/technical-leads
+
+# --- Gates: docs/gates/<TICKET>/G<n>.md --------------------------------------
+# /docs/gates/*/G0.md            @<org>/product-owners
+# /docs/gates/*/G1.md            @<org>/product-owners
+# /docs/gates/*/G2.md            @<org>/product-owners @<org>/ux
+# /docs/gates/*/G3.md            @<org>/technical-leads
+# /docs/gates/*/G4.md            @<org>/product-owners
+# /docs/gates/*/G5.md            @<org>/technical-leads @<org>/revisores
+# /docs/gates/*/G6.md            @<org>/qa
+# /docs/gates/*/G7.md            @<org>/devops @<org>/technical-leads
+# /docs/gates/*/G8.md            @<org>/technical-leads @<org>/product-owners
+# /docs/gates/*/G9.md            @<org>/technical-leads

@@ -1,0 +1,2811 @@
+/*
+ * La galería de demostración (solo `npm run dev`; `npm run demo:quitar` la borra). Clases
+ * con prefijo gl-, para no chocar con las ay- del sistema de diseño ni con las pl- de la
+ * plantilla. Solo tokens --aybar-*: ningún color ni medida suelta. Las proporciones
+ * multiplican tokens y las medidas de maquetación van como múltiplos de --aybar-space-4
+ * (1rem). Las media queries no admiten var(): 640px es --aybar-breakpoint-sm, 768px md,
+ * 1024px lg, 1280px xl y 1536px 2xl.
+ *
+ * El movimiento usa --aybar-motion-* y se apaga con prefers-reduced-motion (al final).
+ */
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+.gl {
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.gl :where(code, kbd) {
+  font-family: var(--aybar-family-mono);
+  font-size: 0.875em;
+}
+
+.gl-texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-texto-chico {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.gl-codigo-en-linea,
+.gl-texto code,
+.gl-texto-chico code,
+.gl-grupo__nota code,
+.gl-panel__nota code {
+  padding: 0 var(--aybar-space-1);
+  border-radius: var(--aybar-radius-sm);
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent);
+  color: var(--aybar-color-fg-link);
+}
+
+/* Un enlace o un botón de texto pequeño: «Código», «Pantalla completa». */
+.gl-enlace-chico {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-1);
+  min-block-size: var(--aybar-space-6);
+  padding: var(--aybar-space-1) var(--aybar-space-2);
+  border: 0;
+  border-radius: var(--aybar-radius-md);
+  background: transparent;
+  color: var(--aybar-color-fg-muted);
+  font: inherit;
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-enlace-chico:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 8%, transparent);
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-enlace-chico[aria-expanded='true'] {
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-enlace-chico[aria-expanded='true'] .ay-icon {
+  rotate: 180deg;
+}
+
+.gl-enlace-chico .ay-icon {
+  transition: rotate var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard);
+}
+
+:is(.gl-enlace-chico, .gl-buscador, .gl-cajon__enlace, .gl-vitrina__enlace, .gl-indice__enlace, .gl-vecinos__enlace, .gl-flotante__boton):focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+  box-shadow: 0 0 0 calc(var(--aybar-focus-ring-width) + var(--aybar-focus-ring-offset) + var(--aybar-space-1)) var(--aybar-color-focus-halo);
+}
+
+/* Lo que solo se ve a partir de un ancho (o hasta él): envoltorios de un control. */
+.gl-desde-xl,
+.gl-desde-md {
+  display: contents;
+}
+
+.gl-hasta-md {
+  display: none;
+}
+
+@media (max-width: 1279.98px) {
+  .gl-desde-xl {
+    display: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .gl-desde-md {
+    display: none;
+  }
+
+  .gl-hasta-md {
+    display: contents;
+  }
+}
+
+/* ── Marco: Navbar, barra lateral, contenido y panel ──────────────────────── */
+
+.gl-marco {
+  --gl-navbar-alto: calc(var(--aybar-space-12) + var(--aybar-space-2));
+}
+
+/* La marca de la galería: la del proyecto y «Galería» en una pastilla. */
+.gl-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  white-space: nowrap;
+}
+
+.gl-marca__galeria {
+  padding: var(--aybar-space-px) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-fg-link) 30%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent);
+  color: var(--aybar-color-fg-link);
+  font-family: var(--aybar-family-sans);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: 0;
+}
+
+/* El disparador del buscador: tiene forma de campo, pero es un botón que abre la paleta. */
+.gl-buscador {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--aybar-control-height-sm);
+  padding: 0 var(--aybar-space-2) 0 var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-bg-canvas) 60%, var(--aybar-color-bg-surface));
+  color: var(--aybar-color-fg-muted);
+  font: inherit;
+  font-size: var(--aybar-font-size-sm);
+  cursor: pointer;
+  box-shadow: inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-fg-default) 3%, transparent);
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-buscador:hover {
+  border-color: var(--aybar-color-border-default);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-buscador__texto {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-buscador__atajo {
+  flex: none;
+  padding: var(--aybar-space-px) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  box-shadow: 0 var(--aybar-space-px) 0 var(--aybar-color-border-subtle);
+}
+
+/* «Ver como» con un ancho propio: el Segmented Control pasa a ancho completo dentro de un
+   contenedor estrecho, y el de las acciones de la Navbar no tiene ancho definido. */
+.gl-ver-como {
+  /* 216px: «Administración | Usuario» en sm */
+  inline-size: calc(var(--aybar-space-24) * 2.25);
+}
+
+/* El Avatar sm (24px) ocupa el hueco del icono del Icon Button. */
+.gl-cuenta .ay-iconbtn {
+  --button-glyph: var(--aybar-space-6);
+}
+
+/* Debajo de la Navbar, la rejilla del Side Panel (ay-split): el contenido y el panel. */
+.gl-cuerpo {
+  align-items: start;
+}
+
+.gl-columnas {
+  display: flex;
+  align-items: flex-start;
+  min-inline-size: 0;
+}
+
+.gl-columnas > .ay-sidebar,
+.gl-cuerpo > .ay-sidepanel:not([data-compacto]) {
+  position: sticky;
+  inset-block-start: var(--gl-navbar-alto);
+  flex: none;
+  box-sizing: border-box;
+  block-size: calc(100dvh - var(--gl-navbar-alto));
+}
+
+.gl-principal {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  min-block-size: calc(100dvh - var(--gl-navbar-alto));
+}
+
+.gl-principal:focus {
+  outline: none;
+}
+
+.gl-barra__pie {
+  margin: 0;
+  padding: var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.ay-sidebar--collapsed .gl-barra__pie {
+  display: none;
+}
+
+/* El cajón de navegación del celular. */
+.gl-cajon {
+  display: grid;
+  gap: var(--aybar-space-6);
+}
+
+.gl-cajon__grupo {
+  display: grid;
+  gap: var(--aybar-space-1);
+}
+
+.gl-cajon__titulo {
+  margin: 0;
+  padding-inline: var(--aybar-space-3);
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.gl-cajon__lista,
+.gl-cajon__sublista {
+  display: grid;
+  gap: var(--aybar-space-px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-cajon__sublista {
+  margin-inline-start: calc(var(--aybar-space-6) + var(--aybar-space-3));
+  padding-inline-start: var(--aybar-space-2);
+  border-inline-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-cajon__enlace {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  min-block-size: var(--aybar-touch-min);
+  padding: 0 var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  text-decoration: none;
+}
+
+.gl-cajon__enlace:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 6%, transparent);
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-cajon__enlace[aria-current='page'] {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 10%, transparent);
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-cajon__enlace--sub {
+  min-block-size: var(--aybar-control-height-md);
+}
+
+.gl-cajon__icono {
+  display: inline-flex;
+  color: var(--aybar-color-fg-subtle);
+}
+
+/* El panel «Personalizar». */
+.gl-panel {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-panel__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.gl-panel__pie {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--aybar-space-2);
+}
+
+/* En el celular la búsqueda se queda en un icono: el texto pasa a ser solo para el lector. */
+@media (max-width: 767.98px) {
+  .gl-marco .ay-navbar__search {
+    flex: 0 0 auto;
+  }
+
+  .gl-buscador {
+    inline-size: var(--aybar-touch-min);
+    min-block-size: var(--aybar-touch-min);
+    justify-content: center;
+    padding: 0;
+  }
+
+  .gl-buscador__texto {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .gl-buscador__atajo {
+    display: none;
+  }
+
+}
+
+/* En el celular estrecho la marca se queda en el símbolo (el nombre, para el lector) y la
+   Navbar junta sus piezas: así cabe en una línea a 320px. */
+@media (max-width: 639.98px) {
+  .gl-marca__proyecto {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .gl-marca__galeria {
+    display: none;
+  }
+
+  .gl-marco .ay-navbar__inner {
+    column-gap: var(--aybar-space-2);
+  }
+
+  .gl-marco .ay-navbar__actions {
+    gap: var(--aybar-space-1);
+  }
+}
+
+/* ── Página: el Header del framework dentro de la columna de contenido ────── */
+
+.gl-pagina {
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* 1280px */
+  max-inline-size: calc(var(--aybar-space-4) * 80);
+  margin-inline: auto;
+  padding: 0 clamp(var(--aybar-space-4), 4vw, var(--aybar-space-10)) var(--aybar-space-16);
+}
+
+.gl-pagina--ancha {
+  /* 1536px */
+  max-inline-size: calc(var(--aybar-space-4) * 96);
+}
+
+/* El Header es una banda en una aplicación; aquí se asienta en la columna, sin banda. */
+.gl .ay-pageheader {
+  margin-block-end: var(--aybar-space-8);
+  background: transparent;
+}
+
+.gl .ay-pageheader > :not(.ay-pageheader__tabs) {
+  padding-inline: 0;
+}
+
+.gl .ay-pageheader__desc {
+  max-inline-size: calc(var(--aybar-space-4) * 48);
+}
+
+.gl-cargando {
+  display: grid;
+  gap: var(--aybar-space-4);
+  padding-block: var(--aybar-space-8);
+}
+
+.gl-embebido {
+  min-block-size: 100dvh;
+  padding-block-start: var(--aybar-space-2);
+}
+
+.gl-embebido:focus {
+  outline: none;
+}
+
+/* Una rejilla de tarjetas: tantas columnas como quepan, ninguna por debajo de 16rem. */
+.gl-rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-4) * 16)), 1fr));
+  gap: var(--aybar-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-rejilla--familias {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-4) * 18)), 1fr));
+}
+
+.gl-rejilla > li {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.gl-rejilla > li > .ay-card {
+  block-size: 100%;
+}
+
+/* ── Vitrina ─────────────────────────────────────────────────────────────── */
+
+.gl-vitrina {
+  display: grid;
+  /* 208px | contenido | 192px */
+  grid-template-columns: calc(var(--aybar-space-4) * 13) minmax(0, 1fr) calc(var(--aybar-space-4) * 12);
+  gap: var(--aybar-space-10);
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: calc(var(--aybar-space-4) * 100);
+  margin-inline: auto;
+  padding: 0 clamp(var(--aybar-space-4), 3vw, var(--aybar-space-10)) var(--aybar-space-16);
+}
+
+.gl-vitrina__familia,
+.gl-vitrina__indice {
+  position: sticky;
+  inset-block-start: var(--gl-navbar-alto, 0px);
+  align-self: start;
+  box-sizing: border-box;
+  max-block-size: calc(100dvh - var(--gl-navbar-alto, 0px));
+  overflow-y: auto;
+  padding-block: var(--aybar-space-8);
+  scrollbar-width: thin;
+}
+
+.gl-vitrina__rotulo {
+  margin: 0 0 var(--aybar-space-2);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.gl-vitrina__lista,
+.gl-indice {
+  display: grid;
+  gap: var(--aybar-space-px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-vitrina__enlace,
+.gl-indice__enlace {
+  display: block;
+  padding: calc(var(--aybar-space-1) * 1.5) var(--aybar-space-3);
+  border-inline-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-snug);
+  text-decoration: none;
+  transition:
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-vitrina__enlace:hover,
+.gl-indice__enlace:hover {
+  border-inline-start-color: color-mix(in oklab, var(--aybar-color-fg-link) 45%, transparent);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El actual: borde de 2px como sombra interior (el texto no se mueve) y un tono hacia la derecha. */
+.gl-vitrina__enlace[aria-current='page'],
+.gl-indice__enlace[aria-current='location'] {
+  border-inline-start-color: transparent;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent), transparent);
+  color: var(--aybar-color-fg-link);
+  font-weight: var(--aybar-font-weight-semibold);
+  box-shadow: inset var(--aybar-border-width-thick) 0 0 var(--aybar-color-fg-link);
+}
+
+.gl-vitrina__enlace:focus-visible,
+.gl-indice__enlace:focus-visible {
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-vitrina__centro {
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-12);
+  min-inline-size: 0;
+}
+
+.gl-vitrina__centro > .ay-pageheader {
+  margin-block-end: 0;
+}
+
+.gl-grupo {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-grupo__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 0.75);
+  scroll-margin-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+}
+
+.gl-grupo__nota {
+  margin: 0;
+  max-inline-size: calc(var(--aybar-space-4) * 48);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.gl-casos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-4) * 19)), 1fr));
+  gap: var(--aybar-space-6);
+}
+
+.gl-casos--completo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Un caso: el lienzo de puntos con el componente, y al pie su etiqueta y sus acciones. */
+.gl-caso {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-inline-size: 0;
+  margin: 0;
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+  scroll-margin-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+  transition: box-shadow var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard);
+}
+
+.gl-caso:hover {
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-caso:has(> .gl-codigo) {
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
+.gl-caso__marco,
+.gl-caso__reserva {
+  /* 128px */
+  min-block-size: calc(var(--aybar-space-4) * 8);
+}
+
+/* El marco aísla el caso: lo de página completa se recorre dentro. El aire interior deja
+   ver entero el anillo de foco. Dentro, el lienzo es de bloque: lo que es en línea (un
+   botón, una insignia) queda centrado y lo que es de bloque ocupa el ancho. */
+.gl-caso__marco {
+  position: relative;
+  display: grid;
+  align-content: center;
+  box-sizing: border-box;
+  /* 480px */
+  max-block-size: calc(var(--aybar-space-4) * 30);
+  overflow: auto;
+  padding: var(--aybar-space-8) var(--aybar-space-6);
+  background-color: color-mix(in oklab, var(--aybar-color-bg-canvas) 45%, var(--aybar-color-bg-surface));
+  background-image: radial-gradient(var(--aybar-color-border-subtle) var(--aybar-space-px), transparent var(--aybar-space-px));
+  /* 18px */
+  background-size: calc(var(--aybar-space-4) + var(--aybar-space-px) * 2) calc(var(--aybar-space-4) + var(--aybar-space-px) * 2);
+}
+
+.gl-caso__lienzo {
+  min-inline-size: 0;
+  text-align: center;
+}
+
+.gl-caso__lienzo > * {
+  text-align: start;
+}
+
+.gl-caso--completo .gl-caso__marco {
+  /* 640px */
+  max-block-size: calc(var(--aybar-space-4) * 40);
+}
+
+.gl-caso--completo .gl-caso__lienzo,
+.gl-caso__marco--completo .gl-caso__lienzo {
+  text-align: start;
+}
+
+/* Con transform, el marco es el bloque contenedor de lo position: fixed del caso. */
+.gl-caso__marco--contenido {
+  transform: translate(0);
+}
+
+.gl-caso__reserva {
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklab, var(--aybar-color-bg-canvas) 45%, var(--aybar-color-bg-surface));
+  color: var(--aybar-color-fg-subtle);
+}
+
+.gl-caso__disparador {
+  display: grid;
+  justify-items: center;
+  gap: var(--aybar-space-3);
+  text-align: center;
+}
+
+.gl-caso__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-caso__tabla {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.gl-caso__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-4);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-caso__etiqueta {
+  min-inline-size: 0;
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  overflow-wrap: anywhere;
+}
+
+.gl-caso__acciones {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-1);
+}
+
+/* El código del caso: el fondo hundido del tema, en monoespaciada, con «Copiar» arriba. */
+.gl-codigo {
+  position: relative;
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-codigo__pre {
+  margin: 0;
+  /* 320px */
+  max-block-size: calc(var(--aybar-space-4) * 20);
+  overflow: auto;
+  padding: var(--aybar-space-5) var(--aybar-space-5) var(--aybar-space-5) var(--aybar-space-5);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-relaxed);
+  tab-size: 2;
+}
+
+.gl-codigo__pre:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-codigo__copiar {
+  position: absolute;
+  inset-block-start: var(--aybar-space-2);
+  inset-inline-end: var(--aybar-space-3);
+}
+
+/* La tabla de props. */
+.gl-props__filtro {
+  /* 320px */
+  max-inline-size: calc(var(--aybar-space-4) * 20);
+}
+
+.gl-props {
+  overflow-x: auto;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-props:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-props__tabla {
+  inline-size: 100%;
+  /* 720px */
+  min-inline-size: calc(var(--aybar-space-4) * 45);
+  border-collapse: collapse;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-props__tabla :is(th, td) {
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  text-align: start;
+  vertical-align: top;
+}
+
+.gl-props__tabla thead tr {
+  background: color-mix(in oklab, var(--aybar-color-bg-canvas) 50%, var(--aybar-color-bg-surface));
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-props__tabla thead th {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-props__tabla tbody tr {
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-props__tabla tbody th {
+  font-weight: var(--aybar-font-weight-regular);
+  white-space: nowrap;
+}
+
+.gl-props__nombre {
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-props__tipo,
+.gl-props__valor {
+  font-size: var(--aybar-font-size-xs);
+  overflow-wrap: anywhere;
+}
+
+.gl-props__tipo {
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-props__nota {
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-props__descripcion {
+  /* 360px */
+  min-inline-size: calc(var(--aybar-space-4) * 22.5);
+  color: var(--aybar-color-fg-muted);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.gl-props__descripcion code {
+  color: var(--aybar-color-fg-default);
+}
+
+/* Anterior y siguiente, al pie de cada componente. */
+.gl-vecinos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--aybar-space-4);
+  padding-block-start: var(--aybar-space-8);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-vecinos__enlace {
+  display: grid;
+  gap: var(--aybar-space-1);
+  padding: var(--aybar-space-4) var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  color: var(--aybar-color-fg-default);
+  text-decoration: none;
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-vecinos__enlace:hover {
+  border-color: color-mix(in oklab, var(--aybar-color-fg-link) 45%, transparent);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-vecinos__enlace--siguiente {
+  grid-column: 2;
+  justify-items: end;
+  text-align: end;
+}
+
+.gl-vecinos__rotulo {
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-vecinos__nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  color: var(--aybar-color-fg-link);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+/* Hasta 2xl el índice «En esta página» se queda fuera: el contenido necesita el ancho. */
+@media (max-width: 1535.98px) {
+  .gl-vitrina {
+    grid-template-columns: calc(var(--aybar-space-4) * 13) minmax(0, 1fr);
+  }
+
+  .gl-vitrina__indice {
+    display: none;
+  }
+}
+
+/* Por debajo de lg, los componentes de la familia pasan a una fila de chips sobre el contenido. */
+@media (max-width: 1023.98px) {
+  .gl-vitrina {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--aybar-space-4);
+  }
+
+  .gl-vitrina__familia {
+    position: static;
+    max-block-size: none;
+    overflow: visible;
+    padding-block: var(--aybar-space-4) 0;
+  }
+
+  .gl-vitrina__lista {
+    display: flex;
+    gap: var(--aybar-space-2);
+    margin-inline: calc(var(--aybar-space-4) * -1);
+    padding: var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-2);
+    overflow-x: auto;
+    scroll-padding-inline: var(--aybar-space-4);
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .gl-vitrina__lista > li {
+    flex: none;
+    scroll-snap-align: start;
+  }
+
+  .gl-vitrina__enlace {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--aybar-touch-min);
+    padding-inline: var(--aybar-space-4);
+    border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+    border-radius: var(--aybar-radius-full);
+    background: var(--aybar-color-bg-surface);
+    white-space: nowrap;
+  }
+
+  .gl-vitrina__enlace[aria-current='page'] {
+    border-color: transparent;
+    background: var(--aybar-color-bg-brand);
+    color: var(--aybar-color-fg-on-brand);
+    box-shadow: none;
+  }
+
+  .gl-vitrina__enlace:focus-visible {
+    outline-offset: var(--aybar-focus-ring-offset);
+  }
+
+  .gl-vitrina__centro {
+    gap: var(--aybar-space-10);
+  }
+}
+
+@media (max-width: 639.98px) {
+  .gl-caso__marco {
+    padding: var(--aybar-space-6) var(--aybar-space-4);
+  }
+
+  .gl-vecinos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gl-vecinos__enlace--siguiente {
+    grid-column: 1;
+  }
+}
+
+/* ── Portada ─────────────────────────────────────────────────────────────── */
+
+.gl-titulo-seccion {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 0.75);
+}
+
+.gl-portada {
+  display: grid;
+  gap: var(--aybar-space-12);
+  padding-block-start: var(--aybar-space-8);
+}
+
+/* El héroe: una escena de Parallax con el degradado de la paleta activa. Las capas
+   decorativas se salen un poco de la escena para que al desplazarse no asome el borde. */
+.gl-heroe {
+  border-radius: var(--aybar-radius-2xl);
+  box-shadow: var(--aybar-shadow-xl);
+}
+
+.gl-heroe > .ay-parallax {
+  border-radius: inherit;
+}
+
+.gl-heroe__fondo,
+.gl-heroe__rejilla,
+.gl-heroe__orbes {
+  position: absolute;
+  inset: calc(var(--aybar-space-8) * -1);
+}
+
+.gl-heroe__fondo {
+  background:
+    radial-gradient(ellipse at 18% 20%, color-mix(in oklab, var(--aybar-color-primary-400) 70%, transparent), transparent 55%),
+    radial-gradient(ellipse at 92% 92%, color-mix(in oklab, var(--aybar-color-primary-300) 45%, transparent), transparent 45%),
+    radial-gradient(circle at 84% 30%, color-mix(in oklab, var(--aybar-color-secondary-400) 30%, transparent), transparent 22%),
+    radial-gradient(ellipse at 70% 10%, color-mix(in oklab, var(--aybar-color-primary-300) 35%, transparent), transparent 45%),
+    linear-gradient(135deg, var(--aybar-color-primary-900), var(--aybar-color-primary-700) 55%, var(--aybar-color-primary-800));
+}
+
+.gl-heroe__rejilla {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--aybar-color-neutral-0) 7%, transparent) var(--aybar-space-px), transparent var(--aybar-space-px)),
+    linear-gradient(90deg, color-mix(in oklab, var(--aybar-color-neutral-0) 7%, transparent) var(--aybar-space-px), transparent var(--aybar-space-px));
+  /* 44px */
+  background-size: calc(var(--aybar-space-10) + var(--aybar-space-1)) calc(var(--aybar-space-10) + var(--aybar-space-1));
+  mask-image: radial-gradient(ellipse at 50% 40%, black, transparent 75%);
+}
+
+.gl-heroe__orbe {
+  position: absolute;
+  border-radius: var(--aybar-radius-full);
+  filter: blur(var(--aybar-space-1));
+}
+
+.gl-heroe__orbe--a {
+  inset-block-start: 22%;
+  inset-inline-end: 12%;
+  inline-size: var(--aybar-space-24);
+  block-size: var(--aybar-space-24);
+  background: radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--aybar-color-secondary-300) 85%, transparent), color-mix(in oklab, var(--aybar-color-secondary-600) 40%, transparent));
+}
+
+.gl-heroe__orbe--b {
+  inset-block-end: 16%;
+  inset-inline-start: 8%;
+  inline-size: var(--aybar-space-16);
+  block-size: var(--aybar-space-16);
+  background: radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--aybar-color-primary-200) 80%, transparent), color-mix(in oklab, var(--aybar-color-primary-500) 30%, transparent));
+}
+
+.gl-heroe__orbe--c {
+  inset-block-start: 12%;
+  inset-inline-start: 46%;
+  inline-size: var(--aybar-space-8);
+  block-size: var(--aybar-space-8);
+  background: color-mix(in oklab, var(--aybar-color-neutral-0) 30%, transparent);
+}
+
+.gl-heroe__contenido {
+  display: grid;
+  place-items: center;
+  /* 448px */
+  min-block-size: calc(var(--aybar-space-4) * 28);
+  padding: clamp(var(--aybar-space-6), 6vw, var(--aybar-space-16)) clamp(var(--aybar-space-4), 5vw, var(--aybar-space-16));
+}
+
+.gl-heroe__contenido .ay-tilt {
+  inline-size: 100%;
+  /* 760px */
+  max-inline-size: calc(var(--aybar-space-4) * 47.5);
+}
+
+.gl-heroe__contenido .ay-card {
+  border-radius: var(--aybar-radius-2xl);
+}
+
+.gl-heroe__contenido .ay-pageheader {
+  margin: 0;
+  padding-block: var(--aybar-space-3) var(--aybar-space-5);
+  border: 0;
+}
+
+.gl-heroe__contenido .ay-pageheader__title {
+  font-size: clamp(var(--aybar-font-size-3xl), 4.4vw, var(--aybar-font-size-5xl));
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.5);
+}
+
+.gl-heroe__aviso code {
+  white-space: nowrap;
+}
+
+.gl-heroe__aviso {
+  justify-self: start;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: var(--aybar-space-1) var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-medium);
+}
+
+.gl-heroe__punto {
+  inline-size: var(--aybar-space-2);
+  block-size: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-feedback-success-border);
+  box-shadow: 0 0 0 var(--aybar-space-1) color-mix(in oklab, var(--aybar-color-feedback-success-border) 25%, transparent);
+}
+
+.gl-cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 5.5)), 1fr));
+  gap: var(--aybar-space-4);
+  padding-block-start: var(--aybar-space-5);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+/* Las combinaciones de la marca: el texto a la izquierda, los chips a la derecha. */
+.gl-combinaciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-4) var(--aybar-space-8);
+  padding: var(--aybar-space-6);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-combinaciones__texto {
+  display: grid;
+  gap: var(--aybar-space-1);
+}
+
+.gl-combinaciones__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+/* La muestra de una combinación: su paleta con un toque de su acento. */
+.gl-muestra {
+  display: inline-block;
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+  border-radius: var(--aybar-radius-full);
+  background: linear-gradient(135deg, var(--gl-muestra) 60%, var(--gl-muestra-acento) 60%);
+  box-shadow: inset 0 0 0 var(--aybar-space-px) color-mix(in oklab, var(--aybar-color-fg-default) 15%, transparent);
+}
+
+.gl-portada__secciones {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-rejilla--secciones .ay-tilt {
+  display: grid;
+  block-size: 100%;
+}
+
+.gl-icono-seccion {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  border-radius: var(--aybar-radius-lg);
+}
+
+.gl-icono-seccion--marca {
+  background: var(--aybar-color-bg-brand-subtle);
+  color: var(--aybar-color-fg-link);
+}
+
+.gl-icono-seccion--acento {
+  background: var(--aybar-color-bg-accent-subtle);
+  color: var(--aybar-color-fg-accent);
+}
+
+.gl-icono-seccion--neutro {
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+}
+
+/* Las tarjetas de sección, de vidrio sobre una franja del degradado: el vidrio se ve. */
+.gl-portada__secciones {
+  position: relative;
+  isolation: isolate;
+  padding: var(--aybar-space-6);
+  border-radius: var(--aybar-radius-2xl);
+  background:
+    radial-gradient(ellipse at 10% 0%, color-mix(in oklab, var(--aybar-color-primary-400) 30%, transparent), transparent 50%),
+    radial-gradient(ellipse at 95% 100%, color-mix(in oklab, var(--aybar-color-secondary-400) 22%, transparent), transparent 45%),
+    color-mix(in oklab, var(--aybar-color-bg-brand-subtle) 70%, var(--aybar-color-bg-canvas));
+}
+
+@media (max-width: 639.98px) {
+  .gl-portada__secciones {
+    padding: var(--aybar-space-4);
+  }
+}
+
+/* ── Ingreso: once maquetas de acceso ─────────────────────────────────────── */
+
+/* Las maquetas responden al ancho de su contenedor, no al de la ventana: la misma maqueta se
+   pinta a pantalla completa y en miniatura (un lienzo de 1280px escalado). */
+.gl-completo--ingreso,
+.gl-miniatura__lienzo {
+  container-type: inline-size;
+}
+
+.gl-in {
+  position: relative;
+  box-sizing: border-box;
+  min-block-size: var(--gl-alto-pantalla, 100dvh);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-sans);
+}
+
+.gl-in:focus {
+  outline: none;
+}
+
+/* El Login Form vive dentro de cada composición (embebido, sin su fondo de página): ocupa
+   el ancho que le da la maqueta. */
+.gl-in .ay-login {
+  inline-size: 100%;
+}
+
+.gl-in-marca .pl-marca {
+  font-size: var(--aybar-font-size-lg);
+}
+
+.gl-in-marca--inversa .pl-marca {
+  color: var(--aybar-color-neutral-0);
+}
+
+.gl-in-marca--inversa .pl-marca__simbolo {
+  border-radius: var(--aybar-radius-md);
+  color: color-mix(in oklab, var(--aybar-color-neutral-0) 12%, transparent);
+  box-shadow: inset 0 0 0 var(--aybar-space-px) color-mix(in oklab, var(--aybar-color-neutral-0) 22%, transparent);
+}
+
+.gl-in-marca--inversa .pl-marca__letra {
+  fill: var(--aybar-color-neutral-0);
+}
+
+.gl-in-cabeza {
+  display: grid;
+  gap: var(--aybar-space-3);
+}
+
+.gl-in-cabeza--centro {
+  justify-items: center;
+  text-align: center;
+}
+
+.gl-in-titulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+  line-height: var(--aybar-font-leading-tight);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.gl-in-titulo:focus {
+  outline: none;
+}
+
+.gl-in-nota {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-normal);
+  text-align: center;
+}
+
+.gl-in-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+}
+
+.gl-in-enlace,
+.gl-in-alterno a,
+.gl-in-cabeza a {
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  text-underline-offset: 0.2em;
+}
+
+.gl-in-alterno {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-in-sellos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-in-sellos > li {
+  padding: var(--aybar-space-1) var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-neutral-0) 14%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-neutral-0) 8%, transparent);
+  color: var(--aybar-color-neutral-0);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* Partido: el panel de marca con curvas de nivel y el formulario al lado. */
+.gl-in-partido {
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-in-partido__marca {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--aybar-space-10);
+  box-sizing: border-box;
+  /* 320px */
+  min-block-size: calc(var(--aybar-space-4) * 20);
+  padding: var(--aybar-space-12);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 24% 28%, color-mix(in oklab, var(--aybar-color-primary-400) 30%, transparent), transparent 42%),
+    radial-gradient(circle at 85% 80%, color-mix(in oklab, var(--aybar-color-secondary-400) 18%, transparent), transparent 36%),
+    var(--aybar-color-primary-800);
+  color: var(--aybar-color-primary-100);
+}
+
+.gl-in-topografia {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+  stroke: color-mix(in oklab, var(--aybar-color-neutral-0) 13%, transparent);
+  stroke-width: 1;
+}
+
+.gl-in-partido__mensaje {
+  display: grid;
+  gap: var(--aybar-space-5);
+  /* 480px */
+  max-inline-size: calc(var(--aybar-space-4) * 30);
+}
+
+.gl-in-partido__lema {
+  margin: 0;
+  color: var(--aybar-color-neutral-0);
+  font-family: var(--aybar-family-heading);
+  font-size: clamp(var(--aybar-font-size-3xl), 3.4vw, calc(var(--aybar-font-size-5xl) * 11 / 12));
+  font-weight: var(--aybar-font-weight-display);
+  line-height: calc(var(--aybar-font-leading-tight) * 11 / 12);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.5);
+  text-wrap: balance;
+}
+
+.gl-in-partido__texto {
+  margin: 0;
+  color: var(--aybar-color-primary-200);
+  font-size: var(--aybar-font-size-lg);
+}
+
+.gl-in-partido__lado {
+  display: flex;
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-5);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--aybar-space-12) var(--aybar-space-6);
+}
+
+/* Minimal: solo tipografía. La tarjeta del Login Form se queda sin marco ni sombra. */
+.gl-in-minimal {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-16) var(--aybar-space-6);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-in-minimal__columna {
+  display: grid;
+  gap: var(--aybar-space-8);
+  inline-size: 100%;
+  /* 400px */
+  max-inline-size: calc(var(--aybar-space-4) * 25);
+}
+
+.gl-in-minimal__saludo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: clamp(var(--aybar-font-size-4xl), 7cqi, calc(var(--aybar-font-size-5xl) * 1.5));
+  font-weight: var(--aybar-font-weight-display);
+  line-height: 1;
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 2);
+}
+
+.gl-in-minimal .ay-login__card {
+  max-inline-size: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.gl-in-minimal .ay-login__brand {
+  display: none;
+}
+
+.gl-in-minimal .ay-login__title {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+/* Animado: ondas que se deslizan sobre el petróleo de la paleta. */
+.gl-in-animado {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-16) var(--aybar-space-4);
+  overflow: hidden;
+  background: var(--aybar-color-primary-900);
+}
+
+.gl-in-ondas {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.gl-in-ondas__brillo {
+  stop-color: var(--aybar-color-primary-600);
+}
+
+.gl-in-ondas__brillo--fin {
+  stop-color: var(--aybar-color-primary-900);
+}
+
+.gl-in-ondas__trazo {
+  fill: none;
+  stroke-width: 1.5;
+  /* Cada trazo mide el doble del lienzo: deslizar la mitad de su caja hace un bucle sin salto. */
+  transform-box: fill-box;
+  animation: gl-onda 30s linear infinite;
+}
+
+.gl-in-ondas__trazo--0 {
+  stroke: color-mix(in oklab, var(--aybar-color-primary-200) 55%, transparent);
+}
+
+.gl-in-ondas__trazo--1 {
+  stroke: color-mix(in oklab, var(--aybar-color-secondary-300) 45%, transparent);
+}
+
+.gl-in-ondas__trazo--2 {
+  stroke: color-mix(in oklab, var(--aybar-color-neutral-0) 22%, transparent);
+}
+
+@keyframes gl-onda {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.gl-in-animado[data-quieto] .gl-in-ondas__trazo {
+  animation-play-state: paused;
+}
+
+.gl-in-animado__control {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: var(--aybar-space-4);
+  inset-inline-end: var(--aybar-space-4);
+}
+
+.gl-in-animado__centro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+}
+
+/* Vidrio: la tarjeta glass sobre el degradado de la paleta, con formas desenfocadas. */
+.gl-in-vidrio {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-16) var(--aybar-space-4);
+  overflow: hidden;
+  background: linear-gradient(140deg, var(--aybar-color-primary-900), var(--aybar-color-primary-600) 55%, var(--aybar-color-primary-400));
+}
+
+.gl-in-vidrio__fondo {
+  position: absolute;
+  inset: 0;
+}
+
+.gl-in-vidrio__forma {
+  position: absolute;
+  border-radius: var(--aybar-radius-full);
+  filter: blur(var(--aybar-space-2));
+}
+
+.gl-in-vidrio__forma--a {
+  inset-block-start: 10%;
+  inset-inline-start: 14%;
+  inline-size: calc(var(--aybar-space-24) * 2.5);
+  block-size: calc(var(--aybar-space-24) * 2.5);
+  background: radial-gradient(circle at 35% 35%, var(--aybar-color-secondary-300), color-mix(in oklab, var(--aybar-color-secondary-600) 40%, transparent));
+}
+
+.gl-in-vidrio__forma--b {
+  inset-block-end: 8%;
+  inset-inline-end: 12%;
+  inline-size: calc(var(--aybar-space-24) * 3);
+  block-size: calc(var(--aybar-space-24) * 3);
+  background: radial-gradient(circle at 35% 35%, var(--aybar-color-primary-200), color-mix(in oklab, var(--aybar-color-primary-500) 30%, transparent));
+}
+
+.gl-in-vidrio__forma--c {
+  inset-block-start: 58%;
+  inset-inline-start: 40%;
+  inline-size: var(--aybar-space-16);
+  block-size: var(--aybar-space-16);
+  background: color-mix(in oklab, var(--aybar-color-neutral-0) 45%, transparent);
+}
+
+.gl-in-vidrio__tarjeta {
+  position: relative;
+  inline-size: 100%;
+  /* 416px */
+  max-inline-size: calc(var(--aybar-space-4) * 26);
+}
+
+.gl-in-vidrio .ay-card {
+  border-radius: var(--aybar-radius-2xl);
+}
+
+.gl-in-vidrio .ay-card__body {
+  gap: var(--aybar-space-6);
+  padding: var(--aybar-space-8);
+}
+
+/* Las maquetas de tarjeta centrada (sin contraseña y flujos). */
+.gl-in-centrada {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-16) var(--aybar-space-4);
+  background:
+    radial-gradient(ellipse at top, color-mix(in oklab, var(--aybar-color-bg-brand-subtle) 80%, transparent), transparent 60%),
+    var(--aybar-color-bg-canvas);
+}
+
+.gl-in-tarjeta {
+  display: grid;
+  gap: var(--aybar-space-5);
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* 400px */
+  max-inline-size: calc(var(--aybar-space-4) * 25);
+  padding: clamp(var(--aybar-space-6), 5cqi, var(--aybar-space-10));
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.gl-in-tarjeta--ancha {
+  /* 576px */
+  max-inline-size: calc(var(--aybar-space-4) * 36);
+}
+
+.gl-in-tarjeta--sin-marco {
+  max-inline-size: calc(var(--aybar-breakpoint-sm) * 0.6);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.gl-in-columnas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 12)), 1fr));
+  align-items: start;
+  gap: var(--aybar-space-4);
+}
+
+/* Form Field separa los campos seguidos con margen: dentro de la rejilla lo pone el gap. */
+.gl-in-columnas > :is(*, .ay-field) {
+  margin: 0;
+}
+
+.gl-in-pila,
+.gl-in-proveedores {
+  display: grid;
+  gap: var(--aybar-space-3);
+}
+
+.gl-in-proveedores {
+  gap: var(--aybar-space-2);
+}
+
+.gl-in-glifo {
+  display: inline-flex;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+.gl-in-glifo svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.gl-in-sobre {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-20);
+  block-size: var(--aybar-space-20);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-brand-subtle);
+}
+
+.gl-in-sobre svg {
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  fill: none;
+  stroke: var(--aybar-color-fg-link);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.gl-in-sobre__punto {
+  fill: var(--aybar-color-action-accent-bg);
+  stroke: var(--aybar-color-bg-brand-subtle);
+}
+
+.gl-in-conmutador {
+  margin-block-end: var(--aybar-space-5);
+}
+
+.gl-in-espera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+  margin-block-end: var(--aybar-space-5);
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-in-espera__reloj {
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+/* A pantalla completa la barra flotante va encima: el pie de cada maqueta le deja sitio. */
+.gl-completo--ingreso .gl-in {
+  padding-block-end: calc(var(--aybar-space-24) + var(--aybar-space-4));
+}
+
+.gl-completo--ingreso .gl-in-partido {
+  padding-block-end: 0;
+}
+
+.gl-completo--ingreso .gl-in-partido__lado {
+  padding-block-end: calc(var(--aybar-space-24) + var(--aybar-space-4));
+}
+
+@container (max-width: 47.99rem) {
+  .gl-in-partido__marca {
+    min-block-size: auto;
+    padding: var(--aybar-space-8) var(--aybar-space-6);
+  }
+
+  .gl-in-partido__lema {
+    font-size: var(--aybar-font-size-2xl);
+  }
+
+  .gl-in-partido__texto,
+  .gl-in-sellos {
+    display: none;
+  }
+
+  .gl-in-partido__lado {
+    padding-block-start: var(--aybar-space-8);
+  }
+}
+
+/* El índice: barra sencilla (es público) y tarjetas con la miniatura viva. */
+.gl-barra-simple {
+  position: sticky;
+  z-index: var(--aybar-z-sticky);
+  inset-block-start: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-3) clamp(var(--aybar-space-4), 4vw, var(--aybar-space-10));
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 84%, transparent);
+  -webkit-backdrop-filter: blur(var(--aybar-space-3));
+  backdrop-filter: blur(var(--aybar-space-3));
+}
+
+.gl-barra-simple__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-default);
+  text-decoration: none;
+}
+
+.gl-barra-simple__marca:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-barra-simple__acciones {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+}
+
+.gl-ingresos {
+  padding-block-start: var(--aybar-space-4);
+}
+
+.gl-ingresos:focus {
+  outline: none;
+}
+
+.gl-rejilla--ingresos {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--aybar-space-4) * 20)), 1fr));
+}
+
+.gl-miniatura {
+  --gl-escala: 0.25;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  margin: calc(var(--aybar-space-px) * -1) calc(var(--aybar-space-px) * -1) 0;
+  overflow: hidden;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-canvas);
+}
+
+.gl-miniatura__lienzo {
+  /* 1280 × 800, el lienzo con que se pinta cada maqueta antes de escalarla */
+  --gl-alto-pantalla: calc(var(--aybar-space-4) * 50);
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: calc(var(--aybar-space-4) * 80);
+  block-size: var(--gl-alto-pantalla);
+  overflow: hidden;
+  transform: scale(var(--gl-escala));
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.gl-miniatura .gl-in {
+  block-size: var(--gl-alto-pantalla);
+  overflow: hidden;
+}
+
+
+/* ── Piezas de formulario y de panel, comunes a cuenta y administración ───── */
+
+.gl-pila {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-subtitulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.gl-subtitulo:focus {
+  outline: none;
+}
+
+/* Campos en dos columnas cuando caben (cada una de 16rem como mínimo). */
+.gl-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 16)), 1fr));
+  align-items: start;
+  gap: var(--aybar-space-4) var(--aybar-space-5);
+}
+
+/* La separación la pone el gap: fuera el margen entre campos seguidos de Form Field. */
+.gl-campos > :is(*, .ay-field) {
+  margin: 0;
+}
+
+.gl-campo-compuesto:focus {
+  outline: none;
+}
+
+.gl-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--aybar-space-2);
+}
+
+.gl-acciones--inicio {
+  justify-content: flex-start;
+}
+
+/* ── Mi cuenta ───────────────────────────────────────────────────────────── */
+
+.gl-cuenta-tabs .ay-tabs--vertical {
+  align-items: start;
+}
+
+.gl-cuenta {
+  min-inline-size: 0;
+  padding-block-start: var(--aybar-space-2);
+}
+
+.gl-cuenta__rejilla {
+  display: grid;
+  gap: var(--aybar-space-6);
+  min-inline-size: 0;
+}
+
+.gl-perfil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-5);
+}
+
+.gl-perfil__texto {
+  display: grid;
+  flex: 1 1 calc(var(--aybar-space-4) * 14);
+  gap: var(--aybar-space-1);
+}
+
+.gl-perfil__nombre {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-xl);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.gl-perfil__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-1);
+  padding-block-start: var(--aybar-space-1);
+}
+
+.gl-vista-formato {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: var(--aybar-space-5) 0;
+  padding: var(--aybar-space-4) var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) dashed var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-vista-formato > div {
+  display: grid;
+  grid-template-columns: calc(var(--aybar-space-4) * 7) minmax(0, 1fr);
+  gap: var(--aybar-space-3);
+}
+
+.gl-vista-formato dt {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-vista-formato dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* La tabla de canales: un Switch por celda; su etiqueta, para el lector (la columna ya la dice a la vista). */
+.gl-tabla-canales {
+  overflow-x: auto;
+}
+
+.gl-tabla-canales:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: calc(var(--aybar-focus-ring-width) * -1);
+}
+
+.gl-tabla-canales table {
+  inline-size: 100%;
+  /* 560px */
+  min-inline-size: calc(var(--aybar-space-4) * 35);
+  border-collapse: collapse;
+}
+
+.gl-tabla-canales :is(th, td) {
+  padding: var(--aybar-space-4) var(--aybar-space-5);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.gl-tabla-canales thead th {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-tabla-canales tbody tr {
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+.gl-tabla-canales tbody th {
+  display: grid;
+  gap: var(--aybar-space-1);
+  font-weight: var(--aybar-font-weight-regular);
+}
+
+.gl-tabla-canales__titulo {
+  color: var(--aybar-color-fg-default);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-tabla-canales__desc {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-celda-switch .ay-switch__text {
+  position: absolute;
+  inline-size: var(--aybar-space-px);
+  block-size: var(--aybar-space-px);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* El QR de maqueta junto al código de confirmación. */
+.gl-qr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--aybar-space-6);
+}
+
+.gl-qr > .gl-pila {
+  flex: 1 1 calc(var(--aybar-space-4) * 16);
+}
+
+.gl-qr__codigo {
+  flex: none;
+  /* 176px */
+  inline-size: calc(var(--aybar-space-4) * 11);
+  block-size: calc(var(--aybar-space-4) * 11);
+  padding: var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-neutral-0);
+  shape-rendering: crispEdges;
+}
+
+.gl-qr__oscuro {
+  fill: var(--aybar-color-neutral-900);
+}
+
+.gl-qr__claro {
+  fill: var(--aybar-color-neutral-0);
+}
+
+.gl-codigos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--aybar-space-4) * 10), 1fr));
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+  list-style: none;
+  counter-reset: codigo;
+}
+
+.gl-codigos code {
+  font-size: var(--aybar-font-size-sm);
+  letter-spacing: var(--aybar-font-tracking-wide);
+}
+
+/* Una lista dentro de una Card sin relleno: la Card ya es el borde. */
+.ay-card__body > .ay-list {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.gl-dispositivo {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-dispositivo svg {
+  inline-size: var(--aybar-space-6);
+  block-size: var(--aybar-space-6);
+}
+
+/* ── Administración ──────────────────────────────────────────────────────── */
+
+.gl-admin {
+  min-inline-size: 0;
+  padding-block-start: var(--aybar-space-6);
+}
+
+.gl-datos {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+  margin: 0;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-datos dt {
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-datos dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Los colores de estado de un lote: los mismos en las barras, la leyenda, el plano y el 3D. */
+.gl-estado--disponible {
+  --gl-color: var(--aybar-color-feedback-success-border);
+}
+
+.gl-estado--reservado {
+  --gl-color: var(--aybar-color-feedback-warning-border);
+}
+
+.gl-estado--vendido {
+  --gl-color: var(--aybar-color-action-primary-bg);
+}
+
+.gl-estado--bloqueado {
+  --gl-color: var(--aybar-color-border-strong);
+}
+
+.gl-admin__resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 26)), 1fr));
+  gap: var(--aybar-space-6);
+}
+
+.gl-admin__ancha {
+  grid-column: 1 / -1;
+}
+
+/* Barras horizontales: el ancho es el porcentaje, en una pista del color hundido. */
+.gl-barras {
+  display: grid;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-barras__fila {
+  display: grid;
+  grid-template-columns: calc(var(--aybar-space-4) * 9) minmax(0, 1fr) calc(var(--aybar-space-4) * 2);
+  align-items: center;
+  gap: var(--aybar-space-3);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-barras__etiqueta {
+  overflow: hidden;
+  color: var(--aybar-color-fg-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-barras__pista {
+  block-size: var(--aybar-space-3);
+  overflow: hidden;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-barras__barra {
+  display: block;
+  inline-size: var(--gl-valor);
+  block-size: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--aybar-color-primary-500), var(--aybar-color-action-primary-bg));
+  transition: inline-size var(--aybar-motion-duration-slow) var(--aybar-motion-easing-decelerate);
+}
+
+.gl-barras__valor {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--aybar-font-weight-semibold);
+  text-align: end;
+}
+
+/* La barra apilada de lotes por estado y su leyenda. */
+.gl-apilada {
+  display: flex;
+  gap: var(--aybar-space-px);
+  block-size: var(--aybar-space-4);
+  overflow: hidden;
+  border-radius: var(--aybar-radius-full);
+}
+
+.gl-apilada__tramo {
+  flex: 0 0 var(--gl-valor);
+  background: var(--gl-color);
+}
+
+.gl-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2) var(--aybar-space-5);
+  margin: var(--aybar-space-4) 0;
+  padding: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  list-style: none;
+}
+
+.gl-leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+}
+
+.gl-leyenda strong {
+  color: var(--aybar-color-fg-default);
+}
+
+.gl-leyenda__punto {
+  inline-size: var(--aybar-space-3);
+  block-size: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-sm);
+  background: var(--gl-color);
+}
+
+/* Usuarios: lista y ficha en un Splitter. */
+.gl-usuarios {
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+  overflow: hidden;
+}
+
+.gl-usuarios .ay-splitter {
+  /* 720px: la lista con diez filas y su paginación */
+  block-size: calc(var(--aybar-space-4) * 45);
+}
+
+.gl-usuarios__lista {
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+  padding: var(--aybar-space-4);
+}
+
+.gl-usuarios__detalle {
+  box-sizing: border-box;
+  min-block-size: 100%;
+  padding: var(--aybar-space-5);
+  background: color-mix(in oklab, var(--aybar-color-bg-canvas) 40%, var(--aybar-color-bg-surface));
+}
+
+.gl-persona {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  min-inline-size: 0;
+  /* El nombre no se parte: si no cabe, la rejilla se desplaza dentro de su región. */
+  white-space: nowrap;
+}
+
+/* Los roles de una fila en una línea: la rejilla se desplaza antes que crecer de alto. */
+.gl-usuarios__lista .ay-grid .ay-tags {
+  flex-wrap: nowrap;
+}
+
+.gl-persona__texto {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.gl-persona__nombre {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--aybar-color-fg-link);
+  font: inherit;
+  font-weight: var(--aybar-font-weight-semibold);
+  text-align: start;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--aybar-color-fg-link) 35%, transparent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.gl-persona__nombre:hover {
+  text-decoration-color: currentColor;
+}
+
+.gl-persona__correo {
+  /* 192px */
+  max-inline-size: calc(var(--aybar-space-4) * 12);
+  overflow: hidden;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-ficha {
+  display: grid;
+  gap: var(--aybar-space-5);
+}
+
+.gl-ficha__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-3) var(--aybar-space-4);
+}
+
+.gl-ficha__titulo {
+  flex: 1 1 calc(var(--aybar-space-4) * 8);
+  min-inline-size: 0;
+}
+
+.gl-ficha__seccion {
+  margin: 0;
+  padding-block-start: var(--aybar-space-4);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-base);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+/* Roles: la lista a la izquierda y el árbol de permisos del elegido. */
+.gl-roles {
+  display: grid;
+  grid-template-columns: calc(var(--aybar-space-4) * 16) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--aybar-space-6);
+}
+
+.gl-roles__lista ul {
+  display: grid;
+  gap: var(--aybar-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gl-roles__rol {
+  display: grid;
+  gap: var(--aybar-space-px);
+  inline-size: 100%;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid transparent;
+  border-radius: var(--aybar-radius-lg);
+  background: transparent;
+  color: var(--aybar-color-fg-default);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-roles__rol:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 6%, transparent);
+}
+
+.gl-roles__rol[aria-current='true'] {
+  border-color: color-mix(in oklab, var(--aybar-color-fg-link) 35%, transparent);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.gl-roles__rol:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.gl-roles__nombre {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-roles__meta {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.gl-roles .ay-card__body {
+  gap: var(--aybar-space-5);
+}
+
+.gl-roles .gl-acciones {
+  align-items: center;
+}
+
+/* Auditoría: los filtros en una fila que envuelve y la Timeline debajo. */
+.gl-auditoria {
+  display: grid;
+  gap: var(--aybar-space-6);
+}
+
+.gl-auditoria__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--aybar-space-5);
+}
+
+.gl-auditoria__filtros > .ay-daterange {
+  flex: 2 1 calc(var(--aybar-space-4) * 24);
+}
+
+.gl-auditoria__filtro {
+  display: grid;
+  flex: 1 1 calc(var(--aybar-space-4) * 14);
+  gap: var(--aybar-space-2);
+}
+
+.gl-auditoria__rotulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.gl-auditoria__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+}
+
+.gl-auditoria__resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-3);
+  margin-block-start: var(--aybar-space-4);
+  padding-block-start: var(--aybar-space-4);
+  border-block-start: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+}
+
+@media (max-width: 767.98px) {
+  .gl-roles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gl-roles__lista ul {
+    display: flex;
+    gap: var(--aybar-space-2);
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .gl-roles__rol {
+    inline-size: max-content;
+  }
+}
+
+/* ── Personalización ─────────────────────────────────────────────────────── */
+
+.gl-personalizar {
+  display: grid;
+  grid-template-columns: calc(var(--aybar-space-4) * 21) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--aybar-space-8);
+}
+
+.gl-personalizar__panel {
+  position: sticky;
+  inset-block-start: calc(var(--gl-navbar-alto, 0px) + var(--aybar-space-6));
+  display: grid;
+  gap: var(--aybar-space-5);
+  max-block-size: calc(100dvh - var(--gl-navbar-alto, 0px) - var(--aybar-space-12));
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.gl-config {
+  max-block-size: none;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-sunken);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.gl-personalizar__vista {
+  display: grid;
+  /* claro y oscuro lado a lado desde 2 × 272px */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 17)), 1fr));
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+}
+
+/* Cada mitad de la vista previa: su propio tema (data-theme con la hoja local) y su lienzo. */
+.gl-vista {
+  display: grid;
+  align-content: start;
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+  padding: var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.gl-vista__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.gl-vista__punto {
+  inline-size: var(--aybar-space-3);
+  block-size: var(--aybar-space-3);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-strong);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface);
+}
+
+.gl-vista__fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+}
+
+.gl-vista__campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 11)), 1fr));
+  gap: var(--aybar-space-4);
+}
+
+.gl-vista__campos > :is(*, .ay-field) {
+  margin: 0;
+}
+
+.gl-vista__avisos {
+  display: grid;
+  gap: var(--aybar-space-2);
+}
+
+@media (max-width: 1023.98px) {
+  .gl-personalizar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gl-personalizar__panel {
+    position: static;
+    max-block-size: none;
+    overflow: visible;
+  }
+}
+
+/* ── Profundidad ─────────────────────────────────────────────────────────── */
+
+.gl-profundidad {
+  display: grid;
+  gap: var(--aybar-space-12);
+}
+
+.gl-profundidad > .ay-pageheader {
+  margin-block-end: 0;
+}
+
+.gl-profundidad__eje {
+  display: block;
+  /* 192px: «Profundo | Plano» en sm */
+  inline-size: calc(var(--aybar-space-4) * 12);
+}
+
+.gl-seccion {
+  display: grid;
+  gap: var(--aybar-space-5);
+  min-inline-size: 0;
+}
+
+.gl-seccion__cabeza {
+  display: grid;
+  gap: var(--aybar-space-2);
+  max-inline-size: calc(var(--aybar-space-4) * 48);
+}
+
+.gl-rejilla--tilt {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 16)), 1fr));
+}
+
+.gl-rejilla--tilt > li > .ay-tilt,
+.gl-rejilla--vidrio > li > .ay-tilt {
+  display: grid;
+}
+
+/* El dibujo de un lote: cielo con sol, una casa y el suelo, con los colores de la paleta. */
+.gl-lote-arte {
+  position: relative;
+  /* 144px */
+  block-size: calc(var(--aybar-space-4) * 9);
+  margin: calc(var(--aybar-space-px) * -1) calc(var(--aybar-space-px) * -1) 0;
+  overflow: hidden;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+  background: linear-gradient(180deg, var(--aybar-color-primary-200), var(--aybar-color-primary-50));
+}
+
+.gl-lote-arte__sol {
+  position: absolute;
+  inset-block-start: 18%;
+  inset-inline-end: 16%;
+  inline-size: var(--aybar-space-10);
+  block-size: var(--aybar-space-10);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-secondary-300);
+  box-shadow: 0 0 var(--aybar-space-8) color-mix(in oklab, var(--aybar-color-secondary-300) 60%, transparent);
+}
+
+.gl-lote-arte__casa {
+  position: absolute;
+  inset-block-end: 28%;
+  inset-inline-start: 22%;
+  inline-size: var(--aybar-space-16);
+  block-size: var(--aybar-space-12);
+  border-radius: var(--aybar-radius-sm) var(--aybar-radius-sm) 0 0;
+  background: var(--aybar-color-primary-700);
+  box-shadow: var(--aybar-space-20) var(--aybar-space-2) 0 calc(var(--aybar-space-2) * -1) var(--aybar-color-primary-500);
+}
+
+.gl-lote-arte__suelo {
+  position: absolute;
+  inset: auto 0 0;
+  block-size: 30%;
+  background: linear-gradient(180deg, var(--aybar-color-success-500), var(--aybar-color-success-700));
+}
+
+/* La escena de Parallax: cielo, cerros, edificios y la tarjeta de vidrio delante. */
+.gl-escena {
+  overflow: hidden;
+  border-radius: var(--aybar-radius-2xl);
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.gl-escena .ay-parallax {
+  /* 400px */
+  min-block-size: calc(var(--aybar-space-4) * 25);
+}
+
+.gl-escena__cielo,
+.gl-escena__cerros,
+.gl-escena__edificios {
+  position: absolute;
+  inset: calc(var(--aybar-space-6) * -1);
+  inline-size: calc(100% + var(--aybar-space-12));
+  block-size: calc(100% + var(--aybar-space-12));
+}
+
+.gl-escena__cielo {
+  background:
+    radial-gradient(circle at 78% 26%, color-mix(in oklab, var(--aybar-color-secondary-300) 75%, transparent), transparent 18%),
+    linear-gradient(180deg, var(--aybar-color-primary-800), var(--aybar-color-primary-500) 70%, var(--aybar-color-primary-300));
+}
+
+.gl-escena__cerros {
+  fill: color-mix(in oklab, var(--aybar-color-primary-900) 70%, transparent);
+}
+
+.gl-escena__edificios {
+  fill: color-mix(in oklab, var(--aybar-color-neutral-900) 55%, var(--aybar-color-primary-900));
+}
+
+.gl-escena__contenido {
+  display: grid;
+  place-items: center;
+  min-block-size: calc(var(--aybar-space-4) * 25);
+  padding: var(--aybar-space-8) var(--aybar-space-4);
+}
+
+.gl-escena__contenido .ay-card {
+  /* 420px */
+  max-inline-size: calc(var(--aybar-space-4) * 26);
+  border-radius: var(--aybar-radius-xl);
+}
+
+.gl-escena__aviso {
+  margin: 0;
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.gl-escena__titulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+/* La banda de color detrás de las tarjetas de vidrio. */
+.gl-banda {
+  position: relative;
+  isolation: isolate;
+  padding: var(--aybar-space-10) var(--aybar-space-6);
+  overflow: hidden;
+  border-radius: var(--aybar-radius-2xl);
+  background: linear-gradient(120deg, var(--aybar-color-primary-800), var(--aybar-color-primary-500));
+}
+
+.gl-banda__forma {
+  position: absolute;
+  z-index: -1;
+  border-radius: var(--aybar-radius-full);
+  filter: blur(var(--aybar-space-1));
+}
+
+.gl-banda__forma--a {
+  inset-block-start: -10%;
+  inset-inline-start: 22%;
+  inline-size: calc(var(--aybar-space-24) * 2);
+  block-size: calc(var(--aybar-space-24) * 2);
+  background: radial-gradient(circle at 35% 35%, var(--aybar-color-secondary-300), var(--aybar-color-secondary-600));
+}
+
+.gl-banda__forma--b {
+  inset-block-end: -20%;
+  inset-inline-end: 8%;
+  inline-size: calc(var(--aybar-space-24) * 2.5);
+  block-size: calc(var(--aybar-space-24) * 2.5);
+  background: radial-gradient(circle at 35% 35%, var(--aybar-color-primary-100), var(--aybar-color-primary-400));
+}
+
+/* ── Pantalla completa: un caso o una pantalla de ingreso, con la barra flotante ─ */
+
+.gl-completo {
+  position: relative;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+}
+
+.gl-completo--centro {
+  display: grid;
+  place-items: center;
+  padding: var(--aybar-space-6);
+}
+
+.gl-completo__principal {
+  min-block-size: 100dvh;
+}
+
+.gl-completo__principal:focus {
+  outline: none;
+}
+
+.gl-caso__marco--completo {
+  display: block;
+  max-block-size: none;
+  min-block-size: 100dvh;
+  overflow: visible;
+  padding: 0 0 calc(var(--aybar-space-24) + var(--aybar-space-4));
+  background: none;
+  text-align: start;
+}
+
+.gl-caso__marco--completo:has(> .gl-caso__disparador) {
+  display: grid;
+  place-items: center;
+}
+
+.gl-flotante {
+  position: fixed;
+  z-index: var(--aybar-z-sticky);
+  inset-block-end: max(var(--aybar-space-4), env(safe-area-inset-bottom));
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-1);
+  box-sizing: border-box;
+  inline-size: max-content;
+  max-inline-size: calc(100% - var(--aybar-space-8));
+  margin-inline: auto;
+  padding: var(--aybar-space-1);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-border-default) 60%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 82%, transparent);
+  -webkit-backdrop-filter: blur(var(--aybar-space-3));
+  backdrop-filter: blur(var(--aybar-space-3));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.gl-flotante__boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-2);
+  min-inline-size: var(--aybar-control-height-md);
+  min-block-size: var(--aybar-control-height-md);
+  padding: 0 var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  text-decoration: none;
+  transition: background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.gl-flotante__boton--texto {
+  padding-inline: var(--aybar-space-3) var(--aybar-space-4);
+}
+
+.gl-flotante__boton:hover {
+  background: color-mix(in oklab, var(--aybar-color-fg-default) 7%, transparent);
+}
+
+.gl-flotante__titulo {
+  min-inline-size: 0;
+  /* 240px */
+  max-inline-size: calc(var(--aybar-space-4) * 15);
+  padding-inline: var(--aybar-space-2);
+  overflow: hidden;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gl-flotante__separador {
+  inline-size: var(--aybar-border-width-thin);
+  block-size: var(--aybar-space-6);
+  margin-inline: var(--aybar-space-1);
+  background: var(--aybar-color-border-subtle);
+}
+
+@media (max-width: 639.98px) {
+  .gl-flotante__titulo {
+    display: none;
+  }
+
+  /* El texto de «volver» queda para el lector: es el nombre del enlace. */
+  .gl-flotante__volver {
+    position: absolute;
+    inline-size: var(--aybar-space-px);
+    block-size: var(--aybar-space-px);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .gl-flotante__boton--texto {
+    padding-inline: var(--aybar-space-2);
+  }
+}
+
+/* ── Movimiento reducido ─────────────────────────────────────────────────── */
+
+/* Lo propio de la galería se queda quieto; lo del framework se apaga solo en su hoja. */
+@media (prefers-reduced-motion: reduce) {
+  .gl :where([class^='gl-'], [class*=' gl-']),
+  .gl :where([class^='gl-'], [class*=' gl-'])::before,
+  .gl :where([class^='gl-'], [class*=' gl-'])::after {
+    transition-duration: 0s !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

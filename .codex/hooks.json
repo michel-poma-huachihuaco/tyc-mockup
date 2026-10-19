@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/scripts/arranque.sh\" --hook codex",
+            "statusMessage": "Arranque Aybar: entorno, paquete Definir y explorador",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

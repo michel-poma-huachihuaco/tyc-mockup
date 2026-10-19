@@ -1,0 +1,62 @@
+{
+  "epica": "EP-01",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-001",
+      "tareas": [
+        {
+          "id": "HU-001-T01",
+          "titulo": "Crear la entidad de dominio Reserva y el puerto de escritura en domain.port.out, segun docs/datos (fundacion)",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 4,
+          "depende_de": []
+        },
+        {
+          "id": "HU-001-T02",
+          "titulo": "Migracion Flyway V2__crear_tabla_reserva.sql (expand) y su script de reversion probado",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 3,
+          "depende_de": ["HU-001-T01"]
+        }
+      ]
+    },
+    {
+      "hu": "HU-002",
+      "tareas": [
+        {
+          "id": "HU-002-T01",
+          "titulo": "Endpoint POST /api/v1/reservas segun docs/arquitectura/servicio-ejemplo.openapi.yaml, errores con AybarException",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 5,
+          "depende_de": ["HU-001-T02"]
+        },
+        {
+          "id": "HU-002-T02",
+          "titulo": "Un test por cada TC de HU-002 en docs/pruebas/test-plan.md, con datos sinteticos",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": null,
+          "estimacion_horas": null,
+          "depende_de": ["HU-002-T01"]
+        },
+        {
+          "id": "HU-002-T03",
+          "titulo": "Pantalla de alta de reserva en frontend/ con @aybarcorp/http: estados vacio, carga, error y sin permisos de G2 y errores por campo en el formulario (solo si HU-002 lleva ui: true)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": 6,
+          "depende_de": ["HU-002-T01"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+/*
+ * La vista previa de /demo/redimensionado: una pantalla de la galería en un iframe al ancho
+ * de un dispositivo, reducida para caber en la columna. El iframe mide lo que mediría la
+ * pantalla de verdad (sus breakpoints y container queries ven ese ancho) y `scale` lo
+ * encoge; el lienzo reserva el alto ya escalado, así que nada desborda ni se mueve debajo.
+ * Prefijo gl-vista; solo tokens --aybar-*. La misma hoja en React y en Angular.
+ */
+
+.gl-vista-previa {
+  display: grid;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-vista__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--aybar-space-4) var(--aybar-space-6);
+}
+
+.gl-vista__campo {
+  flex: 0 1 calc(var(--aybar-space-4) * 16);
+  min-inline-size: 0;
+}
+
+.gl-vista__escala {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.gl-vista {
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.gl-vista__lienzo {
+  position: relative;
+  overflow: hidden;
+  block-size: var(--gl-vista-alto, auto);
+}
+
+/* Centrado con left y translate, físicos a propósito: centrar no depende de la dirección. */
+.gl-vista__dispositivo {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  overflow: hidden;
+  inline-size: var(--gl-vista-ancho);
+  block-size: var(--gl-vista-alto-real);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-canvas);
+  box-shadow: var(--aybar-shadow-lg);
+  translate: -50% 0;
+  scale: var(--gl-vista-escala, 1);
+  transform-origin: top center;
+}
+
+.gl-vista__marco {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+}
+
+.gl-vista__aviso {
+  margin: 0;
+  padding: var(--aybar-space-6);
+  color: var(--aybar-color-fg-muted);
+  text-align: center;
+}

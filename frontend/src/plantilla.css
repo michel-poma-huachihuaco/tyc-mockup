@@ -1,0 +1,1070 @@
+/*
+ * Clases de las pantallas de la plantilla (prefijo pl-, para no chocar con las ay- del
+ * sistema de diseño). Solo tokens --aybar-*: ni colores ni medidas sueltas. Las
+ * proporciones (0.6, 3, 5) multiplican tokens, como hace el propio ui.css; las medidas de
+ * maquetación van en rem como múltiplos de --aybar-space-4 (1rem), con su valor al lado.
+ *
+ * Composición de la guía visual v2 «Petróleo refinado» (docs/diseno del framework): aire,
+ * bordes de un pelo, sombras en capas y movimiento corto. Los tokens nuevos de la v2
+ * (--aybar-color-focus-halo, --aybar-color-bg-brand-subtle) van siempre con un respaldo
+ * de los que ya existen, para que se vea bien con @aybarcorp/tokens 0.2.0.
+ *
+ * Las media queries no admiten var(): 1024px es --aybar-breakpoint-lg y 768px,
+ * --aybar-breakpoint-md.
+ */
+
+.pl-texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-relaxed);
+}
+
+.pl-codigo {
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.pl-centro {
+  display: grid;
+  place-items: center;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  box-sizing: border-box;
+  padding: var(--aybar-space-6);
+  background: var(--aybar-color-bg-canvas);
+}
+
+/* ── Piezas comunes ────────────────────────────────────────────────────── */
+
+/* La marca: el símbolo y el nombre del proyecto. */
+.pl-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  /* 800, el extra-bold de la guía v2 para marca y títulos grandes: no tiene token. */
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  overflow-wrap: anywhere;
+}
+
+.pl-marca__simbolo {
+  flex: none;
+  /* 34px */
+  inline-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  color: var(--aybar-color-bg-brand);
+}
+
+.pl-marca__letra {
+  fill: var(--aybar-color-fg-on-brand);
+}
+
+/* Enlaces con forma de botón: las acciones del héroe y de la barra navegan (son <a>), y el
+   Button del sistema de diseño es un <button>. */
+.pl-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-2);
+  box-sizing: border-box;
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: var(--aybar-control-padding-lg);
+  border: var(--aybar-border-width-thin) solid transparent;
+  border-radius: var(--aybar-radius-md);
+  font-family: inherit;
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+  line-height: var(--aybar-font-leading-tight);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pl-accion:hover {
+  transform: translateY(calc(var(--aybar-space-px) * -1));
+}
+
+.pl-accion:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Foco v2: el anillo global del framework más un halo de 4px. */
+.pl-accion:focus-visible {
+  box-shadow: 0 0 0 var(--aybar-space-1)
+    var(--aybar-color-focus-halo, color-mix(in oklab, var(--aybar-color-border-focus) 22%, transparent));
+}
+
+.pl-accion--lg {
+  /* 52px */
+  min-block-size: calc(var(--aybar-control-height-lg) + var(--aybar-space-1));
+  padding-inline: var(--aybar-space-6);
+  border-radius: var(--aybar-radius-lg);
+  font-size: var(--aybar-font-size-base);
+}
+
+.pl-accion--primaria {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--aybar-color-action-primary-bg), var(--aybar-color-neutral-0) 8%),
+    var(--aybar-color-action-primary-bg)
+  );
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow:
+    inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-neutral-0) 15%, transparent),
+    0 var(--aybar-space-2) var(--aybar-space-6) calc(var(--aybar-space-2) * -1.25)
+      color-mix(in oklab, var(--aybar-color-action-primary-bg) 70%, transparent);
+}
+
+.pl-accion--primaria:hover {
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow:
+    inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-neutral-0) 15%, transparent),
+    0 var(--aybar-space-3) var(--aybar-space-8) calc(var(--aybar-space-2) * -1.25)
+      color-mix(in oklab, var(--aybar-color-action-primary-bg) 80%, transparent);
+}
+
+.pl-accion--secundaria {
+  background: var(--aybar-color-action-secondary-bg);
+  border-color: color-mix(in oklab, var(--aybar-color-action-secondary-border) 45%, transparent);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.pl-accion--secundaria:hover {
+  background: var(--aybar-color-action-secondary-bg-hover);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.pl-accion--inversa {
+  background: var(--aybar-color-bg-inverse);
+  color: var(--aybar-color-fg-inverse);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.pl-accion--inversa:hover {
+  color: var(--aybar-color-fg-inverse);
+}
+
+.pl-accion__icono {
+  flex: none;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+/* Insignia «Nuevo»: mandarina con texto oscuro, el par de acento medido en foundations. */
+.pl-insignia {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--aybar-space-px) * 3) var(--aybar-space-3);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-action-accent-bg);
+  color: var(--aybar-color-action-accent-fg);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-bold);
+  line-height: var(--aybar-font-leading-tight);
+}
+
+.pl-pastilla {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--aybar-space-px) * 2) var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-muted);
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-medium);
+  white-space: nowrap;
+}
+
+.pl-codigo-chip {
+  padding: calc(var(--aybar-space-px) * 2) calc(var(--aybar-space-1) * 1.5);
+  border-radius: var(--aybar-radius-sm);
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent);
+  color: var(--aybar-color-fg-link);
+  font-family: var(--aybar-family-mono);
+  font-size: 0.9em;
+}
+
+/* Puntos de estado: siempre al lado de un texto que dice lo mismo. */
+.pl-punto {
+  flex: none;
+  inline-size: var(--aybar-space-2);
+  block-size: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--pl-punto);
+  box-shadow: 0 0 0 var(--aybar-space-1) color-mix(in oklab, var(--pl-punto) 18%, transparent);
+}
+
+.pl-punto--ok {
+  --pl-punto: var(--aybar-color-success-500);
+}
+
+.pl-punto--acento {
+  --pl-punto: var(--aybar-color-action-accent-bg);
+}
+
+.pl-punto--marca {
+  --pl-punto: var(--aybar-color-fg-link);
+}
+
+.pl-punto--neutro {
+  --pl-punto: var(--aybar-color-fg-subtle);
+}
+
+/* ── Bienvenida pública ────────────────────────────────────────────────── */
+
+.pl-bienvenida {
+  /* 1200px: el ancho del contenido de la bienvenida */
+  --pl-ancho: calc(var(--aybar-breakpoint-xl) - var(--aybar-space-20));
+
+  position: relative;
+  isolation: isolate;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  overflow-x: clip;
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El brillo radial, petróleo hacia mandarina, muy tenue, detrás del héroe. */
+.pl-bienvenida::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  /* 900 × 520px, asomando 220px por arriba */
+  inset-block-start: calc(var(--aybar-space-4) * -13.75);
+  inset-inline-start: 50%;
+  inline-size: calc(var(--aybar-space-4) * 56.25);
+  block-size: calc(var(--aybar-space-4) * 32.5);
+  translate: -50% 0;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--aybar-color-primary-400) 28%, transparent),
+    color-mix(in oklab, var(--aybar-color-action-accent-bg) 6%, transparent) 60%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* La rejilla de 44px, que se desvanece hacia abajo y hacia los lados. */
+.pl-bienvenida__fondo {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  /* 760px */
+  block-size: calc(var(--aybar-space-4) * 47.5);
+  --pl-linea: color-mix(in oklab, var(--aybar-color-fg-link) 8%, transparent);
+  background-image:
+    linear-gradient(to right, var(--pl-linea) var(--aybar-space-px), transparent var(--aybar-space-px)),
+    linear-gradient(to bottom, var(--pl-linea) var(--aybar-space-px), transparent var(--aybar-space-px));
+  background-size: calc(var(--aybar-space-10) + var(--aybar-space-1)) calc(var(--aybar-space-10) + var(--aybar-space-1));
+  background-position: center top;
+  /* De la máscara solo cuenta la opacidad: el color da igual. */
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, var(--aybar-color-neutral-1000) 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, var(--aybar-color-neutral-1000) 40%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Barra superior translúcida, fija al desplazar. */
+.pl-barra {
+  position: sticky;
+  z-index: var(--aybar-z-sticky);
+  inset-block-start: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-4);
+  padding-block: var(--aybar-space-4);
+  padding-inline: max(var(--aybar-space-6), calc((100% - var(--pl-ancho)) / 2 + var(--aybar-space-6)));
+  border-block-end: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-border-subtle) 70%, transparent);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 78%, transparent);
+  backdrop-filter: saturate(1.4) blur(var(--aybar-space-3));
+}
+
+.pl-barra__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+}
+
+.pl-bienvenida__principal > * {
+  box-sizing: border-box;
+  max-inline-size: var(--pl-ancho);
+  margin-inline: auto;
+  padding-inline: var(--aybar-space-6);
+}
+
+.pl-heroe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--aybar-space-6);
+  /* 72px arriba y 56px abajo */
+  padding-block: calc(var(--aybar-space-16) + var(--aybar-space-2)) calc(var(--aybar-space-12) + var(--aybar-space-2));
+  text-align: center;
+}
+
+.pl-heroe__aviso {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: calc(var(--aybar-space-1) * 1.5) var(--aybar-space-4) calc(var(--aybar-space-1) * 1.5) calc(var(--aybar-space-1) * 1.5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 85%, transparent);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.pl-heroe__titulo {
+  /* 880px */
+  max-inline-size: calc(var(--aybar-space-4) * 55);
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  /* 2.5rem … 4.25rem, la escala del héroe de la guía v2 */
+  font-size: clamp(calc(var(--aybar-font-size-5xl) * 5 / 6), 6vw, calc(var(--aybar-font-size-5xl) * 17 / 12));
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  line-height: calc(var(--aybar-font-leading-tight) * 0.875);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.75);
+  text-wrap: balance;
+}
+
+.pl-heroe__resalte {
+  color: var(--aybar-color-fg-link);
+}
+
+.pl-heroe__texto {
+  max-inline-size: var(--aybar-breakpoint-sm);
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: clamp(var(--aybar-font-size-base), 2vw, var(--aybar-font-size-xl));
+  line-height: var(--aybar-font-leading-normal);
+  text-wrap: pretty;
+}
+
+.pl-heroe__error {
+  inline-size: 100%;
+  max-inline-size: var(--aybar-breakpoint-sm);
+  text-align: start;
+}
+
+.pl-heroe__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--aybar-space-3);
+  padding-block-start: var(--aybar-space-1);
+}
+
+/* El bloque «terminal»: oscuro en los dos temas, con los colores fijos de la rampa. */
+.pl-terminal {
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* 720px */
+  max-inline-size: calc(var(--aybar-space-4) * 45);
+  margin: var(--aybar-space-6) 0 0;
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-primary-400) 18%, transparent);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-primary-900);
+  color: var(--aybar-color-primary-200);
+  text-align: start;
+  box-shadow: var(--aybar-shadow-xl);
+}
+
+.pl-terminal__barra {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-block-end: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-primary-400) 18%, transparent);
+  color: var(--aybar-color-primary-300);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.pl-terminal__luces {
+  display: inline-flex;
+  gap: var(--aybar-space-2);
+}
+
+.pl-terminal__luces > span {
+  /* 11px */
+  inline-size: calc(var(--aybar-space-3) - var(--aybar-space-px));
+  block-size: calc(var(--aybar-space-3) - var(--aybar-space-px));
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-danger-500);
+}
+
+.pl-terminal__luces > span:nth-child(2) {
+  background: var(--aybar-color-warning-300);
+}
+
+.pl-terminal__luces > span:nth-child(3) {
+  background: var(--aybar-color-success-500);
+}
+
+.pl-terminal__codigo {
+  margin: 0;
+  padding: var(--aybar-space-5) var(--aybar-space-6);
+  overflow-x: auto;
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  line-height: calc(var(--aybar-font-leading-relaxed) + 0.1);
+  white-space: pre-wrap;
+  overflow-wrap: normal;
+}
+
+/* Una línea por comando, con su «Copiar» a la derecha. */
+.pl-terminal__linea {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aybar-space-3);
+}
+
+/* Sangría francesa de 2ch: lo que no cabe sigue bajo el comando, no bajo el «$». */
+.pl-terminal__texto {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-inline-start: 2ch;
+  text-indent: -2ch;
+}
+
+/* Cada pieza del comando entera: la línea solo se corta en los espacios entre piezas. */
+.pl-terminal__pieza,
+.pl-terminal__nota {
+  white-space: nowrap;
+}
+
+.pl-terminal__copiar {
+  flex: none;
+  /* 24px: el objetivo táctil de WCAG 2.5.8 */
+  min-block-size: var(--aybar-space-6);
+  padding: 0 var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-primary-400) 45%, transparent);
+  border-radius: var(--aybar-radius-sm);
+  background: transparent;
+  color: var(--aybar-color-primary-200);
+  font-family: var(--aybar-family-sans);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  line-height: var(--aybar-font-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pl-terminal__copiar:hover {
+  background: color-mix(in oklab, var(--aybar-color-primary-400) 20%, transparent);
+}
+
+/* La terminal es oscura en los dos temas: el anillo usa su color de texto, que contrasta. */
+.pl-terminal__copiar:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-primary-200);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.pl-terminal__prompt {
+  color: var(--aybar-color-primary-400);
+  user-select: none;
+}
+
+/* La salida de `aybar run`, con la misma sangría francesa: la URL no se pega al borde. */
+.pl-terminal__salida {
+  display: block;
+  padding-inline-start: 2ch;
+  color: var(--aybar-color-success-300);
+  text-indent: -2ch;
+}
+
+.pl-terminal__nota {
+  color: var(--aybar-color-neutral-400);
+}
+
+/* Las tres tarjetas de lo que trae la plantilla. */
+.pl-intro {
+  display: grid;
+  gap: var(--aybar-space-5);
+  /* columnas de 260px como mínimo */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 16.25)), 1fr));
+  padding-block: var(--aybar-space-6) var(--aybar-space-10);
+}
+
+.pl-intro__tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-6);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+  transition:
+    transform var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard);
+}
+
+.pl-intro__tarjeta:hover {
+  transform: translateY(calc(var(--aybar-space-px) * -3));
+  border-color: color-mix(in oklab, var(--aybar-color-fg-link) 28%, var(--aybar-color-border-subtle));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.pl-intro__icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 42px */
+  inline-size: calc(var(--aybar-space-10) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-10) + var(--aybar-space-px) * 2);
+  border-radius: var(--aybar-radius-lg);
+}
+
+.pl-intro__icono svg {
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+/* Fondo tonal de marca (token v2); con 0.2.0, el de info, que es la misma rampa petróleo. */
+.pl-intro__icono--marca {
+  background: var(--aybar-color-bg-brand-subtle, var(--aybar-color-feedback-info-bg));
+  color: var(--aybar-color-fg-link);
+}
+
+.pl-intro__icono--acento {
+  background: var(--aybar-color-bg-accent-subtle);
+  color: var(--aybar-color-fg-accent);
+}
+
+.pl-intro__icono--neutro {
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.pl-intro__titulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.pl-intro__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  /* 15px */
+  font-size: calc((var(--aybar-font-size-sm) + var(--aybar-font-size-base)) / 2);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-intro__texto code {
+  font-family: var(--aybar-family-mono);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* La franja de estado del entorno. */
+.pl-entorno {
+  padding-block-end: calc(var(--aybar-space-12) + var(--aybar-space-2));
+}
+
+.pl-entorno__lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-3) var(--aybar-space-8);
+  margin: 0;
+  padding: var(--aybar-space-4) var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  list-style: none;
+}
+
+.pl-entorno__dato {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.pl-entorno__dato--codigo {
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* ── Ingreso: pantalla partida ─────────────────────────────────────────── */
+
+.pl-ingreso {
+  display: flex;
+  flex-wrap: wrap;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El panel de marca: petróleo con textura topográfica, igual en los dos temas. */
+.pl-ingreso__panel {
+  position: relative;
+  /* dos columnas a partir de --aybar-breakpoint-lg; por debajo, el panel queda arriba */
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--aybar-space-10);
+  box-sizing: border-box;
+  /* 320px */
+  min-block-size: calc(var(--aybar-space-4) * 20);
+  padding: var(--aybar-space-12);
+  overflow: hidden;
+  background-color: var(--aybar-color-primary-800);
+  background-image:
+    radial-gradient(circle at 20% 30%, color-mix(in oklab, var(--aybar-color-primary-400) 22%, transparent), transparent 40%),
+    radial-gradient(circle at 85% 75%, color-mix(in oklab, var(--aybar-color-secondary-400) 14%, transparent), transparent 35%),
+    repeating-radial-gradient(
+      circle at 70% 120%,
+      transparent 0 calc(var(--aybar-space-5) + var(--aybar-space-px) * 2),
+      color-mix(in oklab, var(--aybar-color-neutral-0) 4.5%, transparent) calc(var(--aybar-space-5) + var(--aybar-space-px) * 2)
+        calc(var(--aybar-space-5) + var(--aybar-space-px) * 3)
+    );
+  color: var(--aybar-color-primary-100);
+}
+
+.pl-ingreso__inicio {
+  align-self: flex-start;
+  border-radius: var(--aybar-radius-md);
+  text-decoration: none;
+}
+
+.pl-ingreso__inicio .pl-marca {
+  color: var(--aybar-color-neutral-0);
+}
+
+/* Sobre el petróleo, el símbolo pasa a vidrio: el fondo de marca se confundiría con el panel. */
+.pl-ingreso__inicio .pl-marca__simbolo {
+  border-radius: var(--aybar-radius-md);
+  color: color-mix(in oklab, var(--aybar-color-neutral-0) 10%, transparent);
+  box-shadow: inset 0 0 0 var(--aybar-space-px) color-mix(in oklab, var(--aybar-color-neutral-0) 18%, transparent);
+}
+
+.pl-ingreso__inicio .pl-marca__letra {
+  fill: var(--aybar-color-neutral-0);
+}
+
+.pl-ingreso__inicio:focus-visible {
+  outline-color: var(--aybar-color-secondary-400);
+}
+
+.pl-ingreso__mensaje {
+  display: grid;
+  gap: var(--aybar-space-5);
+  /* 480px */
+  max-inline-size: calc(var(--aybar-space-4) * 30);
+}
+
+.pl-ingreso__lema {
+  margin: 0;
+  color: var(--aybar-color-neutral-0);
+  font-family: var(--aybar-family-heading);
+  /* 1.875rem … 2.75rem */
+  font-size: clamp(var(--aybar-font-size-3xl), 3.4vw, calc(var(--aybar-font-size-5xl) * 11 / 12));
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  line-height: calc(var(--aybar-font-leading-tight) * 11 / 12);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.5);
+  text-wrap: balance;
+}
+
+.pl-ingreso__texto {
+  margin: 0;
+  color: var(--aybar-color-primary-300);
+  font-size: var(--aybar-font-size-lg);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-ingreso__sellos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl-ingreso__sellos > li {
+  padding: var(--aybar-space-2) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-neutral-0) 12%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-neutral-0) 7%, transparent);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.pl-ingreso__lado {
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-5);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--aybar-space-12) var(--aybar-space-6);
+}
+
+/* El Login Form es el <main> de la página (as="main"), sin su fondo de pantalla completa:
+   aquí solo ocupa su columna. */
+.pl-ingreso__lado .ay-login {
+  inline-size: 100%;
+  min-block-size: auto;
+  padding: 0;
+  background: transparent;
+}
+
+.pl-ingreso__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aybar-space-3);
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* el ancho de la tarjeta lg del Login Form: 0.7 × breakpoint sm */
+  max-inline-size: calc(var(--aybar-breakpoint-sm) * 0.7);
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-feedback-warning-border) 35%, transparent);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-feedback-warning-bg);
+  color: var(--aybar-color-feedback-warning-fg);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-ingreso__aviso p {
+  margin: 0;
+}
+
+.pl-ingreso__aviso-icono {
+  flex: none;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+.pl-ingreso__aviso-texto {
+  display: grid;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+/* Los usuarios de prueba, uno por línea: usuario y clave en monoespaciada, como se escriben. */
+.pl-ingreso__usuarios {
+  display: grid;
+  gap: var(--aybar-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl-ingreso__usuarios code {
+  font-family: var(--aybar-family-mono);
+  font-weight: var(--aybar-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+/* Los accesos de la siguiente fase, en dos columnas. El hueco de proveedores del Login
+   Form es una rejilla de dos columnas pensada para un botón por celda: el grupo y su nota
+   van como un bloque cada uno, a todo el ancho, para que «Microsoft» quepa en su botón. */
+.ay-login__providers > .pl-proveedores,
+.ay-login__providers > .pl-proveedores__nota {
+  grid-column: 1 / -1;
+}
+
+.pl-proveedores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--aybar-space-3);
+}
+
+.pl-proveedores__marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-fg-default) 8%, transparent);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.pl-proveedores__marca svg {
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+}
+
+.pl-proveedores__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  text-align: center;
+}
+
+@media (max-width: 1023.98px) {
+  .pl-ingreso__panel {
+    flex-basis: 100%;
+    gap: var(--aybar-space-5);
+    min-block-size: auto;
+    padding: var(--aybar-space-6);
+  }
+
+  .pl-ingreso__lema {
+    font-size: clamp(var(--aybar-font-size-2xl), 5vw, var(--aybar-font-size-3xl));
+  }
+
+  .pl-ingreso__texto {
+    font-size: var(--aybar-font-size-sm);
+  }
+
+  .pl-ingreso__sellos {
+    display: none;
+  }
+
+  .pl-ingreso__lado {
+    padding: var(--aybar-space-8) var(--aybar-space-4);
+  }
+}
+
+/* ── Páginas con sesión ────────────────────────────────────────────────── */
+
+.pl-pagina {
+  /* Lo que queda fijo arriba al desplazar: la Navbar y, en escritorio, el aviso de sesión
+     demo. Sus altos los mide el Marco; aquí se suman para lo que se fije debajo y para el
+     salto del SkipLink. */
+  --pl-fijo-alto: calc(var(--pl-navbar-alto, 0px) + var(--pl-aviso-alto, 0px));
+
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El aviso de sesión demo queda fijo bajo la Navbar. El Banner ya es sticky, pero dentro de
+   este envoltorio (el que mide el Marco para --pl-aviso-alto) lo que se fija es el envoltorio.
+
+   Lo que la plantilla fija bajo la Navbar va por debajo de ella: el aviso en z-sticky − 1.
+   Cuando su bloque se acaba y sube, pasa por debajo de la Navbar, y la Navbar (z-sticky) y
+   el SkipLink (z-sticky + 1) se quedan en el nivel que les da el sistema de diseño. */
+.pl-pagina__aviso {
+  position: sticky;
+  z-index: calc(var(--aybar-z-sticky) - 1);
+  inset-block-start: var(--pl-navbar-alto, 0px);
+}
+
+/* En escritorio, el aviso entero; la línea corta y «Más» son del celular (abajo). */
+.pl-aviso__corto,
+.pl-pagina__aviso .ay-banner__action {
+  display: none;
+}
+
+/* «Más» es una acción de texto del Banner: hereda su color, su letra y su anillo de foco. */
+.pl-aviso__mas {
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* El menú de la cuenta: el Avatar sm (24px) ocupa el hueco del icono del Icon Button. */
+.pl-usuario .ay-iconbtn {
+  --button-glyph: var(--aybar-space-6);
+}
+
+/* El Header de la página abre main#contenido, destino del SkipLink; el contenido va debajo. */
+.pl-contenido {
+  padding-block: 0 var(--aybar-space-16);
+}
+
+.pl-cabecera {
+  margin-block-end: var(--aybar-space-8);
+}
+
+.pl-resumen {
+  display: grid;
+  gap: var(--aybar-space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-breakpoint-sm) * 0.6)), 1fr));
+  align-items: start;
+}
+
+.pl-tarjeta {
+  display: grid;
+  gap: var(--aybar-space-4);
+  align-content: start;
+  min-inline-size: 0;
+  padding: var(--aybar-space-6);
+  background: var(--aybar-color-bg-surface);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.pl-datos {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+  margin: 0;
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-datos dt {
+  color: var(--aybar-color-fg-muted);
+}
+
+.pl-datos dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.pl-modulos {
+  display: grid;
+  gap: var(--aybar-space-4);
+}
+
+/* Cada remoto del registro es una fila de la lista de datos. */
+.pl-modulos__fila {
+  display: contents;
+}
+
+/* aybar:demo:inicio — la tarjeta de la galería de demostración en el inicio (solo dev) */
+.pl-galeria {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-6);
+  padding: var(--aybar-space-8);
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in oklab, var(--aybar-color-secondary-400) 18%, transparent), transparent 45%),
+    linear-gradient(120deg, var(--aybar-color-bg-brand-subtle), var(--aybar-color-bg-surface) 70%);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.pl-galeria__texto {
+  display: grid;
+  gap: var(--aybar-space-2);
+  flex: 1 1 calc(var(--aybar-space-24) * 4);
+  max-inline-size: calc(var(--aybar-space-4) * 44);
+}
+
+.pl-galeria__aviso {
+  margin: 0;
+  color: var(--aybar-color-fg-link);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+}
+
+.pl-galeria__titulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-2xl);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.pl-galeria code {
+  font-family: var(--aybar-family-mono);
+  font-size: 0.9em;
+}
+/* aybar:demo:fin */
+
+/* En el celular: el aviso de sesión demo se compacta y el héroe pierde aire. */
+@media (max-width: 767.98px) {
+  /* Solo la Navbar queda fija: el aviso de sesión demo pasa a una línea con «Más» y se va
+     con la página al desplazar. */
+  .pl-pagina {
+    --pl-fijo-alto: var(--pl-navbar-alto, 0px);
+  }
+
+  /* relative y no static: sigue siendo un contexto de apilamiento, así el Banner, que es
+     sticky en z-sticky, no se pinta encima de la Navbar al pasar por debajo de ella */
+  .pl-pagina__aviso {
+    position: relative;
+    inset-block-start: auto;
+  }
+
+  .pl-pagina__aviso .ay-banner__message {
+    flex: 1 1 0;
+  }
+
+  .pl-pagina__aviso .ay-banner__action {
+    display: block;
+  }
+
+  .pl-aviso__corto {
+    display: inline;
+  }
+
+  .pl-pagina__aviso:not([data-abierto]) .pl-aviso__completo,
+  .pl-pagina__aviso[data-abierto] .pl-aviso__corto {
+    display: none;
+  }
+
+  /* 24 × 24 como mínimo: el objetivo táctil de WCAG 2.5.8. */
+  .pl-aviso__mas {
+    min-block-size: var(--aybar-space-6);
+    min-inline-size: var(--aybar-space-6);
+  }
+
+  .pl-heroe {
+    padding-block: var(--aybar-space-12) var(--aybar-space-10);
+  }
+}
+
+/* En puntero grueso, las acciones llegan al objetivo táctil mínimo. */
+@media (pointer: coarse) {
+  .pl-accion:not(.pl-accion--lg) {
+    min-block-size: max(var(--aybar-control-height-md), var(--aybar-touch-min));
+  }
+}
+
+/* Movimiento reducido: sin traslaciones; los cambios de color siguen. */
+@media (prefers-reduced-motion: reduce) {
+  .pl-accion,
+  .pl-accion:hover,
+  .pl-accion:active,
+  .pl-intro__tarjeta,
+  .pl-intro__tarjeta:hover {
+    transform: none;
+  }
+}

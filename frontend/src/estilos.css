@@ -1,0 +1,21 @@
+/*
+ * Estilos globales del documento. Los tokens --aybar-* y la hoja del sistema de diseño
+ * los importa main.tsx antes que este archivo (lo agrega aybar-front init): colores,
+ * tipografías y espacios salen de ahí. No escribas hex ni medidas sueltas.
+ */
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  /* Guía visual v2: el cuerpo es Proxima Nova servida como Figtree mientras no haya
+     licencia web (src/fuentes.css). @aybarcorp/tokens 0.2.0 todavía no la nombra en
+     --aybar-family-sans; cuando lo haga, estos dos nombres sobran pero no estorban. */
+  font-family: 'Proxima Nova', 'Figtree', var(--aybar-family-sans);
+  line-height: var(--aybar-font-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
