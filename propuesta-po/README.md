@@ -176,6 +176,7 @@ Se cerraron, criterio por criterio, las tres prioridades del PO (HU-043, 050 y 0
 | `scripts/probar-flujos.mjs`, `probar-consulta360.mjs`, `probar-garantias.mjs` | Pruebas en Node, una por criterio |
 | `scripts/recorrer-flujos.mjs`, `recorrer-consulta360.mjs`, `recorrer-operacion-vivo.mjs`, `recorrer-garantias.mjs` | Recorridos en Chrome sin interfaz |
 | `documentacion/` | Copia de consulta de los documentos del PO v1.3, del paquete Definir de Dev 1 y de la cobertura (ver su README) |
+| `src/three/estilos.ts` (cambio) | El CSS del visor usa los tokens del SDK para letra, espacios y radios (`--aybar-font-size-*`, `--aybar-font-weight-*`, `--aybar-space-*`, `--aybar-radius-*`) |
 
 | Comando | Qué hace ahora |
 |---|---|

@@ -73,6 +73,16 @@ está en el documento.
 Los supuestos de esta ronda (por ejemplo, el subtipo «General» de los 4 flujos del PO, o el modo simulación encendido por
 defecto) y las preguntas para el PO están en [DECISIONES.md §5.7](DECISIONES.md).
 
+**Diseño: paleta y componentes del SDK.** El mockup usa el mismo sistema de diseño que el SDK que está en
+`frontend/paquetes/`:
+- los 122 tokens de color coinciden con `@aybarcorp/tokens` 0.3.0;
+- las clases de los componentes son las de `@aybarcorp/ui` 0.3.0.
+
+Todo lo nuevo se armó con esos componentes (Card, DataGrid, Dialog, Form, Select, Switch, Badge, Alert, carga de archivos e
+icono `lock`) y con colores por token, sin colores escritos a mano. Además, el CSS propio del visor (`src/three/estilos.ts`)
+pasó a usar los tokens del SDK para tamaño y peso de letra, espacios y radios. Solo quedan en px las medidas que el SDK no
+tiene como token: bordes, tamaño de iconos, sombras, animaciones y cortes de pantalla.
+
 ### 5. Documentación de consulta en el repositorio
 
 [`documentacion/`](documentacion/README.md) contiene tres cosas:
