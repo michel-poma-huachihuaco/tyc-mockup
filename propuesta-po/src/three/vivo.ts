@@ -15,16 +15,19 @@ import { CANALES, CENTRO, COMITE, ESTACION, H, HUB, PASEO, PISO, SALAS, SALIDA, 
 export interface Estatico {
   zonas: { k: string; n: string; color: RGB }[]
   compuertas: { k: string; n: string; sigla: string; color: RGB }[]
+  tipos?: { k: string; color: RGB }[]            // HU-067 CA-02: color de la caja según el tipo de ticket
 }
 export interface Snap {
   zonas: { k: string; cola: number; atencion: number; riesgo: boolean; gente: { id: string; nombre: string; ocupado: boolean }[]; ocupados?: number; total?: number }[]
   bandeja: number; escalados: number
-  tickets: { id: string; numero: string; gate: string; zona: string; etapa: string; sla: 'ok' | 'riesgo' | 'vencido'; rayo: boolean; sel: boolean; resp?: string }[]
+  comite?: { id: string; numero: string }[]       // HU-067 CA-03: casos con SLA vencido que suben a la Sala de Comité
+  tickets: { id: string; numero: string; tipo?: string; gate: string; zona: string; etapa: string; sla: 'ok' | 'riesgo' | 'vencido'; rayo: boolean; sel: boolean; resp?: string }[]
 }
 export interface Cols { teal: RGB; teal2: RGB; orange: RGB; ok: RGB; warn: RGB; bad: RGB; line: RGB; muted: RGB; texto: RGB; superficie: RGB; suelo: RGB; lienzo: RGB }
 export interface OptsVivo {
   canvas: HTMLCanvasElement; host: HTMLElement; cols: Cols; color: (token: string) => RGB; reducido: boolean
   est: Estatico; hits: { current: { id: string; x: number; y: number }[] }; obtener: () => Snap
+  onZona?: (k: string | null) => void              // HU-067 CA-04: se tocó el suelo de un área (o fuera de las áreas: null)
 }
 
 // ------------------------------------------------------------------ utilidades de animación
@@ -73,6 +76,7 @@ export function montarVivo(o: OptsVivo): () => void {
   const kit = new Kit({ ...C })
   const colorZona = new Map(est.zonas.map((z) => [z.k, z.color]))
   const nombreZona = new Map(est.zonas.map((z) => [z.k, z.n]))
+  const colorTipo = new Map((est.tipos ?? []).map((t) => [t.k, t.color]))
 
   // ---------------------------------------------------------------- luz
   escena.add(new THREE.HemisphereLight(0xfff4e6, color(mezcla(C.suelo, C.teal, 0.5)), 1.7))
@@ -248,11 +252,13 @@ export function montarVivo(o: OptsVivo): () => void {
   }
   const alfombra = (x: number, z: number, w: number, d: number, c: RGB) => {
     const m = new THREE.Mesh(kit.caja(w - 0.1, 0.03, d - 0.1, 0.012), kit.mat(mezcla(c, piso, 0.6), { r: 0.95 })); m.position.set(x + w / 2, 0.02, z + d / 2); m.receiveShadow = true; escena.add(m)
+    return m
   }
+  const suelosZona: THREE.Object3D[] = []  // HU-067 CA-04: la alfombra de cada sala es lo que se toca para abrir el área
   const monitoresSala = new Map<string, THREE.MeshStandardMaterial[]>()
   const plantas: THREE.Object3D[] = []
   const grande = (s: Sala, c: RGB) => {
-    alfombra(s.x, s.z, s.w, s.d, c); paredes(s, c)
+    const alf = alfombra(s.x, s.z, s.w, s.d, c); alf.userData.zona = s.k; suelosZona.push(alf); paredes(s, c)
     const mons: THREE.MeshStandardMaterial[] = []
     s.puestos.forEach((p) => {
       const e = kit.escritorio(); e.position.set(p.x, 0, p.z); e.rotation.y = p.rotEscritorio; escena.add(e)
@@ -278,7 +284,7 @@ export function montarVivo(o: OptsVivo): () => void {
   const tablaC = new THREE.Mesh(kit.caja(2.5, 0.06, 1.0, 0.04), kit.mat(mezcla(C.superficie, C.texto, 0.25), { r: 0.4 })); tablaC.position.set(COMITE.mesa[0], 0.74, COMITE.mesa[1]); Kit.sombrear(tablaC); escena.add(tablaC)
   for (const sx of [-1, 1]) { const p = new THREE.Mesh(kit.caja(0.1, 0.72, 0.8, 0.02), kit.mat(mezcla(C.suelo, C.texto, 0.4), { r: 0.4, m: 0.3 })); p.position.set(COMITE.mesa[0] + sx * 1.0, 0.36, COMITE.mesa[1]); Kit.sombrear(p); escena.add(p) }
   ;[[-0.8, -0.85, 0], [0.8, -0.85, 0], [-0.8, 0.85, Math.PI], [0.8, 0.85, Math.PI]].forEach(([dx, dz, rot], i) => nuevaPersona(`comite:${i}`, `Comité ${i + 1}`, mezcla(C.bad, C.suelo, 0.45 + i * 0.05), true, COMITE.mesa[0] + dx!, COMITE.mesa[1] + dz!, rot!))
-  const pCom = signo('Comité (Mesa SGD)', '', COMITE.x + COMITE.w + 0.3, 2.0, COMITE.z + 0.3, C.bad)
+  const pCom = signo('Sala de Comité', '', COMITE.x + COMITE.w + 0.3, 2.0, COMITE.z + 0.3, C.bad)
   const cartasComite: THREE.Object3D[] = []
   for (let i = 0; i < 6; i++) { const c = kit.tarjeta(C.bad); c.scale.setScalar(0.8); c.position.set(COMITE.mesa[0] - 0.9 + i * 0.36, 0.8, COMITE.mesa[1] + (i % 2 ? 0.14 : -0.14)); c.visible = false; escena.add(c); cartasComite.push(c) }
   // cierre
@@ -321,7 +327,7 @@ export function montarVivo(o: OptsVivo): () => void {
 
   const nuevoEnt = (t: Snap['tickets'][number], ahora: number, retraso: number): Ent => {
     const g = new THREE.Group()
-    const card = kit.tarjeta(colorZona.get(t.zona) ?? C.teal2)
+    const card = kit.tarjeta(colorTipo.get(t.tipo ?? '') ?? colorZona.get(t.zona) ?? C.teal2)
     const ledMat = ledMats.ok, led = new THREE.Mesh(kit.esf(0.028), ledMat); led.position.set(0.23, 0.04, 0.13); card.add(led)
     const h = sprite(C.warn); h.scale.setScalar(0.9); h.position.y = 0.05; card.add(h)
     const bolt = new THREE.Mesh(rayoGeo, rayoMat); bolt.position.y = 0.55; bolt.visible = false
@@ -414,6 +420,17 @@ export function montarVivo(o: OptsVivo): () => void {
   const etPers = document.createElement('div')
   etPers.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:8px;font:600 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${css(C.superficie, 0.92)};border:1px solid ${css(C.line)};color:${css(C.texto)};box-shadow:0 4px 12px rgba(0,0,0,.3)`
   const objPers = new CSS2DObject(etPers); objPers.visible = false; objPers.position.y = 1.5; escena.add(objPers)
+
+  // HU-067 CA-04: tocar el suelo de un área la abre en un panel (lo pinta el chunk). Si el toque cae sobre un ticket gana el
+  // ticket, con el mismo radio (30 px) que usa el chunk para elegirlo; fuera de las áreas se cierra (null).
+  const tocar = (ev: MouseEvent) => {
+    if (!o.onZona) return
+    const b = canvas.getBoundingClientRect(), x = ev.clientX - b.left, y = ev.clientY - b.top
+    if (o.hits.current.some((p) => Math.hypot(p.x - x, p.y - y) < 30)) return
+    rayo.setFromCamera(new THREE.Vector2((x / b.width) * 2 - 1, -(y / b.height) * 2 + 1), cam)
+    o.onZona((rayo.intersectObjects(suelosZona, false)[0]?.object.userData.zona as string | undefined) ?? null)
+  }
+  canvas.addEventListener('click', tocar)
 
   // ---------------------------------------------------------------- bucle
   let primera = true, ultimo = performance.now(), tick = 0
@@ -518,8 +535,14 @@ export function montarVivo(o: OptsVivo): () => void {
 
     // --- carteles y hub
     pHub.set(`${s.bandeja} en espera · rayo > SLA > prioridad`)
-    pCom.set(`${s.escalados} escalados en cadena`, s.escalados > 0)
-    cartasComite.forEach((c, i) => { c.visible = i < s.escalados; if (c.visible && !RM) c.position.y = 0.8 + Math.sin(t * 2 + i) * 0.02 })
+    // HU-067 CA-03: los casos con SLA vencido (ya avisados al líder) aparecen como tarjetas en la mesa de la Sala de Comité, antes
+    // que los escalamientos de la Mesa SGD; se pueden tocar como cualquier ticket (abren su ficha)
+    const com = s.comite ?? []
+    pCom.set(`${com.length} con SLA vencido · ${s.escalados} escalados en cadena`, com.length + s.escalados > 0)
+    cartasComite.forEach((c, i) => {
+      c.visible = i < com.length + s.escalados; if (c.visible && !RM) c.position.y = 0.8 + Math.sin(t * 2 + i) * 0.02
+      if (c.visible && i < com.length) { const pr = v3.copy(c.position).project(cam); hits.push({ id: com[i]!.id, x: ((pr.x + 1) / 2) * w, y: ((1 - pr.y) / 2) * h }) }
+    })
     pSal.set(`${s.tickets.filter((x) => x.etapa === 'salida').length} resueltos recientes`)
     // HU-067 CA-01: cada área con sus gestores ocupados sobre el total y los tickets en cola
     for (const z of s.zonas) pZona.get(z.k)?.set(z.total ? `${z.cola} en cola · ${z.ocupados ?? 0}/${z.total} ocupados` : `${z.cola} en cola · ${z.atencion} en atención`, z.riesgo)
@@ -549,7 +572,7 @@ export function montarVivo(o: OptsVivo): () => void {
   const parar = bucle(RM, frame)
 
   return () => {
-    parar(); ro.disconnect(); canvas.removeEventListener('pointermove', mover); canvas.removeEventListener('pointerleave', salir)
+    parar(); ro.disconnect(); canvas.removeEventListener('pointermove', mover); canvas.removeEventListener('pointerleave', salir); canvas.removeEventListener('click', tocar)
     escena.traverse((x) => { const m = x as THREE.Mesh; if (m.isMesh) { m.geometry.dispose(); const mt = m.material; (Array.isArray(mt) ? mt : [mt]).forEach((q) => q.dispose()) } })
     baldosa.dispose(); tex.dispose(); texHub.dispose(); texLista.dispose(); halo.dispose()
     for (const e of entradas.values()) e.dispose()

@@ -25,9 +25,9 @@ P.useEffect(()=>{let els=[`inicio-360`,`inicio-vivo`].map(i=>document.getElement
 let elegir=id=>{setCid(id);try{sessionStorage.setItem(`v3:cliente`,id)}catch{}},
 ir=id=>{let el=document.getElementById(id);el&&el.scrollIntoView({behavior:matchMedia(`(prefers-reduced-motion: reduce)`).matches?`auto`:`smooth`,block:`start`})},
 chip=(id,texto)=>(0,L.jsx)(`button`,{type:`button`,"aria-current":sec===id?`true`:void 0,onClick:()=>ir(id),children:texto});
-return(0,L.jsxs)(`div`,{className:`pt-inicio`,children:[(0,L.jsx)(__Tope,{}),(0,L.jsxs)(`nav`,{className:`pt-inicio__ancla`,"aria-label":`Secciones del inicio`,children:[chip(`inicio-360`,`Consulta 360`),chip(`inicio-vivo`,`Vista en vivo`)]}),
+return(0,L.jsxs)(`div`,{className:`pt-inicio`,children:[(0,L.jsx)(__Tope,{}),(0,L.jsxs)(`nav`,{className:`pt-inicio__ancla`,"aria-label":`Secciones del inicio`,children:[chip(`inicio-360`,`Consulta 360`),chip(`inicio-vivo`,`Operación en vivo`)]}),
 (0,L.jsx)(`section`,{id:`inicio-360`,"aria-label":`Consulta 360 del cliente`,children:(0,L.jsxs)(`div`,{className:`pt-pagina pt-pagina--ancha`,children:[(0,L.jsx)(T,{title:`Consulta 360`,description:`Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas.`,actions:(0,L.jsx)(r,{variant:`secondary`,onClick:()=>{location.hash=g(`clientes/${cid}`)},children:`Abrir la ficha completa`})}),(0,L.jsx)(P.Suspense,{fallback:null,children:(0,L.jsx)(__G360,{clienteId:cid,onElegir:elegir})})]})}),
-(0,L.jsx)(`section`,{id:`inicio-vivo`,className:`pt-inicio__vivo`,"aria-label":`Vista en vivo`,children:(0,L.jsx)(Vivo,{})})]})}
+(0,L.jsx)(`section`,{id:`inicio-vivo`,className:`pt-inicio__vivo`,"aria-label":`Operación en vivo`,children:(0,L.jsx)(Vivo,{})})]})}
 
 // Cada cabecera de página toma el foco al montarse y el navegador baja hasta ella: el inicio arranca arriba, en el 360.
 function __Tope(){P.useEffect(()=>{let f=()=>{let a=document.activeElement;a&&a.tagName===`H1`&&!a.closest(`#inicio-360`)&&a.blur();scrollTo(0,0)};f();let t=[80,300,800].map(m=>setTimeout(f,m));return()=>t.forEach(clearTimeout)},[]);return null}

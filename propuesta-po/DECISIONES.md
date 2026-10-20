@@ -113,13 +113,18 @@ detractor; marcado como supuesto hasta contar con el KPI Engine, DEP-10). El NPS
 
 ## 5. v1.3 (16-oct): lo que queda abierto
 
-> **Estado: aplicado en el what-if (cuarta ronda, ver README).** Mi Portal (HU-064, 065 y 066), la Etapa 2 fuera de la vista y lo pequeño
-> que faltaba de la HU-067. Nada de esto está aprobado: el PLT-04 v1.3 está «Pendiente DoR» y el comité DoR es el 20-oct.
+> **Estado: aplicado en el what-if.**
+> - **Cuarta ronda (19-oct):** Mi Portal (HU-064, 065 y 066), la Etapa 2 fuera de la vista y lo pequeño que faltaba de la HU-067.
+> - **Quinta ronda (20-oct):** las prioridades del PO (HU-043, 050 y 067) y las garantías (HU-034, 035 y 036), criterio por criterio;
+>   ver §5.7.
+>
+> Nada de esto está aprobado: el PLT-04 v1.3 está «Pendiente DoR» y el comité DoR es el 20-oct.
 
 ### 5.1 Cobertura del mockup frente al PLT-04 v1.3
 
-De las 62 historias de la Etapa 1: **44 sí, 18 parcial, 0 no** (después de esta ronda; antes, HU-064, 065 y 066 eran «no»).
-Las faltas que más pesan, por prioridad del plan:
+De las 62 historias de la Etapa 1: **50 sí, 12 parcial, 0 no** después de la quinta ronda. Antes de la quinta ronda eran 44 sí y
+18 parcial; antes de la cuarta, la HU-064, la 065 y la 066 eran «no». El detalle por historia está en
+`documentacion/cobertura-v1.3.md`. Faltas por prioridad del plan, antes de la quinta ronda:
 
 | HU | Qué falta |
 |---|---|
@@ -128,6 +133,10 @@ Las faltas que más pesan, por prioridad del plan:
 | **HU-067** (prioridad 3) | Ver §5.4 |
 | HU-026 y 027 | «Cambiar estado › Escalado» pasa a Eje 3 sin gate de conflicto ni paquete mínimo de handoff; el aviso de handoff sin confirmar no se ve en ninguna pantalla |
 | HU-044, 046, 048, 031, 040, 041, 055, 056, 057, 034, 035, 036 | Faltas acotadas a uno o dos criterios (detalle en la tabla de cobertura entregada aparte) |
+
+**Quinta ronda:** quedan cubiertas la HU-043, la 050 y la 067 (las tres prioridades) y la 034, la 035 y la 036. Siguen
+parciales 12, con faltas acotadas: la 026 y la 027 (Jesús); la 031, 044, 046, 048 y 055 (Michel); y la 040, 041, 056, 057 y
+066 (Daniel).
 
 ### 5.2 Mi Portal: decisiones de diseño para validar con el PO
 
@@ -159,7 +168,7 @@ Del PLT-04 se tomaron literalmente el «Como/quiero/para» y los criterios. Lo d
 - El simulador «Ticket entrante por Mi Portal» del panel de simulación (del PO) sigue creando tickets con canal Correo, y en la
   consola el canal de respuesta «Mi Portal» sale «no disponible». No los toqué: son del PO.
 
-### 5.4 HU-067 (visor 3D): qué falta frente a sus criterios
+### 5.4 HU-067 (visor 3D): qué faltaba frente a sus criterios (resuelto en la quinta ronda, §5.7)
 
 Se agregó lo pequeño: ocupados/total por sala (CA-01), recorrido con asignaciones y CSAT en la ficha (CA-05), alertas de SLA
 vencido en la bitácora (CA-03/06), tabla «Por área» (CA-09) y la compuerta de Mi Portal para su canal. Queda:
@@ -204,3 +213,25 @@ la Etapa 1 Aybar Ciudad atiende otras solicitudes (por ejemplo, consultas por la
   export de `src/portal/externos.d.ts` y `kit.ts` (`Ii`, `Ai`, `k`…).
 - Mi Portal escribe en el mismo estado en memoria que la consola: al recargar, todo vuelve a la semilla (como el resto del prototipo).
 - El navegador pide `/favicon.ico` por su cuenta y responde 404: ya pasaba antes (el `index.html` del artifact no enlaza icono).
+
+### 5.7 Quinta ronda (20-oct): criterios cerrados y supuestos para validar con el PO
+
+Regla de la ronda: cada cambio responde a un criterio de aceptación del PLT-04 v1.3 de la Etapa 1. No se tomó nada de la rama
+`prototipo-polar` y no se agregó nada que el documento no pida. Donde el PLT-04 deja una pregunta abierta, la tabla dice qué se
+supuso y por qué.
+
+| HU | Qué se cerró | Supuesto o decisión | Pregunta para el PO |
+|---|---|---|---|
+| **043** | Configuración › Flujos con la clave tipo + subtipo + área; responsable del flujo; actividades con su SLA; datos obligatorios; combinación única con «Nueva versión»; bitácora de publicaciones; el alta de la consola, Mi Portal y la simulación aplican el flujo (área, responsable, actividades en orden, SLA = suma o la política si es menor); flujo por defecto del área y alerta «Sin flujo en el área» | Los 4 flujos del PO se conservan, con sus actividades, responsables y SLA. Llevan el subtipo **«General»**, porque el PO no les dio subtipo y el CA-03 lo exige. El responsable de cada flujo es la persona de su área que ya aparece en sus actividades. Se suma el flujo del CA-01: Reclamo · Garantía postventa · Postventa, de 8 + 16 + 8 h, con Lucía Ccahuana y Óscar Medina. Los tickets de ejemplo de la simulación entran con el subtipo «General». La semilla no trae flujo por defecto: lo publica el administrador. Cierra una actividad cualquier rol de atención | ¿Qué combinaciones tipo-subtipo-área tiene el piloto, y con qué responsables? ¿Cuál es el flujo por defecto de cada área? ¿Solo el responsable de la actividad puede cerrarla? |
+| **043 → Mi Portal** | — | Los subtipos de Mi Portal (§5.2) no tienen flujo publicado: el ticket del cliente queda en la cola de ATC y se alerta al administrador (CA-07), y su fecha de compromiso sale de la política del tipo. El PLT-02 dice que los subtipos del formulario salen de los flujos: alinearlo es trabajo de la HU-064 | ¿Se publican flujos para los subtipos de Mi Portal, o el formulario muestra los de los flujos? |
+| **050** | Ficha con proyecto y etapa, lotes, cuotas vencidas de todos los lotes, tickets y «Datos visibles n de 16» según el rol; fecha en «DNI y KYC» y en «Cuotas»; lo restringido en ámbar con candado y lo caído en rojo; un DNI que no está en SIGDA/TAXON abre la excepción (registrar como interesado o derivar); la consulta deja en la bitácora del ticket quién, cuándo y qué secciones, sin datos personales | «Derivar» abre el mismo diálogo de derivación del ticket (HU-007): ni la HU-050 ni la 051 dicen a dónde. La «etapa» es la del nombre del proyecto, porque la semilla no tiene ese campo. La fecha de «DNI y KYC» es la del ejemplo del CA. La exposición sale de la ficha porque el CA-05 no la pide, y sigue en el mapa con candado. Volver a la pestaña no repite la nota: misma persona y mismas secciones en menos de 10 min | ¿Qué es «derivar» en la excepción? ¿Qué campo de SIGDA es la etapa? |
+| **067** | Nombre «Operación en vivo»; pausa y velocidad (x1, x2) solo en el modo simulación; caja del color de su tipo; al vencer, el correo en el registro de actividad y el caso en la Sala de Comité; panel del área al tocarla, solo informativo; paso «en bandeja»; filtro por razón social y por áreas permitidas, también en la escena | El modo simulación está **encendido por defecto**, como el prototipo del PO; se apaga en Herramientas › Simulación. El correo va al responsable con copia a su líder, como dicen la RN-SVC-035 y la HU-055. Las áreas permitidas siguen la regla de la Bandeja: supervisor y coordinador CX ven todo, el resto su área. La paleta por tipo no lleva leyenda porque el CA no la pide. La hora de «en bandeja» es la del registro | ¿El correo va al líder con copia al responsable, o al revés? ¿Hace falta una leyenda de colores por tipo? |
+| **034** | El rechazo por vigencia avisa al cliente con el motivo (WhatsApp, o correo si WhatsApp no responde) y queda en la trazabilidad del reclamo | El aviso usa la misma vía que las confirmaciones de Buses. Mi Portal no muestra esos avisos y el CA no lo pide | — |
+| **035** | La inspección admite el informe y varias fotos | JPG, PNG o PDF, hasta 10 MB cada uno y máximo 5, los límites que ya usa la evidencia del ticket. Exige al menos una foto, por «el informe y las fotos» | ¿Formatos y cantidad? |
+| **036** | «Registrar carta notarial» en el reclamo: vincula su ticket de garantía si no lo tenía, marca la señal de conflicto, impide resolver en Postventa y la derivación a Eje 3 sale del ticket, con el paquete mínimo | Ya derivado, el reclamo sigue sin resolverse en Postventa mientras el ticket esté abierto. Si el cliente no tiene ticket de garantía, se lleva a «Nuevo ticket», porque el alta exige empresa y línea | ¿Quién cierra el reclamo después de la respuesta de Legal? |
+
+Pruebas de esta ronda:
+- **En Node (`npm run probar`):** flujos 9/9, Consulta 360 7/7, garantías 10/10 y Mi Portal 14/14.
+- **En Chrome (`npm run recorrer`, con el servidor arriba):** flujos 7/7, recorrido general 17/17, Operación en vivo 9/9,
+  garantías 6/6 y Consulta 360 10/10.
+- En todos los recorridos: sin errores de JS, consola ni red, y sin textos de la Etapa 2.

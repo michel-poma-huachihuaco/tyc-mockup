@@ -1,0 +1,29 @@
+// HU-ATC-043 · Configuración › Flujos: diálogo «Nuevo flujo» / «Nueva versión» (sustituye a la función W del chunk, por un
+// corte en parchear.mjs). Usa los nombres minificados del chunk Configuracion: B React, V jsx, F diálogo, D formulario,
+// E campo, O texto, A número, z selector, j tarjeta, M cuerpo, n botón, s alerta, S error de acción, w acción en curso,
+// x errores por campo, a API, p aviso, h personas, H áreas, b nombre del área, i tipos; y __f (comun: __h43).
+// flujo: null (cerrado) | {nuevo:true} | {base: flujo vigente} (nueva versión de esa combinación)
+function W({flujo:__b,datos:__d,onCerrar:__c}){let __o=(0,B.useId)(),[__t,__st]=(0,B.useState)(``),[__s,__ss]=(0,B.useState)(``),[__a,__sa]=(0,B.useState)(``),[__r,__sr]=(0,B.useState)(``),[__p,__sp]=(0,B.useState)([]),[__v,__sv]=(0,B.useState)(!1),__x=w();if((0,B.useEffect)(()=>{if(!__b)return;let q=__b.base??null;__st(q?q.tipo??`*`:``),__ss(q?.subtipo??``),__sa(q?.area??``),__sr(q?.responsable??``),__sp(q?q.pasos.map(e=>({...e})):[{nombre:``,responsable:``,slaH:null}]),__sv(!!q),__x.limpiar()},[__b]),!__b)return null;
+let __g=x(__x.error),__def=__t===`*`,__u=(k,c)=>__sp(q=>q.map((e,y)=>y===k?{...e,...c}:e)),
+__per=h.filter(e=>e.rol===`GESTOR`||e.rol===`COLABORADOR`||e.rol===`SUPERVISOR`||e.rol===`LEGAL_RECLAMOS`).map(e=>({value:e.id,label:e.nombre})),
+__rol=[[`GESTOR`,`Gestor de tickets`],[`COLABORADOR`,`Colaborador de área`],[`SUPERVISOR`,`Supervisor ATC`],[`LEGAL_RECLAMOS`,`Responsable legal de reclamos`]].map(([e,q])=>({value:`rol:${e}`,label:`${q} (rol)`})),
+__vig=__t&&__a&&(__def||__s.trim())?__f.versiones(__d,__def?null:__t,__def?null:__s,__a)[0]??null:null,
+__sum=__p.reduce((e,q)=>e+(q.slaH>0?q.slaH:0),0),
+__pub=async()=>{let q=(__vig?.version??0)+1;await __x.ejecutar(async()=>(await a.publicarFlujo({tipo:__t,subtipo:__s,area:__a,responsable:__r,pasos:__p,nuevaVersion:__v}),!0))&&(p({message:`Flujo publicado (versión ${q}). Aplica solo a tickets nuevos.`,tone:`success`}),__c())};
+return(0,V.jsx)(F,{open:!0,onOpenChange:e=>e?void 0:__c(),title:__v&&__vig?`Nueva versión · ${__f.nombre(__vig)}`:`Nuevo flujo`,description:`Tipo, subtipo y área, su responsable y las actividades en orden, cada una con su SLA. Los tickets abiertos conservan su flujo y su SLA congelado.`,size:`lg`,
+footer:(0,V.jsxs)(V.Fragment,{children:[(0,V.jsx)(n,{variant:`ghost`,onClick:__c,children:`Cancelar`}),(0,V.jsx)(n,{variant:`primary`,type:`submit`,form:`${__o}-f`,loading:__x.enCurso,children:__v?`Publicar la versión ${(__vig?.version??0)+1}`:`Publicar el flujo`})]}),
+children:(0,V.jsxs)(D,{id:`${__o}-f`,onSubmit:__pub,errors:Object.fromEntries(Object.entries(__g).map(([e,q])=>[`${__o}-${e}`,q])),children:[
+(0,V.jsxs)(`div`,{className:`pt-rejilla-campos`,children:[
+(0,V.jsx)(E,{label:`Tipo de ticket`,id:`${__o}-tipo`,error:__g.tipo,required:!0,children:(0,V.jsx)(z,{value:__t,placeholder:`Elige el tipo`,disabled:__v,onChange:e=>__st(e.target.value),options:[{value:`*`,label:`Por defecto del área (sin flujo propio)`},...i.map(e=>({value:e.id,label:e.nombre}))]})}),
+__def?null:(0,V.jsx)(E,{label:`Subtipo`,id:`${__o}-subtipo`,error:__g.subtipo,required:!0,children:(0,V.jsx)(O,{value:__s,disabled:__v,onChange:e=>__ss(e.target.value)})}),
+(0,V.jsx)(E,{label:`Área`,id:`${__o}-area`,error:__g.area,required:!0,children:(0,V.jsx)(z,{value:__a,placeholder:`Elige el área`,disabled:__v,onChange:e=>__sa(e.target.value),options:H.map(e=>({value:e,label:b[e]}))})}),
+(0,V.jsx)(E,{label:`Responsable del flujo`,id:`${__o}-responsable`,error:__g.responsable,required:!0,helper:`Recibe el ticket cuando se registra.`,children:(0,V.jsx)(z,{value:__r,placeholder:`Elige al responsable`,onChange:e=>__sr(e.target.value),options:__per})})]}),
+__p.map((e,q)=>(0,V.jsx)(j,{variant:`elevated`,children:(0,V.jsx)(M,{padding:`sm`,children:(0,V.jsxs)(`div`,{className:`pt-pila pt-pila--chica`,children:[
+(0,V.jsx)(`p`,{className:`pt-texto`,children:(0,V.jsxs)(`strong`,{children:[`Actividad `,q+1]})}),
+(0,V.jsx)(E,{label:`Nombre de la actividad ${q+1}`,id:`${__o}-paso-${q}`,error:__g[`paso-${q}`],required:!0,children:(0,V.jsx)(O,{value:e.nombre,onChange:e=>__u(q,{nombre:e.target.value})})}),
+(0,V.jsxs)(`div`,{className:`pt-rejilla-campos`,children:[(0,V.jsx)(E,{label:`Responsable de la actividad ${q+1}`,id:`${__o}-resp-${q}`,error:__g[`resp-${q}`],required:!0,helper:`Una persona o un rol.`,children:(0,V.jsx)(z,{value:e.responsable??``,placeholder:`Elige persona o rol`,onChange:e=>__u(q,{responsable:e.target.value}),options:[{label:`Personas`,options:__per},{label:`Roles`,options:__rol}]})}),(0,V.jsx)(A,{label:`SLA de la actividad ${q+1} (horas hábiles)`,id:`${__o}-sla-${q}`,error:__g[`sla-${q}`],value:e.slaH,onValueChange:e=>__u(q,{slaH:e}),min:.25,step:1,unit:`h`})]}),
+__p.length>1?(0,V.jsx)(`div`,{className:`pt-acciones pt-acciones--inicio`,children:(0,V.jsxs)(n,{size:`sm`,variant:`ghost`,onClick:()=>__sp(e=>e.filter((e,y)=>y!==q)),children:[`Quitar la actividad `,q+1]})}):null]})})},q)),
+(0,V.jsx)(n,{variant:`secondary`,size:`sm`,onClick:()=>__sp(e=>[...e,{nombre:``,responsable:``,slaH:null}]),children:`Añadir una actividad`}),
+(0,V.jsxs)(`p`,{className:`pt-texto`,children:[`SLA del flujo: `,(0,V.jsxs)(`strong`,{children:[__sum,` h hábiles`]}),` (suma de las actividades). Si la política SLA del tipo es menor, prevalece la política.`]}),
+__x.error?.codigo===`flujo-duplicado`?(0,V.jsx)(s,{tone:`warning`,size:`sm`,title:`Esa combinación ya tiene flujo`,actions:(0,V.jsx)(n,{size:`sm`,variant:`primary`,onClick:()=>{__sv(!0),__x.limpiar()},children:`Crear una nueva versión`}),children:(0,V.jsx)(`span`,{className:`pt-alerta__texto`,children:__x.error.message})}):__x.error&&!Object.keys(__g).length?(0,V.jsx)(S,{error:__x.error,reintentar:__pub}):null,
+__g.pasos?(0,V.jsx)(s,{tone:`danger`,size:`sm`,children:(0,V.jsx)(`span`,{className:`pt-alerta__texto`,children:__g.pasos})}):null]})})}

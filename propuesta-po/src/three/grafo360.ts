@@ -19,12 +19,21 @@ export interface OptsGrafo {
   lit: Ref<Set<string>>; pulsos: Ref<Pulso[]>; t0: Ref<number>; pos: Ref<Record<string, { x: number; y: number; r: number }>>
 }
 
-interface NodoEsc { pos: THREE.Vector3; r: number; mesh: THREE.Mesh; halo: THREE.Mesh; et: CSS2DObject; sub?: HTMLElement; txt: HTMLElement }
+interface NodoEsc { pos: THREE.Vector3; r: number; mesh: THREE.Mesh; halo: THREE.Mesh; et: CSS2DObject; sub?: HTMLElement; txt: HTMLElement; candado?: HTMLElement }
+
+/** Candado del sistema de diseño (mismo trazo que el icono «lock»), delante del nombre del dato restringido (HU-050 CA-07). */
+const candado = () => {
+  const s = document.createElement('span')
+  s.setAttribute('aria-hidden', 'true')
+  s.style.cssText = 'display:none;margin-right:3px;vertical-align:-1px'
+  s.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.75 10.75h10.5a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"/><path d="M8.25 10.5V7.75a3.75 3.75 0 0 1 7.5 0v2.75"/></svg>'
+  return s
+}
 
 export function montarGrafo(o: OptsGrafo): () => void {
   const { canvas, host } = o
   const T = {
-    bad: o.color('feedback-danger-border'), naranja: o.color('secondary-400'), borde: o.color('border-default'), src: o.color('primary-500'),
+    bad: o.color('feedback-danger-border'), restringido: o.color('feedback-warning-border'), naranja: o.color('secondary-400'), borde: o.color('border-default'), src: o.color('primary-500'),
     texto: o.color('fg-default'), mudo: o.color('fg-muted'), superficie: o.color('bg-surface'), apagado: o.color('bg-surface-sunken'),
     enlace: o.color('fg-link'), centro: o.color('primary-900'),
   }
@@ -78,6 +87,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / v.nodos.length + 0.1
       const cx = Math.cos(a), lado = cx > 0.3 ? 'der' : cx < -0.3 ? 'izq' : Math.sin(a) > 0 ? 'arriba' : 'abajo'
       nuevo(d.id, new THREE.Vector3(cx * R2 * 1.05, Math.sin(a) * R2 * 0.8, ((i % 3) - 1) * 1.1), 0.26, T.apagado, d.n, undefined, lado)
+      const n = nodos.get(d.id)!
+      n.candado = candado(); n.txt.prepend(n.candado)
     })
     const posDe = (id: string) => (id === 'c' ? new THREE.Vector3() : nodos.get(id)!.pos)
     const arista = (a: string, b: string, extra: { fuente?: string; dato?: string }) => {
@@ -151,12 +162,13 @@ export function montarGrafo(o: OptsGrafo): () => void {
     // datos
     for (const d of v.nodos) {
       const n = nodos.get(d.id)!
-      const malo = d.estado !== 'ok', on = lit.has(d.id) && !malo
+      const restringido = d.estado === 'restringido', malo = d.estado !== 'ok', on = lit.has(d.id) && !malo
       const sel = o.sel.current === d.id || o.hover.current === d.id, sem = !!o.sem.current?.hits.length && !!d.sem
-      ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(malo ? T.bad : on ? T.enlace : T.apagado))
+      ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(restringido ? T.restringido : malo ? T.bad : on ? T.enlace : T.apagado))
       n.mesh.scale.setScalar(1 + (sel ? 0.45 : 0) + (sem ? 0.25 : 0))
       n.halo.visible = on; n.halo.scale.setScalar(1 + (o.reducido ? 0 : Math.sin(ahora / 300 + n.pos.x) * 0.08))
-      n.txt.style.color = css(malo ? T.bad : on || sel ? T.texto : T.mudo)
+      n.txt.style.color = css(restringido ? T.mudo : malo ? T.bad : on || sel ? T.texto : T.mudo)
+      if (n.candado) n.candado.style.display = restringido ? 'inline-block' : 'none'
       n.txt.style.fontWeight = sel ? '800' : '700'
     }
     ini.textContent = v.cliente.nombre.split(' ').slice(0, 2).map((p) => p[0]).join('')

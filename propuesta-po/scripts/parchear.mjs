@@ -58,6 +58,29 @@ const NOTA = 'globalThis.__ptNota&&globalThis.__ptNota(e),null'
 // v1.3: NEXUS, DAEDALUS y UrbeMind pasan a la Etapa 2 (PLT-01 v1.3, «Fuera de este plan · Etapa 2») y no se muestran. Lo que
 // queda es el comportamiento de la Etapa 1 («Cómo opera la Etapa 1 mientras tanto»): líderes y roles del maestro local de ATC.
 const MAESTRO = 'el maestro local de ATC'
+// v1.3 · HU-043 (prioridad 1): flujo por tipo + subtipo + área, con responsable, actividades en orden y SLA por actividad.
+// El modelo vive en scripts/hu043-modelo.js (sufijo de comun); estas son las piezas que se cambian dentro de los chunks.
+// Semilla de flujos (clave tipo + subtipo + área):
+//  · los 4 flujos del PO (Consulta de cuenta y Resolución de contrato en Cobranza, Queja en ATC, Garantía postventa en Postventa),
+//    con sus actividades, responsables y SLA tal cual. El PO no les dio subtipo y el CA-03 lo exige: llevan el subtipo «General»
+//    (supuesto, a definir con el PO). Responsable del flujo: la persona del área que ya aparece en sus actividades;
+//  · el del CA-01/04/05 (Reclamo · Garantía postventa · Postventa; Inspección 8 h, Informe técnico 16 h y Respuesta al cliente 8 h).
+// Los tickets de ejemplo de la simulación («ticket entrante») entran con el subtipo «General», así que siguen el flujo de su tipo.
+const FLUJO_PO = (id, tipo, area, responsable, pasos) => `{id:\`${id}\`,tipo:\`${tipo}\`,subtipo:\`General\`,area:\`${area}\`,responsable:\`${responsable}\`,version:1,pasos:${pasos},slaTotalH:${[...pasos.matchAll(/slaH:(\d+)/g)].reduce((s, m) => s + Number(m[1]), 0)},publicado:Ss,autor:\`p-aperez\`}`
+const FLUJOS_043 = 'ws=[' + [
+  FLUJO_PO('flu-0-1', 'CTA', 'COBRANZA', 'p-rsalazar', '[{nombre:`Recepción`,responsable:`p-crojas`,slaH:2},{nombre:`Revisión de cobranza`,responsable:`p-rsalazar`,slaH:24},{nombre:`Respuesta al cliente`,responsable:`p-crojas`,slaH:4}]'),
+  FLUJO_PO('flu-0-2', 'QUE', 'ATC', 'p-dlazo', '[{nombre:`Registro`,responsable:`p-dlazo`,slaH:2},{nombre:`Respuesta`,responsable:`p-dlazo`,slaH:24}]'),
+  FLUJO_PO('flu-0-4', 'RES', 'COBRANZA', 'p-rsalazar', '[{nombre:`Verificación de la deuda`,responsable:`p-rsalazar`,slaH:24},{nombre:`Revisión legal de la causal`,responsable:`p-pvilchez`,slaH:48},{nombre:`Carta de resolución`,responsable:`p-pvilchez`,slaH:72}]'),
+  FLUJO_PO('flu-0-3', 'GAR', 'POSTVENTA', 'p-lccahuana', '[{nombre:`Recepción`,responsable:`p-lccahuana`,slaH:4},{nombre:`Inspección técnica`,responsable:`p-omedina`,slaH:72}]'),
+  '{id:`flu-0-5`,tipo:`REC`,subtipo:`Garantía postventa`,area:`POSTVENTA`,responsable:`p-lccahuana`,version:1,pasos:[{nombre:`Inspección`,responsable:`p-omedina`,slaH:8},{nombre:`Informe técnico`,responsable:`p-omedina`,slaH:16},{nombre:`Respuesta al cliente`,responsable:`p-lccahuana`,slaH:8}],slaTotalH:32,publicado:Ss,autor:`p-aperez`}',
+].join(',') + ']'
+const ZR_ORIGINAL = 'function Zr(e,t){let n=R(e,t),r=Mr(e,n.tipo),i=r?.pasos[0]?.responsable??null;if(!r||!i||!qr(e,i))return[{...e,tickets:e.tickets.map(e=>e.id===t?{...e,responsable:null,area:r?.area??e.area}:e)},`cola`];let[a,o]=I(e,`fa`),s=D(i)?.area??r.area;return[{...o,tickets:o.tickets.map(e=>e.id===t?{...e,responsable:i,area:s}:e),filasAsignacion:[...o.filasAsignacion,{id:a,ticketId:t,fecha:e.ahora,deArea:n.area,deResponsable:n.responsable,aArea:s,aResponsable:i,motivo:`ALTA`,nota:`Asignado por el flujo del área`,autor:`p-gnunez`}]},`asignado`]}'
+const COLUMNAS_FLUJOS = 'let k=[{key:`tipo`,header:`Tipo de ticket`,width:`13rem`,renderCell:e=>r(e.tipo)},{key:`area`,header:`Área`,width:`10rem`,renderCell:e=>b[m(o,e.tipo)?.area??`ATC`]},{key:`version`,header:`Versión vigente`,width:`9rem`,renderCell:t=>{let n=m(o,t.tipo);return n?`v${n.version}`:(0,V.jsx)(e,{tone:`warning`,size:`sm`,children:`Sin flujo`})}},{key:`pasos`,header:`Pasos y responsables`,renderCell:e=>m(o,e.tipo)?.pasos.map(e=>`${e.nombre} (${d(e.responsable)})`).join(` → `)??`—`},{key:`accion`,header:`Acción`,width:`9rem`,renderCell:e=>(0,V.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>E(e.tipo),children:`Editar`})}],'
+const COLUMNAS_FLUJOS_043 = 'let k=[{key:`tipo`,header:`Tipo`,width:`11rem`,renderCell:e=>e.tipo==null?`Por defecto del área`:r(e.tipo)},{key:`subtipo`,header:`Subtipo`,width:`11rem`,renderCell:e=>e.subtipo??`—`},{key:`area`,header:`Área`,width:`8rem`,renderCell:e=>b[e.area]??e.area},{key:`responsable`,header:`Responsable`,width:`10rem`,renderCell:e=>d(e.responsable)},{key:`actividades`,header:`Actividades`,renderCell:e=>e.pasos.map(e=>`${e.nombre} (${__f.responsable(e.responsable)} · ${e.slaH} h)`).join(` → `)},{key:`sla`,header:`SLA`,width:`11rem`,renderCell:e=>{let t=__f.sla(o,e);return t.totalH<t.sumaH?`${t.totalH} h hábiles (prevalece la política del tipo; las actividades suman ${t.sumaH} h)`:`${t.sumaH} h hábiles`}},{key:`version`,header:`Versión`,width:`6rem`,renderCell:e=>`v${e.version}`},{key:`accion`,header:`Acción`,width:`9rem`,renderCell:e=>(0,V.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>E({base:e}),children:`Nueva versión`})}],__bit=[{key:`fecha`,header:`Fecha`,width:`9rem`,renderCell:e=>y(e.publicado)},{key:`flujo`,header:`Flujo`,renderCell:e=>__f.nombre(e)},{key:`version`,header:`Versión`,width:`6rem`,renderCell:e=>`v${e.version}`},{key:`autor`,header:`Autor`,width:`10rem`,renderCell:e=>d(e.autor)}],'
+const TABLA_FLUJOS = 'h===`flujos`?(0,V.jsx)(j,{children:(0,V.jsx)(M,{children:(0,V.jsxs)(`div`,{className:`pt-pila`,children:[(0,V.jsx)(P,{caption:`Flujos por tipo de ticket`,columns:k,rows:c.fase===`listo`?F:[],getRowId:e=>e.id,loading:c.fase===`cargando`}),(0,V.jsx)(v,{children:`Un editor gráfico de procesos (BPMN) queda fuera de alcance; el SLA de cada paso se suma a la precedencia de políticas de la ola 1.`})]})})}):'
+const TABLA_FLUJOS_043 = 'h===`flujos`?(0,V.jsxs)(`div`,{className:`pt-pila`,children:[(0,V.jsxs)(j,{children:[(0,V.jsx)(R,{as:`h2`,title:`Flujos por tipo, subtipo y área`,actions:(0,V.jsx)(n,{variant:`primary`,size:`sm`,onClick:()=>E({nuevo:!0}),children:`Nuevo flujo`})}),(0,V.jsx)(M,{children:(0,V.jsxs)(`div`,{className:`pt-pila`,children:[(0,V.jsx)(P,{caption:`Flujos por tipo, subtipo y área`,columns:k,rows:c.fase===`listo`?__f.vigentes(o):[],getRowId:e=>e.id,loading:c.fase===`cargando`}),(0,V.jsx)(v,{children:`Un editor gráfico de procesos (BPMN) queda fuera de alcance. El SLA del flujo es la suma de sus actividades, salvo que la política SLA del tipo sea menor: entonces prevalece la política.`})]})})]}),(0,V.jsxs)(j,{children:[(0,V.jsx)(R,{as:`h2`,title:`Bitácora de publicaciones`,subtitle:`Cada versión publicada, con su autor y su fecha.`}),(0,V.jsx)(M,{children:(0,V.jsx)(P,{caption:`Bitácora de publicaciones`,columns:__bit,rows:c.fase===`listo`?__f.bitacora(o):[],getRowId:e=>e.id,loading:c.fase===`cargando`})})]})]}):'
+const SUBTIPO_043 = '(0,R.jsx)(I,{value:y.tipo,placeholder:`Elige el tipo`,onChange:e=>{Z(`tipo`,e.target.value),Z(`subtipo`,``)},options:a.map(e=>({value:e.id,label:e.nombre}))})}),(0,R.jsx)(D,{label:`Subtipo`,optional:!0,helper:`Los subtipos salen de los flujos publicados para el tipo.`,children:(0,R.jsx)(I,{value:y.subtipo,onChange:e=>Z(`subtipo`,e.target.value),options:[{value:``,label:`Sin subtipo`},...__f.subtipos(e,y.tipo).map(e=>({value:e,label:e}))]})}),'
+const RESOLUCION_043 = '[`Resolución`,__P&&__P.flujo?`${b(__P.vence)} (${v(__P.totalH)} hábiles, ${__P.prevalece?`prevalece la política`:`suma de las actividades del flujo`})`:`${b(X.venceResolucion)} (${v(X.politica.resolucionH)} hábiles)`],[`Flujo`,__P&&__P.flujo?`${__f.nombre(__P.flujo)} · versión ${__P.flujo.version}${__P.porDefecto?` (se avisa al administrador funcional)`:``}`:`Sin flujo publicado (se avisa al administrador funcional)`]]'
 
 const especificos = {
   // ------------------------------------------------------------------------- Vista en vivo
@@ -67,24 +90,43 @@ const especificos = {
       fin: '},[l,ve,o]);',
       nuevo: 'efecto-vivo.js',
     },
-    importa: 'import{montarVivo as __mv,actualizarHud as __hud}from"./escenas-three.js";import{Kn as __cli}from"./comun-CVU2GQ4h.js";',
+    // v1.3 · HU-067: equipo y nombre del líder (maestro local de ATC), carga y disponibilidad del gestor, razones sociales y el
+    // selector del sistema de diseño (exportado por el shell)
+    importa: 'import{montarVivo as __mv,actualizarHud as __hud}from"./escenas-three.js";import{Kn as __cli,mn as __equipo,yn as __lider,dn as __carga,pn as __disp,nr as __empresas}from"./comun-CVU2GQ4h.js";import{x as __Sel}from"./prototipo-B6qmgYQk.js";',
     prefijo: leer('componentes-vivo.js') + '\n',
     reemplazos: [
       ['(0,k.jsx)(oe,{items:[{id:`act`,label:`Tickets activos`,value:String(X.length)},{id:`sla`,label:`Resueltos en SLA`,value:Te},{id:`csat`,label:`CSAT del día`,value:we},{id:`niv`,label:`Nivel del equipo`,value:`${Y.nivel} · ${Y.xp}/${Y.meta} XP · racha ${Y.racha}`}]})',
        '(0,k.jsx)(__Hud,{act:X.length,riesgo:X.filter(q=>{let w=S(q,o.ahora).nivel;return w===`vencido`||w===`en-riesgo`}).length,sla:Y.resueltos?Math.round(Y.enSla/Y.resueltos*100):null,enSla:Y.enSla,res:Y.resueltos,csat:Z.length?Z.reduce((q,w)=>q+(w.respuesta?.csat??0),0)/Z.length:null,nCsat:Z.length,nivel:Y.nivel,xp:Y.xp,meta:Y.meta,racha:Y.racha,estados:' + ESTADOS_VIVO + ',nps:' + NPS_VIVO + '})'],
       ['(0,k.jsx)(`div`,{ref:be,className:`pt-escena`,children:(0,k.jsx)(`canvas`,{ref:xe,', '(0,k.jsxs)(`div`,{ref:be,className:`pt-escena`,children:[(0,k.jsx)(`canvas`,{ref:xe,'],
-      [',onClick:Oe})})', ',onClick:Oe}),$?(0,k.jsx)(__Ficha,{t:$,datos:o,puedeRayo:h(c),onCerrar:()=>pe(null),onRayo:Ae,onAbrir:()=>ne(u(`ticket/${$.id}`)),onC360:()=>ne(u(`clientes/${$.clienteId}`))}):null]})'],
+      [',onClick:Oe})})', ',onClick:Oe}),$?(0,k.jsx)(__Ficha,{t:$,datos:o,puedeRayo:h(c),onCerrar:()=>pe(null),onRayo:Ae,onAbrir:()=>ne(u(`ticket/${$.id}`)),onC360:()=>ne(u(`clientes/${$.clienteId}`))}):__z?(0,k.jsx)(__Area,{zona:__z,datos:o,todo:__o0,onCerrar:()=>__sz(null),onTicket:q=>{__sz(null);pe(q)}}):null]})'],
       ['i=null,a=20;', 'i=null,a=30;'],
       // v1.3 · HU-067 CA-03/06: la bitácora suma las alertas de SLA vencido; CA-09: tabla por área antes de la tabla por ticket
       ['Me=[...o.filasEstado].sort((e,t)=>t.fecha.getTime()-e.fecha.getTime()).slice(0,6);', 'Me=__bitacora(o);'],
       ['children:[x(e.fecha),` · `,o.tickets.find(t=>t.id===e.ticketId)?.numero,` · `,y[e.a]]},e.id))', 'children:[x(e.fecha),` · `,e.alerta?(0,k.jsx)(`strong`,{children:e.txt}):e.txt]},e.id))'],
-      ['(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`', '(0,k.jsx)(__Areas,{datos:o}),(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`'],
+      ['(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`', '(0,k.jsx)(__Areas,{datos:o,zonas:__zonasPermitidas(c),onZona:q=>{pe(null);__sz(q)}}),(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`'],
       // v1.3: los tickets registrados en Mi Portal (canal «Mi Portal») entran por la compuerta de Mi Portal, no por la de correo
       ['F=e=>e.tipo===`ING`?`form`:e.tipo===`RSV`?`portal`:', 'F=e=>e.tipo===`ING`?`form`:e.tipo===`RSV`||e.canal===`Mi Portal`?`portal`:'],
       // fuera la etiqueta de la propuesta y el aviso «What-if»; los textos pasan al panel de notas
-      ['meta:(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Propuesta del PO · FT-ATC-18, 21 y 04`}),', ''],
+      // (v1.3 · HU-067 CA-08: en su lugar, la etiqueta «Modo simulación» cuando está activo)
+      ['meta:(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Propuesta del PO · FT-ATC-18, 21 y 04`}),', 'meta:__s.vivoSimulacion!==!1?(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Modo simulación`}):void 0,'],
       ['(0,k.jsx)(s,{tone:`info`,size:`sm`,title:`What-if: propuesta del PO, sin HU aprobada`,children:(0,k.jsx)(`span`,{className:`pt-alerta__texto`,children:', '(0,k.jsx)(ue,{children:(0,k.jsx)(`span`,{children:'],
       ['function ue({children:e}){return(0,k.jsxs)(`span`,{className:`pt-supuesto`,children:[(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Propuesta del PO`}),(0,k.jsx)(`span`,{className:`pt-supuesto__texto`,children:e})]})}', 'function ue({children:e}){return ' + NOTA + '}'],
+      // v1.3 · HU-067 CA-07: `o` pasa a ser la vista filtrada (razón social y áreas permitidas); `__o0`, los datos completos.
+      // CA-08: `__s` es el estado de simulación (Herramientas › Simulación). CA-04: `__z` es el área abierta en el panel.
+      ['let{datos:o}=b(),c=t(),', 'let{datos:__o0,sim:__s}=b(),c=t(),[__emp,__se]=(0,O.useState)(``),[__z,__sz]=(0,O.useState)(null),o=(0,O.useMemo)(()=>__filtrar(__o0,c,__emp),[__o0,c,__emp]),'],
+      // CA-08: el flujo de ejemplo, la pausa y la velocidad (x1, x2) solo existen en el modo simulación
+      ['if(v||l||!Q)return;let e=setInterval(()=>void De(),1500/V);return()=>clearInterval(e)},[v,l,Q,V,De])', 'if(__s.vivoSimulacion===!1||v||l||!Q)return;let e=setInterval(()=>void De(),1500/V);return()=>clearInterval(e)},[__s.vivoSimulacion,v,l,Q,V,De])'],
+      // CA-07 (filtro por razón social) y CA-08 (pausa y velocidad x1/x2 solo en el modo simulación)
+      ['(0,k.jsx)(n,{variant:`secondary`,"aria-pressed":v,disabled:!Q||l,onClick:()=>de(!v),children:v||l?`Reanudar`:`Pausa`}),(0,k.jsx)(n,{variant:`secondary`,disabled:!Q||l,onClick:()=>fe(V===1?2:V===2?4:1),children:`Velocidad x${V}`}),',
+       '(0,k.jsx)(__Sel,{size:`sm`,"aria-label":`Razón social`,value:__emp,onChange:q=>__se(q.target.value),options:[{value:``,label:`Todas las razones sociales`},...__empresas.map(q=>({value:q.id,label:q.nombre}))]}),__s.vivoSimulacion!==!1?(0,k.jsx)(n,{variant:`secondary`,"aria-pressed":v,disabled:!Q||l,onClick:()=>de(!v),children:v||l?`Reanudar`:`Pausa`}):null,__s.vivoSimulacion!==!1?(0,k.jsx)(n,{variant:`secondary`,disabled:!Q||l,onClick:()=>fe(V===1?2:1),children:`Velocidad x${V}`}):null,'],
+      // CA-04: tocar un ticket cierra el panel del área (tocar un área lo avisa la escena con onZona)
+      ['pe(i)},ke=()=>', 'pe(i),i&&__sz(null)},ke=()=>'],
+      ['bandeja orquestadora y seis áreas.', 'bandeja orquestadora y ${__nAreas(c)}.'],
+      // nombre del PLT-04: «Operación en vivo»
+      ['title:`Vista en vivo`,', 'title:`Operación en vivo`,'],
+      ['cada área los atiende. Toca un ticket para seguirlo.`', 'cada área los atiende. Toca un ticket para seguirlo o un área para ver su detalle.`'],
+      ['`Resuelto desde la vista en vivo`', '`Resuelto desde la operación en vivo`'],
+      ['`Seguimiento desde la vista en vivo`', '`Seguimiento desde la operación en vivo`'],
     ],
   },
 
@@ -95,14 +137,35 @@ const especificos = {
       fin: '},[o,E,z,f,m]);',
       nuevo: 'efecto-grafo.js',
     },
-    importa: 'import{montarGrafo as __mg}from"./escenas-three.js";',
+    // HU-050: icono del sistema (candado), aviso previo de «Nuevo ticket» (modo interesado) y permisos por rol
+    importa: 'import{montarGrafo as __mg}from"./escenas-three.js";import{S as __Ico}from"./prototipo-B6qmgYQk.js";import{y as __pre,sn as __perm}from"./comun-CVU2GQ4h.js";',
+    sufijo: leer('consulta360.js'),
     reemplazos: [
-      // el grafo puede elegir al cliente sin salir de la pantalla (lo usa el inicio)
-      ['function ge({clienteId:e}){', 'function ge({clienteId:e,onElegir:__oe}){'],
+      // el grafo puede elegir al cliente sin salir de la pantalla (lo usa el inicio); dentro del ticket recibe «Derivar» (HU-050 CA-08)
+      ['function ge({clienteId:e}){', 'function ge({clienteId:e,onElegir:__oe,onDerivar:__od}){'],
       ['onClick:()=>M(_(`clientes/${t}`))', 'onClick:()=>__oe?__oe(t):M(_(`clientes/${t}`))'],
       ['M(_(`clientes/${i[0].cliente.id}`));return}', '__oe?__oe(i[0].cliente.id):M(_(`clientes/${i[0].cliente.id}`));return}'],
       [',(0,G.jsx)(S,{size:`sm`,variant:`outline`,children:`Meta p95 ≤ 2 s (propuesta del PO)`})', '', true],
-      ['conforme (simulado)', 'conforme'],
+      // HU-050 CA-06: «DNI y KYC» con estado y fecha (la del ejemplo del CA) y «Cuotas vencidas» con la fecha de la consulta
+      ['filas:[[`DNI ${re(i.dni)}`,`verificado`],[`KYC`,`conforme (simulado)`]]', 'filas:[[`DNI ${re(i.dni)}`,`verificado · ${Q(new Date(2026,0,15))}`],[`KYC`,`conforme · ${Q(new Date(2026,0,15))}`]]'],
+      ['function de(t,n,r){let i=v(n);', 'function de(t,n,r){let __ah=t.ahora,i=v(n);'],
+      ["[e.descripcion,`${t.cuotas.filter(e=>e.estado===`Vencida`).length} vencidas`]", "[e.descripcion,`${t.cuotas.filter(e=>e.estado===`Vencida`).length} vencidas · al ${Q(__ah)}`]"],
+      ['subtitle:`Fuente: ${le} · consulta en línea, sin copia`', 'subtitle:`Fuente: ${le} · consulta en línea, sin copiar el dato`'],
+      // HU-050 CA-05: la vista suma las cuotas vencidas de todos los lotes y los tickets del cliente; la ficha va en scripts/consulta360.js
+      ['nodos:A,totalMs:M}}', 'nodos:A,totalMs:M,venc:f.reduce((e,{e:t})=>e+t.cuotas.filter(e=>e.estado===`Vencida`).length,0),nTk:h.length}}'],
+      ['(0,G.jsxs)(`p`,{className:`pt-texto-chico`,children:[`DNI `,re(z.cliente.dni),` · `,z.cliente.proyectos[0]?.split(` · `)[0],` · cliente del maestro`]}),(0,G.jsxs)(`div`,{className:`pt-en-linea`,children:[(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Lotes `,z.nodos.find(e=>e.id===`lote`)?.filas.length]}),(0,G.jsx)(t,{tone:`neutral`,size:`sm`,children:ge(`cuotas`)}),(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Exposición: `,ge(`expo`)]})]})', '(0,G.jsx)(__Ficha,{v:z})'],
+      // HU-050 CA-07: lo restringido lleva candado y se distingue de lo caído (leyenda, panel del dato y tarjetas)
+      ['(0,G.jsx)(S,{size:`sm`,variant:`outline`,children:`Restringido / caído`})', '(0,G.jsxs)(S,{size:`sm`,variant:`outline`,dotColor:`var(--aybar-color-feedback-warning-border)`,children:[(0,G.jsx)(__Ico,{name:`lock`,size:16}),` Restringido`]}),(0,G.jsx)(S,{size:`sm`,variant:`outline`,dotColor:`var(--aybar-color-feedback-danger-border)`,children:`Caído`})'],
+      ['e.estado===`restringido`?(0,G.jsx)(f,{tone:`warning`,size:`sm`,title:`Restringido`,', 'e.estado===`restringido`?(0,G.jsx)(f,{tone:`warning`,size:`sm`,title:(0,G.jsxs)(`span`,{className:`pt-en-linea`,children:[(0,G.jsx)(__Ico,{name:`lock`,size:16}),`Restringido`]}),'],
+      ['actions:r.estado===`restringido`?(0,G.jsx)(t,{tone:`warning`,size:`sm`,children:`Restringido`})', 'actions:r.estado===`restringido`?(0,G.jsxs)(t,{tone:`warning`,size:`sm`,children:[(0,G.jsx)(__Ico,{name:`lock`,size:16}),` Restringido`]})'],
+      // HU-050 CA-08: un DNI que no está en SIGDA/TAXON abre la excepción (interesado o derivar) en vez de buscar documentos
+      ['[O,k]=(0,W.useState)(``),A=(0,W.useRef)(new Set)', '[O,k]=(0,W.useState)(``),[__nf,__snf]=(0,W.useState)(null),A=(0,W.useRef)(new Set)'],
+      ['(0,W.useEffect)(()=>(y(null),K()),[se,K])', '(0,W.useEffect)(()=>(y(null),__snf(null),K()),[se,K])'],
+      ['ce=t=>{t.preventDefault();let r=u.trim();if(!r)return K();', 'ce=t=>{t.preventDefault(),__snf(null);let r=u.trim();if(!r)return K();'],
+      ['let o=v(e),s=o?ee(o).filter(e=>C(a)||!e.sensible):[]', 'if(/^\\d{8}$/.test(r)&&!w(n,r).length){__snf({q:r}),k(`El DNI ${r} no está en SIGDA/TAXON: registra como interesado o deriva.`);return}let o=v(e),s=o?ee(o).filter(e=>C(a)||!e.sensible):[]'],
+      ['children:`Consultar`})]}),', 'children:`Consultar`})]}),__nf?(0,G.jsx)(__NoEnc,{q:__nf.q,onInteresado:__perm.registrar(a.rol)?()=>{__pre.telefono=``,M(_(`nuevo`))}:void 0,onDerivar:__od}):null,'],
+      // HU-050 CA-10: la consulta hecha desde el ticket lleva el ticket para dejar la traza en su bitácora
+      ['l.consultar360(e).then(e=>s({fase:`listo`,vista:e,ms:performance.now()-t}),e=>s({fase:`error`,error:e}))},[e]);', 'l.consultar360(e,n).then(e=>s({fase:`listo`,vista:e,ms:performance.now()-t}),e=>s({fase:`error`,error:e}))},[e,n]);'],
     ],
     // «Ver como» y «Simular caída» ya están en las herramientas flotantes: no se repiten en la ficha del cliente
     cortes: [['(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:`Ver como`,', '(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:Y.n,', '']],
@@ -112,7 +175,7 @@ const especificos = {
   'comun-CVU2GQ4h.js': {
     // v1.3: Mi Portal compone las reglas del chunk con este núcleo (estado, transacción, SLA, flujo, transiciones)
     // y la semilla sin incidencias de ciudad (Etapa 1; ver scripts/etapa1.js)
-    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js'),
+    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js'),
     prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/vivo`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
@@ -146,6 +209,62 @@ const especificos = {
       ['{id:`CIT`,nombre:`Incidencia de ciudad`},', ''],
       ['It=[`Lotes urbanos`,`Vivienda`,`Comercial`,`Servicios de ciudad`]', 'It=[`Lotes urbanos`,`Vivienda`,`Comercial`]'],
       ['return a=ks(a),a=Os(a),a=Ds(a),', 'return a=__etapa1(ks(a)),a=Os(a),a=Ds(a),'],
+      // v1.3 · HU-043: semilla con la clave tipo + subtipo + área; el ticket guarda su subtipo; Pr anota el flujo de esa clave;
+      // Zr (Mi Portal, «ticket entrante») y el alta de la consola aplican el flujo (área, responsable, actividades y SLA);
+      // publicar valida la HU y «cerrarActividad» habilita la siguiente actividad
+      ['ws=[Cs(`flu-0-1`,`CTA`,`COBRANZA`,[{nombre:`Recepción`,responsable:`p-crojas`,slaH:2},{nombre:`Revisión de cobranza`,responsable:`p-rsalazar`,slaH:24},{nombre:`Respuesta al cliente`,responsable:`p-crojas`,slaH:4}]),Cs(`flu-0-2`,`QUE`,`ATC`,[{nombre:`Registro`,responsable:`p-dlazo`,slaH:2},{nombre:`Respuesta`,responsable:`p-dlazo`,slaH:24}]),Cs(`flu-0-4`,`RES`,`COBRANZA`,[{nombre:`Verificación de la deuda`,responsable:`p-rsalazar`,slaH:24},{nombre:`Revisión legal de la causal`,responsable:`p-pvilchez`,slaH:48},{nombre:`Carta de resolución`,responsable:`p-pvilchez`,slaH:72}]),Cs(`flu-0-3`,`GAR`,`POSTVENTA`,[{nombre:`Recepción`,responsable:`p-lccahuana`,slaH:4},{nombre:`Inspección técnica`,responsable:`p-omedina`,slaH:72}])]', FLUJOS_043],
+      ['tipo:t.tipo,prioridad:o,', 'tipo:t.tipo,subtipo:t.subtipo||null,prioridad:o,'],
+      // la simulación («ticket entrante» del panel y de la operación en vivo) registra con el subtipo «General» de los flujos del PO
+      ['tipo:t,prioridad:`MEDIUM`,resumen:`Consulta recibida por Mi Portal`', 'tipo:t,subtipo:`General`,prioridad:`MEDIUM`,resumen:`Consulta recibida por Mi Portal`'],
+      ['function Pr(e,t){let n=R(e,t),r=Mr(e,n.tipo);return r?{...e,flujosDeTicket:[...e.flujosDeTicket,{ticketId:t,tipo:n.tipo,version:r.version}]}:e}', 'function Pr(e,t){return __h43registrar(e,t)}'],
+      [ZR_ORIGINAL, 'function Zr(e,t){return __h43aplicar(e,t,`p-gnunez`)}'],
+      ['crearTicket:e=>Z(`registrar ticket`,t=>Di(t,e,$(),Y.sim.apertura??t.ahora)),', 'crearTicket:e=>Z(`registrar ticket`,t=>__h43crear(t,e,$(),Y.sim.apertura??t.ahora)),'],
+      ['crearTicketInteresado:(e,t)=>Z(`registrar ticket de interesado`,n=>Ua(n,e,t,$(),Y.sim.apertura??n.ahora)),', 'crearTicketInteresado:(e,t)=>Z(`registrar ticket de interesado`,n=>__h43crearInteresado(n,e,t,$(),Y.sim.apertura??n.ahora)),'],
+      ['publicarFlujo:(e,t,n)=>Z(`publicar flujo`,r=>Q(Fr(r,e,t,n,$()))),', 'publicarFlujo:e=>Z(`publicar flujo`,t=>Q(__h43publicar(t,e,$()))),cerrarActividad:(e,t)=>Z(`cerrar actividad`,n=>Q(__h43cerrarActividad(n,e,t,$()))),'],
+      // HU-050 CA-10: la consulta 360 abierta desde un ticket deja en su bitácora (interacciones, nota interna) quién consultó,
+      // cuándo y qué secciones vio, sin ningún dato personal; esa nota no cuenta como «interacción en curso» al reasignar por carga
+      // (la misma consulta del mismo gestor, con las mismas secciones, en menos de 10 min no se repite: volver a la pestaña no es otra consulta)
+      ['function La(e,t,n){', 'function La(e,t,n,__tk){'],
+      ['return[L(e,`consulta360`,{secciones:l}),c]}', 'let __d=L(e,`consulta360`,{secciones:l});if(__tk&&e.tickets.some(e=>e.id===__tk)){let __v=[`lotes`,`cuotas`,`correos`,`documentos`,`tickets`,`llamadas`].filter(e=>c[e].estado===`ok`).map(e=>Ea[e]),__x=`Consulta 360 del cliente. Secciones vistas: ${__v.length?__v.join(`, `):`ninguna`}.`,__u=e.interacciones.filter(q=>q.ticketId===__tk&&q.consulta360).at(-1);if(!(__u&&__u.autor===n&&__u.texto===__x&&e.ahora-__u.fecha<6e5)){let[__i,__s]=I(__d,`in`);__d={...__s,interacciones:[...__s.interacciones,{id:__i,ticketId:__tk,fecha:e.ahora,tipo:`nota`,visible:!1,canal:null,autor:n,texto:__x,adjuntos:[],consulta360:!0}]}}}return[__d,c]}'],
+      ['consultar360:e=>Z(`consulta 360`,t=>La(t,e,$()))', 'consultar360:(e,__tk)=>Z(`consulta 360`,t=>La(t,e,$(),__tk))'],
+      ['Jr=(e,t)=>e.interacciones.some(n=>n.ticketId===t.id&&', 'Jr=(e,t)=>e.interacciones.some(n=>n.ticketId===t.id&&!n.consulta360&&'],
+      // v1.3 · HU-034 CA-02: el reclamo no procedente se informa al cliente con su motivo (scripts/garantias.js)
+      ['(u=cs(u,l,`NO_PROCEDENTE`,`Sistema`,d.motivoNoProcede),[L(', '(u=cs(u,l,`NO_PROCEDENTE`,`Sistema`,d.motivoNoProcede),u=__gInformar(u,d,a),[L('],
+      // v1.3 · HU-035 CA-01: el informe y las fotos (al menos una foto JPG/PNG; PDF opcional; hasta 10 MB y 5 archivos)
+      ['n.evidencias.length||a.push({campo:`fotos`,mensaje:`Adjunta al menos una foto o documento de la inspección.`})',
+       'n.evidencias.some(o=>/\\.(jpe?g|png)$/i.test(o.nombre))||a.push({campo:`fotos`,mensaje:`Adjunta al menos una foto (JPG o PNG) de la inspección.`}),n.evidencias.some(o=>!/\\.(jpe?g|png|pdf)$/i.test(o.nombre)||o.tamano>10485760)&&a.push({campo:`fotos`,mensaje:`Solo fotos JPG o PNG y documentos PDF de hasta 10 MB.`}),n.evidencias.length>5&&a.push({campo:`fotos`,mensaje:`Máximo 5 archivos por inspección.`})'],
+      // v1.3 · HU-036 CA-01: la carta notarial del reclamo (scripts/garantias.js) y, ya en Eje 3, el reclamo sigue sin resolverse
+      // en Postventa mientras el ticket esté abierto
+      ['registrarAdenda:(e,t)=>Z(`registrar adenda`,n=>Q(ms(n,e,t,$()))),', 'registrarAdenda:(e,t)=>Z(`registrar adenda`,n=>Q(ms(n,e,t,$()))),registrarCartaNotarial:(e,t)=>Z(`registrar carta notarial`,n=>Q(__gCarta(n,e,t,$()))),'],
+      ['return!!(n&&n.eje!==3&&B(e,n.id).length)', 'return!!(n&&B(e,n.id).length&&(n.eje!==3||E.includes(n.estado)))'],
+    ],
+  },
+
+  // ------------------------------------------------------------------------- Garantías postventa (v1.3 · HU-034, 035 y 036)
+  'Garantia-DnJ0f3xI.js': {
+    importa: 'import{ii as __Subir,cn as __sen,__ptHuella as __huella}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('garantia-ui.js') + '\n',
+    reemplazos: [
+      ['ADENDA:`Adenda registrada`}', 'ADENDA:`Adenda registrada`,MOTIVO_INFORMADO:`Motivo informado al cliente`,TICKET_VINCULADO:`Ticket vinculado`,CARTA_NOTARIAL:`Carta notarial recibida`}'],
+      // HU-034 CA-02: el aviso al cliente con el motivo se ve en el reclamo
+      ['[j.motivoNoProcede,` Este es el motivo que se informa al cliente.`]', '[j.motivoNoProcede,(q=>q?` Se informó al cliente el ${S(q.fecha)} por ${q.detalle}.`:` Este es el motivo que se informa al cliente.`)($.find(q=>q.evento===`MOTIVO_INFORMADO`))]'],
+      // HU-035 CA-01: varios archivos, fotos y documentos
+      ['description:`El informe y al menos una foto o documento, antes de resolver.`', 'description:`El informe y al menos una foto, antes de resolver; puedes sumar documentos PDF.`'],
+      ['(0,X.jsx)(E,{id:`${a}-fotos`,etiqueta:`Foto o documento de la inspección`,requisitos:`PDF de hasta 10 MB (en el prototipo, un archivo; se guarda su huella).`,documento:c[0]??null,onCambio:e=>l(e?[e]:[]),error:d.fotos})',
+       '(0,X.jsx)(__Evidencias,{id:`${a}-fotos`,archivos:c,onCambio:l,error:d.fotos})'],
+      // HU-036 CA-01: registrar la carta notarial (vincula el ticket si falta), sin «Resolver» con el conflicto activo y,
+      // ya derivado, el aviso de que lo atiende Legal
+      ['(0,X.jsx)(G,{as:`h2`,title:`Reclamo`})', '(0,X.jsx)(G,{as:`h2`,title:`Reclamo`,actions:N&&(V||j.estado===`APPROVED`)&&!(F&&(F.eje===3||__sen(a,F.id).includes(`CARTA_NOTARIAL`)))?(0,X.jsx)(t,{size:`sm`,variant:`secondary`,onClick:()=>A(`carta`),children:`Registrar carta notarial`}):void 0})'],
+      ['(0,X.jsx)(re,{g:j,abierto:E===`adenda`,onCerrar:()=>A(null)})', '(0,X.jsx)(re,{g:j,abierto:E===`adenda`,onCerrar:()=>A(null)}),(0,X.jsx)(__Carta,{g:j,datos:a,abierto:E===`carta`,onCerrar:()=>A(null)})'],
+      ['Q.registrada?(0,X.jsx)(t,{variant:`primary`,onClick:()=>A(`resolver`),children:`Resolver el reclamo`})', 'Q.registrada?I?void 0:(0,X.jsx)(t,{variant:`primary`,onClick:()=>A(`resolver`),children:`Resolver el reclamo`})'],
+      ['I&&F?(0,X.jsx)(i,{tone:`danger`,title:`Conflicto: se atiende en Eje 3`,actions:(0,X.jsx)(t,{variant:`primary`,size:`sm`,onClick:()=>k(o(`ticket/${F.id}`)),children:`Ir al ticket para derivar`}),children:(0,X.jsxs)(`span`,{className:`pt-alerta__texto`,children:[`El ticket `,F.numero,` tiene señal de conflicto: este reclamo no se resuelve en Postventa (Eje 2). Deriva a Eje 3 con el paquete mínimo.`]})}):null',
+       'I&&F?(0,X.jsx)(i,{tone:`danger`,title:F.eje===3?`Derivado a Eje 3`:`Conflicto: se atiende en Eje 3`,actions:(0,X.jsx)(t,{variant:`primary`,size:`sm`,onClick:()=>k(o(`ticket/${F.id}`)),children:F.eje===3?`Ir al ticket`:`Ir al ticket para derivar`}),children:(0,X.jsxs)(`span`,{className:`pt-alerta__texto`,children:F.eje===3?[`El ticket `,F.numero,` está en Eje 3: lo atiende Legal y este reclamo no se resuelve en Postventa mientras el ticket siga abierto.`]:[`El ticket `,F.numero,` tiene señal de conflicto: este reclamo no se resuelve en Postventa (Eje 2). Deriva a Eje 3 con el paquete mínimo.`]})}):null'],
+    ],
+  },
+  'Garantias-uYNfeDU1.js': {
+    reemplazos: [
+      // HU-034 CA-02: el aviso confirma que el motivo se informó al cliente
+      ['message:e.estado===`NOT_ELIGIBLE`?`${e.codigo} registrado como no procedente por vigencia.`:', 'message:e.estado===`NOT_ELIGIBLE`?`${e.codigo} registrado como no procedente por vigencia; se informó el motivo al cliente.`:'],
     ],
   },
 
@@ -166,8 +285,42 @@ const especificos = {
 
   // ------------------------------------------------------------------------- Detalle del ticket: el asistente es ahora el robot flotante
   'DetalleTicket-CTveBafq.js': {
+    // v1.3 · HU-043: tarjeta «Actividades del flujo» (scripts/hu043-detalle.js) y el subtipo en la cabecera
+    importa: 'import{__h43 as __f}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('hu043-detalle.js') + '\n',
     reemplazos: [
       ['g?(0,Q.jsx)(St,{ticket:p,datos:a}):null,', ''],
+      // v1.3 · HU-043 CA-01/04/05: actividades del flujo (primera tarjeta del lateral) y subtipo junto al tipo
+      ['"aria-label":`Datos, compromisos y cierre`,children:[', '"aria-label":`Datos, compromisos y cierre`,children:[(0,Q.jsx)(__Actividades,{ticket:p,datos:a,atiende:g}),'],
+      ['description:`${L(p.empresaId)?.nombre} · ${i(p.tipo)} · ${N[p.area]}', 'description:`${L(p.empresaId)?.nombre} · ${i(p.tipo)}${p.subtipo?` · ${p.subtipo}`:``} · ${N[p.area]}'],
+      // HU-050 CA-08: la consulta 360 de la pestaña Cliente ofrece «Derivar» con el mismo diálogo y reglas que la cabecera
+      ['function Ct({ticket:e,datos:t}){', 'function Ct({ticket:e,datos:t,onDerivar:__od}){'],
+      ['(0,Q.jsx)(lt,{clienteId:e.clienteId})', '(0,Q.jsx)(lt,{clienteId:e.clienteId,onDerivar:__od})'],
+      ['(0,Q.jsx)(Ct,{ticket:p,datos:a})', '(0,Q.jsx)(Ct,{ticket:p,datos:a,onDerivar:g&&(w||p.estado!==`CLOSED`)?()=>f(w?`eje3`:`derivar`):void 0})'],
+    ],
+  },
+  // v1.3 · HU-043: Configuración › Flujos con la clave tipo + subtipo + área, bitácora de publicaciones y alerta «sin flujo»
+  'Configuracion-CA83coxJ.js': {
+    importa: 'import{__h43 as __f}from"./comun-CVU2GQ4h.js";',
+    cortes: [['function W({tipo:e,datos:t,onCerrar:i}){', 'function G({tipo:e,datos:t,onCerrar:i}){', leer('hu043-configuracion.js') + '\n']],
+    reemplazos: [
+      [COLUMNAS_FLUJOS, COLUMNAS_FLUJOS_043],
+      ['{value:`flujos`,label:`Flujos`,count:F.length}', '{value:`flujos`,label:`Flujos`,count:__f.vigentes(o).length}'],
+      [TABLA_FLUJOS, TABLA_FLUJOS_043],
+      ['e.tipo===`GUIA_FALTANTE`', '(e.tipo===`GUIA_FALTANTE`||e.tipo===`FLUJO_FALTANTE`)', true],
+      ['title:`Tipo sin guía`', 'title:e.tipo===`FLUJO_FALTANTE`?`Sin flujo en el área`:`Tipo sin guía`'],
+      ['description:`Cuando un gestor abra un ticket de un tipo sin guía, se reporta aquí.', 'description:`Cuando un gestor abra un ticket de un tipo sin guía, o entre un ticket sin flujo publicado en su área, se reporta aquí.'],
+      ['(0,V.jsx)(W,{tipo:w,datos:o,onCerrar:()=>E(null)})', '(0,V.jsx)(W,{flujo:w,datos:o,onCerrar:()=>E(null)})'],
+    ],
+  },
+  // v1.3 · HU-043: subtipo al registrar y SLA de resolución según el flujo
+  'NuevoTicket-kzkvXK7o.js': {
+    importa: 'import{__h43 as __f}from"./comun-CVU2GQ4h.js";',
+    reemplazos: [
+      ['tipo:``,prioridad:``,resumen:``,descripcion:``}', 'tipo:``,subtipo:``,prioridad:``,resumen:``,descripcion:``}'],
+      ['X=y.tipo&&y.prioridad?ne(e,y.tipo,y.prioridad,Y):null,', 'X=y.tipo&&y.prioridad?ne(e,y.tipo,y.prioridad,Y):null,__P=X?__f.prever(e,y,n.personaId,Y,X):null,'],
+      ['(0,R.jsx)(I,{value:y.tipo,placeholder:`Elige el tipo`,onChange:e=>Z(`tipo`,e.target.value),options:a.map(e=>({value:e.id,label:e.nombre}))})}),', SUBTIPO_043],
+      ['[`Resolución`,`${b(X.venceResolucion)} (${v(X.politica.resolucionH)} hábiles)`]]', RESOLUCION_043],
     ],
   },
   // v1.3 · Etapa 1: líderes y gestores del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
@@ -192,6 +345,8 @@ const especificos = {
       ['label:`Vista en vivo`,icon:(0,L.jsx)(R,{name:`eye`}),current:t.id===`vivo`,badge:(0,L.jsx)(te,{size:`sm`,variant:`outline`,children:`PO`})}', 'label:`Inicio`,icon:(0,L.jsx)(R,{name:`grid`}),current:t.id===`vivo`}'],
       ['(0,L.jsx)(ce,{})]})}function la({ruta:e}){', '(0,L.jsx)(ce,{}),i.rol!==`CONTROL_ACCESO`&&i.rol!==`CLIENTE`?(0,L.jsx)(__Bot,{ruta:t,datos:a,usuario:i.nombre}):null,(0,L.jsx)(__Herramientas,{rol:i.rol,roles:sa,ahora:a.ahora,onApariencia:()=>{d(!u),l(!1)},onSimulacion:()=>{l(!c),d(!1)}})]})}function la({ruta:e}){'],
       ['Mandos para revisar el prototipo. No son parte del producto ni de la consola real.', 'Mandos de prueba para recorrer el sistema como distintos usuarios y en distintos momentos.'],
+      // v1.3 · HU-067 CA-08: el modo simulación de la operación en vivo (Y.sim.vivoSimulacion; encendido por defecto, como el prototipo del PO; apagado, el visor solo refleja los cambios reales)
+      ['(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-reloj`', '(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-vivo`,children:[(0,L.jsx)(`h2`,{id:`sim-vivo`,className:`pt-panel__titulo`,children:`Operación en vivo`}),(0,L.jsx)(Zn,{label:`Modo simulación`,description:`Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (x1, x2).`,checked:o.vivoSimulacion!==!1,onCheckedChange:e=>E.ajustar({vivoSimulacion:e})})]}),(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-reloj`'],
       ['Cambia la persona ficticia y sus permisos.', 'Cambia de usuario y sus permisos.'],
       ['Prueba paletas y grises del sistema de diseño. Se recuerda en este navegador. No es parte del producto.', 'Prueba paletas y grises. Se recuerda en este navegador.'],
       ['Esta pantalla no existe en el prototipo', 'Esta pantalla no existe'],

@@ -56,7 +56,7 @@ export function redactar(c: CtxBot | null, tono: Tono): string {
 }
 
 export function resumir(c: CtxBot | null): { titulo: string; lineas: string[] } {
-  if (!c) return { titulo: 'Sin ticket abierto', lineas: ['Abre un ticket desde la bandeja o la vista en vivo y te lo resumo.'] }
+  if (!c) return { titulo: 'Sin ticket abierto', lineas: ['Abre un ticket desde la bandeja o la operación en vivo y te lo resumo.'] }
   const lineas = [
     `${c.tipo} por ${c.canal}${c.cliente ? ` · cliente: ${c.cliente}` : ''}.`,
     `Está «${c.estado}» en ${c.area}${c.responsable ? ` con ${c.responsable}` : ', sin responsable'}${c.rayo ? ' y tiene rayo' : ''}.`,
@@ -73,7 +73,7 @@ const CRITERIOS: Record<string, string[]> = {
   GAR: ['Inspección técnica registrada', 'Resolución comunicada al cliente'], CTA: ['Datos de cuenta verificados con el cliente'], VIS: ['Visita realizada y constancia adjunta'],
 }
 export function siguientePaso(c: CtxBot | null): { accion: string; motivo: string; pasos: string[]; criterios: string[] } {
-  if (!c) return { accion: 'Abrir un ticket', motivo: 'No hay un ticket en pantalla.', pasos: ['Elige uno en la bandeja o en la vista en vivo.'], criterios: [] }
+  if (!c) return { accion: 'Abrir un ticket', motivo: 'No hay un ticket en pantalla.', pasos: ['Elige uno en la bandeja o en la operación en vivo.'], criterios: [] }
   const criterios = ['Respuesta enviada al cliente', ...(CRITERIOS[c.tipoId] ?? []), 'Cliente informado del cierre']
   if (c.sla.nivel === 'vencido' && c.estadoId !== 'CLOSED') return { accion: 'Priorizar y avisar al cliente', motivo: 'El SLA ya venció.', pasos: ['Escribe al cliente reconociendo la demora y dando una nueva fecha.', 'Si no puedes resolverlo hoy, pide apoyo al supervisor (rayo) o deriva.', 'Deja una nota interna con el motivo del retraso.'], criterios }
   if (c.estadoId === 'OPEN' && !c.primeraRespuesta) return { accion: 'Registrar la primera respuesta', motivo: 'Sin primera respuesta el ticket sigue en «Abierto» y corre el SLA de respuesta.', pasos: ['Responde al cliente con lo que ya sabes.', 'El ticket pasa solo a «En atención».'], criterios }

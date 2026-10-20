@@ -1,4 +1,4 @@
-// Recorre el mockup en Chrome sin interfaz (protocolo CDP, sin dependencias): Mi Portal, Vista en vivo y que no se vea nada de
+// Recorre el mockup en Chrome sin interfaz (protocolo CDP, sin dependencias): Mi Portal, Operación en vivo y que no se vea nada de
 // la Etapa 2 (UrbeMind, NEXUS, DAEDALUS) en ninguna pantalla ni rol (v1.3). Guarda capturas y sale con 1 si un paso falla o
 // hay errores de JS, de consola o respuestas HTTP >= 400.
 // Uso, con el servidor arriba (npm run preview):  npm run recorrer
@@ -61,13 +61,14 @@ await dormir(3500)
 await evaluar(H)
 
 await paso('Inicio (#/vivo) carga con la escena 3D y la ficha', async () => {
-  await esperarTexto('Vista en vivo')
+  await esperarTexto('Operación en vivo')
   const n = await evaluar('document.querySelectorAll("canvas").length'); if (n < 1) throw new Error('sin canvas')
   await evaluar('document.getElementById("inicio-vivo")?.scrollIntoView()'); await dormir(1200); await captura('01-vivo')
   const sala = await evaluar('[...document.querySelectorAll("small")].map(e=>e.textContent).find(t=>/ocupados/.test(t))??""')
   if (!/\d+ en cola · \d+\/\d+ ocupados/.test(sala)) throw new Error('rótulo de sala sin «ocupados/total»: ' + sala)
 })
-await paso('Vista en vivo: tabla «Por área» y ficha con recorrido y CSAT (HU-067)', async () => {
+await paso('Operación en vivo: tabla «Por área» y ficha con recorrido y CSAT (HU-067)', async () => {
+  await evaluar('import("/assets/comun-CVU2GQ4h.js").then(m=>m.O.ajustar({personaId:m.w.SUPERVISOR}))'); await dormir(1200)  // CA-07: el gestor solo ve su área
   const filas = await evaluar('[...document.querySelectorAll("table")].find(t=>t.getAttribute("aria-label")==="Tickets por área")?.querySelectorAll("tbody tr").length ?? 0')
   if (filas < 6) throw new Error('tabla por área con ' + filas + ' filas')
   const cerrado = await evaluar('import("/assets/comun-CVU2GQ4h.js").then(m=>{const d=m.__ptNucleo.datos();return d.tickets.find(t=>t.estado==="CLOSED"&&d.encuestas.some(e=>e.ticketId===t.id&&e.respuesta))?.numero})')
@@ -213,9 +214,9 @@ await paso('Gestor ve el ticket del portal en la consola (canal Mi Portal)', asy
   const id = await evaluar('import("/assets/comun-CVU2GQ4h.js").then(m=>m.__ptNucleo.datos().tickets.filter(t=>t.canal==="Mi Portal").at(-1).id)')
   await ir('#/ticket/' + id); await esperarTexto('Mi Portal'); await captura('16-consola-ticket-portal')
 })
-await paso('Menos movimiento: Vista en vivo sin errores', async () => {
+await paso('Menos movimiento: Operación en vivo sin errores', async () => {
   await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
-  await cdp('Page.navigate', { url: BASE + '?reducido=1#/vivo' }); await dormir(3500); await evaluar(H); await esperarTexto('Vista en vivo')
+  await cdp('Page.navigate', { url: BASE + '?reducido=1#/vivo' }); await dormir(3500); await evaluar(H); await esperarTexto('Operación en vivo')
   const rm = await evaluar('matchMedia("(prefers-reduced-motion: reduce)").matches'); if (!rm) throw new Error('no se emuló reduce')
   await evaluar('document.getElementById("inicio-vivo")?.scrollIntoView()'); await dormir(1500); await captura('17-vivo-reducido')
 })

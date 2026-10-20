@@ -152,3 +152,32 @@ Lo que no se hizo y queda abierto, con su porqué: `DECISIONES.md` §5.
 | `npm run build:portal` | Solo Mi Portal (`src/portal` → `mi-portal.js`) |
 | `npm run probar` | 14 casos en Node: uno por criterio de HU-064, 065 y 066, más el acceso |
 | `npm run recorrer` | Con el servidor arriba: 17 pasos en Chrome sin interfaz (Mi Portal, Vista en vivo, tema claro y oscuro, 390 px, menos movimiento, y que no se vea nada de la Etapa 2: menú de seis roles, `#/urbemind`, 31 pantallas por rol con sus pestañas, selectores, notas y herramientas, y Mi Portal). `CHROME=…` si Chrome no está en `/Applications` |
+
+## Quinta ronda: los criterios del PLT-04 v1.3 (20-oct)
+
+Se cerraron, criterio por criterio, las tres prioridades del PO (HU-043, 050 y 067) y las garantías postventa (HU-034, 035 y
+036). Con eso, la cobertura de la Etapa 1 queda en **50 historias completas y 12 parciales**
+(`documentacion/cobertura-v1.3.md`). Solo se hizo lo que pide cada criterio. Los supuestos y las preguntas para el PO están en
+`DECISIONES.md` §5.7.
+
+| Historia | Cómo verlo |
+|---|---|
+| **HU-043** · Flujos por tipo, subtipo y área | Ver como › Administrador funcional › Configuración › Flujos («Nuevo flujo», «Nueva versión», «Bitácora de publicaciones», pestaña Alertas). Después, Nuevo ticket con tipo «Reclamo» y subtipo «Garantía postventa» y, en el detalle del ticket, «Actividades del flujo» › «Cerrar la actividad» |
+| **HU-050** · Consulta 360 dentro del ticket | `#/ticket/tk-460` › pestaña Cliente: ficha con «Datos visibles n de 16», panel del dato con fecha, candados (cambia de rol en «Ver como»). Para la excepción, busca `12345678`. Para la nota de la consulta, mira la pestaña Interacciones |
+| **HU-067** · Operación en vivo | `#/vivo`: cajas del color de su tipo; toca un área o su nombre en «Por área»; selector de razón social; pausa y velocidad (x1, x2) solo con el modo simulación (Herramientas › Simulación › Operación en vivo) |
+| **HU-034, 035 y 036** · Garantías | `#/garantias/gar-249` (motivo informado al cliente), `#/garantias/gar-585` › «Registrar la inspección» (varias fotos y PDF), `#/garantias/gar-314` › «Registrar carta notarial» |
+
+| Archivo nuevo | Qué es |
+|---|---|
+| `scripts/hu043-modelo.js` | Modelo de flujos (sufijo de `comun`, exporta `__h43`): clave, versiones, aplicar al ticket, actividades, SLA y alerta «sin flujo» |
+| `scripts/hu043-configuracion.js` y `hu043-detalle.js` | Diálogo de Configuración › Flujos y tarjeta «Actividades del flujo» del detalle |
+| `scripts/consulta360.js` | Ficha y excepción de cliente no encontrado de la Consulta 360 (sufijo de `Grafo360`) |
+| `scripts/garantias.js` y `garantia-ui.js` | Aviso al cliente, carta notarial (modelo) y carga de varias evidencias (pantalla) |
+| `scripts/probar-flujos.mjs`, `probar-consulta360.mjs`, `probar-garantias.mjs` | Pruebas en Node, una por criterio |
+| `scripts/recorrer-flujos.mjs`, `recorrer-consulta360.mjs`, `recorrer-operacion-vivo.mjs`, `recorrer-garantias.mjs` | Recorridos en Chrome sin interfaz |
+| `documentacion/` | Copia de consulta de los documentos del PO v1.3, del paquete Definir de Dev 1 y de la cobertura (ver su README) |
+
+| Comando | Qué hace ahora |
+|---|---|
+| `npm run probar` | 40 casos en Node: Mi Portal (14), flujos (9), Consulta 360 (7) y garantías (10) |
+| `npm run recorrer` | Con el servidor arriba: 49 pasos en Chrome. Son el recorrido general (17), flujos (7), Consulta 360 (10), Operación en vivo (9) y garantías (6) |

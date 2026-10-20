@@ -3,15 +3,15 @@
   "private": true,
   "version": "0.3.0",
   "type": "module",
-  "description": "Artifact «Prototipo Aybar Atiende · what-if PO» en local, con Vista en vivo y Búsqueda 360 dibujadas con three.js y Mi Portal (v1.3)",
+  "description": "Artifact «Prototipo Aybar Atiende · what-if PO» en local, con Operación en vivo y Búsqueda 360 dibujadas con three.js y Mi Portal (v1.3)",
   "engines": { "node": ">=22" },
   "scripts": {
     "build:three": "vite build",
     "build:portal": "vite build -c vite.portal.config.ts",
     "parchear": "node scripts/parchear.mjs",
     "build": "node scripts/parchear.mjs && vite build && vite build -c vite.portal.config.ts",
-    "probar": "node scripts/probar-portal.mjs",
-    "recorrer": "node scripts/recorrer-navegador.mjs",
+    "probar": "node scripts/probar-portal.mjs && node scripts/probar-flujos.mjs && node scripts/probar-consulta360.mjs && node scripts/probar-garantias.mjs",
+    "recorrer": "node scripts/recorrer-navegador.mjs && node scripts/recorrer-flujos.mjs && node scripts/recorrer-consulta360.mjs && node scripts/recorrer-operacion-vivo.mjs && node scripts/recorrer-garantias.mjs",
     "start": "npm run build && vite preview --outDir artefacto --port 5180",
     "preview": "vite preview --outDir artefacto --port 5180"
   },

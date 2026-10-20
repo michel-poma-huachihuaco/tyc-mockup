@@ -32,9 +32,10 @@ caso('064 CA-01 registro guiado: canal Mi Portal, número y fecha de compromiso 
   assert.match(r.ticket.numero, /^[A-Z]{3}-\d{6}$/)
   assert.equal(r.ticket.subtipo, 'Pago no reflejado')
   assert.ok(n.compromiso(r.ticket) > d0.ahora, 'la fecha de compromiso es futura')
-  const flujo = n.flujo(d, 'CTA')
-  assert.ok(flujo, 'CTA tiene flujo en la semilla')
-  assert.equal(r.resultado, 'asignado'); assert.equal(r.ticket.responsable, flujo.pasos[0].responsable)
+  // HU-043: el flujo es por tipo + subtipo + área. La semilla trae los flujos del PO con el subtipo «General» y el del CA-01;
+  // «Consulta de cuenta · Pago no reflejado» no tiene flujo ni ATC flujo por defecto: queda en la cola y se alerta (CA-07)
+  assert.equal(r.resultado, 'cola'); assert.equal(r.ticket.responsable, null)
+  assert.ok(d.alertasOps.some((a) => a.tipo === 'FLUJO_FALTANTE' && a.ticketId === r.ticket.id))
   assert.ok(d.eventos.some((e) => e.nombre === 'ticket_creado' && e.datos.canal === 'mi_portal' && e.datos.subtipo === 'Pago no reflejado'))
   assert.ok(d.interacciones.some((i) => i.ticketId === r.ticket.id && i.tipo === 'cliente' && i.adjuntos.length === 1))
 })

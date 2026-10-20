@@ -104,6 +104,13 @@ const CSS = `
 .v3-f-hist li:first-child::before{background:var(--v3-tono,var(--v3-pri))}.v3-f-hist li:first-child{color:var(--v3-fg)}
 .v3-f-t{margin:0;padding:6px 14px 4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}
 .v3-f-acc{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--v3-ln)}
+/* HU-067 CA-04: panel del área (mismo marco que la ficha del ticket) */
+.v3-f-area{margin:0;font-size:16px;line-height:1.2;font-weight:700}
+.v3-f-lista{margin:0;padding:0 14px 8px;list-style:none;display:grid;gap:6px}
+.v3-f-lista li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:12.5px}
+.v3-f-nota{margin:0;padding:0 14px 10px;font-size:12px;color:var(--v3-mu)}
+/* HU-067 CA-07: el selector de razón social de la cabecera no desborda en móvil */
+.ay-pageheader__actions .ay-selectwrap,.ay-pageheader__actions .ay-select{max-width:100%}
 
 /* ---------------------------------------------------------------- selector de entradas */
 .v3-entradas{position:absolute;z-index:4;left:14px;bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:calc(100% - 28px);padding:6px 8px;border-radius:12px;background:color-mix(in srgb,var(--v3-sf) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--v3-ln)}

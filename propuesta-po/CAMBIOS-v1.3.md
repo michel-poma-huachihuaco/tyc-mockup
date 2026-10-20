@@ -1,6 +1,6 @@
 # propuesta-po · cambios para la v1.3 (Etapa 1)
 
-Rama `feature/AYB-0001-propuesta-po-v1-3`, hija de `main` (`d42d81e`). Preparada el 19-oct-2026 por Brayan Hurtado (Dev 1) con asistencia de IA (Claude). Pendiente de revisión del dueño del repositorio y de validación del PO.
+Rama `feature/AYB-0001-propuesta-po-v1-3`, hija de `main` (`d42d81e`). Preparada el 19-oct-2026 por Brayan Hurtado (Dev 1) con asistencia de IA (Claude) y ampliada el 20-oct (secciones 4 y 5). Pendiente de revisión del dueño del repositorio y de validación del PO.
 
 ## Por qué
 
@@ -55,6 +55,33 @@ Archivos: `src/three/vivo.ts`, `scripts/componentes-vivo.js` y `scripts/efecto-v
 - **DAEDALUS:** no aparece en ninguna pantalla.
 - La pantalla de UrbeMind sigue dentro del bundle compilado porque no se puede recortar sin el código fuente del artifact, pero nada la enlaza ni la carga.
 
+### 4. Criterios de las prioridades del PO y de las garantías (20-oct)
+
+Se cerraron, criterio por criterio, las HU que más pesan para el comité DoR. **Regla:** solo lo que pide cada criterio del
+PLT-04 v1.3. No se trajo nada de la rama `prototipo-polar`: no cerraba ningún criterio que faltara y lo que tiene de más no
+está en el documento.
+
+| HU | Prioridad / dueño | Qué se agregó (criterios) | Dónde verlo |
+|---|---|---|---|
+| **043** Flujos por tipo y área | P1 · Michel | Clave tipo + subtipo + área, responsable del flujo, actividades con su SLA (CA-01, 03). Una versión nueva solo aplica a tickets nuevos (CA-02). Actividades en orden en el ticket (CA-04). SLA = suma, salvo que la política sea menor (CA-05). Combinación única con «Nueva versión» (CA-06). Flujo por defecto del área y alerta (CA-07). Bitácora de publicaciones (CA-08) | Configuración › Flujos (Administrador funcional), Nuevo ticket, detalle del ticket |
+| **050** Consulta 360 en el ticket | P2 · Daniel | Ficha con etapa, tickets y «Datos visibles n de 16» (CA-05). Fecha en el dato (CA-06). Candado y color distinto para lo restringido (CA-07). DNI inexistente: interesado o derivar (CA-08). Rastro en la bitácora del ticket (CA-10) | `#/ticket/tk-460` › Cliente |
+| **067** Operación en vivo | P3 · Michel | Nombre del PLT-04. Caja del color de su tipo (CA-02). Al vencer, correo y Sala de Comité (CA-03). Panel del área (CA-04). Paso «en bandeja» (CA-05). Filtro por razón social y áreas permitidas (CA-07). Pausa y velocidad x1/x2 solo en el modo simulación (CA-08) | `#/vivo` |
+| **034** Vigencia de la garantía | Brayan | El rechazo por vigencia se informa al cliente con su motivo (CA-02) | `#/garantias/gar-249` |
+| **035** Inspección técnica | Brayan | El informe y varias fotos (CA-01) | `#/garantias/gar-585` |
+| **036** Escalar a Eje 3 | Brayan | Carta notarial en el reclamo: señal de conflicto, sin resolver en Eje 2 y derivación a Eje 3 desde el ticket (CA-01) | `#/garantias/gar-314` |
+
+Los supuestos de esta ronda (por ejemplo, el subtipo «General» de los 4 flujos del PO, o el modo simulación encendido por
+defecto) y las preguntas para el PO están en [DECISIONES.md §5.7](DECISIONES.md).
+
+### 5. Documentación de consulta en el repositorio
+
+[`documentacion/`](documentacion/README.md) contiene tres cosas:
+- los 6 documentos del PO v1.3, tal cual y con su huella;
+- el borrador del paquete Definir de Dev 1 (33 documentos, valida sin errores; todavía no subido a Nexora);
+- la [cobertura](documentacion/cobertura-v1.3.md) del mockup historia por historia.
+
+No reemplaza a Nexora: el paquete se aprueba allí, y la carpeta `docs/` solo la escribe `aybar paquete sellar`.
+
 ## Qué viene del PO y qué no
 
 - **Del PLT-04 v1.3, tal cual:** el «Como / quiero / para», los criterios de aceptación y el comportamiento de la Etapa 1 mientras tanto (PLT-01, «Fuera de este plan»).
@@ -68,19 +95,14 @@ Archivos: `src/three/vivo.ts`, `scripts/componentes-vivo.js` y `scripts/efecto-v
 
 ## Cobertura frente a las 62 HU de la v1.3
 
-**44 completas, 18 parciales y 0 sin pantalla.** Antes de este cambio, la HU-064, 065 y 066 no tenían pantalla.
+**50 completas, 12 parciales y 0 sin pantalla** al 20-oct. Antes eran 44 y 18; y antes del 19-oct, la HU-064, 065 y 066 no
+tenían pantalla. Las tres prioridades del PO están completas.
 
-Lo que falta en las prioridades del PO (detalle en [DECISIONES.md §5.1, §5.3 y §5.4](DECISIONES.md)):
+Siguen parciales, con faltas acotadas (detalle en [documentacion/cobertura-v1.3.md](documentacion/cobertura-v1.3.md)):
 
-- **HU-043 (prioridad 1):**
-  - el flujo va solo por tipo, sin subtipo;
-  - no crea actividades ni calcula el SLA total del flujo.
-- **HU-050 (prioridad 2):**
-  - la consulta 360 no deja rastro en la bitácora del ticket;
-  - la ficha no tiene el contador «datos visibles n de 16».
-- **HU-067 (prioridad 3):**
-  - no hay panel al tocar un área ni filtro por razón social;
-  - la tarjeta usa el color del área y no el del tipo.
+- HU-026 y 027, de Jesús;
+- HU-031, 044, 046, 048 y 055, de Michel;
+- HU-040, 041, 056, 057 y 066, de Daniel.
 
 ## Cómo probarlo
 
@@ -88,11 +110,17 @@ Lo que falta en las prioridades del PO (detalle en [DECISIONES.md §5.1, §5.3 y
 cd propuesta-po
 npm install
 npm start          # compila (escenas three.js y Mi Portal) y sirve http://localhost:5180
-npm run probar     # 14 casos: uno por criterio de HU-064, 065 y 066, más el acceso
-npm run recorrer   # con el servidor arriba: recorre el mockup en Chrome sin interfaz
+npm run probar     # 40 casos en Node: Mi Portal, flujos, Consulta 360 y garantías (uno por criterio)
+npm run recorrer   # con el servidor arriba: 49 pasos en Chrome sin interfaz, en 5 recorridos
 ```
 
-Verificado el 19-oct-2026:
+Verificado el 20-oct-2026, después de la sección 4:
+
+- **`npm run probar`:** Mi Portal 14/14, flujos 9/9, Consulta 360 7/7 y garantías 10/10.
+- **`npm run recorrer`:** recorrido general 17/17, flujos 7/7, Consulta 360 10/10, Operación en vivo 9/9 y garantías 6/6.
+- En todos: sin errores de JS, consola ni red, sin textos de la Etapa 2 y sin desplazamiento horizontal a 390 px.
+
+Verificado el 19-oct-2026 (secciones 1 a 3):
 
 - **Compilación:** sin errores de tipos, y `npm run build` reproduce el mismo artefacto.
 - **`npm run probar`:** 14 de 14 casos.
@@ -109,10 +137,17 @@ Verificado el 19-oct-2026:
 | Nuevos | `CAMBIOS-v1.3.md`, `src/portal/` (`index.ts`, `vistas.ts`, `modelo.ts`, `kit.ts`, `estilos.ts`, `tipos.ts`, `externos.d.ts`), `vite.portal.config.ts`, `scripts/nucleo-portal.js`, `scripts/etapa1.js`, `scripts/probar-portal.mjs`, `scripts/recorrer-navegador.mjs`, `artefacto/assets/mi-portal.js` (generado) |
 | Modificados | `package.json` (scripts `build`, `build:portal`, `probar`, `recorrer`; `start` compila todo), `README.md` (sección «Cuarta ronda»), `DECISIONES.md` (§5), `scripts/parchear.mjs`, `scripts/shell.js`, `scripts/componentes-vivo.js`, `scripts/efecto-vivo.js`, `src/three/vivo.ts` |
 | Regenerados | `artefacto/assets/` (`comun`, `prototipo`, `VistaEnVivo`, `MiDia`, `escenas-three.js`) |
+| Nuevos el 20-oct | `documentacion/` (documentos del PO, paquete de Dev 1 y cobertura), `scripts/hu043-modelo.js`, `hu043-configuracion.js`, `hu043-detalle.js`, `consulta360.js`, `garantias.js`, `garantia-ui.js`, `probar-flujos.mjs`, `probar-consulta360.mjs`, `probar-garantias.mjs`, `recorrer-flujos.mjs`, `recorrer-consulta360.mjs`, `recorrer-operacion-vivo.mjs`, `recorrer-garantias.mjs` |
+| Modificados el 20-oct | `scripts/parchear.mjs`, `componentes-vivo.js`, `efecto-vivo.js`, `shell.js`, `probar-portal.mjs`, `recorrer-navegador.mjs`; `src/three/vivo.ts`, `grafo360.ts`, `estilos.ts`, `bot.ts`; `package.json`, `README.md`, `DECISIONES.md` (§5.7) y los chunks regenerados de `artefacto/assets/` |
 | Sin tocar | `original/`, `frontend/`, `docs/` y el resto del repositorio |
 
 ## Para tener en cuenta
 
 - **Ticket:** todavía no hay ticket del backlog. La rama y el commit usan `AYB-0001`, el marcador provisional que propone el paquete del equipo en Nexora (`analisis/decisiones.md`, D-005). Cuando exista el ticket real, se renombra la rama.
 - **Firma:** el commit no está firmado (no hay llave GPG/SSH configurada). Para integrar a `main` el SDK pide autor humano con firma verificada, PR con revisor distinto del autor y la asistencia de IA declarada en la descripción del PR.
+- **Cambio visible en Mi Portal (20-oct):** los subtipos que ve el cliente no tienen flujo publicado. Su ticket queda en la cola de
+  ATC con una alerta para el administrador, como pide la HU-043 CA-07, y la fecha de compromiso sale de la política del tipo.
+  Alinear los subtipos de Mi Portal con los flujos es trabajo de la HU-064 (§5.7).
+- **Operación en vivo:** el modo simulación está encendido por defecto, para que la escena se mueva como en el prototipo del PO.
+  Apagado, el visor solo refleja los cambios reales.
 - **Riesgo técnico:** los parches dependen de los nombres internos del artifact compilado. Si el PO vuelve a publicar el artifact, `parchear.mjs` avisa y hay que actualizar los marcadores.
