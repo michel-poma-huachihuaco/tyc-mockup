@@ -85,7 +85,7 @@ export interface CorreoAsignacionLog {
 }
 
 export const CLIENTES_SIM: readonly (readonly [string, string, string])[] = [
-  ['Eddie Huamaní', 'Villa Sol II · Lote C-07', 'Consulta de cupo en bus EntregaFest y pase QR'],
+  ['Elena Torres', 'Villa Sol II · Lote C-07', 'Consulta de cupo en bus EntregaFest y pase QR'],
   ['Lucía Paredes', 'Mirador del Sur · Lote C-21', 'Inspección de fisura en muro perimétrico (Garantía)'],
   ['Jorge Ramos', 'Los Álamos I · Lote A-03', 'Reclamo por demora de minuta y suspensión de resolución'],
   ['María Quispe', 'Villa Sol II · Lote B-14', 'Validación de voucher de cuota pagada en agente BCP'],

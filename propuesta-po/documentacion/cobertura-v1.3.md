@@ -1,6 +1,8 @@
 # Cobertura del mockup frente al PLT-04 v1.3 (Etapa 1)
 
-**Al 20-oct-2026: las 62 historias de la Etapa 1 están completas** (ver `../DECISIONES.md` §5.7 y §5.8).
+**Al 20-oct-2026: las 62 historias de la Etapa 1 están completas** (ver `../DECISIONES.md` §5.7, §5.8 y §5.11).
+Se revisó de nuevo después de completar la Operación en vivo y la Consulta 360 que vienen de la rama de Daniel: las dos usan
+los clientes y tickets del mockup y cumplen los criterios de la HU-067 y de las HU-049 a 053.
 Una historia es «completa» cuando el mockup permite comprobar cada uno de sus criterios de aceptación. Las integraciones con
 sistemas reales (SIGDA/TAXON, Cobranza, Legal, correo, WhatsApp) están simuladas; los supuestos tomados donde el PLT-04 deja
 preguntas abiertas están en `DECISIONES.md`.
@@ -99,7 +101,7 @@ Responsable según el plan v1.3: Dev 1 Brayan, Dev 2 Jesús, Dev 3 Michel, Dev 4
 | 048 | Recibir retroalimentación de IA mientras atiendo y cierro | 3 | Ticket › «Cambiar estado» › Resuelto: criterios de cierre pendientes y el asistente (Aceptar / Usar mi versión editada / Descartar); registro de decisiones en el ticket |
 | 054 | Ver mi avance diario y el de mi equipo | 3 | #/midia › Mi día · Ver como: Gestor de tickets; #/midia › Equipo · Ver como: Supervisor ATC |
 | 055 | Recibir un correo al asignarme un ticket, con copia a mi líder | 3 | #/midia › Correos de asignación › «Ver»: «Plantilla de correo de asignación» (con líder, sin líder y resumen de reasignación masiva) |
-| 067 | Ver el proceso de atención en un visor 3D (operación en vivo) | 3 | #/vivo › «Operación en vivo» (modo simulación en Herramientas › Simulación; tocar un área o su nombre en «Por área») |
+| 067 | Ver el proceso de atención en un visor 3D (operación en vivo) | 3 | #/vivo › «Operación en Vivo» · Ver como: Supervisor ATC. Tocar una sala para su panel (carga por gestor, solo informativo); tocar una caja para su ficha (recorrido con hora, SLA consumido y CSAT si está cerrado, p. ej. AIN-000482); «Escalar a Comité SGD» hace vencer un ticket: el registro de actividad muestra el correo con copia al líder y el caso aparece en la Sala de Comité; «Razón social» filtra la planta; «Lista por área» es la vista sin 3D; pausa y velocidad (1×, 2×, 4×) solo con Herramientas › Simulación › «Modo simulación». Ver como: Gestor de tickets para ver solo su sala |
 
 ## EP-ATC-10 · Consulta 360 e integraciones operativas
 
@@ -108,11 +110,11 @@ Responsable según el plan v1.3: Dev 1 Brayan, Dev 2 Jesús, Dev 3 Michel, Dev 4
 | 040 | Sincronizar con Legal los tickets derivados a Eje 3 | 4 | Ticket derivado a Eje 3 › pestaña Legal; Herramientas › Simulación › «Legal pone en revisión el último caso enviado» y «Legal resuelve…» |
 | 041 | Priorizar los reclamos con riesgo de denuncia por su exposición | 4 | Ticket ALT-001207 (prioridad Urgente al alertar a Legal) y Torre de Control › «Riesgo de denuncia» (columna Prioridad) |
 | 042 | Atender la llamada con la ficha del cliente y registrarla en el ticket | 4 | Cualquier pantalla (panel «Llamada entrante» arriba) · Ver como: Gestor de tickets; Simulación › «Número que llama» (cliente o «Número no registrado») › «Simular una llamada entrante» › Contestar › «Finalizar y registrar la llamada» |
-| 049 | Buscar al cliente y llamarlo desde su ficha | 4 | #/clientes (búsqueda por DNI, nombre, código, lote, teléfono o N.º de ticket) y #/clientes/cli-001 (botón «Llamar») · Ver como: Gestor de tickets |
-| 050 | Ver la consulta 360 del cliente dentro del ticket | 4 | #/ticket/tk-460 › pestaña Cliente (ficha, panel del dato, candados, excepción con un DNI inexistente y nota en Interacciones) |
-| 051 | Continuar la atención cuando la consulta del cliente falla | 4 | #/nuevo («No está en SIGDA/TAXON» › «Registrar como interesado»; con Simulación › «SIGDA/TAXON no disponible» sale «Puedes seguir atendiendo») y #/ticket/tk-632 (tarjeta «Interesado», pendiente de vincular) · Ver como: Gestor de tickets |
-| 052 | Consultar datos específicos con el motor de José | 4 | #/ticket/tk-460 › pestaña Cliente › «Consultas rápidas» · Ver como: Gestor de tickets; Simulación › «Motor de consultas no disponible»; Ver como: Gestora de la Mesa SGD para el dato sin permiso (queda en «Auditoría: intentos rechazados») |
-| 053 | Buscar documentos del cliente por significado | 4 | #/ticket/tk-90 › pestaña Cliente › Documentos («Buscar en los documentos por significado»; también el buscador del grafo en Inicio) · Ver como: Gestor de tickets (la «Carta notarial de requerimiento» no aparece) frente a Supervisor ATC (sí aparece) |
+| 049 | Buscar al cliente y llamarlo desde su ficha | 4 | #/clientes (búsqueda por DNI, nombre, código, lote, teléfono o N.º de ticket) y #/clientes/cli-001 (botón «Llamar») · Ver como: Gestor de tickets. También en #/consulta360: buscar «Vargas» o «Villa Sol II» para la lista con DNI parcial y lote, y «Llamar» desde la central CTI |
+| 050 | Ver la consulta 360 del cliente dentro del ticket | 4 | #/ticket/tk-460 › pestaña Cliente (ficha, panel del dato, candados, excepción con un DNI inexistente y nota en Interacciones). En #/consulta360, los mismos candados por rol: «Datos visibles n de 16» (Ver como: Coordinador CX, 9 de 16) |
+| 051 | Continuar la atención cuando la consulta del cliente falla | 4 | #/nuevo («No está en SIGDA/TAXON» › «Registrar como interesado»; con Simulación › «SIGDA/TAXON no disponible» sale «Puedes seguir atendiendo») y #/ticket/tk-632 (tarjeta «Interesado», pendiente de vincular) · Ver como: Gestor de tickets. En #/consulta360: un DNI inexistente ofrece «Registrar ticket como Interesado»; con SIGDA caído, aviso y «Reintentar» |
+| 052 | Consultar datos específicos con el motor de José | 4 | #/ticket/tk-460 › pestaña Cliente › «Consultas rápidas» · Ver como: Gestor de tickets; Simulación › «Motor de consultas no disponible»; Ver como: Gestora de la Mesa SGD para el dato sin permiso (queda en «Auditoría: intentos rechazados»). Igual en #/consulta360 › «Consultas rápidas en línea» |
+| 053 | Buscar documentos del cliente por significado | 4 | #/ticket/tk-90 › pestaña Cliente › Documentos («Buscar en los documentos por significado») · Ver como: Gestor de tickets (la «Carta notarial de requerimiento» no aparece) frente a Supervisor ATC (sí aparece). En #/consulta360: chip «adenda de cambio de lote»; sin coincidencias («piscina olímpica con jacuzzi») sugiere palabras exactas |
 
 ## EP-ATC-11 · Resolución por morosidad y formularios simples
 

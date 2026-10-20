@@ -1,6 +1,8 @@
 // Escena «Planta de Atención en Vivo» de la rama de Daniel (origin/prototipo-polar · frontend/src/app/pantallas/atc/three/vivo.ts),
 // copiada tal cual para la página #/vivo (src/vivo). Solo cambian las rutas de import (nuestros comun, entradas, estilos,
 // modelos, oficina y robots son los mismos módulos, que Daniel reformateó) y se suma leerTokenRgb de su three/comun.ts.
+// HU-067 (propuesta-po, b3-j): tres añadidos opcionales marcados «propuesta-po»: color de la caja por tipo (CA-02), casos
+// vencidos en la Sala de Comité (CA-03) y gestores ocupados sobre el total en el cartel de cada sala (CA-01).
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { bucle, capaEtiquetas, color, css, type RGB } from './comun.ts';
@@ -34,6 +36,8 @@ import { crearOrquestador } from './robots.ts';
 export interface Estatico {
   zonas: { k: string; n: string; color: RGB }[];
   compuertas: { k: string; n: string; sigla: string; color: RGB }[];
+  // HU-067 CA-02 (propuesta-po): color de la caja según el tipo de ticket; sin él, el de la sala (como en Daniel)
+  tipos?: { k: string; color: RGB }[];
 }
 
 export interface Snap {
@@ -43,12 +47,18 @@ export interface Snap {
     atencion: number;
     riesgo: boolean;
     gente: { id: string; nombre: string; ocupado: boolean }[];
+    // HU-067 CA-01 (propuesta-po): gestores ocupados sobre el total del área
+    ocupados?: number;
+    total?: number;
   }[];
   bandeja: number;
   escalados: number;
+  // HU-067 CA-03 (propuesta-po): casos con el SLA vencido (ya avisados al líder) que suben a la Sala de Comité
+  comite?: { id: string; numero: string }[];
   tickets: {
     id: string;
     numero: string;
+    tipo?: string;
     gate: string;
     zona: string;
     etapa: 'bandeja' | 'cola' | 'atencion' | 'salida' | string;
@@ -186,6 +196,7 @@ export function montarVivo(o: OptsVivo): () => void {
   const kit = new Kit({ ...C });
   const colorZona = new Map(est.zonas.map((z) => [z.k, z.color]));
   const nombreZona = new Map(est.zonas.map((z) => [z.k, z.n]));
+  const colorTipo = new Map((est.tipos ?? []).map((t) => [t.k, t.color]));
 
   // Luz
   escena.add(new THREE.HemisphereLight(0xfff4e6, color(mezcla(C.suelo, C.teal, 0.5)), 1.7));
@@ -963,7 +974,7 @@ export function montarVivo(o: OptsVivo): () => void {
 
   const nuevoEnt = (t: Snap['tickets'][number], ahora: number, retraso: number): Ent => {
     const g = new THREE.Group();
-    const card = kit.tarjeta(colorZona.get(t.zona) ?? C.teal2);
+    const card = kit.tarjeta(colorTipo.get(t.tipo ?? '') ?? colorZona.get(t.zona) ?? C.teal2);
     const ledMat = ledMats.ok;
     const led = new THREE.Mesh(kit.esf(0.028), ledMat);
     led.position.set(0.23, 0.04, 0.13);
@@ -1427,14 +1438,28 @@ export function montarVivo(o: OptsVivo): () => void {
     }
 
     pHub.set(`${s.bandeja} en espera · rayo > SLA > prioridad`);
-    pCom.set(`${s.escalados} escalados en cadena`, s.escalados > 0);
+    // HU-067 CA-03 (propuesta-po): los casos con SLA vencido aparecen como tarjetas en la mesa de la Sala de Comité, antes que los
+    // escalamientos de la Mesa SGD, y se tocan como cualquier ticket (abren su ficha)
+    const com = s.comite ?? [];
+    pCom.set(
+      com.length ? `${com.length} con SLA vencido · ${s.escalados} escalados en cadena` : `${s.escalados} escalados en cadena`,
+      com.length + s.escalados > 0,
+    );
     cartasComite.forEach((c, i) => {
-      c.visible = i < s.escalados;
+      c.visible = i < com.length + s.escalados;
       if (c.visible && !RM) c.position.y = 0.8 + Math.sin(t * 2 + i) * 0.02;
+      if (c.visible && i < com.length) {
+        const pr = v3.copy(c.position).project(cam);
+        hits.push({ id: com[i]!.id, x: ((pr.x + 1) / 2) * w, y: ((1 - pr.y) / 2) * h });
+      }
     });
     pSal.set(`${s.tickets.filter((x) => x.etapa === 'salida').length} resueltos recientes`);
     for (const z of s.zonas) {
-      pZona.get(z.k)?.set(`${z.cola} en cola · ${z.atencion} en atención`, z.riesgo);
+      // HU-067 CA-01 (propuesta-po): tickets en cola y gestores ocupados sobre el total
+      pZona.get(z.k)?.set(
+        z.total ? `${z.cola} en cola · ${z.ocupados ?? 0}/${z.total} ocupados` : `${z.cola} en cola · ${z.atencion} en atención`,
+        z.riesgo,
+      );
     }
     dibujarHub(s, ahora);
 

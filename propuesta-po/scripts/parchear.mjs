@@ -165,7 +165,10 @@ const especificos = {
     },
     // HU-050: icono del sistema (candado), aviso previo de «Nuevo ticket» (modo interesado) y permisos por rol
     importa: 'import{montarGrafo as __mg}from"./escenas-three.js";import{S as __Ico}from"./prototipo-B6qmgYQk.js";import{y as __pre,sn as __perm}from"./comun-CVU2GQ4h.js";import{n as __Seg}from"./prototipo-B6qmgYQk.js";import{t as __Dlg}from"./Dialog-BcfHiG-J.js";',
-    sufijo: leer('consulta360.js') + '\n' + leer('c360-redireccion.js') + '\n' + leer('c360-mejoras.js'),
+    sufijo: leer('consulta360.js') + '\n' + leer('c360-redireccion.js') + '\n' + leer('c360-mejoras.js') +
+      // 20-oct (b3-k): la Consulta 360 de #/consulta360 (src/c360) usa esta misma vista de los 16 datos por rol y fuente caída,
+      // los sistemas de origen, el ticket del cliente por canal y la síntesis por reglas locales
+      '\nexport{de as __vista360,X as __fuentes360,__ticketCon360,__sintesis360};',
     reemplazos: [
       // el grafo puede elegir al cliente sin salir de la pantalla (lo usa el inicio); dentro del ticket recibe «Derivar» (HU-050 CA-08)
       ['function ge({clienteId:e}){', 'function ge({clienteId:e,onElegir:__oe,onDerivar:__od}){'],
@@ -514,6 +517,9 @@ const especificos = {
       // coordinador CX veían «Todas las áreas».
       ['ie=(e,n)=>n===`mios`?e.responsable===t.id:n===`area`?e.area===t.area:n!==`sin-asignar`||!e.responsable&&(t.rol===`SUPERVISOR`||t.rol===`COORDINADOR_CX`||e.area===t.area)', '__ar=__h44.areas(t.id),ie=(e,n)=>n===`mios`?e.responsable===t.id:n===`area`?e.area===t.area:__ar.includes(e.area)&&(n!==`sin-asignar`||!e.responsable)'],
       ['todas:`Todas las áreas`', 'todas:`Áreas que superviso`'],
+      // 20-oct (b3-k): desde la Consulta 360 («Tickets previos», «Tickets en Bandeja», «Ver tickets del titular») la Bandeja abre
+      // filtrada por el DNI del cliente, con el alcance más amplio que tenga el rol y con los cerrados (los tickets previos)
+      ['[f,p]=(0,P.useState)(d[0]),[m,h]=(0,P.useState)(``),[v,y]=(0,P.useState)([]),[b,x]=(0,P.useState)(!1),[S,C]=(0,P.useState)(!1)', '[__bq]=(0,P.useState)(()=>{let q=globalThis.__ptBandejaBusca||null;return globalThis.__ptBandejaBusca=null,q}),[f,p]=(0,P.useState)(__bq?d.find(q=>q===`todas`||q===`area`)??d[0]:d[0]),[m,h]=(0,P.useState)(__bq??``),[v,y]=(0,P.useState)([]),[b,x]=(0,P.useState)(!1),[S,C]=(0,P.useState)(!!__bq)'],
       ['description:`Tickets activos de ${A===`todas`?`todas las áreas`:', 'description:`Tickets activos de ${A===`todas`||A===`sin-asignar`&&__ar.length!==1?(__ar.length?`las áreas que supervisas (${__h44.lista(__ar)})`:`las áreas que supervisas`):'],
       ['title:A===`sin-asignar`?`Nada sin asignar`', 'title:!__ar.length?`No supervisas ninguna área`:A===`sin-asignar`?`Nada sin asignar`'],
       ['description:A===`sin-asignar`?`Todos los tickets de tu área tienen responsable.`', 'description:!__ar.length?`Según el maestro local de ATC no eres supervisor de ninguna área: aquí no ves tickets de otras áreas.`:A===`sin-asignar`?`Todos los tickets de tu área tienen responsable.`'],
@@ -525,7 +531,8 @@ const especificos = {
       // Se carga bajo demanda, como Mi Portal; el chunk VistaEnVivo del PO queda sin ruta.
       ['function ca(){let e=de(),', 'const __VivoD=(0,P.lazy)(()=>import(`./vivo-daniel.js`).then(m=>({default:m.VivoDaniel})));\nfunction ca(){let e=de(),'],
       ['case`vivo`:return(0,L.jsx)(Gi,{});', 'case`vivo`:return(0,L.jsx)(__VivoD,{});'],
-      ['Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (x1, x2).', 'La planta avanza sola con tickets de ejemplo; apagado, queda en pausa (se reanuda con «Reanudar planta»).'],
+      // b3-j · HU-067 CA-08: apagado, la Operación en Vivo solo refleja la Bandeja (sin pausa, velocidad ni tickets de ejemplo)
+      ['Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (x1, x2).', 'Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (1×, 2×, 4×). Apagado, la Operación en Vivo solo refleja la Bandeja en tiempo real.'],
     ],
     // la barra superior queda con la marca y el usuario; el aviso «What-if» desaparece
     cortes: [

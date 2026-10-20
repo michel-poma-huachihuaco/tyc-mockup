@@ -20,6 +20,8 @@ const CHUNKS: Record<string, string> = {
   // Consulta 360 del Cliente de Daniel (src/c360): ventana del visor de contratos y tablas del expediente
   'aybar:Dialog': './Dialog-BcfHiG-J.js',
   'aybar:Table': './Table-BJWCycht.js',
+  // 20-oct (b3-k): la vista y las reglas de la Consulta 360 del PO (Grafo360; parchear.mjs añade sus exports)
+  'aybar:Grafo360': './Grafo360-BzaG42VX.js',
 }
 
 export default defineConfig({

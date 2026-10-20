@@ -1,8 +1,12 @@
-// Datos de ejemplo de la Consulta 360 de la rama de Daniel (origin/prototipo-polar), copiados TAL CUAL:
+// Datos de ejemplo de la Consulta 360 de la rama de Daniel (origin/prototipo-polar):
 //  · frontend/src/app/pantallas/atc/datos-atc.ts › tipos y FUENTES_360, NODOS_360, CLIENTES_360, CONTRATOS_ATC y CONSULTAS_SEMANTICAS;
-//  · frontend/src/app/pantallas/atc/vista-c360.ts › REDIRECCION_NODOS_360, TRAZABILIDAD_FUENTES_360, TRAZABILIDAD_NODOS_360 y
-//    CONSULTAS_MOTOR_RAPIDAS.
-// Lo único propio está al final: el ticket de cada cliente en los datos de Daniel (para «detalle»), calculado con su misma regla.
+//  · frontend/src/app/pantallas/atc/vista-c360.ts › REDIRECCION_NODOS_360, TRAZABILIDAD_FUENTES_360 y TRAZABILIDAD_NODOS_360.
+// 20-oct (b3-k): los clientes, lotes, cuotas, tickets, correos, llamadas, documentos y contratos que se muestran salen del modelo del
+// mockup (src/c360/modelo.ts). De aquí quedan los nombres de sistemas y secciones, los textos de criterio / consulta en línea /
+// plataforma / integración, los registros de ejemplo de llamadas y correos y las plantillas del visor de contratos (cláusulas,
+// linderos, firmas), asignados a los clientes del mockup por índice. Sin nombres ni DNI de personas reales: el titular del primer
+// cliente de ejemplo es un marcador que el visor sustituye por el cliente del mockup. Fuera las consultas rápidas de ejemplo
+// (las da el motor del modelo) y el mapa de tickets por número (abrían tickets de otros clientes).
 /* eslint-disable */
 
 export interface Fuente360 {
@@ -139,9 +143,9 @@ export const CLIENTES_360: readonly Cliente360[] = [
   {
     k: 'eh',
     iniciales: 'EH',
-    nombre: 'Eddie Huamaní',
-    doc: 'DNI 72282555',
-    dni: '72282555',
+    nombre: 'Titular de ejemplo',
+    doc: 'DNI 00000001',
+    dni: '00000001',
     telefono: '+51 987 654 321',
     proyecto: 'Villa Sol · Etapa II',
     lotes: ['C-07'],
@@ -152,12 +156,12 @@ export const CLIENTES_360: readonly Cliente360[] = [
     guiaRecomendada: 'Confirmación de cupo EntregaFest y envío de pase QR por WhatsApp.',
     datos: {
       kyc: [
-        ['DNI 72282555', 'Verificado en RENIEC / SIGDA'],
+        ['DNI 00000001', 'Verificado en RENIEC / SIGDA'],
         ['Estado KYC', 'Conforme · 15-ene-2026'],
-        ['Estado Civil', 'Casado · Copropietaria: Elena Mendoza'],
+        ['Estado Civil', 'Casado · con copropietaria'],
       ],
       cont: [
-        ['eddie.huamani@ejemplo.test', 'Correo verificado'],
+        ['titular.ejemplo@ejemplo.test', 'Correo verificado'],
         ['+51 987 654 321', 'Celular principal · Click-to-Call disponible'],
         ['Canal preferido', 'WhatsApp Corporativo y Mi Portal'],
       ],
@@ -501,8 +505,8 @@ export const CONTRATOS_ATC: readonly ContratoInmobiliarioAtc[] = [
     estado: 'VIGENTE',
     empresa: 'Aybar Inmobiliaria S.A.C.',
     rucEmpresa: '20601234561',
-    clienteNombre: 'Eddie Huamaní',
-    clienteDoc: 'DNI 72282555',
+    clienteNombre: 'Titular de ejemplo',
+    clienteDoc: 'DNI 00000001',
     clienteKey360: 'eh',
     proyecto: 'Villa Sol',
     etapa: 'Etapa II',
@@ -535,7 +539,7 @@ export const CONTRATOS_ATC: readonly ContratoInmobiliarioAtc[] = [
         numero: 'SEGUNDA',
         titulo: 'Objeto del Contrato e Identificación de la Unidad Inmobiliaria',
         contenido:
-          'Por el presente instrumento, LA VENDEDORA transfiere en compraventa con reserva de propiedad a favor de EL COMPRADOR (Eddie Huamaní, DNI 72282555) el Lote 07 de la Manzana C, con un área superficial de 160.00 m², según Adenda de Reubicación N.º 01.',
+          'Por el presente instrumento, LA VENDEDORA transfiere en compraventa con reserva de propiedad a favor de EL COMPRADOR (Titular de ejemplo, DNI 00000001) el Lote 07 de la Manzana C, con un área superficial de 160.00 m², según Adenda de Reubicación N.º 01.',
       },
       {
         numero: 'TERCERA',
@@ -578,8 +582,8 @@ export const CONTRATOS_ATC: readonly ContratoInmobiliarioAtc[] = [
       },
       {
         rol: 'COMPRADOR_TITULAR',
-        nombre: 'Eddie Huamaní',
-        documento: 'DNI 72282555',
+        nombre: 'Titular de ejemplo',
+        documento: 'DNI 00000001',
         fechaFirma: '15-sep-2025 11:18:05',
         modalidad: 'Firma Biométrica RENIEC + Token SMS',
         hashCustodia: 'SHA256:4c2019be...31a904',
@@ -965,12 +969,6 @@ export const CONSULTAS_SEMANTICAS: readonly { readonly q: string; readonly nodo:
 ];
 
 
-export interface ConsultaMotorRapida {
-  readonly id: string;
-  readonly nombre: string;
-  readonly respuesta: (cli: Cliente360, lote: string) => string;
-}
-
 export interface MetaTrazabilidad360 {
   readonly hu: string;
   readonly rfRn: string;
@@ -1100,7 +1098,7 @@ export const TRAZABILIDAD_FUENTES_360: Readonly<Record<string, MetaTrazabilidad3
     hu: 'Motor de Consultas en Línea',
     rfRn: 'Respuestas consolidadas en tiempo real sin copia local',
     entidadDep: 'API Motor de Consultas',
-    inputReal: 'Tipo de consulta + lote: responde saldo, estado de cuenta, independización, boletas y EntregaFest.',
+    inputReal: 'Tipo de consulta + lote: responde saldo, próxima cuota, último pago y estado del contrato, según el rol.',
   },
   repo: {
     hu: 'Expediente digital y búsqueda semántica',
@@ -1187,7 +1185,7 @@ export const TRAZABILIDAD_NODOS_360: Readonly<Record<string, MetaTrazabilidad360
     hu: 'Detalle reservado de movimientos financieros',
     rfRn: 'Control de acceso por perfil del usuario',
     entidadDep: 'Cobranza · Motor de Consultas',
-    inputReal: 'Detalle financiero reservado (restringido para perfil Gestor; visible para Supervisor y Legal).',
+    inputReal: 'Detalle financiero reservado: total pagado, saldo pendiente y días de mora; se muestra según el permiso del rol.',
   },
   docs: {
     hu: 'Buscador inteligente de documentos',
@@ -1223,44 +1221,6 @@ export const TRAZABILIDAD_NODOS_360: Readonly<Record<string, MetaTrazabilidad360
     hu: 'Evaluación de riesgo legal y regulatorio',
     rfRn: 'Acceso controlado por perfil y custodia 6/6',
     entidadDep: 'Mesa SGD · Handoff Legal',
-    inputReal: 'Riesgo regulatorio/judicial y paquete documental 6/6 (restringido para perfil Gestor).',
+    inputReal: 'Riesgo regulatorio/judicial y paquete documental 6/6 (solo Supervisor, Legal y Mesa SGD).',
   },
-};
-
-export const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
-  {
-    id: 'saldo-ecta',
-    nombre: 'Saldo total y estado de cuenta por lote',
-    respuesta: (cli, lote) =>
-      `Lote ${lote} (${cli.proyecto}): ${cli.datos['saldo']?.[0]?.[1] ?? 'S/ 0'} · Estado de cuenta: ${cli.datos['ecta']?.map((f) => `${f[0]} ${f[1]}`).join(' · ') ?? 'Al día'}.`,
-  },
-  {
-    id: 'independizacion',
-    nombre: 'Estado de independización y partida registral',
-    respuesta: (cli, lote) =>
-      `Lote ${lote} (${cli.proyecto}): Independización en trámite registral SUNARP · Acta: ${cli.datos['acta']?.[0]?.[1] ?? 'En proceso'}.`,
-  },
-  {
-    id: 'boletas-abonos',
-    nombre: 'Validación de boletas y últimos abonos conciliados',
-    respuesta: (cli, lote) =>
-      `Lote ${lote}: ${cli.datos['crono']?.[0]?.[1] ?? 'Pagos conciliados'} · Última conciliación bancaria verificada sin observaciones.`,
-  },
-  {
-    id: 'entregafest',
-    nombre: 'Elegibilidad y requisitos para EntregaFest',
-    respuesta: (cli, lote) =>
-      `Lote ${lote} (${cli.nombre}): Estado en padrón EntregaFest verificado · Garantía: ${cli.datos['gar']?.[0]?.[1] ?? 'Vigente'}.`,
-  },
-];
-
-// Ticket que abre «detalle» en la rama de Daniel para cada cliente (alRedirigirDesde360: el primero de crearTicketsDemo con su
-// contrato principal o con su primer nombre). Aquí se busca por ese número en nuestro modelo; si no está, se va a la Bandeja.
-export const TICKET_DETALLE_360: Readonly<Record<string, string>> = {
-  eh: 'AIN-000486',
-  jr: 'ALT-001204',
-  lp: 'APV-000412',
-  mq: 'AIN-000482',
-  rh: 'APV-000089',
-  hq: 'AIN-000491',
 };

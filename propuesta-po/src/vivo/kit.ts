@@ -7,6 +7,10 @@ import { h as CardHeader, x as Select, u as Drawer, n as SegmentedControl, m as 
 import { n as Card, t as CardBody } from 'aybar:CardBody'
 import { t as Breadcrumb } from 'aybar:Breadcrumb'
 import { t as ProgressBar } from 'aybar:ProgressBar'
+// HU-067 (b3-j): tabla por área (CA-09), motivo del rayo (RN-SVC-031) y error de una acción del modelo
+import { t as DataGrid } from 'aybar:DataGrid'
+import { t as FormField } from 'aybar:FormField'
+import { t as Input } from 'aybar:Input'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const React: any = C.Ii()
@@ -22,7 +26,7 @@ export const ruta = C.Jn
 
 export const ui = {
   Button: C.Ai, Badge: C.$r, PageHeader: C.Nr, Card, CardBody, CardHeader, CardPairs, Select, Drawer, SegmentedControl, Breadcrumb,
-  ProgressBar,
+  ProgressBar, DataGrid, FormField, Input, ErrorAccion: C.t,
 }
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')
@@ -66,17 +70,19 @@ export function Rating(p: { label: string; value: number; allowHalf?: boolean; c
 }
 
 export interface Hito { id: string; titulo: string; fecha: Date; autor?: string; tono?: 'default' | 'accent' | 'success' | 'danger' }
-const relativo = (f: Date) => {
-  // contra `new Date()` y no `Date.now()`: el reloj del prototipo puede ir adelantado (Herramientas › Simulación)
-  const min = (f.getTime() - new Date().getTime()) / 60000, rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' })
+const relativo = (f: Date, ahora?: Date) => {
+  // contra `new Date()` y no `Date.now()`: el reloj del prototipo puede ir adelantado (Herramientas › Simulación); con datos del
+  // modelo se pasa su reloj (`ahora`)
+  const min = (f.getTime() - (ahora ?? new Date()).getTime()) / 60000, rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' })
   return Math.abs(min) < 1 ? rtf.format(0, 'second') : Math.abs(min) < 60 ? rtf.format(Math.round(min), 'minute') : rtf.format(Math.round(min / 60), 'hour')
 }
 const horaMin = (f: Date) => f.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
-/** Timeline vertical (ay-timeline): autor en negrita, título y tiempo relativo (con la hora si se repite), como la del SDK. */
-export function Timeline(p: { label: string; hitos: Hito[] }) {
-  const rel = p.hitos.map((e) => relativo(e.fecha))
+/** Timeline vertical (ay-timeline): autor en negrita, título y tiempo relativo (con la hora si se repite), como la del SDK.
+ *  `ahora`: reloj del modelo para el tiempo relativo; `conHora`: la hora siempre a la vista (HU-067 CA-05 y CA-06). */
+export function Timeline(p: { label: string; hitos: Hito[]; ahora?: Date; conHora?: boolean }) {
+  const rel = p.hitos.map((e) => relativo(e.fecha, p.ahora))
   return h('ol', { className: 'ay-timeline ay-timeline--vertical', 'aria-label': p.label }, ...p.hitos.map((e, i) => {
-    const repetido = rel[i] === rel[i - 1] || rel[i] === rel[i + 1]
+    const repetido = p.conHora || rel[i] === rel[i - 1] || rel[i] === rel[i + 1]
     return h('li', { key: e.id, className: 'ay-timeline__event' },
       h('span', { className: cx('ay-timeline__dot', `ay-timeline__dot--${e.tono ?? 'default'}`), 'aria-hidden': 'true' }),
       h('div', { className: 'ay-timeline__body' },

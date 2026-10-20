@@ -22,8 +22,7 @@ Revisado el 20-oct-2026 contra Nexora (proyecto PJ-06, apartado «Tiketes»). Es
 | Dev 3 (Michel) | 0 | 27 |
 | Dev 4 (Daniel) | 0 | 31 |
 
-**Decisión que falta antes de subir**: el paquete tiene también las épicas, funcionalidades, historias y DoR de Jesús, Michel y Daniel.
-Si sube todo Brayan, sus versiones quedan a su nombre en la auditoría de Nexora. La otra opción es que suba solo lo suyo (33 documentos) y que cada responsable suba lo propio desde esta misma carpeta. En los dos casos, todo queda pendiente hasta que lo apruebe el PO.
+**Quién sube (decidido el 20-oct): Brayan sube los 119 documentos**, también las épicas, funcionalidades, historias y DoR de Jesús, Michel y Daniel. En la auditoría de Nexora todas esas versiones quedan a nombre de Brayan, y cada documento sigue diciendo quién es su responsable. Todo queda pendiente hasta que lo apruebe el PO.
 
 Solo se suben las carpetas `epicas/`, `features/`, `historias/` y `dor/`. `README.md`, `explorador.html`, este plan y `NEXORA-BRAYAN-v1.3.md`, el detalle de los cambios de Brayan, son material de consulta y no van a Nexora.
 

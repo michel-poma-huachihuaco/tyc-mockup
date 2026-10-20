@@ -356,3 +356,29 @@ El PO tiene que confirmarlas:
 **Pregunta para el PO: la decisión D-12 de esa rama.** Saca la HU-048 (IA al cerrar) y la HU-053 (búsqueda semántica) de la
 Etapa 1. La tomó la sesión de trabajo de esa rama el 19-oct, no el PO, y los documentos del PO v1.3 siguen contando ambas HU
 en la Etapa 1. Aquí no se aplicó: ¿el PO confirma que salen?
+
+### 5.11 Decisiones de Brayan sobre la revisión del 20-oct
+
+La revisión del 20-oct encontró que la Operación en vivo y la Consulta 360 traídas de Daniel no cumplen todos los criterios de
+la v1.3 (detalle en `documentacion/cobertura-v1.3.md`). Brayan decidió:
+
+| # | Pregunta | Decisión |
+|---|---|---|
+| 1 | La Operación en vivo de Daniel cumple solo el CA-10 de la HU-067 | Se completa la de Daniel con los 10 criterios, sin volver a la versión anterior |
+| 2 | Las páginas de Daniel usan sus propios clientes y tickets | Usan los clientes y tickets del mockup; los datos de Daniel quedan como información adicional de ejemplo |
+| 3 | La Consulta 360 de Daniel no respeta los permisos por rol | Se alinea con la v1.3: candado por rol (HU-050), el motor no devuelve datos sin permiso y registra el intento (HU-052), la búsqueda semántica dice «sin coincidencias» y sugiere palabras exactas (HU-053) |
+| 4 | Cuándo se actualiza la cobertura | Al terminar estos arreglos |
+| 5 | Quién sube el paquete a Nexora | Brayan sube los 119 documentos cuando dé la luz verde (ver `documentacion/paquete-definir-etapa1-v1.3/PLAN-NEXORA.md`) |
+
+Las cuatro mejoras de §5.10 se mantienen, y el PO las tiene que confirmar.
+
+Hecho el 20-oct. Supuestos que quedan para revisar:
+
+- **Consulta 360, dato «no disponible»:** basta con que caiga una de sus fuentes, como en la pantalla de Daniel. En la pestaña
+  Cliente del ticket tienen que caer todas.
+- **Consulta 360 › Bandeja:** al venir de la 360, la Bandeja abre filtrada por el DNI del cliente. Si el rol no ve esos tickets
+  (HU-044), no hay botón: se explica el motivo y se ofrece «Último ticket».
+- **Consulta 360, textos de Daniel:** se ajustaron 3 que contradecían la v1.3 (estado de cuenta, exposición legal y motor).
+- **Operación en vivo, rayo desde la ficha:** solo lo marca el supervisor, que es lo que permite el mockup (RN-SVC-031), con motivo
+  y tope del 10 %.
+- **Operación en vivo, CSAT del día:** la semilla no tiene encuestas de hoy, así que muestra «—» con el acumulado al lado.

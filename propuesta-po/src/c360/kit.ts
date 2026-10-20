@@ -2,7 +2,7 @@
 // chunks (mismas clases ay-* que @aybarcorp/ui-angular 0.3.0 de la rama de Daniel). Lo que el artifact no trae en React (Avatar,
 // Divider, Text, Stack, Row, Grid) se pinta con sus mismas clases ay-*.
 import * as C from 'aybar:comun'
-import { h as CardHeader, m as CardPairs, n as SegmentedControl, v as SearchInput, c as Tabs, x as Select } from 'aybar:prototipo'
+import { h as CardHeader, m as CardPairs, n as SegmentedControl, v as SearchInput, c as Tabs, x as Select, S as Icono } from 'aybar:prototipo'
 import { n as Card, t as CardBody } from 'aybar:CardBody'
 import { t as Breadcrumb } from 'aybar:Breadcrumb'
 import { t as FormField } from 'aybar:FormField'
@@ -26,7 +26,7 @@ export const { useState, useEffect, useMemo, useRef, useCallback, lazy, Suspense
 
 export const ui = {
   Button: C.Ai, Badge: C.$r, Tag: C.Qr, Alert: C.Gr, PageHeader: C.Nr,
-  CardHeader, CardPairs, SegmentedControl, SearchInput, Tabs, Select, Card, CardBody, Breadcrumb, FormField, Dialog, Table, EmptyState,
+  CardHeader, CardPairs, SegmentedControl, SearchInput, Tabs, Select, Card, CardBody, Breadcrumb, FormField, Dialog, Table, EmptyState, Icono,
 }
 
 const unir = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')

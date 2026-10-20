@@ -1,14 +1,15 @@
 import * as e from "./comun-CVU2GQ4h.js";
-import { c as t, h as n, m as r, n as i, v as a, x as o } from "./prototipo-B6qmgYQk.js";
-import { t as s } from "./FormField-BR5f57fp.js";
+import { S as t, c as n, h as r, m as i, n as a, v as o, x as s } from "./prototipo-B6qmgYQk.js";
+import { t as ee } from "./FormField-BR5f57fp.js";
 import { n as c, t as l } from "./CardBody-WQ8Pzs3R.js";
 import { t as u } from "./EmptyState-DMKP8Bhj.js";
 import { t as d } from "./Breadcrumb-BtXUT3bJ.js";
-import { leerTokenRgb as ee, montarGrafoDaniel as te, montarRed2D as ne } from "./escenas-three.js";
-import { t as f } from "./Dialog-BcfHiG-J.js";
-import { t as p } from "./Table-BJWCycht.js";
+import { leerTokenRgb as te, montarGrafoDaniel as f, montarRed2D as ne } from "./escenas-three.js";
+import { t as p } from "./Dialog-BcfHiG-J.js";
+import { t as m } from "./Table-BJWCycht.js";
+import * as h from "./Grafo360-BzaG42VX.js";
 //#region src/c360/datos.ts
-var m = [
+var g = [
 	{
 		id: "sigda",
 		nombre: "SIGDA / TAXON",
@@ -57,7 +58,7 @@ var m = [
 		detalle: "Historial y Libro",
 		ms: 120
 	}
-], h = [
+], _ = [
 	{
 		id: "kyc",
 		nombre: "DNI y KYC",
@@ -141,13 +142,13 @@ var m = [
 		fuentes: ["atc", "cob"],
 		restringidoPara: ["gestor"]
 	}
-], g = [
+], v = [
 	{
 		k: "eh",
 		iniciales: "EH",
-		nombre: "Eddie Huamaní",
-		doc: "DNI 72282555",
-		dni: "72282555",
+		nombre: "Titular de ejemplo",
+		doc: "DNI 00000001",
+		dni: "00000001",
 		telefono: "+51 987 654 321",
 		proyecto: "Villa Sol · Etapa II",
 		lotes: ["C-07"],
@@ -157,12 +158,12 @@ var m = [
 		guiaRecomendada: "Confirmación de cupo EntregaFest y envío de pase QR por WhatsApp.",
 		datos: {
 			kyc: [
-				["DNI 72282555", "Verificado en RENIEC / SIGDA"],
+				["DNI 00000001", "Verificado en RENIEC / SIGDA"],
 				["Estado KYC", "Conforme · 15-ene-2026"],
-				["Estado Civil", "Casado · Copropietaria: Elena Mendoza"]
+				["Estado Civil", "Casado · con copropietaria"]
 			],
 			cont: [
-				["eddie.huamani@ejemplo.test", "Correo verificado"],
+				["titular.ejemplo@ejemplo.test", "Correo verificado"],
 				["+51 987 654 321", "Celular principal · Click-to-Call disponible"],
 				["Canal preferido", "WhatsApp Corporativo y Mi Portal"]
 			],
@@ -366,15 +367,15 @@ var m = [
 			expo: [["Riesgo contractual medio", "S/ 3,540.00 en mora · Caso MOR-2026-0024"]]
 		}
 	}
-], _ = [
+], re = [
 	{
 		codigo: "VS-2025-0507",
 		tipo: "Contrato de Compraventa de Lote Urbano con Reserva de Dominio",
 		estado: "VIGENTE",
 		empresa: "Aybar Inmobiliaria S.A.C.",
 		rucEmpresa: "20601234561",
-		clienteNombre: "Eddie Huamaní",
-		clienteDoc: "DNI 72282555",
+		clienteNombre: "Titular de ejemplo",
+		clienteDoc: "DNI 00000001",
 		clienteKey360: "eh",
 		proyecto: "Villa Sol",
 		etapa: "Etapa II",
@@ -405,7 +406,7 @@ var m = [
 			{
 				numero: "SEGUNDA",
 				titulo: "Objeto del Contrato e Identificación de la Unidad Inmobiliaria",
-				contenido: "Por el presente instrumento, LA VENDEDORA transfiere en compraventa con reserva de propiedad a favor de EL COMPRADOR (Eddie Huamaní, DNI 72282555) el Lote 07 de la Manzana C, con un área superficial de 160.00 m², según Adenda de Reubicación N.º 01."
+				contenido: "Por el presente instrumento, LA VENDEDORA transfiere en compraventa con reserva de propiedad a favor de EL COMPRADOR (Titular de ejemplo, DNI 00000001) el Lote 07 de la Manzana C, con un área superficial de 160.00 m², según Adenda de Reubicación N.º 01."
 			},
 			{
 				numero: "TERCERA",
@@ -440,8 +441,8 @@ var m = [
 			hashCustodia: "SHA256:9f84a2c1...77e10b"
 		}, {
 			rol: "COMPRADOR_TITULAR",
-			nombre: "Eddie Huamaní",
-			documento: "DNI 72282555",
+			nombre: "Titular de ejemplo",
+			documento: "DNI 00000001",
 			fechaFirma: "15-sep-2025 11:18:05",
 			modalidad: "Firma Biométrica RENIEC + Token SMS",
 			hashCustodia: "SHA256:4c2019be...31a904"
@@ -904,7 +905,7 @@ var m = [
 			}
 		]
 	}
-], re = [
+], ie = [
 	{
 		q: "adenda de cambio de lote",
 		nodo: "docs",
@@ -920,7 +921,7 @@ var m = [
 		nodo: "acta",
 		explicacion: "Búsqueda semántica: ubica el Acta de Entrega y periodo de cobertura postventa."
 	}
-], v = {
+], y = {
 	kyc: {
 		etiqueta: "Ver contrato y titulares",
 		destino: "contrato",
@@ -1001,7 +1002,7 @@ var m = [
 		destino: "sgd",
 		moduloNombre: "Comité y Casos SGD"
 	}
-}, y = {
+}, ae = {
 	sigda: {
 		hu: "Identidad única, KYC y Contratos",
 		rfRn: "Maestro único de clientes sin duplicidad local",
@@ -1024,7 +1025,7 @@ var m = [
 		hu: "Motor de Consultas en Línea",
 		rfRn: "Respuestas consolidadas en tiempo real sin copia local",
 		entidadDep: "API Motor de Consultas",
-		inputReal: "Tipo de consulta + lote: responde saldo, estado de cuenta, independización, boletas y EntregaFest."
+		inputReal: "Tipo de consulta + lote: responde saldo, próxima cuota, último pago y estado del contrato, según el rol."
 	},
 	repo: {
 		hu: "Expediente digital y búsqueda semántica",
@@ -1050,7 +1051,7 @@ var m = [
 		entidadDep: "Motor Central Aybar Atiende",
 		inputReal: "Identificador del cliente: devuelve historial de tickets ATC, asientos del Libro y exposición legal SGD."
 	}
-}, ie = {
+}, oe = {
 	kyc: {
 		hu: "Identificación y verificación del titular",
 		rfRn: "Validación contra el registro único corporativo",
@@ -1109,7 +1110,7 @@ var m = [
 		hu: "Detalle reservado de movimientos financieros",
 		rfRn: "Control de acceso por perfil del usuario",
 		entidadDep: "Cobranza · Motor de Consultas",
-		inputReal: "Detalle financiero reservado (restringido para perfil Gestor; visible para Supervisor y Legal)."
+		inputReal: "Detalle financiero reservado: total pagado, saldo pendiente y días de mora; se muestra según el permiso del rol."
 	},
 	docs: {
 		hu: "Buscador inteligente de documentos",
@@ -1145,94 +1146,69 @@ var m = [
 		hu: "Evaluación de riesgo legal y regulatorio",
 		rfRn: "Acceso controlado por perfil y custodia 6/6",
 		entidadDep: "Mesa SGD · Handoff Legal",
-		inputReal: "Riesgo regulatorio/judicial y paquete documental 6/6 (restringido para perfil Gestor)."
+		inputReal: "Riesgo regulatorio/judicial y paquete documental 6/6 (solo Supervisor, Legal y Mesa SGD)."
 	}
-}, b = [
-	{
-		id: "saldo-ecta",
-		nombre: "Saldo total y estado de cuenta por lote",
-		respuesta: (e, t) => `Lote ${t} (${e.proyecto}): ${e.datos.saldo?.[0]?.[1] ?? "S/ 0"} · Estado de cuenta: ${e.datos.ecta?.map((e) => `${e[0]} ${e[1]}`).join(" · ") ?? "Al día"}.`
-	},
-	{
-		id: "independizacion",
-		nombre: "Estado de independización y partida registral",
-		respuesta: (e, t) => `Lote ${t} (${e.proyecto}): Independización en trámite registral SUNARP · Acta: ${e.datos.acta?.[0]?.[1] ?? "En proceso"}.`
-	},
-	{
-		id: "boletas-abonos",
-		nombre: "Validación de boletas y últimos abonos conciliados",
-		respuesta: (e, t) => `Lote ${t}: ${e.datos.crono?.[0]?.[1] ?? "Pagos conciliados"} · Última conciliación bancaria verificada sin observaciones.`
-	},
-	{
-		id: "entregafest",
-		nombre: "Elegibilidad y requisitos para EntregaFest",
-		respuesta: (e, t) => `Lote ${t} (${e.nombre}): Estado en padrón EntregaFest verificado · Garantía: ${e.datos.gar?.[0]?.[1] ?? "Vigente"}.`
-	}
-], ae = {
-	eh: "AIN-000486",
-	jr: "ALT-001204",
-	lp: "APV-000412",
-	mq: "AIN-000482",
-	rh: "APV-000089",
-	hq: "AIN-000491"
-}, x = e.Ii(), S = x.createElement;
-x.Fragment;
-var { useState: C, useEffect: w, useMemo: oe, useRef: T, useCallback: E, lazy: D, Suspense: O } = x, k = {
+}, b = e.Ii(), x = b.createElement;
+b.Fragment;
+var { useState: S, useEffect: C, useMemo: w, useRef: T, useCallback: se, lazy: ce, Suspense: le } = b, E = {
 	Button: e.Ai,
 	Badge: e.$r,
 	Tag: e.Qr,
 	Alert: e.Gr,
 	PageHeader: e.Nr,
-	CardHeader: n,
-	CardPairs: r,
-	SegmentedControl: i,
-	SearchInput: a,
-	Tabs: t,
-	Select: o,
+	CardHeader: r,
+	CardPairs: i,
+	SegmentedControl: a,
+	SearchInput: o,
+	Tabs: n,
+	Select: s,
 	Card: c,
 	CardBody: l,
 	Breadcrumb: d,
-	FormField: s,
-	Dialog: f,
-	Table: p,
-	EmptyState: u
-}, A = (...e) => e.filter(Boolean).join(" "), j = ({ gap: e = "4", className: t, children: n, ...r }) => S("div", {
+	FormField: ee,
+	Dialog: p,
+	Table: m,
+	EmptyState: u,
+	Icono: t
+}, D = (...e) => e.filter(Boolean).join(" "), O = ({ gap: e = "4", className: t, children: n, ...r }) => x("div", {
 	...r,
-	className: A("ay-stack", `ay-stack--${e}`, t)
-}, n), M = ({ gap: e = "2", ajuste: t, justificar: n, className: r, children: i, ...a }) => S("div", {
+	className: D("ay-stack", `ay-stack--${e}`, t)
+}, n), k = ({ gap: e = "2", ajuste: t, justificar: n, className: r, children: i, ...a }) => x("div", {
 	...a,
-	className: A("ay-row", `ay-row--${e}`, t && "ay-row--wrap", n && n !== "start" && `ay-row--${n}`, r)
-}, i), se = ({ columnas: e, gap: t = "md", className: n, children: r, ...i }) => S("div", {
+	className: D("ay-row", `ay-row--${e}`, t && "ay-row--wrap", n && n !== "start" && `ay-row--${n}`, r)
+}, i), ue = ({ columnas: e, gap: t = "md", className: n, children: r, ...i }) => x("div", {
 	...i,
-	className: A("ay-grid", e && `ay-grid--${e}`, `ay-grid--gap-${t}`, n)
-}, r), N = ({ as: e = "span", estilo: t = "body", size: n, className: r, style: i, children: a, ...o }) => S(e, {
+	className: D("ay-grid", e && `ay-grid--${e}`, `ay-grid--gap-${t}`, n)
+}, r), A = ({ as: e = "span", estilo: t = "body", size: n, className: r, style: i, children: a, ...o }) => x(e, {
 	...o,
-	className: A("ay-text", `ay-text--${t}`, r),
+	className: D("ay-text", `ay-text--${t}`, r),
 	style: n ? {
 		...i,
 		fontSize: `var(--aybar-font-size-${n})`
 	} : i
-}, a), P = ({ espaciado: e = "md" }) => S("hr", {
-	className: A("ay-divider", `ay-divider--${e}`),
+}, a), de = ({ espaciado: e = "md" }) => x("hr", {
+	className: D("ay-divider", `ay-divider--${e}`),
 	"aria-hidden": "true"
-}), ce = ({ nombre: e, size: t = "md" }) => S("span", { className: A("ay-avatar", `ay-avatar--${t}`, "ay-avatar--circle") }, S("span", {
+}), fe = ({ nombre: e, size: t = "md" }) => x("span", { className: D("ay-avatar", `ay-avatar--${t}`, "ay-avatar--circle") }, x("span", {
 	className: "ay-avatar__initials",
 	"aria-hidden": "true"
-}, e.split(/\s+/).filter(Boolean).slice(0, 2).map((e) => e[0]).join("").toUpperCase()), S("span", { className: "ay-visually-hidden" }, e));
-//#endregion
-//#region src/c360/contrato.ts
-function F(e) {
-	let t = e.letrasVencidas > 0 ? `${e.letrasPagadas}/${e.totalLetras} pagadas · ${e.letrasVencidas} vencidas (${e.moraAcumulada})` : `${e.letrasPagadas}/${e.totalLetras} pagadas · ${e.actaEntregaEstado}`;
+}, e.split(/\s+/).filter(Boolean).slice(0, 2).map((e) => e[0]).join("").toUpperCase()), x("span", { className: "ay-visually-hidden" }, e)), pe = "Restringido para tu rol", j = (e) => [
+	e.proyecto,
+	e.etapa,
+	e.manzanaLote
+].filter(Boolean).join(" · ");
+function me(e, t) {
+	let n = t ? e.letrasVencidas > 0 ? `${e.letrasPagadas}/${e.totalLetras} pagadas · ${e.letrasVencidas} vencidas (${e.moraAcumulada})` : `${e.letrasPagadas}/${e.totalLetras} pagadas · ${e.actaEntregaEstado}` : `${pe} · ${e.actaEntregaEstado}`;
 	return [
 		["Empresa Vendedora", `${e.empresa} (RUC ${e.rucEmpresa})`],
 		["Titular / Comprador", `${e.clienteNombre} (${e.clienteDoc})`],
-		["Proyecto y Unidad", `${e.proyecto} · ${e.etapa} · ${e.manzanaLote} (${e.areaMetros})`],
+		["Proyecto y Unidad", `${j(e)} (${e.areaMetros})`],
 		["Registro SUNARP y Notaría", `Partida ${e.partidaMatrizSunarp} · ${e.notaria} (${e.kardexNotarial})`],
-		["Posición Financiera", `Total: ${e.precioTotal} · Inicial: ${e.cuotaInicial} · Saldo: ${e.saldoPendiente}`],
-		["Letras y Entrega", t]
+		["Posición Financiera", t ? `Total: ${e.precioTotal} · Inicial: ${e.cuotaInicial} · Saldo: ${e.saldoPendiente}` : pe],
+		["Letras y Entrega", n]
 	];
 }
-var le = (e) => [
+var he = (e) => [
 	{
 		value: "clausulas",
 		label: "Cláusulas y Linderos",
@@ -1253,14 +1229,14 @@ var le = (e) => [
 		label: "Cronograma de Pagos",
 		count: e.cronograma.length
 	}
-], I = (e) => S(N, {
+], M = (e) => x(A, {
 	estilo: "mono",
 	size: "xs"
-}, e), ue = [
+}, e), ge = [
 	{
 		key: "rol",
 		header: "Rol Contractual",
-		render: (e) => S(k.Badge, {
+		render: (e) => x(E.Badge, {
 			size: "sm",
 			tone: e.rol === "REPRESENTANTE_EMPRESA" ? "info" : "success"
 		}, e.rol)
@@ -1268,12 +1244,12 @@ var le = (e) => [
 	{
 		key: "nombre",
 		header: "Nombre y Documento",
-		render: (e) => S(j, { gap: "1" }, S("strong", null, e.nombre), I(e.documento))
+		render: (e) => x(O, { gap: "1" }, x("strong", null, e.nombre), M(e.documento))
 	},
 	{
 		key: "fechaFirma",
 		header: "Fecha y Hora de Firma",
-		render: (e) => I(e.fechaFirma)
+		render: (e) => M(e.fechaFirma)
 	},
 	{
 		key: "modalidad",
@@ -1282,13 +1258,13 @@ var le = (e) => [
 	{
 		key: "hashCustodia",
 		header: "Hash SHA-256 Custodia GLI",
-		render: (e) => I(e.hashCustodia)
+		render: (e) => M(e.hashCustodia)
 	}
-], de = [
+], _e = [
 	{
 		key: "numero",
 		header: "N.º Letra",
-		render: (e) => S(N, {
+		render: (e) => x(A, {
 			as: "strong",
 			estilo: "mono",
 			size: "xs"
@@ -1297,18 +1273,18 @@ var le = (e) => [
 	{
 		key: "vencimiento",
 		header: "Vencimiento",
-		render: (e) => I(e.vencimiento)
+		render: (e) => M(e.vencimiento)
 	},
 	{
 		key: "monto",
 		header: "Importe",
 		align: "end",
-		render: (e) => S("strong", null, e.monto)
+		render: (e) => x("strong", null, e.monto)
 	},
 	{
 		key: "estado",
 		header: "Estado",
-		render: (e) => S(k.Badge, {
+		render: (e) => x(E.Badge, {
 			size: "sm",
 			tone: e.estado === "PAGADA" ? "success" : e.estado === "VENCIDA" ? "danger" : "info"
 		}, e.estado)
@@ -1316,77 +1292,83 @@ var le = (e) => [
 	{
 		key: "fechaPago",
 		header: "Fecha de Pago",
-		render: (e) => I(e.fechaPago ?? "—")
+		render: (e) => M(e.fechaPago ?? "—")
 	},
 	{
 		key: "operacion",
 		header: "Operación Conciliada",
-		render: (e) => I(e.operacion ?? "Pendiente de abono")
+		render: (e) => M(e.operacion ?? "Pendiente de abono")
 	}
 ];
-function L(e, t) {
-	return t === "clausulas" ? S(j, { gap: "3" }, S(k.Alert, {
+function ve(e, t, n) {
+	return t === "clausulas" ? x(O, { gap: "3" }, x(E.Alert, {
 		tone: "info",
 		size: "sm",
 		title: `Zonificación y Linderos (${e.zonificacion})`
-	}, e.linderos), e.clausulas.map((e) => S(k.Card, { key: e.numero }, S(k.CardHeader, {
+	}, e.linderos), e.clausulas.map((e) => x(E.Card, { key: e.numero }, x(E.CardHeader, {
 		title: `${e.numero} CLÁUSULA — ${e.titulo}`,
 		as: "h4",
 		divider: !0,
-		actions: e.alerta ? S(k.Badge, {
+		actions: e.alerta ? x(E.Badge, {
 			size: "sm",
 			tone: "danger"
 		}, e.alerta) : void 0
-	}), S(k.CardBody, { padding: "sm" }, S(N, {
+	}), x(E.CardBody, { padding: "sm" }, x(A, {
 		as: "p",
 		estilo: "body",
 		size: "sm"
-	}, e.contenido))))) : t === "adendas" ? S(j, { gap: "3" }, e.adendas.length ? e.adendas.map((e) => S(k.Card, { key: e.codigo }, S(k.CardHeader, {
+	}, e.contenido))))) : t === "adendas" ? x(O, { gap: "3" }, e.adendas.length ? e.adendas.map((e) => x(E.Card, { key: e.codigo }, x(E.CardHeader, {
 		title: `${e.codigo} · ${e.titulo}`,
 		subtitle: `Fecha de suscripción: ${e.fecha}`,
 		as: "h4",
 		divider: !0,
-		actions: S(k.Badge, {
+		actions: x(E.Badge, {
 			size: "sm",
 			tone: e.estado === "FIRMADA" ? "success" : "warning"
 		}, e.estado)
-	}), S(k.CardBody, {
+	}), x(E.CardBody, {
 		padding: "sm",
 		gap: "sm"
-	}, S(N, {
+	}, x(A, {
 		as: "strong",
 		estilo: "label",
 		size: "sm"
-	}, e.resumen), S(N, {
+	}, e.resumen), x(A, {
 		as: "p",
 		estilo: "body",
 		size: "sm"
-	}, e.detalleClausula)))) : S(k.EmptyState, {
+	}, e.detalleClausula)))) : x(E.EmptyState, {
 		size: "compact",
 		title: "Sin adendas modificatorias",
 		description: `Se rige íntegramente por la minuta matriz firmada el ${e.fechaSuscripcion}.`
-	})) : t === "firmantes" ? S(k.Table, {
+	})) : t === "firmantes" ? x(E.Table, {
 		caption: "Firmantes y custodia criptográfica del contrato",
-		columns: ue,
+		columns: ge,
 		striped: !0,
 		rows: e.firmantes.map((e, t) => ({
 			...e,
 			id: `f${t}`
 		}))
-	}) : S(k.Table, {
+	}) : n ? x(E.Table, {
 		caption: "Cronograma de letras y estado de conciliación",
-		columns: de,
+		columns: _e,
 		striped: !0,
 		rows: e.cronograma.map((e) => ({
 			...e,
 			id: `l${e.numero}`
 		}))
-	});
+	}) : x(E.Alert, {
+		tone: "warning",
+		size: "sm",
+		title: x("span", { className: "pt-en-linea" }, x(E.Icono, {
+			name: "lock",
+			size: 16
+		}), " Cronograma restringido")
+	}, "Tu rol no ve las cuotas ni el estado de cuenta del cliente.");
 }
-function fe(e) {
-	if (!e.abierto) return null;
-	let t = _.find((t) => t.codigo === e.codigo) ?? _[0];
-	return S(k.Dialog, {
+function ye(e) {
+	let t = e.contratos.find((t) => t.codigo === e.codigo) ?? e.contratos[0];
+	return !e.abierto || !t ? null : x(E.Dialog, {
 		open: !0,
 		size: "lg",
 		"data-c360-visor": "",
@@ -1394,61 +1376,61 @@ function fe(e) {
 		onOpenChange: (t) => {
 			t || e.alCerrar();
 		}
-	}, S(j, { gap: "4" }, S(k.Card, null, S(k.CardBody, {
+	}, x(O, { gap: "4" }, x(E.Card, null, x(E.CardBody, {
 		padding: "sm",
 		gap: "sm"
-	}, S(M, {
+	}, x(k, {
 		gap: "3",
 		justificar: "between",
 		ajuste: !0
-	}, S(j, { gap: "1" }, S(N, {
+	}, x(O, { gap: "1" }, x(A, {
 		estilo: "label",
 		size: "xs"
-	}, "Seleccionar expediente contractual (SIGDA / GLI)"), S(M, {
+	}, "Seleccionar expediente contractual (SIGDA / GLI)"), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, _.map((n) => S(k.Button, {
+	}, e.contratos.map((n) => x(E.Button, {
 		key: n.codigo,
 		size: "sm",
 		variant: t.codigo === n.codigo ? "primary" : "secondary",
 		"aria-pressed": t.codigo === n.codigo,
 		onClick: () => e.alElegir(n.codigo)
-	}, `${n.codigo} · ${n.clienteNombre.split(" ")[0]}`)))), S(M, {
+	}, `${n.codigo} · ${n.manzanaLote}`)))), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(k.Badge, { tone: t.estado === "VIGENTE" ? "success" : t.estado === "EN_EVALUACION_RESOLUCION" ? "danger" : "info" }, t.estado), S(k.Badge, { tone: "neutral" }, t.tipo))))), S(k.Card, null, S(k.CardHeader, {
+	}, x(E.Badge, { tone: t.estado === "VIGENTE" ? "success" : t.estado === "EN_EVALUACION_RESOLUCION" ? "danger" : "info" }, t.estado), x(E.Badge, { tone: "neutral" }, t.tipo))))), x(E.Card, null, x(E.CardHeader, {
 		title: "Ficha Registral y Financiera",
-		subtitle: `${t.proyecto} · ${t.etapa} · ${t.manzanaLote}`,
+		subtitle: j(t),
 		as: "h3",
 		divider: !0
-	}), S(k.CardBody, { padding: "sm" }, S(k.CardPairs, { pairs: F(t) }))), S(k.Tabs, {
+	}), x(E.CardBody, { padding: "sm" }, x(E.CardPairs, { pairs: me(t, e.verFinanzas) }))), x(E.Tabs, {
 		"aria-label": "Secciones del expediente contractual",
 		variant: "underline",
 		size: "sm",
-		items: le(t),
+		items: he(t),
 		value: e.pestana,
 		onValueChange: (t) => {
 			(t === "clausulas" || t === "adendas" || t === "firmantes" || t === "cronograma") && e.alCambiarPestana(t);
 		}
-	}, L(t, e.pestana)), S(P, { espaciado: "none" }), S(M, {
+	}, ve(t, e.pestana, e.verFinanzas)), x(de, { espaciado: "none" }), x(k, {
 		gap: "2",
 		justificar: "between",
 		ajuste: !0
-	}, S(N, {
+	}, x(A, {
 		estilo: "body",
 		size: "xs"
-	}, `Expediente digital sincronizado con Repositorio S3 / GLI (Kardex ${t.kardexNotarial})`), S(M, {
+	}, `Expediente digital sincronizado con Repositorio S3 / GLI (Kardex ${t.kardexNotarial})`), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, e.verBandeja ? S(k.Button, {
+	}, e.verBandeja ? x(E.Button, {
 		size: "sm",
 		variant: "secondary",
 		onClick: e.verBandeja
-	}, "Ver tickets del titular en Bandeja") : null, t.letrasVencidas >= 3 && e.irMorosidad ? S(k.Button, {
+	}, "Ver tickets del titular en Bandeja") : null, e.verFinanzas && t.letrasVencidas >= 3 && e.irMorosidad ? x(E.Button, {
 		size: "sm",
 		variant: "danger",
 		onClick: e.irMorosidad
-	}, "Ir a Mesa de Morosidad 3 Meses") : null, S(k.Button, {
+	}, "Ir a Mesa de Morosidad 3 Meses") : null, x(E.Button, {
 		size: "sm",
 		variant: "primary",
 		onClick: e.alCerrar
@@ -1456,33 +1438,150 @@ function fe(e) {
 }
 //#endregion
 //#region src/c360/estilos.ts
-var pe = "\n.pl-c360.pt-pagina--ancha{max-inline-size:none}\n.pl-c360 .pt-escena-wrap{position:relative;inline-size:100%;min-inline-size:0;border-radius:var(--aybar-radius-lg);overflow:hidden}\n.pl-c360 .pt-escena-grafo{position:relative;inline-size:100%;min-inline-size:0;border-radius:var(--aybar-radius-lg);border:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);background:var(--aybar-color-bg-surface-sunken);overflow:hidden}\n.pl-c360 .pt-escena-grafo[hidden],.pl-c360 .atc-astra-canvas[hidden]{display:none !important}\n.pl-c360 .pt-escena-grafo canvas{display:block;inline-size:100%}\n.pl-c360 .atc-astra-canvas{display:block;inline-size:100%;block-size:calc(var(--aybar-space-4) * 35)}\n.pl-c360 .pl-atc-ficha-flotante{position:absolute;inset-block-end:var(--aybar-space-4);inset-inline-end:var(--aybar-space-4);z-index:6;inline-size:min(calc(var(--aybar-space-4) * 24),calc(100% - var(--aybar-space-8)));max-block-size:calc(100% - var(--aybar-space-8));overflow-y:auto}\n.pl-c360 .ay-segmented:not(.ay-segmented--fill){min-inline-size:0;flex-shrink:0}\n.pl-c360 .ay-row>.ay-search{flex:1 1 calc(var(--aybar-space-16) * 3);max-inline-size:none}\n.pl-c360 .ay-row>.ay-selectwrap{inline-size:auto}\n.pl-c360 .ay-grid>.ay-card{cursor:pointer}\n/* cabecera como ay-page-header de ui-angular en la consola de Daniel: panel de superficie, migas sin sangría y el estado\n   (ayEstado) en su propia línea bajo el título */\n.pl-c360 .ay-pageheader{background:var(--aybar-color-bg-surface)}\n.pl-c360 .ay-pageheader>.ay-pageheader__row{padding-inline:clamp(var(--aybar-space-4),(100vw - var(--aybar-breakpoint-md)) * 10000,var(--aybar-space-6))}\n.pl-c360 .ay-pageheader__title>.ay-row{flex-basis:100%}\n/* visor de contratos: el Dialog del artifact con las medidas de ay-modal size=\"lg\" de ui-angular (va en un portal, fuera de .pl-c360) */\n.ay-dialog[data-c360-visor]{inline-size:min(calc(var(--aybar-space-4) * 48),calc(100vw - var(--aybar-space-8)));max-inline-size:none;max-block-size:calc(100vh - var(--aybar-space-16));background:var(--aybar-color-bg-surface)}\n.ay-dialog[data-c360-visor] .ay-dialog__header{padding:var(--aybar-space-6) var(--aybar-space-6) var(--aybar-space-4);border-block-end:0}\n.ay-dialog[data-c360-visor] .ay-dialog__body{padding:0 var(--aybar-space-6) var(--aybar-space-6);font-size:var(--aybar-font-size-sm);line-height:var(--aybar-font-leading-relaxed)}\n.ay-dialog[data-c360-visor] .ay-card__pairs dd{overflow-wrap:anywhere}\n", R = !1;
-function me() {
-	if (R || typeof document > "u" || (R = !0, document.getElementById("c360-daniel-estilos"))) return;
+var be = "\n.pl-c360.pt-pagina--ancha{max-inline-size:none}\n.pl-c360 .pt-escena-wrap{position:relative;inline-size:100%;min-inline-size:0;border-radius:var(--aybar-radius-lg);overflow:hidden}\n.pl-c360 .pt-escena-grafo{position:relative;inline-size:100%;min-inline-size:0;border-radius:var(--aybar-radius-lg);border:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);background:var(--aybar-color-bg-surface-sunken);overflow:hidden}\n.pl-c360 .pt-escena-grafo[hidden],.pl-c360 .atc-astra-canvas[hidden]{display:none !important}\n.pl-c360 .pt-escena-grafo canvas{display:block;inline-size:100%}\n.pl-c360 .atc-astra-canvas{display:block;inline-size:100%;block-size:calc(var(--aybar-space-4) * 35)}\n.pl-c360 .pl-atc-ficha-flotante{position:absolute;inset-block-end:var(--aybar-space-4);inset-inline-end:var(--aybar-space-4);z-index:6;inline-size:min(calc(var(--aybar-space-4) * 24),calc(100% - var(--aybar-space-8)));max-block-size:calc(100% - var(--aybar-space-8));overflow-y:auto}\n.pl-c360 .ay-segmented:not(.ay-segmented--fill){min-inline-size:0;flex-shrink:0}\n.pl-c360 .ay-row>.ay-search{flex:1 1 calc(var(--aybar-space-16) * 3);max-inline-size:none}\n.pl-c360 .ay-row>.ay-selectwrap{inline-size:auto}\n.pl-c360 .ay-grid>.ay-card{cursor:pointer}\n/* cabecera como ay-page-header de ui-angular en la consola de Daniel: panel de superficie, migas sin sangría y el estado\n   (ayEstado) en su propia línea bajo el título */\n.pl-c360 .ay-pageheader{background:var(--aybar-color-bg-surface)}\n.pl-c360 .ay-pageheader>.ay-pageheader__row{padding-inline:clamp(var(--aybar-space-4),(100vw - var(--aybar-breakpoint-md)) * 10000,var(--aybar-space-6))}\n.pl-c360 .ay-pageheader__title>.ay-row{flex-basis:100%}\n/* visor de contratos: el Dialog del artifact con las medidas de ay-modal size=\"lg\" de ui-angular (va en un portal, fuera de .pl-c360) */\n.ay-dialog[data-c360-visor]{inline-size:min(calc(var(--aybar-space-4) * 48),calc(100vw - var(--aybar-space-8)));max-inline-size:none;max-block-size:calc(100vh - var(--aybar-space-16));background:var(--aybar-color-bg-surface)}\n.ay-dialog[data-c360-visor] .ay-dialog__header{padding:var(--aybar-space-6) var(--aybar-space-6) var(--aybar-space-4);border-block-end:0}\n.ay-dialog[data-c360-visor] .ay-dialog__body{padding:0 var(--aybar-space-6) var(--aybar-space-6);font-size:var(--aybar-font-size-sm);line-height:var(--aybar-font-leading-relaxed)}\n.ay-dialog[data-c360-visor] .ay-card__pairs dd{overflow-wrap:anywhere}\n", xe = !1;
+function Se() {
+	if (xe || typeof document > "u" || (xe = !0, document.getElementById("c360-daniel-estilos"))) return;
 	let e = document.createElement("style");
-	e.id = "c360-daniel-estilos", e.textContent = pe, document.head.append(e);
+	e.id = "c360-daniel-estilos", e.textContent = be, document.head.append(e);
+}
+//#endregion
+//#region src/c360/modelo.ts
+var N = e.E, Ce = () => ({
+	datos: e.k().datos,
+	persona: e.A()
+}), we = (t, n = "info") => e.Wr({
+	message: t,
+	tone: n
+}), Te = (e, t, n) => h.__vista360(e, t, n), Ee = (t) => e.Kn(t), De = (t) => e.Ut(t), Oe = (t) => e.qn(t), ke = (t) => e.At(t), Ae = (t, n) => !!e.sn[t]?.(n), je = e.yt, Me = (e) => h.__fuentes360.find((t) => t.id === e)?.fuente ?? null, Ne = (t, n) => {
+	let r = Me(t);
+	r && e.O.fuente(r, n);
+};
+function Pe(t) {
+	let n = e.Q.find((e) => e.id === t.garantias[0]?.entregaId)?.clienteId, r = [
+		"cli-001",
+		t.casosResolucion[0]?.clienteId,
+		n,
+		"cli-014",
+		"cli-022",
+		"cli-012",
+		"cli-009"
+	];
+	return [...new Set(r.filter((e) => !!e))].map(Ee).filter((e) => !!e);
+}
+var Fe = (e) => Math.max(0, Number.parseInt(e.replace(/\D/g, ""), 10) - 1 || 0), Ie = (e) => e.split(/\s+/).filter(Boolean).slice(0, 2).map((e) => e[0]).join("").toUpperCase(), Le = (e) => e.split(" · ")[0] ?? e, Re = (e) => e.split(" · ").slice(1).join(" · ") || e, ze = (e) => e.estado !== "CLOSED" && e.estado !== "RESOLVED", Be = (e, t, n) => h.__ticketCon360(e, t, n), Ve = (e, t) => h.__sintesis360(e, t), He = (e) => v[Fe(e) % v.length];
+function Ue(e, t) {
+	let n = He(e.id), r = De(e)[0], i = n.datos[t] ?? [], a = (e) => n.lotes.reduce((e, t) => r ? e.split(t).join(Re(r.descripcion)) : e, e);
+	return i.filter(([e]) => !/^Sin /.test(e)).map(([e, t]) => [a(e), a(t)]);
+}
+var P = (e) => `S/ ${e.toLocaleString("es-PE", {
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2
+})}`, F = (e) => `${e.getFullYear()}-${String(e.getMonth() + 1).padStart(2, "0")}-${String(e.getDate()).padStart(2, "0")}`, We = (e) => e.toLocaleDateString("es-PE", {
+	day: "numeric",
+	month: "long",
+	year: "numeric"
+}), I = (e) => e.toLocaleDateString("es-PE", {
+	day: "2-digit",
+	month: "short",
+	year: "numeric"
+}), Ge = {
+	mora: ["LA-2023-0117", "VS-2024-0891"],
+	entregado: ["MS-2025-0210", "RB-2024-0318"],
+	alDia: ["VS-2025-0507", "VS-2024-0412"]
+};
+function Ke(t, n) {
+	let r = Fe(n.id), i = `DNI ${Oe(n.dni)}`, a = e.Q.filter((e) => e.clienteId === n.id), o = e.Vt(n).filter((e) => e.tipo === "Adenda"), s = De(n), ee = s.some((e) => a.some((t) => t.unidad.includes(Re(e.descripcion))));
+	return s.map((s, c) => {
+		let l = e.Ht(n, s, t.ahora, e.Nt(t, s.id)), u = l.cuotas.filter((e) => e.estado === "Vencida"), d = t.casosResolucion.find((e) => e.loteId === s.id), te = u.length >= 3 || !!(d && d.estado !== "REGULARIZADO"), f = a.find((e) => e.unidad.includes(Re(s.descripcion))) ?? (c === 0 && !ee ? a[0] : void 0), ne = te ? Ge.mora : f ? Ge.entregado : Ge.alDia, p = re.find((e) => e.codigo === ne[(r + c) % ne.length]) ?? re[0], m = Le(s.descripcion), h = Re(s.descripcion), g = l.cuotas[0]?.monto ?? 0, _ = s.precio - g * l.cuotas.length, ie = v.find((e) => e.k === p.clienteKey360), y = [
+			[p.clienteNombre, n.nombre],
+			[p.clienteDoc, i],
+			[p.codigo, s.contrato],
+			[`${p.proyecto} - ${p.etapa}`, m],
+			[p.proyecto, m],
+			...ie ? ie.lotes.map((e) => [`Lote ${e}`, `lote ${h}`]) : [],
+			...ie?.datos.cont?.filter(([e]) => e.includes("@")).map(([e]) => [e, n.correo]) ?? []
+		], ae = new Map(y.filter(([e]) => e)), oe = new RegExp([...ae.keys()].sort((e, t) => t.length - e.length).map((e) => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g"), b = (e) => e.replace(oe, (e) => ae.get(e) ?? e), x = (() => {
+			let e = l.cuotas.findIndex((e) => e.estado !== "Pagada"), t = Math.max(0, (e < 0 ? l.cuotas.length : e) - 3);
+			return l.cuotas.slice(t, t + 5);
+		})().map((e) => ({
+			numero: e.n,
+			vencimiento: F(e.vence),
+			monto: P(e.monto),
+			estado: e.estado === "Pagada" ? "PAGADA" : e.estado === "Vencida" ? "VENCIDA" : "POR_VENCER",
+			...e.estado === "Pagada" ? {
+				fechaPago: F(e.vence),
+				operacion: `BCP-${String(((r + 7) * 7919 + e.n * 104729) % 9e5 + 1e5)}`
+			} : {}
+		})), S = p.clausulas.map((e) => /Precio/i.test(e.titulo) ? {
+			...e,
+			contenido: `El precio total pactado de común acuerdo asciende a ${P(s.precio)}, cancelados mediante una cuota inicial de ${P(_)} y el saldo de ${P(s.precio - _)} financiado en ${l.cuotas.length} letras mensuales iguales de ${P(g)} con vencimiento el día ${l.cuotas[0]?.vence.getDate() ?? 5} de cada mes.`
+		} : /Objeto|Transferencia/i.test(e.titulo) ? {
+			...e,
+			contenido: `Por el presente instrumento, LA VENDEDORA transfiere en compraventa con reserva de propiedad a favor de EL COMPRADOR (${n.nombre}, ${i}) el lote ${h} del proyecto ${m}, contrato ${s.contrato}.`
+		} : {
+			...e,
+			contenido: b(e.contenido),
+			...e.alerta ? { alerta: b(e.alerta) } : {}
+		});
+		return {
+			...p,
+			codigo: s.contrato,
+			estado: te ? "EN_EVALUACION_RESOLUCION" : f ? "ENTREGADO_CON_GARANTIA" : "VIGENTE",
+			clienteNombre: n.nombre,
+			clienteDoc: i,
+			clienteKey360: n.id,
+			proyecto: m,
+			etapa: "",
+			manzanaLote: h,
+			fechaSuscripcion: We(s.firmado),
+			precioTotal: P(s.precio),
+			cuotaInicial: P(_),
+			capitalFinanciado: P(s.precio - _),
+			totalLetras: l.cuotas.length,
+			letrasPagadas: l.pagadas,
+			letrasVencidas: u.length,
+			saldoPendiente: P(l.saldo),
+			moraAcumulada: u.length ? `${P(u.length * g)} · ${l.diasMora} días de mora` : P(0),
+			actaEntregaEstado: f ? `Acta ${f.id} firmada el ${I(f.entregada)}` : "Sin acta de entrega (lote no entregado)",
+			clausulas: S,
+			adendas: o.map((e, t) => ({
+				codigo: `ADE-${s.contrato}-${String(t + 1).padStart(2, "0")}`,
+				fecha: I(e.fecha),
+				titulo: e.titulo,
+				estado: "FIRMADA",
+				resumen: e.texto,
+				detalleClausula: `ACUERDO SEGUNDO: Las partes acuerdan sustituir el objeto de la compraventa por el lote ${h}, reconociendo el 100% de las cuotas abonadas a la fecha y manteniendo la cuota mensual en ${P(g)}.`
+			})),
+			firmantes: p.firmantes.filter((e) => e.rol !== "COPROPIETARIO").map((e) => e.rol === "COMPRADOR_TITULAR" ? {
+				...e,
+				nombre: n.nombre,
+				documento: i,
+				fechaFirma: `${F(s.firmado)} ${e.fechaFirma.split(" ")[1] ?? ""}`.trim()
+			} : {
+				...e,
+				fechaFirma: `${F(s.firmado)} ${e.fechaFirma.split(" ")[1] ?? ""}`.trim()
+			}),
+			cronograma: x
+		};
+	});
+}
+function qe() {
+	e.y.telefono = "", e.y.cliente = null;
+}
+function Je(t, n, r) {
+	if (!Ae("atender", n.rol) && n.rol !== "COORDINADOR_CX") return 0;
+	let i = n.rol === "SUPERVISOR" || n.rol === "COORDINADOR_CX", a = e.__h44.areas(n.id);
+	return t.tickets.filter((e) => e.clienteId === r && (i ? a.includes(e.area) : e.area === n.area)).length;
+}
+function Ye(e) {
+	globalThis.__ptBandejaBusca = e;
 }
 //#endregion
 //#region src/c360/pagina.ts
-function he(e, t) {
-	return e === "SUPERVISOR" ? {
-		rol: "supervisor",
-		nodo: "ecta"
-	} : e === "LEGAL_RECLAMOS" || e === "MESA_SGD" ? {
-		rol: "legal",
-		nodo: "expo"
-	} : e === "COORDINADOR_CX" ? {
-		rol: "cx",
-		nodo: "tick"
-	} : t === "POSTVENTA" ? {
-		rol: "supervisor",
-		nodo: "gar"
-	} : {
-		rol: "gestor",
-		nodo: "lote"
-	};
+function Xe(e, t) {
+	return e === "SUPERVISOR" ? "ecta" : e === "LEGAL_RECLAMOS" || e === "MESA_SGD" ? "expo" : e === "COORDINADOR_CX" ? "tick" : t === "POSTVENTA" ? "gar" : "lote";
 }
-var ge = {
+var Ze = {
 	bandeja: () => "bandeja",
 	detalle: () => "detalle",
 	nuevo: () => "nuevo",
@@ -1490,46 +1589,58 @@ var ge = {
 	sgd: (e) => e === "expo" ? "mesa" : "morosidad",
 	garantias: () => "garantias",
 	evento: () => "fest"
-}, _e = [{
+}, Qe = [{
 	value: "po3d",
 	label: "Grafo 3D"
 }, {
 	value: "2d",
 	label: "Grafo 2D"
-}], ve = b.map((e) => ({
+}], $e = je.map((e) => ({
 	value: e.id,
 	label: e.nombre
-})), ye = (e) => y[e] ?? {
+})), et = "__ninguno", tt = (e) => ae[e] ?? {
 	hu: "Consulta 360 en línea",
 	rfRn: "Integración en tiempo real sin copia local",
 	entidadDep: e.toUpperCase(),
 	inputReal: "Consulta en línea sin copia local."
-}, be = (e) => ie[e] ?? {
+}, nt = (e) => oe[e] ?? {
 	hu: "Sección de ficha 360",
 	rfRn: "Consulta en tiempo real por perfil",
 	entidadDep: "Sistema de origen conectado",
 	inputReal: "Dato consultado en línea desde la fuente."
-}, xe = (e) => v[e] ?? {
+}, rt = (e) => y[e] ?? {
 	etiqueta: "Ir a Bandeja del Cliente",
 	destino: "bandeja",
 	moduloNombre: "Bandeja y Avance Diario"
-}, Se = (e) => m.find((t) => t.id === e)?.nombre ?? e, Ce = (e) => e.fuentes.map(Se).join(" + "), we = (e) => h.filter((t) => t.fuentes.includes(e)), Te = (e) => e.datos.cont?.[1]?.[1] ?? e.datos.cont?.[0]?.[1] ?? `${e.k}@cliente.aybar.pe`, Ee = (e, t) => e.datos[t] ?? [["Sin registros", "—"]];
-function De(e) {
-	me();
-	let t = he(e.rol, e.area), n = t.rol, [r, i] = C("po3d"), [a, o] = C("eh"), [s, c] = C(t.nodo), [l, u] = C(null), [d, f] = C(!0), [p, _] = C(!0), [v, y] = C([]), [ie, x] = C(""), [oe, E] = C(""), [D, O] = C([]), [A, F] = C(!1), [le, I] = C("respuesta en 0.54 s · 8 fuentes en línea"), [ue, de] = C(h.length), [L, pe] = C(b[0].id), [R, De] = C("C-07"), [Oe, ke] = C(""), [Ae, je] = C(!1), [Me, Ne] = C(0), [z, B] = C({
+}, it = (e) => g.find((t) => t.id === e)?.nombre ?? e, at = (e) => e.fuentes.map(it).join(" + "), ot = (e) => _.filter((t) => t.fuentes.includes(e)), st = (e) => e.toLocaleTimeString("es-PE", {
+	hour: "2-digit",
+	minute: "2-digit"
+}), ct = (e) => e.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+function lt(e) {
+	Se();
+	let { datos: t, persona: n } = Ce(), r = ke(n), i = Ae("atender", n.rol), [a, o] = S("po3d"), [s, ee] = S("cli-001"), [c, l] = S(() => Xe(e.rol, e.area)), [u, d] = S(null), [p, m] = S(!0), [h, v] = S(!0), [re, y] = S(""), [ae, oe] = S(!1), [b, w] = S(null), [se, ce] = S([]), [le, D] = S([]), [pe, j] = S(null), [me, he] = S(null), [M, ge] = S(null), [_e, ve] = S("respuesta en 0.54 s · 8 fuentes en línea"), [be, xe] = S(_.length), [Fe, He] = S(je[0]?.id ?? "saldo"), [P, F] = S(""), [We, I] = S(null), [Ge, lt] = S(!1), [ut, dt] = S(!1), [ft, pt] = S(0), [mt, ht] = S(""), [gt, _t] = S(!1), [vt, L] = S({
 		abierto: !1,
-		codigo: "VS-2025-0507",
+		codigo: "",
 		pestana: "clausulas"
-	}), V = g.find((e) => e.k === a) ?? g[0], H = h.find((e) => e.id === s) ?? h[0], Pe = l ? m.find((e) => e.id === l) ?? null : null, Fe = T(null), U = T(null), Ie = T(null), Le = T(null), Re = T(null), W = T(s), ze = T(null), Be = T(null), Ve = T(/* @__PURE__ */ new Set()), He = T([]), Ue = T(0), We = T({}), Ge = T(null), G = T(null), K = T({
+	}), R = Te(t, s, n) ?? Te(t, "cli-001", n), z = R.cliente, B = De(z), V = B[0]?.contrato ?? "—", yt = (e) => R.nodos.find((t) => t.id === e), H = R.fuentes.filter((e) => e.caida).map((e) => e.id), U = (e) => {
+		let t = yt(e);
+		return t ? t.estado === "restringido" ? "restringido" : t.fuentes.some((e) => H.includes(e)) ? "caido" : "ok" : "ok";
+	}, bt = {
+		...R,
+		nodos: R.nodos.map((e) => ({
+			...e,
+			estado: U(e.id)
+		}))
+	}, xt = R.nodos.filter((e) => e.estado !== "restringido").length, W = _.find((e) => e.id === c) ?? _[0], St = u ? g.find((e) => e.id === u) ?? null : null, G = t.tickets.filter((e) => e.clienteId === z.id).sort((e, t) => +t.abierto - e.abierto), K = G.filter(ze), q = r.lotes, Ct = r.cuotas, wt = U("cont") === "ok", Tt = U("tick") === "ok", Et = T(null), Dt = T(null), Ot = T(null), kt = T(null), At = T(null), jt = T(c), Mt = T(null), Nt = T(null), Pt = T(/* @__PURE__ */ new Set()), Ft = T([]), It = T(0), Lt = T({}), Rt = T(null), zt = T(null), J = T({
 		seleccionarNodo: (e) => {},
 		inspeccionarFuente: (e) => {}
-	}), Ke = (e) => {
-		let t = n === "cx" ? "supervisor" : n;
-		return e.restringidoPara?.includes(t) ? {
+	}), Bt = (e) => {
+		let t = U(e.id);
+		return t === "restringido" ? {
 			codigo: "locked",
 			tono: "warning",
 			etiqueta: "Restringido"
-		} : e.fuentes.some((e) => v.includes(e)) ? {
+		} : t === "caido" ? {
 			codigo: "down",
 			tono: "danger",
 			etiqueta: "No disponible"
@@ -1538,86 +1649,129 @@ function De(e) {
 			tono: "success",
 			etiqueta: "En línea"
 		};
-	}, qe = (e) => Ee(V, e), Je = (e) => qe(e)[0]?.[1] ?? "—";
-	W.current = s, ze.current = D.length > 0 ? { hits: [...D] } : null, Ge.current = {
-		fuentes: m,
-		nodos: h.map((e) => ({
+	}, Vt = (e) => {
+		let t = yt(e)?.filas ?? [["Sin registros", "—"]];
+		if (e !== "llam" && e !== "correos") return t;
+		let n = Ue(z, e), r = t.filter(([e]) => !/^Sin /.test(e));
+		return r.length || n.length ? [...r, ...n] : t;
+	}, Ht = (e) => Vt(e)[0]?.[1] ?? "—", Ut = (e, t) => x(E.Badge, {
+		key: t,
+		size: "sm",
+		tone: "warning"
+	}, x(E.Icono, {
+		name: "lock",
+		size: 16
+	}), ` ${e}`);
+	jt.current = c, Mt.current = se.length > 0 ? { hits: [...se] } : null, Rt.current = {
+		fuentes: g,
+		nodos: _.map((e) => ({
 			id: e.id,
 			nombre: e.nombre,
 			fuentes: e.fuentes,
-			codigo: Ke(e).codigo
+			codigo: Bt(e).codigo
 		})),
-		sel: s,
-		caidas: v,
+		sel: c,
+		caidas: H,
 		cliente: {
-			iniciales: V.iniciales,
-			lotes: V.lotes
+			iniciales: Ie(z.nombre),
+			lotes: q ? B.map((e) => Re(e.descripcion)) : []
 		}
 	};
-	let q = (e) => {
-		u(null), c(e), W.current = e, f(!0), _(!0);
-	}, Ye = (e) => {
-		u(e);
-		let t = h.find((t) => t.fuentes.includes(e));
-		t && (c(t.id), W.current = t.id), f(!0), _(!0);
+	let Y = (e) => {
+		d(null), l(e), jt.current = e, m(!0), v(!0);
+	}, Wt = (e) => {
+		d(e);
+		let t = _.find((t) => t.fuentes.includes(e));
+		t && (l(t.id), jt.current = t.id), m(!0), v(!0);
 	};
-	K.current = {
-		seleccionarNodo: q,
-		inspeccionarFuente: Ye
+	J.current = {
+		seleccionarNodo: Y,
+		inspeccionarFuente: Wt
 	};
-	let J = (e, t = "clausulas") => B((n) => ({
+	let X = (e, t = "clausulas") => L((n) => ({
 		abierto: !0,
 		codigo: e || n.codigo,
 		pestana: t
-	})), Xe = (e) => {
-		let t = xe(e).destino;
-		return t === "contrato" ? null : ge[t]?.(e) ?? "bandeja";
-	}, Y = (t) => {
-		let n = Xe(t);
-		return n === null || e.puede(n);
-	}, X = (t) => {
-		let n = Xe(t);
-		n === null ? J(V.contratoPrincipal, t === "crono" || t === "saldo" ? "cronograma" : t === "docs" ? "adendas" : "clausulas") : e.ir(n, {
-			numero: ae[V.k],
-			nombre: V.nombre,
-			dni: V.dni
-		});
-	}, Ze = (e) => {
+	})), Gt = (r) => {
+		let i = rt(r);
+		if (U(r) === "restringido") return { motivo: "Dato restringido para tu rol: no lleva a otro módulo." };
+		if (i.destino === "contrato") {
+			if (!q || !B.length) return null;
+			let e = r === "crono" || r === "saldo" ? "cronograma" : r === "docs" ? "adendas" : "clausulas";
+			return {
+				etiqueta: i.etiqueta,
+				ir: () => X(V, e)
+			};
+		}
+		let a = Ze[i.destino]?.(r) ?? "bandeja";
+		if (!e.puede(a)) return { motivo: `Tu rol no tiene acceso a ${i.moduloNombre}.` };
+		if (a === "detalle") {
+			let n = Be(t, z.id, r === "llam" ? "Teléfono" : "Correo");
+			return n ? {
+				etiqueta: `${n.con ? i.etiqueta : "Abrir el último ticket del cliente"} ${n.t.numero}`,
+				ir: () => e.ir("detalle", { numero: n.t.numero })
+			} : { motivo: "El cliente no tiene tickets." };
+		}
+		return a === "bandeja" ? G.length ? Je(t, n, z.id) ? {
+			etiqueta: i.etiqueta,
+			ir: () => {
+				Ye(z.dni), e.ir("bandeja", {});
+			}
+		} : { motivo: "Tu Bandeja solo muestra tus áreas y los tickets de este cliente son de otra: ábrelos desde «Tickets previos»." } : { motivo: "El cliente no tiene tickets." } : {
+			etiqueta: i.etiqueta,
+			ir: () => e.ir(a, {})
+		};
+	}, Kt = (e, t) => {
+		let n = Gt(e);
+		return n && "ir" in n ? Q({
+			variant: t,
+			onClick: n.ir
+		}, `${n.etiqueta} →`) : null;
+	}, qt = (e) => {
+		let t = Gt(e);
+		return t && "motivo" in t ? x(A, {
+			as: "p",
+			estilo: "subtitle",
+			size: "xs"
+		}, t.motivo) : null;
+	}, Jt = () => {
+		w(null), ce([]), D([]), j(null);
+	}, Yt = (e) => {
 		if (!e) return;
-		F(!1), o(e);
-		let t = g.find((t) => t.k === e);
-		t?.lotes[0] && De(t.lotes[0]), ke("");
-	}, Qe = (e, t, n) => {
-		let r = n === "cx" ? "supervisor" : n, i = {
-			cliente: { nombre: e.nombre },
-			fuentes: m.map((e) => ({
+		he(null), ge(null), j(null), ee(e);
+		let t = Ee(e), n = t ? De(t)[0] : void 0;
+		F(n?.id ?? ""), I(null), ht(""), ce([]), D([]), L((e) => ({
+			...e,
+			codigo: ""
+		}));
+	}, Xt = (e) => {
+		let t = e.fuentes.filter((e) => e.caida).map((e) => e.id), n = {
+			cliente: { nombre: e.cliente.nombre },
+			fuentes: g.map((e) => ({
 				id: e.id,
 				n: e.nombre,
 				d: e.detalle,
 				caida: t.includes(e.id)
 			})),
-			nodos: h.map((e) => {
-				let n = !!e.restringidoPara?.includes(r), i = e.fuentes.some((e) => t.includes(e));
-				return {
-					id: e.id,
-					n: e.nombre,
-					estado: n ? "restringido" : i ? "caido" : "ok",
-					sem: e.semantico,
-					fuentes: e.fuentes
-				};
-			})
+			nodos: _.map((t) => ({
+				id: t.id,
+				n: t.nombre,
+				estado: e.nodos.find((e) => e.id === t.id)?.estado ?? "ok",
+				sem: t.semantico,
+				fuentes: t.fuentes
+			}))
 		};
-		Re.current = i, Ve.current = /* @__PURE__ */ new Set();
-		let a = (e) => t.includes(e) ? 1200 : m.find((t) => t.id === e)?.ms ?? 220, o = [];
-		i.fuentes.forEach((e) => o.push({
+		At.current = n, Pt.current = /* @__PURE__ */ new Set();
+		let r = (e) => t.includes(e) ? 1200 : g.find((t) => t.id === e)?.ms ?? 220, i = [];
+		n.fuentes.forEach((e) => i.push({
 			a: "c",
 			b: e.id,
 			t0: 0,
-			dur: a(e.id) * .55,
+			dur: r(e.id) * .55,
 			src: e.id
-		})), i.nodos.forEach((e) => e.fuentes.forEach((t) => {
-			let n = a(t);
-			o.push({
+		})), n.nodos.forEach((e) => e.fuentes.forEach((t) => {
+			let n = r(t);
+			i.push({
 				a: t,
 				b: e.id,
 				t0: n * .55,
@@ -1625,618 +1779,826 @@ function De(e) {
 				src: t,
 				dst: e.id
 			});
-		})), He.current = o, Ue.current = performance.now();
-		let s = Math.max(...i.nodos.map((e) => Math.min(...e.fuentes.map(a)))) + 120, c = t.length, l = `respuesta en ${(s / 1e3).toFixed(2)} s · ${c > 0 ? `${c} ${c === 1 ? "fuente no disponible" : "fuentes no disponibles"}` : `${i.fuentes.length} fuentes en línea`}`;
-		I("consultando…"), G.current !== null && clearTimeout(G.current), G.current = setTimeout(() => {
-			I(l), de(i.nodos.filter((e) => e.estado === "ok").length);
-		}, s + 140);
-	}, Z = (e = V) => Qe(e, v, n), $e = (e) => y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]), et = (e) => y((t) => t.filter((t) => !e.fuentes.includes(t))), tt = (e) => g.find((t) => t.dni.toLowerCase().includes(e) || t.doc.toLowerCase().includes(e) || t.nombre.toLowerCase().includes(e) || t.telefono.toLowerCase().includes(e) || t.lotes.some((t) => t.toLowerCase().includes(e))), nt = (e) => {
-		x(e);
-		let t = e.trim().toLowerCase();
-		if (!t) {
-			E(""), O([]);
-			return;
+		})), Ft.current = i, It.current = performance.now();
+		let a = Math.max(...n.nodos.map((e) => Math.min(...e.fuentes.map(r)))) + 120, o = t.length, s = `respuesta en ${(a / 1e3).toFixed(2)} s · ${o > 0 ? `${n.fuentes.length - o} de ${n.fuentes.length} fuentes respondieron` : `${n.fuentes.length} fuentes en línea`}`;
+		ve("consultando…"), zt.current !== null && clearTimeout(zt.current), zt.current = setTimeout(() => {
+			ve(s), xe(n.nodos.filter((e) => e.estado === "ok").length);
+		}, a + 140);
+	}, Z = () => Xt(bt), Zt = (e) => Ne(e, !H.includes(e)), Qt = (e) => e.forEach((e) => Ne(e, !1)), $t = (e) => Qt(e.fuentes.filter((e) => H.includes(e))), en = async (e) => {
+		Y("docs"), ce([]), D([]);
+		let t = performance.now();
+		try {
+			let n = await N.buscarDocumentos(z.id, e), r = Math.round(performance.now() - t);
+			ce(n.resultados.map((e) => ({
+				titulo: e.documento.titulo,
+				fragmento: e.fragmento,
+				relevancia: e.relevancia
+			}))), D(n.sugerencias), w(n.resultados.length ? {
+				tono: "info",
+				titulo: "Búsqueda semántica documental por significado",
+				texto: `Repositorio S3 / GLI: ${n.resultados.length} ${n.resultados.length === 1 ? "documento relevante" : "documentos relevantes"} de ${z.nombre} para «${e}» en ${r} ms, con su fragmento.`
+			} : {
+				tono: "warning",
+				titulo: "Sin coincidencias relevantes",
+				texto: `Ningún documento de ${z.nombre} coincide por significado con «${e}». Prueba con palabras exactas: ${n.sugerencias.map((e) => `«${e}»`).join(", ") || "el tipo de documento"}.`
+			});
+		} catch (e) {
+			let t = e;
+			w({
+				tono: t.status === 403 ? "danger" : "warning",
+				titulo: t.status === 403 ? "Documentos restringidos para tu rol" : "Búsqueda de documentos no disponible",
+				texto: t.message ?? "No se pudo buscar."
+			});
 		}
-		let n = tt(t);
-		n && n.k !== a && (F(!1), Ze(n.k));
-	}, rt = (e, t, n, r = V) => {
-		x(e), q(t), E(n), O(Ee(r, t).map((e, t) => ({
-			titulo: e[0],
-			fragmento: e[1],
-			relevancia: Math.max(82, 98 - t * 6)
-		}))), Z(r);
-	}, it = () => {
-		F(!0), x("DNI 99999999 (No registrado en SIGDA)");
-	}, at = (e) => {
-		let t = Le.current?.querySelector("input[type=\"search\"], input"), n = (e ?? t?.value ?? ie).trim();
-		x(n);
-		let r = n.toLowerCase();
+		Z();
+	}, tn = (e, t, n) => {
+		y(e), j(null), t === "docs" ? en(e) : (Y(t), ce([]), D([]), w({
+			tono: "info",
+			titulo: "Búsqueda semántica documental por significado",
+			texto: n
+		}), Z());
+	}, nn = (e = "") => {
+		he({ q: e }), j(null), e && y(`DNI ${e} (No registrado en SIGDA)`);
+	}, rn = async (e) => {
+		let t = kt.current?.querySelector("input[type=\"search\"], input"), n = (e ?? t?.value ?? re).trim();
+		y(n), Jt(), ge(null);
+		let r = ct(n);
 		if (!r) {
-			f(!0), _(!0), Z();
+			m(!0), v(!0), N.consultar360(z.id).catch(() => {}), Z();
 			return;
 		}
-		if (r.includes("99999999") || r.includes("no existe")) {
-			it();
+		let i = ie.find((e) => ct(e.q) === r);
+		if (i) return tn(i.q, i.nodo, i.explicacion);
+		let a = _.find((e) => ct(e.nombre) === r || e.id === r);
+		if (a) {
+			Y(a.id), Z();
 			return;
 		}
-		let i = tt(r), o = V;
-		i && i.k !== a && (Ze(i.k), o = i);
-		let s = re.find((e) => e.q.toLowerCase().includes(r) || r.includes(e.q.toLowerCase()) || r === e.nodo);
-		if (s) {
-			rt(s.q, s.nodo, s.explicacion, o);
+		let o = g.find((e) => ct(e.nombre) === r || e.id === r);
+		if (o) {
+			Wt(o.id), Z();
 			return;
 		}
-		let c = h.find((e) => e.nombre.toLowerCase().includes(r) || e.id.toLowerCase() === r);
-		if (c) {
-			O([]), E(""), q(c.id), Z(o);
-			return;
+		oe(!0);
+		let s = performance.now();
+		try {
+			let e = await N.buscarClientes360(n), t = Math.round(performance.now() - s);
+			if (e.length === 1) {
+				let n = e[0];
+				Yt(n.cliente.id), y(""), w({
+					tono: "success",
+					titulo: "Cliente encontrado en SIGDA/TAXON",
+					texto: `${n.cliente.nombre} (DNI ${Oe(n.cliente.dni)}) por ${n.criterio.toLowerCase()} en ${t} ms, con sus tickets y lotes.`
+				});
+				return;
+			}
+			if (e.length > 1) {
+				j({
+					q: n,
+					lista: e
+				});
+				return;
+			}
+			let r = n.replace(/\D/g, "");
+			if (/^\d{8}$/.test(r) && /^[\d\s.-]+$/.test(n)) return nn(r);
+			if (/^[\d\s+.-]+$/.test(n) || /^[a-z]{2,4}-?\d/i.test(n)) {
+				w({
+					tono: "warning",
+					titulo: "Sin coincidencias en el maestro",
+					texto: `Ningún cliente de SIGDA/TAXON coincide con «${n}». Revisa el DNI, el teléfono o el N.º de ticket.`
+				});
+				return;
+			}
+		} catch (e) {
+			let t = e;
+			if (t.status === 503) {
+				if (ge({
+					q: n,
+					texto: t.message ?? "SIGDA/TAXON no responde."
+				}), /^[\d\s+.-]+$/.test(n)) return;
+			} else {
+				w({
+					tono: "danger",
+					titulo: "Búsqueda de clientes restringida",
+					texto: t.message ?? "Tu rol no busca clientes."
+				});
+				return;
+			}
+		} finally {
+			oe(!1);
 		}
-		let l = m.find((e) => e.nombre.toLowerCase().includes(r) || e.id.toLowerCase() === r);
-		l ? (O([]), E(""), Ye(l.id), Z(o)) : i ? (O([]), E(""), q(i.lotes.some((e) => e.toLowerCase().includes(r)) ? "lote" : "kyc"), Z(i)) : (q("docs"), O(Ee(o, "docs").map((e, t) => ({
-			titulo: e[0],
-			fragmento: `${e[1]} · coincidencia semántica para «${n}»`,
-			relevancia: Math.max(74, 96 - t * 8)
-		}))), E(`Búsqueda semántica documental: indexación vectorial sobre S3/GLI para «${n}» completada en 310 ms.`), Z(o));
-	}, ot = () => {
-		let e = R || V.lotes[0] || "M-14";
-		if (v.includes("jose")) {
-			ke("El motor de consultas en línea no está disponible en este momento. La atención no se bloquea: continúa con el ticket y vuelve a consultar más tarde.");
-			return;
+		await en(n);
+	}, an = async () => {
+		let e = P || B[0]?.id || "";
+		lt(!0);
+		try {
+			let t = await N.consultarMotor({ clienteId: z.id }, Fe, e);
+			I({
+				tono: "success",
+				titulo: t.consulta,
+				texto: `${t.texto} Respuesta del motor de José vía API · ${st(t.fecha)}.`
+			});
+		} catch (e) {
+			let t = e;
+			I(t.status === 503 ? {
+				tono: "warning",
+				titulo: "Motor de consultas no disponible",
+				texto: `${t.message ?? ""} La atención no se bloquea: continúa con el ticket y vuelve a consultar más tarde.`
+			} : t.status === 403 ? {
+				tono: "danger",
+				titulo: "Dato no disponible para tu rol",
+				texto: t.message ?? "El motor no devuelve ese dato para tu rol; el intento queda registrado."
+			} : {
+				tono: "warning",
+				titulo: "No se pudo consultar",
+				texto: t.message ?? "Revisa la consulta y el lote."
+			});
+		} finally {
+			lt(!1);
 		}
-		let t = b.find((e) => e.id === L) ?? b[0];
-		ke(t.respuesta(V, e));
-	}, st = (t) => e.ir("nuevo", {
+	}, on = mt || K[0]?.id || et, sn = async () => {
+		_t(!0);
+		try {
+			let e = on === et ? null : on, n = await N.iniciarLlamada(z.id, e), r = e ? t.tickets.find((t) => t.id === e)?.numero : null;
+			we(`Llamada iniciada por el call center. Grabación ${n.grabacion}${r ? ` · queda como interacción del ticket ${r}` : " · queda en la ficha del cliente"}.`, "success"), pt(1), dt(!0);
+		} catch (e) {
+			we(e.message ?? "No se pudo iniciar la llamada.", "danger");
+		} finally {
+			_t(!1);
+		}
+	}, cn = (t) => e.ir("nuevo", {
 		nombre: t.nombre,
 		dni: t.dni
-	}), ct = () => e.ir("nuevo", {});
-	w(() => {
-		q(t.nodo);
-	}, [e.rol, e.area]), w(() => {
+	}), ln = () => {
+		qe(), e.ir("nuevo", {});
+	};
+	C(() => {
+		Y(Xe(e.rol, e.area));
+	}, [e.rol, e.area]);
+	let un = t.fuentesCaidas.join(",");
+	C(() => {
+		N.consultar360(z.id).catch(() => {});
+	}, [z.id, n.id]), C(() => {
 		Z();
 	}, [
-		a,
-		v,
-		n
-	]), w(() => {
-		let e = Fe.current, t = U.current;
+		z.id,
+		un,
+		n.id
+	]), C(() => {
+		let e = Et.current, t = Dt.current;
 		if (!e || !t) return;
 		let n = /* @__PURE__ */ new Map(), r = (e) => {
 			let t = n.get(e);
 			if (t) return t;
-			let r = ee(e);
+			let r = te(e);
 			return n.set(e, r), r;
 		}, i = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? !1, a = null;
 		try {
-			a = te({
+			a = f({
 				canvas: t,
 				host: e,
 				color: r,
 				reducido: i,
-				vista: Re,
-				sel: W,
-				sem: ze,
-				hover: Be,
-				lit: Ve,
-				pulsos: He,
-				t0: Ue,
-				pos: We,
-				alClickNodo: (e) => K.current.seleccionarNodo(e),
-				alClickFuente: (e) => K.current.inspeccionarFuente(e)
+				vista: At,
+				sel: jt,
+				sem: Mt,
+				hover: Nt,
+				lit: Pt,
+				pulsos: Ft,
+				t0: It,
+				pos: Lt,
+				alClickNodo: (e) => J.current.seleccionarNodo(e),
+				alClickFuente: (e) => J.current.inspeccionarFuente(e)
 			});
 		} catch (e) {
 			console.error("[grafo 3D]", e);
 		}
 		return () => a?.();
-	}, []), w(() => {
-		let e = Ie.current;
+	}, []), C(() => {
+		let e = Ot.current;
 		if (e) return ne({
 			canvas: e,
-			estado: Ge,
-			alClickNodo: (e) => K.current.seleccionarNodo(e),
-			alClickFuente: (e) => K.current.inspeccionarFuente(e),
-			alClickCliente: () => K.current.seleccionarNodo("kyc")
+			estado: Rt,
+			alClickNodo: (e) => J.current.seleccionarNodo(e),
+			alClickFuente: (e) => J.current.inspeccionarFuente(e),
+			alClickCliente: () => J.current.seleccionarNodo("kyc")
 		});
-	}, []), w(() => {
-		if (!Ae) return;
-		let e = setInterval(() => Ne((e) => e + 1), 1e3);
+	}, []), C(() => {
+		if (!ut) return;
+		let e = setInterval(() => pt((e) => e + 1), 1e3);
 		return () => clearInterval(e);
-	}, [Ae]), w(() => () => {
-		G.current !== null && clearTimeout(G.current);
+	}, [ut]), C(() => () => {
+		zt.current !== null && clearTimeout(zt.current);
 	}, []);
-	let lt = (e) => {
-		let t = U.current.getBoundingClientRect();
+	let dn = (e) => {
+		let t = Dt.current.getBoundingClientRect();
 		return [e.clientX - t.left, e.clientY - t.top];
-	}, ut = (e) => {
-		if (!U.current) return;
-		let [t, n] = lt(e), r = We.current, i = null, a = 26;
-		for (let e of h) {
+	}, fn = (e) => {
+		if (!Dt.current) return;
+		let [t, n] = dn(e), r = Lt.current, i = null, a = 26;
+		for (let e of _) {
 			let o = r[e.id];
 			if (!o) continue;
 			let s = Math.hypot(o.x - t, o.y - n);
 			s < a && (a = s, i = e.id);
 		}
-		if (i) return q(i);
-		for (let e of m) {
+		if (i) return Y(i);
+		for (let e of g) {
 			let i = r[e.id];
-			if (i && Math.hypot(i.x - t, i.y - n) < 26) return Ye(e.id);
+			if (i && Math.hypot(i.x - t, i.y - n) < 26) return Wt(e.id);
 		}
 		let o = r.c;
-		o && Math.hypot(o.x - t, o.y - n) < 32 && q("kyc");
-	}, dt = (e) => {
-		let t = U.current;
+		o && Math.hypot(o.x - t, o.y - n) < 32 && Y("kyc");
+	}, pn = (e) => {
+		let t = Dt.current;
 		if (!t) return;
-		let [n, r] = lt(e), i = We.current, a = null, o = 26;
-		for (let e of h) {
+		let [n, r] = dn(e), i = Lt.current, a = null, o = 26;
+		for (let e of _) {
 			let t = i[e.id];
 			if (!t) continue;
 			let s = Math.hypot(t.x - n, t.y - r);
 			s < o && (o = s, a = e.id);
 		}
-		if (!a) for (let e of m) {
+		if (!a) for (let e of g) {
 			let t = i[e.id];
 			if (t && Math.hypot(t.x - n, t.y - r) < 24) {
 				a = e.id;
 				break;
 			}
 		}
-		Be.current = a, t.style.cursor = a ? "pointer" : "default";
-	}, Q = (e, t) => S(k.Button, {
-		size: "sm",
-		...e
-	}, t), $ = Ke(H), ft = xe(H.id), pt = (e) => qe(e).map(([e, t]) => [e, t]), mt = (e) => {
-		let t = be(e);
+		Nt.current = a, t.style.cursor = a ? "pointer" : "default";
+	};
+	function Q(e, t) {
+		return x(E.Button, {
+			size: "sm",
+			...e
+		}, t);
+	}
+	let $ = Bt(W), mn = rt(W.id), hn = (e) => Vt(e).map(([e, t]) => [e, t]), gn = (e) => {
+		let t = nt(e);
 		return [
 			["Sistema de origen", t.entidadDep],
 			["Criterio", t.rfRn],
 			["Consulta en línea", t.inputReal]
 		];
-	}, ht = (e) => {
-		let t = ye(e.id);
+	}, _n = (e) => {
+		let t = tt(e.id);
 		return [
 			["Plataforma", t.entidadDep],
 			["Integración", t.rfRn],
 			["Consulta en línea", t.inputReal]
 		];
-	}, gt = (e) => S(M, {
+	}, vn = (e) => x(k, {
 		gap: "2",
 		ajuste: !0
 	}, ...e, Q({
 		variant: "ghost",
-		onClick: () => _(!p)
-	}, p ? "Contraer" : "Desplegar"), Q({
+		onClick: () => v(!h)
+	}, h ? "Contraer" : "Desplegar"), Q({
 		variant: "ghost",
 		"aria-label": "Cerrar ficha",
-		onClick: () => f(!1)
-	}, "Cerrar")), _t = S(k.Card, null, S(k.CardBody, null, S(j, { gap: "3" }, S("div", {
-		className: "ay-row ay-row--2 ay-row--wrap",
-		role: "search",
-		ref: Le
-	}, S(k.SearchInput, {
-		label: "Buscar cliente o documento (DNI, lote, teléfono, sección 360 o consulta en lenguaje natural)",
-		size: "sm",
-		debounce: 0,
-		value: ie,
-		onValueChange: nt,
-		onSearch: (e) => at(e),
-		placeholder: "Ej. Elena, 45892104, M-14, adenda de cambio de lote, cuotas vencidas…"
-	}), Q({
-		variant: "primary",
-		onClick: () => at()
-	}, "Consultar"), S(k.SegmentedControl, {
-		label: "Modo de visualización 360",
-		size: "sm",
-		options: _e,
-		value: r,
-		onValueChange: (e) => {
-			(e === "po3d" || e === "2d") && (i(e), requestAnimationFrame(() => window.dispatchEvent(new Event("resize"))));
-		}
-	})), S(M, {
-		gap: "2",
-		ajuste: !0,
-		"aria-label": "Clientes frecuentes y búsquedas por significado"
-	}, S(N, {
-		estilo: "label",
+		onClick: () => m(!1)
+	}, "Cerrar")), yn = (e, t) => Me(e) ? Q({
+		variant: t ? "primary" : "danger",
+		onClick: () => Zt(e)
+	}, t ? "Restaurar fuente en línea" : "Probar desconexión") : x(A, {
+		estilo: "subtitle",
 		size: "xs"
-	}, "Clientes:"), g.map((e) => Q({
-		key: e.k,
-		variant: a === e.k ? "primary" : "secondary",
-		onClick: () => Ze(e.k)
-	}, e.nombre)), S(N, {
-		estilo: "label",
-		size: "xs"
-	}, "Búsqueda semántica:"), re.map((e) => Q({
-		key: e.q,
-		variant: "ghost",
-		onClick: () => rt(e.q, e.nodo, e.explicacion)
-	}, `«${e.q}»`))), S("div", { className: "pt-escena-wrap" }, S("div", {
-		ref: Fe,
-		className: "pt-escena-grafo",
-		hidden: r !== "po3d"
-	}, S("canvas", {
-		ref: U,
-		role: "img",
-		"aria-label": `Red de consulta 360 de ${V.nombre}: ${m.length} sistemas de origen y ${h.length} datos.`,
-		onClick: (e) => ut(e.nativeEvent),
-		onMouseMove: (e) => dt(e.nativeEvent),
-		onMouseLeave: () => {
-			Be.current = null;
-		}
-	})), S("canvas", {
-		ref: Ie,
-		className: "atc-astra-canvas",
-		hidden: r !== "2d",
-		role: "img",
-		"aria-label": `Red de consulta 360 de ${V.nombre} en 2D.`
-	}), d ? Pe ? ((e) => {
-		let t = v.includes(e.id);
-		return S("div", {
+	}, "Sistema interno: su caída no se simula."), bn = (e) => {
+		let t = H.includes(e.id);
+		return x("div", {
 			className: "pl-atc-ficha-flotante",
 			role: "dialog",
 			"aria-modal": "false",
 			"aria-label": `Sistema de origen ${e.nombre}`
-		}, S(k.Card, null, S(k.CardHeader, {
+		}, x(E.Card, null, x(E.CardHeader, {
 			title: `Sistema: ${e.nombre}`,
-			subtitle: `${e.detalle} · ${ye(e.id).hu}`,
+			subtitle: `${e.detalle} · ${tt(e.id).hu}`,
 			as: "h3",
-			actions: gt([S(k.Badge, {
+			actions: vn([x(E.Badge, {
 				key: "e",
 				size: "sm",
 				tone: t ? "danger" : "success"
-			}, t ? "Sin respuesta" : "En línea"), S(k.Badge, {
+			}, t ? "Sin respuesta" : "En línea"), x(E.Badge, {
 				key: "l",
 				size: "sm",
 				tone: "info"
 			}, `Latencia ${e.ms} ms`)])
-		}), p ? S(k.CardBody, null, S(j, { gap: "3" }, S(k.CardPairs, { pairs: ht(e) }), S(j, { gap: "1" }, S(N, {
+		}), h ? x(E.CardBody, null, x(O, { gap: "3" }, x(E.CardPairs, { pairs: _n(e) }), x(O, { gap: "1" }, x(A, {
 			estilo: "label",
 			size: "xs"
-		}, `Secciones alimentadas por ${e.nombre}`), S(M, {
+		}, `Secciones alimentadas por ${e.nombre}`), x(k, {
 			gap: "2",
 			ajuste: !0
-		}, we(e.id).map((e) => Q({
+		}, ot(e.id).map((e) => Q({
 			key: e.id,
-			variant: s === e.id ? "primary" : "secondary",
-			onClick: () => q(e.id)
-		}, e.nombre)))), S(P, { espaciado: "sm" }), S(M, {
+			variant: c === e.id ? "primary" : "secondary",
+			onClick: () => Y(e.id)
+		}, e.nombre)))), x(de, { espaciado: "sm" }), x(k, {
 			gap: "2",
 			ajuste: !0
-		}, Q({
-			variant: t ? "primary" : "danger",
-			onClick: () => $e(e.id)
-		}, t ? "Restaurar fuente en línea" : "Probar desconexión"), Q({
+		}, yn(e.id, t), Q({
 			variant: "ghost",
-			onClick: () => u(null)
+			onClick: () => d(null)
 		}, "Ver nodo actual")))) : null));
-	})(Pe) : S("div", {
-		className: "pl-atc-ficha-flotante",
-		role: "dialog",
-		"aria-modal": "false",
-		"aria-label": `Nodo 360 ${H.nombre}`
-	}, S(k.Card, null, S(k.CardHeader, {
-		title: H.nombre,
-		subtitle: `${be(H.id).hu} · ${V.nombre}`,
-		as: "h3",
-		actions: gt([S(k.Badge, {
-			key: "e",
-			size: "sm",
-			tone: $.tono
-		}, $.etiqueta), S(k.Badge, {
-			key: "o",
-			size: "sm",
-			tone: "info"
-		}, `Origen: ${Ce(H)}`)])
-	}), p ? S(k.CardBody, null, S(j, { gap: "3" }, $.codigo === "locked" ? S(k.Alert, {
-		tone: "warning",
-		title: "Acceso restringido por perfil"
-	}, `Tu perfil (${e.etiquetaRol}) no tiene acceso a este dato reservado. Cambia de perfil a Supervisor o Legal en Herramientas › Ver como para visualizarlo.`) : $.codigo === "down" ? S(k.Alert, {
-		tone: "danger",
-		title: "Fuente no disponible temporalmente"
-	}, `${H.fuentes.filter((e) => v.includes(e)).map(Se).join(", ")} no responde en este instante. Las demás secciones siguen activas.`) : [S(k.CardPairs, {
-		key: "p",
-		pairs: pt(H.id)
-	}), H.semantico && D.length > 0 ? S(k.Card, { key: "s" }, S(k.CardHeader, {
+	}, xn = () => se.length > 0 ? x(E.Card, { key: "s" }, x(E.CardHeader, {
 		title: "Coincidencias semánticas",
 		as: "h4"
-	}), S(k.CardBody, null, S(j, { gap: "2" }, D.map((e) => S(M, {
+	}), x(E.CardBody, null, x(O, { gap: "2" }, se.map((e) => x(k, {
 		key: e.titulo,
 		gap: "2",
 		ajuste: !0
-	}, S(k.Badge, {
+	}, x(E.Badge, {
 		size: "sm",
 		tone: "info"
-	}, `${e.relevancia}%`), S(N, {
+	}, `${e.relevancia}%`), x(A, {
 		as: "strong",
 		estilo: "title",
 		size: "xs"
-	}, e.titulo), S(N, {
+	}, e.titulo), x(A, {
 		estilo: "subtitle",
 		size: "xs"
-	}, `«${e.fragmento}»`)))))) : null], S(P, { espaciado: "sm" }), S(k.CardPairs, { pairs: mt(H.id) }), S(M, {
+	}, `«${e.fragmento}»`)))))) : le.length > 0 ? x(O, {
+		key: "s",
+		gap: "1"
+	}, x(A, {
+		estilo: "label",
+		size: "xs"
+	}, "Sin coincidencias relevantes. Busca por palabras exactas:"), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, Y(H.id) ? Q({
+	}, le.map((e) => Q({
+		key: e,
+		variant: "ghost",
+		onClick: () => {
+			y(e), en(e);
+		}
+	}, `«${e}»`)))) : null, Sn = () => x("div", {
+		className: "pl-atc-ficha-flotante",
+		role: "dialog",
+		"aria-modal": "false",
+		"aria-label": `Nodo 360 ${W.nombre}`
+	}, x(E.Card, null, x(E.CardHeader, {
+		title: W.nombre,
+		subtitle: `${nt(W.id).hu} · ${z.nombre}`,
+		as: "h3",
+		actions: vn([$.codigo === "locked" ? Ut($.etiqueta, "e") : x(E.Badge, {
+			key: "e",
+			size: "sm",
+			tone: $.tono
+		}, $.etiqueta), x(E.Badge, {
+			key: "o",
+			size: "sm",
+			tone: "info"
+		}, `Origen: ${at(W)}`)])
+	}), h ? x(E.CardBody, null, x(O, { gap: "3" }, $.codigo === "locked" ? x(E.Alert, {
+		tone: "warning",
+		title: x("span", { className: "pt-en-linea" }, x(E.Icono, {
+			name: "lock",
+			size: 16
+		}), " Acceso restringido por perfil")
+	}, `Tu perfil (${e.etiquetaRol}) no tiene acceso a este dato reservado. Cambia de perfil a Supervisor o Legal en Herramientas › Ver como para visualizarlo.`) : $.codigo === "down" ? x(E.Alert, {
+		tone: "danger",
+		title: "Fuente no disponible temporalmente",
+		actions: Q({
+			variant: "secondary",
+			onClick: () => $t(W)
+		}, "Reintentar")
+	}, `${W.fuentes.filter((e) => H.includes(e)).map(it).join(", ")} no responde en este instante (intento a las ${st(t.ahora)}). Las demás secciones siguen activas.`) : [
+		W.semantico ? xn() : null,
+		x(E.CardPairs, {
+			key: "p",
+			pairs: hn(W.id)
+		}),
+		x(A, {
+			key: "l",
+			estilo: "subtitle",
+			size: "xs"
+		}, `Consulta en línea, sin copiar el dato · ${st(t.ahora)}`),
+		W.id === "tick" && G.length ? x(k, {
+			key: "t",
+			gap: "2",
+			ajuste: !0
+		}, G.slice(0, 4).map((t) => Q({
+			key: t.id,
+			variant: "ghost",
+			onClick: () => e.ir("detalle", { numero: t.numero })
+		}, `Abrir ticket ${t.numero} →`))) : null
+	], x(de, { espaciado: "sm" }), x(E.CardPairs, { pairs: gn(W.id) }), x(k, {
+		gap: "2",
+		ajuste: !0
+	}, Kt(W.id, "primary"), mn.destino !== "contrato" && q && B.length ? Q({
+		variant: "secondary",
+		onClick: () => X(V)
+	}, `Contrato ${V}`) : null, e.puede("nuevo") ? Q({
+		variant: "secondary",
+		onClick: () => cn(z)
+	}, "+ Crear ticket") : null), qt(W.id))) : null)), Cn = pe ? x(E.Card, null, x(E.CardHeader, {
+		title: `${pe.lista.length} clientes coinciden con «${pe.q}»`,
+		subtitle: "Maestro SIGDA/TAXON · elige al cliente correcto por su DNI parcial y su lote",
+		as: "h4",
+		actions: Q({
+			variant: "ghost",
+			onClick: () => j(null)
+		}, "Cerrar")
+	}), x(E.CardBody, null, x(O, {
+		gap: "2",
+		role: "list",
+		"aria-label": "Clientes que coinciden"
+	}, pe.lista.map((e) => x(k, {
+		key: e.cliente.id,
+		gap: "2",
+		ajuste: !0,
+		justificar: "between",
+		role: "listitem"
+	}, x(k, {
+		gap: "2",
+		ajuste: !0
+	}, x(A, {
+		as: "strong",
+		estilo: "title",
+		size: "xs"
+	}, e.cliente.nombre), x(E.Badge, {
+		size: "sm",
+		tone: "info"
+	}, `DNI ${Oe(e.cliente.dni)}`), x(E.Badge, {
+		size: "sm",
+		tone: "neutral"
+	}, e.cliente.proyectos.join(" / ")), x(A, {
+		estilo: "subtitle",
+		size: "xs"
+	}, `por ${e.criterio.toLowerCase()}`)), Q({
+		variant: "secondary",
+		onClick: () => {
+			Yt(e.cliente.id), y("");
+		}
+	}, "Elegir")))))) : null, wn = Pe(t), Tn = x(E.Card, null, x(E.CardBody, null, x(O, { gap: "3" }, x("div", {
+		className: "ay-row ay-row--2 ay-row--wrap",
+		role: "search",
+		ref: kt
+	}, x(E.SearchInput, {
+		label: "Buscar cliente o documento (DNI, nombre, lote, N.º de ticket, sección 360 o consulta en lenguaje natural)",
+		size: "sm",
+		debounce: 0,
+		value: re,
+		onValueChange: (e) => {
+			y(e), e.trim() || Jt();
+		},
+		onSearch: (e) => void rn(e),
+		placeholder: "Ej. María, 94841786, Villa Sol II, AIN-000486, adenda de cambio de lote, carta notarial…"
+	}), Q({
 		variant: "primary",
-		onClick: () => X(H.id)
-	}, `${ft.etiqueta} →`) : null, ft.destino === "contrato" ? null : Q({
-		variant: "secondary",
-		onClick: () => J(V.contratoPrincipal)
-	}, `Contrato ${V.contratoPrincipal}`), e.puede("nuevo") ? Q({
-		variant: "secondary",
-		onClick: () => st(V)
-	}, "+ Crear ticket") : null))) : null)) : null), S(M, {
+		loading: ae,
+		onClick: () => void rn()
+	}, "Consultar"), x(E.SegmentedControl, {
+		label: "Modo de visualización 360",
+		size: "sm",
+		options: Qe,
+		value: a,
+		onValueChange: (e) => {
+			(e === "po3d" || e === "2d") && (o(e), requestAnimationFrame(() => window.dispatchEvent(new Event("resize"))));
+		}
+	})), Cn, x(k, {
+		gap: "2",
+		ajuste: !0,
+		"aria-label": "Clientes frecuentes y búsquedas por significado"
+	}, x(A, {
+		estilo: "label",
+		size: "xs"
+	}, "Clientes:"), wn.map((e) => Q({
+		key: e.id,
+		variant: z.id === e.id ? "primary" : "secondary",
+		onClick: () => Yt(e.id)
+	}, e.nombre)), x(A, {
+		estilo: "label",
+		size: "xs"
+	}, "Búsqueda semántica:"), ie.map((e) => Q({
+		key: e.q,
+		variant: "ghost",
+		onClick: () => tn(e.q, e.nodo, e.explicacion)
+	}, `«${e.q}»`))), x("div", { className: "pt-escena-wrap" }, x("div", {
+		ref: Et,
+		className: "pt-escena-grafo",
+		hidden: a !== "po3d"
+	}, x("canvas", {
+		ref: Dt,
+		role: "img",
+		"aria-label": `Red de consulta 360 de ${z.nombre}: ${g.length} sistemas de origen y ${_.length} datos.`,
+		onClick: (e) => fn(e.nativeEvent),
+		onMouseMove: (e) => pn(e.nativeEvent),
+		onMouseLeave: () => {
+			Nt.current = null;
+		}
+	})), x("canvas", {
+		ref: Ot,
+		className: "atc-astra-canvas",
+		hidden: a !== "2d",
+		role: "img",
+		"aria-label": `Red de consulta 360 de ${z.nombre} en 2D.`
+	}), p ? St ? bn(St) : Sn() : null), x(k, {
 		gap: "2",
 		ajuste: !0,
 		justificar: "between"
-	}, S(M, {
+	}, x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(k.Tag, {
+	}, x(E.Tag, {
 		variant: "outline",
 		dotColor: "var(--aybar-color-secondary-400)"
-	}, "Cliente"), S(k.Tag, {
+	}, "Cliente"), x(E.Tag, {
 		variant: "outline",
 		dotColor: "var(--aybar-color-primary-500)"
-	}, `Sistema de origen (${m.length - v.length}/${m.length})`), S(k.Tag, {
+	}, `Sistema de origen (${g.length - H.length}/${g.length})`), x(E.Tag, {
 		variant: "outline",
 		dotColor: "var(--aybar-color-fg-link)"
-	}, `Dato del cliente (${ue}/${h.length})`), S(k.Tag, {
+	}, `Dato del cliente (${be}/${_.length})`), x(E.Tag, {
 		variant: "outline",
 		dotColor: "var(--aybar-color-feedback-danger-border)"
-	}, "Restringido / sin conexión")), S(M, {
+	}, "Restringido / sin conexión")), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(N, {
+	}, x(A, {
 		estilo: "label",
 		size: "xs",
 		role: "status",
 		"aria-live": "polite"
-	}, le), S(k.Badge, {
+	}, _e), x(E.Badge, {
 		size: "sm",
 		tone: "info"
-	}, "Consulta en línea (< 2 s)")))))), vt = S("aside", {
+	}, "Consulta en línea (< 2 s)")))))), En = (e, t) => {
+		let n = U(e), r = _.find((t) => t.id === e)?.nombre ?? e;
+		return n === "restringido" ? Ut(r) : n === "caido" ? x(E.Badge, {
+			size: "sm",
+			tone: "danger"
+		}, `${r}: no disponible`) : x(E.Badge, {
+			size: "sm",
+			tone: "neutral"
+		}, t);
+	}, Dn = x("aside", {
 		className: "ay-stack ay-stack--3",
 		style: { gridColumn: "span 1" },
 		"aria-label": "Cliente, controles y navegación rápida"
-	}, S(k.Card, null, S(k.CardHeader, {
-		title: V.nombre,
-		subtitle: `${V.doc} · ${V.proyecto} · Contrato ${V.contratoPrincipal}`,
+	}, x(E.Card, null, x(E.CardHeader, {
+		title: z.nombre,
+		subtitle: `DNI ${Oe(z.dni)} · ${[...new Set(z.proyectos.map(Le))].join(", ")}${q ? ` · Contrato ${V}` : ""}`,
 		as: "h3",
-		actions: S(k.Badge, {
+		actions: x(E.Badge, {
 			size: "sm",
-			tone: "success"
-		}, "Maestro SIGDA")
-	}), S(k.CardBody, null, S(j, { gap: "3" }, S(M, {
+			tone: U("kyc") === "caido" ? "danger" : "success"
+		}, U("kyc") === "caido" ? "SIGDA no disponible" : "Maestro SIGDA")
+	}), x(E.CardBody, null, x(O, { gap: "3" }, x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(k.Badge, {
-		size: "sm",
-		tone: "neutral"
-	}, `Lotes ${V.lotes.length}`), S(k.Badge, {
-		size: "sm",
-		tone: "neutral"
-	}, `Cuotas: ${Je("cuotas")}`), S(k.Badge, {
-		size: "sm",
-		tone: "neutral"
-	}, `Exposición: ${Je("expo")}`)), S(M, {
+	}, En("lote", `Lotes ${B.length}`), En("cuotas", `Cuotas vencidas: ${R.venc}`), En("tick", `Tickets ${R.nTk}`), En("expo", `Exposición: ${Ht("expo")}`), x(E.Tag, {
+		variant: "outline",
+		size: "sm"
+	}, `Datos visibles ${xt} de ${R.nodos.length}`)), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, Q({
+	}, q && B.length ? Q({
 		variant: "primary",
-		onClick: () => J(V.contratoPrincipal)
-	}, `Ver contrato ${V.contratoPrincipal}`), Y("tick") ? Q({
-		variant: "secondary",
-		onClick: () => X("tick")
-	}, "Tickets en Bandeja") : null)))), S(k.Card, null, S(k.CardHeader, {
+		onClick: () => X(V)
+	}, `Ver contrato ${V}`) : null, (() => {
+		let t = Gt("tick"), n = G[0];
+		return t && "ir" in t ? Q({
+			variant: "secondary",
+			onClick: t.ir
+		}, "Tickets en Bandeja") : Tt && n ? Q({
+			variant: "secondary",
+			onClick: () => e.ir("detalle", { numero: n.numero })
+		}, `Último ticket ${n.numero} →`) : null;
+	})())))), x(E.Card, null, x(E.CardHeader, {
 		title: "Estado de sistemas de origen",
 		subtitle: "Monitoreo de disponibilidad y continuidad por fuente",
 		as: "h3"
-	}), S(k.CardBody, null, S(M, {
+	}), x(E.CardBody, null, x(k, {
 		gap: "2",
 		ajuste: !0
 	}, Q({
-		variant: v.length === 0 ? "primary" : "secondary",
-		onClick: () => y([])
-	}, "Todas en línea"), m.map((e) => Q({
+		variant: H.length === 0 ? "primary" : "secondary",
+		onClick: () => Qt(H)
+	}, "Todas en línea"), g.map((e) => Q({
 		key: e.id,
-		variant: v.includes(e.id) ? "primary" : "secondary",
-		onClick: () => $e(e.id)
-	}, e.nombre))))), S(k.Card, null, S(k.CardHeader, {
+		variant: H.includes(e.id) ? "primary" : "secondary",
+		onClick: () => Zt(e.id),
+		disabled: !Me(e.id),
+		title: Me(e.id) ? void 0 : "Sistema interno: su caída no se simula"
+	}, e.nombre))))), x(E.Card, null, x(E.CardHeader, {
 		title: "Nodos del Grafo 360 y Redirección",
 		subtitle: "Haz clic en un nodo para inspeccionarlo o redirigir a su módulo operativo",
 		as: "h3"
-	}), S(k.CardBody, null, S(j, { gap: "3" }, S(M, {
+	}), x(E.CardBody, null, x(O, { gap: "3" }, x(k, {
 		gap: "2",
 		ajuste: !0
-	}, h.map((e) => Q({
+	}, _.map((e) => Q({
 		key: e.id,
-		variant: s === e.id && !l ? "primary" : "secondary",
-		onClick: () => q(e.id)
-	}, e.nombre))), S(M, {
+		variant: c === e.id && !u ? "primary" : "secondary",
+		onClick: () => Y(e.id),
+		leadingIcon: U(e.id) === "restringido" ? x(E.Icono, {
+			name: "lock",
+			size: 16
+		}) : void 0,
+		"aria-label": U(e.id) === "restringido" ? `${e.nombre}: restringido` : U(e.id) === "caido" ? `${e.nombre}: no disponible` : void 0
+	}, e.nombre))), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, Y(H.id) ? Q({
-		variant: "secondary",
-		onClick: () => X(H.id)
-	}, `${ft.etiqueta} →`) : null, Q({
+	}, Kt(W.id, "secondary"), Q({
 		variant: "ghost",
 		onClick: () => {
-			f(!d), _(!0);
+			m(!p), v(!0);
 		}
-	}, d ? "Ocultar ficha" : "Mostrar ficha")))))), yt = S(k.Card, null, S(k.CardBody, null, S(j, { gap: "3" }, S(M, {
+	}, p ? "Ocultar ficha" : "Mostrar ficha")), qt(W.id))))), On = Ve(bt, t), kn = Tt ? K.length ? `${K.length} ${K.length === 1 ? "ticket abierto" : "tickets abiertos"}: ${K[0].numero} · ${K[0].resumen}.` : G.length ? `Sin tickets abiertos; el último fue ${G[0].numero} · ${G[0].resumen}.` : "Primer contacto: el cliente no tiene tickets." : "Tu rol no ve los tickets del cliente.", An = [...K.map((e) => ({
+		value: e.id,
+		label: `Ticket ${e.numero}`
+	})), {
+		value: et,
+		label: "Sin ticket (solo en la ficha)"
+	}], jn = x(E.Card, null, x(E.CardBody, null, x(O, { gap: "3" }, x(k, {
 		gap: "4",
 		ajuste: !0,
 		justificar: "between"
-	}, S(M, {
+	}, x(k, {
 		gap: "3",
 		ajuste: !0
-	}, S(ce, {
-		nombre: V.nombre,
+	}, x(fe, {
+		nombre: z.nombre,
 		size: "lg"
-	}), S(j, { gap: "1" }, S(M, {
+	}), x(O, { gap: "1" }, x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(N, {
+	}, x(A, {
 		estilo: "label",
 		size: "xs"
-	}, `Clientes / ${V.nombre}`), S(k.Badge, {
+	}, `Clientes / ${z.nombre}`), x(E.Badge, {
 		size: "sm",
 		tone: "success"
-	}, "Titular verificado en SIGDA")), S(M, {
+	}, "Titular verificado en SIGDA")), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(N, {
+	}, x(A, {
 		estilo: "title",
 		size: "lg"
-	}, V.nombre), S(k.Badge, {
+	}, z.nombre), x(E.Badge, {
 		size: "sm",
 		tone: "info"
-	}, V.doc), S(k.Badge, {
+	}, `DNI ${Oe(z.dni)}`), wt ? x(E.Badge, {
 		size: "sm",
 		tone: "neutral"
-	}, V.telefono), S(k.Badge, {
+	}, z.telefono) : null, wt ? x(E.Badge, {
 		size: "sm",
 		tone: "neutral"
-	}, Te(V)), S(k.Badge, {
+	}, z.correo) : null, q ? x(E.Badge, {
 		size: "sm",
 		tone: "neutral"
-	}, `${V.proyecto} · Lote ${V.lotes.join(", ")}`), S(k.Badge, {
+	}, z.proyectos.join(" · ")) : null, q && B.length ? x(E.Badge, {
 		size: "sm",
 		tone: "info"
-	}, `Contrato ${V.contratoPrincipal}`)), S(N, {
+	}, `Contrato ${V}`) : null), x(A, {
 		as: "p",
 		estilo: "body",
 		size: "sm"
-	}, S("strong", null, "Contexto de atención:"), " ", V.estadoEmocional))), S(M, {
+	}, x("strong", null, "Contexto de atención:"), " ", kn))), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(k.Card, null, S(k.CardBody, null, S(M, {
+	}, wt && i ? x(E.Card, null, x(E.CardBody, null, x(k, {
 		gap: "3",
 		ajuste: !0
-	}, S(j, { gap: "1" }, S(N, {
+	}, x(O, { gap: "1" }, x(A, {
 		estilo: "label",
 		size: "xs"
-	}, "Central Telefónica CTI"), S(N, {
+	}, "Central Telefónica CTI"), x(A, {
 		as: "strong",
 		estilo: "mono",
 		size: "sm"
-	}, V.telefono)), Ae ? [S(k.Badge, {
+	}, z.telefono), ut ? null : x(E.Select, {
+		size: "sm",
+		"aria-label": "Registrar la llamada en",
+		options: An,
+		value: on,
+		onChange: (e) => ht(e.target.value)
+	})), ut ? [x(E.Badge, {
 		key: "b",
 		size: "sm",
 		tone: "success"
-	}, `En llamada · 00:${Me < 10 ? "0" + Me : Me}`), Q({
+	}, `En llamada · ${String(Math.floor(ft / 60)).padStart(2, "0")}:${String(ft % 60).padStart(2, "0")}`), Q({
 		key: "c",
 		variant: "danger",
 		onClick: () => {
-			je(!1), q("llam");
+			dt(!1), Y("llam");
 		}
 	}, "Colgar y guardar grabación")] : Q({
 		variant: "primary",
-		onClick: () => {
-			Ne(1), je(!0);
-		}
-	}, "Llamar")))), Q({
+		loading: gt,
+		onClick: () => void sn()
+	}, "Llamar")))) : null, q && B.length ? Q({
 		variant: "primary",
-		onClick: () => J(V.contratoPrincipal)
-	}, `Ver contrato ${V.contratoPrincipal}`), e.puede("nuevo") ? Q({
+		onClick: () => X(V)
+	}, `Ver contrato ${V}`) : null, e.puede("nuevo") ? Q({
 		variant: "secondary",
-		onClick: () => st(V)
+		onClick: () => cn(z)
 	}, "+ Crear ticket") : null, Q({
 		variant: "ghost",
-		onClick: it
-	}, "Registrar Interesado no ubicado"))), S(k.Alert, {
+		onClick: () => nn()
+	}, "Registrar Interesado no ubicado"))), x(E.Alert, {
 		tone: "info",
 		title: "Síntesis Copiloto IA en tiempo real"
-	}, `${V.sintesisIa} — `, S("strong", null, "Acción sugerida:"), ` ${V.guiaRecomendada}`)))), bt = S(k.Card, null, S(k.CardHeader, {
+	}, `${On.texto} — `, x("strong", null, "Acción sugerida:"), ` ${On.accion}`)))), Mn = q ? B : [], Nn = x(E.Card, null, x(E.CardHeader, {
 		title: "Consultas rápidas en línea",
 		subtitle: "Respuestas instantáneas del motor de consultas por lote y contrato.",
 		as: "h3",
-		actions: S(M, {
+		actions: x(k, {
 			gap: "2",
 			ajuste: !0
 		}, Q({
 			variant: "primary",
-			onClick: ot
-		}, "Consultar ahora"), Q({
+			loading: Ge,
+			disabled: !Mn.length,
+			onClick: () => void an()
+		}, "Consultar ahora"), q && B.length ? Q({
 			variant: "secondary",
-			onClick: () => J(V.contratoPrincipal)
-		}, `Abrir contrato ${V.contratoPrincipal}`))
-	}), S(k.CardBody, null, S(j, { gap: "3" }, S(se, {
+			onClick: () => X(V)
+		}, `Abrir contrato ${V}`) : null)
+	}), x(E.CardBody, null, x(O, { gap: "3" }, x(ue, {
 		columnas: 2,
 		gap: "md"
-	}, S(k.FormField, { label: "Tipo de consulta" }, S(k.Select, {
+	}, x(E.FormField, { label: "Tipo de consulta" }, x(E.Select, {
 		size: "sm",
-		options: ve,
-		value: L,
-		onChange: (e) => pe(e.target.value)
-	})), S(k.FormField, { label: "Lote del cliente" }, S(k.Select, {
+		options: $e,
+		value: Fe,
+		onChange: (e) => {
+			He(e.target.value), I(null);
+		}
+	})), x(E.FormField, { label: "Lote del cliente" }, x(E.Select, {
 		size: "sm",
-		options: V.lotes.map((e) => ({
-			value: e,
-			label: `${V.proyecto} · Lote ${e}`
-		})),
-		value: R,
-		onChange: (e) => De(e.target.value)
-	}))), Oe ? S(k.Alert, {
-		tone: v.includes("jose") ? "danger" : "success",
-		title: b.find((e) => e.id === L)?.nombre ?? "Consulta al motor"
-	}, Oe) : null, S(N, {
+		options: Mn.length ? Mn.map((e) => ({
+			value: e.id,
+			label: e.descripcion
+		})) : [{
+			value: "",
+			label: "Lotes restringidos para tu rol"
+		}],
+		value: P || Mn[0]?.id || "",
+		onChange: (e) => {
+			F(e.target.value), I(null);
+		}
+	}))), We ? x(E.Alert, {
+		tone: We.tono,
+		title: We.titulo
+	}, We.texto) : null, x(A, {
 		estilo: "subtitle",
 		size: "xs"
-	}, "Consulta ejecutada en tiempo real contra los sistemas financieros e inmobiliarios con registro de auditoría.")))), xt = S(k.Card, null, S(k.CardHeader, {
-		title: `${h.length} secciones de datos en línea de ${V.nombre} (con redirección directa por nodo)`,
+	}, "Consulta ejecutada en tiempo real contra los sistemas financieros e inmobiliarios con registro de auditoría.")))), Pn = x(E.Card, null, x(E.CardHeader, {
+		title: `${_.length} secciones de datos en línea de ${z.nombre} (con redirección directa por nodo)`,
 		subtitle: "Haz clic en cualquier tarjeta para enfocarla en el Grafo 3D o usa el botón de redirección para ir a su módulo operativo",
 		as: "h3"
-	}), S(k.CardBody, null, S(se, {
+	}), x(E.CardBody, null, x(ue, {
 		columnas: 4,
 		gap: "md"
-	}, h.map((t) => {
-		let n = Ke(t), r = xe(t.id);
-		return S(k.Card, {
-			key: t.id,
+	}, _.map((n) => {
+		let r = Bt(n), i = rt(n.id);
+		return x(E.Card, {
+			key: n.id,
 			variant: "selectable",
-			selected: s === t.id,
-			onClick: () => q(t.id)
-		}, S(k.CardHeader, {
-			title: t.nombre,
-			subtitle: `Origen: ${Ce(t)}`,
+			selected: c === n.id,
+			onClick: () => Y(n.id)
+		}, x(E.CardHeader, {
+			title: n.nombre,
+			subtitle: `Origen: ${at(n)}`,
 			as: "h4",
-			actions: S(k.Badge, {
+			actions: r.codigo === "locked" ? Ut(r.etiqueta) : x(E.Badge, {
 				size: "sm",
-				tone: n.tono
-			}, n.etiqueta)
-		}), S(k.CardBody, null, S(j, { gap: "2" }, n.codigo === "ok" ? S(k.CardPairs, { pairs: pt(t.id) }) : n.codigo === "locked" ? S(N, {
+				tone: r.tono
+			}, r.etiqueta)
+		}), x(E.CardBody, null, x(O, { gap: "2" }, r.codigo === "ok" ? x(E.CardPairs, { pairs: hn(n.id) }) : r.codigo === "locked" ? x(A, {
 			as: "p",
 			estilo: "subtitle",
 			size: "xs"
-		}, `Tu perfil (${e.etiquetaRol}) no tiene acceso a «${t.nombre.toLowerCase()}». Solicítalo a tu supervisor ATC si lo requieres.`) : S(M, {
+		}, `Tu perfil (${e.etiquetaRol}) no tiene acceso a «${n.nombre.toLowerCase()}». Solicítalo a tu supervisor ATC si lo requieres.`) : x(k, {
 			gap: "2",
 			ajuste: !0,
 			justificar: "between"
-		}, S(N, {
+		}, x(A, {
 			estilo: "subtitle",
 			size: "xs"
-		}, "No se pudo consultar. Las demás secciones siguen disponibles."), Q({
+		}, `No se pudo consultar (intento a las ${st(t.ahora)}). Las demás secciones siguen disponibles.`), Q({
 			variant: "secondary",
 			onClick: (e) => {
-				e.stopPropagation(), et(t);
+				e.stopPropagation(), $t(n);
 			}
-		}, "Reintentar")), S(P, { espaciado: "sm" }), S(M, {
+		}, "Reintentar")), x(de, { espaciado: "sm" }), x(k, {
 			gap: "2",
 			ajuste: !0,
 			justificar: "between",
 			onClick: (e) => e.stopPropagation()
-		}, S(N, {
+		}, x(A, {
 			estilo: "label",
 			size: "xs"
-		}, r.moduloNombre), Y(t.id) ? Q({
-			variant: "ghost",
-			onClick: () => X(t.id)
-		}, `${r.etiqueta} →`) : null))));
-	}))));
-	return S("div", { className: "pt-pagina pt-pagina--ancha pl-c360" }, S(k.PageHeader, {
+		}, i.moduloNombre), Kt(n.id, "ghost")))));
+	})))), Fn = g.length - H.length, In = vt.abierto ? Ke(t, z) : [];
+	return x("div", { className: "pt-pagina pt-pagina--ancha pl-c360" }, x(E.PageHeader, {
 		title: "Consulta 360 del Cliente",
 		size: "md",
-		breadcrumb: S(k.Breadcrumb, {
+		breadcrumb: x(E.Breadcrumb, {
 			label: "Ruta del módulo",
 			items: [
 				{ label: "Aybar Atiende" },
@@ -2244,80 +2606,101 @@ function De(e) {
 				{ label: "Consulta 360 del Cliente" }
 			]
 		}),
-		meta: S(M, {
+		meta: x(k, {
 			gap: "2",
 			ajuste: !0
-		}, S(k.Badge, {
-			tone: "success",
+		}, x(E.Badge, {
+			tone: Fn === g.length ? "success" : "warning",
 			dot: !0
-		}, "En línea · 8 sistemas"), S(k.Badge, { tone: "info" }, `${e.usuario} (${e.etiquetaRol})`)),
+		}, Fn === g.length ? `En línea · ${g.length} sistemas` : `${Fn} de ${g.length} sistemas en línea`), x(E.Badge, { tone: "info" }, `${e.usuario} (${e.etiquetaRol})`)),
 		description: "Ficha integral consolidada desde 8 sistemas en línea",
-		actions: Q({
+		actions: q && B.length ? Q({
 			variant: "secondary",
-			onClick: () => J(z.codigo)
-		}, `Visor de Contratos (${z.codigo})`)
-	}), S(j, { gap: "4" }, S(se, {
+			onClick: () => X(vt.codigo || V)
+		}, `Visor de Contratos (${V})`) : null
+	}), x(O, { gap: "4" }, x(ue, {
 		columnas: 3,
 		gap: "md"
-	}, S("div", { style: { gridColumn: "span 2" } }, _t), vt), A ? S(k.Alert, {
+	}, x("div", { style: { gridColumn: "span 2" } }, Tn), Dn), me ? x(E.Alert, {
 		tone: "warning",
 		title: "Cliente no ubicado en el maestro SIGDA — Registro como Interesado",
-		actions: S(M, {
+		actions: x(k, {
 			gap: "2",
 			ajuste: !0
 		}, e.puede("nuevo") ? Q({
 			variant: "primary",
-			onClick: ct
+			onClick: ln
 		}, "Registrar ticket como Interesado") : null, Q({
 			variant: "ghost",
-			onClick: () => F(!1)
+			onClick: () => {
+				he(null), y("");
+			}
 		}, "Volver a ficha 360"))
-	}, "No se encontró coincidencia para el documento consultado. Para preservar la integridad del maestro único, se registra como ", S("strong", null, "Interesado en cola de conciliación"), " con datos mínimos verificables y el ticket continúa su atención sin bloquear al cliente.") : null, v.length > 0 ? S(k.Alert, {
+	}, `${me.q ? `El DNI ${me.q} no está en SIGDA/TAXON y aquí no se crea un registro paralelo del cliente. ` : "No se encontró coincidencia para el documento consultado. "}Para preservar la integridad del maestro único, se registra como `, x("strong", null, "Interesado en cola de conciliación"), e.puede("nuevo") ? " con datos mínimos verificables y el ticket continúa su atención sin bloquear al cliente. Si atiendes un ticket, también puedes derivarlo desde su pestaña Cliente." : ". Tu rol no registra tickets: pide a un gestor que lo registre como interesado.") : null, M ? x(E.Alert, {
 		tone: "warning",
-		title: `Continuidad operativa activa — ${v.length} sistema(s) externo(s) sin respuesta`
-	}, `La vista 360 mantiene operativas las ${m.length - v.length} fuentes restantes (los nodos del sistema sin conexión se marcan como «no disponible» mientras el resto de la ficha responde con normalidad).`) : null, oe ? S(k.Alert, {
-		tone: "info",
-		title: "Búsqueda semántica documental por significado"
-	}, oe) : null, yt, S(M, {
+		title: "SIGDA/TAXON no responde — continuidad de la atención",
+		actions: x(k, {
+			gap: "2",
+			ajuste: !0
+		}, Q({
+			variant: "secondary",
+			onClick: () => void rn(M.q)
+		}, "Reintentar"), e.puede("nuevo") ? Q({
+			variant: "primary",
+			onClick: ln
+		}, "Registrar ticket con datos mínimos") : null)
+	}, `${M.texto} Puedes seguir atendiendo: registra el ticket con datos mínimos y, cuando SIGDA/TAXON vuelva, el sistema lo vincula al cliente y lo deja en su bitácora.`) : null, H.length > 0 ? x(E.Alert, {
+		tone: "warning",
+		title: `Continuidad operativa activa — ${H.length} sistema(s) externo(s) sin respuesta`,
+		actions: Q({
+			variant: "secondary",
+			onClick: () => Qt(H)
+		}, "Reintentar todos")
+	}, `La vista 360 mantiene operativas las ${g.length - H.length} fuentes restantes (los nodos del sistema sin conexión se marcan como «no disponible» mientras el resto de la ficha responde con normalidad).`) : null, b ? x(E.Alert, {
+		tone: b.tono,
+		title: b.titulo
+	}, b.texto) : null, jn, x(k, {
 		gap: "2",
 		ajuste: !0,
 		justificar: "between"
-	}, S(N, {
+	}, x(A, {
 		estilo: "subtitle",
 		size: "xs"
-	}, S("strong", null, "Vista estructurada en tarjetas (consulta directa a las fuentes de origen):"), " los datos se consultan en tiempo real sin duplicarse localmente."), S(M, {
+	}, x("strong", null, "Vista estructurada en tarjetas (consulta directa a las fuentes de origen):"), " los datos se consultan en tiempo real sin duplicarse localmente."), x(k, {
 		gap: "2",
 		ajuste: !0
-	}, S(k.Badge, {
+	}, x(E.Badge, {
 		size: "sm",
 		tone: "neutral"
-	}, le), S(k.Badge, {
+	}, _e), x(E.Badge, {
 		size: "sm",
 		tone: "info"
-	}, "Tiempo de respuesta < 2 s"))), bt, xt), S(fe, {
-		abierto: z.abierto,
-		codigo: z.codigo,
-		pestana: z.pestana,
-		alElegir: (e) => B((t) => ({
+	}, "Tiempo de respuesta < 2 s"))), Nn, Pn), x(ye, {
+		abierto: vt.abierto && In.length > 0,
+		contratos: In,
+		verFinanzas: Ct,
+		codigo: vt.codigo || V,
+		pestana: vt.pestana,
+		alElegir: (e) => L((t) => ({
 			...t,
 			codigo: e
 		})),
-		alCambiarPestana: (e) => B((t) => ({
+		alCambiarPestana: (e) => L((t) => ({
 			...t,
 			pestana: e
 		})),
-		alCerrar: () => B((e) => ({
+		alCerrar: () => L((e) => ({
 			...e,
 			abierto: !1
 		})),
-		verBandeja: e.puede("bandeja") ? () => {
-			B((e) => ({
+		verBandeja: e.puede("bandeja") && Je(t, n, z.id) ? () => {
+			L((e) => ({
 				...e,
 				abierto: !1
-			})), e.ir("bandeja", {});
+			})), Ye(z.dni), e.ir("bandeja", {});
 		} : void 0,
 		irMorosidad: e.puede("morosidad") ? () => {
-			B((e) => ({
+			L((e) => ({
 				...e,
 				abierto: !1
 			})), e.ir("morosidad", {});
@@ -2325,4 +2708,4 @@ function De(e) {
 	}));
 }
 //#endregion
-export { De as Consulta360Daniel };
+export { lt as Consulta360Daniel };

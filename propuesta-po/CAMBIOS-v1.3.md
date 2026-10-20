@@ -146,6 +146,33 @@ Pedido del equipo para la presentación: según el equipo, son requisitos del PO
   por tipo.
 - **Pruebas:** `recorrer-operacion-vivo`, `recorrer-consulta360` y `recorrer-360-redireccion` quedan desactualizadas.
 
+**Segunda actualización del 20-oct (decisiones de Brayan, [DECISIONES.md §5.11](DECISIONES.md)):** las dos páginas siguen con
+el diseño de Daniel, pero ahora usan **los clientes y tickets del mockup** y cumplen la v1.3. Los datos de Daniel quedan como
+información adicional de ejemplo.
+- **Operación en vivo (HU-067, los 10 criterios):**
+  - la planta lee los tickets del modelo, y un cambio en la Bandeja se ve en menos de un segundo;
+  - en la escena: caja del color del tipo, «n en cola · ocupados/total» por sala y casos vencidos en la Sala de Comité;
+  - al vencer el SLA, el registro de actividad muestra el correo al responsable con copia a su líder;
+  - panel del área con la carga por gestor, solo informativo;
+  - recorrido de la ficha con hora, SLA consumido y CSAT;
+  - filtro por razón social y áreas por rol;
+  - vista «Lista por área», que también entra sin WebGL;
+  - pausa y velocidad, solo en modo simulación.
+  Las acciones de la ficha (Rayo, Resolver, Reasignar y «Ver expediente») pasan por la API del mockup y sus reglas. Código:
+  `src/vivo/modelo.ts` (nuevo), `planta.ts` y `vista.ts`.
+- **Consulta 360 (HU-049 a 053):**
+  - el buscador encuentra a los clientes del mockup y lista los resultados con DNI parcial y lote;
+  - «Correos», «Llamadas», «Tickets previos», «Abrir ticket» y «+ Crear ticket» abren siempre al mismo cliente;
+  - candados por rol con «Datos visibles n de 16»;
+  - el motor no devuelve datos sin permiso y deja el intento en la auditoría;
+  - la búsqueda semántica oculta los documentos restringidos y, sin coincidencias, sugiere palabras exactas;
+  - DNI inexistente → registrar interesado; con SIGDA caído, aviso y reintento.
+  Código: `src/c360/modelo.ts` (nuevo) y `pagina.ts`.
+- **Lo que vuelve:** el filtro por razón social, la vista por área y el color por tipo.
+- **Datos personales:** ya no se usa el nombre del PO como cliente.
+- **Pruebas:** sin pruebas nuevas, por pedido del equipo. Compila y las pantallas cargan sin errores. Los recorridos de estas dos
+  páginas siguen desactualizados.
+
 Lo que contradice la HU-067 v1.3 y aun así se trajo, más la pregunta sobre la D-12 de esa rama, está en
 [DECISIONES.md §5.10](DECISIONES.md).
 
