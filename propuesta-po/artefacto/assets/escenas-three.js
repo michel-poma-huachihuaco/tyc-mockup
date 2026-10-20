@@ -4113,7 +4113,73 @@ function Fi(e, t, n, r, i, a, o) {
 		object: e
 	};
 }
-var Ii = class extends Kt {
+var Ii = class extends zr {
+	constructor(e) {
+		super(), this.isPointsMaterial = !0, this.type = "PointsMaterial", this.color = new Pn(16777215), this.map = null, this.alphaMap = null, this.size = 1, this.sizeAttenuation = !0, this.fog = !0, this.setValues(e);
+	}
+	copy(e) {
+		return super.copy(e), this.color.copy(e.color), this.map = e.map, this.alphaMap = e.alphaMap, this.size = e.size, this.sizeAttenuation = e.sizeAttenuation, this.fog = e.fog, this;
+	}
+}, Li = /*@__PURE__*/ new Qt(), Ri = /*@__PURE__*/ new oi(), zi = /*@__PURE__*/ new Sr(), Bi = /*@__PURE__*/ new W(), Vi = class extends En {
+	constructor(e = new Ar(), t = new Ii()) {
+		super(), this.isPoints = !0, this.type = "Points", this.geometry = e, this.material = t, this.morphTargetDictionary = void 0, this.morphTargetInfluences = void 0, this.updateMorphTargets();
+	}
+	copy(e, t) {
+		return super.copy(e, t), this.material = Array.isArray(e.material) ? e.material.slice() : e.material, this.geometry = e.geometry, this;
+	}
+	intersectsFrustum(e) {
+		return e.intersectsObject(this);
+	}
+	raycast(e, t) {
+		let n = this.geometry, r = this.matrixWorld, i = e.params.Points.threshold, a = n.drawRange;
+		if (n.boundingSphere === null && n.computeBoundingSphere(), zi.copy(n.boundingSphere), zi.applyMatrix4(r), zi.radius += i, e.ray.intersectsSphere(zi) === !1) return;
+		Li.copy(r).invert(), Ri.copy(e.ray).applyMatrix4(Li);
+		let o = i / ((this.scale.x + this.scale.y + this.scale.z) / 3), s = o * o, c = n.index, l = n.attributes.position;
+		if (c !== null) {
+			let n = Math.max(0, a.start), i = Math.min(c.count, a.start + a.count);
+			for (let a = n, o = i; a < o; a++) {
+				let n = c.getX(a);
+				Bi.fromBufferAttribute(l, n), Hi(Bi, n, s, r, e, t, this);
+			}
+		} else {
+			let n = Math.max(0, a.start), i = Math.min(l.count, a.start + a.count);
+			for (let a = n, o = i; a < o; a++) Bi.fromBufferAttribute(l, a), Hi(Bi, a, s, r, e, t, this);
+		}
+	}
+	updateMorphTargets() {
+		let e = this.geometry.morphAttributes, t = Object.keys(e);
+		if (t.length > 0) {
+			let n = e[t[0]];
+			if (n !== void 0) {
+				this.morphTargetInfluences = [], this.morphTargetDictionary = {};
+				for (let e = 0, t = n.length; e < t; e++) {
+					let t = n[e].name || String(e);
+					this.morphTargetInfluences.push(0), this.morphTargetDictionary[t] = e;
+				}
+			}
+		}
+	}
+};
+function Hi(e, t, n, r, i, a, o) {
+	let s = Ri.distanceSqToPoint(e);
+	if (s < n) {
+		let n = new W();
+		Ri.closestPointToPoint(e, n), n.applyMatrix4(r);
+		let c = i.ray.origin.distanceTo(n);
+		if (c < i.near || c > i.far) return;
+		a.push({
+			distance: c,
+			distanceToRay: Math.sqrt(s),
+			point: n,
+			index: t,
+			face: null,
+			faceIndex: null,
+			barycoord: null,
+			object: o
+		});
+	}
+}
+var Ui = class extends Kt {
 	constructor(e = [], t = 301, n, r, i, a, o, s, c, l) {
 		super(e, t, n, r, i, a, o, s, c, l), this.isCubeTexture = !0, this.flipY = !1;
 	}
@@ -4123,11 +4189,11 @@ var Ii = class extends Kt {
 	set images(e) {
 		this.image = e;
 	}
-}, Li = class extends Kt {
+}, Wi = class extends Kt {
 	constructor(e, t, n, r, i, a, o, s, c) {
 		super(e, t, n, r, i, a, o, s, c), this.isCanvasTexture = !0, this.needsUpdate = !0;
 	}
-}, Ri = class extends Kt {
+}, Gi = class extends Kt {
 	constructor(e, t, n = g, r, i, o, s = a, c = a, l, u = D, d = 1) {
 		if (u !== 1026 && u !== 1027) throw Error("THREE.DepthTexture: format must be either THREE.DepthFormat or THREE.DepthStencilFormat");
 		super({
@@ -4143,7 +4209,7 @@ var Ii = class extends Kt {
 		let t = super.toJSON(e);
 		return t.compareFunction = this.compareFunction, t;
 	}
-}, zi = class extends Ri {
+}, Ki = class extends Gi {
 	constructor(e, t = g, n = 301, r, i, o = a, s = a, c, l = D) {
 		let u = {
 			width: e,
@@ -4165,14 +4231,14 @@ var Ii = class extends Kt {
 	set images(e) {
 		this.image = e;
 	}
-}, Bi = class extends Kt {
+}, qi = class extends Kt {
 	constructor(e = null) {
 		super(), this.sourceTexture = e, this.isExternalTexture = !0;
 	}
 	copy(e) {
 		return super.copy(e), this.sourceTexture = e.sourceTexture, this;
 	}
-}, Vi = class e extends Ar {
+}, Ji = class e extends Ar {
 	constructor(e = 1, t = 1, n = 1, r = 1, i = 1, a = 1) {
 		super(), this.type = "BoxGeometry", this.parameters = {
 			width: e,
@@ -4205,7 +4271,7 @@ var Ii = class extends Kt {
 	static fromJSON(t) {
 		return new e(t.width, t.height, t.depth, t.widthSegments, t.heightSegments, t.depthSegments);
 	}
-}, Hi = class e extends Ar {
+}, Yi = class e extends Ar {
 	constructor(e = 1, t = 1, n = 4, r = 8, i = 1) {
 		super(), this.type = "CapsuleGeometry", this.parameters = {
 			radius: e,
@@ -4249,7 +4315,7 @@ var Ii = class extends Kt {
 	static fromJSON(t) {
 		return new e(t.radius, t.height, t.capSegments, t.radialSegments, t.heightSegments);
 	}
-}, Ui = class e extends Ar {
+}, Xi = class e extends Ar {
 	constructor(e = 1, t = 1, n = 1, r = 32, i = 1, a = !1, o = 0, s = Math.PI * 2) {
 		super(), this.type = "CylinderGeometry", this.parameters = {
 			radiusTop: e,
@@ -4302,7 +4368,7 @@ var Ii = class extends Kt {
 	static fromJSON(t) {
 		return new e(t.radiusTop, t.radiusBottom, t.height, t.radialSegments, t.heightSegments, t.openEnded, t.thetaStart, t.thetaLength);
 	}
-}, Wi = class {
+}, Zi = class {
 	constructor() {
 		this.type = "Curve", this.arcLengthDivisions = 200, this.needsUpdate = !1, this.cacheArcLengths = null;
 	}
@@ -4407,7 +4473,7 @@ var Ii = class extends Kt {
 	fromJSON(e) {
 		return this.arcLengthDivisions = e.arcLengthDivisions, this;
 	}
-}, Gi = class extends Wi {
+}, Qi = class extends Zi {
 	constructor(e = 0, t = 0, n = 1, r = 1, i = 0, a = Math.PI * 2, o = !1, s = 0) {
 		super(), this.isEllipseCurve = !0, this.type = "EllipseCurve", this.aX = e, this.aY = t, this.xRadius = n, this.yRadius = r, this.aStartAngle = i, this.aEndAngle = a, this.aClockwise = o, this.aRotation = s;
 	}
@@ -4433,12 +4499,12 @@ var Ii = class extends Kt {
 	fromJSON(e) {
 		return super.fromJSON(e), this.aX = e.aX, this.aY = e.aY, this.xRadius = e.xRadius, this.yRadius = e.yRadius, this.aStartAngle = e.aStartAngle, this.aEndAngle = e.aEndAngle, this.aClockwise = e.aClockwise, this.aRotation = e.aRotation, this;
 	}
-}, Ki = class extends Gi {
+}, $i = class extends Qi {
 	constructor(e, t, n, r, i, a) {
 		super(e, t, n, n, r, i, a), this.isArcCurve = !0, this.type = "ArcCurve";
 	}
 };
-function qi() {
+function ea() {
 	let e = 0, t = 0, n = 0, r = 0;
 	function i(i, a, o, s) {
 		e = i, t = o, n = -3 * i + 3 * a - 2 * o - s, r = 2 * i - 2 * a + o + s;
@@ -4457,7 +4523,7 @@ function qi() {
 		}
 	};
 }
-var Ji = /*@__PURE__*/ new W(), Yi = /*@__PURE__*/ new W(), Xi = /*@__PURE__*/ new qi(), Zi = /*@__PURE__*/ new qi(), Qi = /*@__PURE__*/ new qi(), $i = class extends Wi {
+var ta = /*@__PURE__*/ new W(), na = /*@__PURE__*/ new W(), ra = /*@__PURE__*/ new ea(), ia = /*@__PURE__*/ new ea(), aa = /*@__PURE__*/ new ea(), oa = class extends Zi {
 	constructor(e = [], t = !1, n = "centripetal", r = .5) {
 		super(), this.isCatmullRomCurve3 = !0, this.type = "CatmullRomCurve3", this.points = e, this.closed = t, this.curveType = n, this.tension = r;
 	}
@@ -4465,13 +4531,13 @@ var Ji = /*@__PURE__*/ new W(), Yi = /*@__PURE__*/ new W(), Xi = /*@__PURE__*/ n
 		let n = t, r = this.points, i = r.length, a = (i - +!this.closed) * e, o = Math.floor(a), s = a - o;
 		this.closed ? o += o > 0 ? 0 : (Math.floor(Math.abs(o) / i) + 1) * i : s === 0 && o === i - 1 && (o = i - 2, s = 1);
 		let c, l;
-		this.closed || o > 0 ? c = r[(o - 1) % i] : (Yi.subVectors(r[0], r[1]).add(r[0]), c = Yi);
+		this.closed || o > 0 ? c = r[(o - 1) % i] : (na.subVectors(r[0], r[1]).add(r[0]), c = na);
 		let u = r[o % i], d = r[(o + 1) % i];
-		if (this.closed || o + 2 < i ? l = r[(o + 2) % i] : (Ji.subVectors(r[i - 1], r[i - 2]).add(r[i - 1]), l = Ji), this.curveType === "centripetal" || this.curveType === "chordal") {
+		if (this.closed || o + 2 < i ? l = r[(o + 2) % i] : (ta.subVectors(r[i - 1], r[i - 2]).add(r[i - 1]), l = ta), this.curveType === "centripetal" || this.curveType === "chordal") {
 			let e = this.curveType === "chordal" ? .5 : .25, t = c.distanceToSquared(u) ** +e, n = u.distanceToSquared(d) ** +e, r = d.distanceToSquared(l) ** +e;
-			n < 1e-4 && (n = 1), t < 1e-4 && (t = n), r < 1e-4 && (r = n), Xi.initNonuniformCatmullRom(c.x, u.x, d.x, l.x, t, n, r), Zi.initNonuniformCatmullRom(c.y, u.y, d.y, l.y, t, n, r), Qi.initNonuniformCatmullRom(c.z, u.z, d.z, l.z, t, n, r);
-		} else this.curveType === "catmullrom" && (Xi.initCatmullRom(c.x, u.x, d.x, l.x, this.tension), Zi.initCatmullRom(c.y, u.y, d.y, l.y, this.tension), Qi.initCatmullRom(c.z, u.z, d.z, l.z, this.tension));
-		return n.set(Xi.calc(s), Zi.calc(s), Qi.calc(s)), n;
+			n < 1e-4 && (n = 1), t < 1e-4 && (t = n), r < 1e-4 && (r = n), ra.initNonuniformCatmullRom(c.x, u.x, d.x, l.x, t, n, r), ia.initNonuniformCatmullRom(c.y, u.y, d.y, l.y, t, n, r), aa.initNonuniformCatmullRom(c.z, u.z, d.z, l.z, t, n, r);
+		} else this.curveType === "catmullrom" && (ra.initCatmullRom(c.x, u.x, d.x, l.x, this.tension), ia.initCatmullRom(c.y, u.y, d.y, l.y, this.tension), aa.initCatmullRom(c.z, u.z, d.z, l.z, this.tension));
+		return n.set(ra.calc(s), ia.calc(s), aa.calc(s)), n;
 	}
 	copy(e) {
 		super.copy(e), this.points = [];
@@ -4499,47 +4565,47 @@ var Ji = /*@__PURE__*/ new W(), Yi = /*@__PURE__*/ new W(), Xi = /*@__PURE__*/ n
 		return this.closed = e.closed, this.curveType = e.curveType, this.tension = e.tension, this;
 	}
 };
-function ea(e, t, n, r, i) {
+function sa(e, t, n, r, i) {
 	let a = (r - t) * .5, o = (i - n) * .5, s = e * e, c = e * s;
 	return (2 * n - 2 * r + a + o) * c + (-3 * n + 3 * r - 2 * a - o) * s + a * e + n;
 }
-function ta(e, t) {
+function ca(e, t) {
 	let n = 1 - e;
 	return n * n * t;
 }
-function na(e, t) {
+function la(e, t) {
 	return 2 * (1 - e) * e * t;
 }
-function ra(e, t) {
+function ua(e, t) {
 	return e * e * t;
 }
-function ia(e, t, n, r) {
-	return ta(e, t) + na(e, n) + ra(e, r);
+function da(e, t, n, r) {
+	return ca(e, t) + la(e, n) + ua(e, r);
 }
-function aa(e, t) {
+function fa(e, t) {
 	let n = 1 - e;
 	return n * n * n * t;
 }
-function oa(e, t) {
+function pa(e, t) {
 	let n = 1 - e;
 	return 3 * n * n * e * t;
 }
-function sa(e, t) {
+function ma(e, t) {
 	return 3 * (1 - e) * e * e * t;
 }
-function ca(e, t) {
+function ha(e, t) {
 	return e * e * e * t;
 }
-function la(e, t, n, r, i) {
-	return aa(e, t) + oa(e, n) + sa(e, r) + ca(e, i);
+function ga(e, t, n, r, i) {
+	return fa(e, t) + pa(e, n) + ma(e, r) + ha(e, i);
 }
-var ua = class extends Wi {
+var _a = class extends Zi {
 	constructor(e = new U(), t = new U(), n = new U(), r = new U()) {
 		super(), this.isCubicBezierCurve = !0, this.type = "CubicBezierCurve", this.v0 = e, this.v1 = t, this.v2 = n, this.v3 = r;
 	}
 	getPoint(e, t = new U()) {
 		let n = t, r = this.v0, i = this.v1, a = this.v2, o = this.v3;
-		return n.set(la(e, r.x, i.x, a.x, o.x), la(e, r.y, i.y, a.y, o.y)), n;
+		return n.set(ga(e, r.x, i.x, a.x, o.x), ga(e, r.y, i.y, a.y, o.y)), n;
 	}
 	copy(e) {
 		return super.copy(e), this.v0.copy(e.v0), this.v1.copy(e.v1), this.v2.copy(e.v2), this.v3.copy(e.v3), this;
@@ -4551,13 +4617,13 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v0.fromArray(e.v0), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this.v3.fromArray(e.v3), this;
 	}
-}, da = class extends Wi {
+}, va = class extends Zi {
 	constructor(e = new W(), t = new W(), n = new W(), r = new W()) {
 		super(), this.isCubicBezierCurve3 = !0, this.type = "CubicBezierCurve3", this.v0 = e, this.v1 = t, this.v2 = n, this.v3 = r;
 	}
 	getPoint(e, t = new W()) {
 		let n = t, r = this.v0, i = this.v1, a = this.v2, o = this.v3;
-		return n.set(la(e, r.x, i.x, a.x, o.x), la(e, r.y, i.y, a.y, o.y), la(e, r.z, i.z, a.z, o.z)), n;
+		return n.set(ga(e, r.x, i.x, a.x, o.x), ga(e, r.y, i.y, a.y, o.y), ga(e, r.z, i.z, a.z, o.z)), n;
 	}
 	copy(e) {
 		return super.copy(e), this.v0.copy(e.v0), this.v1.copy(e.v1), this.v2.copy(e.v2), this.v3.copy(e.v3), this;
@@ -4569,7 +4635,7 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v0.fromArray(e.v0), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this.v3.fromArray(e.v3), this;
 	}
-}, fa = class extends Wi {
+}, ya = class extends Zi {
 	constructor(e = new U(), t = new U()) {
 		super(), this.isLineCurve = !0, this.type = "LineCurve", this.v1 = e, this.v2 = t;
 	}
@@ -4596,7 +4662,7 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this;
 	}
-}, pa = class extends Wi {
+}, ba = class extends Zi {
 	constructor(e = new W(), t = new W()) {
 		super(), this.isLineCurve3 = !0, this.type = "LineCurve3", this.v1 = e, this.v2 = t;
 	}
@@ -4623,13 +4689,13 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this;
 	}
-}, ma = class extends Wi {
+}, xa = class extends Zi {
 	constructor(e = new U(), t = new U(), n = new U()) {
 		super(), this.isQuadraticBezierCurve = !0, this.type = "QuadraticBezierCurve", this.v0 = e, this.v1 = t, this.v2 = n;
 	}
 	getPoint(e, t = new U()) {
 		let n = t, r = this.v0, i = this.v1, a = this.v2;
-		return n.set(ia(e, r.x, i.x, a.x), ia(e, r.y, i.y, a.y)), n;
+		return n.set(da(e, r.x, i.x, a.x), da(e, r.y, i.y, a.y)), n;
 	}
 	copy(e) {
 		return super.copy(e), this.v0.copy(e.v0), this.v1.copy(e.v1), this.v2.copy(e.v2), this;
@@ -4641,13 +4707,13 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v0.fromArray(e.v0), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this;
 	}
-}, ha = class extends Wi {
+}, Sa = class extends Zi {
 	constructor(e = new W(), t = new W(), n = new W()) {
 		super(), this.isQuadraticBezierCurve3 = !0, this.type = "QuadraticBezierCurve3", this.v0 = e, this.v1 = t, this.v2 = n;
 	}
 	getPoint(e, t = new W()) {
 		let n = t, r = this.v0, i = this.v1, a = this.v2;
-		return n.set(ia(e, r.x, i.x, a.x), ia(e, r.y, i.y, a.y), ia(e, r.z, i.z, a.z)), n;
+		return n.set(da(e, r.x, i.x, a.x), da(e, r.y, i.y, a.y), da(e, r.z, i.z, a.z)), n;
 	}
 	copy(e) {
 		return super.copy(e), this.v0.copy(e.v0), this.v1.copy(e.v1), this.v2.copy(e.v2), this;
@@ -4659,13 +4725,13 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.v0.fromArray(e.v0), this.v1.fromArray(e.v1), this.v2.fromArray(e.v2), this;
 	}
-}, ga = class extends Wi {
+}, Ca = class extends Zi {
 	constructor(e = []) {
 		super(), this.isSplineCurve = !0, this.type = "SplineCurve", this.points = e;
 	}
 	getPoint(e, t = new U()) {
 		let n = t, r = this.points, i = (r.length - 1) * e, a = Math.floor(i), o = i - a, s = r[a === 0 ? a : a - 1], c = r[a], l = r[a > r.length - 2 ? r.length - 1 : a + 1], u = r[a > r.length - 3 ? r.length - 1 : a + 2];
-		return n.set(ea(o, s.x, c.x, l.x, u.x), ea(o, s.y, c.y, l.y, u.y)), n;
+		return n.set(sa(o, s.x, c.x, l.x, u.x), sa(o, s.y, c.y, l.y, u.y)), n;
 	}
 	copy(e) {
 		super.copy(e), this.points = [];
@@ -4692,19 +4758,19 @@ var ua = class extends Wi {
 		}
 		return this;
 	}
-}, _a = /*#__PURE__*/ Object.freeze({
+}, wa = /*#__PURE__*/ Object.freeze({
 	__proto__: null,
-	ArcCurve: Ki,
-	CatmullRomCurve3: $i,
-	CubicBezierCurve: ua,
-	CubicBezierCurve3: da,
-	EllipseCurve: Gi,
-	LineCurve: fa,
-	LineCurve3: pa,
-	QuadraticBezierCurve: ma,
-	QuadraticBezierCurve3: ha,
-	SplineCurve: ga
-}), va = class extends Wi {
+	ArcCurve: $i,
+	CatmullRomCurve3: oa,
+	CubicBezierCurve: _a,
+	CubicBezierCurve3: va,
+	EllipseCurve: Qi,
+	LineCurve: ya,
+	LineCurve3: ba,
+	QuadraticBezierCurve: xa,
+	QuadraticBezierCurve3: Sa,
+	SplineCurve: Ca
+}), Ta = class extends Zi {
 	constructor() {
 		super(), this.type = "CurvePath", this.curves = [], this.autoClose = !1;
 	}
@@ -4715,7 +4781,7 @@ var ua = class extends Wi {
 		let e = this.curves[0].getPoint(0), t = this.curves[this.curves.length - 1].getPoint(1);
 		if (!e.equals(t)) {
 			let n = e.isVector2 === !0 ? "LineCurve" : "LineCurve3";
-			this.curves.push(new _a[n](t, e));
+			this.curves.push(new wa[n](t, e));
 		}
 		return this;
 	}
@@ -4780,11 +4846,11 @@ var ua = class extends Wi {
 		super.fromJSON(e), this.autoClose = e.autoClose, this.curves = [];
 		for (let t = 0, n = e.curves.length; t < n; t++) {
 			let n = e.curves[t];
-			this.curves.push(new _a[n.type]().fromJSON(n));
+			this.curves.push(new wa[n.type]().fromJSON(n));
 		}
 		return this;
 	}
-}, ya = class extends va {
+}, Ea = class extends Ta {
 	constructor(e) {
 		super(), this.type = "Path", this.currentPoint = new U(), e && this.setFromPoints(e);
 	}
@@ -4797,19 +4863,19 @@ var ua = class extends Wi {
 		return this.currentPoint.set(e, t), this;
 	}
 	lineTo(e, t) {
-		let n = new fa(this.currentPoint.clone(), new U(e, t));
+		let n = new ya(this.currentPoint.clone(), new U(e, t));
 		return this.curves.push(n), this.currentPoint.set(e, t), this;
 	}
 	quadraticCurveTo(e, t, n, r) {
-		let i = new ma(this.currentPoint.clone(), new U(e, t), new U(n, r));
+		let i = new xa(this.currentPoint.clone(), new U(e, t), new U(n, r));
 		return this.curves.push(i), this.currentPoint.set(n, r), this;
 	}
 	bezierCurveTo(e, t, n, r, i, a) {
-		let o = new ua(this.currentPoint.clone(), new U(e, t), new U(n, r), new U(i, a));
+		let o = new _a(this.currentPoint.clone(), new U(e, t), new U(n, r), new U(i, a));
 		return this.curves.push(o), this.currentPoint.set(i, a), this;
 	}
 	splineThru(e) {
-		let t = new ga([this.currentPoint.clone()].concat(e));
+		let t = new Ca([this.currentPoint.clone()].concat(e));
 		return this.curves.push(t), this.currentPoint.copy(e[e.length - 1]), this;
 	}
 	arc(e, t, n, r, i, a) {
@@ -4824,7 +4890,7 @@ var ua = class extends Wi {
 		return this.absellipse(e + c, t + l, n, r, i, a, o, s), this;
 	}
 	absellipse(e, t, n, r, i, a, o, s) {
-		let c = new Gi(e, t, n, r, i, a, o, s);
+		let c = new Qi(e, t, n, r, i, a, o, s);
 		if (this.curves.length > 0) {
 			let e = c.getPoint(0);
 			e.equals(this.currentPoint) || this.lineTo(e.x, e.y);
@@ -4843,7 +4909,7 @@ var ua = class extends Wi {
 	fromJSON(e) {
 		return super.fromJSON(e), this.currentPoint.fromArray(e.currentPoint), this;
 	}
-}, ba = class extends ya {
+}, Da = class extends Ea {
 	constructor(e) {
 		super(e), this.uuid = ot(), this.type = "Shape", this.holes = [];
 	}
@@ -4879,16 +4945,16 @@ var ua = class extends Wi {
 		super.fromJSON(e), this.uuid = e.uuid, this.holes = [];
 		for (let t = 0, n = e.holes.length; t < n; t++) {
 			let n = e.holes[t];
-			this.holes.push(new ya().fromJSON(n));
+			this.holes.push(new Ea().fromJSON(n));
 		}
 		return this;
 	}
 };
-function xa(e, t, n = 2) {
-	let r = t && t.length, i = r ? t[0] * n : e.length, a = Sa(e, 0, i, n, !0), o = [];
+function Oa(e, t, n = 2) {
+	let r = t && t.length, i = r ? t[0] * n : e.length, a = ka(e, 0, i, n, !0), o = [];
 	if (!a || a.next === a.prev) return o;
 	let s, c, l;
-	if (r && (a = ka(e, t, a, n)), e.length > 80 * n) {
+	if (r && (a = Ia(e, t, a, n)), e.length > 80 * n) {
 		s = e[0], c = e[1];
 		let t = s, r = c;
 		for (let a = n; a < i; a += n) {
@@ -4897,83 +4963,83 @@ function xa(e, t, n = 2) {
 		}
 		l = Math.max(t - s, r - c), l = l === 0 ? 0 : 32767 / l;
 	}
-	return wa(a, o, n, s, c, l, 0), o;
+	return ja(a, o, n, s, c, l, 0), o;
 }
-function Sa(e, t, n, r, i) {
+function ka(e, t, n, r, i) {
 	let a;
-	if (i === $a(e, t, n, r) > 0) for (let i = t; i < n; i += r) a = Xa(i / r | 0, e[i], e[i + 1], a);
-	else for (let i = n - r; i >= t; i -= r) a = Xa(i / r | 0, e[i], e[i + 1], a);
-	return a && Ha(a, a.next) && (Za(a), a = a.next), a;
+	if (i === oo(e, t, n, r) > 0) for (let i = t; i < n; i += r) a = ro(i / r | 0, e[i], e[i + 1], a);
+	else for (let i = n - r; i >= t; i -= r) a = ro(i / r | 0, e[i], e[i + 1], a);
+	return a && Ya(a, a.next) && (io(a), a = a.next), a;
 }
-function Ca(e, t) {
+function Aa(e, t) {
 	if (!e) return e;
 	t ||= e;
 	let n = e, r;
 	do
-		if (r = !1, !n.steiner && (Ha(n, n.next) || Va(n.prev, n, n.next) === 0)) {
-			if (Za(n), n = t = n.prev, n === n.next) break;
+		if (r = !1, !n.steiner && (Ya(n, n.next) || Ja(n.prev, n, n.next) === 0)) {
+			if (io(n), n = t = n.prev, n === n.next) break;
 			r = !0;
 		} else n = n.next;
 	while (r || n !== t);
 	return t;
 }
-function wa(e, t, n, r, i, a, o) {
+function ja(e, t, n, r, i, a, o) {
 	if (!e) return;
-	!o && a && Pa(e, r, i, a);
+	!o && a && Va(e, r, i, a);
 	let s = e;
 	for (; e.prev !== e.next;) {
 		let c = e.prev, l = e.next;
-		if (a ? Ea(e, r, i, a) : Ta(e)) t.push(c.i, e.i, l.i), Za(e), e = l.next, s = l.next;
+		if (a ? Na(e, r, i, a) : Ma(e)) t.push(c.i, e.i, l.i), io(e), e = l.next, s = l.next;
 		else if (e = l, e === s) {
-			o ? o === 1 ? (e = Da(Ca(e), t), wa(e, t, n, r, i, a, 2)) : o === 2 && Oa(e, t, n, r, i, a) : wa(Ca(e), t, n, r, i, a, 1);
+			o ? o === 1 ? (e = Pa(Aa(e), t), ja(e, t, n, r, i, a, 2)) : o === 2 && Fa(e, t, n, r, i, a) : ja(Aa(e), t, n, r, i, a, 1);
 			break;
 		}
 	}
 }
-function Ta(e) {
+function Ma(e) {
 	let t = e.prev, n = e, r = e.next;
-	if (Va(t, n, r) >= 0) return !1;
+	if (Ja(t, n, r) >= 0) return !1;
 	let i = t.x, a = n.x, o = r.x, s = t.y, c = n.y, l = r.y, u = Math.min(i, a, o), d = Math.min(s, c, l), f = Math.max(i, a, o), p = Math.max(s, c, l), m = r.next;
 	for (; m !== t;) {
-		if (m.x >= u && m.x <= f && m.y >= d && m.y <= p && za(i, s, a, c, o, l, m.x, m.y) && Va(m.prev, m, m.next) >= 0) return !1;
+		if (m.x >= u && m.x <= f && m.y >= d && m.y <= p && Ka(i, s, a, c, o, l, m.x, m.y) && Ja(m.prev, m, m.next) >= 0) return !1;
 		m = m.next;
 	}
 	return !0;
 }
-function Ea(e, t, n, r) {
+function Na(e, t, n, r) {
 	let i = e.prev, a = e, o = e.next;
-	if (Va(i, a, o) >= 0) return !1;
-	let s = i.x, c = a.x, l = o.x, u = i.y, d = a.y, f = o.y, p = Math.min(s, c, l), m = Math.min(u, d, f), h = Math.max(s, c, l), g = Math.max(u, d, f), _ = Ia(p, m, t, n, r), v = Ia(h, g, t, n, r), y = e.prevZ, b = e.nextZ;
+	if (Ja(i, a, o) >= 0) return !1;
+	let s = i.x, c = a.x, l = o.x, u = i.y, d = a.y, f = o.y, p = Math.min(s, c, l), m = Math.min(u, d, f), h = Math.max(s, c, l), g = Math.max(u, d, f), _ = Ua(p, m, t, n, r), v = Ua(h, g, t, n, r), y = e.prevZ, b = e.nextZ;
 	for (; y && y.z >= _ && b && b.z <= v;) {
-		if (y.x >= p && y.x <= h && y.y >= m && y.y <= g && y !== i && y !== o && za(s, u, c, d, l, f, y.x, y.y) && Va(y.prev, y, y.next) >= 0 || (y = y.prevZ, b.x >= p && b.x <= h && b.y >= m && b.y <= g && b !== i && b !== o && za(s, u, c, d, l, f, b.x, b.y) && Va(b.prev, b, b.next) >= 0)) return !1;
+		if (y.x >= p && y.x <= h && y.y >= m && y.y <= g && y !== i && y !== o && Ka(s, u, c, d, l, f, y.x, y.y) && Ja(y.prev, y, y.next) >= 0 || (y = y.prevZ, b.x >= p && b.x <= h && b.y >= m && b.y <= g && b !== i && b !== o && Ka(s, u, c, d, l, f, b.x, b.y) && Ja(b.prev, b, b.next) >= 0)) return !1;
 		b = b.nextZ;
 	}
 	for (; y && y.z >= _;) {
-		if (y.x >= p && y.x <= h && y.y >= m && y.y <= g && y !== i && y !== o && za(s, u, c, d, l, f, y.x, y.y) && Va(y.prev, y, y.next) >= 0) return !1;
+		if (y.x >= p && y.x <= h && y.y >= m && y.y <= g && y !== i && y !== o && Ka(s, u, c, d, l, f, y.x, y.y) && Ja(y.prev, y, y.next) >= 0) return !1;
 		y = y.prevZ;
 	}
 	for (; b && b.z <= v;) {
-		if (b.x >= p && b.x <= h && b.y >= m && b.y <= g && b !== i && b !== o && za(s, u, c, d, l, f, b.x, b.y) && Va(b.prev, b, b.next) >= 0) return !1;
+		if (b.x >= p && b.x <= h && b.y >= m && b.y <= g && b !== i && b !== o && Ka(s, u, c, d, l, f, b.x, b.y) && Ja(b.prev, b, b.next) >= 0) return !1;
 		b = b.nextZ;
 	}
 	return !0;
 }
-function Da(e, t) {
+function Pa(e, t) {
 	let n = e;
 	do {
 		let r = n.prev, i = n.next.next;
-		!Ha(r, i) && Ua(r, n, n.next, i) && qa(r, i) && qa(i, r) && (t.push(r.i, n.i, i.i), Za(n), Za(n.next), n = e = i), n = n.next;
+		!Ya(r, i) && Xa(r, n, n.next, i) && eo(r, i) && eo(i, r) && (t.push(r.i, n.i, i.i), io(n), io(n.next), n = e = i), n = n.next;
 	} while (n !== e);
-	return Ca(n);
+	return Aa(n);
 }
-function Oa(e, t, n, r, i, a) {
+function Fa(e, t, n, r, i, a) {
 	let o = e;
 	do {
 		let e = o.next.next;
 		for (; e !== o.prev;) {
-			if (o.i !== e.i && Ba(o, e)) {
-				let s = Ya(o, e);
-				o = Ca(o, o.next), s = Ca(s, s.next), wa(o, t, n, r, i, a, 0), wa(s, t, n, r, i, a, 0);
+			if (o.i !== e.i && qa(o, e)) {
+				let s = no(o, e);
+				o = Aa(o, o.next), s = Aa(s, s.next), ja(o, t, n, r, i, a, 0), ja(s, t, n, r, i, a, 0);
 				return;
 			}
 			e = e.next;
@@ -4981,31 +5047,31 @@ function Oa(e, t, n, r, i, a) {
 		o = o.next;
 	} while (o !== e);
 }
-function ka(e, t, n, r) {
+function Ia(e, t, n, r) {
 	let i = [];
 	for (let n = 0, a = t.length; n < a; n++) {
-		let o = Sa(e, t[n] * r, n < a - 1 ? t[n + 1] * r : e.length, r, !1);
-		o === o.next && (o.steiner = !0), i.push(La(o));
+		let o = ka(e, t[n] * r, n < a - 1 ? t[n + 1] * r : e.length, r, !1);
+		o === o.next && (o.steiner = !0), i.push(Wa(o));
 	}
-	i.sort(Aa);
-	for (let e = 0; e < i.length; e++) n = ja(i[e], n);
+	i.sort(La);
+	for (let e = 0; e < i.length; e++) n = Ra(i[e], n);
 	return n;
 }
-function Aa(e, t) {
+function La(e, t) {
 	let n = e.x - t.x;
 	return n === 0 && (n = e.y - t.y, n === 0 && (n = (e.next.y - e.y) / (e.next.x - e.x) - (t.next.y - t.y) / (t.next.x - t.x))), n;
 }
-function ja(e, t) {
-	let n = Ma(e, t);
+function Ra(e, t) {
+	let n = za(e, t);
 	if (!n) return t;
-	let r = Ya(n, e);
-	return Ca(r, r.next), Ca(n, n.next);
+	let r = no(n, e);
+	return Aa(r, r.next), Aa(n, n.next);
 }
-function Ma(e, t) {
+function za(e, t) {
 	let n = t, r = e.x, i = e.y, a = -Infinity, o;
-	if (Ha(e, n)) return n;
+	if (Ya(e, n)) return n;
 	do {
-		if (Ha(e, n.next)) return n.next;
+		if (Ya(e, n.next)) return n.next;
 		if (i <= n.y && i >= n.next.y && n.next.y !== n.y) {
 			let e = n.x + (i - n.y) * (n.next.x - n.x) / (n.next.y - n.y);
 			if (e <= r && e > a && (a = e, o = n.x < n.next.x ? n : n.next, e === r)) return o;
@@ -5016,25 +5082,25 @@ function Ma(e, t) {
 	let s = o, c = o.x, l = o.y, u = Infinity;
 	n = o;
 	do {
-		if (r >= n.x && n.x >= c && r !== n.x && Ra(i < l ? r : a, i, c, l, i < l ? a : r, i, n.x, n.y)) {
+		if (r >= n.x && n.x >= c && r !== n.x && Ga(i < l ? r : a, i, c, l, i < l ? a : r, i, n.x, n.y)) {
 			let t = Math.abs(i - n.y) / (r - n.x);
-			qa(n, e) && (t < u || t === u && (n.x > o.x || n.x === o.x && Na(o, n))) && (o = n, u = t);
+			eo(n, e) && (t < u || t === u && (n.x > o.x || n.x === o.x && Ba(o, n))) && (o = n, u = t);
 		}
 		n = n.next;
 	} while (n !== s);
 	return o;
 }
-function Na(e, t) {
-	return Va(e.prev, e, t.prev) < 0 && Va(t.next, e, e.next) < 0;
+function Ba(e, t) {
+	return Ja(e.prev, e, t.prev) < 0 && Ja(t.next, e, e.next) < 0;
 }
-function Pa(e, t, n, r) {
+function Va(e, t, n, r) {
 	let i = e;
 	do
-		i.z === 0 && (i.z = Ia(i.x, i.y, t, n, r)), i.prevZ = i.prev, i.nextZ = i.next, i = i.next;
+		i.z === 0 && (i.z = Ua(i.x, i.y, t, n, r)), i.prevZ = i.prev, i.nextZ = i.next, i = i.next;
 	while (i !== e);
-	i.prevZ.nextZ = null, i.prevZ = null, Fa(i);
+	i.prevZ.nextZ = null, i.prevZ = null, Ha(i);
 }
-function Fa(e) {
+function Ha(e) {
 	let t, n = 1;
 	do {
 		let r = e, i;
@@ -5052,71 +5118,71 @@ function Fa(e) {
 	} while (t > 1);
 	return e;
 }
-function Ia(e, t, n, r, i) {
+function Ua(e, t, n, r, i) {
 	return e = (e - n) * i | 0, t = (t - r) * i | 0, e = (e | e << 8) & 16711935, e = (e | e << 4) & 252645135, e = (e | e << 2) & 858993459, e = (e | e << 1) & 1431655765, t = (t | t << 8) & 16711935, t = (t | t << 4) & 252645135, t = (t | t << 2) & 858993459, t = (t | t << 1) & 1431655765, e | t << 1;
 }
-function La(e) {
+function Wa(e) {
 	let t = e, n = e;
 	do
 		(t.x < n.x || t.x === n.x && t.y < n.y) && (n = t), t = t.next;
 	while (t !== e);
 	return n;
 }
-function Ra(e, t, n, r, i, a, o, s) {
+function Ga(e, t, n, r, i, a, o, s) {
 	return (i - o) * (t - s) >= (e - o) * (a - s) && (e - o) * (r - s) >= (n - o) * (t - s) && (n - o) * (a - s) >= (i - o) * (r - s);
 }
-function za(e, t, n, r, i, a, o, s) {
-	return (e !== o || t !== s) && Ra(e, t, n, r, i, a, o, s);
+function Ka(e, t, n, r, i, a, o, s) {
+	return (e !== o || t !== s) && Ga(e, t, n, r, i, a, o, s);
 }
-function Ba(e, t) {
-	return e.next.i !== t.i && e.prev.i !== t.i && !Ka(e, t) && (qa(e, t) && qa(t, e) && Ja(e, t) && (Va(e.prev, e, t.prev) || Va(e, t.prev, t)) || Ha(e, t) && Va(e.prev, e, e.next) > 0 && Va(t.prev, t, t.next) > 0);
+function qa(e, t) {
+	return e.next.i !== t.i && e.prev.i !== t.i && !$a(e, t) && (eo(e, t) && eo(t, e) && to(e, t) && (Ja(e.prev, e, t.prev) || Ja(e, t.prev, t)) || Ya(e, t) && Ja(e.prev, e, e.next) > 0 && Ja(t.prev, t, t.next) > 0);
 }
-function Va(e, t, n) {
+function Ja(e, t, n) {
 	return (t.y - e.y) * (n.x - t.x) - (t.x - e.x) * (n.y - t.y);
 }
-function Ha(e, t) {
+function Ya(e, t) {
 	return e.x === t.x && e.y === t.y;
 }
-function Ua(e, t, n, r) {
-	let i = Ga(Va(e, t, n)), a = Ga(Va(e, t, r)), o = Ga(Va(n, r, e)), s = Ga(Va(n, r, t));
-	return !!(i !== a && o !== s || i === 0 && Wa(e, n, t) || a === 0 && Wa(e, r, t) || o === 0 && Wa(n, e, r) || s === 0 && Wa(n, t, r));
+function Xa(e, t, n, r) {
+	let i = Qa(Ja(e, t, n)), a = Qa(Ja(e, t, r)), o = Qa(Ja(n, r, e)), s = Qa(Ja(n, r, t));
+	return !!(i !== a && o !== s || i === 0 && Za(e, n, t) || a === 0 && Za(e, r, t) || o === 0 && Za(n, e, r) || s === 0 && Za(n, t, r));
 }
-function Wa(e, t, n) {
+function Za(e, t, n) {
 	return t.x <= Math.max(e.x, n.x) && t.x >= Math.min(e.x, n.x) && t.y <= Math.max(e.y, n.y) && t.y >= Math.min(e.y, n.y);
 }
-function Ga(e) {
+function Qa(e) {
 	return e > 0 ? 1 : e < 0 ? -1 : 0;
 }
-function Ka(e, t) {
+function $a(e, t) {
 	let n = e;
 	do {
-		if (n.i !== e.i && n.next.i !== e.i && n.i !== t.i && n.next.i !== t.i && Ua(n, n.next, e, t)) return !0;
+		if (n.i !== e.i && n.next.i !== e.i && n.i !== t.i && n.next.i !== t.i && Xa(n, n.next, e, t)) return !0;
 		n = n.next;
 	} while (n !== e);
 	return !1;
 }
-function qa(e, t) {
-	return Va(e.prev, e, e.next) < 0 ? Va(e, t, e.next) >= 0 && Va(e, e.prev, t) >= 0 : Va(e, t, e.prev) < 0 || Va(e, e.next, t) < 0;
+function eo(e, t) {
+	return Ja(e.prev, e, e.next) < 0 ? Ja(e, t, e.next) >= 0 && Ja(e, e.prev, t) >= 0 : Ja(e, t, e.prev) < 0 || Ja(e, e.next, t) < 0;
 }
-function Ja(e, t) {
+function to(e, t) {
 	let n = e, r = !1, i = (e.x + t.x) / 2, a = (e.y + t.y) / 2;
 	do
 		n.y > a != n.next.y > a && n.next.y !== n.y && i < (n.next.x - n.x) * (a - n.y) / (n.next.y - n.y) + n.x && (r = !r), n = n.next;
 	while (n !== e);
 	return r;
 }
-function Ya(e, t) {
-	let n = Qa(e.i, e.x, e.y), r = Qa(t.i, t.x, t.y), i = e.next, a = t.prev;
+function no(e, t) {
+	let n = ao(e.i, e.x, e.y), r = ao(t.i, t.x, t.y), i = e.next, a = t.prev;
 	return e.next = t, t.prev = e, n.next = i, i.prev = n, r.next = n, n.prev = r, a.next = r, r.prev = a, r;
 }
-function Xa(e, t, n, r) {
-	let i = Qa(e, t, n);
+function ro(e, t, n, r) {
+	let i = ao(e, t, n);
 	return r ? (i.next = r.next, i.prev = r, r.next.prev = i, r.next = i) : (i.prev = i, i.next = i), i;
 }
-function Za(e) {
+function io(e) {
 	e.next.prev = e.prev, e.prev.next = e.next, e.prevZ && (e.prevZ.nextZ = e.nextZ), e.nextZ && (e.nextZ.prevZ = e.prevZ);
 }
-function Qa(e, t, n) {
+function ao(e, t, n) {
 	return {
 		i: e,
 		x: t,
@@ -5129,16 +5195,16 @@ function Qa(e, t, n) {
 		steiner: !1
 	};
 }
-function $a(e, t, n, r) {
+function oo(e, t, n, r) {
 	let i = 0;
 	for (let a = t, o = n - r; a < n; a += r) i += (e[o] - e[a]) * (e[a + 1] + e[o + 1]), o = a;
 	return i;
 }
-var eo = class {
+var so = class {
 	static triangulate(e, t, n = 2) {
-		return xa(e, t, n);
+		return Oa(e, t, n);
 	}
-}, to = class e {
+}, co = class e {
 	static area(e) {
 		let t = e.length, n = 0;
 		for (let r = t - 1, i = 0; i < t; r = i++) n += e[r].x * e[i].y - e[i].x * e[r].y;
@@ -5149,24 +5215,24 @@ var eo = class {
 	}
 	static triangulateShape(e, t) {
 		let n = [], r = [], i = [];
-		no(e), ro(n, e);
+		lo(e), uo(n, e);
 		let a = e.length;
-		t.forEach(no);
-		for (let e = 0; e < t.length; e++) r.push(a), a += t[e].length, ro(n, t[e]);
-		let o = eo.triangulate(n, r);
+		t.forEach(lo);
+		for (let e = 0; e < t.length; e++) r.push(a), a += t[e].length, uo(n, t[e]);
+		let o = so.triangulate(n, r);
 		for (let e = 0; e < o.length; e += 3) i.push(o.slice(e, e + 3));
 		return i;
 	}
 };
-function no(e) {
+function lo(e) {
 	let t = e.length;
 	t > 2 && e[t - 1].equals(e[0]) && e.pop();
 }
-function ro(e, t) {
+function uo(e, t) {
 	for (let n = 0; n < t.length; n++) e.push(t[n].x), e.push(t[n].y);
 }
-var io = class e extends Ar {
-	constructor(e = new ba([
+var fo = class e extends Ar {
+	constructor(e = new Da([
 		new U(.5, .5),
 		new U(-.5, .5),
 		new U(-.5, -.5),
@@ -5183,7 +5249,7 @@ var io = class e extends Ar {
 		}
 		this.setAttribute("position", new vr(r, 3)), this.setAttribute("uv", new vr(i, 2)), this.computeVertexNormals();
 		function a(e) {
-			let a = [], o = t.curveSegments === void 0 ? 12 : t.curveSegments, s = t.steps === void 0 ? 1 : t.steps, c = t.depth === void 0 ? 1 : t.depth, l = t.bevelEnabled === void 0 || t.bevelEnabled, u = t.bevelThickness === void 0 ? .2 : t.bevelThickness, d = t.bevelSize === void 0 ? u - .1 : t.bevelSize, f = t.bevelOffset === void 0 ? 0 : t.bevelOffset, p = t.bevelSegments === void 0 ? 3 : t.bevelSegments, m = t.extrudePath, h = t.UVGenerator === void 0 ? ao : t.UVGenerator, g, _ = !1, v, y, b, x;
+			let a = [], o = t.curveSegments === void 0 ? 12 : t.curveSegments, s = t.steps === void 0 ? 1 : t.steps, c = t.depth === void 0 ? 1 : t.depth, l = t.bevelEnabled === void 0 || t.bevelEnabled, u = t.bevelThickness === void 0 ? .2 : t.bevelThickness, d = t.bevelSize === void 0 ? u - .1 : t.bevelSize, f = t.bevelOffset === void 0 ? 0 : t.bevelOffset, p = t.bevelSegments === void 0 ? 3 : t.bevelSegments, m = t.extrudePath, h = t.UVGenerator === void 0 ? po : t.UVGenerator, g, _ = !1, v, y, b, x;
 			if (m) {
 				g = m.getSpacedPoints(s), _ = !0, l = !1;
 				let e = m.isCatmullRomCurve3 ? m.closed : !1;
@@ -5191,11 +5257,11 @@ var io = class e extends Ar {
 			}
 			l || (p = 0, u = 0, d = 0, f = 0);
 			let S = e.extractPoints(o), C = S.shape, w = S.holes;
-			if (!to.isClockWise(C)) {
+			if (!co.isClockWise(C)) {
 				C = C.reverse();
 				for (let e = 0, t = w.length; e < t; e++) {
 					let t = w[e];
-					to.isClockWise(t) && (w[e] = t.reverse());
+					co.isClockWise(t) && (w[e] = t.reverse());
 				}
 			}
 			function T(e) {
@@ -5239,7 +5305,7 @@ var io = class e extends Ar {
 				ee.push(te), M = M.concat(te);
 			}
 			let N;
-			if (p === 0) N = to.triangulateShape(D, w);
+			if (p === 0) N = co.triangulateShape(D, w);
 			else {
 				let e = [], t = [];
 				for (let n = 0; n < p; n++) {
@@ -5259,7 +5325,7 @@ var io = class e extends Ar {
 						r === 0 && t.push(o);
 					}
 				}
-				N = to.triangulateShape(e, t);
+				N = co.triangulateShape(e, t);
 			}
 			let P = N.length, ne = d + f;
 			for (let e = 0; e < k; e++) {
@@ -5357,7 +5423,7 @@ var io = class e extends Ar {
 	}
 	toJSON() {
 		let e = super.toJSON(), t = this.parameters.shapes, n = this.parameters.options;
-		return oo(t, n, e);
+		return mo(t, n, e);
 	}
 	static fromJSON(t, n) {
 		let r = [];
@@ -5366,9 +5432,9 @@ var io = class e extends Ar {
 			r.push(i);
 		}
 		let i = t.options.extrudePath;
-		return i !== void 0 && (t.options.extrudePath = new _a[i.type]().fromJSON(i)), new e(r, t.options);
+		return i !== void 0 && (t.options.extrudePath = new wa[i.type]().fromJSON(i)), new e(r, t.options);
 	}
-}, ao = {
+}, po = {
 	generateTopUV: function(e, t, n, r, i) {
 		let a = t[n * 3], o = t[n * 3 + 1], s = t[r * 3], c = t[r * 3 + 1], l = t[i * 3], u = t[i * 3 + 1];
 		return [
@@ -5392,7 +5458,7 @@ var io = class e extends Ar {
 		];
 	}
 };
-function oo(e, t, n) {
+function mo(e, t, n) {
 	if (n.shapes = [], Array.isArray(e)) for (let t = 0, r = e.length; t < r; t++) {
 		let r = e[t];
 		n.shapes.push(r.uuid);
@@ -5400,7 +5466,7 @@ function oo(e, t, n) {
 	else n.shapes.push(e.uuid);
 	return n.options = Object.assign({}, t), t.extrudePath !== void 0 && (n.options.extrudePath = t.extrudePath.toJSON()), n;
 }
-var so = class e extends Ar {
+var ho = class e extends Ar {
 	constructor(e = 1, t = 1, n = 1, r = 1) {
 		super(), this.type = "PlaneGeometry", this.parameters = {
 			width: e,
@@ -5428,7 +5494,7 @@ var so = class e extends Ar {
 	static fromJSON(t) {
 		return new e(t.width, t.height, t.widthSegments, t.heightSegments);
 	}
-}, co = class e extends Ar {
+}, go = class e extends Ar {
 	constructor(e = 1, t = 32, n = 16, r = 0, i = Math.PI * 2, a = 0, o = Math.PI) {
 		super(), this.type = "SphereGeometry", this.parameters = {
 			radius: e,
@@ -5461,7 +5527,7 @@ var so = class e extends Ar {
 	static fromJSON(t) {
 		return new e(t.radius, t.widthSegments, t.heightSegments, t.phiStart, t.phiLength, t.thetaStart, t.thetaLength);
 	}
-}, lo = class e extends Ar {
+}, _o = class e extends Ar {
 	constructor(e = 1, t = .4, n = 12, r = 48, i = Math.PI * 2, a = 0, o = Math.PI * 2) {
 		super(), this.type = "TorusGeometry", this.parameters = {
 			radius: e,
@@ -5493,15 +5559,15 @@ var so = class e extends Ar {
 		return new e(t.radius, t.tube, t.radialSegments, t.tubularSegments, t.arc, t.thetaStart, t.thetaLength);
 	}
 };
-function uo(e) {
+function vo(e) {
 	let t = {};
 	for (let n in e) {
 		t[n] = {};
 		for (let r in e[n]) {
 			let i = e[n][r];
-			if (po(i)) i.isRenderTargetTexture ? (B("UniformsUtils: Textures of render targets cannot be cloned via cloneUniforms() or mergeUniforms()."), t[n][r] = null) : t[n][r] = i.clone();
+			if (bo(i)) i.isRenderTargetTexture ? (B("UniformsUtils: Textures of render targets cannot be cloned via cloneUniforms() or mergeUniforms()."), t[n][r] = null) : t[n][r] = i.clone();
 			else if (Array.isArray(i)) {
-				if (po(i[0])) {
+				if (bo(i[0])) {
 					let e = [];
 					for (let t = 0, n = i.length; t < n; t++) e[t] = i[t].clone();
 					t[n][r] = e;
@@ -5511,32 +5577,32 @@ function uo(e) {
 	}
 	return t;
 }
-function fo(e) {
+function yo(e) {
 	let t = {};
 	for (let n = 0; n < e.length; n++) {
-		let r = uo(e[n]);
+		let r = vo(e[n]);
 		for (let e in r) t[e] = r[e];
 	}
 	return t;
 }
-function po(e) {
+function bo(e) {
 	return e && (e.isColor || e.isMatrix3 || e.isMatrix4 || e.isVector2 || e.isVector3 || e.isVector4 || e.isTexture || e.isQuaternion);
 }
-function mo(e) {
+function xo(e) {
 	let t = [];
 	for (let n = 0; n < e.length; n++) t.push(e[n].clone());
 	return t;
 }
-function ho(e) {
+function So(e) {
 	let t = e.getRenderTarget();
 	return t === null ? e.outputColorSpace : t.isXRRenderTarget === !0 ? t.texture.colorSpace : It.workingColorSpace;
 }
-var go = {
-	clone: uo,
-	merge: fo
-}, _o = "void main() {\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}", vo = "void main() {\n	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}", yo = class extends zr {
+var Co = {
+	clone: vo,
+	merge: yo
+}, wo = "void main() {\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}", To = "void main() {\n	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}", Eo = class extends zr {
 	constructor(e) {
-		super(), this.isShaderMaterial = !0, this.type = "ShaderMaterial", this.defines = {}, this.uniforms = {}, this.uniformsGroups = [], this.vertexShader = _o, this.fragmentShader = vo, this.linewidth = 1, this.wireframe = !1, this.wireframeLinewidth = 1, this.fog = !1, this.lights = !1, this.clipping = !1, this.forceSinglePass = !0, this.extensions = {
+		super(), this.isShaderMaterial = !0, this.type = "ShaderMaterial", this.defines = {}, this.uniforms = {}, this.uniformsGroups = [], this.vertexShader = wo, this.fragmentShader = To, this.linewidth = 1, this.wireframe = !1, this.wireframeLinewidth = 1, this.fog = !1, this.lights = !1, this.clipping = !1, this.forceSinglePass = !0, this.extensions = {
 			clipCullDistance: !1,
 			multiDraw: !1
 		}, this.defaultAttributeValues = {
@@ -5550,7 +5616,7 @@ var go = {
 		}, this.index0AttributeName = void 0, this.uniformsNeedUpdate = !1, this.glslVersion = null, e !== void 0 && this.setValues(e);
 	}
 	copy(e) {
-		return super.copy(e), this.fragmentShader = e.fragmentShader, this.vertexShader = e.vertexShader, this.uniforms = uo(e.uniforms), this.uniformsGroups = mo(e.uniformsGroups), this.defines = Object.assign({}, e.defines), this.wireframe = e.wireframe, this.wireframeLinewidth = e.wireframeLinewidth, this.fog = e.fog, this.lights = e.lights, this.clipping = e.clipping, this.extensions = Object.assign({}, e.extensions), this.glslVersion = e.glslVersion, this.defaultAttributeValues = Object.assign({}, e.defaultAttributeValues), this.index0AttributeName = e.index0AttributeName, this.uniformsNeedUpdate = e.uniformsNeedUpdate, this;
+		return super.copy(e), this.fragmentShader = e.fragmentShader, this.vertexShader = e.vertexShader, this.uniforms = vo(e.uniforms), this.uniformsGroups = xo(e.uniformsGroups), this.defines = Object.assign({}, e.defines), this.wireframe = e.wireframe, this.wireframeLinewidth = e.wireframeLinewidth, this.fog = e.fog, this.lights = e.lights, this.clipping = e.clipping, this.extensions = Object.assign({}, e.extensions), this.glslVersion = e.glslVersion, this.defaultAttributeValues = Object.assign({}, e.defaultAttributeValues), this.index0AttributeName = e.index0AttributeName, this.uniformsNeedUpdate = e.uniformsNeedUpdate, this;
 	}
 	toJSON(e) {
 		let t = super.toJSON(e);
@@ -5616,18 +5682,18 @@ var go = {
 		if (e.defines !== void 0 && (this.defines = e.defines), e.vertexShader !== void 0 && (this.vertexShader = e.vertexShader), e.fragmentShader !== void 0 && (this.fragmentShader = e.fragmentShader), e.glslVersion !== void 0 && (this.glslVersion = e.glslVersion), e.extensions !== void 0) for (let t in e.extensions) this.extensions[t] = e.extensions[t];
 		return e.lights !== void 0 && (this.lights = e.lights), e.clipping !== void 0 && (this.clipping = e.clipping), this;
 	}
-}, bo = class extends yo {
+}, Do = class extends Eo {
 	constructor(e) {
 		super(e), this.isRawShaderMaterial = !0, this.type = "RawShaderMaterial";
 	}
-}, xo = class extends zr {
+}, Oo = class extends zr {
 	constructor(e) {
 		super(), this.isMeshStandardMaterial = !0, this.type = "MeshStandardMaterial", this.defines = { STANDARD: "" }, this.color = new Pn(16777215), this.roughness = 1, this.metalness = 0, this.map = null, this.lightMap = null, this.lightMapIntensity = 1, this.aoMap = null, this.aoMapIntensity = 1, this.emissive = new Pn(0), this.emissiveIntensity = 1, this.emissiveMap = null, this.bumpMap = null, this.bumpScale = 1, this.normalMap = null, this.normalMapType = 0, this.normalScale = new U(1, 1), this.displacementMap = null, this.displacementScale = 1, this.displacementBias = 0, this.roughnessMap = null, this.metalnessMap = null, this.alphaMap = null, this.envMap = null, this.envMapRotation = new ln(), this.envMapIntensity = 1, this.wireframe = !1, this.wireframeLinewidth = 1, this.wireframeLinecap = "round", this.wireframeLinejoin = "round", this.flatShading = !1, this.fog = !0, this.setValues(e);
 	}
 	copy(e) {
 		return super.copy(e), this.defines = { STANDARD: "" }, this.color.copy(e.color), this.roughness = e.roughness, this.metalness = e.metalness, this.map = e.map, this.lightMap = e.lightMap, this.lightMapIntensity = e.lightMapIntensity, this.aoMap = e.aoMap, this.aoMapIntensity = e.aoMapIntensity, this.emissive.copy(e.emissive), this.emissiveMap = e.emissiveMap, this.emissiveIntensity = e.emissiveIntensity, this.bumpMap = e.bumpMap, this.bumpScale = e.bumpScale, this.normalMap = e.normalMap, this.normalMapType = e.normalMapType, this.normalScale.copy(e.normalScale), this.displacementMap = e.displacementMap, this.displacementScale = e.displacementScale, this.displacementBias = e.displacementBias, this.roughnessMap = e.roughnessMap, this.metalnessMap = e.metalnessMap, this.alphaMap = e.alphaMap, this.envMap = e.envMap, this.envMapRotation.copy(e.envMapRotation), this.envMapIntensity = e.envMapIntensity, this.wireframe = e.wireframe, this.wireframeLinewidth = e.wireframeLinewidth, this.wireframeLinecap = e.wireframeLinecap, this.wireframeLinejoin = e.wireframeLinejoin, this.flatShading = e.flatShading, this.fog = e.fog, this;
 	}
-}, So = class extends xo {
+}, ko = class extends Oo {
 	constructor(e) {
 		super(), this.isMeshPhysicalMaterial = !0, this.defines = {
 			STANDARD: "",
@@ -5689,14 +5755,14 @@ var go = {
 			PHYSICAL: ""
 		}, this.anisotropy = e.anisotropy, this.anisotropyRotation = e.anisotropyRotation, this.anisotropyMap = e.anisotropyMap, this.clearcoat = e.clearcoat, this.clearcoatMap = e.clearcoatMap, this.clearcoatRoughness = e.clearcoatRoughness, this.clearcoatRoughnessMap = e.clearcoatRoughnessMap, this.clearcoatNormalMap = e.clearcoatNormalMap, this.clearcoatNormalScale.copy(e.clearcoatNormalScale), this.dispersion = e.dispersion, this.ior = e.ior, this.iridescence = e.iridescence, this.iridescenceMap = e.iridescenceMap, this.iridescenceIOR = e.iridescenceIOR, this.iridescenceThicknessRange = [...e.iridescenceThicknessRange], this.iridescenceThicknessMap = e.iridescenceThicknessMap, this.retroreflectivity = e.retroreflectivity, this.sheen = e.sheen, this.sheenColor.copy(e.sheenColor), this.sheenColorMap = e.sheenColorMap, this.sheenRoughness = e.sheenRoughness, this.sheenRoughnessMap = e.sheenRoughnessMap, this.transmission = e.transmission, this.transmissionMap = e.transmissionMap, this.thickness = e.thickness, this.thicknessMap = e.thicknessMap, this.attenuationDistance = e.attenuationDistance, this.attenuationColor.copy(e.attenuationColor), this.specularIntensity = e.specularIntensity, this.specularIntensityMap = e.specularIntensityMap, this.specularColor.copy(e.specularColor), this.specularColorMap = e.specularColorMap, this;
 	}
-}, Co = class extends zr {
+}, Ao = class extends zr {
 	constructor(e) {
 		super(), this.isMeshDepthMaterial = !0, this.type = "MeshDepthMaterial", this.depthPacking = Le, this.map = null, this.alphaMap = null, this.displacementMap = null, this.displacementScale = 1, this.displacementBias = 0, this.wireframe = !1, this.wireframeLinewidth = 1, this.setValues(e);
 	}
 	copy(e) {
 		return super.copy(e), this.depthPacking = e.depthPacking, this.map = e.map, this.alphaMap = e.alphaMap, this.displacementMap = e.displacementMap, this.displacementScale = e.displacementScale, this.displacementBias = e.displacementBias, this.wireframe = e.wireframe, this.wireframeLinewidth = e.wireframeLinewidth, this;
 	}
-}, wo = class extends zr {
+}, jo = class extends zr {
 	constructor(e) {
 		super(), this.isMeshDistanceMaterial = !0, this.type = "MeshDistanceMaterial", this.map = null, this.alphaMap = null, this.displacementMap = null, this.displacementScale = 1, this.displacementBias = 0, this.setValues(e);
 	}
@@ -5704,13 +5770,13 @@ var go = {
 		return super.copy(e), this.map = e.map, this.alphaMap = e.alphaMap, this.displacementMap = e.displacementMap, this.displacementScale = e.displacementScale, this.displacementBias = e.displacementBias, this;
 	}
 };
-function To(e, t) {
+function Mo(e, t) {
 	return !e || e.constructor === t ? e : typeof t.BYTES_PER_ELEMENT == "number" ? new t(e) : Array.prototype.slice.call(e);
 }
-function Eo(e) {
+function No(e) {
 	return e !== void 0 && e.inTangents !== void 0 && e.outTangents !== void 0;
 }
-var Do = class {
+var Po = class {
 	constructor(e, t, n, r) {
 		this.parameterPositions = e, this._cachedIndex = 0, this.resultBuffer = r === void 0 ? new t.constructor(n) : r, this.sampleValues = t, this.valueSize = n, this.settings = null, this.DefaultSettings_ = {};
 	}
@@ -5768,7 +5834,7 @@ var Do = class {
 		throw Error("THREE.Interpolant: Call to abstract method.");
 	}
 	intervalChanged_() {}
-}, Oo = class extends Do {
+}, Fo = class extends Po {
 	constructor(e, t, n, r) {
 		super(e, t, n, r), this._weightPrev = -0, this._offsetPrev = -0, this._weightNext = -0, this._offsetNext = -0, this.DefaultSettings_ = {
 			endingStart: Fe,
@@ -5803,7 +5869,7 @@ var Do = class {
 		for (let e = 0; e !== o; ++e) i[e] = g * a[l + e] + _ * a[c + e] + v * a[s + e] + y * a[u + e];
 		return i;
 	}
-}, ko = class extends Do {
+}, Io = class extends Po {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
@@ -5812,14 +5878,14 @@ var Do = class {
 		for (let e = 0; e !== o; ++e) i[e] = a[c + e] * u + a[s + e] * l;
 		return i;
 	}
-}, Ao = class extends Do {
+}, Lo = class extends Po {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
 	interpolate_(e) {
 		return this.copySampleValue_(e - 1);
 	}
-}, jo = class extends Do {
+}, Ro = class extends Po {
 	interpolate_(e, t, n, r) {
 		let i = this.resultBuffer, a = this.sampleValues, o = this.valueSize, s = e * o, c = s - o, l = this.inTangents, u = this.outTangents;
 		if (!l || !u) {
@@ -5829,36 +5895,36 @@ var Do = class {
 		}
 		let d = o * 2, f = e - 1;
 		for (let p = 0; p !== o; ++p) {
-			let o = a[c + p], m = a[s + p], h = f * d + p * 2, g = u[h], _ = u[h + 1], v = e * d + p * 2, y = l[v], b = l[v + 1], x = Po(n, t, g, y, r);
-			i[p] = Mo(x, o, _, b, m);
+			let o = a[c + p], m = a[s + p], h = f * d + p * 2, g = u[h], _ = u[h + 1], v = e * d + p * 2, y = l[v], b = l[v + 1], x = Vo(n, t, g, y, r);
+			i[p] = zo(x, o, _, b, m);
 		}
 		return i;
 	}
 };
-function Mo(e, t, n, r, i) {
+function zo(e, t, n, r, i) {
 	let a = 1 - e;
 	return a * a * a * t + 3 * a * a * e * n + 3 * a * e * e * r + e * e * e * i;
 }
-function No(e, t, n, r, i) {
+function Bo(e, t, n, r, i) {
 	let a = 1 - e;
 	return 3 * a * a * (n - t) + 6 * a * e * (r - n) + 3 * e * e * (i - r);
 }
-function Po(e, t, n, r, i) {
+function Vo(e, t, n, r, i) {
 	let a = (e - t) / (i - t);
 	for (let o = 0; o < 8; o++) {
-		let o = Mo(a, t, n, r, i) - e;
+		let o = zo(a, t, n, r, i) - e;
 		if (Math.abs(o) < 1e-10) break;
-		let s = No(a, t, n, r, i);
+		let s = Bo(a, t, n, r, i);
 		if (Math.abs(s) < 1e-10) break;
 		a = Math.max(0, Math.min(1, a - o / s));
 	}
 	return a;
 }
-var Fo = class {
+var Ho = class {
 	constructor(e, t, n, r) {
 		if (e === void 0) throw Error("THREE.KeyframeTrack: track name is undefined");
 		if (t === void 0 || t.length === 0) throw Error("THREE.KeyframeTrack: no keyframes in track named " + e);
-		this.name = e, this.times = To(t, this.TimeBufferType), this.values = To(n, this.ValueBufferType), this.setInterpolation(r || this.DefaultInterpolation);
+		this.name = e, this.times = Mo(t, this.TimeBufferType), this.values = Mo(n, this.ValueBufferType), this.setInterpolation(r || this.DefaultInterpolation);
 	}
 	static toJSON(e) {
 		let t = e.constructor, n;
@@ -5866,28 +5932,28 @@ var Fo = class {
 		else {
 			n = {
 				name: e.name,
-				times: To(e.times, Array),
-				values: To(e.values, Array)
+				times: Mo(e.times, Array),
+				values: Mo(e.values, Array)
 			};
 			let t = e.getInterpolation();
-			t !== e.DefaultInterpolation && (n.interpolation = t), Eo(e.settings) && (n.settings = {
-				inTangents: To(e.settings.inTangents, Array),
-				outTangents: To(e.settings.outTangents, Array)
+			t !== e.DefaultInterpolation && (n.interpolation = t), No(e.settings) && (n.settings = {
+				inTangents: Mo(e.settings.inTangents, Array),
+				outTangents: Mo(e.settings.outTangents, Array)
 			});
 		}
 		return n.type = e.ValueTypeName, n;
 	}
 	InterpolantFactoryMethodDiscrete(e) {
-		return new Ao(this.times, this.values, this.getValueSize(), e);
+		return new Lo(this.times, this.values, this.getValueSize(), e);
 	}
 	InterpolantFactoryMethodLinear(e) {
-		return new ko(this.times, this.values, this.getValueSize(), e);
+		return new Io(this.times, this.values, this.getValueSize(), e);
 	}
 	InterpolantFactoryMethodSmooth(e) {
-		return new Oo(this.times, this.values, this.getValueSize(), e);
+		return new Fo(this.times, this.values, this.getValueSize(), e);
 	}
 	InterpolantFactoryMethodBezier(e) {
-		let t = new jo(this.times, this.values, this.getValueSize(), e);
+		let t = new Ro(this.times, this.values, this.getValueSize(), e);
 		return this.settings && (t.inTangents = this.settings.inTangents, t.outTangents = this.settings.outTangents), t;
 	}
 	setInterpolation(e) {
@@ -5936,7 +6002,7 @@ var Fo = class {
 		if (e !== 1) {
 			let t = this.times;
 			for (let n = 0, r = t.length; n !== r; ++n) t[n] *= e;
-			Eo(this.settings) && (Io(this.settings.inTangents, e), Io(this.settings.outTangents, e));
+			No(this.settings) && (Uo(this.settings.inTangents, e), Uo(this.settings.outTangents, e));
 		}
 		return this;
 	}
@@ -6013,35 +6079,35 @@ var Fo = class {
 	}
 	clone() {
 		let e = this.times.slice(), t = this.values.slice(), n = this.constructor, r = new n(this.name, e, t);
-		return r.createInterpolant = this.createInterpolant, Eo(this.settings) && (r.settings = {
+		return r.createInterpolant = this.createInterpolant, No(this.settings) && (r.settings = {
 			inTangents: this.settings.inTangents.slice(),
 			outTangents: this.settings.outTangents.slice()
 		}), r;
 	}
 };
-function Io(e, t) {
+function Uo(e, t) {
 	for (let n = 0, r = e.length; n !== r; n += 2) e[n] *= t;
 }
-Fo.prototype.ValueTypeName = "", Fo.prototype.TimeBufferType = Float32Array, Fo.prototype.ValueBufferType = Float32Array, Fo.prototype.DefaultInterpolation = Ne;
-var Lo = class extends Fo {
+Ho.prototype.ValueTypeName = "", Ho.prototype.TimeBufferType = Float32Array, Ho.prototype.ValueBufferType = Float32Array, Ho.prototype.DefaultInterpolation = Ne;
+var Wo = class extends Ho {
 	constructor(e, t, n) {
 		super(e, t, n);
 	}
 };
-Lo.prototype.ValueTypeName = "bool", Lo.prototype.ValueBufferType = Array, Lo.prototype.DefaultInterpolation = Me, Lo.prototype.InterpolantFactoryMethodLinear = void 0, Lo.prototype.InterpolantFactoryMethodSmooth = void 0;
-var Ro = class extends Fo {
+Wo.prototype.ValueTypeName = "bool", Wo.prototype.ValueBufferType = Array, Wo.prototype.DefaultInterpolation = Me, Wo.prototype.InterpolantFactoryMethodLinear = void 0, Wo.prototype.InterpolantFactoryMethodSmooth = void 0;
+var Go = class extends Ho {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
 };
-Ro.prototype.ValueTypeName = "color";
-var zo = class extends Fo {
+Go.prototype.ValueTypeName = "color";
+var Ko = class extends Ho {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
 };
-zo.prototype.ValueTypeName = "number";
-var Bo = class extends Do {
+Ko.prototype.ValueTypeName = "number";
+var qo = class extends Po {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
@@ -6050,28 +6116,28 @@ var Bo = class extends Do {
 		for (let e = c + o; c !== e; c += 4) Ot.slerpFlat(i, 0, a, c - o, a, c, s);
 		return i;
 	}
-}, Vo = class extends Fo {
+}, Jo = class extends Ho {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
 	InterpolantFactoryMethodLinear(e) {
-		return new Bo(this.times, this.values, this.getValueSize(), e);
+		return new qo(this.times, this.values, this.getValueSize(), e);
 	}
 };
-Vo.prototype.ValueTypeName = "quaternion", Vo.prototype.InterpolantFactoryMethodSmooth = void 0;
-var Ho = class extends Fo {
+Jo.prototype.ValueTypeName = "quaternion", Jo.prototype.InterpolantFactoryMethodSmooth = void 0;
+var Yo = class extends Ho {
 	constructor(e, t, n) {
 		super(e, t, n);
 	}
 };
-Ho.prototype.ValueTypeName = "string", Ho.prototype.ValueBufferType = Array, Ho.prototype.DefaultInterpolation = Me, Ho.prototype.InterpolantFactoryMethodLinear = void 0, Ho.prototype.InterpolantFactoryMethodSmooth = void 0;
-var Uo = class extends Fo {
+Yo.prototype.ValueTypeName = "string", Yo.prototype.ValueBufferType = Array, Yo.prototype.DefaultInterpolation = Me, Yo.prototype.InterpolantFactoryMethodLinear = void 0, Yo.prototype.InterpolantFactoryMethodSmooth = void 0;
+var Xo = class extends Ho {
 	constructor(e, t, n, r) {
 		super(e, t, n, r);
 	}
 };
-Uo.prototype.ValueTypeName = "vector";
-var Wo = class extends En {
+Xo.prototype.ValueTypeName = "vector";
+var Zo = class extends En {
 	constructor(e, t = 1) {
 		super(), this.isLight = !0, this.type = "Light", this.color = new Pn(e), this.intensity = t;
 	}
@@ -6082,7 +6148,7 @@ var Wo = class extends En {
 		let t = super.toJSON(e);
 		return t.object.color = this.color.getHex(), t.object.intensity = this.intensity, t;
 	}
-}, Go = class extends Wo {
+}, Qo = class extends Zo {
 	constructor(e, t, n) {
 		super(e, n), this.isHemisphereLight = !0, this.type = "HemisphereLight", this.position.copy(En.DEFAULT_UP), this.updateMatrix(), this.groundColor = new Pn(t);
 	}
@@ -6093,7 +6159,7 @@ var Wo = class extends En {
 		let t = super.toJSON(e);
 		return t.object.groundColor = this.groundColor.getHex(), t;
 	}
-}, Ko = /*@__PURE__*/ new Qt(), qo = /*@__PURE__*/ new W(), Jo = /*@__PURE__*/ new W(), Yo = class {
+}, $o = /*@__PURE__*/ new Qt(), es = /*@__PURE__*/ new W(), ts = /*@__PURE__*/ new W(), ns = class {
 	constructor(e) {
 		this.camera = e, this.intensity = 1, this.bias = 0, this.biasNode = null, this.normalBias = 0, this.radius = 1, this.blurSamples = 8, this.mapSize = new U(512, 512), this.mapType = d, this.map = null, this.mapPass = null, this.matrix = new Qt(), this.autoUpdate = !0, this.needsUpdate = !1, this._frustum = new Ti(), this._frameExtents = new U(1, 1), this._viewportCount = 1, this._viewports = [new qt(0, 0, 1, 1)];
 	}
@@ -6108,12 +6174,12 @@ var Wo = class extends En {
 	}
 	updateMatrices(e) {
 		let t = this.camera;
-		qo.setFromMatrixPosition(e.matrixWorld), t.position.copy(qo), Jo.setFromMatrixPosition(e.target.matrixWorld), t.lookAt(Jo), t.updateMatrixWorld(), this._updateMatrix(t, this.matrix, this._frustum);
+		es.setFromMatrixPosition(e.matrixWorld), t.position.copy(es), ts.setFromMatrixPosition(e.target.matrixWorld), t.lookAt(ts), t.updateMatrixWorld(), this._updateMatrix(t, this.matrix, this._frustum);
 	}
 	_updateMatrix(e, t, n, r) {
-		Ko.multiplyMatrices(e.projectionMatrix, e.matrixWorldInverse), n.setFromProjectionMatrix(Ko, e.coordinateSystem, e.reversedDepth);
+		$o.multiplyMatrices(e.projectionMatrix, e.matrixWorldInverse), n.setFromProjectionMatrix($o, e.coordinateSystem, e.reversedDepth);
 		let i = this._frameExtents, a = r ? r.z / i.x : 1, o = r ? r.w / i.y : 1, s = r ? r.x / i.x : 0, c = r ? r.y / i.y : 0;
-		e.coordinateSystem === 2001 || e.reversedDepth ? t.set(.5 * a, 0, 0, .5 * a + s, 0, .5 * o, 0, .5 * o + c, 0, 0, 1, 0, 0, 0, 0, 1) : t.set(.5 * a, 0, 0, .5 * a + s, 0, .5 * o, 0, .5 * o + c, 0, 0, .5, .5, 0, 0, 0, 1), t.multiply(Ko);
+		e.coordinateSystem === 2001 || e.reversedDepth ? t.set(.5 * a, 0, 0, .5 * a + s, 0, .5 * o, 0, .5 * o + c, 0, 0, 1, 0, 0, 0, 0, 1) : t.set(.5 * a, 0, 0, .5 * a + s, 0, .5 * o, 0, .5 * o + c, 0, 0, .5, .5, 0, 0, 0, 1), t.multiply($o);
 	}
 	getViewport(e) {
 		return this._viewports[e];
@@ -6134,7 +6200,7 @@ var Wo = class extends En {
 		let e = {};
 		return e.intensity = this.intensity, e.bias = this.bias, e.normalBias = this.normalBias, e.radius = this.radius, e.blurSamples = this.blurSamples, e.mapSize = this.mapSize.toArray(), e.camera = this.camera.toJSON(!1).object, delete e.camera.matrix, e;
 	}
-}, Xo = /*@__PURE__*/ new W(), Zo = /*@__PURE__*/ new Ot(), Qo = /*@__PURE__*/ new W(), $o = class extends En {
+}, rs = /*@__PURE__*/ new W(), is = /*@__PURE__*/ new Ot(), as = /*@__PURE__*/ new W(), os = class extends En {
 	constructor() {
 		super(), this.isCamera = !0, this.type = "Camera", this.matrixWorldInverse = new Qt(), this.projectionMatrix = new Qt(), this.projectionMatrixInverse = new Qt(), this.coordinateSystem = We, this._reversedDepth = !1;
 	}
@@ -6148,15 +6214,15 @@ var Wo = class extends En {
 		return super.getWorldDirection(e).negate();
 	}
 	updateMatrixWorld(e) {
-		super.updateMatrixWorld(e), this.matrixWorld.decompose(Xo, Zo, Qo), Qo.x === 1 && Qo.y === 1 && Qo.z === 1 ? this.matrixWorldInverse.copy(this.matrixWorld).invert() : this.matrixWorldInverse.compose(Xo, Zo, Qo.set(1, 1, 1)).invert();
+		super.updateMatrixWorld(e), this.matrixWorld.decompose(rs, is, as), as.x === 1 && as.y === 1 && as.z === 1 ? this.matrixWorldInverse.copy(this.matrixWorld).invert() : this.matrixWorldInverse.compose(rs, is, as.set(1, 1, 1)).invert();
 	}
 	updateWorldMatrix(e, t, n = !1) {
-		super.updateWorldMatrix(e, t, n), this.matrixWorld.decompose(Xo, Zo, Qo), Qo.x === 1 && Qo.y === 1 && Qo.z === 1 ? this.matrixWorldInverse.copy(this.matrixWorld).invert() : this.matrixWorldInverse.compose(Xo, Zo, Qo.set(1, 1, 1)).invert();
+		super.updateWorldMatrix(e, t, n), this.matrixWorld.decompose(rs, is, as), as.x === 1 && as.y === 1 && as.z === 1 ? this.matrixWorldInverse.copy(this.matrixWorld).invert() : this.matrixWorldInverse.compose(rs, is, as.set(1, 1, 1)).invert();
 	}
 	clone() {
 		return new this.constructor().copy(this);
 	}
-}, es = /*@__PURE__*/ new W(), ts = /*@__PURE__*/ new U(), ns = /*@__PURE__*/ new U(), rs = class extends $o {
+}, ss = /*@__PURE__*/ new W(), cs = /*@__PURE__*/ new U(), ls = /*@__PURE__*/ new U(), us = class extends os {
 	constructor(e = 50, t = 1, n = .1, r = 2e3) {
 		super(), this.isPerspectiveCamera = !0, this.type = "PerspectiveCamera", this.fov = e, this.zoom = 1, this.near = n, this.far = r, this.focus = 10, this.aspect = t, this.view = null, this.filmGauge = 35, this.filmOffset = 0, this.updateProjectionMatrix();
 	}
@@ -6181,10 +6247,10 @@ var Wo = class extends En {
 		return this.filmGauge / Math.max(this.aspect, 1);
 	}
 	getViewBounds(e, t, n) {
-		es.set(-1, -1, .5).applyMatrix4(this.projectionMatrixInverse), t.set(es.x, es.y).multiplyScalar(-e / es.z), es.set(1, 1, .5).applyMatrix4(this.projectionMatrixInverse), n.set(es.x, es.y).multiplyScalar(-e / es.z);
+		ss.set(-1, -1, .5).applyMatrix4(this.projectionMatrixInverse), t.set(ss.x, ss.y).multiplyScalar(-e / ss.z), ss.set(1, 1, .5).applyMatrix4(this.projectionMatrixInverse), n.set(ss.x, ss.y).multiplyScalar(-e / ss.z);
 	}
 	getViewSize(e, t) {
-		return this.getViewBounds(e, ts, ns), t.subVectors(ns, ts);
+		return this.getViewBounds(e, cs, ls), t.subVectors(ls, cs);
 	}
 	setViewOffset(e, t, n, r, i, a) {
 		this.aspect = e / t, this.view === null && (this.view = {
@@ -6213,7 +6279,7 @@ var Wo = class extends En {
 		let t = super.toJSON(e);
 		return t.object.fov = this.fov, t.object.zoom = this.zoom, t.object.near = this.near, t.object.far = this.far, t.object.focus = this.focus, t.object.aspect = this.aspect, this.view !== null && (t.object.view = Object.assign({}, this.view)), t.object.filmGauge = this.filmGauge, t.object.filmOffset = this.filmOffset, t;
 	}
-}, is = class extends $o {
+}, ds = class extends os {
 	constructor(e = -1, t = 1, n = 1, r = -1, i = .1, a = 2e3) {
 		super(), this.isOrthographicCamera = !0, this.type = "OrthographicCamera", this.zoom = 1, this.view = null, this.left = e, this.right = t, this.top = n, this.bottom = r, this.near = i, this.far = a, this.updateProjectionMatrix();
 	}
@@ -6246,13 +6312,13 @@ var Wo = class extends En {
 		let t = super.toJSON(e);
 		return t.object.zoom = this.zoom, t.object.left = this.left, t.object.right = this.right, t.object.top = this.top, t.object.bottom = this.bottom, t.object.near = this.near, t.object.far = this.far, this.view !== null && (t.object.view = Object.assign({}, this.view)), t;
 	}
-}, as = class extends Yo {
+}, fs = class extends ns {
 	constructor() {
-		super(new is(-5, 5, 5, -5, .5, 500)), this.isDirectionalLightShadow = !0;
+		super(new ds(-5, 5, 5, -5, .5, 500)), this.isDirectionalLightShadow = !0;
 	}
-}, os = class extends Wo {
+}, ps = class extends Zo {
 	constructor(e, t) {
-		super(e, t), this.isDirectionalLight = !0, this.type = "DirectionalLight", this.position.copy(En.DEFAULT_UP), this.updateMatrix(), this.target = new En(), this.shadow = new as();
+		super(e, t), this.isDirectionalLight = !0, this.type = "DirectionalLight", this.position.copy(En.DEFAULT_UP), this.updateMatrix(), this.target = new En(), this.shadow = new fs();
 	}
 	dispose() {
 		super.dispose(), this.shadow.dispose();
@@ -6264,20 +6330,20 @@ var Wo = class extends En {
 		let t = super.toJSON(e);
 		return t.object.shadow = this.shadow.toJSON(), t.object.target = this.target.uuid, t;
 	}
-}, ss = -90, cs = 1, ls = class extends En {
+}, ms = -90, hs = 1, gs = class extends En {
 	constructor(e, t, n) {
 		super(), this.type = "CubeCamera", this.renderTarget = n, this.coordinateSystem = null, this.activeMipmapLevel = 0;
-		let r = new rs(ss, cs, e, t);
+		let r = new us(ms, hs, e, t);
 		r.layers = this.layers, this.add(r);
-		let i = new rs(ss, cs, e, t);
+		let i = new us(ms, hs, e, t);
 		i.layers = this.layers, this.add(i);
-		let a = new rs(ss, cs, e, t);
+		let a = new us(ms, hs, e, t);
 		a.layers = this.layers, this.add(a);
-		let o = new rs(ss, cs, e, t);
+		let o = new us(ms, hs, e, t);
 		o.layers = this.layers, this.add(o);
-		let s = new rs(ss, cs, e, t);
+		let s = new us(ms, hs, e, t);
 		s.layers = this.layers, this.add(s);
-		let c = new rs(ss, cs, e, t);
+		let c = new us(ms, hs, e, t);
 		c.layers = this.layers, this.add(c);
 	}
 	updateCoordinateSystem() {
@@ -6299,18 +6365,18 @@ var Wo = class extends En {
 		let h = !1;
 		h = e.isWebGLRenderer === !0 ? e.state.buffers.depth.getReversed() : e.reversedDepthBuffer, e.setRenderTarget(n, 0, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, i), e.setRenderTarget(n, 1, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, a), e.setRenderTarget(n, 2, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, o), e.setRenderTarget(n, 3, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, s), e.setRenderTarget(n, 4, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, c), n.texture.generateMipmaps = m, e.setRenderTarget(n, 5, r), h && e.autoClear === !1 && e.clearDepth(), e.render(t, l), e.setRenderTarget(u, d, f), e.xr.enabled = p, n.texture.needsPMREMUpdate = !0;
 	}
-}, us = class extends rs {
+}, _s = class extends us {
 	constructor(e = []) {
 		super(), this.isArrayCamera = !0, this.isMultiViewCamera = !1, this.cameras = e;
 	}
-}, ds = "\\[\\]\\.:\\/", fs = /* @__PURE__ */ RegExp("[\\[\\]\\.:\\/]", "g"), ps = "[^\\[\\]\\.:\\/]", ms = "[^" + ds.replace("\\.", "") + "]", hs = /*@__PURE__*/ "((?:WC+[\\/:])*)".replace("WC", ps), gs = /*@__PURE__*/ "(WCOD+)?".replace("WCOD", ms), _s = /*@__PURE__*/ "(?:\\.(WC+)(?:\\[(.+)\\])?)?".replace("WC", ps), vs = /*@__PURE__*/ "\\.(WC+)(?:\\[(.+)\\])?".replace("WC", ps), ys = RegExp("^" + hs + gs + _s + vs + "$"), bs = [
+}, vs = "\\[\\]\\.:\\/", ys = /* @__PURE__ */ RegExp("[\\[\\]\\.:\\/]", "g"), bs = "[^\\[\\]\\.:\\/]", xs = "[^" + vs.replace("\\.", "") + "]", Ss = /*@__PURE__*/ "((?:WC+[\\/:])*)".replace("WC", bs), Cs = /*@__PURE__*/ "(WCOD+)?".replace("WCOD", xs), ws = /*@__PURE__*/ "(?:\\.(WC+)(?:\\[(.+)\\])?)?".replace("WC", bs), Ts = /*@__PURE__*/ "\\.(WC+)(?:\\[(.+)\\])?".replace("WC", bs), Es = RegExp("^" + Ss + Cs + ws + Ts + "$"), Ds = [
 	"material",
 	"materials",
 	"bones",
 	"map"
-], xs = class {
+], Os = class {
 	constructor(e, t, n) {
-		let r = n || Ss.parseTrackName(t);
+		let r = n || ks.parseTrackName(t);
 		this._targetGroup = e, this._bindings = e.subscribe_(t, r);
 	}
 	getValue(e, t) {
@@ -6330,7 +6396,7 @@ var Wo = class extends En {
 		let e = this._bindings;
 		for (let t = this._targetGroup.nCachedObjects_, n = e.length; t !== n; ++t) e[t].unbind();
 	}
-}, Ss = class e {
+}, ks = class e {
 	constructor(t, n, r) {
 		this.path = n, this.parsedPath = r || e.parseTrackName(n), this.node = e.findNode(t, this.parsedPath.nodeName), this.rootNode = t, this.getValue = this._getValue_unbound, this.setValue = this._setValue_unbound;
 	}
@@ -6338,10 +6404,10 @@ var Wo = class extends En {
 		return t && t.isAnimationObjectGroup ? new e.Composite(t, n, r) : new e(t, n, r);
 	}
 	static sanitizeNodeName(e) {
-		return e.replace(/\s/g, "_").replace(fs, "");
+		return e.replace(/\s/g, "_").replace(ys, "");
 	}
 	static parseTrackName(e) {
-		let t = ys.exec(e);
+		let t = Es.exec(e);
 		if (t === null) throw Error("THREE.PropertyBinding: Cannot parse trackName: " + e);
 		let n = {
 			nodeName: t[2],
@@ -6352,7 +6418,7 @@ var Wo = class extends En {
 		}, r = n.nodeName && n.nodeName.lastIndexOf(".");
 		if (r !== void 0 && r !== -1) {
 			let e = n.nodeName.substring(r + 1);
-			bs.indexOf(e) !== -1 && (n.nodeName = n.nodeName.substring(0, r), n.objectName = e);
+			Ds.indexOf(e) !== -1 && (n.nodeName = n.nodeName.substring(0, r), n.objectName = e);
 		}
 		if (n.propertyName === null || n.propertyName.length === 0) throw Error("THREE.PropertyBinding: can not parse propertyName from trackName: " + e);
 		return n;
@@ -6529,43 +6595,43 @@ var Wo = class extends En {
 		this.node = null, this.getValue = this._getValue_unbound, this.setValue = this._setValue_unbound;
 	}
 };
-Ss.Composite = xs, Ss.prototype.BindingType = {
+ks.Composite = Os, ks.prototype.BindingType = {
 	Direct: 0,
 	EntireArray: 1,
 	ArrayElement: 2,
 	HasFromToArray: 3
-}, Ss.prototype.Versioning = {
+}, ks.prototype.Versioning = {
 	None: 0,
 	NeedsUpdate: 1,
 	MatrixWorldNeedsUpdate: 2
-}, Ss.prototype.GetterByBindingType = [
-	Ss.prototype._getValue_direct,
-	Ss.prototype._getValue_array,
-	Ss.prototype._getValue_arrayElement,
-	Ss.prototype._getValue_toArray
-], Ss.prototype.SetterByBindingTypeAndVersioning = [
+}, ks.prototype.GetterByBindingType = [
+	ks.prototype._getValue_direct,
+	ks.prototype._getValue_array,
+	ks.prototype._getValue_arrayElement,
+	ks.prototype._getValue_toArray
+], ks.prototype.SetterByBindingTypeAndVersioning = [
 	[
-		Ss.prototype._setValue_direct,
-		Ss.prototype._setValue_direct_setNeedsUpdate,
-		Ss.prototype._setValue_direct_setMatrixWorldNeedsUpdate
+		ks.prototype._setValue_direct,
+		ks.prototype._setValue_direct_setNeedsUpdate,
+		ks.prototype._setValue_direct_setMatrixWorldNeedsUpdate
 	],
 	[
-		Ss.prototype._setValue_array,
-		Ss.prototype._setValue_array_setNeedsUpdate,
-		Ss.prototype._setValue_array_setMatrixWorldNeedsUpdate
+		ks.prototype._setValue_array,
+		ks.prototype._setValue_array_setNeedsUpdate,
+		ks.prototype._setValue_array_setMatrixWorldNeedsUpdate
 	],
 	[
-		Ss.prototype._setValue_arrayElement,
-		Ss.prototype._setValue_arrayElement_setNeedsUpdate,
-		Ss.prototype._setValue_arrayElement_setMatrixWorldNeedsUpdate
+		ks.prototype._setValue_arrayElement,
+		ks.prototype._setValue_arrayElement_setNeedsUpdate,
+		ks.prototype._setValue_arrayElement_setMatrixWorldNeedsUpdate
 	],
 	[
-		Ss.prototype._setValue_fromArray,
-		Ss.prototype._setValue_fromArray_setNeedsUpdate,
-		Ss.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate
+		ks.prototype._setValue_fromArray,
+		ks.prototype._setValue_fromArray_setNeedsUpdate,
+		ks.prototype._setValue_fromArray_setMatrixWorldNeedsUpdate
 	]
 ];
-var Cs = /*@__PURE__*/ new Qt(), ws = class {
+var As = /*@__PURE__*/ new Qt(), js = class {
 	constructor(e, t, n = 0, r = Infinity) {
 		this.ray = new oi(e, t), this.near = n, this.far = r, this.camera = null, this.layers = new un(), this.params = {
 			Mesh: {},
@@ -6582,27 +6648,27 @@ var Cs = /*@__PURE__*/ new Qt(), ws = class {
 		t.isPerspectiveCamera ? (this.ray.origin.setFromMatrixPosition(t.matrixWorld), this.ray.direction.set(e.x, e.y, .5).unproject(t).sub(this.ray.origin).normalize(), this.camera = t) : t.isOrthographicCamera ? (this.ray.origin.set(e.x, e.y, t.projectionMatrix.elements[14]).unproject(t), this.ray.direction.set(0, 0, -1).transformDirection(t.matrixWorld), this.camera = t) : V("Raycaster: Unsupported camera type: " + t.type);
 	}
 	setFromXRController(e) {
-		return Cs.identity().extractRotation(e.matrixWorld), this.ray.origin.setFromMatrixPosition(e.matrixWorld), this.ray.direction.set(0, 0, -1).applyMatrix4(Cs), this;
+		return As.identity().extractRotation(e.matrixWorld), this.ray.origin.setFromMatrixPosition(e.matrixWorld), this.ray.direction.set(0, 0, -1).applyMatrix4(As), this;
 	}
 	intersectObject(e, t = !0, n = []) {
-		return Es(e, this, n, t), n.sort(Ts), n;
+		return Ns(e, this, n, t), n.sort(Ms), n;
 	}
 	intersectObjects(e, t = !0, n = []) {
-		for (let r = 0, i = e.length; r < i; r++) Es(e[r], this, n, t);
-		return n.sort(Ts), n;
+		for (let r = 0, i = e.length; r < i; r++) Ns(e[r], this, n, t);
+		return n.sort(Ms), n;
 	}
 };
-function Ts(e, t) {
+function Ms(e, t) {
 	return e.distance - t.distance;
 }
-function Es(e, t, n, r) {
+function Ns(e, t, n, r) {
 	let i = !0;
 	if (e.layers.test(t.layers) && e.raycast(t, n) === !1 && (i = !1), i === !0 && r === !0) {
 		let r = e.children;
-		for (let e = 0, i = r.length; e < i; e++) Es(r[e], t, n, !0);
+		for (let e = 0, i = r.length; e < i; e++) Ns(r[e], t, n, !0);
 	}
 }
-var Ds = class {
+var Ps = class {
 	constructor(e = 1, t = 0, n = 0) {
 		this.radius = e, this.phi = t, this.theta = n;
 	}
@@ -6650,7 +6716,7 @@ var Ds = class {
 		return i[0] = e, i[2] = t, i[1] = n, i[3] = r, this;
 	}
 });
-var Os = class extends tt {
+var Fs = class extends tt {
 	constructor(e, t = null) {
 		super(), this.object = e, this.domElement = t, this.enabled = !0, this.state = -1, this.keys = {}, this.mouseButtons = {
 			LEFT: null,
@@ -6668,8 +6734,8 @@ var Os = class extends tt {
 	dispose() {}
 	update() {}
 };
-function ks(e, t, n, r) {
-	let i = As(r);
+function Is(e, t, n, r) {
+	let i = Ls(r);
 	switch (n) {
 		case w: return e * t;
 		case k: return e * t / i.components * i.byteLength;
@@ -6718,7 +6784,7 @@ function ks(e, t, n, r) {
 	}
 	throw Error(`Unable to determine texture byte length for ${n} format.`);
 }
-function As(e) {
+function Ls(e) {
 	switch (e) {
 		case d:
 		case f: return {
@@ -6753,7 +6819,7 @@ function As(e) {
 typeof __THREE_DEVTOOLS__ < "u" && __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("register", { detail: { revision: "186" } })), typeof window < "u" && (window.__THREE__ ? B("WARNING: Multiple instances of Three.js being imported.") : window.__THREE__ = "186");
 //#endregion
 //#region node_modules/three/build/three.module.js
-function js() {
+function Rs() {
 	let e = null, t = !1, n = null, r = null;
 	function i(t, a) {
 		r = e.requestAnimationFrame(i), n(t, a);
@@ -6773,7 +6839,7 @@ function js() {
 		}
 	};
 }
-function Ms(e) {
+function zs(e) {
 	let t = /* @__PURE__ */ new WeakMap();
 	function n(t, n) {
 		let r = t.array, i = t.usage, a = r.byteLength, o = e.createBuffer();
@@ -6848,7 +6914,7 @@ function Ms(e) {
 		update: o
 	};
 }
-var Ns = {
+var Bs = {
 	alphahash_fragment: "#ifdef USE_ALPHAHASH\n	if ( diffuseColor.a < getAlphaHashThreshold( vPosition ) ) discard;\n#endif",
 	alphahash_pars_fragment: "#ifdef USE_ALPHAHASH\n	const float ALPHA_HASH_SCALE = 0.05;\n	float hash2D( vec2 value ) {\n		return fract( 1.0e4 * sin( 17.0 * value.x + 0.1 * value.y ) * ( 0.1 + abs( sin( 13.0 * value.y + value.x ) ) ) );\n	}\n	float hash3D( vec3 value ) {\n		return hash2D( vec2( hash2D( value.xy ), value.z ) );\n	}\n	float getAlphaHashThreshold( vec3 position ) {\n		float maxDeriv = max(\n			length( dFdx( position.xyz ) ),\n			length( dFdy( position.xyz ) )\n		);\n		float pixScale = 1.0 / ( ALPHA_HASH_SCALE * maxDeriv );\n		vec2 pixScales = vec2(\n			exp2( floor( log2( pixScale ) ) ),\n			exp2( ceil( log2( pixScale ) ) )\n		);\n		vec2 alpha = vec2(\n			hash3D( floor( pixScales.x * position.xyz ) ),\n			hash3D( floor( pixScales.y * position.xyz ) )\n		);\n		float lerpFactor = fract( log2( pixScale ) );\n		float x = ( 1.0 - lerpFactor ) * alpha.x + lerpFactor * alpha.y;\n		float a = min( lerpFactor, 1.0 - lerpFactor );\n		vec3 cases = vec3(\n			x * x / ( 2.0 * a * ( 1.0 - a ) ),\n			( x - 0.5 * a ) / ( 1.0 - a ),\n			1.0 - ( ( 1.0 - x ) * ( 1.0 - x ) / ( 2.0 * a * ( 1.0 - a ) ) )\n		);\n		float threshold = ( x < ( 1.0 - a ) )\n			? ( ( x < a ) ? cases.x : cases.y )\n			: cases.z;\n		return clamp( threshold , 1.0e-6, 1.0 );\n	}\n#endif",
 	alphamap_fragment: "#ifdef USE_ALPHAMAP\n	diffuseColor.a *= texture2D( alphaMap, vAlphaMapUv ).g;\n#endif",
@@ -7190,9 +7256,9 @@ var Ns = {
 		alphaMapTransform: { value: /*@__PURE__*/ new jt() },
 		alphaTest: { value: 0 }
 	}
-}, Ps = {
+}, Vs = {
 	basic: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.specularmap,
 			K.envmap,
@@ -7200,11 +7266,11 @@ var Ns = {
 			K.lightmap,
 			K.fog
 		]),
-		vertexShader: Ns.meshbasic_vert,
-		fragmentShader: Ns.meshbasic_frag
+		vertexShader: Bs.meshbasic_vert,
+		fragmentShader: Bs.meshbasic_frag
 	},
 	lambert: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.specularmap,
 			K.envmap,
@@ -7221,11 +7287,11 @@ var Ns = {
 				envMapIntensity: { value: 1 }
 			}
 		]),
-		vertexShader: Ns.meshlambert_vert,
-		fragmentShader: Ns.meshlambert_frag
+		vertexShader: Bs.meshlambert_vert,
+		fragmentShader: Bs.meshlambert_frag
 	},
 	phong: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.specularmap,
 			K.envmap,
@@ -7244,11 +7310,11 @@ var Ns = {
 				envMapIntensity: { value: 1 }
 			}
 		]),
-		vertexShader: Ns.meshphong_vert,
-		fragmentShader: Ns.meshphong_frag
+		vertexShader: Bs.meshphong_vert,
+		fragmentShader: Bs.meshphong_frag
 	},
 	standard: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.envmap,
 			K.aomap,
@@ -7268,11 +7334,11 @@ var Ns = {
 				envMapIntensity: { value: 1 }
 			}
 		]),
-		vertexShader: Ns.meshphysical_vert,
-		fragmentShader: Ns.meshphysical_frag
+		vertexShader: Bs.meshphysical_vert,
+		fragmentShader: Bs.meshphysical_frag
 	},
 	toon: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.aomap,
 			K.lightmap,
@@ -7285,11 +7351,11 @@ var Ns = {
 			K.lights,
 			{ emissive: { value: /*@__PURE__*/ new Pn(0) } }
 		]),
-		vertexShader: Ns.meshtoon_vert,
-		fragmentShader: Ns.meshtoon_frag
+		vertexShader: Bs.meshtoon_vert,
+		fragmentShader: Bs.meshtoon_frag
 	},
 	matcap: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.bumpmap,
 			K.normalmap,
@@ -7297,16 +7363,16 @@ var Ns = {
 			K.fog,
 			{ matcap: { value: null } }
 		]),
-		vertexShader: Ns.meshmatcap_vert,
-		fragmentShader: Ns.meshmatcap_frag
+		vertexShader: Bs.meshmatcap_vert,
+		fragmentShader: Bs.meshmatcap_frag
 	},
 	points: {
-		uniforms: /*@__PURE__*/ fo([K.points, K.fog]),
-		vertexShader: Ns.points_vert,
-		fragmentShader: Ns.points_frag
+		uniforms: /*@__PURE__*/ yo([K.points, K.fog]),
+		vertexShader: Bs.points_vert,
+		fragmentShader: Bs.points_frag
 	},
 	dashed: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.fog,
 			{
@@ -7315,29 +7381,29 @@ var Ns = {
 				totalSize: { value: 2 }
 			}
 		]),
-		vertexShader: Ns.linedashed_vert,
-		fragmentShader: Ns.linedashed_frag
+		vertexShader: Bs.linedashed_vert,
+		fragmentShader: Bs.linedashed_frag
 	},
 	depth: {
-		uniforms: /*@__PURE__*/ fo([K.common, K.displacementmap]),
-		vertexShader: Ns.depth_vert,
-		fragmentShader: Ns.depth_frag
+		uniforms: /*@__PURE__*/ yo([K.common, K.displacementmap]),
+		vertexShader: Bs.depth_vert,
+		fragmentShader: Bs.depth_frag
 	},
 	normal: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.bumpmap,
 			K.normalmap,
 			K.displacementmap,
 			{ opacity: { value: 1 } }
 		]),
-		vertexShader: Ns.meshnormal_vert,
-		fragmentShader: Ns.meshnormal_frag
+		vertexShader: Bs.meshnormal_vert,
+		fragmentShader: Bs.meshnormal_frag
 	},
 	sprite: {
-		uniforms: /*@__PURE__*/ fo([K.sprite, K.fog]),
-		vertexShader: Ns.sprite_vert,
-		fragmentShader: Ns.sprite_frag
+		uniforms: /*@__PURE__*/ yo([K.sprite, K.fog]),
+		vertexShader: Bs.sprite_vert,
+		fragmentShader: Bs.sprite_frag
 	},
 	background: {
 		uniforms: {
@@ -7345,8 +7411,8 @@ var Ns = {
 			t2D: { value: null },
 			backgroundIntensity: { value: 1 }
 		},
-		vertexShader: Ns.background_vert,
-		fragmentShader: Ns.background_frag
+		vertexShader: Bs.background_vert,
+		fragmentShader: Bs.background_frag
 	},
 	backgroundCube: {
 		uniforms: {
@@ -7355,8 +7421,8 @@ var Ns = {
 			backgroundIntensity: { value: 1 },
 			backgroundRotation: { value: /*@__PURE__*/ new jt() }
 		},
-		vertexShader: Ns.backgroundCube_vert,
-		fragmentShader: Ns.backgroundCube_frag
+		vertexShader: Bs.backgroundCube_vert,
+		fragmentShader: Bs.backgroundCube_frag
 	},
 	cube: {
 		uniforms: {
@@ -7364,16 +7430,16 @@ var Ns = {
 			tFlip: { value: -1 },
 			opacity: { value: 1 }
 		},
-		vertexShader: Ns.cube_vert,
-		fragmentShader: Ns.cube_frag
+		vertexShader: Bs.cube_vert,
+		fragmentShader: Bs.cube_frag
 	},
 	equirect: {
 		uniforms: { tEquirect: { value: null } },
-		vertexShader: Ns.equirect_vert,
-		fragmentShader: Ns.equirect_frag
+		vertexShader: Bs.equirect_vert,
+		fragmentShader: Bs.equirect_frag
 	},
 	distance: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.common,
 			K.displacementmap,
 			{
@@ -7382,11 +7448,11 @@ var Ns = {
 				farDistance: { value: 1e3 }
 			}
 		]),
-		vertexShader: Ns.distance_vert,
-		fragmentShader: Ns.distance_frag
+		vertexShader: Bs.distance_vert,
+		fragmentShader: Bs.distance_frag
 	},
 	shadow: {
-		uniforms: /*@__PURE__*/ fo([
+		uniforms: /*@__PURE__*/ yo([
 			K.lights,
 			K.fog,
 			{
@@ -7394,12 +7460,12 @@ var Ns = {
 				opacity: { value: 1 }
 			}
 		]),
-		vertexShader: Ns.shadow_vert,
-		fragmentShader: Ns.shadow_frag
+		vertexShader: Bs.shadow_vert,
+		fragmentShader: Bs.shadow_frag
 	}
 };
-Ps.physical = {
-	uniforms: /*@__PURE__*/ fo([Ps.standard.uniforms, {
+Vs.physical = {
+	uniforms: /*@__PURE__*/ yo([Vs.standard.uniforms, {
 		clearcoat: { value: 0 },
 		clearcoatMap: { value: null },
 		clearcoatMapTransform: { value: /*@__PURE__*/ new jt() },
@@ -7446,16 +7512,16 @@ Ps.physical = {
 		anisotropyMap: { value: null },
 		anisotropyMapTransform: { value: /*@__PURE__*/ new jt() }
 	}]),
-	vertexShader: Ns.meshphysical_vert,
-	fragmentShader: Ns.meshphysical_frag
+	vertexShader: Bs.meshphysical_vert,
+	fragmentShader: Bs.meshphysical_frag
 };
-var Fs = {
+var Hs = {
 	r: 0,
 	b: 0,
 	g: 0
-}, Is = /*@__PURE__*/ new Qt(), Ls = /*@__PURE__*/ new jt();
-Ls.set(-1, 0, 0, 0, 1, 0, 0, 0, 1);
-function Rs(e, t, n, r, i, a) {
+}, Us = /*@__PURE__*/ new Qt(), Ws = /*@__PURE__*/ new jt();
+Ws.set(-1, 0, 0, 0, 1, 0, 0, 0, 1);
+function Gs(e, t, n, r, i, a) {
 	let o = new Pn(0), s = i === !0 ? 0 : 1, c, l, u = null, d = 0, f = null;
 	function p(e) {
 		let n = e.isScene === !0 ? e.background : null;
@@ -7473,11 +7539,11 @@ function Rs(e, t, n, r, i, a) {
 	}
 	function h(t, n) {
 		let i = p(n);
-		i && (i.isCubeTexture || i.mapping === 306) ? (l === void 0 && (l = new G(new Vi(1, 1, 1), new yo({
+		i && (i.isCubeTexture || i.mapping === 306) ? (l === void 0 && (l = new G(new Ji(1, 1, 1), new Eo({
 			name: "BackgroundCubeMaterial",
-			uniforms: uo(Ps.backgroundCube.uniforms),
-			vertexShader: Ps.backgroundCube.vertexShader,
-			fragmentShader: Ps.backgroundCube.fragmentShader,
+			uniforms: vo(Vs.backgroundCube.uniforms),
+			vertexShader: Vs.backgroundCube.vertexShader,
+			fragmentShader: Vs.backgroundCube.fragmentShader,
 			side: 1,
 			depthTest: !1,
 			depthWrite: !1,
@@ -7487,11 +7553,11 @@ function Rs(e, t, n, r, i, a) {
 			this.matrixWorld.copyPosition(n.matrixWorld);
 		}, Object.defineProperty(l.material, "envMap", { get: function() {
 			return this.uniforms.envMap.value;
-		} }), r.update(l)), l.material.uniforms.envMap.value = i, l.material.uniforms.backgroundBlurriness.value = n.backgroundBlurriness, l.material.uniforms.backgroundIntensity.value = n.backgroundIntensity, l.material.uniforms.backgroundRotation.value.setFromMatrix4(Is.makeRotationFromEuler(n.backgroundRotation)).transpose(), i.isCubeTexture && i.isRenderTargetTexture === !1 && l.material.uniforms.backgroundRotation.value.premultiply(Ls), l.material.toneMapped = It.getTransfer(i.colorSpace) !== Ve, (u !== i || d !== i.version || f !== e.toneMapping) && (l.material.needsUpdate = !0, u = i, d = i.version, f = e.toneMapping), l.layers.enableAll(), t.unshift(l, l.geometry, l.material, 0, 0, null)) : i && i.isTexture && (c === void 0 && (c = new G(new so(2, 2), new yo({
+		} }), r.update(l)), l.material.uniforms.envMap.value = i, l.material.uniforms.backgroundBlurriness.value = n.backgroundBlurriness, l.material.uniforms.backgroundIntensity.value = n.backgroundIntensity, l.material.uniforms.backgroundRotation.value.setFromMatrix4(Us.makeRotationFromEuler(n.backgroundRotation)).transpose(), i.isCubeTexture && i.isRenderTargetTexture === !1 && l.material.uniforms.backgroundRotation.value.premultiply(Ws), l.material.toneMapped = It.getTransfer(i.colorSpace) !== Ve, (u !== i || d !== i.version || f !== e.toneMapping) && (l.material.needsUpdate = !0, u = i, d = i.version, f = e.toneMapping), l.layers.enableAll(), t.unshift(l, l.geometry, l.material, 0, 0, null)) : i && i.isTexture && (c === void 0 && (c = new G(new ho(2, 2), new Eo({
 			name: "BackgroundMaterial",
-			uniforms: uo(Ps.background.uniforms),
-			vertexShader: Ps.background.vertexShader,
-			fragmentShader: Ps.background.fragmentShader,
+			uniforms: vo(Vs.background.uniforms),
+			vertexShader: Vs.background.vertexShader,
+			fragmentShader: Vs.background.fragmentShader,
 			side: 0,
 			depthTest: !1,
 			depthWrite: !1,
@@ -7502,7 +7568,7 @@ function Rs(e, t, n, r, i, a) {
 		} }), r.update(c)), c.material.uniforms.t2D.value = i, c.material.uniforms.backgroundIntensity.value = n.backgroundIntensity, c.material.toneMapped = It.getTransfer(i.colorSpace) !== Ve, i.matrixAutoUpdate === !0 && i.updateMatrix(), c.material.uniforms.uvTransform.value.copy(i.matrix), (u !== i || d !== i.version || f !== e.toneMapping) && (c.material.needsUpdate = !0, u = i, d = i.version, f = e.toneMapping), c.layers.enableAll(), t.unshift(c, c.geometry, c.material, 0, 0, null));
 	}
 	function g(t, r) {
-		t.getRGB(Fs, ho(e)), n.buffers.color.setClear(Fs.r, Fs.g, Fs.b, r, a);
+		t.getRGB(Hs, So(e)), n.buffers.color.setClear(Hs.r, Hs.g, Hs.b, r, a);
 	}
 	function _() {
 		l !== void 0 && (l.geometry.dispose(), l.material.dispose(), l = void 0), c !== void 0 && (c.geometry.dispose(), c.material.dispose(), c = void 0);
@@ -7525,7 +7591,7 @@ function Rs(e, t, n, r, i, a) {
 		dispose: _
 	};
 }
-function zs(e, t) {
+function Ks(e, t) {
 	let n = e.getParameter(e.MAX_VERTEX_ATTRIBS), r = {}, i = f(null), a = i, o = !1;
 	function s(n, r, i, s, c) {
 		let u = !1, f = d(n, s, i, r);
@@ -7720,7 +7786,7 @@ function zs(e, t) {
 		disableUnusedAttributes: v
 	};
 }
-function Bs(e, t, n) {
+function qs(e, t, n) {
 	let r;
 	function i(e) {
 		r = e;
@@ -7740,7 +7806,7 @@ function Bs(e, t, n) {
 	}
 	this.setMode = i, this.render = a, this.renderInstances = o, this.renderMultiDraw = s;
 }
-function Vs(e, t, n, r) {
+function Js(e, t, n, r) {
 	let i;
 	function a() {
 		if (i !== void 0) return i;
@@ -7790,7 +7856,7 @@ function Vs(e, t, n, r) {
 		samples: S
 	};
 }
-function Hs(e) {
+function Ys(e) {
 	let t = this, n = null, r = 0, i = !1, a = !1, o = new Lr(), s = new jt(), c = {
 		value: null,
 		needsUpdate: !1
@@ -7830,13 +7896,13 @@ function Hs(e) {
 		return t.numPlanes = a, t.numIntersection = 0, l;
 	}
 }
-var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PURE__*/ new Pn(), Ys = null, Xs = 0, Zs = 0, Qs = !1, $s = /*@__PURE__*/ new W(), ec = /*@__PURE__*/ new W(), tc = class {
+var Xs = 4, Zs = 6, Qs = 20, $s = 256, ec = /*@__PURE__*/ new ds(), tc = /*@__PURE__*/ new Pn(), nc = null, rc = 0, ic = 0, ac = !1, oc = /*@__PURE__*/ new W(), sc = /*@__PURE__*/ new W(), cc = class {
 	constructor(e) {
 		this._renderer = e, this._pingPongRenderTarget = null, this._lodMax = 0, this._cubeSize = 0, this._sizeLods = [], this._lodMeshes = [], this._backgroundBox = null, this._cubemapMaterial = null, this._equirectMaterial = null, this._blurMaterial = null, this._ggxMaterial = null;
 	}
 	fromScene(e, t = 0, n = .1, r = 100, i = {}) {
-		let { size: a = 256, position: o = $s } = i;
-		Ys = this._renderer.getRenderTarget(), Xs = this._renderer.getActiveCubeFace(), Zs = this._renderer.getActiveMipmapLevel(), Qs = this._renderer.xr.enabled, this._renderer.xr.enabled = !1, this._setSize(a);
+		let { size: a = 256, position: o = oc } = i;
+		nc = this._renderer.getRenderTarget(), rc = this._renderer.getActiveCubeFace(), ic = this._renderer.getActiveMipmapLevel(), ac = this._renderer.xr.enabled, this._renderer.xr.enabled = !1, this._setSize(a);
 		let s = this._allocateTargets();
 		return s.depthBuffer = !0, this._sceneToCubeUV(e, n, r, s, o), t > 0 && this._blur(s, 0, 0, t), this._applyPMREM(s), this._cleanup(s), s;
 	}
@@ -7847,10 +7913,10 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 		return this._fromTexture(e, t);
 	}
 	compileCubemapShader() {
-		this._cubemapMaterial === null && (this._cubemapMaterial = cc(), this._compileMaterial(this._cubemapMaterial));
+		this._cubemapMaterial === null && (this._cubemapMaterial = hc(), this._compileMaterial(this._cubemapMaterial));
 	}
 	compileEquirectangularShader() {
-		this._equirectMaterial === null && (this._equirectMaterial = sc(), this._compileMaterial(this._equirectMaterial));
+		this._equirectMaterial === null && (this._equirectMaterial = mc(), this._compileMaterial(this._equirectMaterial));
 	}
 	dispose() {
 		this._dispose(), this._cubemapMaterial !== null && this._cubemapMaterial.dispose(), this._equirectMaterial !== null && this._equirectMaterial.dispose(), this._backgroundBox !== null && (this._backgroundBox.geometry.dispose(), this._backgroundBox.material.dispose());
@@ -7863,10 +7929,10 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 		for (let e = 0; e < this._lodMeshes.length; e++) this._lodMeshes[e].geometry.dispose();
 	}
 	_cleanup(e) {
-		this._renderer.setRenderTarget(Ys, Xs, Zs), this._renderer.xr.enabled = Qs, e.scissorTest = !1, ic(e, 0, 0, e.width, e.height);
+		this._renderer.setRenderTarget(nc, rc, ic), this._renderer.xr.enabled = ac, e.scissorTest = !1, dc(e, 0, 0, e.width, e.height);
 	}
 	_fromTexture(e, t) {
-		e.mapping === 301 || e.mapping === 302 ? this._setSize(e.image.length === 0 ? 16 : e.image[0].width || e.image[0].image.width) : this._setSize(e.image.width / 4), Ys = this._renderer.getRenderTarget(), Xs = this._renderer.getActiveCubeFace(), Zs = this._renderer.getActiveMipmapLevel(), Qs = this._renderer.xr.enabled, this._renderer.xr.enabled = !1;
+		e.mapping === 301 || e.mapping === 302 ? this._setSize(e.image.length === 0 ? 16 : e.image[0].width || e.image[0].image.width) : this._setSize(e.image.width / 4), nc = this._renderer.getRenderTarget(), rc = this._renderer.getActiveCubeFace(), ic = this._renderer.getActiveMipmapLevel(), ac = this._renderer.xr.enabled, this._renderer.xr.enabled = !1;
 		let n = t || this._allocateTargets();
 		return this._textureToCubeUV(e, n), this._applyPMREM(n), this._cleanup(n), n;
 	}
@@ -7879,20 +7945,20 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 			format: E,
 			colorSpace: ze,
 			depthBuffer: !1
-		}, r = rc(e, t, n);
+		}, r = uc(e, t, n);
 		if (this._pingPongRenderTarget === null || this._pingPongRenderTarget.width !== e || this._pingPongRenderTarget.height !== t) {
-			this._pingPongRenderTarget !== null && this._dispose(), this._pingPongRenderTarget = rc(e, t, n);
+			this._pingPongRenderTarget !== null && this._dispose(), this._pingPongRenderTarget = uc(e, t, n);
 			let { _lodMax: r } = this;
-			({lodMeshes: this._lodMeshes, sizeLods: this._sizeLods} = nc(r)), this._blurMaterial = oc(r, e, t), this._ggxMaterial = ac(r, e, t);
+			({lodMeshes: this._lodMeshes, sizeLods: this._sizeLods} = lc(r)), this._blurMaterial = pc(r, e, t), this._ggxMaterial = fc(r, e, t);
 		}
 		return r;
 	}
 	_compileMaterial(e) {
 		let t = new G(new Ar(), e);
-		this._renderer.compile(t, qs);
+		this._renderer.compile(t, ec);
 	}
 	_sceneToCubeUV(e, t, n, r, i) {
-		let a = new rs(90, 1, t, n), o = [
+		let a = new us(90, 1, t, n), o = [
 			1,
 			-1,
 			1,
@@ -7907,31 +7973,31 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 			-1,
 			-1
 		], c = this._renderer, l = c.autoClear, u = c.toneMapping;
-		c.getClearColor(Js), c.toneMapping = 0, c.autoClear = !1, c.state.buffers.depth.getReversed() && (c.setRenderTarget(r), c.clearDepth(), c.setRenderTarget(null)), this._backgroundBox === null && (this._backgroundBox = new G(new Vi(), new si({
+		c.getClearColor(tc), c.toneMapping = 0, c.autoClear = !1, c.state.buffers.depth.getReversed() && (c.setRenderTarget(r), c.clearDepth(), c.setRenderTarget(null)), this._backgroundBox === null && (this._backgroundBox = new G(new Ji(), new si({
 			name: "PMREM.Background",
 			side: 1,
 			depthWrite: !1,
 			depthTest: !1
 		})));
 		let d = this._backgroundBox, f = d.material, p = !1, m = e.background;
-		m ? m.isColor && (f.color.copy(m), e.background = null, p = !0) : (f.color.copy(Js), p = !0);
+		m ? m.isColor && (f.color.copy(m), e.background = null, p = !0) : (f.color.copy(tc), p = !0);
 		for (let t = 0; t < 6; t++) {
 			let n = t % 3;
 			n === 0 ? (a.up.set(0, o[t], 0), a.position.set(i.x, i.y, i.z), a.lookAt(i.x + s[t], i.y, i.z)) : n === 1 ? (a.up.set(0, 0, o[t]), a.position.set(i.x, i.y, i.z), a.lookAt(i.x, i.y + s[t], i.z)) : (a.up.set(0, o[t], 0), a.position.set(i.x, i.y, i.z), a.lookAt(i.x, i.y, i.z + s[t]));
 			let l = this._cubeSize;
-			ic(r, n * l, t > 2 ? l : 0, l, l), c.setRenderTarget(r), p && c.render(d, a), c.render(e, a);
+			dc(r, n * l, t > 2 ? l : 0, l, l), c.setRenderTarget(r), p && c.render(d, a), c.render(e, a);
 		}
 		c.toneMapping = u, c.autoClear = l, e.background = m;
 	}
 	_textureToCubeUV(e, t) {
 		let n = this._renderer, r = e.mapping === 301 || e.mapping === 302;
-		r ? (this._cubemapMaterial === null && (this._cubemapMaterial = cc()), this._cubemapMaterial.uniforms.flipEnvMap.value = e.isRenderTargetTexture === !1 ? -1 : 1) : this._equirectMaterial === null && (this._equirectMaterial = sc());
+		r ? (this._cubemapMaterial === null && (this._cubemapMaterial = hc()), this._cubemapMaterial.uniforms.flipEnvMap.value = e.isRenderTargetTexture === !1 ? -1 : 1) : this._equirectMaterial === null && (this._equirectMaterial = mc());
 		let i = r ? this._cubemapMaterial : this._equirectMaterial, a = this._lodMeshes[0];
 		a.material = i;
 		let o = i.uniforms;
 		o.envMap.value = e;
 		let s = this._cubeSize;
-		ic(t, 0, 0, 3 * s, 2 * s), n.setRenderTarget(t), n.render(a, qs);
+		dc(t, 0, 0, 3 * s, 2 * s), n.setRenderTarget(t), n.render(a, ec);
 	}
 	_applyPMREM(e) {
 		let t = this._renderer, n = t.autoClear;
@@ -7943,8 +8009,8 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 	_applyGGXFilter(e, t, n) {
 		let r = this._renderer, i = this._pingPongRenderTarget, a = this._ggxMaterial, o = this._lodMeshes[n];
 		o.material = a;
-		let s = a.uniforms, c = n / (this._lodMeshes.length - 1), l = t / (this._lodMeshes.length - 1), u = Math.sqrt(c * c - l * l) * (c * 1.25), { _lodMax: d } = this, f = this._sizeLods[n], p = 3 * f * (n > d - Us ? n - d + Us : 0), m = 4 * (this._cubeSize - f);
-		s.envMap.value = e.texture, s.roughness.value = u, s.mipInt.value = d - t, ic(i, p, m, 3 * f, 2 * f), r.setRenderTarget(i), r.render(o, qs), s.envMap.value = i.texture, s.roughness.value = 0, s.mipInt.value = d - n, ic(e, p, m, 3 * f, 2 * f), r.setRenderTarget(e), r.render(o, qs);
+		let s = a.uniforms, c = n / (this._lodMeshes.length - 1), l = t / (this._lodMeshes.length - 1), u = Math.sqrt(c * c - l * l) * (c * 1.25), { _lodMax: d } = this, f = this._sizeLods[n], p = 3 * f * (n > d - Xs ? n - d + Xs : 0), m = 4 * (this._cubeSize - f);
+		s.envMap.value = e.texture, s.roughness.value = u, s.mipInt.value = d - t, dc(i, p, m, 3 * f, 2 * f), r.setRenderTarget(i), r.render(o, ec), s.envMap.value = i.texture, s.roughness.value = 0, s.mipInt.value = d - n, dc(e, p, m, 3 * f, 2 * f), r.setRenderTarget(e), r.render(o, ec);
 	}
 	_blur(e, t, n, r) {
 		let i = this._pingPongRenderTarget, a = Math.min(r, Math.PI) / Math.SQRT2;
@@ -7956,11 +8022,11 @@ var Us = 4, Ws = 6, Gs = 20, Ks = 256, qs = /*@__PURE__*/ new is(), Js = /*@__PU
 		let c = o.uniforms;
 		c.envMap.value = e.texture, c.sigma.value = i, c.mipInt.value = this._lodMax - n;
 		let l = this._sizeLods[r];
-		ic(t, 3 * l * (r > this._lodMax - Us ? r - this._lodMax + Us : 0), 4 * (this._cubeSize - l), 3 * l, 2 * l), a.setRenderTarget(t), a.render(s, qs);
+		dc(t, 3 * l * (r > this._lodMax - Xs ? r - this._lodMax + Xs : 0), 4 * (this._cubeSize - l), 3 * l, 2 * l), a.setRenderTarget(t), a.render(s, ec);
 	}
 };
-function nc(e) {
-	let t = [], n = [], r = e, i = e - Us + 1 + Ws;
+function lc(e) {
+	let t = [], n = [], r = e, i = e - Xs + 1 + Zs;
 	for (let e = 0; e < i; e++) {
 		let e = 2 ** r;
 		t.push(e);
@@ -8002,29 +8068,29 @@ function nc(e) {
 			c.set(r, 18 * e);
 			for (let t = 0; t < 6; t++) {
 				let n = s[t * 2] * 2 - 1, r = s[t * 2 + 1] * 2 - 1;
-				e === 0 ? ec.set(1, r, n) : e === 1 ? ec.set(-n, 1, -r) : e === 2 ? ec.set(-n, r, 1) : e === 3 ? ec.set(-1, r, -n) : e === 4 ? ec.set(-n, -1, r) : ec.set(n, r, -1), ec.toArray(l, (e * 6 + t) * 3);
+				e === 0 ? sc.set(1, r, n) : e === 1 ? sc.set(-n, 1, -r) : e === 2 ? sc.set(-n, r, 1) : e === 3 ? sc.set(-1, r, -n) : e === 4 ? sc.set(-n, -1, r) : sc.set(n, r, -1), sc.toArray(l, (e * 6 + t) * 3);
 			}
 		}
 		let u = new Ar();
-		u.setAttribute("position", new hr(c, 3)), u.setAttribute("outputDirection", new hr(l, 3)), n.push(new G(u, null)), r > Us && r--;
+		u.setAttribute("position", new hr(c, 3)), u.setAttribute("outputDirection", new hr(l, 3)), n.push(new G(u, null)), r > Xs && r--;
 	}
 	return {
 		lodMeshes: n,
 		sizeLods: t
 	};
 }
-function rc(e, t, n) {
+function uc(e, t, n) {
 	let r = new Yt(e, t, n);
 	return r.texture.mapping = 306, r.texture.name = "PMREM.cubeUv", r.scissorTest = !0, r;
 }
-function ic(e, t, n, r, i) {
+function dc(e, t, n, r, i) {
 	e.viewport.set(t, n, r, i), e.scissor.set(t, n, r, i);
 }
-function ac(e, t, n) {
-	return new yo({
+function fc(e, t, n) {
+	return new Eo({
 		name: "PMREMGGXConvolution",
 		defines: {
-			GGX_SAMPLES: Ks,
+			GGX_SAMPLES: $s,
 			CUBEUV_TEXEL_WIDTH: 1 / t,
 			CUBEUV_TEXEL_HEIGHT: 1 / n,
 			CUBEUV_MAX_MIP: `${e}.0`
@@ -8034,18 +8100,18 @@ function ac(e, t, n) {
 			roughness: { value: 0 },
 			mipInt: { value: 0 }
 		},
-		vertexShader: lc(),
+		vertexShader: gc(),
 		fragmentShader: "\n\n			precision highp float;\n			precision highp int;\n\n			varying vec3 vOutputDirection;\n\n			uniform sampler2D envMap;\n			uniform float roughness;\n			uniform float mipInt;\n\n			#define ENVMAP_TYPE_CUBE_UV\n			#include <cube_uv_reflection_fragment>\n\n			#define PI 3.14159265359\n\n			// Van der Corput radical inverse\n			float radicalInverse_VdC(uint bits) {\n				bits = (bits << 16u) | (bits >> 16u);\n				bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);\n				bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);\n				bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);\n				bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);\n				return float(bits) * 2.3283064365386963e-10; // / 0x100000000\n			}\n\n			// Hammersley sequence\n			vec2 hammersley(uint i, uint N) {\n				return vec2(float(i) / float(N), radicalInverse_VdC(i));\n			}\n\n			// GGX VNDF importance sampling (Eric Heitz 2018)\n			// \"Sampling the GGX Distribution of Visible Normals\"\n			// https://jcgt.org/published/0007/04/01/\n			vec3 importanceSampleGGX_VNDF(vec2 Xi, vec3 V, float roughness) {\n				float alpha = roughness * roughness;\n\n				// Section 4.1: Orthonormal basis\n				vec3 T1 = vec3(1.0, 0.0, 0.0);\n				vec3 T2 = cross(V, T1);\n\n				// Section 4.2: Parameterization of projected area\n				float r = sqrt(Xi.x);\n				float phi = 2.0 * PI * Xi.y;\n				float t1 = r * cos(phi);\n				float t2 = r * sin(phi);\n				float s = 0.5 * (1.0 + V.z);\n				t2 = (1.0 - s) * sqrt(1.0 - t1 * t1) + s * t2;\n\n				// Section 4.3: Reprojection onto hemisphere\n				vec3 Nh = t1 * T1 + t2 * T2 + sqrt(max(0.0, 1.0 - t1 * t1 - t2 * t2)) * V;\n\n				// Section 3.4: Transform back to ellipsoid configuration\n				return normalize(vec3(alpha * Nh.x, alpha * Nh.y, max(0.0, Nh.z)));\n			}\n\n			void main() {\n				vec3 N = normalize(vOutputDirection);\n				vec3 V = N; // Assume view direction equals normal for pre-filtering\n\n				vec3 prefilteredColor = vec3(0.0);\n				float totalWeight = 0.0;\n\n				// For very low roughness, just sample the environment directly\n				if (roughness < 0.001) {\n					gl_FragColor = vec4(bilinearCubeUV(envMap, N, mipInt), 1.0);\n					return;\n				}\n\n				// Tangent space basis for VNDF sampling\n				vec3 up = abs(N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);\n				vec3 tangent = normalize(cross(up, N));\n				vec3 bitangent = cross(N, tangent);\n\n				for(uint i = 0u; i < uint(GGX_SAMPLES); i++) {\n					vec2 Xi = hammersley(i, uint(GGX_SAMPLES));\n\n					// For PMREM, V = N, so in tangent space V is always (0, 0, 1)\n					vec3 H_tangent = importanceSampleGGX_VNDF(Xi, vec3(0.0, 0.0, 1.0), roughness);\n\n					// Transform H back to world space\n					vec3 H = normalize(tangent * H_tangent.x + bitangent * H_tangent.y + N * H_tangent.z);\n					vec3 L = normalize(2.0 * dot(V, H) * H - V);\n\n					float NdotL = max(dot(N, L), 0.0);\n\n					if(NdotL > 0.0) {\n						// Sample environment at fixed mip level\n						// VNDF importance sampling handles the distribution filtering\n						vec3 sampleColor = bilinearCubeUV(envMap, L, mipInt);\n\n						// Weight by NdotL for the split-sum approximation\n						// VNDF PDF naturally accounts for the visible microfacet distribution\n						prefilteredColor += sampleColor * NdotL;\n						totalWeight += NdotL;\n					}\n				}\n\n				if (totalWeight > 0.0) {\n					prefilteredColor = prefilteredColor / totalWeight;\n				}\n\n				gl_FragColor = vec4(prefilteredColor, 1.0);\n			}\n		",
 		blending: 0,
 		depthTest: !1,
 		depthWrite: !1
 	});
 }
-function oc(e, t, n) {
-	return new yo({
+function pc(e, t, n) {
+	return new Eo({
 		name: "SphericalGaussianBlur",
 		defines: {
-			SAMPLES: Gs,
+			SAMPLES: Qs,
 			CUBEUV_TEXEL_WIDTH: 1 / t,
 			CUBEUV_TEXEL_HEIGHT: 1 / n,
 			CUBEUV_MAX_MIP: `${e}.0`
@@ -8055,42 +8121,42 @@ function oc(e, t, n) {
 			sigma: { value: 0 },
 			mipInt: { value: 0 }
 		},
-		vertexShader: lc(),
+		vertexShader: gc(),
 		fragmentShader: "\n\n			precision highp float;\n			precision highp int;\n\n			varying vec3 vOutputDirection;\n\n			uniform sampler2D envMap;\n			uniform float sigma;\n			uniform float mipInt;\n\n			#define ENVMAP_TYPE_CUBE_UV\n			#include <cube_uv_reflection_fragment>\n\n			#define PI 3.14159265359\n			#define GOLDEN_ANGLE 2.39996322973\n\n			void main() {\n\n				if ( sigma == 0.0 ) {\n\n					gl_FragColor = vec4( bilinearCubeUV( envMap, vOutputDirection, mipInt ), 1.0 );\n					return;\n\n				}\n\n				vec3 outputDirection = normalize( vOutputDirection );\n\n				vec3 up = abs( outputDirection.z ) < 0.999 ? vec3( 0.0, 0.0, 1.0 ) : vec3( 1.0, 0.0, 0.0 );\n				vec3 tangent = normalize( cross( up, outputDirection ) );\n				vec3 bitangent = cross( outputDirection, tangent );\n\n				// Truncate the kernel at three standard deviations or at the antipode.\n				float thetaMax = min( 3.0 * sigma, PI );\n				float truncation = 1.0 - exp( - 0.5 * thetaMax * thetaMax / ( sigma * sigma ) );\n\n				vec3 accumColor = vec3( 0.0 );\n				float accumWeight = 0.0;\n\n				for ( int i = 0; i < SAMPLES; i ++ ) {\n\n					// Stratified inverse-CDF sampling of the Gaussian, placed on a golden-angle spiral.\n					float stratum = ( float( i ) + 0.5 ) / float( SAMPLES );\n					float theta = sigma * sqrt( - 2.0 * log( 1.0 - stratum * truncation ) );\n					float phi = float( i ) * GOLDEN_ANGLE;\n\n					vec3 offset = cos( phi ) * tangent + sin( phi ) * bitangent;\n					vec3 sampleDirection = cos( theta ) * outputDirection + sin( theta ) * offset;\n\n					// Correct the planar sample density to solid angle.\n					float weight = sin( theta ) / theta;\n\n					accumColor += weight * bilinearCubeUV( envMap, sampleDirection, mipInt );\n					accumWeight += weight;\n\n				}\n\n				gl_FragColor = vec4( accumColor / accumWeight, 1.0 );\n\n			}\n		",
 		blending: 0,
 		depthTest: !1,
 		depthWrite: !1
 	});
 }
-function sc() {
-	return new yo({
+function mc() {
+	return new Eo({
 		name: "EquirectangularToCubeUV",
 		uniforms: { envMap: { value: null } },
-		vertexShader: lc(),
+		vertexShader: gc(),
 		fragmentShader: "\n\n			precision mediump float;\n			precision mediump int;\n\n			varying vec3 vOutputDirection;\n\n			uniform sampler2D envMap;\n\n			#include <common>\n\n			void main() {\n\n				vec3 outputDirection = normalize( vOutputDirection );\n				vec2 uv = equirectUv( outputDirection );\n\n				gl_FragColor = vec4( texture2D ( envMap, uv ).rgb, 1.0 );\n\n			}\n		",
 		blending: 0,
 		depthTest: !1,
 		depthWrite: !1
 	});
 }
-function cc() {
-	return new yo({
+function hc() {
+	return new Eo({
 		name: "CubemapToCubeUV",
 		uniforms: {
 			envMap: { value: null },
 			flipEnvMap: { value: -1 }
 		},
-		vertexShader: lc(),
+		vertexShader: gc(),
 		fragmentShader: "\n\n			precision mediump float;\n			precision mediump int;\n\n			uniform float flipEnvMap;\n\n			varying vec3 vOutputDirection;\n\n			uniform samplerCube envMap;\n\n			void main() {\n\n				gl_FragColor = textureCube( envMap, vec3( flipEnvMap * vOutputDirection.x, vOutputDirection.yz ) );\n\n			}\n		",
 		blending: 0,
 		depthTest: !1,
 		depthWrite: !1
 	});
 }
-function lc() {
+function gc() {
 	return "\n\n		precision mediump float;\n		precision mediump int;\n\n		attribute vec3 outputDirection;\n\n		varying vec3 vOutputDirection;\n\n		void main() {\n\n			vOutputDirection = outputDirection;\n			gl_Position = vec4( position, 1.0 );\n\n		}\n	";
 }
-var uc = class extends Yt {
+var _c = class extends Yt {
 	constructor(e = 1, t = {}) {
 		super(e, e, t), this.isWebGLCubeRenderTarget = !0;
 		let n = {
@@ -8105,7 +8171,7 @@ var uc = class extends Yt {
 			n,
 			n
 		];
-		this.texture = new Ii(r), this._setTextureOptions(t), this.texture.isRenderTargetTexture = !0;
+		this.texture = new Ui(r), this._setTextureOptions(t), this.texture.isRenderTargetTexture = !0;
 	}
 	fromEquirectangularTexture(e, t) {
 		this.texture.type = t.type, this.texture.colorSpace = t.colorSpace, this.texture.generateMipmaps = t.generateMipmaps, this.texture.minFilter = t.minFilter, this.texture.magFilter = t.magFilter;
@@ -8113,9 +8179,9 @@ var uc = class extends Yt {
 			uniforms: { tEquirect: { value: null } },
 			vertexShader: "\n\n				varying vec3 vWorldDirection;\n\n				vec3 transformDirection( in vec3 dir, in mat4 matrix ) {\n\n					return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );\n\n				}\n\n				void main() {\n\n					vWorldDirection = transformDirection( position, modelMatrix );\n\n					#include <begin_vertex>\n					#include <project_vertex>\n\n				}\n			",
 			fragmentShader: "\n\n				uniform sampler2D tEquirect;\n\n				varying vec3 vWorldDirection;\n\n				#include <common>\n\n				void main() {\n\n					vec3 direction = normalize( vWorldDirection );\n\n					vec2 sampleUV = equirectUv( direction );\n\n					gl_FragColor = texture2D( tEquirect, sampleUV );\n\n				}\n			"
-		}, r = new Vi(5, 5, 5), i = new yo({
+		}, r = new Ji(5, 5, 5), i = new Eo({
 			name: "CubemapFromEquirect",
-			uniforms: uo(n.uniforms),
+			uniforms: vo(n.uniforms),
 			vertexShader: n.vertexShader,
 			fragmentShader: n.fragmentShader,
 			side: 1,
@@ -8123,7 +8189,7 @@ var uc = class extends Yt {
 		});
 		i.uniforms.tEquirect.value = t;
 		let a = new G(r, i), o = t.minFilter;
-		return t.minFilter === 1008 && (t.minFilter = c), new ls(1, 10, this).update(e, a), t.minFilter = o, a.geometry.dispose(), a.material.dispose(), this;
+		return t.minFilter === 1008 && (t.minFilter = c), new gs(1, 10, this).update(e, a), t.minFilter = o, a.geometry.dispose(), a.material.dispose(), this;
 	}
 	clear(e, t = !0, n = !0, r = !0) {
 		let i = e.getRenderTarget();
@@ -8131,7 +8197,7 @@ var uc = class extends Yt {
 		e.setRenderTarget(i);
 	}
 };
-function dc(e) {
+function vc(e) {
 	let t = /* @__PURE__ */ new WeakMap(), n = /* @__PURE__ */ new WeakMap(), r = null;
 	function i(e, t = !1) {
 		return e == null ? null : t ? o(e) : a(e);
@@ -8147,7 +8213,7 @@ function dc(e) {
 				{
 					let r = n.image;
 					if (r && r.height > 0) {
-						let i = new uc(r.height);
+						let i = new _c(r.height);
 						return i.fromEquirectangularTexture(e, n), t.set(n, i), n.addEventListener("dispose", l), s(i.texture, n.mapping);
 					}
 					return null;
@@ -8161,11 +8227,11 @@ function dc(e) {
 			let i = t.mapping, a = i === 303 || i === 304, o = i === 301 || i === 302;
 			if (a || o) {
 				let i = n.get(t), s = i === void 0 ? 0 : i.texture.pmremVersion;
-				if (t.isRenderTargetTexture && t.pmremVersion !== s) return r === null && (r = new tc(e)), i = a ? r.fromEquirectangular(t, i) : r.fromCubemap(t, i), i.texture.pmremVersion = t.pmremVersion, n.set(t, i), i.texture;
+				if (t.isRenderTargetTexture && t.pmremVersion !== s) return r === null && (r = new cc(e)), i = a ? r.fromEquirectangular(t, i) : r.fromCubemap(t, i), i.texture.pmremVersion = t.pmremVersion, n.set(t, i), i.texture;
 				if (i !== void 0) return i.texture;
 				{
 					let s = t.image;
-					return a && s && s.height > 0 || o && s && c(s) ? (r === null && (r = new tc(e)), i = a ? r.fromEquirectangular(t) : r.fromCubemap(t), i.texture.pmremVersion = t.pmremVersion, n.set(t, i), t.addEventListener("dispose", u), i.texture) : null;
+					return a && s && s.height > 0 || o && s && c(s) ? (r === null && (r = new cc(e)), i = a ? r.fromEquirectangular(t) : r.fromCubemap(t), i.texture.pmremVersion = t.pmremVersion, n.set(t, i), t.addEventListener("dispose", u), i.texture) : null;
 				}
 			}
 		}
@@ -8199,7 +8265,7 @@ function dc(e) {
 		dispose: d
 	};
 }
-function fc(e) {
+function yc(e) {
 	let t = {};
 	function n(n) {
 		if (t[n] !== void 0) return t[n];
@@ -8219,7 +8285,7 @@ function fc(e) {
 		}
 	};
 }
-function pc(e, t, n, r) {
+function bc(e, t, n, r) {
 	let i = {}, a = /* @__PURE__ */ new WeakMap();
 	function o(e) {
 		let s = e.target;
@@ -8273,7 +8339,7 @@ function pc(e, t, n, r) {
 		getWireframeAttribute: u
 	};
 }
-function mc(e, t, n) {
+function xc(e, t, n) {
 	let r;
 	function i(e) {
 		r = e;
@@ -8297,7 +8363,7 @@ function mc(e, t, n) {
 	}
 	this.setMode = i, this.setIndex = s, this.render = c, this.renderInstances = l, this.renderMultiDraw = u;
 }
-function hc(e) {
+function Sc(e) {
 	let t = {
 		geometries: 0,
 		textures: 0
@@ -8340,7 +8406,7 @@ function hc(e) {
 		update: r
 	};
 }
-function gc(e, t, n) {
+function Cc(e, t, n) {
 	let r = /* @__PURE__ */ new WeakMap(), i = new qt();
 	function a(a, o, s) {
 		let c = a.morphTargetInfluences, l = o.morphAttributes.position || o.morphAttributes.normal || o.morphAttributes.color, u = l === void 0 ? 0 : l.length, d = r.get(o);
@@ -8381,7 +8447,7 @@ function gc(e, t, n) {
 	}
 	return { update: a };
 }
-function _c(e, t, n, r, i) {
+function wc(e, t, n, r, i) {
 	let a = /* @__PURE__ */ new WeakMap();
 	function o(r) {
 		let o = i.render.frame, s = r.geometry, l = t.get(r, s);
@@ -8403,7 +8469,7 @@ function _c(e, t, n, r, i) {
 		dispose: s
 	};
 }
-var vc = {
+var Tc = {
 	1: "LINEAR_TONE_MAPPING",
 	2: "REINHARD_TONE_MAPPING",
 	3: "CINEON_TONE_MAPPING",
@@ -8412,7 +8478,7 @@ var vc = {
 	7: "NEUTRAL_TONE_MAPPING",
 	5: "CUSTOM_TONE_MAPPING"
 };
-function yc(e, t, n, r, i, a) {
+function Ec(e, t, n, r, i, a) {
 	let o = new Yt(t, n, {
 		type: e,
 		depthBuffer: i,
@@ -8441,13 +8507,13 @@ function yc(e, t, n, r, i, a) {
 		2,
 		0
 	], 2));
-	let u = new bo({
+	let u = new Do({
 		uniforms: { tDiffuse: { value: null } },
 		vertexShader: "\n			precision highp float;\n\n			uniform mat4 modelViewMatrix;\n			uniform mat4 projectionMatrix;\n\n			attribute vec3 position;\n			attribute vec2 uv;\n\n			varying vec2 vUv;\n\n			void main() {\n				vUv = uv;\n				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n			}",
 		fragmentShader: "\n			precision highp float;\n\n			uniform sampler2D tDiffuse;\n\n			varying vec2 vUv;\n\n			#include <tonemapping_pars_fragment>\n			#include <colorspace_pars_fragment>\n\n			void main() {\n				gl_FragColor = texture2D( tDiffuse, vUv );\n\n				#ifdef LINEAR_TONE_MAPPING\n					gl_FragColor.rgb = LinearToneMapping( gl_FragColor.rgb );\n				#elif defined( REINHARD_TONE_MAPPING )\n					gl_FragColor.rgb = ReinhardToneMapping( gl_FragColor.rgb );\n				#elif defined( CINEON_TONE_MAPPING )\n					gl_FragColor.rgb = CineonToneMapping( gl_FragColor.rgb );\n				#elif defined( ACES_FILMIC_TONE_MAPPING )\n					gl_FragColor.rgb = ACESFilmicToneMapping( gl_FragColor.rgb );\n				#elif defined( AGX_TONE_MAPPING )\n					gl_FragColor.rgb = AgXToneMapping( gl_FragColor.rgb );\n				#elif defined( NEUTRAL_TONE_MAPPING )\n					gl_FragColor.rgb = NeutralToneMapping( gl_FragColor.rgb );\n				#elif defined( CUSTOM_TONE_MAPPING )\n					gl_FragColor.rgb = CustomToneMapping( gl_FragColor.rgb );\n				#endif\n\n				#ifdef SRGB_TRANSFER\n					gl_FragColor = sRGBTransferOETF( gl_FragColor );\n				#endif\n			}",
 		depthTest: !1,
 		depthWrite: !1
-	}), d = new G(l, u), f = new is(-1, 1, 1, -1, 0, 1), p = null, m = null, h = !1, g, _ = null, y = [], b = !1;
+	}), d = new G(l, u), f = new ds(-1, 1, 1, -1, 0, 1), p = null, m = null, h = !1, g, _ = null, y = [], b = !1;
 	this.setSize = function(e, t) {
 		o.setSize(e, t), s !== null && s.setSize(e, t), c !== null && c.setSize(e, t);
 		for (let n = 0; n < y.length; n++) {
@@ -8488,7 +8554,7 @@ function yc(e, t, n, r, i, a) {
 		}
 		if (p !== e.outputColorSpace || m !== e.toneMapping) {
 			p = e.outputColorSpace, m = e.toneMapping, u.defines = {}, It.getTransfer(p) === "srgb" && (u.defines.SRGB_TRANSFER = "");
-			let t = vc[m];
+			let t = Tc[m];
 			t && (u.defines[t] = ""), u.needsUpdate = !0;
 		}
 		u.uniforms.tDiffuse.value = n.texture, e.setRenderTarget(_), e.render(d, f), _ = null, h = !1;
@@ -8498,324 +8564,324 @@ function yc(e, t, n, r, i, a) {
 		o.dispose(), s !== null && s.dispose(), c !== null && c.dispose(), l.dispose(), u.dispose();
 	};
 }
-var bc = /*@__PURE__*/ new Kt(), xc = /*@__PURE__*/ new Ri(1, 1), Sc = /*@__PURE__*/ new Xt(), Cc = /*@__PURE__*/ new Zt(), wc = /*@__PURE__*/ new Ii(), Tc = [], Ec = [], Dc = /* @__PURE__ */ new Float32Array(16), Oc = /* @__PURE__ */ new Float32Array(9), kc = /* @__PURE__ */ new Float32Array(4);
-function Ac(e, t, n) {
+var Dc = /*@__PURE__*/ new Kt(), Oc = /*@__PURE__*/ new Gi(1, 1), kc = /*@__PURE__*/ new Xt(), Ac = /*@__PURE__*/ new Zt(), jc = /*@__PURE__*/ new Ui(), Mc = [], Nc = [], Pc = /* @__PURE__ */ new Float32Array(16), Fc = /* @__PURE__ */ new Float32Array(9), Ic = /* @__PURE__ */ new Float32Array(4);
+function Lc(e, t, n) {
 	let r = e[0];
 	if (r <= 0 || r > 0) return e;
-	let i = t * n, a = Tc[i];
-	if (a === void 0 && (a = new Float32Array(i), Tc[i] = a), t !== 0) {
+	let i = t * n, a = Mc[i];
+	if (a === void 0 && (a = new Float32Array(i), Mc[i] = a), t !== 0) {
 		r.toArray(a, 0);
 		for (let r = 1, i = 0; r !== t; ++r) i += n, e[r].toArray(a, i);
 	}
 	return a;
 }
-function jc(e, t) {
+function Rc(e, t) {
 	if (e.length !== t.length) return !1;
 	for (let n = 0, r = e.length; n < r; n++) if (e[n] !== t[n]) return !1;
 	return !0;
 }
-function Mc(e, t) {
+function zc(e, t) {
 	for (let n = 0, r = t.length; n < r; n++) e[n] = t[n];
 }
-function Nc(e, t) {
-	let n = Ec[t];
-	n === void 0 && (n = new Int32Array(t), Ec[t] = n);
+function Bc(e, t) {
+	let n = Nc[t];
+	n === void 0 && (n = new Int32Array(t), Nc[t] = n);
 	for (let r = 0; r !== t; ++r) n[r] = e.allocateTextureUnit();
 	return n;
 }
-function Pc(e, t) {
+function Vc(e, t) {
 	let n = this.cache;
 	n[0] !== t && (e.uniform1f(this.addr, t), n[0] = t);
 }
-function Fc(e, t) {
+function Hc(e, t) {
 	let n = this.cache;
 	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y) && (e.uniform2f(this.addr, t.x, t.y), n[0] = t.x, n[1] = t.y);
 	else {
-		if (jc(n, t)) return;
-		e.uniform2fv(this.addr, t), Mc(n, t);
-	}
-}
-function Ic(e, t) {
-	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3f(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
-	else if (t.r !== void 0) (n[0] !== t.r || n[1] !== t.g || n[2] !== t.b) && (e.uniform3f(this.addr, t.r, t.g, t.b), n[0] = t.r, n[1] = t.g, n[2] = t.b);
-	else {
-		if (jc(n, t)) return;
-		e.uniform3fv(this.addr, t), Mc(n, t);
-	}
-}
-function Lc(e, t) {
-	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4f(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
-	else {
-		if (jc(n, t)) return;
-		e.uniform4fv(this.addr, t), Mc(n, t);
-	}
-}
-function Rc(e, t) {
-	let n = this.cache, r = t.elements;
-	if (r === void 0) {
-		if (jc(n, t)) return;
-		e.uniformMatrix2fv(this.addr, !1, t), Mc(n, t);
-	} else {
-		if (jc(n, r)) return;
-		kc.set(r), e.uniformMatrix2fv(this.addr, !1, kc), Mc(n, r);
-	}
-}
-function zc(e, t) {
-	let n = this.cache, r = t.elements;
-	if (r === void 0) {
-		if (jc(n, t)) return;
-		e.uniformMatrix3fv(this.addr, !1, t), Mc(n, t);
-	} else {
-		if (jc(n, r)) return;
-		Oc.set(r), e.uniformMatrix3fv(this.addr, !1, Oc), Mc(n, r);
-	}
-}
-function Bc(e, t) {
-	let n = this.cache, r = t.elements;
-	if (r === void 0) {
-		if (jc(n, t)) return;
-		e.uniformMatrix4fv(this.addr, !1, t), Mc(n, t);
-	} else {
-		if (jc(n, r)) return;
-		Dc.set(r), e.uniformMatrix4fv(this.addr, !1, Dc), Mc(n, r);
-	}
-}
-function Vc(e, t) {
-	let n = this.cache;
-	n[0] !== t && (e.uniform1i(this.addr, t), n[0] = t);
-}
-function Hc(e, t) {
-	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y) && (e.uniform2i(this.addr, t.x, t.y), n[0] = t.x, n[1] = t.y);
-	else {
-		if (jc(n, t)) return;
-		e.uniform2iv(this.addr, t), Mc(n, t);
+		if (Rc(n, t)) return;
+		e.uniform2fv(this.addr, t), zc(n, t);
 	}
 }
 function Uc(e, t) {
 	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3i(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3f(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
+	else if (t.r !== void 0) (n[0] !== t.r || n[1] !== t.g || n[2] !== t.b) && (e.uniform3f(this.addr, t.r, t.g, t.b), n[0] = t.r, n[1] = t.g, n[2] = t.b);
 	else {
-		if (jc(n, t)) return;
-		e.uniform3iv(this.addr, t), Mc(n, t);
+		if (Rc(n, t)) return;
+		e.uniform3fv(this.addr, t), zc(n, t);
 	}
 }
 function Wc(e, t) {
 	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4i(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4f(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
 	else {
-		if (jc(n, t)) return;
-		e.uniform4iv(this.addr, t), Mc(n, t);
+		if (Rc(n, t)) return;
+		e.uniform4fv(this.addr, t), zc(n, t);
 	}
 }
 function Gc(e, t) {
-	let n = this.cache;
-	n[0] !== t && (e.uniform1ui(this.addr, t), n[0] = t);
+	let n = this.cache, r = t.elements;
+	if (r === void 0) {
+		if (Rc(n, t)) return;
+		e.uniformMatrix2fv(this.addr, !1, t), zc(n, t);
+	} else {
+		if (Rc(n, r)) return;
+		Ic.set(r), e.uniformMatrix2fv(this.addr, !1, Ic), zc(n, r);
+	}
 }
 function Kc(e, t) {
-	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y) && (e.uniform2ui(this.addr, t.x, t.y), n[0] = t.x, n[1] = t.y);
-	else {
-		if (jc(n, t)) return;
-		e.uniform2uiv(this.addr, t), Mc(n, t);
+	let n = this.cache, r = t.elements;
+	if (r === void 0) {
+		if (Rc(n, t)) return;
+		e.uniformMatrix3fv(this.addr, !1, t), zc(n, t);
+	} else {
+		if (Rc(n, r)) return;
+		Fc.set(r), e.uniformMatrix3fv(this.addr, !1, Fc), zc(n, r);
 	}
 }
 function qc(e, t) {
-	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3ui(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
-	else {
-		if (jc(n, t)) return;
-		e.uniform3uiv(this.addr, t), Mc(n, t);
+	let n = this.cache, r = t.elements;
+	if (r === void 0) {
+		if (Rc(n, t)) return;
+		e.uniformMatrix4fv(this.addr, !1, t), zc(n, t);
+	} else {
+		if (Rc(n, r)) return;
+		Pc.set(r), e.uniformMatrix4fv(this.addr, !1, Pc), zc(n, r);
 	}
 }
 function Jc(e, t) {
 	let n = this.cache;
-	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4ui(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
+	n[0] !== t && (e.uniform1i(this.addr, t), n[0] = t);
+}
+function Yc(e, t) {
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y) && (e.uniform2i(this.addr, t.x, t.y), n[0] = t.x, n[1] = t.y);
 	else {
-		if (jc(n, t)) return;
-		e.uniform4uiv(this.addr, t), Mc(n, t);
+		if (Rc(n, t)) return;
+		e.uniform2iv(this.addr, t), zc(n, t);
 	}
 }
-function Yc(e, t, n) {
-	let r = this.cache, i = n.allocateTextureUnit();
-	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i);
-	let a;
-	this.type === e.SAMPLER_2D_SHADOW ? (xc.compareFunction = n.isReversedDepthBuffer() ? 518 : 515, a = xc) : a = bc, n.setTexture2D(t || a, i);
+function Xc(e, t) {
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3i(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
+	else {
+		if (Rc(n, t)) return;
+		e.uniform3iv(this.addr, t), zc(n, t);
+	}
 }
-function Xc(e, t, n) {
-	let r = this.cache, i = n.allocateTextureUnit();
-	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTexture3D(t || Cc, i);
+function Zc(e, t) {
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4i(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
+	else {
+		if (Rc(n, t)) return;
+		e.uniform4iv(this.addr, t), zc(n, t);
+	}
 }
-function Zc(e, t, n) {
-	let r = this.cache, i = n.allocateTextureUnit();
-	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTextureCube(t || wc, i);
+function Qc(e, t) {
+	let n = this.cache;
+	n[0] !== t && (e.uniform1ui(this.addr, t), n[0] = t);
 }
-function Qc(e, t, n) {
-	let r = this.cache, i = n.allocateTextureUnit();
-	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTexture2DArray(t || Sc, i);
-}
-function $c(e) {
-	switch (e) {
-		case 5126: return Pc;
-		case 35664: return Fc;
-		case 35665: return Ic;
-		case 35666: return Lc;
-		case 35674: return Rc;
-		case 35675: return zc;
-		case 35676: return Bc;
-		case 5124:
-		case 35670: return Vc;
-		case 35667:
-		case 35671: return Hc;
-		case 35668:
-		case 35672: return Uc;
-		case 35669:
-		case 35673: return Wc;
-		case 5125: return Gc;
-		case 36294: return Kc;
-		case 36295: return qc;
-		case 36296: return Jc;
-		case 35678:
-		case 36198:
-		case 36298:
-		case 36306:
-		case 35682: return Yc;
-		case 35679:
-		case 36299:
-		case 36307: return Xc;
-		case 35680:
-		case 36300:
-		case 36308:
-		case 36293: return Zc;
-		case 36289:
-		case 36303:
-		case 36311:
-		case 36292: return Qc;
+function $c(e, t) {
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y) && (e.uniform2ui(this.addr, t.x, t.y), n[0] = t.x, n[1] = t.y);
+	else {
+		if (Rc(n, t)) return;
+		e.uniform2uiv(this.addr, t), zc(n, t);
 	}
 }
 function el(e, t) {
-	e.uniform1fv(this.addr, t);
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z) && (e.uniform3ui(this.addr, t.x, t.y, t.z), n[0] = t.x, n[1] = t.y, n[2] = t.z);
+	else {
+		if (Rc(n, t)) return;
+		e.uniform3uiv(this.addr, t), zc(n, t);
+	}
 }
 function tl(e, t) {
-	let n = Ac(t, this.size, 2);
-	e.uniform2fv(this.addr, n);
+	let n = this.cache;
+	if (t.x !== void 0) (n[0] !== t.x || n[1] !== t.y || n[2] !== t.z || n[3] !== t.w) && (e.uniform4ui(this.addr, t.x, t.y, t.z, t.w), n[0] = t.x, n[1] = t.y, n[2] = t.z, n[3] = t.w);
+	else {
+		if (Rc(n, t)) return;
+		e.uniform4uiv(this.addr, t), zc(n, t);
+	}
 }
-function nl(e, t) {
-	let n = Ac(t, this.size, 3);
-	e.uniform3fv(this.addr, n);
+function nl(e, t, n) {
+	let r = this.cache, i = n.allocateTextureUnit();
+	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i);
+	let a;
+	this.type === e.SAMPLER_2D_SHADOW ? (Oc.compareFunction = n.isReversedDepthBuffer() ? 518 : 515, a = Oc) : a = Dc, n.setTexture2D(t || a, i);
 }
-function rl(e, t) {
-	let n = Ac(t, this.size, 4);
-	e.uniform4fv(this.addr, n);
+function rl(e, t, n) {
+	let r = this.cache, i = n.allocateTextureUnit();
+	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTexture3D(t || Ac, i);
 }
-function il(e, t) {
-	let n = Ac(t, this.size, 4);
-	e.uniformMatrix2fv(this.addr, !1, n);
+function il(e, t, n) {
+	let r = this.cache, i = n.allocateTextureUnit();
+	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTextureCube(t || jc, i);
 }
-function al(e, t) {
-	let n = Ac(t, this.size, 9);
-	e.uniformMatrix3fv(this.addr, !1, n);
+function al(e, t, n) {
+	let r = this.cache, i = n.allocateTextureUnit();
+	r[0] !== i && (e.uniform1i(this.addr, i), r[0] = i), n.setTexture2DArray(t || kc, i);
 }
-function ol(e, t) {
-	let n = Ac(t, this.size, 16);
-	e.uniformMatrix4fv(this.addr, !1, n);
-}
-function sl(e, t) {
-	e.uniform1iv(this.addr, t);
-}
-function cl(e, t) {
-	e.uniform2iv(this.addr, t);
-}
-function ll(e, t) {
-	e.uniform3iv(this.addr, t);
-}
-function ul(e, t) {
-	e.uniform4iv(this.addr, t);
-}
-function dl(e, t) {
-	e.uniform1uiv(this.addr, t);
-}
-function fl(e, t) {
-	e.uniform2uiv(this.addr, t);
-}
-function pl(e, t) {
-	e.uniform3uiv(this.addr, t);
-}
-function ml(e, t) {
-	e.uniform4uiv(this.addr, t);
-}
-function hl(e, t, n) {
-	let r = this.cache, i = t.length, a = Nc(n, i);
-	jc(r, a) || (e.uniform1iv(this.addr, a), Mc(r, a));
-	let o;
-	o = this.type === e.SAMPLER_2D_SHADOW ? xc : bc;
-	for (let e = 0; e !== i; ++e) n.setTexture2D(t[e] || o, a[e]);
-}
-function gl(e, t, n) {
-	let r = this.cache, i = t.length, a = Nc(n, i);
-	jc(r, a) || (e.uniform1iv(this.addr, a), Mc(r, a));
-	for (let e = 0; e !== i; ++e) n.setTexture3D(t[e] || Cc, a[e]);
-}
-function _l(e, t, n) {
-	let r = this.cache, i = t.length, a = Nc(n, i);
-	jc(r, a) || (e.uniform1iv(this.addr, a), Mc(r, a));
-	for (let e = 0; e !== i; ++e) n.setTextureCube(t[e] || wc, a[e]);
-}
-function vl(e, t, n) {
-	let r = this.cache, i = t.length, a = Nc(n, i);
-	jc(r, a) || (e.uniform1iv(this.addr, a), Mc(r, a));
-	for (let e = 0; e !== i; ++e) n.setTexture2DArray(t[e] || Sc, a[e]);
-}
-function yl(e) {
+function ol(e) {
 	switch (e) {
-		case 5126: return el;
-		case 35664: return tl;
-		case 35665: return nl;
-		case 35666: return rl;
-		case 35674: return il;
-		case 35675: return al;
-		case 35676: return ol;
+		case 5126: return Vc;
+		case 35664: return Hc;
+		case 35665: return Uc;
+		case 35666: return Wc;
+		case 35674: return Gc;
+		case 35675: return Kc;
+		case 35676: return qc;
 		case 5124:
-		case 35670: return sl;
+		case 35670: return Jc;
 		case 35667:
-		case 35671: return cl;
+		case 35671: return Yc;
 		case 35668:
-		case 35672: return ll;
+		case 35672: return Xc;
 		case 35669:
-		case 35673: return ul;
-		case 5125: return dl;
-		case 36294: return fl;
-		case 36295: return pl;
-		case 36296: return ml;
+		case 35673: return Zc;
+		case 5125: return Qc;
+		case 36294: return $c;
+		case 36295: return el;
+		case 36296: return tl;
 		case 35678:
 		case 36198:
 		case 36298:
 		case 36306:
-		case 35682: return hl;
+		case 35682: return nl;
 		case 35679:
 		case 36299:
-		case 36307: return gl;
+		case 36307: return rl;
 		case 35680:
 		case 36300:
 		case 36308:
-		case 36293: return _l;
+		case 36293: return il;
 		case 36289:
 		case 36303:
 		case 36311:
-		case 36292: return vl;
+		case 36292: return al;
 	}
 }
-var bl = class {
-	constructor(e, t, n) {
-		this.id = e, this.addr = n, this.cache = [], this.type = t.type, this.setValue = $c(t.type);
+function sl(e, t) {
+	e.uniform1fv(this.addr, t);
+}
+function cl(e, t) {
+	let n = Lc(t, this.size, 2);
+	e.uniform2fv(this.addr, n);
+}
+function ll(e, t) {
+	let n = Lc(t, this.size, 3);
+	e.uniform3fv(this.addr, n);
+}
+function ul(e, t) {
+	let n = Lc(t, this.size, 4);
+	e.uniform4fv(this.addr, n);
+}
+function dl(e, t) {
+	let n = Lc(t, this.size, 4);
+	e.uniformMatrix2fv(this.addr, !1, n);
+}
+function fl(e, t) {
+	let n = Lc(t, this.size, 9);
+	e.uniformMatrix3fv(this.addr, !1, n);
+}
+function pl(e, t) {
+	let n = Lc(t, this.size, 16);
+	e.uniformMatrix4fv(this.addr, !1, n);
+}
+function ml(e, t) {
+	e.uniform1iv(this.addr, t);
+}
+function hl(e, t) {
+	e.uniform2iv(this.addr, t);
+}
+function gl(e, t) {
+	e.uniform3iv(this.addr, t);
+}
+function _l(e, t) {
+	e.uniform4iv(this.addr, t);
+}
+function vl(e, t) {
+	e.uniform1uiv(this.addr, t);
+}
+function yl(e, t) {
+	e.uniform2uiv(this.addr, t);
+}
+function bl(e, t) {
+	e.uniform3uiv(this.addr, t);
+}
+function xl(e, t) {
+	e.uniform4uiv(this.addr, t);
+}
+function Sl(e, t, n) {
+	let r = this.cache, i = t.length, a = Bc(n, i);
+	Rc(r, a) || (e.uniform1iv(this.addr, a), zc(r, a));
+	let o;
+	o = this.type === e.SAMPLER_2D_SHADOW ? Oc : Dc;
+	for (let e = 0; e !== i; ++e) n.setTexture2D(t[e] || o, a[e]);
+}
+function Cl(e, t, n) {
+	let r = this.cache, i = t.length, a = Bc(n, i);
+	Rc(r, a) || (e.uniform1iv(this.addr, a), zc(r, a));
+	for (let e = 0; e !== i; ++e) n.setTexture3D(t[e] || Ac, a[e]);
+}
+function wl(e, t, n) {
+	let r = this.cache, i = t.length, a = Bc(n, i);
+	Rc(r, a) || (e.uniform1iv(this.addr, a), zc(r, a));
+	for (let e = 0; e !== i; ++e) n.setTextureCube(t[e] || jc, a[e]);
+}
+function Tl(e, t, n) {
+	let r = this.cache, i = t.length, a = Bc(n, i);
+	Rc(r, a) || (e.uniform1iv(this.addr, a), zc(r, a));
+	for (let e = 0; e !== i; ++e) n.setTexture2DArray(t[e] || kc, a[e]);
+}
+function El(e) {
+	switch (e) {
+		case 5126: return sl;
+		case 35664: return cl;
+		case 35665: return ll;
+		case 35666: return ul;
+		case 35674: return dl;
+		case 35675: return fl;
+		case 35676: return pl;
+		case 5124:
+		case 35670: return ml;
+		case 35667:
+		case 35671: return hl;
+		case 35668:
+		case 35672: return gl;
+		case 35669:
+		case 35673: return _l;
+		case 5125: return vl;
+		case 36294: return yl;
+		case 36295: return bl;
+		case 36296: return xl;
+		case 35678:
+		case 36198:
+		case 36298:
+		case 36306:
+		case 35682: return Sl;
+		case 35679:
+		case 36299:
+		case 36307: return Cl;
+		case 35680:
+		case 36300:
+		case 36308:
+		case 36293: return wl;
+		case 36289:
+		case 36303:
+		case 36311:
+		case 36292: return Tl;
 	}
-}, xl = class {
+}
+var Dl = class {
 	constructor(e, t, n) {
-		this.id = e, this.addr = n, this.cache = [], this.type = t.type, this.size = t.size, this.setValue = yl(t.type);
+		this.id = e, this.addr = n, this.cache = [], this.type = t.type, this.setValue = ol(t.type);
 	}
-}, Sl = class {
+}, Ol = class {
+	constructor(e, t, n) {
+		this.id = e, this.addr = n, this.cache = [], this.type = t.type, this.size = t.size, this.setValue = El(t.type);
+	}
+}, kl = class {
 	constructor(e) {
 		this.id = e, this.seq = [], this.map = {};
 	}
@@ -8826,31 +8892,31 @@ var bl = class {
 			a.setValue(e, t[a.id], n);
 		}
 	}
-}, Cl = /(\w+)(\])?(\[|\.)?/g;
-function wl(e, t) {
+}, Al = /(\w+)(\])?(\[|\.)?/g;
+function jl(e, t) {
 	e.seq.push(t), e.map[t.id] = t;
 }
-function Tl(e, t, n) {
+function Ml(e, t, n) {
 	let r = e.name, i = r.length;
-	for (Cl.lastIndex = 0;;) {
-		let a = Cl.exec(r), o = Cl.lastIndex, s = a[1], c = a[2] === "]", l = a[3];
+	for (Al.lastIndex = 0;;) {
+		let a = Al.exec(r), o = Al.lastIndex, s = a[1], c = a[2] === "]", l = a[3];
 		if (c && (s |= 0), l === void 0 || l === "[" && o + 2 === i) {
-			wl(n, l === void 0 ? new bl(s, e, t) : new xl(s, e, t));
+			jl(n, l === void 0 ? new Dl(s, e, t) : new Ol(s, e, t));
 			break;
 		}
 		{
 			let e = n.map[s];
-			e === void 0 && (e = new Sl(s), wl(n, e)), n = e;
+			e === void 0 && (e = new kl(s), jl(n, e)), n = e;
 		}
 	}
 }
-var El = class {
+var Nl = class {
 	constructor(e, t) {
 		this.seq = [], this.map = {};
 		let n = e.getProgramParameter(t, e.ACTIVE_UNIFORMS);
 		for (let r = 0; r < n; ++r) {
 			let n = e.getActiveUniform(t, r);
-			Tl(n, e.getUniformLocation(t, n.name), this);
+			Ml(n, e.getUniformLocation(t, n.name), this);
 		}
 		let r = [], i = [];
 		for (let t of this.seq) t.type === e.SAMPLER_2D_SHADOW || t.type === e.SAMPLER_CUBE_SHADOW || t.type === e.SAMPLER_2D_ARRAY_SHADOW ? r.push(t) : i.push(t);
@@ -8879,12 +8945,12 @@ var El = class {
 		return n;
 	}
 };
-function Dl(e, t, n) {
+function Pl(e, t, n) {
 	let r = e.createShader(t);
 	return e.shaderSource(r, n), e.compileShader(r), r;
 }
-var Ol = 37297, kl = 0;
-function Al(e, t) {
+var Fl = 37297, Il = 0;
+function Ll(e, t) {
 	let n = e.split("\n"), r = [], i = Math.max(t - 6, 0), a = Math.min(t + 6, n.length);
 	for (let e = i; e < a; e++) {
 		let i = e + 1;
@@ -8892,35 +8958,35 @@ function Al(e, t) {
 	}
 	return r.join("\n");
 }
-var jl = /*@__PURE__*/ new jt();
-function Ml(e) {
-	It._getMatrix(jl, It.workingColorSpace, e);
-	let t = `mat3( ${jl.elements.map((e) => e.toFixed(4))} )`;
+var Rl = /*@__PURE__*/ new jt();
+function zl(e) {
+	It._getMatrix(Rl, It.workingColorSpace, e);
+	let t = `mat3( ${Rl.elements.map((e) => e.toFixed(4))} )`;
 	switch (It.getTransfer(e)) {
 		case Be: return [t, "LinearTransferOETF"];
 		case Ve: return [t, "sRGBTransferOETF"];
 		default: return B("WebGLProgram: Unsupported color space: ", e), [t, "LinearTransferOETF"];
 	}
 }
-function Nl(e, t, n) {
+function Bl(e, t, n) {
 	let r = e.getShaderParameter(t, e.COMPILE_STATUS), i = (e.getShaderInfoLog(t) || "").trim();
 	if (r && i === "") return "";
 	let a = /ERROR: 0:(\d+)/.exec(i);
 	if (a) {
 		let r = parseInt(a[1]);
-		return n.toUpperCase() + "\n\n" + i + "\n\n" + Al(e.getShaderSource(t), r);
+		return n.toUpperCase() + "\n\n" + i + "\n\n" + Ll(e.getShaderSource(t), r);
 	}
 	return i;
 }
-function Pl(e, t) {
-	let n = Ml(t);
+function Vl(e, t) {
+	let n = zl(t);
 	return [
 		`vec4 ${e}( vec4 value ) {`,
 		`	return ${n[1]}( vec4( value.rgb * ${n[0]}, value.a ) );`,
 		"}"
 	].join("\n");
 }
-var Fl = {
+var Hl = {
 	1: "Linear",
 	2: "Reinhard",
 	3: "Cineon",
@@ -8929,23 +8995,23 @@ var Fl = {
 	7: "Neutral",
 	5: "Custom"
 };
-function Il(e, t) {
-	let n = Fl[t];
+function Ul(e, t) {
+	let n = Hl[t];
 	return n === void 0 ? (B("WebGLProgram: Unsupported toneMapping:", t), "vec3 " + e + "( vec3 color ) { return LinearToneMapping( color ); }") : "vec3 " + e + "( vec3 color ) { return " + n + "ToneMapping( color ); }";
 }
-var Ll = /*@__PURE__*/ new W();
-function Rl() {
-	return It.getLuminanceCoefficients(Ll), [
+var Wl = /*@__PURE__*/ new W();
+function Gl() {
+	return It.getLuminanceCoefficients(Wl), [
 		"float luminance( const in vec3 rgb ) {",
-		`	const vec3 weights = vec3( ${Ll.x.toFixed(4)}, ${Ll.y.toFixed(4)}, ${Ll.z.toFixed(4)} );`,
+		`	const vec3 weights = vec3( ${Wl.x.toFixed(4)}, ${Wl.y.toFixed(4)}, ${Wl.z.toFixed(4)} );`,
 		"	return dot( weights, rgb );",
 		"}"
 	].join("\n");
 }
-function zl(e) {
-	return [e.extensionClipCullDistance ? "#extension GL_ANGLE_clip_cull_distance : require" : "", e.extensionMultiDraw ? "#extension GL_ANGLE_multi_draw : require" : ""].filter(Hl).join("\n");
+function Kl(e) {
+	return [e.extensionClipCullDistance ? "#extension GL_ANGLE_clip_cull_distance : require" : "", e.extensionMultiDraw ? "#extension GL_ANGLE_multi_draw : require" : ""].filter(Yl).join("\n");
 }
-function Bl(e) {
+function ql(e) {
 	let t = [];
 	for (let n in e) {
 		let r = e[n];
@@ -8953,7 +9019,7 @@ function Bl(e) {
 	}
 	return t.join("\n");
 }
-function Vl(e, t) {
+function Jl(e, t) {
 	let n = {}, r = e.getProgramParameter(t, e.ACTIVE_ATTRIBUTES);
 	for (let i = 0; i < r; i++) {
 		let r = e.getActiveAttrib(t, i), a = r.name, o = 1;
@@ -8965,40 +9031,40 @@ function Vl(e, t) {
 	}
 	return n;
 }
-function Hl(e) {
+function Yl(e) {
 	return e !== "";
 }
-function Ul(e, t) {
+function Xl(e, t) {
 	let n = t.numSpotLightShadows + t.numSpotLightMaps - t.numSpotLightShadowsWithMaps;
 	return e.replace(/NUM_SUN_LIGHTS/g, t.numSunLights).replace(/NUM_DIR_LIGHTS/g, t.numDirLights).replace(/NUM_SPOT_LIGHTS/g, t.numSpotLights).replace(/NUM_SPOT_LIGHT_MAPS/g, t.numSpotLightMaps).replace(/NUM_SPOT_LIGHT_COORDS/g, n).replace(/NUM_RECT_AREA_LIGHTS/g, t.numRectAreaLights).replace(/NUM_POINT_LIGHTS/g, t.numPointLights).replace(/NUM_HEMI_LIGHTS/g, t.numHemiLights).replace(/NUM_SUN_LIGHT_SHADOWS/g, t.numSunLightShadows).replace(/NUM_DIR_LIGHT_SHADOWS/g, t.numDirLightShadows).replace(/NUM_SPOT_LIGHT_SHADOWS_WITH_MAPS/g, t.numSpotLightShadowsWithMaps).replace(/NUM_SPOT_LIGHT_SHADOWS/g, t.numSpotLightShadows).replace(/NUM_POINT_LIGHT_SHADOWS/g, t.numPointLightShadows);
 }
-function Wl(e, t) {
+function Zl(e, t) {
 	return e.replace(/NUM_CLIPPING_PLANES/g, t.numClippingPlanes).replace(/UNION_CLIPPING_PLANES/g, t.numClippingPlanes - t.numClipIntersection);
 }
-var Gl = /^[ \t]*#include +<([\w\d./]+)>/gm;
-function Kl(e) {
-	return e.replace(Gl, Jl);
+var Ql = /^[ \t]*#include +<([\w\d./]+)>/gm;
+function $l(e) {
+	return e.replace(Ql, tu);
 }
-var ql = /* @__PURE__ */ new Map();
-function Jl(e, t) {
-	let n = Ns[t];
+var eu = /* @__PURE__ */ new Map();
+function tu(e, t) {
+	let n = Bs[t];
 	if (n === void 0) {
-		let e = ql.get(t);
-		if (e !== void 0) n = Ns[e], B("WebGLRenderer: Shader chunk \"%s\" has been deprecated. Use \"%s\" instead.", t, e);
+		let e = eu.get(t);
+		if (e !== void 0) n = Bs[e], B("WebGLRenderer: Shader chunk \"%s\" has been deprecated. Use \"%s\" instead.", t, e);
 		else throw Error("THREE.WebGLProgram: Can not resolve #include <" + t + ">");
 	}
-	return Kl(n);
+	return $l(n);
 }
-var Yl = /#pragma unroll_loop_start\s+for\s*\(\s*int\s+i\s*=\s*(\d+)\s*;\s*i\s*<\s*(\d+)\s*;\s*i\s*\+\+\s*\)\s*{([\s\S]+?)}\s+#pragma unroll_loop_end/g;
-function Xl(e) {
-	return e.replace(Yl, Zl);
+var nu = /#pragma unroll_loop_start\s+for\s*\(\s*int\s+i\s*=\s*(\d+)\s*;\s*i\s*<\s*(\d+)\s*;\s*i\s*\+\+\s*\)\s*{([\s\S]+?)}\s+#pragma unroll_loop_end/g;
+function ru(e) {
+	return e.replace(nu, iu);
 }
-function Zl(e, t, n, r) {
+function iu(e, t, n, r) {
 	let i = "";
 	for (let e = parseInt(t); e < parseInt(n); e++) i += r.replace(/\[\s*i\s*\]/g, "[ " + e + " ]").replace(/UNROLLED_LOOP_INDEX/g, e);
 	return i;
 }
-function Ql(e) {
+function au(e) {
 	let t = `precision ${e.precision} float;
 	precision ${e.precision} int;
 	precision ${e.precision} sampler2D;
@@ -9019,34 +9085,34 @@ function Ql(e) {
 	`;
 	return e.precision === "highp" ? t += "\n#define HIGH_PRECISION" : e.precision === "mediump" ? t += "\n#define MEDIUM_PRECISION" : e.precision === "lowp" && (t += "\n#define LOW_PRECISION"), t;
 }
-var $l = {
+var ou = {
 	1: "SHADOWMAP_TYPE_PCF",
 	3: "SHADOWMAP_TYPE_VSM"
 };
-function eu(e) {
-	return $l[e.shadowMapType] || "SHADOWMAP_TYPE_BASIC";
+function su(e) {
+	return ou[e.shadowMapType] || "SHADOWMAP_TYPE_BASIC";
 }
-var tu = {
+var cu = {
 	301: "ENVMAP_TYPE_CUBE",
 	302: "ENVMAP_TYPE_CUBE",
 	306: "ENVMAP_TYPE_CUBE_UV"
 };
-function nu(e) {
-	return e.envMap === !1 ? "ENVMAP_TYPE_CUBE" : tu[e.envMapMode] || "ENVMAP_TYPE_CUBE";
+function lu(e) {
+	return e.envMap === !1 ? "ENVMAP_TYPE_CUBE" : cu[e.envMapMode] || "ENVMAP_TYPE_CUBE";
 }
-var ru = { 302: "ENVMAP_MODE_REFRACTION" };
-function iu(e) {
-	return e.envMap === !1 ? "ENVMAP_MODE_REFLECTION" : ru[e.envMapMode] || "ENVMAP_MODE_REFLECTION";
+var uu = { 302: "ENVMAP_MODE_REFRACTION" };
+function du(e) {
+	return e.envMap === !1 ? "ENVMAP_MODE_REFLECTION" : uu[e.envMapMode] || "ENVMAP_MODE_REFLECTION";
 }
-var au = {
+var fu = {
 	0: "ENVMAP_BLENDING_MULTIPLY",
 	1: "ENVMAP_BLENDING_MIX",
 	2: "ENVMAP_BLENDING_ADD"
 };
-function ou(e) {
-	return e.envMap === !1 ? "ENVMAP_BLENDING_NONE" : au[e.combine] || "ENVMAP_BLENDING_NONE";
+function pu(e) {
+	return e.envMap === !1 ? "ENVMAP_BLENDING_NONE" : fu[e.combine] || "ENVMAP_BLENDING_NONE";
 }
-function su(e) {
+function mu(e) {
 	let t = e.envMapCubeUVHeight;
 	if (t === null) return null;
 	let n = Math.log2(t) - 2, r = 1 / t;
@@ -9056,18 +9122,18 @@ function su(e) {
 		maxMip: n
 	};
 }
-function cu(e, t, n, r) {
-	let i = e.getContext(), a = n.defines, o = n.vertexShader, s = n.fragmentShader, c = eu(n), l = nu(n), u = iu(n), d = ou(n), f = su(n), p = zl(n), m = Bl(a), h = i.createProgram(), g, _, v = n.glslVersion ? "#version " + n.glslVersion + "\n" : "";
+function hu(e, t, n, r) {
+	let i = e.getContext(), a = n.defines, o = n.vertexShader, s = n.fragmentShader, c = su(n), l = lu(n), u = du(n), d = pu(n), f = mu(n), p = Kl(n), m = ql(a), h = i.createProgram(), g, _, v = n.glslVersion ? "#version " + n.glslVersion + "\n" : "";
 	n.isRawShaderMaterial ? (g = [
 		"#define SHADER_TYPE " + n.shaderType,
 		"#define SHADER_NAME " + n.shaderName,
 		m
-	].filter(Hl).join("\n"), g.length > 0 && (g += "\n"), _ = [
+	].filter(Yl).join("\n"), g.length > 0 && (g += "\n"), _ = [
 		"#define SHADER_TYPE " + n.shaderType,
 		"#define SHADER_NAME " + n.shaderName,
 		m
-	].filter(Hl).join("\n"), _.length > 0 && (_ += "\n")) : (g = [
-		Ql(n),
+	].filter(Yl).join("\n"), _.length > 0 && (_ += "\n")) : (g = [
+		au(n),
 		"#define SHADER_TYPE " + n.shaderType,
 		"#define SHADER_NAME " + n.shaderName,
 		m,
@@ -9196,8 +9262,8 @@ function cu(e, t, n, r) {
 		"	attribute vec4 skinWeight;",
 		"#endif",
 		"\n"
-	].filter(Hl).join("\n"), _ = [
-		Ql(n),
+	].filter(Yl).join("\n"), _ = [
+		au(n),
 		"#define SHADER_TYPE " + n.shaderType,
 		"#define SHADER_NAME " + n.shaderName,
 		m,
@@ -9270,16 +9336,16 @@ function cu(e, t, n, r) {
 		"uniform vec3 cameraPosition;",
 		"uniform bool isOrthographic;",
 		n.toneMapping === 0 ? "" : "#define TONE_MAPPING",
-		n.toneMapping === 0 ? "" : Ns.tonemapping_pars_fragment,
-		n.toneMapping === 0 ? "" : Il("toneMapping", n.toneMapping),
+		n.toneMapping === 0 ? "" : Bs.tonemapping_pars_fragment,
+		n.toneMapping === 0 ? "" : Ul("toneMapping", n.toneMapping),
 		n.dithering ? "#define DITHERING" : "",
 		n.opaque ? "#define OPAQUE" : "",
-		Ns.colorspace_pars_fragment,
-		Pl("linearToOutputTexel", n.outputColorSpace),
-		Rl(),
+		Bs.colorspace_pars_fragment,
+		Vl("linearToOutputTexel", n.outputColorSpace),
+		Gl(),
 		n.useDepthPacking ? "#define DEPTH_PACKING " + n.depthPacking : "",
 		"\n"
-	].filter(Hl).join("\n")), o = Kl(o), o = Ul(o, n), o = Wl(o, n), s = Kl(s), s = Ul(s, n), s = Wl(s, n), o = Xl(o), s = Xl(s), n.isRawShaderMaterial !== !0 && (v = "#version 300 es\n", g = [
+	].filter(Yl).join("\n")), o = $l(o), o = Xl(o, n), o = Zl(o, n), s = $l(s), s = Xl(s, n), s = Zl(s, n), o = ru(o), s = ru(s), n.isRawShaderMaterial !== !0 && (v = "#version 300 es\n", g = [
 		p,
 		"#define attribute in",
 		"#define varying out",
@@ -9299,7 +9365,7 @@ function cu(e, t, n, r) {
 		"#define texture2DProjGradEXT textureProjGrad",
 		"#define textureCubeGradEXT textureGrad"
 	].join("\n") + "\n" + _);
-	let y = v + g + o, b = v + _ + s, x = Dl(i, i.VERTEX_SHADER, y), S = Dl(i, i.FRAGMENT_SHADER, b);
+	let y = v + g + o, b = v + _ + s, x = Pl(i, i.VERTEX_SHADER, y), S = Pl(i, i.FRAGMENT_SHADER, b);
 	i.attachShader(h, x), i.attachShader(h, S), n.index0AttributeName === void 0 ? n.hasPositionAttribute === !0 && i.bindAttribLocation(h, 0, "position") : i.bindAttribLocation(h, 0, n.index0AttributeName), i.linkProgram(h);
 	function C(t) {
 		if (e.debug.checkShaderErrors) {
@@ -9307,7 +9373,7 @@ function cu(e, t, n, r) {
 			if (i.getProgramParameter(h, i.LINK_STATUS) === !1) {
 				if (l = !1, typeof e.debug.onShaderError == "function") e.debug.onShaderError(i, h, x, S);
 				else {
-					let e = Nl(i, x, "vertex"), n = Nl(i, S, "fragment");
+					let e = Bl(i, x, "vertex"), n = Bl(i, S, "fragment");
 					V("WebGLProgram: Shader Error " + i.getError() + " - VALIDATE_STATUS " + i.getProgramParameter(h, i.VALIDATE_STATUS) + "\n\nMaterial Name: " + t.name + "\nMaterial Type: " + t.type + "\n\nProgram Info Log: " + o + "\n" + e + "\n" + n);
 				}
 			} else o === "" ? (s === "" || c === "") && (u = !1) : B("WebGLProgram: Program Info Log:", o);
@@ -9324,7 +9390,7 @@ function cu(e, t, n, r) {
 				}
 			});
 		}
-		i.deleteShader(x), i.deleteShader(S), w = new El(i, h), T = Vl(i, h);
+		i.deleteShader(x), i.deleteShader(S), w = new Nl(i, h), T = Jl(i, h);
 	}
 	let w;
 	this.getUniforms = function() {
@@ -9336,12 +9402,12 @@ function cu(e, t, n, r) {
 	};
 	let E = n.rendererExtensionParallelShaderCompile === !1;
 	return this.isReady = function() {
-		return E === !1 && (E = i.getProgramParameter(h, Ol)), E;
+		return E === !1 && (E = i.getProgramParameter(h, Fl)), E;
 	}, this.destroy = function() {
 		r.releaseStatesOfProgram(this), i.deleteProgram(h), this.program = void 0;
-	}, this.type = n.shaderType, this.name = n.shaderName, this.id = kl++, this.cacheKey = t, this.usedTimes = 1, this.program = h, this.vertexShader = x, this.fragmentShader = S, this;
+	}, this.type = n.shaderType, this.name = n.shaderName, this.id = Il++, this.cacheKey = t, this.usedTimes = 1, this.program = h, this.vertexShader = x, this.fragmentShader = S, this;
 }
-var lu = 0, uu = class {
+var gu = 0, _u = class {
 	constructor() {
 		this.shaderCache = /* @__PURE__ */ new Map(), this.materialCache = /* @__PURE__ */ new Map();
 	}
@@ -9369,18 +9435,18 @@ var lu = 0, uu = class {
 	}
 	_getShaderStage(e) {
 		let t = this.shaderCache, n = t.get(e);
-		return n === void 0 && (n = new du(e), t.set(e, n)), n;
+		return n === void 0 && (n = new vu(e), t.set(e, n)), n;
 	}
-}, du = class {
+}, vu = class {
 	constructor(e) {
-		this.id = lu++, this.code = e, this.usedTimes = 0;
+		this.id = gu++, this.code = e, this.usedTimes = 0;
 	}
 };
-function fu(e) {
+function yu(e) {
 	return e === 1030 || e === 37490 || e === 36285;
 }
-function pu(e, t, n, r, i, a) {
-	let o = new un(), s = new uu(), c = /* @__PURE__ */ new Set(), l = [], u = /* @__PURE__ */ new Map(), d = r.logarithmicDepthBuffer, f = r.precision, p = {
+function bu(e, t, n, r, i, a) {
+	let o = new un(), s = new _u(), c = /* @__PURE__ */ new Set(), l = [], u = /* @__PURE__ */ new Map(), d = r.logarithmicDepthBuffer, f = r.precision, p = {
 		MeshDepthMaterial: "depth",
 		MeshDistanceMaterial: "distance",
 		MeshNormalMaterial: "normal",
@@ -9407,7 +9473,7 @@ function pu(e, t, n, r, i, a) {
 		v.morphAttributes.position !== void 0 && (E = 1), v.morphAttributes.normal !== void 0 && (E = 2), v.morphAttributes.color !== void 0 && (E = 3);
 		let D, O, k, A;
 		if (C) {
-			let e = Ps[C];
+			let e = Vs[C];
 			D = e.vertexShader, O = e.fragmentShader;
 		} else {
 			D = i.vertexShader, O = i.fragmentShader;
@@ -9448,7 +9514,7 @@ function pu(e, t, n, r, i, a) {
 			emissiveMap: ce,
 			normalMapObjectSpace: oe && i.normalMapType === 1,
 			normalMapTangentSpace: oe && i.normalMapType === 0,
-			packedNormalMap: oe && i.normalMapType === 0 && fu(i.normalMap.format),
+			packedNormalMap: oe && i.normalMapType === 0 && yu(i.normalMap.format),
 			metalnessMap: F,
 			roughnessMap: I,
 			anisotropy: le,
@@ -9568,14 +9634,14 @@ function pu(e, t, n, r, i, a) {
 	function y(e) {
 		let t = p[e.type], n;
 		if (t) {
-			let e = Ps[t];
-			n = go.clone(e.uniforms);
+			let e = Vs[t];
+			n = Co.clone(e.uniforms);
 		} else n = e.uniforms;
 		return n;
 	}
 	function b(t, n) {
 		let r = u.get(n);
-		return r === void 0 ? (r = new cu(e, n, t, i), l.push(r), u.set(n, r)) : ++r.usedTimes, r;
+		return r === void 0 ? (r = new hu(e, n, t, i), l.push(r), u.set(n, r)) : ++r.usedTimes, r;
 	}
 	function x(e) {
 		if (--e.usedTimes === 0) {
@@ -9600,7 +9666,7 @@ function pu(e, t, n, r, i, a) {
 		dispose: C
 	};
 }
-function mu() {
+function xu() {
 	let e = /* @__PURE__ */ new WeakMap();
 	function t(t) {
 		return e.has(t);
@@ -9626,13 +9692,13 @@ function mu() {
 		dispose: a
 	};
 }
-function hu(e, t) {
+function Su(e, t) {
 	return e.groupOrder === t.groupOrder ? e.renderOrder === t.renderOrder ? e.material.id === t.material.id ? e.materialVariant === t.materialVariant ? e.z === t.z ? e.id - t.id : e.z - t.z : e.materialVariant - t.materialVariant : e.material.id - t.material.id : e.renderOrder - t.renderOrder : e.groupOrder - t.groupOrder;
 }
-function gu(e, t) {
+function Cu(e, t) {
 	return e.groupOrder === t.groupOrder ? e.renderOrder === t.renderOrder ? e.z === t.z ? e.id - t.id : t.z - e.z : e.renderOrder - t.renderOrder : e.groupOrder - t.groupOrder;
 }
-function _u() {
+function wu() {
 	let e = [], t = 0, n = [], r = [], i = [];
 	function a() {
 		t = 0, n.length = 0, r.length = 0, i.length = 0;
@@ -9665,7 +9731,7 @@ function _u() {
 		a.transmission > 0 ? r.unshift(u) : a.transparent === !0 ? i.unshift(u) : n.unshift(u);
 	}
 	function u(e, t) {
-		n.length > 1 && n.sort(e || hu), r.length > 1 && r.sort(t || gu), i.length > 1 && i.sort(t || gu);
+		n.length > 1 && n.sort(e || Su), r.length > 1 && r.sort(t || Cu), i.length > 1 && i.sort(t || Cu);
 	}
 	function d() {
 		for (let n = t, r = e.length; n < r; n++) {
@@ -9685,11 +9751,11 @@ function _u() {
 		sort: u
 	};
 }
-function vu() {
+function Tu() {
 	let e = /* @__PURE__ */ new WeakMap();
 	function t(t, n) {
 		let r = e.get(t), i;
-		return r === void 0 ? (i = new _u(), e.set(t, [i])) : n >= r.length ? (i = new _u(), r.push(i)) : i = r[n], i;
+		return r === void 0 ? (i = new wu(), e.set(t, [i])) : n >= r.length ? (i = new wu(), r.push(i)) : i = r[n], i;
 	}
 	function n() {
 		e = /* @__PURE__ */ new WeakMap();
@@ -9699,7 +9765,7 @@ function vu() {
 		dispose: n
 	};
 }
-function yu() {
+function Eu() {
 	let e = {};
 	return { get: function(t) {
 		if (e[t.id] !== void 0) return e[t.id];
@@ -9748,7 +9814,7 @@ function yu() {
 		return e[t.id] = n, n;
 	} };
 }
-function bu() {
+function Du() {
 	let e = {};
 	return { get: function(t) {
 		if (e[t.id] !== void 0) return e[t.id];
@@ -9786,12 +9852,12 @@ function bu() {
 		return e[t.id] = n, n;
 	} };
 }
-var xu = 0;
-function Su(e, t) {
+var Ou = 0;
+function ku(e, t) {
 	return (t.castShadow ? 2 : 0) - (e.castShadow ? 2 : 0) + +!!t.map - !!e.map;
 }
-function Cu(e) {
-	let t = new yu(), n = bu(), r = {
+function Au(e) {
+	let t = new Eu(), n = Du(), r = {
 		version: 0,
 		hash: {
 			sunLength: -1,
@@ -9844,7 +9910,7 @@ function Cu(e) {
 		let a = 0, o = 0, s = 0;
 		for (let e = 0; e < 9; e++) r.probe[e].set(0, 0, 0);
 		let c = 0, l = 0, u = 0, d = 0, f = 0, p = 0, m = 0, h = 0, g = 0, _ = 0, v = 0, y = 0, b = 0, x = 0;
-		i.sort(Su);
+		i.sort(ku);
 		for (let e = 0, S = i.length; e < S; e++) {
 			let S = i[e], C = S.color, w = S.intensity, T = S.distance, E = null;
 			if (S.shadow && S.shadow.map && (E = S.shadow.map.texture.format === 1030 ? S.shadow.map.texture : S.shadow.map.depthTexture || S.shadow.map.texture), S.isAmbientLight) a += C.r * w, o += C.g * w, s += C.b * w;
@@ -9894,7 +9960,7 @@ function Cu(e) {
 		}
 		m > 0 && (e.has("OES_texture_float_linear") === !0 ? (r.rectAreaLTC1 = K.LTC_FLOAT_1, r.rectAreaLTC2 = K.LTC_FLOAT_2) : (r.rectAreaLTC1 = K.LTC_HALF_1, r.rectAreaLTC2 = K.LTC_HALF_2)), r.ambient[0] = a, r.ambient[1] = o, r.ambient[2] = s;
 		let S = r.hash;
-		(S.sunLength !== c || S.directionalLength !== d || S.pointLength !== f || S.spotLength !== p || S.rectAreaLength !== m || S.hemiLength !== h || S.numSunShadows !== l || S.numDirectionalShadows !== g || S.numPointShadows !== _ || S.numSpotShadows !== v || S.numSpotMaps !== y || S.numLightProbes !== x) && (r.sun.length = c, r.directional.length = d, r.spot.length = p, r.rectArea.length = m, r.point.length = f, r.hemi.length = h, r.sunShadow.length = l, r.sunShadowMap.length = l, r.sunShadowMatrix.length = u, r.sunShadowCascade.length = u, r.directionalShadow.length = g, r.directionalShadowMap.length = g, r.directionalShadowMatrix.length = g, r.pointShadow.length = _, r.pointShadowMap.length = _, r.pointShadowMatrix.length = _, r.spotShadow.length = v, r.spotShadowMap.length = v, r.spotLightMatrix.length = v + y - b, r.spotLightMap.length = y, r.numSpotLightShadowsWithMaps = b, r.numLightProbes = x, S.sunLength = c, S.directionalLength = d, S.pointLength = f, S.spotLength = p, S.rectAreaLength = m, S.hemiLength = h, S.numSunShadows = l, S.numDirectionalShadows = g, S.numPointShadows = _, S.numSpotShadows = v, S.numSpotMaps = y, S.numLightProbes = x, r.version = xu++);
+		(S.sunLength !== c || S.directionalLength !== d || S.pointLength !== f || S.spotLength !== p || S.rectAreaLength !== m || S.hemiLength !== h || S.numSunShadows !== l || S.numDirectionalShadows !== g || S.numPointShadows !== _ || S.numSpotShadows !== v || S.numSpotMaps !== y || S.numLightProbes !== x) && (r.sun.length = c, r.directional.length = d, r.spot.length = p, r.rectArea.length = m, r.point.length = f, r.hemi.length = h, r.sunShadow.length = l, r.sunShadowMap.length = l, r.sunShadowMatrix.length = u, r.sunShadowCascade.length = u, r.directionalShadow.length = g, r.directionalShadowMap.length = g, r.directionalShadowMatrix.length = g, r.pointShadow.length = _, r.pointShadowMap.length = _, r.pointShadowMatrix.length = _, r.spotShadow.length = v, r.spotShadowMap.length = v, r.spotLightMatrix.length = v + y - b, r.spotLightMap.length = y, r.numSpotLightShadowsWithMaps = b, r.numLightProbes = x, S.sunLength = c, S.directionalLength = d, S.pointLength = f, S.spotLength = p, S.rectAreaLength = m, S.hemiLength = h, S.numSunShadows = l, S.numDirectionalShadows = g, S.numPointShadows = _, S.numSpotShadows = v, S.numSpotMaps = y, S.numLightProbes = x, r.version = Ou++);
 	}
 	function c(e, t) {
 		let n = 0, s = 0, c = 0, l = 0, u = 0, d = 0, f = t.matrixWorldInverse;
@@ -9927,8 +9993,8 @@ function Cu(e) {
 		state: r
 	};
 }
-function wu(e) {
-	let t = new Cu(e), n = [], r = [], i = [];
+function ju(e) {
+	let t = new Au(e), n = [], r = [], i = [];
 	function a(e) {
 		d.camera = e, n.length = 0, r.length = 0, i.length = 0;
 	}
@@ -9966,11 +10032,11 @@ function wu(e) {
 		pushLightProbeGrid: c
 	};
 }
-function Tu(e) {
+function Mu(e) {
 	let t = /* @__PURE__ */ new WeakMap();
 	function n(n, r = 0) {
 		let i = t.get(n), a;
-		return i === void 0 ? (a = new wu(e), t.set(n, [a])) : r >= i.length ? (a = new wu(e), i.push(a)) : a = i[r], a;
+		return i === void 0 ? (a = new ju(e), t.set(n, [a])) : r >= i.length ? (a = new ju(e), i.push(a)) : a = i[r], a;
 	}
 	function r() {
 		t = /* @__PURE__ */ new WeakMap();
@@ -9980,35 +10046,35 @@ function Tu(e) {
 		dispose: r
 	};
 }
-var Eu = "void main() {\n	gl_Position = vec4( position, 1.0 );\n}", Du = "uniform sampler2D shadow_pass;\nuniform vec2 resolution;\nuniform float radius;\nvoid main() {\n	const float samples = float( VSM_SAMPLES );\n	float mean = 0.0;\n	float squared_mean = 0.0;\n	float uvStride = samples <= 1.0 ? 0.0 : 2.0 / ( samples - 1.0 );\n	float uvStart = samples <= 1.0 ? 0.0 : - 1.0;\n	for ( float i = 0.0; i < samples; i ++ ) {\n		float uvOffset = uvStart + i * uvStride;\n		#ifdef HORIZONTAL_PASS\n			vec2 distribution = texture2D( shadow_pass, ( gl_FragCoord.xy + vec2( uvOffset, 0.0 ) * radius ) / resolution ).rg;\n			mean += distribution.x;\n			squared_mean += distribution.y * distribution.y + distribution.x * distribution.x;\n		#else\n			float depth = texture2D( shadow_pass, ( gl_FragCoord.xy + vec2( 0.0, uvOffset ) * radius ) / resolution ).r;\n			mean += depth;\n			squared_mean += depth * depth;\n		#endif\n	}\n	mean = mean / samples;\n	squared_mean = squared_mean / samples;\n	float std_dev = sqrt( max( 0.0, squared_mean - mean * mean ) );\n	gl_FragColor = vec4( mean, std_dev, 0.0, 1.0 );\n}", Ou = [
+var Nu = "void main() {\n	gl_Position = vec4( position, 1.0 );\n}", Pu = "uniform sampler2D shadow_pass;\nuniform vec2 resolution;\nuniform float radius;\nvoid main() {\n	const float samples = float( VSM_SAMPLES );\n	float mean = 0.0;\n	float squared_mean = 0.0;\n	float uvStride = samples <= 1.0 ? 0.0 : 2.0 / ( samples - 1.0 );\n	float uvStart = samples <= 1.0 ? 0.0 : - 1.0;\n	for ( float i = 0.0; i < samples; i ++ ) {\n		float uvOffset = uvStart + i * uvStride;\n		#ifdef HORIZONTAL_PASS\n			vec2 distribution = texture2D( shadow_pass, ( gl_FragCoord.xy + vec2( uvOffset, 0.0 ) * radius ) / resolution ).rg;\n			mean += distribution.x;\n			squared_mean += distribution.y * distribution.y + distribution.x * distribution.x;\n		#else\n			float depth = texture2D( shadow_pass, ( gl_FragCoord.xy + vec2( 0.0, uvOffset ) * radius ) / resolution ).r;\n			mean += depth;\n			squared_mean += depth * depth;\n		#endif\n	}\n	mean = mean / samples;\n	squared_mean = squared_mean / samples;\n	float std_dev = sqrt( max( 0.0, squared_mean - mean * mean ) );\n	gl_FragColor = vec4( mean, std_dev, 0.0, 1.0 );\n}", Fu = [
 	/*@__PURE__*/ new W(1, 0, 0),
 	/*@__PURE__*/ new W(-1, 0, 0),
 	/*@__PURE__*/ new W(0, 1, 0),
 	/*@__PURE__*/ new W(0, -1, 0),
 	/*@__PURE__*/ new W(0, 0, 1),
 	/*@__PURE__*/ new W(0, 0, -1)
-], ku = [
+], Iu = [
 	/*@__PURE__*/ new W(0, -1, 0),
 	/*@__PURE__*/ new W(0, -1, 0),
 	/*@__PURE__*/ new W(0, 0, 1),
 	/*@__PURE__*/ new W(0, 0, -1),
 	/*@__PURE__*/ new W(0, -1, 0),
 	/*@__PURE__*/ new W(0, -1, 0)
-], Au = /*@__PURE__*/ new Qt(), ju = /*@__PURE__*/ new W(), Mu = /*@__PURE__*/ new W();
-function Nu(e, t, n) {
-	let r = new Ti(), i = new U(), o = new U(), s = new qt(), l = new Co(), u = new wo(), d = {}, f = n.maxTextureSize, p = {
+], Lu = /*@__PURE__*/ new Qt(), Ru = /*@__PURE__*/ new W(), zu = /*@__PURE__*/ new W();
+function Bu(e, t, n) {
+	let r = new Ti(), i = new U(), o = new U(), s = new qt(), l = new Ao(), u = new jo(), d = {}, f = n.maxTextureSize, p = {
 		0: 1,
 		1: 0,
 		2: 2
-	}, m = new yo({
+	}, m = new Eo({
 		defines: { VSM_SAMPLES: 8 },
 		uniforms: {
 			shadow_pass: { value: null },
 			resolution: { value: new U() },
 			radius: { value: 4 }
 		},
-		vertexShader: Eu,
-		fragmentShader: Du
+		vertexShader: Nu,
+		fragmentShader: Pu
 	}), h = m.clone();
 	h.defines.HORIZONTAL_PASS = 1;
 	let y = new Ar();
@@ -10058,8 +10124,8 @@ function Nu(e, t, n) {
 						minFilter: c,
 						magFilter: c,
 						generateMipmaps: !1
-					}), p.map.texture.name = d.name + ".shadowMap", p.map.depthTexture = new Ri(i.x, i.y, _), p.map.depthTexture.name = d.name + ".shadowMapDepth", p.map.depthTexture.format = D, p.map.depthTexture.compareFunction = null, p.map.depthTexture.minFilter = a, p.map.depthTexture.magFilter = a;
-				} else d.isPointLight ? (p.map = new uc(i.x), p.map.depthTexture = new zi(i.x, g)) : (p.map = new Yt(i.x, i.y), p.map.depthTexture = new Ri(i.x, i.y, g)), p.map.depthTexture.name = d.name + ".shadowMap", p.map.depthTexture.format = D, this.type === 1 ? (p.map.depthTexture.compareFunction = b ? 518 : 515, p.map.depthTexture.minFilter = c, p.map.depthTexture.magFilter = c) : (p.map.depthTexture.compareFunction = null, p.map.depthTexture.minFilter = a, p.map.depthTexture.magFilter = a);
+					}), p.map.texture.name = d.name + ".shadowMap", p.map.depthTexture = new Gi(i.x, i.y, _), p.map.depthTexture.name = d.name + ".shadowMapDepth", p.map.depthTexture.format = D, p.map.depthTexture.compareFunction = null, p.map.depthTexture.minFilter = a, p.map.depthTexture.magFilter = a;
+				} else d.isPointLight ? (p.map = new _c(i.x), p.map.depthTexture = new Ki(i.x, g)) : (p.map = new Yt(i.x, i.y), p.map.depthTexture = new Gi(i.x, i.y, g)), p.map.depthTexture.name = d.name + ".shadowMap", p.map.depthTexture.format = D, this.type === 1 ? (p.map.depthTexture.compareFunction = b ? 518 : 515, p.map.depthTexture.minFilter = c, p.map.depthTexture.magFilter = c) : (p.map.depthTexture.compareFunction = null, p.map.depthTexture.minFilter = a, p.map.depthTexture.magFilter = a);
 				p.camera.updateProjectionMatrix();
 			}
 			p.map.isWebGLCubeRenderTarget !== !0 && (p.map.width !== i.x || p.map.height !== i.y) && p.map.setSize(i.x, i.y);
@@ -10069,7 +10135,7 @@ function Nu(e, t, n) {
 				let i = p.getCamera(t);
 				if (d.isPointLight) {
 					let e = p.camera, n = p.matrix, r = d.distance || e.far;
-					r !== e.far && (e.far = r, e.updateProjectionMatrix()), ju.setFromMatrixPosition(d.matrixWorld), e.position.copy(ju), Mu.copy(e.position), Mu.add(Ou[t]), e.up.copy(ku[t]), e.lookAt(Mu), e.updateMatrixWorld(), n.makeTranslation(-ju.x, -ju.y, -ju.z), Au.multiplyMatrices(e.projectionMatrix, e.matrixWorldInverse), p._frustum.setFromProjectionMatrix(Au, e.coordinateSystem, e.reversedDepth);
+					r !== e.far && (e.far = r, e.updateProjectionMatrix()), Ru.setFromMatrixPosition(d.matrixWorld), e.position.copy(Ru), zu.copy(e.position), zu.add(Fu[t]), e.up.copy(Iu[t]), e.lookAt(zu), e.updateMatrixWorld(), n.makeTranslation(-Ru.x, -Ru.y, -Ru.z), Lu.multiplyMatrices(e.projectionMatrix, e.matrixWorldInverse), p._frustum.setFromProjectionMatrix(Lu, e.coordinateSystem, e.reversedDepth);
 				}
 				if (p.map.isWebGLCubeRenderTarget) e.setRenderTarget(p.map, t), e.clear();
 				else {
@@ -10135,7 +10201,7 @@ function Nu(e, t, n) {
 		}
 	}
 }
-function Pu(e, t) {
+function Vu(e, t) {
 	function n() {
 		let t = !1, n = new qt(), r = null, i = new qt(0, 0, 0, 0);
 		return {
@@ -10510,7 +10576,7 @@ function Pu(e, t) {
 		reset: Le
 	};
 }
-function Fu(e, t, d, f, p, m, h) {
+function Hu(e, t, d, f, p, m, h) {
 	let g = t.has("WEBGL_multisampled_render_to_texture") ? t.get("WEBGL_multisampled_render_to_texture") : null, _ = typeof navigator > "u" ? !1 : /OculusBrowser/g.test(navigator.userAgent), v = new U(), y = /* @__PURE__ */ new WeakMap(), b = /* @__PURE__ */ new Set(), x, S = /* @__PURE__ */ new WeakMap(), C = !1;
 	try {
 		C = typeof OffscreenCanvas < "u" && new OffscreenCanvas(1, 1).getContext("2d") !== null;
@@ -10749,7 +10815,7 @@ function Fu(e, t, d, f, p, m, h) {
 							if (g) {
 								if (v) {
 									if (n.layerUpdates.size > 0) {
-										let t = ks(f.width, f.height, n.format, n.type);
+										let t = Is(f.width, f.height, n.format, n.type);
 										for (let i of n.layerUpdates) {
 											let n = f.data.subarray(i * t / f.data.BYTES_PER_ELEMENT, (i + 1) * t / f.data.BYTES_PER_ELEMENT);
 											d.compressedTexSubImage3D(e.TEXTURE_2D_ARRAY, r, 0, 0, i, f.width, f.height, 1, c, n);
@@ -10768,7 +10834,7 @@ function Fu(e, t, d, f, p, m, h) {
 				if (g) {
 					if (_ && d.texStorage3D(e.TEXTURE_2D_ARRAY, y, u, t.width, t.height, t.depth), v) {
 						if (n.layerUpdates.size > 0) {
-							let r = ks(t.width, t.height, n.format, n.type);
+							let r = Is(t.width, t.height, n.format, n.type);
 							for (let i of n.layerUpdates) {
 								let n = t.data.subarray(i * r / t.data.BYTES_PER_ELEMENT, (i + 1) * r / t.data.BYTES_PER_ELEMENT);
 								d.texSubImage3D(e.TEXTURE_2D_ARRAY, 0, 0, 0, i, t.width, t.height, 1, c, l, n);
@@ -11055,7 +11121,7 @@ function Fu(e, t, d, f, p, m, h) {
 		return d.buffers.depth.getReversed();
 	};
 }
-function Iu(e, t) {
+function Uu(e, t) {
 	function n(n, r = "") {
 		let i, a = It.getTransfer(r);
 		if (n === 1009) return e.UNSIGNED_BYTE;
@@ -11150,28 +11216,28 @@ function Iu(e, t) {
 	}
 	return { convert: n };
 }
-var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "\nuniform sampler2DArray depthColor;\nuniform float depthWidth;\nuniform float depthHeight;\n\nvoid main() {\n\n	vec2 coord = vec2( gl_FragCoord.x / depthWidth, gl_FragCoord.y / depthHeight );\n\n	if ( coord.x >= 1.0 ) {\n\n		gl_FragDepth = texture( depthColor, vec3( coord.x - 1.0, coord.y, 1 ) ).r;\n\n	} else {\n\n		gl_FragDepth = texture( depthColor, vec3( coord.x, coord.y, 0 ) ).r;\n\n	}\n\n}", zu = class {
+var Wu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Gu = "\nuniform sampler2DArray depthColor;\nuniform float depthWidth;\nuniform float depthHeight;\n\nvoid main() {\n\n	vec2 coord = vec2( gl_FragCoord.x / depthWidth, gl_FragCoord.y / depthHeight );\n\n	if ( coord.x >= 1.0 ) {\n\n		gl_FragDepth = texture( depthColor, vec3( coord.x - 1.0, coord.y, 1 ) ).r;\n\n	} else {\n\n		gl_FragDepth = texture( depthColor, vec3( coord.x, coord.y, 0 ) ).r;\n\n	}\n\n}", Ku = class {
 	constructor() {
 		this.texture = null, this.mesh = null, this.depthNear = 0, this.depthFar = 0;
 	}
 	init(e, t) {
 		if (this.texture === null) {
-			let n = new Bi(e.texture);
+			let n = new qi(e.texture);
 			(e.depthNear !== t.depthNear || e.depthFar !== t.depthFar) && (this.depthNear = e.depthNear, this.depthFar = e.depthFar), this.texture = n;
 		}
 	}
 	getMesh(e) {
 		if (this.texture !== null && this.mesh === null) {
-			let t = e.cameras[0].viewport, n = new yo({
-				vertexShader: Lu,
-				fragmentShader: Ru,
+			let t = e.cameras[0].viewport, n = new Eo({
+				vertexShader: Wu,
+				fragmentShader: Gu,
 				uniforms: {
 					depthColor: { value: this.texture },
 					depthWidth: { value: t.z },
 					depthHeight: { value: t.w }
 				}
 			});
-			this.mesh = new G(new so(20, 20), n);
+			this.mesh = new G(new ho(20, 20), n);
 		}
 		return this.mesh;
 	}
@@ -11181,14 +11247,14 @@ var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "
 	getDepthTexture() {
 		return this.texture;
 	}
-}, Bu = class extends tt {
+}, qu = class extends tt {
 	constructor(e, t) {
 		super();
-		let n = this, r = null, i = 1, a = null, o = "local-floor", s = 1, c = null, l = null, u = null, f = null, p = null, m = null, h = typeof XRWebGLBinding < "u", _ = new zu(), v = {}, y = t.getContextAttributes(), b = null, S = null, C = [], w = [], T = new U(), k = null, A = null, j = new rs();
+		let n = this, r = null, i = 1, a = null, o = "local-floor", s = 1, c = null, l = null, u = null, f = null, p = null, m = null, h = typeof XRWebGLBinding < "u", _ = new Ku(), v = {}, y = t.getContextAttributes(), b = null, S = null, C = [], w = [], T = new U(), k = null, A = null, j = new us();
 		j.viewport = new qt();
-		let ee = new rs();
+		let ee = new us();
 		ee.viewport = new qt();
-		let te = [j, ee], M = new us(), N = null, P = null;
+		let te = [j, ee], M = new _s(), N = null, P = null;
 		this.cameraAutoUpdate = !0, this.enabled = !1, this.isPresenting = !1, this.getController = function(e) {
 			let t = C[e];
 			return t === void 0 && (t = new kn(), C[e] = t), t.getTargetRaySpace();
@@ -11251,7 +11317,7 @@ var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "
 					u = this.getBinding(), f = u.createProjectionLayer(s), r.updateRenderState({ layers: [f] }), e.setPixelRatio(1), e.setSize(f.textureWidth, f.textureHeight, !1), S = new Yt(f.textureWidth, f.textureHeight, {
 						format: E,
 						type: d,
-						depthTexture: new Ri(f.textureWidth, f.textureHeight, a, void 0, void 0, void 0, void 0, void 0, void 0, n),
+						depthTexture: new Gi(f.textureWidth, f.textureHeight, a, void 0, void 0, void 0, void 0, void 0, void 0, n),
 						stencilBuffer: y.stencil,
 						colorSpace: e.outputColorSpace,
 						samples: y.antialias ? 4 : 0,
@@ -11367,7 +11433,7 @@ var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "
 						a = t.viewport, n === 0 && (e.setRenderTargetTextures(S, t.colorTexture, t.depthStencilTexture), e.setRenderTarget(S));
 					}
 					let o = te[n];
-					o === void 0 && (o = new rs(), o.layers.enable(n), o.viewport = new qt(), te[n] = o), o.matrix.fromArray(r.transform.matrix), o.matrix.decompose(o.position, o.quaternion, o.scale), o.projectionMatrix.fromArray(r.projectionMatrix), o.projectionMatrixInverse.copy(o.projectionMatrix).invert(), o.viewport.set(a.x, a.y, a.width, a.height), n === 0 && (M.matrix.copy(o.matrix), M.matrix.decompose(M.position, M.quaternion, M.scale)), i === !0 && M.cameras.push(o);
+					o === void 0 && (o = new us(), o.layers.enable(n), o.viewport = new qt(), te[n] = o), o.matrix.fromArray(r.transform.matrix), o.matrix.decompose(o.position, o.quaternion, o.scale), o.projectionMatrix.fromArray(r.projectionMatrix), o.projectionMatrixInverse.copy(o.projectionMatrix).invert(), o.viewport.set(a.x, a.y, a.width, a.height), n === 0 && (M.matrix.copy(o.matrix), M.matrix.decompose(M.position, M.quaternion, M.scale)), i === !0 && M.cameras.push(o);
 				}
 				let a = r.enabledFeatures;
 				if (a && a.includes("depth-sensing") && r.depthUsage == "gpu-optimized" && h) {
@@ -11381,7 +11447,7 @@ var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "
 						let n = t[e].camera;
 						if (n) {
 							let e = v[n];
-							e || (e = new Bi(), v[n] = e);
+							e || (e = new qi(), v[n] = e);
 							let t = u.getCameraImage(n);
 							e.sourceTexture = t;
 						}
@@ -11397,19 +11463,19 @@ var Lu = "\nvoid main() {\n\n	gl_Position = vec4( position, 1.0 );\n\n}", Ru = "
 				data: i
 			}), m = null;
 		}
-		let ue = new js();
+		let ue = new Rs();
 		ue.setAnimationLoop(le), this.setAnimationLoop = function(e) {
 			I = e;
 		}, this.dispose = function() {};
 	}
-}, Vu = /*@__PURE__*/ new Qt(), Hu = /*@__PURE__*/ new jt();
-Hu.set(-1, 0, 0, 0, 1, 0, 0, 0, 1);
-function Uu(e, t) {
+}, Ju = /*@__PURE__*/ new Qt(), Yu = /*@__PURE__*/ new jt();
+Yu.set(-1, 0, 0, 0, 1, 0, 0, 0, 1);
+function Xu(e, t) {
 	function n(e, t) {
 		e.matrixAutoUpdate === !0 && e.updateMatrix(), t.value.copy(e.matrix);
 	}
 	function r(t, n) {
-		n.color.getRGB(t.fogColor.value, ho(e)), n.isFog ? (t.fogNear.value = n.near, t.fogFar.value = n.far) : n.isFogExp2 && (t.fogDensity.value = n.density);
+		n.color.getRGB(t.fogColor.value, So(e)), n.isFog ? (t.fogNear.value = n.near, t.fogFar.value = n.far) : n.isFogExp2 && (t.fogDensity.value = n.density);
 	}
 	function i(e, t, n, r, i) {
 		t.isNodeMaterial ? t.uniformsNeedUpdate = !1 : t.isMeshBasicMaterial ? a(e, t) : t.isMeshLambertMaterial ? (a(e, t), t.envMap && (e.envMapIntensity.value = t.envMapIntensity)) : t.isMeshToonMaterial ? (a(e, t), d(e, t)) : t.isMeshPhongMaterial ? (a(e, t), u(e, t), t.envMap && (e.envMapIntensity.value = t.envMapIntensity)) : t.isMeshStandardMaterial ? (a(e, t), f(e, t), t.isMeshPhysicalMaterial && p(e, t, i)) : t.isMeshMatcapMaterial ? (a(e, t), m(e, t)) : t.isMeshDepthMaterial ? a(e, t) : t.isMeshDistanceMaterial ? (a(e, t), h(e, t)) : t.isMeshNormalMaterial ? a(e, t) : t.isLineBasicMaterial ? (o(e, t), t.isLineDashedMaterial && s(e, t)) : t.isPointsMaterial ? c(e, t, n, r) : t.isSpriteMaterial ? l(e, t) : t.isShadowMaterial ? (e.color.value.copy(t.color), e.opacity.value = t.opacity) : t.isShaderMaterial && (t.uniformsNeedUpdate = !1);
@@ -11417,7 +11483,7 @@ function Uu(e, t) {
 	function a(e, r) {
 		e.opacity.value = r.opacity, r.color && e.diffuse.value.copy(r.color), r.emissive && e.emissive.value.copy(r.emissive).multiplyScalar(r.emissiveIntensity), r.map && (e.map.value = r.map, n(r.map, e.mapTransform)), r.alphaMap && (e.alphaMap.value = r.alphaMap, n(r.alphaMap, e.alphaMapTransform)), r.bumpMap && (e.bumpMap.value = r.bumpMap, n(r.bumpMap, e.bumpMapTransform), e.bumpScale.value = r.bumpScale, r.side === 1 && (e.bumpScale.value *= -1)), r.normalMap && (e.normalMap.value = r.normalMap, n(r.normalMap, e.normalMapTransform), e.normalScale.value.copy(r.normalScale), r.side === 1 && e.normalScale.value.negate()), r.displacementMap && (e.displacementMap.value = r.displacementMap, n(r.displacementMap, e.displacementMapTransform), e.displacementScale.value = r.displacementScale, e.displacementBias.value = r.displacementBias), r.emissiveMap && (e.emissiveMap.value = r.emissiveMap, n(r.emissiveMap, e.emissiveMapTransform)), r.specularMap && (e.specularMap.value = r.specularMap, n(r.specularMap, e.specularMapTransform)), r.alphaTest > 0 && (e.alphaTest.value = r.alphaTest);
 		let i = t.get(r), a = i.envMap, o = i.envMapRotation;
-		a && (e.envMap.value = a, e.envMapRotation.value.setFromMatrix4(Vu.makeRotationFromEuler(o)).transpose(), a.isCubeTexture && a.isRenderTargetTexture === !1 && e.envMapRotation.value.premultiply(Hu), e.reflectivity.value = r.reflectivity, e.ior.value = r.ior, e.refractionRatio.value = r.refractionRatio), r.lightMap && (e.lightMap.value = r.lightMap, e.lightMapIntensity.value = r.lightMapIntensity, n(r.lightMap, e.lightMapTransform)), r.aoMap && (e.aoMap.value = r.aoMap, e.aoMapIntensity.value = r.aoMapIntensity, n(r.aoMap, e.aoMapTransform));
+		a && (e.envMap.value = a, e.envMapRotation.value.setFromMatrix4(Ju.makeRotationFromEuler(o)).transpose(), a.isCubeTexture && a.isRenderTargetTexture === !1 && e.envMapRotation.value.premultiply(Yu), e.reflectivity.value = r.reflectivity, e.ior.value = r.ior, e.refractionRatio.value = r.refractionRatio), r.lightMap && (e.lightMap.value = r.lightMap, e.lightMapIntensity.value = r.lightMapIntensity, n(r.lightMap, e.lightMapTransform)), r.aoMap && (e.aoMap.value = r.aoMap, e.aoMapIntensity.value = r.aoMapIntensity, n(r.aoMap, e.aoMapTransform));
 	}
 	function o(e, t) {
 		e.diffuse.value.copy(t.color), e.opacity.value = t.opacity, t.map && (e.map.value = t.map, n(t.map, e.mapTransform));
@@ -11455,7 +11521,7 @@ function Uu(e, t) {
 		refreshMaterialUniforms: i
 	};
 }
-function Wu(e, t, n, r) {
+function Zu(e, t, n, r) {
 	let i = {}, a = {}, o = [], s = e.getParameter(e.MAX_UNIFORM_BUFFER_BINDINGS);
 	function c(e, t) {
 		let n = t.program;
@@ -11555,7 +11621,7 @@ function Wu(e, t, n, r) {
 		dispose: y
 	};
 }
-var Gu = new Uint16Array([
+var Qu = new Uint16Array([
 	12469,
 	15057,
 	12620,
@@ -12068,11 +12134,11 @@ var Gu = new Uint16Array([
 	1398,
 	13702,
 	1183
-]), Ku = null;
-function qu() {
-	return Ku === null && (Ku = new xi(Gu, 16, 16, j, v), Ku.name = "DFG_LUT", Ku.minFilter = c, Ku.magFilter = c, Ku.wrapS = r, Ku.wrapT = r, Ku.generateMipmaps = !1, Ku.needsUpdate = !0), Ku;
+]), $u = null;
+function ed() {
+	return $u === null && ($u = new xi(Qu, 16, 16, j, v), $u.name = "DFG_LUT", $u.minFilter = c, $u.magFilter = c, $u.wrapS = r, $u.wrapT = r, $u.generateMipmaps = !1, $u.needsUpdate = !0), $u;
 }
-var Ju = class {
+var td = class {
 	constructor(e = {}) {
 		let { canvas: t = Je(), context: n = null, depth: r = !0, stencil: i = !1, alpha: a = !1, antialias: o = !1, premultipliedAlpha: s = !0, preserveDrawingBuffer: c = !1, powerPreference: l = "default", failIfMajorPerformanceCaveat: f = !1, reversedDepthBuffer: p = !1, outputBufferType: h = d } = e;
 		this.isWebGLRenderer = !0;
@@ -12135,10 +12201,10 @@ var Ju = class {
 			throw t.removeEventListener("webglcontextlost", H, !1), t.removeEventListener("webglcontextrestored", st, !1), t.removeEventListener("webglcontextcreationerror", ct, !1), V("WebGLRenderer: " + e.message), e;
 		}
 		function at() {
-			Ne = new fc(L), Ne.init(), nt = new Iu(L, Ne), Pe = new Vs(L, Ne, e, nt), R = new Pu(L, Ne), Pe.reversedDepthBuffer && p && R.buffers.depth.setReversed(!0), ie = L.createFramebuffer(), ae = L.createFramebuffer(), oe = L.createFramebuffer(), Fe = new hc(L), z = new mu(), Ie = new Fu(L, Ne, R, z, Pe, nt, Fe), Le = new dc(P), ze = new Ms(L), rt = new zs(L, ze), Be = new pc(L, ze, Fe, rt), Ve = new _c(L, Be, ze, rt, Fe), Qe = new gc(L, Pe, Ie), qe = new Hs(z), He = new pu(P, Le, Ne, Pe, rt, qe), Ue = new Uu(P, z), Ge = new vu(), Ke = new Tu(Ne), Ze = new Rs(P, Le, R, Ve, _, s), Ye = new Nu(P, Ve, Pe), it = new Wu(L, Fe, Pe, R), et = new Bs(L, Ne, Fe), tt = new mc(L, Ne, Fe), Fe.programs = He.programs, P.capabilities = Pe, P.extensions = Ne, P.properties = z, P.renderLists = Ge, P.shadowMap = Ye, P.state = R, P.info = Fe;
+			Ne = new yc(L), Ne.init(), nt = new Uu(L, Ne), Pe = new Js(L, Ne, e, nt), R = new Vu(L, Ne), Pe.reversedDepthBuffer && p && R.buffers.depth.setReversed(!0), ie = L.createFramebuffer(), ae = L.createFramebuffer(), oe = L.createFramebuffer(), Fe = new Sc(L), z = new xu(), Ie = new Hu(L, Ne, R, z, Pe, nt, Fe), Le = new vc(P), ze = new zs(L), rt = new Ks(L, ze), Be = new bc(L, ze, Fe, rt), Ve = new wc(L, Be, ze, rt, Fe), Qe = new Cc(L, Pe, Ie), qe = new Ys(z), He = new bu(P, Le, Ne, Pe, rt, qe), Ue = new Xu(P, z), Ge = new Tu(), Ke = new Mu(Ne), Ze = new Gs(P, Le, R, Ve, _, s), Ye = new Bu(P, Ve, Pe), it = new Zu(L, Fe, Pe, R), et = new qs(L, Ne, Fe), tt = new xc(L, Ne, Fe), Fe.programs = He.programs, P.capabilities = Pe, P.extensions = Ne, P.properties = z, P.renderLists = Ge, P.shadowMap = Ye, P.state = R, P.info = Fe;
 		}
-		S !== 1009 && (N = new yc(S, t.width, t.height, o, r, i));
-		let ot = new Bu(P, L);
+		S !== 1009 && (N = new Ec(S, t.width, t.height, o, r, i));
+		let ot = new qu(P, L);
 		this.xr = ot, this.getContext = function() {
 			return L;
 		}, this.getContextAttributes = function() {
@@ -12322,7 +12388,7 @@ var Ju = class {
 		function gt() {
 			_t.start();
 		}
-		let _t = new js();
+		let _t = new Rs();
 		_t.setAnimationLoop(mt), typeof self < "u" && _t.setContext(self), this.setAnimationLoop = function(e) {
 			pt = e, ot.setAnimationLoop(e), e === null ? _t.stop() : _t.start();
 		}, ot.addEventListener("sessionstart", ht), ot.addEventListener("sessionend", gt), this.render = function(e, t) {
@@ -12450,7 +12516,7 @@ var Ju = class {
 		function wt(e) {
 			if (e.uniformsList === null) {
 				let t = e.currentProgram.getUniforms();
-				e.uniformsList = El.seqWithValue(t.seq, e.uniforms);
+				e.uniformsList = Nl.seqWithValue(t.seq, e.uniforms);
 			}
 			return e.uniformsList;
 		}
@@ -12498,14 +12564,14 @@ var Ju = class {
 			}
 			i.isBatchedMesh && (T.setOptional(L, i, "batchingTexture"), T.setValue(L, "batchingTexture", i._matricesTexture, Ie), T.setOptional(L, i, "batchingIdTexture"), T.setValue(L, "batchingIdTexture", i._indirectTexture, Ie), T.setOptional(L, i, "batchingColorTexture"), i._colorsTexture !== null && T.setValue(L, "batchingColorTexture", i._colorsTexture, Ie));
 			let D = n.morphAttributes;
-			if ((D.position !== void 0 || D.normal !== void 0 || D.color !== void 0) && Qe.update(i, n, x), (C || v.receiveShadow !== i.receiveShadow) && (v.receiveShadow = i.receiveShadow, T.setValue(L, "receiveShadow", i.receiveShadow)), (r.isMeshStandardMaterial || r.isMeshLambertMaterial || r.isMeshPhongMaterial) && r.envMap === null && t.environment !== null && (E.envMapIntensity.value = t.environmentIntensity), E.dfgLUT !== void 0 && (E.dfgLUT.value = qu()), C) {
+			if ((D.position !== void 0 || D.normal !== void 0 || D.color !== void 0) && Qe.update(i, n, x), (C || v.receiveShadow !== i.receiveShadow) && (v.receiveShadow = i.receiveShadow, T.setValue(L, "receiveShadow", i.receiveShadow)), (r.isMeshStandardMaterial || r.isMeshLambertMaterial || r.isMeshPhongMaterial) && r.envMap === null && t.environment !== null && (E.envMapIntensity.value = t.environmentIntensity), E.dfgLUT !== void 0 && (E.dfgLUT.value = ed()), C) {
 				if (T.setValue(L, "toneMappingExposure", P.toneMappingExposure), v.needsLights && U(E, w), a && r.fog === !0 && Ue.refreshFogUniforms(E, a), Ue.refreshMaterialUniforms(E, r, _e, ge, k.state.transmissionRenderTarget[e.id]), v.needsLights && v.lightProbeGrid) {
 					let e = v.lightProbeGrid;
 					E.probesSH.value = e.texture, E.probesMin.value.copy(e.boundingBox.min), E.probesMax.value.copy(e.boundingBox.max), E.probesResolution.value.copy(e.resolution);
 				}
-				El.upload(L, wt(v), E, Ie);
+				Nl.upload(L, wt(v), E, Ie);
 			}
-			if (r.isShaderMaterial && r.uniformsNeedUpdate === !0 && (El.upload(L, wt(v), E, Ie), r.uniformsNeedUpdate = !1), r.isSpriteMaterial && T.setValue(L, "center", i.center), T.setValue(L, "modelViewMatrix", i.modelViewMatrix), T.setValue(L, "normalMatrix", i.normalMatrix), T.setValue(L, "modelMatrix", i.matrixWorld), r.uniformsGroups !== void 0) {
+			if (r.isShaderMaterial && r.uniformsNeedUpdate === !0 && (Nl.upload(L, wt(v), E, Ie), r.uniformsNeedUpdate = !1), r.isSpriteMaterial && T.setValue(L, "center", i.center), T.setValue(L, "modelViewMatrix", i.modelViewMatrix), T.setValue(L, "normalMatrix", i.normalMatrix), T.setValue(L, "modelMatrix", i.matrixWorld), r.uniformsGroups !== void 0) {
 				let e = r.uniformsGroups;
 				for (let t = 0, n = e.length; t < n; t++) {
 					let n = e[t];
@@ -12667,7 +12733,7 @@ var Ju = class {
 		let t = this.getContext();
 		t.drawingBufferColorSpace = It._getDrawingBufferColorSpace(e), t.unpackColorSpace = It._getUnpackColorSpace();
 	}
-}, Yu = class extends En {
+}, nd = class extends En {
 	constructor(e = document.createElement("div")) {
 		super(), this.isCSS2DObject = !0, this.element = e, this.element.style.position = "absolute", this.element.style.userSelect = "none", this.element.setAttribute("draggable", !1), this.center = new U(.5, .5), this.rotation2D = 0, this.addEventListener("removed", function() {
 			this.traverse(function(e) {
@@ -12678,7 +12744,7 @@ var Ju = class {
 	copy(e, t) {
 		return super.copy(e, t), this.element = e.element.cloneNode(!0), this.center = e.center, this.rotation2D = e.rotation2D, this;
 	}
-}, Xu = new W(), Zu = new Qt(), Qu = new Qt(), $u = new W(), ed = new W(), td = class {
+}, rd = new W(), id = new Qt(), ad = new Qt(), od = new W(), sd = new W(), cd = class {
 	constructor(e = {}) {
 		let t = this, n, r, i, a, o = { objects: /* @__PURE__ */ new WeakMap() }, s = e.element === void 0 ? document.createElement("div") : e.element;
 		s.style.overflow = "hidden", this.domElement = s, this.sortObjects = !0, this.getSize = function() {
@@ -12687,7 +12753,7 @@ var Ju = class {
 				height: r
 			};
 		}, this.render = function(e, t) {
-			e.matrixWorldAutoUpdate === !0 && e.updateMatrixWorld(), t.parent === null && t.matrixWorldAutoUpdate === !0 && t.updateMatrixWorld(), Zu.copy(t.matrixWorldInverse), Qu.multiplyMatrices(t.projectionMatrix, Zu), l(e, e, t), this.sortObjects && f(e);
+			e.matrixWorldAutoUpdate === !0 && e.updateMatrixWorld(), t.parent === null && t.matrixWorldAutoUpdate === !0 && t.updateMatrixWorld(), id.copy(t.matrixWorldInverse), ad.multiplyMatrices(t.projectionMatrix, id), l(e, e, t), this.sortObjects && f(e);
 		}, this.setSize = function(e, t) {
 			n = e, r = t, i = n / 2, a = r / 2, s.style.width = e + "px", s.style.height = t + "px";
 		};
@@ -12699,13 +12765,13 @@ var Ju = class {
 			if (e.visible === !1) c(e);
 			else {
 				if (e.isCSS2DObject) {
-					Xu.setFromMatrixPosition(e.matrixWorld), Xu.applyMatrix4(Qu);
-					let c = Xu.z >= -1 && Xu.z <= 1 && e.layers.test(r.layers) === !0, l = e.element;
+					rd.setFromMatrixPosition(e.matrixWorld), rd.applyMatrix4(ad);
+					let c = rd.z >= -1 && rd.z <= 1 && e.layers.test(r.layers) === !0, l = e.element;
 					if (l.style.display = c === !0 ? "" : "none", c === !0) {
 						e.onBeforeRender(t, n, r);
 						let o = 100 * e.center.x, c = 100 * e.center.y;
 						l.style.transformOrigin = `${o}% ${c}%`;
-						let u = -e.rotation2D, d = Xu.x * i + i, f = -Xu.y * a + a;
+						let u = -e.rotation2D, d = rd.x * i + i, f = -rd.y * a + a;
 						l.style.transform = `translate(${-o}%, ${-c}%) translate(${d}px, ${f}px) rotate(${u}rad)`, l.parentNode !== s && s.appendChild(l), e.onAfterRender(t, n, r);
 					}
 					let d = { distanceToCameraSquared: u(r, e) };
@@ -12715,7 +12781,7 @@ var Ju = class {
 			}
 		}
 		function u(e, t) {
-			return $u.setFromMatrixPosition(e.matrixWorld), ed.setFromMatrixPosition(t.matrixWorld), $u.distanceToSquared(ed);
+			return od.setFromMatrixPosition(e.matrixWorld), sd.setFromMatrixPosition(t.matrixWorld), od.distanceToSquared(sd);
 		}
 		function d(e) {
 			let t = [];
@@ -12731,12 +12797,12 @@ var Ju = class {
 		}
 	}
 }, q = (e, t = 1) => t === 1 ? `rgb(${e[0]} ${e[1]} ${e[2]})` : `rgb(${e[0]} ${e[1]} ${e[2]} / ${t})`, J = (e) => new Pn().setRGB(e[0] / 255, e[1] / 255, e[2] / 255, Re);
-function nd(e) {
+function ld(e) {
 	getComputedStyle(e).position === "static" && (e.style.position = "relative");
 	let t = document.createElement("div");
-	return t.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;font-family:Montserrat,system-ui,sans-serif", e.append(t), new td({ element: t });
+	return t.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;font-family:Montserrat,system-ui,sans-serif", e.append(t), new cd({ element: t });
 }
-function rd(e, t) {
+function ud(e, t) {
 	let n = 0, r = !1, i = (e) => {
 		try {
 			t(e);
@@ -12756,14 +12822,14 @@ function rd(e, t) {
 }
 //#endregion
 //#region node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js
-var id = new W();
-function ad(e, t, n, r, i, a) {
+var dd = new W();
+function fd(e, t, n, r, i, a) {
 	let o = 2 * Math.PI * i / 4, s = Math.max(a - 2 * i, 0), c = Math.PI / 4;
-	id.copy(t), id[r] = 0, id.normalize();
-	let l = .5 * o / (o + s), u = 1 - id.angleTo(e) / c;
-	return Math.sign(id[n]) === 1 ? u * l : s / (o + s) + l + l * (1 - u);
+	dd.copy(t), dd[r] = 0, dd.normalize();
+	let l = .5 * o / (o + s), u = 1 - dd.angleTo(e) / c;
+	return Math.sign(dd[n]) === 1 ? u * l : s / (o + s) + l + l * (1 - u);
 }
-var od = class e extends Vi {
+var pd = class e extends Ji {
 	constructor(e = 1, t = 1, n = 1, r = 2, i = .1) {
 		let a = r * 2 + 1;
 		if (i = Math.min(e / 2, t / 2, n / 2, i), super(1, 1, 1, a, a, a), this.type = "RoundedBoxGeometry", this.parameters = {
@@ -12778,27 +12844,27 @@ var od = class e extends Vi {
 		let s = new W(), c = new W(), l = new W(e, t, n).divideScalar(2).subScalar(i), u = this.attributes.position.array, d = this.attributes.normal.array, f = this.attributes.uv.array, p = u.length / 6, m = new W(), h = .5 / a;
 		for (let r = 0, a = 0; r < u.length; r += 3, a += 2) switch (s.fromArray(u, r), c.copy(s), c.x -= Math.sign(c.x) * h, c.y -= Math.sign(c.y) * h, c.z -= Math.sign(c.z) * h, c.normalize(), u[r + 0] = l.x * Math.sign(s.x) + c.x * i, u[r + 1] = l.y * Math.sign(s.y) + c.y * i, u[r + 2] = l.z * Math.sign(s.z) + c.z * i, d[r + 0] = c.x, d[r + 1] = c.y, d[r + 2] = c.z, Math.floor(r / p)) {
 			case 0:
-				m.set(1, 0, 0), f[a + 0] = ad(m, c, "z", "y", i, n), f[a + 1] = 1 - ad(m, c, "y", "z", i, t);
+				m.set(1, 0, 0), f[a + 0] = fd(m, c, "z", "y", i, n), f[a + 1] = 1 - fd(m, c, "y", "z", i, t);
 				break;
 			case 1:
-				m.set(-1, 0, 0), f[a + 0] = 1 - ad(m, c, "z", "y", i, n), f[a + 1] = 1 - ad(m, c, "y", "z", i, t);
+				m.set(-1, 0, 0), f[a + 0] = 1 - fd(m, c, "z", "y", i, n), f[a + 1] = 1 - fd(m, c, "y", "z", i, t);
 				break;
 			case 2:
-				m.set(0, 1, 0), f[a + 0] = 1 - ad(m, c, "x", "z", i, e), f[a + 1] = ad(m, c, "z", "x", i, n);
+				m.set(0, 1, 0), f[a + 0] = 1 - fd(m, c, "x", "z", i, e), f[a + 1] = fd(m, c, "z", "x", i, n);
 				break;
 			case 3:
-				m.set(0, -1, 0), f[a + 0] = 1 - ad(m, c, "x", "z", i, e), f[a + 1] = 1 - ad(m, c, "z", "x", i, n);
+				m.set(0, -1, 0), f[a + 0] = 1 - fd(m, c, "x", "z", i, e), f[a + 1] = 1 - fd(m, c, "z", "x", i, n);
 				break;
 			case 4:
-				m.set(0, 0, 1), f[a + 0] = 1 - ad(m, c, "x", "y", i, e), f[a + 1] = 1 - ad(m, c, "y", "x", i, t);
+				m.set(0, 0, 1), f[a + 0] = 1 - fd(m, c, "x", "y", i, e), f[a + 1] = 1 - fd(m, c, "y", "x", i, t);
 				break;
-			case 5: m.set(0, 0, -1), f[a + 0] = ad(m, c, "x", "y", i, e), f[a + 1] = 1 - ad(m, c, "y", "x", i, t);
+			case 5: m.set(0, 0, -1), f[a + 0] = fd(m, c, "x", "y", i, e), f[a + 1] = 1 - fd(m, c, "y", "x", i, t);
 		}
 	}
 	static fromJSON(t) {
 		return new e(t.width, t.height, t.depth, t.segments, t.radius);
 	}
-}, Y = (e, t, n) => e.map((e, r) => Math.round(e + (t[r] - e) * n)), sd = [
+}, Y = (e, t, n) => e.map((e, r) => Math.round(e + (t[r] - e) * n)), md = [
 	[
 		241,
 		205,
@@ -12824,7 +12890,7 @@ var od = class e extends Vi {
 		64,
 		46
 	]
-], cd = [
+], hd = [
 	[
 		40,
 		30,
@@ -12850,11 +12916,11 @@ var od = class e extends Vi {
 		160,
 		100
 	]
-], ld = (e) => {
+], gd = (e) => {
 	let t = 2166136261;
 	for (let n = 0; n < e.length; n++) t = Math.imul(t ^ e.charCodeAt(n), 16777619);
 	return t >>> 0;
-}, ud = class e {
+}, _d = class e {
 	C;
 	mats = /* @__PURE__ */ new Map();
 	geos = /* @__PURE__ */ new Map();
@@ -12863,7 +12929,7 @@ var od = class e extends Vi {
 	}
 	mat(e, t = {}) {
 		let n = `${e}|${t.r}|${t.m}|${t.e}|${t.ei}|${t.op}`, r = this.mats.get(n);
-		return r || (r = new xo({
+		return r || (r = new Oo({
 			color: J(e),
 			roughness: t.r ?? .65,
 			metalness: t.m ?? .04
@@ -12874,16 +12940,16 @@ var od = class e extends Vi {
 		return n || (n = t(), this.geos.set(e, n)), n;
 	}
 	caja(e, t, n, r = .03) {
-		return this.geo(`rb${e},${t},${n},${r}`, () => new od(e, t, n, 3, Math.min(r, e / 2, t / 2, n / 2)));
+		return this.geo(`rb${e},${t},${n},${r}`, () => new pd(e, t, n, 3, Math.min(r, e / 2, t / 2, n / 2)));
 	}
 	cil(e, t, n, r = 24) {
-		return this.geo(`cy${e},${t},${n},${r}`, () => new Ui(e, t, n, r));
+		return this.geo(`cy${e},${t},${n},${r}`, () => new Xi(e, t, n, r));
 	}
 	cap(e, t) {
-		return this.geo(`cp${e},${t}`, () => new Hi(e, t, 4, 10));
+		return this.geo(`cp${e},${t}`, () => new Yi(e, t, 4, 10));
 	}
 	esf(e) {
-		return this.geo(`sp${e}`, () => new co(e, 18, 14));
+		return this.geo(`sp${e}`, () => new go(e, 18, 14));
 	}
 	static sombrear(e, t = !0, n = !0) {
 		return e.traverse((e) => {
@@ -12920,14 +12986,14 @@ var od = class e extends Vi {
 		let r = new Dn(), i = this.C, a = this.mat(Y(i.suelo, i.texto, .12), {
 			r: .35,
 			m: .3
-		}), o = new xo({
+		}), o = new Oo({
 			color: J(Y(i.suelo, i.teal, .4)),
 			emissive: J(i.teal),
 			emissiveIntensity: .35,
 			roughness: .25
 		}), s = new G(this.caja(t, n, .035, .012), a);
 		s.position.y = .2 + n / 2 + .02;
-		let c = new G(new so(t - .04, n - .04), o);
+		let c = new G(new ho(t - .04, n - .04), o);
 		c.position.set(0, s.position.y, .019);
 		let l = new G(this.cil(.025, .04, .2, 10), a);
 		l.position.y = .12;
@@ -12954,7 +13020,7 @@ var od = class e extends Vi {
 		return n.add(i, a), n.userData.follaje = a, e.sombrear(n, !0, !1);
 	}
 	vidrio(e, t, n, r = 1.25) {
-		let i = new Dn(), a = new G(this.caja(t === "x" ? e : .05, r, t === "z" ? e : .05, .01), new So({
+		let i = new Dn(), a = new G(this.caja(t === "x" ? e : .05, r, t === "z" ? e : .05, .01), new ko({
 			color: J(Y(n, this.C.superficie, .7)),
 			transparent: !0,
 			opacity: .3,
@@ -12981,7 +13047,7 @@ var od = class e extends Vi {
 		d.position.y = c + .79;
 		let f = new G(this.esf(.115), a);
 		f.scale.set(.95, 1.08, 1);
-		let p = new G(new co(.122, 18, 12, 0, Math.PI * 2, 0, Math.PI * .55), o);
+		let p = new G(new go(.122, 18, 12, 0, Math.PI * 2, 0, Math.PI * .55), o);
 		p.position.set(0, .02, -.01), p.rotation.x = -.25, d.add(f, p);
 		let m = (e) => {
 			let t = new Dn();
@@ -13043,15 +13109,15 @@ var od = class e extends Vi {
 		}
 		return n.add(a, o, s), e.sombrear(n, !0, !1);
 	}
-}, dd = (e, t = {}) => {
-	let n = new xo({
+}, vd = (e, t = {}) => {
+	let n = new Oo({
 		color: J(e),
 		roughness: t.r ?? .45,
 		metalness: t.m ?? .2
 	});
 	return t.e && (n.emissive = J(t.e), n.emissiveIntensity = t.ei ?? 1), n;
 };
-function fd(e, t) {
+function yd(e, t) {
 	let n = e.C, r = new Dn(), i = Y(t.cuerpo, [
 		255,
 		255,
@@ -13060,16 +13126,16 @@ function fd(e, t) {
 		0,
 		0,
 		0
-	], .55), s = dd(i, {
+	], .55), s = vd(i, {
 		r: .35,
 		m: .15
-	}), c = dd(a, {
+	}), c = vd(a, {
 		r: .5,
 		m: .5
-	}), l = dd(o, {
+	}), l = vd(o, {
 		r: .15,
 		m: .6
-	}), u = new G(e.cil(.3, .34, .05, 28), dd(o, {
+	}), u = new G(e.cil(.3, .34, .05, 28), vd(o, {
 		r: .4,
 		m: .5
 	}));
@@ -13078,19 +13144,19 @@ function fd(e, t) {
 		color: J(t.acento),
 		transparent: !0,
 		opacity: .85
-	}), f = new G(new lo(.31, .022, 8, 40), d);
+	}), f = new G(new _o(.31, .022, 8, 40), d);
 	f.rotation.x = Math.PI / 2, f.position.y = .065;
 	let p = new G(e.cil(.1, .16, .34, 14), c);
 	p.position.y = .23;
 	let m = new G(e.caja(.46, .5, .32, .09), s);
 	m.position.y = .67;
-	let h = dd(Y(n.suelo, t.acento, .35), {
+	let h = vd(Y(n.suelo, t.acento, .35), {
 		r: .2,
 		e: t.acento,
 		ei: .55
 	});
 	t.pechoMapa && (h.map = t.pechoMapa, h.emissiveMap = t.pechoMapa, h.color.set(16777215));
-	let g = new G(new so(.28, .24), h);
+	let g = new G(new ho(.28, .24), h);
 	g.position.set(0, .7, .163);
 	let _ = new G(e.caja(.32, .28, .02, .012), c);
 	_.position.set(0, .7, .158);
@@ -13106,7 +13172,7 @@ function fd(e, t) {
 	}), C = new G(e.cil(.07, .09, .08, 12), c);
 	C.position.y = -.17;
 	let w = [-1, 1].map((n) => {
-		let r = new G(e.cil(.06, .06, .05, 16), dd(Y(t.acento, [
+		let r = new G(e.cil(.06, .06, .05, 16), vd(Y(t.acento, [
 			0,
 			0,
 			0
@@ -13115,7 +13181,7 @@ function fd(e, t) {
 			m: .4
 		}));
 		return r.rotation.z = Math.PI / 2, r.position.set(n * .215, 0, 0), r;
-	}), T = dd(t.acento, {
+	}), T = vd(t.acento, {
 		r: .25,
 		e: t.acento,
 		ei: 1.4
@@ -13132,7 +13198,7 @@ function fd(e, t) {
 		o.position.y = -.24;
 		let l = new G(e.esf(.045), c), u = new G(e.cil(.03, .03, .2, 10), s);
 		u.position.y = -.11;
-		let d = new G(e.caja(.08, .07, .06, .02), dd(t.acento, {
+		let d = new G(e.caja(.08, .07, .06, .02), vd(t.acento, {
 			r: .4,
 			m: .3
 		}));
@@ -13141,7 +13207,7 @@ function fd(e, t) {
 			ant: o
 		};
 	}, k = O(-1), A = O(1);
-	return r.add(u, f, p, m, g, _, v, y, k.p, A.p), r.scale.setScalar(t.escala ?? 1), ud.sombrear(r, !0, !1), {
+	return r.add(u, f, p, m, g, _, v, y, k.p, A.p), r.scale.setScalar(t.escala ?? 1), _d.sombrear(r, !0, !1), {
 		g: r,
 		cabeza: y,
 		ojos: S,
@@ -13154,7 +13220,7 @@ function fd(e, t) {
 		fase: t.fase ?? 0
 	};
 }
-function pd(e, t, n, r = 1) {
+function bd(e, t, n, r = 1) {
 	if (n) return;
 	let i = e.fase;
 	e.g.position.y = Math.sin(t * 1.6 + i) * .012;
@@ -13163,8 +13229,8 @@ function pd(e, t, n, r = 1) {
 		e.scale.y += (a - e.scale.y) * .5;
 	}), e.bulbo.emissiveIntensity = 1.1 + Math.sin(t * 4 * r + i) * .6, e.aro.opacity = .6 + Math.sin(t * 2.2 * r + i) * .25, e.pecho.emissiveIntensity = .5 + Math.sin(t * 3 * r + i) * .18;
 }
-function md(e, t, n) {
-	let r = e.C, i = fd(e, {
+function xd(e, t, n) {
+	let r = e.C, i = yd(e, {
 		cuerpo: Y(t, r.suelo, .35),
 		acento: t,
 		escala: 1.5,
@@ -13183,7 +13249,7 @@ function md(e, t, n) {
 		robot: i,
 		g: a,
 		update: (e, t, n, r) => {
-			pd(i, e, r, 1 + Math.min(1.5, t / 8));
+			bd(i, e, r, 1 + Math.min(1.5, t / 8));
 			let c = 1.6 + Math.min(3.4, t * .35), l = i.fase;
 			if (r) i.bi.p.rotation.x = i.bd.p.rotation.x = -.9, o.forEach((e, t) => {
 				let n = t / o.length * Math.PI * 2;
@@ -13201,7 +13267,7 @@ function md(e, t, n) {
 }
 //#endregion
 //#region src/three/entradas.ts
-var hd = [
+var Sd = [
 	{
 		id: "terminal",
 		n: "Terminales",
@@ -13228,7 +13294,7 @@ var hd = [
 		d: "Arcos de datos por donde «entra» cada solicitud"
 	}
 ];
-function gd(e, t, n) {
+function Cd(e, t, n) {
 	let r = document.createElement("canvas");
 	r.width = r.height = 128;
 	let i = r.getContext("2d");
@@ -13261,17 +13327,17 @@ function gd(e, t, n) {
 		[98, 98],
 		[88, 88]
 	].forEach(([e, t]) => i.fillRect(e, t, 11, 11)));
-	let o = new Li(r);
+	let o = new Wi(r);
 	return o.colorSpace = Re, o.anisotropy = 4, o;
 }
-var _d = (e) => 1 - (1 - Math.max(0, Math.min(1, e))) ** 3;
-function vd(e, t, r, i, a, o) {
+var wd = (e) => 1 - (1 - Math.max(0, Math.min(1, e))) ** 3;
+function Td(e, t, r, i, a, o) {
 	let s = i.C, c = new Dn(), l = Y(s.suelo, [
 		0,
 		0,
 		0
 	], .4), u = Y(s.suelo, s.texto, .35), d = Y(s.superficie, s.suelo, .35), f = [], p = (e, t = 1) => {
-		let n = new xo({
+		let n = new Oo({
 			color: J(e),
 			emissive: J(e),
 			emissiveIntensity: t,
@@ -13297,7 +13363,7 @@ function vd(e, t, r, i, a, o) {
 		opacity: .8
 	});
 	f.push(g);
-	let _ = new G(new lo(.4, .02, 8, 48), g);
+	let _ = new G(new _o(.4, .02, 8, 48), g);
 	_.rotation.x = Math.PI / 2, _.position.y = .055, c.add(_);
 	let v = new W(0, .9, .2), y = () => {};
 	if (e === "terminal") {
@@ -13311,13 +13377,13 @@ function vd(e, t, r, i, a, o) {
 			m: .5
 		}));
 		t.position.set(0, 1, .215), c.add(t);
-		let n = m(a), s = new G(new so(.44, .44), n);
+		let n = m(a), s = new G(new ho(.44, .44), n);
 		s.position.set(0, 1.06, .234), c.add(s);
 		let u = new G(i.caja(.5, .05, .05, .02), p(r, 1.2));
 		u.position.set(0, 1.4, .2), c.add(u);
 		let h = new G(i.caja(.34, .05, .07, .02), i.mat(l));
 		h.position.set(0, .62, .2), c.add(h);
-		let g = new G(new so(.3, .02), new si({ color: J(r) }));
+		let g = new G(new ho(.3, .02), new si({ color: J(r) }));
 		g.position.set(0, .6, .236), c.add(g), f.push(g.material);
 		let _ = new G(i.cil(.045, .045, .02, 16), p(r, .9));
 		_.rotation.x = Math.PI / 2, _.position.set(0, .78, .225), c.add(_), v = new W(0, .62, .35), y = (e, t, r) => {
@@ -13342,7 +13408,7 @@ function vd(e, t, r, i, a, o) {
 			m: .5
 		}));
 		d.position.set(0, 1.08, .205), c.add(d);
-		let f = new G(new so(.3, .3), m(a));
+		let f = new G(new ho(.3, .3), m(a));
 		f.position.set(0, 1.08, .218), c.add(f);
 		let h = new G(i.cil(.065, .065, .03, 20), p([
 			255,
@@ -13360,7 +13426,7 @@ function vd(e, t, r, i, a, o) {
 		_.position.set(0, .74, .2), _.scale.z = .05, c.add(_);
 		let b = new G(i.caja(.2, .01, .045, .003), p(r, .6));
 		b.position.set(0, .002, .1), _.add(b), v = new W(0, .76, .34), y = (e, t, r) => {
-			let i = t > 0 ? _d(1 - t) * (1 - Math.max(0, (1 - t - .55) / .45)) : 0;
+			let i = t > 0 ? wd(1 - t) * (1 - Math.max(0, (1 - t - .55) / .45)) : 0;
 			_.scale.z = .05 + (r ? 0 : i) * 1, _.position.z = .2 + _.scale.z * .15, h.position.z = .215 - (t > .7 ? .015 : 0), n.material.emissiveIntensity = .7 + t + (r ? 0 : Math.sin(e * 2.4 + o) * .15);
 		};
 	} else if (e === "orbe") {
@@ -13376,7 +13442,7 @@ function vd(e, t, r, i, a, o) {
 		t.position.y = .4, c.add(t);
 		let n = new Dn();
 		n.position.y = 1.1, c.add(n);
-		let s = new G(new co(.3, 32, 24), new So({
+		let s = new G(new go(.3, 32, 24), new ko({
 			color: J(Y(r, [
 				255,
 				255,
@@ -13398,7 +13464,7 @@ function vd(e, t, r, i, a, o) {
 		}));
 		d.scale.setScalar(.34), n.add(d), f.push(d.material);
 		let p = [0, 1].map((e) => {
-			let t = new G(new lo(.42 - e * .05, .012, 8, 56), new si({
+			let t = new G(new _o(.42 - e * .05, .012, 8, 56), new si({
 				color: J(r),
 				transparent: !0,
 				opacity: .8
@@ -13426,7 +13492,7 @@ function vd(e, t, r, i, a, o) {
 			n.scale.setScalar(i), s.material.emissiveIntensity = .25 + t * 1.2;
 		};
 	} else if (e === "minibot") {
-		let e = fd(i, {
+		let e = yd(i, {
 			cuerpo: Y(r, [
 				255,
 				255,
@@ -13438,19 +13504,19 @@ function vd(e, t, r, i, a, o) {
 			fase: o
 		});
 		e.g.position.y = 0, c.add(e.g);
-		let n = new G(i.caja(.46, .04, .04, .015), new xo({
+		let n = new G(i.caja(.46, .04, .04, .015), new Oo({
 			color: J(r),
 			emissive: J(r),
 			emissiveIntensity: .6
 		}));
 		if (t === "tel") {
-			let t = new G(new lo(.2, .018, 8, 24, Math.PI), i.mat(r));
+			let t = new G(new _o(.2, .018, 8, 24, Math.PI), i.mat(r));
 			t.position.y = 1.05, e.g.add(t);
 			let n = new G(i.cil(.008, .008, .16, 6), i.mat(r));
 			n.rotation.z = Math.PI / 2.4, n.position.set(.22, .99, .1), e.g.add(n);
 		} else n.position.set(0, .5, .17), e.g.add(n);
 		v = new W(0, .55, .45), y = (t, n, r) => {
-			if (pd(e, t, r, 1 + n * 2), !r) {
+			if (bd(e, t, r, 1 + n * 2), !r) {
 				let r = Math.sin(t * 6 + o) * .4 * (.3 + n);
 				e.bd.p.rotation.x = -.4 - n * 1.3, e.bd.p.rotation.z = -.35 - r * .4, e.bd.ant.rotation.x = -.5 + r, e.bi.p.rotation.x = -.15, e.bi.p.rotation.z = .2, e.cabeza.rotation.y = Math.sin(t * .7 + o) * .4;
 			}
@@ -13484,7 +13550,7 @@ function vd(e, t, r, i, a, o) {
 			255,
 			255
 		], .35), m.fillRect(4 + e * 10, 0, 1.5, 128);
-		let g = new Li(u);
+		let g = new Wi(u);
 		g.wrapS = g.wrapT = n, g.colorSpace = Re, f.push(g);
 		let _ = new si({
 			map: g,
@@ -13495,7 +13561,7 @@ function vd(e, t, r, i, a, o) {
 			blending: 2
 		});
 		f.push(_);
-		let b = new G(new so(.9, 1.45), _);
+		let b = new G(new ho(.9, 1.45), _);
 		b.position.y = .82, c.add(b);
 		let x = new ei(new Br({
 			map: a,
@@ -13508,7 +13574,7 @@ function vd(e, t, r, i, a, o) {
 			}), x.position.y = 2 + (r ? 0 : Math.sin(e * 1.8 + o) * .04);
 		};
 	}
-	return ud.sombrear(c, !0, !1), {
+	return _d.sombrear(c, !0, !1), {
 		g: c,
 		spawn: v,
 		update: (e, t, n) => {
@@ -13522,11 +13588,11 @@ function vd(e, t, r, i, a, o) {
 }
 //#endregion
 //#region src/three/estilos.ts
-var yd = "\n.v3-hud,.v3-ficha,.v3-entradas,.pt-herr,.pt-bot,.pt-usuario,.pt-inicio__ancla{\n  --v3-ok:var(--aybar-color-feedback-success-border,#2e8b57);--v3-warn:var(--aybar-color-feedback-warning-border,#e39b1c);\n  --v3-bad:var(--aybar-color-feedback-danger-border,#c0453a);--v3-acc:var(--aybar-color-secondary-400,#f6a42c);\n  --v3-fg:var(--aybar-color-fg-default,#e8f0f2);--v3-mu:var(--aybar-color-fg-muted,#9db4ba);\n  --v3-sf:var(--aybar-color-bg-surface,#1b2a31);--v3-sk:var(--aybar-color-bg-surface-sunken,#142026);--v3-ln:var(--aybar-color-border-subtle,#2d4048);\n  --v3-pri:var(--aybar-color-primary-500,#2b8a9c);font-family:inherit}\n\n/* ---------------------------------------------------------------- HUD de estadísticas */\n.v3-hud-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--aybar-space-3)}\n@media(max-width:1100px){.v3-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:520px){.v3-hud-grid{grid-template-columns:minmax(0,1fr)}}\n.v3-k{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:var(--aybar-space-3);align-items:center;padding:var(--aybar-space-3) var(--aybar-space-4);border-radius:var(--aybar-radius-md);background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg);overflow:hidden;isolation:isolate;transition:border-color .3s,box-shadow .3s}\n.v3-k::before{content:\"\";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 22%,transparent),transparent 60%);opacity:.9}\n.v3-k[data-estado=ok]{--v3-tono:var(--v3-ok)}.v3-k[data-estado=warn]{--v3-tono:var(--v3-warn)}.v3-k[data-estado=bad]{--v3-tono:var(--v3-bad)}.v3-k[data-estado=acc]{--v3-tono:var(--v3-acc)}.v3-k[data-estado=pri]{--v3-tono:var(--v3-pri)}\n.v3-k-ic{position:relative;width:46px;height:46px;border-radius:var(--aybar-radius-md);display:grid;place-items:center;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--v3-tono) 38%,transparent)}\n.v3-k-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n.v3-k-lbl{font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);letter-spacing:.02em;color:var(--v3-mu)}\n.v3-k-val{display:block;font-size:var(--aybar-font-size-3xl);line-height:1.05;font-weight:var(--aybar-font-weight-bold);letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--v3-fg)}\n.v3-k-val small{font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu);margin-left:var(--aybar-space-1)}\n.v3-k-sub{grid-column:1/-1;margin-top:var(--aybar-space-2);display:flex;align-items:center;gap:var(--aybar-space-2);min-height:20px;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);flex-wrap:nowrap;white-space:nowrap}\n.v3-k-chip{display:inline-flex;align-items:center;gap:var(--aybar-space-1);padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-full);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 14%,transparent);border:1px solid color-mix(in srgb,var(--v3-tono) 35%,transparent)}\n.v3-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}\n.v3-k-chip.pulsa .v3-dot{animation:v3-latido 1.1s ease-in-out infinite}\n.v3-spark{margin-left:auto;width:72px;min-width:40px;height:28px;flex:0 1 auto}\n.v3-spark path{fill:none;stroke:var(--v3-tono);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}\n.v3-spark .area{fill:color-mix(in srgb,var(--v3-tono) 20%,transparent);stroke:none}\n.v3-tend{font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu)}.v3-tend.sube{color:var(--v3-warn)}.v3-tend.baja{color:var(--v3-ok)}\n/* anillo de SLA */\n.v3-anillo{position:relative;width:56px;height:56px;flex:none;grid-row:1/2}\n.v3-anillo svg{width:56px;height:56px;transform:rotate(-90deg)}\n.v3-anillo circle{fill:none;stroke-width:5;stroke-linecap:round}\n.v3-anillo .base{stroke:var(--v3-ln)}.v3-anillo .arco{stroke:var(--v3-tono);transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .3s}\n.v3-anillo .meta{stroke:var(--v3-fg);opacity:.6;stroke-width:2.5;stroke-dasharray:1.6 999;stroke-linecap:butt}\n.v3-anillo .ic{position:absolute;inset:0;display:grid;place-items:center;color:var(--v3-tono)}\n.v3-anillo .ic svg{width:22px;height:22px;transform:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n/* estrellas de CSAT */\n.v3-estrellas{position:relative;display:inline-block;height:16px;width:90px;line-height:0}\n.v3-estrellas svg{width:90px;height:16px;display:block}\n.v3-estrellas .fondo{color:var(--v3-ln)}.v3-estrellas .lleno{position:absolute;left:0;top:0;width:90px;color:var(--v3-acc);clip-path:inset(0 var(--r,100%) 0 0);transition:clip-path .9s cubic-bezier(.2,.8,.2,1)}\n.v3-estrellas .lleno svg{width:90px}\n/* nivel del equipo */\n.v3-hex{position:relative;width:46px;height:46px;display:grid;place-items:center;color:var(--v3-acc);font-weight:var(--aybar-font-weight-bold);font-size:var(--aybar-font-size-xl)}\n.v3-hex svg{position:absolute;inset:0;width:46px;height:46px;fill:color-mix(in srgb,var(--v3-acc) 18%,var(--v3-sk));stroke:var(--v3-acc);stroke-width:2;stroke-linejoin:round}\n.v3-hex b{position:relative}\n.v3-xp{grid-column:1/-1;margin-top:var(--aybar-space-2);height:8px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden;position:relative}\n.v3-xp i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:linear-gradient(90deg,var(--v3-acc),color-mix(in srgb,var(--v3-acc) 60%,#fff));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}\n.v3-xp i::after{content:\"\";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:v3-brillo 2.6s ease-in-out infinite}\n.v3-racha{display:inline-flex;align-items:center;gap:var(--aybar-space-1);font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu)}\n.v3-racha svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}\n.v3-racha.viva{color:var(--v3-acc)}.v3-racha.viva svg{fill:color-mix(in srgb,var(--v3-acc) 55%,transparent);animation:v3-llama .9s ease-in-out infinite alternate;transform-origin:50% 90%}\n.v3-nps-cuenta{font-weight:var(--aybar-font-weight-bold);letter-spacing:.02em}\n/* tickets por estado */\n.v3-estados{grid-column:span 3;padding:var(--aybar-space-3) var(--aybar-space-4);border-radius:var(--aybar-radius-md);background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg)}\n@media(max-width:1100px){.v3-estados{grid-column:1/-1}}\n.v3-est-cab{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--aybar-space-2)}.v3-est-total{font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n.v3-est-lista{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--aybar-space-2);margin:0;padding:0;list-style:none}\n@media(max-width:1100px){.v3-est-lista{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:520px){.v3-est-lista{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.v3-est{--c:var(--v3-pri);position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-2);border-radius:var(--aybar-radius-sm);background:color-mix(in srgb,var(--c) 9%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}\n.v3-est.sep{border-style:dashed}\n.v3-est[data-e=OPEN]{--c:var(--v3-pri)}.v3-est[data-e=IN_PROGRESS]{--c:var(--v3-acc)}.v3-est[data-e=PENDING_CUSTOMER]{--c:var(--v3-warn)}.v3-est[data-e=ESCALATED]{--c:var(--v3-bad)}.v3-est[data-e=REOPENED]{--c:#b98ae0}.v3-est[data-e=RESOLVED]{--c:color-mix(in srgb,var(--v3-ok) 70%,#fff)}.v3-est[data-e=CLOSED]{--c:var(--v3-ok)}\n.v3-est .v3-dot{color:var(--c)}.v3-est b{font-size:var(--aybar-font-size-xl);line-height:1;font-variant-numeric:tabular-nums}\n.v3-est>span:nth-of-type(2){grid-column:1/-1;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);margin-top:var(--aybar-space-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.v3-est-pista{grid-column:1/-1;margin-top:var(--aybar-space-1);height:5px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden}\n.v3-est-pista i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:var(--c);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .7s cubic-bezier(.2,.8,.2,1)}\n.v3-est.sube,.v3-est.baja{animation:v3-destello-c .9s ease-out}\n@keyframes v3-destello-c{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 65%,transparent)}100%{box-shadow:0 0 0 10px transparent}}\n/* retroalimentación al cambiar un valor */\n.v3-k.sube,.v3-k.baja,.v3-k.sube-bien,.v3-k.baja-mal{animation:v3-destello .9s ease-out}\n.v3-k-val.pop{animation:v3-pop .45s cubic-bezier(.25,1,.5,1)}\n.v3-delta{position:absolute;right:var(--aybar-space-3);top:var(--aybar-space-2);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);padding:var(--aybar-space-px) var(--aybar-space-2);border-radius:var(--aybar-radius-full);color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));animation:v3-delta 1.4s ease-out forwards;pointer-events:none}\n.v3-k.nivel-up{animation:v3-nivel 1.4s ease-out}\n.v3-chispa{position:absolute;left:30px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--v3-acc);animation:v3-chispa 1.1s ease-out forwards;pointer-events:none}\n@keyframes v3-latido{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.45}}\n@keyframes v3-brillo{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}\n@keyframes v3-llama{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.18) rotate(3deg)}}\n@keyframes v3-destello{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--v3-tono) 70%,transparent);border-color:var(--v3-tono)}100%{box-shadow:0 0 0 14px transparent}}\n@keyframes v3-pop{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1);opacity:1}}\n@keyframes v3-delta{0%{opacity:0;transform:translateY(8px)}18%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}\n@keyframes v3-nivel{0%{box-shadow:0 0 0 0 var(--v3-acc)}40%{box-shadow:0 0 0 18px transparent,0 0 40px 6px color-mix(in srgb,var(--v3-acc) 60%,transparent)}100%{box-shadow:none}}\n@keyframes v3-chispa{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}\n\n/* ---------------------------------------------------------------- ficha del ticket */\n.v3-ficha{position:absolute;z-index:6;top:var(--aybar-space-3);right:var(--aybar-space-3);width:min(360px,calc(100% - 2 * var(--aybar-space-3)));max-height:calc(100% - 2 * var(--aybar-space-3));overflow:auto;border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 30%,transparent);color:var(--v3-fg);outline:none;animation:v3-entra .32s cubic-bezier(.2,.9,.3,1.1)}\n.v3-ficha[data-nivel=ok],.v3-ficha[data-nivel=cumplido]{--v3-tono:var(--v3-ok)}.v3-ficha[data-nivel=riesgo]{--v3-tono:var(--v3-warn)}.v3-ficha[data-nivel=vencido]{--v3-tono:var(--v3-bad)}\n@keyframes v3-entra{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}\n@media(max-width:640px){.v3-ficha{top:auto;bottom:var(--aybar-space-2);right:var(--aybar-space-2);left:var(--aybar-space-2);width:auto;animation-name:v3-sube}@keyframes v3-sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}}\n.v3-f-cab{display:flex;align-items:flex-start;gap:var(--aybar-space-2);padding:var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-2);border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 16%,transparent),transparent)}\n.v3-f-num{font:var(--aybar-font-weight-bold) var(--aybar-font-size-lg)/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}\n.v3-f-chips{display:flex;flex-wrap:wrap;gap:var(--aybar-space-1);margin-top:var(--aybar-space-2)}\n.v3-f-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:var(--aybar-radius-sm);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;display:grid;place-items:center}\n.v3-f-x:hover{color:var(--v3-fg);border-color:var(--v3-mu)}.v3-f-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}\n.v3-f-res{margin:0;padding:var(--aybar-space-3) var(--aybar-space-3) 0;font-size:var(--aybar-font-size-sm);line-height:1.45}\n.v3-f-sla{padding:var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-1)}.v3-f-sla-t{display:flex;justify-content:space-between;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);margin-bottom:var(--aybar-space-1)}.v3-f-sla-t b{color:var(--v3-fg)}\n.v3-f-barra{height:8px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden}.v3-f-barra i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:var(--v3-tono,var(--v3-ok));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .5s cubic-bezier(.2,.8,.2,1)}\n.v3-f-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--aybar-space-2) var(--aybar-space-3);margin:0;padding:var(--aybar-space-3) var(--aybar-space-3)}\n.v3-f-fila{min-width:0}.v3-f-fila dt{font-size:var(--aybar-font-size-2xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}.v3-f-fila dd{margin:var(--aybar-space-1) 0 0;font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-semibold);overflow-wrap:anywhere}\n.v3-f-hist{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-1);list-style:none;border-left:0}\n.v3-f-hist li{position:relative;padding:var(--aybar-space-1) 0 var(--aybar-space-1) var(--aybar-space-4);font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n.v3-f-hist li::before{content:\"\";position:absolute;left:3px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--v3-ln);box-shadow:0 0 0 2px var(--v3-sf)}\n.v3-f-hist li:first-child::before{background:var(--v3-tono,var(--v3-pri))}.v3-f-hist li:first-child{color:var(--v3-fg)}\n.v3-f-t{margin:0;padding:var(--aybar-space-1) var(--aybar-space-3) var(--aybar-space-1);font-size:var(--aybar-font-size-2xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}\n.v3-f-acc{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n/* HU-067 CA-04: panel del área (mismo marco que la ficha del ticket) */\n.v3-f-area{margin:0;font-size:var(--aybar-font-size-base);line-height:1.2;font-weight:var(--aybar-font-weight-bold)}\n.v3-f-lista{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-2);list-style:none;display:grid;gap:var(--aybar-space-1)}\n.v3-f-lista li{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-1) var(--aybar-space-2);font-size:var(--aybar-font-size-xs)}\n.v3-f-nota{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-2);font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n/* HU-067 CA-07: el selector de razón social de la cabecera no desborda en móvil */\n.ay-pageheader__actions .ay-selectwrap,.ay-pageheader__actions .ay-select{max-width:100%}\n\n/* ---------------------------------------------------------------- selector de entradas */\n.v3-entradas{position:absolute;z-index:4;left:var(--aybar-space-3);bottom:var(--aybar-space-3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-1);max-width:calc(100% - 2 * var(--aybar-space-3));padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--v3-ln)}\n.v3-entradas span{font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.06em;text-transform:uppercase;color:var(--v3-mu);margin-right:var(--aybar-space-1)}\n.v3-entradas button{font-family:inherit;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer}\n.v3-entradas button:hover{border-color:var(--v3-acc)}\n.v3-entradas button[aria-pressed=true]{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.v3-entradas button:focus-visible,.v3-f-x:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n\n\n/* ---------------------------------------------------------------- usuario en la barra superior */\n.pt-usuario{display:flex;align-items:center;gap:var(--aybar-space-2);color:var(--v3-fg);font-size:var(--aybar-font-size-sm)}\n.pt-usuario__av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:var(--aybar-font-weight-bold);font-size:var(--aybar-font-size-xs);letter-spacing:.02em;background:color-mix(in srgb,var(--v3-pri) 28%,var(--v3-sk));color:var(--v3-fg);box-shadow:inset 0 0 0 1px var(--v3-ln)}\n.pt-usuario__txt{display:flex;flex-direction:column;line-height:1.2}.pt-usuario__txt b{font-weight:var(--aybar-font-weight-semibold)}.pt-usuario__txt small{color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n@media(max-width:700px){.pt-usuario__txt{display:none}}\n\n/* ---------------------------------------------------------------- herramientas flotantes (ver como, tema, apariencia, simulación, notas) */\n.pt-herr{position:fixed;left:var(--aybar-space-4);bottom:var(--aybar-space-4);z-index:60}\n.pt-herr__fab{width:46px;height:46px;border-radius:50%;border:1px solid var(--v3-ln);background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--v3-fg);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-herr__fab:hover,.pt-herr__fab[aria-expanded=true]{border-color:var(--v3-acc);transform:rotate(45deg)}\n.pt-herr__fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}\n.pt-herr__fab:focus-visible,.pt-herr button:focus-visible,.pt-bot button:focus-visible,.pt-inicio__ancla button:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n.pt-herr__panel{position:absolute;left:0;bottom:58px;width:min(360px,calc(100vw - 32px));max-height:min(72vh,640px);overflow:auto;border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 22px 60px rgba(0,0,0,.5);color:var(--v3-fg);animation:v3-arriba .24s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-arriba{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}\n.pt-herr__cab{display:flex;align-items:center;gap:var(--aybar-space-2);padding:var(--aybar-space-3) var(--aybar-space-4) var(--aybar-space-2)}.pt-herr__cab h2{margin:0;font-size:var(--aybar-font-size-base);font-weight:var(--aybar-font-weight-bold)}.pt-herr__cab small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs);margin-top:var(--aybar-space-1)}\n.pt-herr__atras{border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);border-radius:var(--aybar-radius-sm);width:30px;height:30px;cursor:pointer;font-size:var(--aybar-font-size-base)}\n.pt-herr__sec{padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-2)}.pt-herr__sec>b{display:block;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu);margin-bottom:var(--aybar-space-1)}\n.pt-herr__filas{display:grid;gap:var(--aybar-space-1);padding:var(--aybar-space-1) var(--aybar-space-3) var(--aybar-space-3)}\n.pt-herr__fila{display:grid;grid-template-columns:auto 1fr auto;gap:var(--aybar-space-3);align-items:center;text-align:left;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-herr__fila:hover{border-color:var(--v3-acc)}.pt-herr__fila b{display:block;font-size:var(--aybar-font-size-sm)}.pt-herr__fila small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}.pt-herr__fila i{font-style:normal;color:var(--v3-mu);font-size:var(--aybar-font-size-lg)}\n.pt-herr__cuenta{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 var(--aybar-space-1);border-radius:var(--aybar-radius-full);background:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);margin-left:var(--aybar-space-1)}\n.pt-herr__notas{display:grid;gap:var(--aybar-space-2);padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-4)}.pt-herr__nota{padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);background:var(--v3-sk);border:1px solid var(--v3-ln);font-size:var(--aybar-font-size-xs);line-height:1.45}\n.pt-herr__vacio{padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-4);color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n\n/* ---------------------------------------------------------------- inicio: consulta 360 y vista en vivo */\n.pt-grafo__busca{align-items:start;row-gap:var(--aybar-space-1,4px)}\n.pt-grafo__busca>.ay-field{display:contents}\n.pt-grafo__busca>.ay-field>*{grid-column:1}\n.pt-grafo__busca>.ay-field>.ay-label{grid-row:1}\n.pt-grafo__busca>.ay-field>:nth-child(2){grid-row:2}\n.pt-grafo__busca>.ay-field>.ay-error:empty{display:none}\n.pt-grafo__busca>.ay-btn{grid-column:2;grid-row:2}\n/* Consulta 360 (20-oct): en el módulo, las tarjetas de nodos y de sistemas van debajo del grafo, a todo el ancho y alineadas con\n   sus columnas; «Ocultar ficha» esconde el panel del dato; un dato o sistema caído se pinta en rojo (solo tokens del SDK) */\n.pt-c360-modulo{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0;align-items:start}\n@media(min-width:1024px){.pt-c360-modulo{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}}\n.pt-c360-caido>.ay-btn{--button-fg:var(--aybar-color-feedback-danger-fg);--button-border:var(--aybar-color-feedback-danger-border);--button-bg:var(--aybar-color-feedback-danger-bg)}\n.pt-lateral[data-sin-ficha]>:has(.pt-c360-dato){display:none}\n/* Consulta 360 (20-oct, resto de las mejoras): control «Grafo 3D / 2D», bloque bajo las tarjetas del módulo y malla de los 16 datos */\n.pt-grafo__modo{display:flex;justify-content:flex-end}\n.ay-pageheader__actions:has(>.pt-c360-cab){flex:0 1 auto;max-inline-size:100%}\n.pt-c360-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}\n.pt-c360-extra{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0}\n.pt-c360-malla{display:grid;gap:var(--aybar-space-3);grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));align-items:start}\n.pt-c360-malla>.ay-card{cursor:pointer}\n.pt-c360-malla .ay-card__pairs{grid-template-columns:minmax(0,1fr)}\n.pt-c360-malla .ay-card__pairs dd{margin-block-end:var(--aybar-space-2)}\n.pt-c360-malla .ay-card__pairs :is(dt,dd){overflow-wrap:anywhere;white-space:normal}\n.pt-pie-c360{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--aybar-space-2)}\n.pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-6);background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}\n.pt-inicio__ancla button{font:var(--aybar-font-weight-semibold) var(--aybar-font-size-xs)/1 inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}\n.pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}\n.pt-inicio__ancla button[aria-current=true]{color:var(--aybar-color-bg-canvas,#0f1a1f);background:var(--v3-acc);border-color:var(--v3-acc)}\n.pt-inicio section{scroll-margin-top:calc(var(--pt-navbar-alto,0px) + 56px)}\n.pt-inicio__vivo{margin-top:var(--aybar-space-6);padding-top:var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-inicio__ficha{font-size:var(--aybar-font-size-sm)}\n\n/* ---------------------------------------------------------------- asistente flotante */\n.pt-bot{position:fixed;right:var(--aybar-space-5);bottom:var(--aybar-space-5);z-index:60}\n.pt-bot__fab{position:relative;display:block;width:78px;height:78px;padding:0;border-radius:50%;border:1px solid var(--v3-ln);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sf)),var(--v3-sk));cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,.5);overflow:hidden;transition:transform .3s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-bot__fab:hover{transform:translateY(-3px);border-color:var(--v3-acc)}.pt-bot__fab canvas{width:100%;height:100%;display:block}\n.pt-bot__globo{position:absolute;right:88px;bottom:22px;max-width:220px;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md) var(--aybar-radius-md) calc(var(--aybar-radius-sm) / 2) var(--aybar-radius-md);background:var(--v3-sf);border:1px solid var(--v3-ln);box-shadow:0 10px 28px rgba(0,0,0,.4);font-size:var(--aybar-font-size-xs);line-height:1.35;color:var(--v3-fg);cursor:pointer;animation:v3-arriba .3s cubic-bezier(.25,1,.5,1);text-align:left}\n.pt-bot__panel{position:absolute;right:0;bottom:92px;width:min(410px,calc(100vw - 32px));height:min(620px,calc(100vh - 150px));display:flex;flex-direction:column;border-radius:var(--aybar-radius-lg);background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 24px 70px rgba(0,0,0,.55);color:var(--v3-fg);overflow:hidden;animation:v3-arriba .28s cubic-bezier(.25,1,.5,1)}\n.pt-bot__cab{display:flex;align-items:center;gap:var(--aybar-space-3);padding:var(--aybar-space-3) var(--aybar-space-3);border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-acc) 14%,transparent),transparent)}\n.pt-bot__av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 25%,var(--v3-sf)),var(--v3-sk));border:1px solid var(--v3-ln)}.pt-bot__av canvas{width:100%;height:100%;display:block}\n.pt-bot__cab h2{margin:0;font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-bold)}.pt-bot__cab small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs);margin-top:var(--aybar-space-px)}\n.pt-bot__x{margin-left:auto;width:30px;height:30px;border-radius:var(--aybar-radius-sm);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer}.pt-bot__x:hover{color:var(--v3-fg)}\n.pt-bot__msgs{flex:1;overflow:auto;padding:var(--aybar-space-3);display:flex;flex-direction:column;gap:var(--aybar-space-2);scroll-behavior:smooth}\n.pt-bot__m{max-width:94%;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);font-size:var(--aybar-font-size-sm);line-height:1.5;white-space:pre-wrap;animation:v3-msg .28s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-msg{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}\n.pt-bot__m--bot{align-self:flex-start;background:var(--v3-sk);border:1px solid var(--v3-ln);border-bottom-left-radius:calc(var(--aybar-radius-sm) / 2)}\n.pt-bot__m--yo{align-self:flex-end;background:color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--v3-acc) 40%,transparent);border-bottom-right-radius:calc(var(--aybar-radius-sm) / 2)}\n.pt-bot__m h3{margin:0 0 var(--aybar-space-1);font-size:var(--aybar-font-size-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--v3-acc)}\n.pt-bot__m ul,.pt-bot__m ol{margin:var(--aybar-space-1) 0 0;padding-left:var(--aybar-space-4)}.pt-bot__m li{margin:var(--aybar-space-1) 0}\n.pt-bot__texto{margin:var(--aybar-space-1) 0;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-sm);background:var(--v3-sf);border:1px dashed var(--v3-ln);white-space:pre-wrap}\n.pt-bot__acc{display:flex;gap:var(--aybar-space-1);flex-wrap:wrap;margin-top:var(--aybar-space-2)}\n.pt-bot__editar{display:block;width:100%;box-sizing:border-box;resize:vertical;font:inherit;color:var(--v3-fg);line-height:1.5}\n.pt-bot__editar:focus{outline:2px solid var(--v3-acc);outline-offset:1px;border-style:solid}.pt-bot__editar[readonly]{color:var(--v3-mu)}\n.pt-bot__crit{margin-top:var(--aybar-space-2)}.pt-bot__nota{margin:var(--aybar-space-1) 0 0;color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n.pt-bot__btn{font-family:inherit;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);padding:var(--aybar-space-1) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-bot__btn:hover{border-color:var(--v3-acc)}.pt-bot__btn--p{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__btn[aria-pressed=true]{background:color-mix(in srgb,var(--v3-acc) 22%,transparent);border-color:var(--v3-acc)}\n.pt-bot__h{display:flex;gap:var(--aybar-space-2);align-items:flex-start;margin:var(--aybar-space-1) 0}.pt-bot__h i{font-style:normal;flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__h[data-n=ok] i{background:var(--v3-ok)}.pt-bot__h[data-n=aviso] i{background:var(--v3-warn)}.pt-bot__h[data-n=alto] i{background:var(--v3-bad)}\n.pt-bot__chips{display:flex;flex-wrap:wrap;gap:var(--aybar-space-1);padding:var(--aybar-space-2) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-bot__form{display:flex;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-bot__form input{flex:1;min-width:0;font:var(--aybar-font-weight-medium) var(--aybar-font-size-sm) inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg)}\n.pt-bot__form input:focus{outline:2px solid var(--v3-acc);outline-offset:1px}\n.pt-bot__puntos{display:inline-flex;gap:var(--aybar-space-1);padding:var(--aybar-space-1) 0}.pt-bot__puntos i{width:6px;height:6px;border-radius:50%;background:var(--v3-mu);animation:v3-punto 1s ease-in-out infinite}.pt-bot__puntos i:nth-child(2){animation-delay:.15s}.pt-bot__puntos i:nth-child(3){animation-delay:.3s}\n@keyframes v3-punto{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}\n@media(max-width:640px){.pt-bot{right:var(--aybar-space-3);bottom:var(--aybar-space-3)}.pt-bot__panel{bottom:88px;height:calc(100vh - 130px)}}\n\n@media(prefers-reduced-motion:reduce){.pt-herr *,.pt-bot *,.pt-inicio__ancla *{animation:none!important;transition:none!important}}\n@media(prefers-reduced-motion:reduce){.v3-hud *,.v3-ficha,.v3-ficha *{animation:none!important;transition:none!important}}\n/* 20-oct · Operación en vivo con las mejoras del visor de Daniel: la ficha del ticket pasa a la izquierda (el cajón de bandejas\n   abre a la derecha), controles de simulación, resumen y leyenda de la escena y el cajón (bandeja, inspector y correos CC).\n   Solo tokens del SDK. */\n.v3-ficha{left:var(--aybar-space-3);right:auto}\n@media(max-width:640px){.v3-ficha{left:var(--aybar-space-2);right:var(--aybar-space-2)}}\n.v3-sim{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}\n.v3-escena-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-block-end:var(--aybar-space-2)}\n.v3-escena-ayuda{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted)}\n.v3-leyenda{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin:var(--aybar-space-2) 0 0;padding:0;list-style:none}\n.v3-cajon{--v3-ok:var(--aybar-color-feedback-success-border);--v3-warn:var(--aybar-color-feedback-warning-border);--v3-bad:var(--aybar-color-feedback-danger-border);--v3-acc:var(--aybar-color-secondary-400);--v3-fg:var(--aybar-color-fg-default);--v3-mu:var(--aybar-color-fg-muted);--v3-sf:var(--aybar-color-bg-surface);--v3-sk:var(--aybar-color-bg-surface-sunken);--v3-ln:var(--aybar-color-border-subtle);--v3-pri:var(--aybar-color-primary-500);display:grid;gap:var(--aybar-space-4);min-inline-size:0}\n.v3-cajon .v3-f-grid,.v3-cajon .v3-f-t,.v3-cajon .v3-f-lista,.v3-cajon .v3-f-nota{padding-inline:0}\n.v3-acc{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin-block-start:var(--aybar-space-3)}\n.v3-area{margin-block-start:var(--aybar-space-3);padding-block-start:var(--aybar-space-2);border-block-start:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle)}\n.v3-bj{display:grid;gap:var(--aybar-space-2);margin:0;padding:0;list-style:none}\n.v3-bj-item{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3);border:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);border-radius:var(--aybar-radius-md);background:var(--aybar-color-bg-surface)}\n.v3-bj-item[data-sel]{border-color:var(--aybar-color-secondary-400)}\n.v3-bj-btn{flex:1 1 14rem;min-inline-size:0;display:grid;gap:var(--aybar-space-1);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}\n.v3-bj-btn:focus-visible{outline:var(--aybar-border-width-thick) solid var(--aybar-color-secondary-400);outline-offset:var(--aybar-space-1);border-radius:var(--aybar-radius-sm)}\n.v3-bj-l1{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);font-size:var(--aybar-font-size-sm)}\n.v3-bj-l1 b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:var(--aybar-font-weight-bold)}\n.v3-bj-l2{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted);overflow-wrap:anywhere}\n.v3-bj-der{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-inline-start:auto}\n/* a 390 px los selects de la cabecera (razón social y sala) no desbordan la página */\n.pt-pagina .ay-pageheader__actions{min-inline-size:0;max-inline-size:100%;flex-wrap:wrap}\n.pt-pagina .ay-pageheader__actions .ay-selectwrap,.pt-pagina .ay-pageheader__actions select{min-inline-size:0;max-inline-size:100%}\n", bd = !1;
-function xd() {
-	if (bd || typeof document > "u" || (bd = !0, document.getElementById("v3-estilos"))) return;
+var Ed = "\n.v3-hud,.v3-ficha,.v3-entradas,.pt-herr,.pt-bot,.pt-usuario,.pt-inicio__ancla{\n  --v3-ok:var(--aybar-color-feedback-success-border,#2e8b57);--v3-warn:var(--aybar-color-feedback-warning-border,#e39b1c);\n  --v3-bad:var(--aybar-color-feedback-danger-border,#c0453a);--v3-acc:var(--aybar-color-secondary-400,#f6a42c);\n  --v3-fg:var(--aybar-color-fg-default,#e8f0f2);--v3-mu:var(--aybar-color-fg-muted,#9db4ba);\n  --v3-sf:var(--aybar-color-bg-surface,#1b2a31);--v3-sk:var(--aybar-color-bg-surface-sunken,#142026);--v3-ln:var(--aybar-color-border-subtle,#2d4048);\n  --v3-pri:var(--aybar-color-primary-500,#2b8a9c);font-family:inherit}\n\n/* ---------------------------------------------------------------- HUD de estadísticas */\n.v3-hud-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--aybar-space-3)}\n@media(max-width:1100px){.v3-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:520px){.v3-hud-grid{grid-template-columns:minmax(0,1fr)}}\n.v3-k{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:var(--aybar-space-3);align-items:center;padding:var(--aybar-space-3) var(--aybar-space-4);border-radius:var(--aybar-radius-md);background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg);overflow:hidden;isolation:isolate;transition:border-color .3s,box-shadow .3s}\n.v3-k::before{content:\"\";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 22%,transparent),transparent 60%);opacity:.9}\n.v3-k[data-estado=ok]{--v3-tono:var(--v3-ok)}.v3-k[data-estado=warn]{--v3-tono:var(--v3-warn)}.v3-k[data-estado=bad]{--v3-tono:var(--v3-bad)}.v3-k[data-estado=acc]{--v3-tono:var(--v3-acc)}.v3-k[data-estado=pri]{--v3-tono:var(--v3-pri)}\n.v3-k-ic{position:relative;width:46px;height:46px;border-radius:var(--aybar-radius-md);display:grid;place-items:center;color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--v3-tono) 38%,transparent)}\n.v3-k-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n.v3-k-lbl{font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);letter-spacing:.02em;color:var(--v3-mu)}\n.v3-k-val{display:block;font-size:var(--aybar-font-size-3xl);line-height:1.05;font-weight:var(--aybar-font-weight-bold);letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--v3-fg)}\n.v3-k-val small{font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu);margin-left:var(--aybar-space-1)}\n.v3-k-sub{grid-column:1/-1;margin-top:var(--aybar-space-2);display:flex;align-items:center;gap:var(--aybar-space-2);min-height:20px;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);flex-wrap:nowrap;white-space:nowrap}\n.v3-k-chip{display:inline-flex;align-items:center;gap:var(--aybar-space-1);padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-full);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 14%,transparent);border:1px solid color-mix(in srgb,var(--v3-tono) 35%,transparent)}\n.v3-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}\n.v3-k-chip.pulsa .v3-dot{animation:v3-latido 1.1s ease-in-out infinite}\n.v3-spark{margin-left:auto;width:72px;min-width:40px;height:28px;flex:0 1 auto}\n.v3-spark path{fill:none;stroke:var(--v3-tono);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}\n.v3-spark .area{fill:color-mix(in srgb,var(--v3-tono) 20%,transparent);stroke:none}\n.v3-tend{font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu)}.v3-tend.sube{color:var(--v3-warn)}.v3-tend.baja{color:var(--v3-ok)}\n/* anillo de SLA */\n.v3-anillo{position:relative;width:56px;height:56px;flex:none;grid-row:1/2}\n.v3-anillo svg{width:56px;height:56px;transform:rotate(-90deg)}\n.v3-anillo circle{fill:none;stroke-width:5;stroke-linecap:round}\n.v3-anillo .base{stroke:var(--v3-ln)}.v3-anillo .arco{stroke:var(--v3-tono);transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .3s}\n.v3-anillo .meta{stroke:var(--v3-fg);opacity:.6;stroke-width:2.5;stroke-dasharray:1.6 999;stroke-linecap:butt}\n.v3-anillo .ic{position:absolute;inset:0;display:grid;place-items:center;color:var(--v3-tono)}\n.v3-anillo .ic svg{width:22px;height:22px;transform:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\n/* estrellas de CSAT */\n.v3-estrellas{position:relative;display:inline-block;height:16px;width:90px;line-height:0}\n.v3-estrellas svg{width:90px;height:16px;display:block}\n.v3-estrellas .fondo{color:var(--v3-ln)}.v3-estrellas .lleno{position:absolute;left:0;top:0;width:90px;color:var(--v3-acc);clip-path:inset(0 var(--r,100%) 0 0);transition:clip-path .9s cubic-bezier(.2,.8,.2,1)}\n.v3-estrellas .lleno svg{width:90px}\n/* nivel del equipo */\n.v3-hex{position:relative;width:46px;height:46px;display:grid;place-items:center;color:var(--v3-acc);font-weight:var(--aybar-font-weight-bold);font-size:var(--aybar-font-size-xl)}\n.v3-hex svg{position:absolute;inset:0;width:46px;height:46px;fill:color-mix(in srgb,var(--v3-acc) 18%,var(--v3-sk));stroke:var(--v3-acc);stroke-width:2;stroke-linejoin:round}\n.v3-hex b{position:relative}\n.v3-xp{grid-column:1/-1;margin-top:var(--aybar-space-2);height:8px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden;position:relative}\n.v3-xp i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:linear-gradient(90deg,var(--v3-acc),color-mix(in srgb,var(--v3-acc) 60%,#fff));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}\n.v3-xp i::after{content:\"\";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);animation:v3-brillo 2.6s ease-in-out infinite}\n.v3-racha{display:inline-flex;align-items:center;gap:var(--aybar-space-1);font-weight:var(--aybar-font-weight-bold);color:var(--v3-mu)}\n.v3-racha svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}\n.v3-racha.viva{color:var(--v3-acc)}.v3-racha.viva svg{fill:color-mix(in srgb,var(--v3-acc) 55%,transparent);animation:v3-llama .9s ease-in-out infinite alternate;transform-origin:50% 90%}\n.v3-nps-cuenta{font-weight:var(--aybar-font-weight-bold);letter-spacing:.02em}\n/* tickets por estado */\n.v3-estados{grid-column:span 3;padding:var(--aybar-space-3) var(--aybar-space-4);border-radius:var(--aybar-radius-md);background:linear-gradient(160deg,var(--v3-sf),var(--v3-sk));border:1px solid var(--v3-ln);color:var(--v3-fg)}\n@media(max-width:1100px){.v3-estados{grid-column:1/-1}}\n.v3-est-cab{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--aybar-space-2)}.v3-est-total{font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n.v3-est-lista{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--aybar-space-2);margin:0;padding:0;list-style:none}\n@media(max-width:1100px){.v3-est-lista{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:520px){.v3-est-lista{grid-template-columns:repeat(2,minmax(0,1fr))}}\n.v3-est{--c:var(--v3-pri);position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-2) var(--aybar-space-2);border-radius:var(--aybar-radius-sm);background:color-mix(in srgb,var(--c) 9%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}\n.v3-est.sep{border-style:dashed}\n.v3-est[data-e=OPEN]{--c:var(--v3-pri)}.v3-est[data-e=IN_PROGRESS]{--c:var(--v3-acc)}.v3-est[data-e=PENDING_CUSTOMER]{--c:var(--v3-warn)}.v3-est[data-e=ESCALATED]{--c:var(--v3-bad)}.v3-est[data-e=REOPENED]{--c:#b98ae0}.v3-est[data-e=RESOLVED]{--c:color-mix(in srgb,var(--v3-ok) 70%,#fff)}.v3-est[data-e=CLOSED]{--c:var(--v3-ok)}\n.v3-est .v3-dot{color:var(--c)}.v3-est b{font-size:var(--aybar-font-size-xl);line-height:1;font-variant-numeric:tabular-nums}\n.v3-est>span:nth-of-type(2){grid-column:1/-1;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);margin-top:var(--aybar-space-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.v3-est-pista{grid-column:1/-1;margin-top:var(--aybar-space-1);height:5px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden}\n.v3-est-pista i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:var(--c);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .7s cubic-bezier(.2,.8,.2,1)}\n.v3-est.sube,.v3-est.baja{animation:v3-destello-c .9s ease-out}\n@keyframes v3-destello-c{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 65%,transparent)}100%{box-shadow:0 0 0 10px transparent}}\n/* retroalimentación al cambiar un valor */\n.v3-k.sube,.v3-k.baja,.v3-k.sube-bien,.v3-k.baja-mal{animation:v3-destello .9s ease-out}\n.v3-k-val.pop{animation:v3-pop .45s cubic-bezier(.25,1,.5,1)}\n.v3-delta{position:absolute;right:var(--aybar-space-3);top:var(--aybar-space-2);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);padding:var(--aybar-space-px) var(--aybar-space-2);border-radius:var(--aybar-radius-full);color:var(--v3-tono);background:color-mix(in srgb,var(--v3-tono) 16%,var(--v3-sk));animation:v3-delta 1.4s ease-out forwards;pointer-events:none}\n.v3-k.nivel-up{animation:v3-nivel 1.4s ease-out}\n.v3-chispa{position:absolute;left:30px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--v3-acc);animation:v3-chispa 1.1s ease-out forwards;pointer-events:none}\n@keyframes v3-latido{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.45}}\n@keyframes v3-brillo{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}\n@keyframes v3-llama{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.18) rotate(3deg)}}\n@keyframes v3-destello{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--v3-tono) 70%,transparent);border-color:var(--v3-tono)}100%{box-shadow:0 0 0 14px transparent}}\n@keyframes v3-pop{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1);opacity:1}}\n@keyframes v3-delta{0%{opacity:0;transform:translateY(8px)}18%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}\n@keyframes v3-nivel{0%{box-shadow:0 0 0 0 var(--v3-acc)}40%{box-shadow:0 0 0 18px transparent,0 0 40px 6px color-mix(in srgb,var(--v3-acc) 60%,transparent)}100%{box-shadow:none}}\n@keyframes v3-chispa{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}\n\n/* ---------------------------------------------------------------- ficha del ticket */\n.v3-ficha{position:absolute;z-index:6;top:var(--aybar-space-3);right:var(--aybar-space-3);width:min(360px,calc(100% - 2 * var(--aybar-space-3)));max-height:calc(100% - 2 * var(--aybar-space-3));overflow:auto;border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 30%,transparent);color:var(--v3-fg);outline:none;animation:v3-entra .32s cubic-bezier(.2,.9,.3,1.1)}\n.v3-ficha[data-nivel=ok],.v3-ficha[data-nivel=cumplido]{--v3-tono:var(--v3-ok)}.v3-ficha[data-nivel=riesgo]{--v3-tono:var(--v3-warn)}.v3-ficha[data-nivel=vencido]{--v3-tono:var(--v3-bad)}\n@keyframes v3-entra{from{opacity:0;transform:translateX(24px) scale(.97)}to{opacity:1;transform:none}}\n@media(max-width:640px){.v3-ficha{top:auto;bottom:var(--aybar-space-2);right:var(--aybar-space-2);left:var(--aybar-space-2);width:auto;animation-name:v3-sube}@keyframes v3-sube{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}}\n.v3-f-cab{display:flex;align-items:flex-start;gap:var(--aybar-space-2);padding:var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-2);border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-tono,var(--v3-pri)) 16%,transparent),transparent)}\n.v3-f-num{font:var(--aybar-font-weight-bold) var(--aybar-font-size-lg)/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}\n.v3-f-chips{display:flex;flex-wrap:wrap;gap:var(--aybar-space-1);margin-top:var(--aybar-space-2)}\n.v3-f-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:var(--aybar-radius-sm);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;display:grid;place-items:center}\n.v3-f-x:hover{color:var(--v3-fg);border-color:var(--v3-mu)}.v3-f-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}\n.v3-f-res{margin:0;padding:var(--aybar-space-3) var(--aybar-space-3) 0;font-size:var(--aybar-font-size-sm);line-height:1.45}\n.v3-f-sla{padding:var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-1)}.v3-f-sla-t{display:flex;justify-content:space-between;font-size:var(--aybar-font-size-xs);color:var(--v3-mu);margin-bottom:var(--aybar-space-1)}.v3-f-sla-t b{color:var(--v3-fg)}\n.v3-f-barra{height:8px;border-radius:var(--aybar-radius-full);background:var(--v3-ln);overflow:hidden}.v3-f-barra i{display:block;height:100%;width:100%;border-radius:var(--aybar-radius-full);background:var(--v3-tono,var(--v3-ok));transform:scaleX(var(--p,0));transform-origin:left;transition:transform .5s cubic-bezier(.2,.8,.2,1)}\n.v3-f-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--aybar-space-2) var(--aybar-space-3);margin:0;padding:var(--aybar-space-3) var(--aybar-space-3)}\n.v3-f-fila{min-width:0}.v3-f-fila dt{font-size:var(--aybar-font-size-2xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}.v3-f-fila dd{margin:var(--aybar-space-1) 0 0;font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-semibold);overflow-wrap:anywhere}\n.v3-f-hist{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-1);list-style:none;border-left:0}\n.v3-f-hist li{position:relative;padding:var(--aybar-space-1) 0 var(--aybar-space-1) var(--aybar-space-4);font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n.v3-f-hist li::before{content:\"\";position:absolute;left:3px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--v3-ln);box-shadow:0 0 0 2px var(--v3-sf)}\n.v3-f-hist li:first-child::before{background:var(--v3-tono,var(--v3-pri))}.v3-f-hist li:first-child{color:var(--v3-fg)}\n.v3-f-t{margin:0;padding:var(--aybar-space-1) var(--aybar-space-3) var(--aybar-space-1);font-size:var(--aybar-font-size-2xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu)}\n.v3-f-acc{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n/* HU-067 CA-04: panel del área (mismo marco que la ficha del ticket) */\n.v3-f-area{margin:0;font-size:var(--aybar-font-size-base);line-height:1.2;font-weight:var(--aybar-font-weight-bold)}\n.v3-f-lista{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-2);list-style:none;display:grid;gap:var(--aybar-space-1)}\n.v3-f-lista li{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-1) var(--aybar-space-2);font-size:var(--aybar-font-size-xs)}\n.v3-f-nota{margin:0;padding:0 var(--aybar-space-3) var(--aybar-space-2);font-size:var(--aybar-font-size-xs);color:var(--v3-mu)}\n/* HU-067 CA-07: el selector de razón social de la cabecera no desborda en móvil */\n.ay-pageheader__actions .ay-selectwrap,.ay-pageheader__actions .ay-select{max-width:100%}\n\n/* ---------------------------------------------------------------- selector de entradas */\n.v3-entradas{position:absolute;z-index:4;left:var(--aybar-space-3);bottom:var(--aybar-space-3);display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-1);max-width:calc(100% - 2 * var(--aybar-space-3));padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--v3-ln)}\n.v3-entradas span{font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.06em;text-transform:uppercase;color:var(--v3-mu);margin-right:var(--aybar-space-1)}\n.v3-entradas button{font-family:inherit;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);padding:var(--aybar-space-1) var(--aybar-space-2);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer}\n.v3-entradas button:hover{border-color:var(--v3-acc)}\n.v3-entradas button[aria-pressed=true]{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.v3-entradas button:focus-visible,.v3-f-x:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n\n\n/* ---------------------------------------------------------------- usuario en la barra superior */\n.pt-usuario{display:flex;align-items:center;gap:var(--aybar-space-2);color:var(--v3-fg);font-size:var(--aybar-font-size-sm)}\n.pt-usuario__av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:var(--aybar-font-weight-bold);font-size:var(--aybar-font-size-xs);letter-spacing:.02em;background:color-mix(in srgb,var(--v3-pri) 28%,var(--v3-sk));color:var(--v3-fg);box-shadow:inset 0 0 0 1px var(--v3-ln)}\n.pt-usuario__txt{display:flex;flex-direction:column;line-height:1.2}.pt-usuario__txt b{font-weight:var(--aybar-font-weight-semibold)}.pt-usuario__txt small{color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n@media(max-width:700px){.pt-usuario__txt{display:none}}\n\n/* ---------------------------------------------------------------- herramientas flotantes (ver como, tema, apariencia, simulación, notas) */\n.pt-herr{position:fixed;left:var(--aybar-space-4);bottom:var(--aybar-space-4);z-index:60}\n.pt-herr__fab{width:46px;height:46px;border-radius:50%;border:1px solid var(--v3-ln);background:color-mix(in srgb,var(--v3-sf) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--v3-fg);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-herr__fab:hover,.pt-herr__fab[aria-expanded=true]{border-color:var(--v3-acc);transform:rotate(45deg)}\n.pt-herr__fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}\n.pt-herr__fab:focus-visible,.pt-herr button:focus-visible,.pt-bot button:focus-visible,.pt-inicio__ancla button:focus-visible{outline:2px solid var(--v3-acc);outline-offset:2px}\n.pt-herr__panel{position:absolute;left:0;bottom:58px;width:min(360px,calc(100vw - 32px));max-height:min(72vh,640px);overflow:auto;border-radius:var(--aybar-radius-md);background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 22px 60px rgba(0,0,0,.5);color:var(--v3-fg);animation:v3-arriba .24s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-arriba{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}\n.pt-herr__cab{display:flex;align-items:center;gap:var(--aybar-space-2);padding:var(--aybar-space-3) var(--aybar-space-4) var(--aybar-space-2)}.pt-herr__cab h2{margin:0;font-size:var(--aybar-font-size-base);font-weight:var(--aybar-font-weight-bold)}.pt-herr__cab small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs);margin-top:var(--aybar-space-1)}\n.pt-herr__atras{border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);border-radius:var(--aybar-radius-sm);width:30px;height:30px;cursor:pointer;font-size:var(--aybar-font-size-base)}\n.pt-herr__sec{padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-2)}.pt-herr__sec>b{display:block;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--v3-mu);margin-bottom:var(--aybar-space-1)}\n.pt-herr__filas{display:grid;gap:var(--aybar-space-1);padding:var(--aybar-space-1) var(--aybar-space-3) var(--aybar-space-3)}\n.pt-herr__fila{display:grid;grid-template-columns:auto 1fr auto;gap:var(--aybar-space-3);align-items:center;text-align:left;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-herr__fila:hover{border-color:var(--v3-acc)}.pt-herr__fila b{display:block;font-size:var(--aybar-font-size-sm)}.pt-herr__fila small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}.pt-herr__fila i{font-style:normal;color:var(--v3-mu);font-size:var(--aybar-font-size-lg)}\n.pt-herr__cuenta{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 var(--aybar-space-1);border-radius:var(--aybar-radius-full);background:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f);font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);margin-left:var(--aybar-space-1)}\n.pt-herr__notas{display:grid;gap:var(--aybar-space-2);padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-4)}.pt-herr__nota{padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);background:var(--v3-sk);border:1px solid var(--v3-ln);font-size:var(--aybar-font-size-xs);line-height:1.45}\n.pt-herr__vacio{padding:var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-4);color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n\n/* ---------------------------------------------------------------- inicio: consulta 360 y vista en vivo */\n.pt-grafo__busca{align-items:start;row-gap:var(--aybar-space-1,4px)}\n.pt-grafo__busca>.ay-field{display:contents}\n.pt-grafo__busca>.ay-field>*{grid-column:1}\n.pt-grafo__busca>.ay-field>.ay-label{grid-row:1}\n.pt-grafo__busca>.ay-field>:nth-child(2){grid-row:2}\n.pt-grafo__busca>.ay-field>.ay-error:empty{display:none}\n.pt-grafo__busca>.ay-btn{grid-column:2;grid-row:2}\n/* Consulta 360 (20-oct): en el módulo, las tarjetas de nodos y de sistemas van debajo del grafo, a todo el ancho y alineadas con\n   sus columnas; «Ocultar ficha» esconde el panel del dato; un dato o sistema caído se pinta en rojo (solo tokens del SDK) */\n.pt-c360-modulo{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0;align-items:start}\n@media(min-width:1024px){.pt-c360-modulo{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}}\n.pt-c360-caido>.ay-btn{--button-fg:var(--aybar-color-feedback-danger-fg);--button-border:var(--aybar-color-feedback-danger-border);--button-bg:var(--aybar-color-feedback-danger-bg)}\n.pt-lateral[data-sin-ficha]>:has(.pt-c360-dato){display:none}\n/* Consulta 360 (20-oct, resto de las mejoras): control «Grafo 3D / 2D», bloque bajo las tarjetas del módulo y malla de los 16 datos */\n.pt-grafo__modo{display:flex;justify-content:flex-end}\n.ay-pageheader__actions:has(>.pt-c360-cab){flex:0 1 auto;max-inline-size:100%}\n.pt-c360-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}\n.pt-c360-extra{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0}\n.pt-c360-malla{display:grid;gap:var(--aybar-space-3);grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));align-items:start}\n.pt-c360-malla>.ay-card{cursor:pointer}\n.pt-c360-malla .ay-card__pairs{grid-template-columns:minmax(0,1fr)}\n.pt-c360-malla .ay-card__pairs dd{margin-block-end:var(--aybar-space-2)}\n.pt-c360-malla .ay-card__pairs :is(dt,dd){overflow-wrap:anywhere;white-space:normal}\n.pt-pie-c360{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--aybar-space-2)}\n.pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-6);background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}\n.pt-inicio__ancla button{font:var(--aybar-font-weight-semibold) var(--aybar-font-size-xs)/1 inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}\n.pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}\n.pt-inicio__ancla button[aria-current=true]{color:var(--aybar-color-bg-canvas,#0f1a1f);background:var(--v3-acc);border-color:var(--v3-acc)}\n.pt-inicio section{scroll-margin-top:calc(var(--pt-navbar-alto,0px) + 56px)}\n.pt-inicio__vivo{margin-top:var(--aybar-space-6);padding-top:var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-inicio__ficha{font-size:var(--aybar-font-size-sm)}\n\n/* ---------------------------------------------------------------- asistente flotante */\n.pt-bot{position:fixed;right:var(--aybar-space-5);bottom:var(--aybar-space-5);z-index:60}\n.pt-bot__fab{position:relative;display:block;width:78px;height:78px;padding:0;border-radius:50%;border:1px solid var(--v3-ln);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sf)),var(--v3-sk));cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,.5);overflow:hidden;transition:transform .3s cubic-bezier(.25,1,.5,1),border-color .2s}\n.pt-bot__fab:hover{transform:translateY(-3px);border-color:var(--v3-acc)}.pt-bot__fab canvas{width:100%;height:100%;display:block}\n.pt-bot__globo{position:absolute;right:88px;bottom:22px;max-width:220px;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md) var(--aybar-radius-md) calc(var(--aybar-radius-sm) / 2) var(--aybar-radius-md);background:var(--v3-sf);border:1px solid var(--v3-ln);box-shadow:0 10px 28px rgba(0,0,0,.4);font-size:var(--aybar-font-size-xs);line-height:1.35;color:var(--v3-fg);cursor:pointer;animation:v3-arriba .3s cubic-bezier(.25,1,.5,1);text-align:left}\n.pt-bot__panel{position:absolute;right:0;bottom:92px;width:min(410px,calc(100vw - 32px));height:min(620px,calc(100vh - 150px));display:flex;flex-direction:column;border-radius:var(--aybar-radius-lg);background:color-mix(in srgb,var(--v3-sf) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--v3-ln);box-shadow:0 24px 70px rgba(0,0,0,.55);color:var(--v3-fg);overflow:hidden;animation:v3-arriba .28s cubic-bezier(.25,1,.5,1)}\n.pt-bot__cab{display:flex;align-items:center;gap:var(--aybar-space-3);padding:var(--aybar-space-3) var(--aybar-space-3);border-bottom:1px solid var(--v3-ln);background:linear-gradient(180deg,color-mix(in srgb,var(--v3-acc) 14%,transparent),transparent)}\n.pt-bot__av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--v3-acc) 25%,var(--v3-sf)),var(--v3-sk));border:1px solid var(--v3-ln)}.pt-bot__av canvas{width:100%;height:100%;display:block}\n.pt-bot__cab h2{margin:0;font-size:var(--aybar-font-size-sm);font-weight:var(--aybar-font-weight-bold)}.pt-bot__cab small{display:block;color:var(--v3-mu);font-size:var(--aybar-font-size-xs);margin-top:var(--aybar-space-px)}\n.pt-bot__x{margin-left:auto;width:30px;height:30px;border-radius:var(--aybar-radius-sm);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer}.pt-bot__x:hover{color:var(--v3-fg)}\n.pt-bot__msgs{flex:1;overflow:auto;padding:var(--aybar-space-3);display:flex;flex-direction:column;gap:var(--aybar-space-2);scroll-behavior:smooth}\n.pt-bot__m{max-width:94%;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-md);font-size:var(--aybar-font-size-sm);line-height:1.5;white-space:pre-wrap;animation:v3-msg .28s cubic-bezier(.25,1,.5,1)}\n@keyframes v3-msg{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}\n.pt-bot__m--bot{align-self:flex-start;background:var(--v3-sk);border:1px solid var(--v3-ln);border-bottom-left-radius:calc(var(--aybar-radius-sm) / 2)}\n.pt-bot__m--yo{align-self:flex-end;background:color-mix(in srgb,var(--v3-acc) 22%,var(--v3-sk));border:1px solid color-mix(in srgb,var(--v3-acc) 40%,transparent);border-bottom-right-radius:calc(var(--aybar-radius-sm) / 2)}\n.pt-bot__m h3{margin:0 0 var(--aybar-space-1);font-size:var(--aybar-font-size-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--v3-acc)}\n.pt-bot__m ul,.pt-bot__m ol{margin:var(--aybar-space-1) 0 0;padding-left:var(--aybar-space-4)}.pt-bot__m li{margin:var(--aybar-space-1) 0}\n.pt-bot__texto{margin:var(--aybar-space-1) 0;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-sm);background:var(--v3-sf);border:1px dashed var(--v3-ln);white-space:pre-wrap}\n.pt-bot__acc{display:flex;gap:var(--aybar-space-1);flex-wrap:wrap;margin-top:var(--aybar-space-2)}\n.pt-bot__editar{display:block;width:100%;box-sizing:border-box;resize:vertical;font:inherit;color:var(--v3-fg);line-height:1.5}\n.pt-bot__editar:focus{outline:2px solid var(--v3-acc);outline-offset:1px;border-style:solid}.pt-bot__editar[readonly]{color:var(--v3-mu)}\n.pt-bot__crit{margin-top:var(--aybar-space-2)}.pt-bot__nota{margin:var(--aybar-space-1) 0 0;color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}\n.pt-bot__btn{font-family:inherit;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);padding:var(--aybar-space-1) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}\n.pt-bot__btn:hover{border-color:var(--v3-acc)}.pt-bot__btn--p{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__btn[aria-pressed=true]{background:color-mix(in srgb,var(--v3-acc) 22%,transparent);border-color:var(--v3-acc)}\n.pt-bot__h{display:flex;gap:var(--aybar-space-2);align-items:flex-start;margin:var(--aybar-space-1) 0}.pt-bot__h i{font-style:normal;flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-bold);color:var(--aybar-color-bg-canvas,#0f1a1f)}\n.pt-bot__h[data-n=ok] i{background:var(--v3-ok)}.pt-bot__h[data-n=aviso] i{background:var(--v3-warn)}.pt-bot__h[data-n=alto] i{background:var(--v3-bad)}\n.pt-bot__chips{display:flex;flex-wrap:wrap;gap:var(--aybar-space-1);padding:var(--aybar-space-2) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-bot__form{display:flex;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3) var(--aybar-space-3);border-top:1px solid var(--v3-ln)}\n.pt-bot__form input{flex:1;min-width:0;font:var(--aybar-font-weight-medium) var(--aybar-font-size-sm) inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:var(--v3-sk);color:var(--v3-fg)}\n.pt-bot__form input:focus{outline:2px solid var(--v3-acc);outline-offset:1px}\n.pt-bot__puntos{display:inline-flex;gap:var(--aybar-space-1);padding:var(--aybar-space-1) 0}.pt-bot__puntos i{width:6px;height:6px;border-radius:50%;background:var(--v3-mu);animation:v3-punto 1s ease-in-out infinite}.pt-bot__puntos i:nth-child(2){animation-delay:.15s}.pt-bot__puntos i:nth-child(3){animation-delay:.3s}\n@keyframes v3-punto{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}\n@media(max-width:640px){.pt-bot{right:var(--aybar-space-3);bottom:var(--aybar-space-3)}.pt-bot__panel{bottom:88px;height:calc(100vh - 130px)}}\n\n@media(prefers-reduced-motion:reduce){.pt-herr *,.pt-bot *,.pt-inicio__ancla *{animation:none!important;transition:none!important}}\n@media(prefers-reduced-motion:reduce){.v3-hud *,.v3-ficha,.v3-ficha *{animation:none!important;transition:none!important}}\n/* 20-oct · Operación en vivo con las mejoras del visor de Daniel: la ficha del ticket pasa a la izquierda (el cajón de bandejas\n   abre a la derecha), controles de simulación, resumen y leyenda de la escena y el cajón (bandeja, inspector y correos CC).\n   Solo tokens del SDK. */\n.v3-ficha{left:var(--aybar-space-3);right:auto}\n@media(max-width:640px){.v3-ficha{left:var(--aybar-space-2);right:var(--aybar-space-2)}}\n.v3-sim{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}\n.v3-escena-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-block-end:var(--aybar-space-2)}\n.v3-escena-ayuda{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted)}\n.v3-leyenda{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin:var(--aybar-space-2) 0 0;padding:0;list-style:none}\n.v3-cajon{--v3-ok:var(--aybar-color-feedback-success-border);--v3-warn:var(--aybar-color-feedback-warning-border);--v3-bad:var(--aybar-color-feedback-danger-border);--v3-acc:var(--aybar-color-secondary-400);--v3-fg:var(--aybar-color-fg-default);--v3-mu:var(--aybar-color-fg-muted);--v3-sf:var(--aybar-color-bg-surface);--v3-sk:var(--aybar-color-bg-surface-sunken);--v3-ln:var(--aybar-color-border-subtle);--v3-pri:var(--aybar-color-primary-500);display:grid;gap:var(--aybar-space-4);min-inline-size:0}\n.v3-cajon .v3-f-grid,.v3-cajon .v3-f-t,.v3-cajon .v3-f-lista,.v3-cajon .v3-f-nota{padding-inline:0}\n.v3-acc{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin-block-start:var(--aybar-space-3)}\n.v3-area{margin-block-start:var(--aybar-space-3);padding-block-start:var(--aybar-space-2);border-block-start:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle)}\n.v3-bj{display:grid;gap:var(--aybar-space-2);margin:0;padding:0;list-style:none}\n.v3-bj-item{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3);border:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);border-radius:var(--aybar-radius-md);background:var(--aybar-color-bg-surface)}\n.v3-bj-item[data-sel]{border-color:var(--aybar-color-secondary-400)}\n.v3-bj-btn{flex:1 1 14rem;min-inline-size:0;display:grid;gap:var(--aybar-space-1);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}\n.v3-bj-btn:focus-visible{outline:var(--aybar-border-width-thick) solid var(--aybar-color-secondary-400);outline-offset:var(--aybar-space-1);border-radius:var(--aybar-radius-sm)}\n.v3-bj-l1{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);font-size:var(--aybar-font-size-sm)}\n.v3-bj-l1 b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:var(--aybar-font-weight-bold)}\n.v3-bj-l2{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted);overflow-wrap:anywhere}\n.v3-bj-der{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-inline-start:auto}\n/* a 390 px los selects de la cabecera (razón social y sala) no desbordan la página */\n.pt-pagina .ay-pageheader__actions{min-inline-size:0;max-inline-size:100%;flex-wrap:wrap}\n.pt-pagina .ay-pageheader__actions .ay-selectwrap,.pt-pagina .ay-pageheader__actions select{min-inline-size:0;max-inline-size:100%}\n", Dd = !1;
+function Od() {
+	if (Dd || typeof document > "u" || (Dd = !0, document.getElementById("v3-estilos"))) return;
 	let e = document.createElement("style");
-	e.id = "v3-estilos", e.textContent = yd, document.head.append(e);
+	e.id = "v3-estilos", e.textContent = Ed, document.head.append(e);
 }
 //#endregion
 //#region src/three/oficina.ts
@@ -13535,7 +13601,7 @@ var X = {
 	z0: -.6,
 	w: 18.8,
 	d: 15.8
-}, Sd = new W(8.8, 0, 7.4), Cd = (e, t, n) => new W(e, t, n), wd = [
+}, kd = new W(8.8, 0, 7.4), Ad = (e, t, n) => new W(e, t, n), jd = [
 	{
 		k: "tel",
 		z: 1.5
@@ -13556,7 +13622,7 @@ var X = {
 		k: "form",
 		z: 9.5
 	}
-], Td = {
+], Md = {
 	x: 1.5,
 	opX: .8
 }, Z = {
@@ -13578,7 +13644,7 @@ var X = {
 	w: 2.7,
 	d: 2.8,
 	puerta: [3, 13.4]
-}, Ed = (e, t) => {
+}, Nd = (e, t) => {
 	let n = 12.6, r = t + 1.45;
 	return {
 		k: e,
@@ -13606,7 +13672,7 @@ var X = {
 			};
 		})
 	};
-}, Dd = (e, t, n) => {
+}, Pd = (e, t, n) => {
 	let r = 11.9, i = t + n / 2;
 	return {
 		k: e,
@@ -13634,73 +13700,73 @@ var X = {
 			};
 		})
 	};
-}, Od = {
-	eje1: Ed("eje1", .4),
-	cob: Ed("cob", 3.7),
-	libro: Ed("libro", 7),
-	legal: Dd("legal", 12.6, 4.8),
-	post: Dd("post", 7.7, 4.4),
-	proy: Dd("proy", 3.9, 3.5)
-}, kd = {
+}, Fd = {
+	eje1: Nd("eje1", .4),
+	cob: Nd("cob", 3.7),
+	libro: Nd("libro", 7),
+	legal: Pd("legal", 12.6, 4.8),
+	post: Pd("post", 7.7, 4.4),
+	proy: Pd("proy", 3.9, 3.5)
+}, Id = {
 	viaje: .62,
 	mesa: .88,
 	atencion: 1.3,
 	cola: .5
-}, Ad = (e) => Cd(5.9 + e % 4 * .36, kd.mesa + Math.floor(e / 12) * .05, 6.5 + Math.floor(e / 4) % 3 * .28), jd = (e, t) => {
+}, Ld = (e) => Ad(5.9 + e % 4 * .36, Id.mesa + Math.floor(e / 12) * .05, 6.5 + Math.floor(e / 4) % 3 * .28), Rd = (e, t) => {
 	let n = Math.floor(t / 4) % 3, r = t % 4, i = Math.floor(t / 12) * .06;
-	return e.lado === "oeste" ? Cd(e.fuera[0] - r * .42, kd.cola + i, e.fuera[1] - .35 + n * .4) : Cd(e.fuera[0] - .6 + r * .42, kd.cola + i, e.fuera[1] - n * .4);
-}, Md = (e) => Cd(.9 + e % 4 * .55, .95, 13 + Math.floor(e / 4) % 3 * .5), Nd = (e, t, n) => {
+	return e.lado === "oeste" ? Ad(e.fuera[0] - r * .42, Id.cola + i, e.fuera[1] - .35 + n * .4) : Ad(e.fuera[0] - .6 + r * .42, Id.cola + i, e.fuera[1] - n * .4);
+}, zd = (e) => Ad(.9 + e % 4 * .55, .95, 13 + Math.floor(e / 4) % 3 * .5), Bd = (e, t, n) => {
 	let r = e.puestos[Math.min(t, e.puestos.length - 1)];
-	return Cd(r.x, kd.atencion + n * .12, r.z);
-}, Pd = (e, t, n = kd.viaje) => Cd(e, n, t), Fd = (e, t) => [
-	Pd(Td.x + .5, e),
-	Pd(3, e),
-	Pd(3, 6.7),
-	Pd(5.3, 6.7),
+	return Ad(r.x, Id.atencion + n * .12, r.z);
+}, Vd = (e, t, n = Id.viaje) => Ad(e, n, t), Hd = (e, t) => [
+	Vd(Md.x + .5, e),
+	Vd(3, e),
+	Vd(3, 6.7),
+	Vd(5.3, 6.7),
 	t
-], Id = (e, t) => {
+], Ud = (e, t) => {
 	let n = e.lado === "oeste" ? [
-		Pd(9.6, 6.7),
-		Pd(11.6, 6.7),
-		Pd(11.6, e.fuera[1])
+		Vd(9.6, 6.7),
+		Vd(11.6, 6.7),
+		Vd(11.6, e.fuera[1])
 	] : [
-		Pd(7.4, 8.4),
-		Pd(7.4, 10.9),
-		Pd(e.fuera[0], 10.9)
+		Vd(7.4, 8.4),
+		Vd(7.4, 10.9),
+		Vd(e.fuera[0], 10.9)
 	];
 	return [
-		Pd(5.9, 6.7),
+		Vd(5.9, 6.7),
 		...n,
 		t
 	];
-}, Ld = (e, t) => [
-	Pd(e.fuera[0], e.fuera[1]),
-	Pd(e.puerta[0], e.puerta[1]),
-	Pd(e.dentro[0], e.dentro[1]),
-	Cd(t.x, t.y, e.lado === "oeste" ? t.z : e.dentro[1]),
+}, Wd = (e, t) => [
+	Vd(e.fuera[0], e.fuera[1]),
+	Vd(e.puerta[0], e.puerta[1]),
+	Vd(e.dentro[0], e.dentro[1]),
+	Ad(t.x, t.y, e.lado === "oeste" ? t.z : e.dentro[1]),
 	t
-], Rd = (e, t) => [
+], Gd = (e, t) => [
 	...e.lado === "oeste" ? [
-		Pd(e.dentro[0], e.dentro[1]),
-		Pd(e.puerta[0], e.puerta[1]),
-		Pd(11.6, e.fuera[1]),
-		Pd(11.6, 10.9)
+		Vd(e.dentro[0], e.dentro[1]),
+		Vd(e.puerta[0], e.puerta[1]),
+		Vd(11.6, e.fuera[1]),
+		Vd(11.6, 10.9)
 	] : [
-		Pd(e.dentro[0], e.dentro[1]),
-		Pd(e.puerta[0], e.puerta[1]),
-		Pd(e.fuera[0], 10.9)
+		Vd(e.dentro[0], e.dentro[1]),
+		Vd(e.puerta[0], e.puerta[1]),
+		Vd(e.fuera[0], 10.9)
 	],
-	Pd(3.4, 10.9),
-	Pd(3.4, $.puerta[1]),
-	Pd($.puerta[0] - .2, $.puerta[1]),
+	Vd(3.4, 10.9),
+	Vd(3.4, $.puerta[1]),
+	Vd($.puerta[0] - .2, $.puerta[1]),
 	t
-], zd = [
-	Pd(3, 2.2, 0),
-	Pd(3, 10.6, 0),
-	Pd(11.4, 10.6, 0),
-	Pd(11.4, 2.2, 0)
-], Bd = (e, t = 0, n = 1) => Math.max(t, Math.min(n, e)), Vd = (e) => e < .5 ? 4 * e * e * e : 1 - (-2 * e + 2) ** 3 / 2, Hd = (e) => 1 + 2.70158 * (e - 1) ** 3 + 1.70158 * (e - 1) ** 2, Ud = 4.4;
-function Wd(e, t, n) {
+], Kd = [
+	Vd(3, 2.2, 0),
+	Vd(3, 10.6, 0),
+	Vd(11.4, 10.6, 0),
+	Vd(11.4, 2.2, 0)
+], qd = (e, t = 0, n = 1) => Math.max(t, Math.min(n, e)), Jd = (e) => e < .5 ? 4 * e * e * e : 1 - (-2 * e + 2) ** 3 / 2, Yd = (e) => 1 + 2.70158 * (e - 1) ** 3 + 1.70158 * (e - 1) ** 2, Xd = 4.4;
+function Zd(e, t, n) {
 	let r = [e.clone()];
 	for (let e of t) e.distanceToSquared(r[r.length - 1]) > 1e-4 && r.push(e.clone());
 	if (r.length < 2) return null;
@@ -13710,28 +13776,28 @@ function Wd(e, t, n) {
 		pts: r,
 		cum: i,
 		t0: n,
-		dur: Math.max(.7, i[i.length - 1] / Ud) * 1e3
+		dur: Math.max(.7, i[i.length - 1] / Xd) * 1e3
 	};
 }
-function Gd(e, t, n) {
-	let r = Bd((t - e.t0) / e.dur), i = Vd(r) * e.cum[e.cum.length - 1], a = 1;
+function Qd(e, t, n) {
+	let r = qd((t - e.t0) / e.dur), i = Jd(r) * e.cum[e.cum.length - 1], a = 1;
 	for (; a < e.cum.length - 1 && e.cum[a] < i;) a++;
 	let o = e.pts[a - 1], s = e.pts[a], c = e.cum[a] - e.cum[a - 1] || 1;
-	return n.lerpVectors(o, s, Bd((i - e.cum[a - 1]) / c)), n.y += Math.sin(Math.PI * r) * .18, r >= 1;
+	return n.lerpVectors(o, s, qd((i - e.cum[a - 1]) / c)), n.y += Math.sin(Math.PI * r) * .18, r >= 1;
 }
-function Kd(e) {
+function $d(e) {
 	let { canvas: t, host: r, cols: i, est: a } = e, o = e.reducido;
-	xd();
-	let s = new Ju({
+	Od();
+	let s = new td({
 		canvas: t,
 		antialias: !0,
 		alpha: !0
 	});
 	s.setPixelRatio(Math.min(2, devicePixelRatio || 1)), s.shadowMap.enabled = !0, s.shadowMap.type = 1, s.toneMapping = 4, s.toneMappingExposure = 1.35;
-	let c = nd(r), l = new In(), u = new is(-1, 1, 1, -1, -80, 80), d = new ud({ ...i }), f = new Map(a.zonas.map((e) => [e.k, e.color])), p = new Map(a.zonas.map((e) => [e.k, e.n])), m = new Map((a.tipos ?? []).map((e) => [e.k, e.color]));
-	l.add(new Go(16774374, J(Y(i.suelo, i.teal, .5)), 1.7));
-	let h = new os(16773340, 2.9);
-	h.position.set(Sd.x - 9, 17, Sd.z + 7), h.target.position.copy(Sd), h.castShadow = !0, h.shadow.mapSize.set(2048, 2048), h.shadow.bias = -4e-4, h.shadow.normalBias = .03, h.shadow.radius = 4, Object.assign(h.shadow.camera, {
+	let c = ld(r), l = new In(), u = new ds(-1, 1, 1, -1, -80, 80), d = new _d({ ...i }), f = new Map(a.zonas.map((e) => [e.k, e.color])), p = new Map(a.zonas.map((e) => [e.k, e.n])), m = new Map((a.tipos ?? []).map((e) => [e.k, e.color]));
+	l.add(new Qo(16774374, J(Y(i.suelo, i.teal, .5)), 1.7));
+	let h = new ps(16773340, 2.9);
+	h.position.set(kd.x - 9, 17, kd.z + 7), h.target.position.copy(kd), h.castShadow = !0, h.shadow.mapSize.set(2048, 2048), h.shadow.bias = -4e-4, h.shadow.normalBias = .03, h.shadow.radius = 4, Object.assign(h.shadow.camera, {
 		left: -15,
 		right: 15,
 		top: 13,
@@ -13739,27 +13805,27 @@ function Kd(e) {
 		near: 1,
 		far: 50
 	}), h.shadow.camera.updateProjectionMatrix(), l.add(h, h.target);
-	let g = new os(J(Y(i.teal, i.superficie, .5)), .5);
+	let g = new ps(J(Y(i.teal, i.superficie, .5)), .5);
 	g.position.set(14, 8, -6), l.add(g);
 	let _ = Y(i.suelo, i.texto, .2), v = Y(i.suelo, i.texto, .34), y = (() => {
 		let e = document.createElement("canvas");
 		e.width = e.height = 128;
 		let t = e.getContext("2d");
 		t.fillStyle = "#fff", t.fillRect(0, 0, 128, 128), t.strokeStyle = "rgba(0,0,0,.09)", t.lineWidth = 2, t.strokeRect(1, 1, 126, 126);
-		let r = new Li(e);
+		let r = new Wi(e);
 		return r.wrapS = r.wrapT = n, r.colorSpace = Re, r.anisotropy = 4, r;
 	})(), b = new G(d.caja(X.w, .3, X.d, .08), d.mat(Y(i.suelo, i.texto, .4), { r: .8 }));
 	b.position.set(X.x0 + X.w / 2, -.15, X.z0 + X.d / 2), b.receiveShadow = !0, l.add(b);
 	let x = y.clone();
 	x.repeat.set(X.w, X.d), x.needsUpdate = !0;
-	let S = new G(new so(X.w - .1, X.d - .1), new xo({
+	let S = new G(new ho(X.w - .1, X.d - .1), new Oo({
 		color: J(_),
 		map: x,
 		roughness: .9
 	}));
 	S.rotation.x = -Math.PI / 2, S.position.set(X.x0 + X.w / 2, .005, X.z0 + X.d / 2), S.receiveShadow = !0, l.add(S);
 	let C = (e, t, n, r, i, a = .012) => {
-		let o = new G(new so(n - e, r - t), d.mat(i, { r: .85 }));
+		let o = new G(new ho(n - e, r - t), d.mat(i, { r: .85 }));
 		return o.rotation.x = -Math.PI / 2, o.position.set((e + n) / 2, a, (t + r) / 2), o.receiveShadow = !0, l.add(o), o;
 	};
 	C(2.55, 1, 3.45, 11.4, v), C(2.55, 10.45, 12.2, 11.35, v), C(11.2, .1, 12.1, 11.35, v), C(3, 6.25, 11.6, 7.15, v);
@@ -13806,7 +13872,7 @@ function Kd(e) {
 			});
 		}
 		p.append(m, h), d.append(f, p), u.append(d);
-		let g = new Yu(u);
+		let g = new nd(u);
 		g.position.set(n, r, a), l.add(g);
 		let _ = { set: (e, t = !1) => {
 			h.textContent !== e && (h.textContent = e);
@@ -13818,10 +13884,10 @@ function Kd(e) {
 			obj: g
 		};
 	}, k = /* @__PURE__ */ new Map(), A = (e, t, n, r, i, a, o, s = !0) => {
-		let c = ld(e + t), u = d.persona({
+		let c = gd(e + t), u = d.persona({
 			camisa: n,
-			piel: sd[c % sd.length],
-			pelo: cd[(c >>> 3) % cd.length],
+			piel: md[c % md.length],
+			pelo: hd[(c >>> 3) % hd.length],
 			sentado: r
 		});
 		u.position.set(i, 0, a), u.rotation.y = o, l.add(u);
@@ -13850,9 +13916,9 @@ function Kd(e) {
 			let i = +!!n, a = o || !n ? 0 : Math.sin(t * 17 + r) * .07, s = o || !n ? 0 : Math.sin(t * 17 + r + 2) * .07;
 			e.bi.p.rotation.x = -(.55 + .6 * i) + a, e.bd.p.rotation.x = -(.55 + .6 * i) + s, e.bi.ant.rotation.x = -(.2 + .45 * i), e.bd.ant.rotation.x = -(.2 + .45 * i), e.bi.p.rotation.z = .08, e.bd.p.rotation.z = -.08, e.cabeza.rotation.y = n || o ? Math.sin(t * .7 + r) * .06 : Math.sin(t * .45 + r) * .5, e.cabeza.rotation.x = n ? .12 + Math.sin(t * 2 + r) * .02 : 0;
 		}
-	}, te = new Map(a.compuertas.map((e) => [e.k, e])), M = /* @__PURE__ */ new Map(), N = new Map(wd.map((e) => {
+	}, te = new Map(a.compuertas.map((e) => [e.k, e])), M = /* @__PURE__ */ new Map(), N = new Map(jd.map((e) => {
 		let t = te.get(e.k);
-		return [e.k, gd(e.k, t.color, Y(i.suelo, t.color, .18))];
+		return [e.k, Cd(e.k, t.color, Y(i.suelo, t.color, .18))];
 	})), P = new Dn();
 	l.add(P);
 	let ne = /* @__PURE__ */ new Map(), re = /* @__PURE__ */ new Map(), ie = [], ae = (() => {
@@ -13860,15 +13926,15 @@ function Kd(e) {
 		if (!e) try {
 			e = localStorage.getItem("v3:entradas");
 		} catch {}
-		return hd.some((t) => t.id === e) ? e : "terminal";
+		return Sd.some((t) => t.id === e) ? e : "terminal";
 	})(), oe = () => {
 		for (let e of ne.values()) P.remove(e.g), e.dispose();
 		ne.clear(), ie.forEach((e) => {
 			l.remove(e), e.element.remove();
 		}), ie.length = 0;
-		for (let t of wd) {
-			let n = te.get(t.k), r = vd(ae, t.k, n.color, d, N.get(t.k), ld(t.k) % 628 / 100);
-			r.g.position.set(Td.x, 0, t.z), r.g.rotation.y = Math.PI / 2, r.g.scale.setScalar(1.3), r.g.userData.canal = t.k, P.add(r.g), ne.set(t.k, r), r.g.updateMatrixWorld(!0), M.set(t.k, r.g.localToWorld(r.spawn.clone())), ie.push(O(n.n, "", .15, 1.5, t.z - .45, n.color, !0, () => e.onCanal?.(t.k)).obj);
+		for (let t of jd) {
+			let n = te.get(t.k), r = Td(ae, t.k, n.color, d, N.get(t.k), gd(t.k) % 628 / 100);
+			r.g.position.set(Md.x, 0, t.z), r.g.rotation.y = Math.PI / 2, r.g.scale.setScalar(1.3), r.g.userData.canal = t.k, P.add(r.g), ne.set(t.k, r), r.g.updateMatrixWorld(!0), M.set(t.k, r.g.localToWorld(r.spawn.clone())), ie.push(O(n.n, "", .15, 1.5, t.z - .45, n.color, !0, () => e.onCanal?.(t.k)).obj);
 		}
 	};
 	oe();
@@ -13876,21 +13942,21 @@ function Kd(e) {
 	se.className = "v3-entradas", se.setAttribute("role", "group"), se.setAttribute("aria-label", "Estilo de las entradas automatizadas");
 	let ce = document.createElement("span");
 	ce.textContent = "Entradas", se.append(ce);
-	let F = hd.map((e) => {
+	let F = Sd.map((e) => {
 		let t = document.createElement("button");
 		return t.type = "button", t.textContent = e.n, t.title = e.d, t.setAttribute("aria-pressed", String(e.id === ae)), t.addEventListener("click", () => {
 			ae = e.id;
 			try {
 				localStorage.setItem("v3:entradas", e.id);
 			} catch {}
-			F.forEach((t, n) => t.setAttribute("aria-pressed", String(hd[n].id === e.id))), oe();
+			F.forEach((t, n) => t.setAttribute("aria-pressed", String(Sd[n].id === e.id))), oe();
 		}), se.append(t), t;
 	});
 	r.append(se);
 	let I = new G(d.caja(Z.w, .09, Z.d + .5, .04), d.mat(Y(i.superficie, i.texto, .22), { r: .45 }));
-	I.position.set(Z.x, .8, Z.z), ud.sombrear(I), l.add(I);
+	I.position.set(Z.x, .8, Z.z), _d.sombrear(I), l.add(I);
 	let le = new G(d.caja(Z.w - .2, .74, Z.d + .3, .04), d.mat(Y(i.teal, i.suelo, .2), { r: .5 }));
-	le.position.set(Z.x, .37, Z.z), ud.sombrear(le), l.add(le);
+	le.position.set(Z.x, .37, Z.z), _d.sombrear(le), l.add(le);
 	let ue = new G(d.caja(Z.w - .3, .035, .03, .01), d.mat(i.orange, {
 		r: .3,
 		e: i.orange,
@@ -13898,22 +13964,22 @@ function Kd(e) {
 	}));
 	ue.position.set(Z.x, .6, Z.z + Z.d / 2 + .17), l.add(ue);
 	let de = new G(d.caja(1.65, .035, 1, .03), d.mat(Y(i.orange, i.superficie, .35), { r: .5 }));
-	de.position.set(6.55, .865, 6.65), ud.sombrear(de), l.add(de);
+	de.position.set(6.55, .865, 6.65), _d.sombrear(de), l.add(de);
 	let fe = document.createElement("canvas");
 	fe.width = 512, fe.height = 288;
-	let pe = new Li(fe);
+	let pe = new Wi(fe);
 	pe.colorSpace = Re;
 	let me = document.createElement("canvas");
 	me.width = 256, me.height = 288;
-	let he = new Li(me);
+	let he = new Wi(me);
 	he.colorSpace = Re;
 	let ge = (e, t, n) => {
 		let r = new G(d.caja(t + .08, .7 * (t > 1 ? 1 : .9) + .08, .06, .02), d.mat(Y(i.suelo, i.texto, .1), {
 			r: .35,
 			m: .3
 		})), a = .7 * (t > 1 ? 1 : .9);
-		r.position.set(e, 1.65, Z.pantallas), ud.sombrear(r, !0, !1);
-		let o = new G(new so(t, a), new si({
+		r.position.set(e, 1.65, Z.pantallas), _d.sombrear(r, !0, !1);
+		let o = new G(new ho(t, a), new si({
 			map: n,
 			toneMapped: !1
 		}));
@@ -13921,7 +13987,7 @@ function Kd(e) {
 	};
 	ge(Z.x, 1.25, pe), ge(Z.x - 1.05, .62, he), ge(Z.x + 1.05, .62, he);
 	let _e = new G(d.caja(3, 1.05, .12, .03), d.mat(Y(i.suelo, i.texto, .14), { r: .6 }));
-	_e.position.set(Z.x, .52, Z.pantallas - .05), ud.sombrear(_e), l.add(_e);
+	_e.position.set(Z.x, .52, Z.pantallas - .05), _d.sombrear(_e), l.add(_e);
 	let ve = (() => {
 		let e = document.createElement("canvas");
 		e.width = e.height = 128;
@@ -13933,9 +13999,9 @@ function Kd(e) {
 		].forEach((e) => {
 			t.beginPath(), t.roundRect(26 + e * 6, 26 + e * 18, 76 - e * 12, 24, 8), t.stroke();
 		}), t.beginPath(), t.moveTo(64, 104), t.lineTo(64, 118), t.moveTo(54, 110), t.lineTo(64, 120), t.lineTo(74, 110), t.stroke();
-		let n = new Li(e);
+		let n = new Wi(e);
 		return n.colorSpace = Re, n;
-	})(), ye = md(d, i.orange, ve);
+	})(), ye = xd(d, i.orange, ve);
 	ye.g.position.set(Z.despachador[0], 0, Z.despachador[1]), ye.g.rotation.y = Math.PI, l.add(ye.g);
 	let be = new W(6.55, .9, 6.65), xe = O("Bandeja orquestadora", "", Z.x, 2.5, Z.pantallas - .2, i.orange, !1, () => e.onEtapa?.("bandeja")), Se = [
 		I,
@@ -13983,7 +14049,7 @@ function Kd(e) {
 		a.position.set((e.lado, e.x + e.w - .3), 0, (e.lado, e.z + e.d - .3)), l.add(a), Oe.push(a);
 	}, Ae = /* @__PURE__ */ new Map();
 	for (let t of a.zonas) {
-		let n = Od[t.k];
+		let n = Fd[t.k];
 		if (!n) continue;
 		ke(n, t.color);
 		let r = n.lado === "oeste" ? n.x - .1 : n.puerta[0], i = n.lado === "oeste" ? n.puerta[1] : n.z - .1;
@@ -14001,13 +14067,13 @@ function Kd(e) {
 		e(Q.w, "x", Q.x + Q.w / 2, Q.z), e(Q.w, "x", Q.x + Q.w / 2, Q.z + Q.d), e(Q.d, "z", Q.x, Q.z + Q.d / 2), e(Q.d, "z", Q.x + Q.w, Q.z + Q.d / 2);
 	}
 	let je = new G(d.caja(2.5, .06, 1, .04), d.mat(Y(i.superficie, i.texto, .25), { r: .4 }));
-	je.position.set(Q.mesa[0], .74, Q.mesa[1]), ud.sombrear(je), l.add(je);
+	je.position.set(Q.mesa[0], .74, Q.mesa[1]), _d.sombrear(je), l.add(je);
 	for (let e of [-1, 1]) {
 		let t = new G(d.caja(.1, .72, .8, .02), d.mat(Y(i.suelo, i.texto, .4), {
 			r: .4,
 			m: .3
 		}));
-		t.position.set(Q.mesa[0] + e * 1, .36, Q.mesa[1]), ud.sombrear(t), l.add(t);
+		t.position.set(Q.mesa[0] + e * 1, .36, Q.mesa[1]), _d.sombrear(t), l.add(t);
 	}
 	[
 		[
@@ -14049,18 +14115,18 @@ function Kd(e) {
 		let t = $.puerta[1] - .55 - $.z, n = $.z + $.d - ($.puerta[1] + .55);
 		e(t, "z", $.x + $.w, $.z + t / 2), e(n, "z", $.x + $.w, $.z + $.d - n / 2);
 	}
-	let Ne = new G(new lo(.62, .05, 8, 28, Math.PI), d.mat(i.ok, {
+	let Ne = new G(new _o(.62, .05, 8, 28, Math.PI), d.mat(i.ok, {
 		r: .3,
 		e: i.ok,
 		ei: .9
 	}));
 	Ne.position.set($.puerta[0], .62, $.puerta[1]), Ne.rotation.y = Math.PI / 2, l.add(Ne);
 	let Pe = new G(d.caja(2.4, .05, 1.5, .03), d.mat(Y(i.superficie, i.texto, .2), { r: .5 }));
-	Pe.position.set(1.7, .86, 13.45), ud.sombrear(Pe), l.add(Pe);
+	Pe.position.set(1.7, .86, 13.45), _d.sombrear(Pe), l.add(Pe);
 	let R = new G(d.caja(2.2, .82, 1.3, .03), d.mat(Y(i.ok, i.suelo, .6), { r: .6 }));
-	R.position.set(1.7, .41, 13.45), ud.sombrear(R), l.add(R), A("salida:recep", "Recepción Mi Portal", Y(i.ok, i.suelo, .3), !1, 1.7, 12.55, 0);
+	R.position.set(1.7, .41, 13.45), _d.sombrear(R), l.add(R), A("salida:recep", "Recepción Mi Portal", Y(i.ok, i.suelo, .3), !1, 1.7, 12.55, 0);
 	let Fe = O("Cierre en Mi Portal", "", 1.5, 1.7, 14.9, i.ok, !1, () => e.onEtapa?.("salida")), z = [0, 2].map((e) => ({
-		p: A(`paseo:${e}`, `Supervisor ${e + 1}`, Y(i.teal2, i.suelo, .15), !1, zd[e].x, zd[e].z, 0),
+		p: A(`paseo:${e}`, `Supervisor ${e + 1}`, Y(i.teal2, i.suelo, .15), !1, Kd[e].x, Kd[e].z, 0),
 		seg: e,
 		u: 0
 	})), Ie = (() => {
@@ -14068,7 +14134,7 @@ function Kd(e) {
 		e.width = e.height = 64;
 		let t = e.getContext("2d"), n = t.createRadialGradient(32, 32, 0, 32, 32, 32);
 		n.addColorStop(0, "rgba(255,255,255,.95)"), n.addColorStop(.35, "rgba(255,255,255,.35)"), n.addColorStop(1, "rgba(255,255,255,0)"), t.fillStyle = n, t.fillRect(0, 0, 64, 64);
-		let r = new Li(e);
+		let r = new Wi(e);
 		return r.colorSpace = Re, r;
 	})(), Le = (e) => {
 		let t = new ei(new Br({
@@ -14081,9 +14147,9 @@ function Kd(e) {
 		}));
 		return t.center.set(.5, .5), t;
 	}, ze = (() => {
-		let e = new ba();
+		let e = new Da();
 		e.moveTo(.1, .5), e.lineTo(-.2, -.02), e.lineTo(-.02, -.02), e.lineTo(-.12, -.5), e.lineTo(.22, .08), e.lineTo(.04, .08), e.closePath();
-		let t = new io(e, {
+		let t = new fo(e, {
 			depth: .1,
 			bevelEnabled: !0,
 			bevelSize: .015,
@@ -14091,7 +14157,7 @@ function Kd(e) {
 			bevelSegments: 1
 		});
 		return t.center(), t.scale(.42, .42, .42), t;
-	})(), Be = new xo({
+	})(), Be = new Oo({
 		color: J(i.orange),
 		emissive: J(i.orange),
 		emissiveIntensity: 1.2,
@@ -14113,7 +14179,7 @@ function Kd(e) {
 		if (!e) return;
 		let n = We.get(e), r = n?.indexOf(t) ?? -1;
 		n && r >= 0 && (n[r] = null);
-	}, qe = new G(new lo(.42, .025, 8, 36), new si({
+	}, qe = new G(new _o(.42, .025, 8, 36), new si({
 		color: J(i.orange),
 		transparent: !0,
 		opacity: 0,
@@ -14122,7 +14188,7 @@ function Kd(e) {
 	qe.rotation.x = Math.PI / 2, l.add(qe);
 	let Je = document.createElement("div");
 	Je.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:999px;font:700 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${q(i.orange)};color:${q(i.lienzo)};box-shadow:0 4px 12px rgba(0,0,0,.35)`;
-	let Ye = new Yu(Je);
+	let Ye = new nd(Je);
 	Ye.visible = !1;
 	let Xe = (e, t, n) => {
 		let r = new Dn(), a = d.tarjeta(m.get(e.tipo ?? "") ?? f.get(e.zona) ?? i.teal2), o = He.ok, s = new G(d.esf(.028), o);
@@ -14149,7 +14215,7 @@ function Kd(e) {
 			mov: null,
 			nace: t + n,
 			muere: null,
-			fase: ld(e.id) % 628 / 100,
+			fase: gd(e.id) % 628 / 100,
 			sla: "ok",
 			rayo: !1,
 			sel: !1,
@@ -14157,23 +14223,23 @@ function Kd(e) {
 		};
 		return Ue.set(e.id, h), h;
 	}, Ze = /* @__PURE__ */ new Map(), B = (e, t, n, r, i, a) => {
-		let s = Od[t.zona] ?? Od.eje1, c = t.etapa === "bandeja" ? "b" : t.etapa === "cola" ? `c:${t.zona}` : t.etapa === "salida" ? "s" : `a:${t.zona}`;
+		let s = Fd[t.zona] ?? Fd.eje1, c = t.etapa === "bandeja" ? "b" : t.etapa === "cola" ? `c:${t.zona}` : t.etapa === "salida" ? "s" : `a:${t.zona}`;
 		if (e.clave === c && !a) return;
 		Ke(e.clave, e.id), e.clave = c, e.etapa = t.etapa, e.zona = t.zona;
-		let l = wd.find((e) => e.k === t.gate) ?? wd[0], u, d;
-		if (t.etapa === "bandeja") u = Ad(Ge(c, e.id)), d = Fd(l.z, u);
-		else if (t.etapa === "cola") u = jd(s, Ge(c, e.id)), d = Id(s, u);
-		else if (t.etapa === "salida") u = Md(Ge(c, e.id)), d = Rd(s, u);
+		let l = jd.find((e) => e.k === t.gate) ?? jd[0], u, d;
+		if (t.etapa === "bandeja") u = Ld(Ge(c, e.id)), d = Hd(l.z, u);
+		else if (t.etapa === "cola") u = Rd(s, Ge(c, e.id)), d = Ud(s, u);
+		else if (t.etapa === "salida") u = zd(Ge(c, e.id)), d = Gd(s, u);
 		else {
 			let r = n.zonas.find((e) => e.k === t.zona)?.gente ?? [], i = Math.max(0, r.findIndex((e) => e.id === t.resp)), a = Ge(c, e.id), o = Math.max(0, a - r.length);
-			u = Nd(s, i >= 0 ? i : ld(t.id) % 3, o), d = Ld(s, u);
+			u = Bd(s, i >= 0 ? i : gd(t.id) % 3, o), d = Wd(s, u);
 		}
-		i ? (e.pos.copy(u), e.mov = null) : (a && (e.pos.copy(M.get(l.k) ?? Cd(1.5, kd.mesa, l.z)), t.etapa !== "bandeja" && (d = [
-			Cd(2, kd.viaje, l.z),
-			Cd(3, kd.viaje, l.z),
-			Cd(3, kd.viaje, 6.7),
+		i ? (e.pos.copy(u), e.mov = null) : (a && (e.pos.copy(M.get(l.k) ?? Ad(1.5, Id.mesa, l.z)), t.etapa !== "bandeja" && (d = [
+			Ad(2, Id.viaje, l.z),
+			Ad(3, Id.viaje, l.z),
+			Ad(3, Id.viaje, 6.7),
 			...d
-		])), e.mov = o ? null : Wd(e.pos, d, r), o && e.pos.copy(u));
+		])), e.mov = o ? null : Zd(e.pos, d, r), o && e.pos.copy(u));
 	}, V = /* @__PURE__ */ new Map(), Qe = 0, $e = (e, t) => {
 		if (t - Qe < 280) return;
 		Qe = t;
@@ -14185,7 +14251,7 @@ function Kd(e) {
 		], .5))), n.fillStyle = o, n.fillRect(0, 0, r, a), n.fillStyle = q(i.orange), n.font = "700 26px Montserrat, system-ui, sans-serif", n.textAlign = "left", n.fillText("BANDEJA", 24, 44), n.fillStyle = q(i.texto), n.font = "800 66px Montserrat, system-ui, sans-serif", n.fillText(String(e.bandeja), 24, 112), n.fillStyle = q(i.muted), n.font = "500 18px Montserrat, system-ui, sans-serif", n.fillText("en espera · rayo > SLA > prioridad", 24, 140);
 		let s = e.zonas.length, c = (r - 48) / s;
 		e.zonas.forEach((e, t) => {
-			let r = Bd(e.cola / 12), o = V.get(e.k) ?? 0, s = o + (r - o) * .4;
+			let r = qd(e.cola / 12), o = V.get(e.k) ?? 0, s = o + (r - o) * .4;
 			V.set(e.k, s);
 			let l = 8 + s * 92, u = 24 + t * c + 6, d = a - 44;
 			n.fillStyle = q(f.get(e.k) ?? i.teal2, .28), n.fillRect(u, d - 100, c - 12, 100), n.fillStyle = q(e.riesgo ? i.bad : f.get(e.k) ?? i.teal2), n.fillRect(u, d - l, c - 12, l), n.fillStyle = q(i.texto), n.font = "700 17px Montserrat, system-ui, sans-serif", n.textAlign = "center", n.fillText(String(e.cola), u + (c - 12) / 2, d - l - 6), n.fillStyle = q(i.muted), n.font = "600 13px Montserrat, system-ui, sans-serif", n.fillText((p.get(e.k) ?? e.k).split(" ")[0].slice(0, 7), u + (c - 12) / 2, a - 22);
@@ -14213,9 +14279,9 @@ function Kd(e) {
 		et = tt = 0, H = null;
 	};
 	o || (t.addEventListener("pointermove", ot), t.addEventListener("pointerleave", st));
-	let ct = new ws(), lt = document.createElement("div");
+	let ct = new js(), lt = document.createElement("div");
 	lt.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:8px;font:600 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${q(i.superficie, .92)};border:1px solid ${q(i.line)};color:${q(i.texto)};box-shadow:0 4px 12px rgba(0,0,0,.3)`;
-	let ut = new Yu(lt);
+	let ut = new nd(lt);
 	ut.visible = !1, ut.position.y = 1.5, l.add(ut);
 	let dt = (e, t) => {
 		let n = e;
@@ -14240,7 +14306,7 @@ function Kd(e) {
 		let a = n / 1e3, d = e.obtener();
 		ht++;
 		for (let e of d.zonas) {
-			let t = Od[e.k];
+			let t = Fd[e.k];
 			if (!t) continue;
 			let n = De.get(e.k) ?? [];
 			t.puestos.forEach((t, r) => {
@@ -14259,9 +14325,9 @@ function Kd(e) {
 		ye.update(a, d.bandeja, be, o);
 		for (let [e, t] of ne) t.update(a, (n - (re.get(e) ?? -1e9)) / 1e3, o);
 		if (!o) for (let e of z) {
-			let t = zd[e.seg], n = zd[(e.seg + 1) % zd.length], i = t.distanceTo(n);
-			e.u += .85 * r / i, e.u >= 1 && (e.u = 0, e.seg = (e.seg + 1) % zd.length);
-			let o = zd[e.seg], s = zd[(e.seg + 1) % zd.length];
+			let t = Kd[e.seg], n = Kd[(e.seg + 1) % Kd.length], i = t.distanceTo(n);
+			e.u += .85 * r / i, e.u >= 1 && (e.u = 0, e.seg = (e.seg + 1) % Kd.length);
+			let o = Kd[e.seg], s = Kd[(e.seg + 1) % Kd.length];
 			e.p.g.position.lerpVectors(o, s, e.u), e.p.g.position.y = Math.abs(Math.sin(a * 7 + e.p.fase)) * .02, e.p.g.rotation.y = Math.atan2(s.x - o.x, s.z - o.z);
 			let c = Math.sin(a * 7 + e.p.fase) * .55;
 			e.p.pI && e.p.pD && (e.p.pI.rotation.x = c, e.p.pD.rotation.x = -c), e.p.bi.p.rotation.x = -c * .7, e.p.bd.p.rotation.x = c * .7, e.p.bi.ant.rotation.x = -.25, e.p.bd.ant.rotation.x = -.25;
@@ -14279,12 +14345,12 @@ function Kd(e) {
 		for (let [e, t] of Ue) !p.has(e) && t.muere == null && (t.muere = n, Ke(t.clave, e), t.clave = null);
 		let h = [], g = t.clientWidth, _ = t.clientHeight, v = null;
 		for (let [e, t] of Ue) {
-			t.mov && Gd(t.mov, n, t.pos) && (t.pos.copy(t.mov.pts[t.mov.pts.length - 1]), t.mov = null);
+			t.mov && Qd(t.mov, n, t.pos) && (t.pos.copy(t.mov.pts[t.mov.pts.length - 1]), t.mov = null);
 			let r = t.sel ? 1.22 : 1, i = (n - t.nace) / 1e3;
-			i < 0 ? r = 1e-4 : !o && i < .45 && (r *= Math.max(1e-4, Hd(i / .45)));
+			i < 0 ? r = 1e-4 : !o && i < .45 && (r *= Math.max(1e-4, Yd(i / .45)));
 			let s = 0;
 			if (t.muere != null) {
-				let i = Bd((n - t.muere) / 350);
+				let i = qd((n - t.muere) / 350);
 				if (r *= 1 - i, s = i * .4, i >= 1 || o) {
 					l.remove(t.g), Ue.delete(e);
 					continue;
@@ -14322,7 +14388,7 @@ function Kd(e) {
 		for (let e of d.zonas) Ae.get(e.k)?.set(e.total ? `${e.cola} en cola · ${e.ocupados ?? 0}/${e.total} ocupados` : `${e.cola} en cola · ${e.atencion} en atención`, e.riesgo);
 		$e(d, n), nt += (et - nt) * .06, rt += (tt - rt) * .06;
 		let x = o ? 0 : Math.sin(a * .12) * .5 + nt * .7, S = o ? 0 : Math.cos(a * .1) * .3 + rt * .4;
-		if (u.position.set(Sd.x + 30 + x, 30, Sd.z + 30 + S), u.lookAt(Sd.x + x * .5, .2, Sd.z + S * .5), ut.visible = !1, H && ht % 3 == 0 && !o) {
+		if (u.position.set(kd.x + 30 + x, 30, kd.z + 30 + S), u.lookAt(kd.x + x * .5, .2, kd.z + S * .5), ut.visible = !1, H && ht % 3 == 0 && !o) {
 			ct.setFromCamera(new U(H[0] / g * 2 - 1, -(H[1] / _) * 2 + 1), u);
 			let e = [...k.values()].map((e) => e.g), t = ct.intersectObjects(e, !0)[0]?.object;
 			for (; t && !t.userData.clave;) t = t.parent;
@@ -14330,7 +14396,7 @@ function Kd(e) {
 			n ? (ut.position.set(n.g.position.x, 1.55, n.g.position.z), lt.textContent = n.nombre, ut.visible = !0, vt = n) : vt = null;
 		} else vt && H && !o && (ut.position.set(vt.g.position.x, 1.55, vt.g.position.z), ut.visible = !0);
 		pt = !1, s.render(l, u), c.render(l, u);
-	}, vt = null, yt = rd(o, _t);
+	}, vt = null, yt = ud(o, _t);
 	return () => {
 		yt(), at.disconnect(), t.removeEventListener("pointermove", ot), t.removeEventListener("pointerleave", st), t.removeEventListener("click", ft), l.traverse((e) => {
 			let t = e;
@@ -14346,8 +14412,8 @@ function Kd(e) {
 }
 //#endregion
 //#region src/three/vivo-daniel.ts
-var qd = (e, t = 0, n = 1) => Math.max(t, Math.min(n, e)), Jd = (e) => e < .5 ? 4 * e * e * e : 1 - (-2 * e + 2) ** 3 / 2, Yd = (e) => 1 + 2.70158 * (e - 1) ** 3 + 1.70158 * (e - 1) ** 2, Xd = 4.4;
-function Zd(e, t, n) {
+var ef = (e, t = 0, n = 1) => Math.max(t, Math.min(n, e)), tf = (e) => e < .5 ? 4 * e * e * e : 1 - (-2 * e + 2) ** 3 / 2, nf = (e) => 1 + 2.70158 * (e - 1) ** 3 + 1.70158 * (e - 1) ** 2, rf = 4.4;
+function af(e, t, n) {
 	let r = [e.clone()];
 	for (let e of t) e.distanceToSquared(r[r.length - 1]) > 1e-4 && r.push(e.clone());
 	if (r.length < 2) return null;
@@ -14357,28 +14423,28 @@ function Zd(e, t, n) {
 		pts: r,
 		cum: i,
 		t0: n,
-		dur: Math.max(.7, i[i.length - 1] / Xd) * 1e3
+		dur: Math.max(.7, i[i.length - 1] / rf) * 1e3
 	};
 }
-function Qd(e, t, n) {
-	let r = qd((t - e.t0) / e.dur), i = Jd(r) * e.cum[e.cum.length - 1], a = 1;
+function of(e, t, n) {
+	let r = ef((t - e.t0) / e.dur), i = tf(r) * e.cum[e.cum.length - 1], a = 1;
 	for (; a < e.cum.length - 1 && e.cum[a] < i;) a++;
 	let o = e.pts[a - 1], s = e.pts[a], c = e.cum[a] - e.cum[a - 1] || 1;
-	return n.lerpVectors(o, s, qd((i - e.cum[a - 1]) / c)), n.y += Math.sin(Math.PI * r) * .18, r >= 1;
+	return n.lerpVectors(o, s, ef((i - e.cum[a - 1]) / c)), n.y += Math.sin(Math.PI * r) * .18, r >= 1;
 }
-function $d(e) {
+function sf(e) {
 	let { canvas: t, host: r, cols: i, est: a } = e, o = e.reducido;
-	xd();
-	let s = new Ju({
+	Od();
+	let s = new td({
 		canvas: t,
 		antialias: !0,
 		alpha: !0
 	});
 	s.setPixelRatio(Math.min(2, devicePixelRatio || 1)), s.shadowMap.enabled = !0, s.shadowMap.type = 1, s.toneMapping = 4, s.toneMappingExposure = 1.35;
-	let c = nd(r), l = new In(), u = new is(-1, 1, 1, -1, -80, 80), d = new ud({ ...i }), f = new Map(a.zonas.map((e) => [e.k, e.color])), p = new Map(a.zonas.map((e) => [e.k, e.n]));
-	l.add(new Go(16774374, J(Y(i.suelo, i.teal, .5)), 1.7));
-	let m = new os(16773340, 2.9);
-	m.position.set(Sd.x - 9, 17, Sd.z + 7), m.target.position.copy(Sd), m.castShadow = !0, m.shadow.mapSize.set(2048, 2048), m.shadow.bias = -4e-4, m.shadow.normalBias = .03, m.shadow.radius = 4, Object.assign(m.shadow.camera, {
+	let c = ld(r), l = new In(), u = new ds(-1, 1, 1, -1, -80, 80), d = new _d({ ...i }), f = new Map(a.zonas.map((e) => [e.k, e.color])), p = new Map(a.zonas.map((e) => [e.k, e.n]));
+	l.add(new Qo(16774374, J(Y(i.suelo, i.teal, .5)), 1.7));
+	let m = new ps(16773340, 2.9);
+	m.position.set(kd.x - 9, 17, kd.z + 7), m.target.position.copy(kd), m.castShadow = !0, m.shadow.mapSize.set(2048, 2048), m.shadow.bias = -4e-4, m.shadow.normalBias = .03, m.shadow.radius = 4, Object.assign(m.shadow.camera, {
 		left: -15,
 		right: 15,
 		top: 13,
@@ -14386,27 +14452,27 @@ function $d(e) {
 		near: 1,
 		far: 50
 	}), m.shadow.camera.updateProjectionMatrix(), l.add(m, m.target);
-	let h = new os(J(Y(i.teal, i.superficie, .5)), .5);
+	let h = new ps(J(Y(i.teal, i.superficie, .5)), .5);
 	h.position.set(14, 8, -6), l.add(h);
 	let g = Y(i.suelo, i.texto, .2), _ = Y(i.suelo, i.texto, .34), v = (() => {
 		let e = document.createElement("canvas");
 		e.width = 128, e.height = 128;
 		let t = e.getContext("2d");
 		t.fillStyle = "#fff", t.fillRect(0, 0, 128, 128), t.strokeStyle = "rgba(0,0,0,.09)", t.lineWidth = 2, t.strokeRect(1, 1, 126, 126);
-		let r = new Li(e);
+		let r = new Wi(e);
 		return r.wrapS = n, r.wrapT = n, r.colorSpace = Re, r.anisotropy = 4, r;
 	})(), y = new G(d.caja(X.w, .3, X.d, .08), d.mat(Y(i.suelo, i.texto, .4), { r: .8 }));
 	y.position.set(X.x0 + X.w / 2, -.15, X.z0 + X.d / 2), y.receiveShadow = !0, l.add(y);
 	let b = v.clone();
 	b.repeat.set(X.w, X.d), b.needsUpdate = !0;
-	let x = new G(new so(X.w - .1, X.d - .1), new xo({
+	let x = new G(new ho(X.w - .1, X.d - .1), new Oo({
 		color: J(g),
 		map: b,
 		roughness: .9
 	}));
 	x.rotation.x = -Math.PI / 2, x.position.set(X.x0 + X.w / 2, .005, X.z0 + X.d / 2), x.receiveShadow = !0, l.add(x);
 	let S = (e, t, n, r, i, a = .012) => {
-		let o = new G(new so(n - e, r - t), d.mat(i, { r: .85 }));
+		let o = new G(new ho(n - e, r - t), d.mat(i, { r: .85 }));
 		return o.rotation.x = -Math.PI / 2, o.position.set((e + n) / 2, a, (t + r) / 2), o.receiveShadow = !0, l.add(o), o;
 	};
 	S(2.55, 1, 3.45, 11.4, _), S(2.55, 10.45, 12.2, 11.35, _), S(11.2, .1, 12.1, 11.35, _), S(3, 6.25, 11.6, 7.15, _);
@@ -14444,7 +14510,7 @@ function $d(e) {
 		m.style.cssText = "display:block;font:700 11.5px Montserrat,system-ui,sans-serif", m.textContent = e;
 		let h = document.createElement("small");
 		h.style.cssText = `display:block;font:500 10px Montserrat,system-ui,sans-serif;color:${q(i.muted)}`, h.textContent = t, s && (h.style.display = "none", d.style.padding = "3px 9px 3px 7px"), p.append(m, h), d.append(f, p), u.append(d);
-		let g = new Yu(u);
+		let g = new nd(u);
 		g.position.set(n, r, a), l.add(g);
 		let _ = { set: (e, t = !1) => {
 			h.textContent !== e && (h.textContent = e);
@@ -14456,10 +14522,10 @@ function $d(e) {
 			obj: g
 		};
 	}, O = /* @__PURE__ */ new Map(), k = (e, t, n, r, i, a, o, s = !0) => {
-		let c = ld(e + t), u = d.persona({
+		let c = gd(e + t), u = d.persona({
 			camisa: n,
-			piel: sd[c % sd.length],
-			pelo: cd[(c >>> 3) % cd.length],
+			piel: md[c % md.length],
+			pelo: hd[(c >>> 3) % hd.length],
 			sentado: r
 		});
 		u.position.set(i, 0, a), u.rotation.y = o, l.add(u);
@@ -14488,9 +14554,9 @@ function $d(e) {
 			let i = +!!n, a = o || !n ? 0 : Math.sin(t * 17 + r) * .07, s = o || !n ? 0 : Math.sin(t * 17 + r + 2) * .07;
 			e.bi.p.rotation.x = -(.55 + .6 * i) + a, e.bd.p.rotation.x = -(.55 + .6 * i) + s, e.bi.ant.rotation.x = -(.2 + .45 * i), e.bd.ant.rotation.x = -(.2 + .45 * i), e.bi.p.rotation.z = .08, e.bd.p.rotation.z = -.08, e.cabeza.rotation.y = n || o ? Math.sin(t * .7 + r) * .06 : Math.sin(t * .45 + r) * .5, e.cabeza.rotation.x = n ? .12 + Math.sin(t * 2 + r) * .02 : 0;
 		}
-	}, ee = new Map(a.compuertas.map((e) => [e.k, e])), te = /* @__PURE__ */ new Map(), M = new Map(wd.map((e) => {
+	}, ee = new Map(a.compuertas.map((e) => [e.k, e])), te = /* @__PURE__ */ new Map(), M = new Map(jd.map((e) => {
 		let t = ee.get(e.k);
-		return [e.k, gd(e.k, t.color, Y(i.suelo, t.color, .18))];
+		return [e.k, Cd(e.k, t.color, Y(i.suelo, t.color, .18))];
 	})), N = new Dn();
 	l.add(N);
 	let P = /* @__PURE__ */ new Map(), ne = /* @__PURE__ */ new Map(), re = [], ie = (() => {
@@ -14498,15 +14564,15 @@ function $d(e) {
 		if (!e) try {
 			e = localStorage.getItem("v3:entradas");
 		} catch {}
-		return hd.some((t) => t.id === e) ? e : "terminal";
+		return Sd.some((t) => t.id === e) ? e : "terminal";
 	})(), ae = () => {
 		for (let e of P.values()) N.remove(e.g), e.dispose();
 		P.clear(), re.forEach((e) => {
 			l.remove(e), e.element.remove();
 		}), re.length = 0;
-		for (let t of wd) {
-			let n = ee.get(t.k), r = vd(ie, t.k, n.color, d, M.get(t.k), ld(t.k) % 628 / 100);
-			r.g.position.set(Td.x, 0, t.z), r.g.rotation.y = Math.PI / 2, r.g.scale.setScalar(1.3), r.g.userData.canalKey = t.k, N.add(r.g), P.set(t.k, r), r.g.updateMatrixWorld(!0), te.set(t.k, r.g.localToWorld(r.spawn.clone())), re.push(D(n.n, "", .15, 1.5, t.z - .45, n.color, !0, () => e.alClickCanal?.(t.k)).obj);
+		for (let t of jd) {
+			let n = ee.get(t.k), r = Td(ie, t.k, n.color, d, M.get(t.k), gd(t.k) % 628 / 100);
+			r.g.position.set(Md.x, 0, t.z), r.g.rotation.y = Math.PI / 2, r.g.scale.setScalar(1.3), r.g.userData.canalKey = t.k, N.add(r.g), P.set(t.k, r), r.g.updateMatrixWorld(!0), te.set(t.k, r.g.localToWorld(r.spawn.clone())), re.push(D(n.n, "", .15, 1.5, t.z - .45, n.color, !0, () => e.alClickCanal?.(t.k)).obj);
 		}
 	};
 	ae();
@@ -14514,21 +14580,21 @@ function $d(e) {
 	oe.className = "v3-entradas", oe.setAttribute("role", "group"), oe.setAttribute("aria-label", "Estilo de las entradas automatizadas");
 	let se = document.createElement("span");
 	se.textContent = "Entradas", oe.append(se);
-	let ce = hd.map((e) => {
+	let ce = Sd.map((e) => {
 		let t = document.createElement("button");
 		return t.type = "button", t.textContent = e.n, t.title = e.d, t.setAttribute("aria-pressed", String(e.id === ie)), t.addEventListener("click", () => {
 			ie = e.id;
 			try {
 				localStorage.setItem("v3:entradas", e.id);
 			} catch {}
-			ce.forEach((t, n) => t.setAttribute("aria-pressed", String(hd[n].id === e.id))), ae();
+			ce.forEach((t, n) => t.setAttribute("aria-pressed", String(Sd[n].id === e.id))), ae();
 		}), oe.append(t), t;
 	});
 	r.append(oe);
 	let F = new G(d.caja(Z.w, .09, Z.d + .5, .04), d.mat(Y(i.superficie, i.texto, .22), { r: .45 }));
-	F.position.set(Z.x, .8, Z.z), ud.sombrear(F), l.add(F);
+	F.position.set(Z.x, .8, Z.z), _d.sombrear(F), l.add(F);
 	let I = new G(d.caja(Z.w - .2, .74, Z.d + .3, .04), d.mat(Y(i.teal, i.suelo, .2), { r: .5 }));
-	I.position.set(Z.x, .37, Z.z), ud.sombrear(I), l.add(I);
+	I.position.set(Z.x, .37, Z.z), _d.sombrear(I), l.add(I);
 	let le = new G(d.caja(Z.w - .3, .035, .03, .01), d.mat(i.orange, {
 		r: .3,
 		e: i.orange,
@@ -14536,22 +14602,22 @@ function $d(e) {
 	}));
 	le.position.set(Z.x, .6, Z.z + Z.d / 2 + .17), l.add(le);
 	let ue = new G(d.caja(1.65, .035, 1, .03), d.mat(Y(i.orange, i.superficie, .35), { r: .5 }));
-	ue.position.set(6.55, .865, 6.65), ud.sombrear(ue), l.add(ue);
+	ue.position.set(6.55, .865, 6.65), _d.sombrear(ue), l.add(ue);
 	let de = document.createElement("canvas");
 	de.width = 512, de.height = 288;
-	let fe = new Li(de);
+	let fe = new Wi(de);
 	fe.colorSpace = Re;
 	let pe = document.createElement("canvas");
 	pe.width = 256, pe.height = 288;
-	let me = new Li(pe);
+	let me = new Wi(pe);
 	me.colorSpace = Re;
 	let he = (e, t, n) => {
 		let r = .7 * (t > 1 ? 1 : .9), a = new G(d.caja(t + .08, r + .08, .06, .02), d.mat(Y(i.suelo, i.texto, .1), {
 			r: .35,
 			m: .3
 		}));
-		a.position.set(e, 1.65, Z.pantallas), ud.sombrear(a, !0, !1);
-		let o = new G(new so(t, r), new si({
+		a.position.set(e, 1.65, Z.pantallas), _d.sombrear(a, !0, !1);
+		let o = new G(new ho(t, r), new si({
 			map: n,
 			toneMapped: !1
 		}));
@@ -14559,7 +14625,7 @@ function $d(e) {
 	};
 	he(Z.x, 1.25, fe), he(Z.x - 1.05, .62, me), he(Z.x + 1.05, .62, me);
 	let ge = new G(d.caja(3, 1.05, .12, .03), d.mat(Y(i.suelo, i.texto, .14), { r: .6 }));
-	ge.position.set(Z.x, .52, Z.pantallas - .05), ud.sombrear(ge), l.add(ge);
+	ge.position.set(Z.x, .52, Z.pantallas - .05), _d.sombrear(ge), l.add(ge);
 	let _e = (() => {
 		let e = document.createElement("canvas");
 		e.width = 128, e.height = 128;
@@ -14571,9 +14637,9 @@ function $d(e) {
 		].forEach((e) => {
 			t.beginPath(), t.roundRect(26 + e * 6, 26 + e * 18, 76 - e * 12, 24, 8), t.stroke();
 		}), t.beginPath(), t.moveTo(64, 104), t.lineTo(64, 118), t.moveTo(54, 110), t.lineTo(64, 120), t.lineTo(74, 110), t.stroke();
-		let n = new Li(e);
+		let n = new Wi(e);
 		return n.colorSpace = Re, n;
-	})(), ve = md(d, i.orange, _e);
+	})(), ve = xd(d, i.orange, _e);
 	ve.g.position.set(Z.despachador[0], 0, Z.despachador[1]), ve.g.rotation.y = Math.PI, l.add(ve.g);
 	let ye = new W(6.55, .9, 6.65), be = D("Bandeja orquestadora", "", Z.x, 2.5, Z.pantallas - .2, i.orange, !1, () => e.alClickEtapa?.("bandeja")), xe = 1.1, Se = (e, t) => {
 		let { x: n, z: r, w: i, d: a } = e, o = (e, n, r) => {
@@ -14612,7 +14678,7 @@ function $d(e) {
 		i.position.set(e.x + e.w - .3, 0, e.z + e.d - .3), l.add(i), Te.push(i);
 	}, De = /* @__PURE__ */ new Map();
 	for (let t of a.zonas) {
-		let n = Od[t.k];
+		let n = Fd[t.k];
 		if (!n) continue;
 		Ee(n, t.color);
 		let r = n.lado === "oeste" ? n.x - .1 : n.puerta[0], i = n.lado === "oeste" ? n.puerta[1] : n.z - .1;
@@ -14627,13 +14693,13 @@ function $d(e) {
 		e(Q.w, "x", Q.x + Q.w / 2, Q.z), e(Q.w, "x", Q.x + Q.w / 2, Q.z + Q.d), e(Q.d, "z", Q.x, Q.z + Q.d / 2), e(Q.d, "z", Q.x + Q.w, Q.z + Q.d / 2);
 	}
 	let Oe = new G(d.caja(2.5, .06, 1, .04), d.mat(Y(i.superficie, i.texto, .25), { r: .4 }));
-	Oe.position.set(Q.mesa[0], .74, Q.mesa[1]), ud.sombrear(Oe), l.add(Oe);
+	Oe.position.set(Q.mesa[0], .74, Q.mesa[1]), _d.sombrear(Oe), l.add(Oe);
 	for (let e of [-1, 1]) {
 		let t = new G(d.caja(.1, .72, .8, .02), d.mat(Y(i.suelo, i.texto, .4), {
 			r: .4,
 			m: .3
 		}));
-		t.position.set(Q.mesa[0] + e * 1, .36, Q.mesa[1]), ud.sombrear(t), l.add(t);
+		t.position.set(Q.mesa[0] + e * 1, .36, Q.mesa[1]), _d.sombrear(t), l.add(t);
 	}
 	[
 		[
@@ -14672,18 +14738,18 @@ function $d(e) {
 		let t = $.puerta[1] - .55 - $.z, n = $.z + $.d - ($.puerta[1] + .55);
 		e(t, "z", $.x + $.w, $.z + t / 2), e(n, "z", $.x + $.w, $.z + $.d - n / 2);
 	}
-	let je = new G(new lo(.62, .05, 8, 28, Math.PI), d.mat(i.ok, {
+	let je = new G(new _o(.62, .05, 8, 28, Math.PI), d.mat(i.ok, {
 		r: .3,
 		e: i.ok,
 		ei: .9
 	}));
 	je.position.set($.puerta[0], .62, $.puerta[1]), je.rotation.y = Math.PI / 2, l.add(je);
 	let L = new G(d.caja(2.4, .05, 1.5, .03), d.mat(Y(i.superficie, i.texto, .2), { r: .5 }));
-	L.position.set(1.7, .86, 13.45), ud.sombrear(L), l.add(L);
+	L.position.set(1.7, .86, 13.45), _d.sombrear(L), l.add(L);
 	let Me = new G(d.caja(2.2, .82, 1.3, .03), d.mat(Y(i.ok, i.suelo, .6), { r: .6 }));
-	Me.position.set(1.7, .41, 13.45), ud.sombrear(Me), l.add(Me), k("salida:recep", "Recepción Mi Portal", Y(i.ok, i.suelo, .3), !1, 1.7, 12.55, 0);
+	Me.position.set(1.7, .41, 13.45), _d.sombrear(Me), l.add(Me), k("salida:recep", "Recepción Mi Portal", Y(i.ok, i.suelo, .3), !1, 1.7, 12.55, 0);
 	let Ne = D("Cierre en Mi Portal", "", 1.5, 1.7, 14.9, i.ok, !1, () => e.alClickEtapa?.("salida")), Pe = [0, 2].map((e) => ({
-		p: k(`paseo:${e}`, `Supervisor ${e === 0 ? "Mirtha Delgado" : "Raúl Cárdenas"}`, Y(i.teal2, i.suelo, .15), !1, zd[e].x, zd[e].z, 0),
+		p: k(`paseo:${e}`, `Supervisor ${e === 0 ? "Mirtha Delgado" : "Raúl Cárdenas"}`, Y(i.teal2, i.suelo, .15), !1, Kd[e].x, Kd[e].z, 0),
 		seg: e,
 		u: 0
 	})), R = (() => {
@@ -14691,7 +14757,7 @@ function $d(e) {
 		e.width = 64, e.height = 64;
 		let t = e.getContext("2d"), n = t.createRadialGradient(32, 32, 0, 32, 32, 32);
 		n.addColorStop(0, "rgba(255,255,255,.95)"), n.addColorStop(.35, "rgba(255,255,255,.35)"), n.addColorStop(1, "rgba(255,255,255,0)"), t.fillStyle = n, t.fillRect(0, 0, 64, 64);
-		let r = new Li(e);
+		let r = new Wi(e);
 		return r.colorSpace = Re, r;
 	})(), Fe = (e) => {
 		let t = new ei(new Br({
@@ -14704,9 +14770,9 @@ function $d(e) {
 		}));
 		return t.center.set(.5, .5), t;
 	}, z = (() => {
-		let e = new ba();
+		let e = new Da();
 		e.moveTo(.1, .5), e.lineTo(-.2, -.02), e.lineTo(-.02, -.02), e.lineTo(-.12, -.5), e.lineTo(.22, .08), e.lineTo(.04, .08), e.closePath();
-		let t = new io(e, {
+		let t = new fo(e, {
 			depth: .1,
 			bevelEnabled: !0,
 			bevelSize: .015,
@@ -14714,7 +14780,7 @@ function $d(e) {
 			bevelSegments: 1
 		});
 		return t.center(), t.scale(.42, .42, .42), t;
-	})(), Ie = new xo({
+	})(), Ie = new Oo({
 		color: J(i.orange),
 		emissive: J(i.orange),
 		emissiveIntensity: 1.2,
@@ -14736,7 +14802,7 @@ function $d(e) {
 		if (!e) return;
 		let n = Ve.get(e), r = n?.indexOf(t) ?? -1;
 		n && r >= 0 && (n[r] = null);
-	}, We = new G(new lo(.42, .025, 8, 36), new si({
+	}, We = new G(new _o(.42, .025, 8, 36), new si({
 		color: J(i.orange),
 		transparent: !0,
 		opacity: 0,
@@ -14745,7 +14811,7 @@ function $d(e) {
 	We.rotation.x = Math.PI / 2, l.add(We);
 	let Ge = document.createElement("div");
 	Ge.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:999px;font:700 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${q(i.orange)};color:${q(i.lienzo)};box-shadow:0 4px 12px rgba(0,0,0,.35)`;
-	let Ke = new Yu(Ge);
+	let Ke = new nd(Ge);
 	Ke.visible = !1;
 	let qe = (e, t, n) => {
 		let r = new Dn(), a = d.tarjeta(f.get(e.zona) ?? i.teal2), o = ze.ok, s = new G(d.esf(.028), o);
@@ -14772,7 +14838,7 @@ function $d(e) {
 			mov: null,
 			nace: t + n,
 			muere: null,
-			fase: ld(e.id) % 628 / 100,
+			fase: gd(e.id) % 628 / 100,
 			sla: "ok",
 			rayo: !1,
 			sel: !1,
@@ -14780,23 +14846,23 @@ function $d(e) {
 		};
 		return Be.set(e.id, m), m;
 	}, Je = /* @__PURE__ */ new Map(), Ye = (e, t, n, r, i, a) => {
-		let s = Od[t.zona] ?? Od.eje1, c = t.etapa === "bandeja" ? "b" : t.etapa === "cola" ? `c:${t.zona}` : t.etapa === "salida" ? "s" : `a:${t.zona}`;
+		let s = Fd[t.zona] ?? Fd.eje1, c = t.etapa === "bandeja" ? "b" : t.etapa === "cola" ? `c:${t.zona}` : t.etapa === "salida" ? "s" : `a:${t.zona}`;
 		if (e.clave === c && !a) return;
 		Ue(e.clave, e.id), e.clave = c, e.etapa = t.etapa, e.zona = t.zona;
-		let l = wd.find((e) => e.k === t.gate) ?? wd[0], u, d;
-		if (t.etapa === "bandeja") u = Ad(He(c, e.id)), d = Fd(l.z, u);
-		else if (t.etapa === "cola") u = jd(s, He(c, e.id)), d = Id(s, u);
-		else if (t.etapa === "salida") u = Md(He(c, e.id)), d = Rd(s, u);
+		let l = jd.find((e) => e.k === t.gate) ?? jd[0], u, d;
+		if (t.etapa === "bandeja") u = Ld(He(c, e.id)), d = Hd(l.z, u);
+		else if (t.etapa === "cola") u = Rd(s, He(c, e.id)), d = Ud(s, u);
+		else if (t.etapa === "salida") u = zd(He(c, e.id)), d = Gd(s, u);
 		else {
 			let r = n.zonas.find((e) => e.k === t.zona)?.gente ?? [], i = Math.max(0, r.findIndex((e) => e.id === t.resp)), a = He(c, e.id), o = Math.max(0, a - r.length);
-			u = Nd(s, i >= 0 ? i : ld(t.id) % 3, o), d = Ld(s, u);
+			u = Bd(s, i >= 0 ? i : gd(t.id) % 3, o), d = Wd(s, u);
 		}
-		i ? (e.pos.copy(u), e.mov = null) : (a && (e.pos.copy(te.get(l.k) ?? Cd(1.5, kd.mesa, l.z)), t.etapa !== "bandeja" && (d = [
-			Cd(2, kd.viaje, l.z),
-			Cd(3, kd.viaje, l.z),
-			Cd(3, kd.viaje, 6.7),
+		i ? (e.pos.copy(u), e.mov = null) : (a && (e.pos.copy(te.get(l.k) ?? Ad(1.5, Id.mesa, l.z)), t.etapa !== "bandeja" && (d = [
+			Ad(2, Id.viaje, l.z),
+			Ad(3, Id.viaje, l.z),
+			Ad(3, Id.viaje, 6.7),
 			...d
-		])), e.mov = o ? null : Zd(e.pos, d, r), o && e.pos.copy(u));
+		])), e.mov = o ? null : af(e.pos, d, r), o && e.pos.copy(u));
 	}, Xe = /* @__PURE__ */ new Map(), Ze = 0, B = (e, t) => {
 		if (t - Ze < 280) return;
 		Ze = t;
@@ -14808,7 +14874,7 @@ function $d(e) {
 		], .5))), n.fillStyle = o, n.fillRect(0, 0, r, a), n.fillStyle = q(i.orange), n.font = "700 26px Montserrat, system-ui, sans-serif", n.textAlign = "left", n.fillText("BANDEJA", 24, 44), n.fillStyle = q(i.texto), n.font = "800 66px Montserrat, system-ui, sans-serif", n.fillText(String(e.bandeja), 24, 112), n.fillStyle = q(i.muted), n.font = "500 18px Montserrat, system-ui, sans-serif", n.fillText("en espera · rayo > SLA > prioridad", 24, 140);
 		let s = e.zonas.length, c = (r - 48) / s;
 		e.zonas.forEach((e, t) => {
-			let r = qd(e.cola / 12), o = Xe.get(e.k) ?? 0, s = o + (r - o) * .4;
+			let r = ef(e.cola / 12), o = Xe.get(e.k) ?? 0, s = o + (r - o) * .4;
 			Xe.set(e.k, s);
 			let l = 8 + s * 92, u = 24 + t * c + 6, d = a - 44;
 			n.fillStyle = q(f.get(e.k) ?? i.teal2, .28), n.fillRect(u, d - 100, c - 12, 100), n.fillStyle = q(e.riesgo ? i.bad : f.get(e.k) ?? i.teal2), n.fillRect(u, d - l, c - 12, l), n.fillStyle = q(i.texto), n.font = "700 17px Montserrat, system-ui, sans-serif", n.textAlign = "center", n.fillText(String(e.cola), u + (c - 12) / 2, d - l - 6), n.fillStyle = q(i.muted), n.font = "600 13px Montserrat, system-ui, sans-serif", n.fillText((p.get(e.k) ?? e.k).split(" ")[0].slice(0, 7), u + (c - 12) / 2, a - 22);
@@ -14851,17 +14917,17 @@ function $d(e) {
 		}
 	};
 	t.addEventListener("click", ot), o || (t.addEventListener("pointermove", it), t.addEventListener("pointerleave", at));
-	let H = new ws(), st = document.createElement("div");
+	let H = new js(), st = document.createElement("div");
 	st.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:8px;font:600 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${q(i.superficie, .92)};border:1px solid ${q(i.line)};color:${q(i.texto)};box-shadow:0 4px 12px rgba(0,0,0,.3)`;
-	let ct = new Yu(st);
+	let ct = new nd(st);
 	ct.visible = !1, ct.position.y = 1.5, l.add(ct);
-	let lt = !0, ut = performance.now(), dt = 0, ft = null, pt = new W(), mt = rd(o, (n) => {
+	let lt = !0, ut = performance.now(), dt = 0, ft = null, pt = new W(), mt = ud(o, (n) => {
 		let r = Math.min(.1, (n - ut) / 1e3);
 		ut = n;
 		let a = n / 1e3, d = e.obtener();
 		dt++;
 		for (let e of d.zonas) {
-			let t = Od[e.k];
+			let t = Fd[e.k];
 			if (!t) continue;
 			let n = we.get(e.k) ?? [];
 			t.puestos.forEach((t, r) => {
@@ -14880,9 +14946,9 @@ function $d(e) {
 		ve.update(a, d.bandeja, ye, o);
 		for (let [e, t] of P) t.update(a, (n - (ne.get(e) ?? -1e9)) / 1e3, o);
 		if (!o) for (let e of Pe) {
-			let t = zd[e.seg], n = zd[(e.seg + 1) % zd.length], i = t.distanceTo(n);
-			e.u += .85 * r / i, e.u >= 1 && (e.u = 0, e.seg = (e.seg + 1) % zd.length);
-			let o = zd[e.seg], s = zd[(e.seg + 1) % zd.length];
+			let t = Kd[e.seg], n = Kd[(e.seg + 1) % Kd.length], i = t.distanceTo(n);
+			e.u += .85 * r / i, e.u >= 1 && (e.u = 0, e.seg = (e.seg + 1) % Kd.length);
+			let o = Kd[e.seg], s = Kd[(e.seg + 1) % Kd.length];
 			e.p.g.position.lerpVectors(o, s, e.u), e.p.g.position.y = Math.abs(Math.sin(a * 7 + e.p.fase)) * .02, e.p.g.rotation.y = Math.atan2(s.x - o.x, s.z - o.z);
 			let c = Math.sin(a * 7 + e.p.fase) * .55;
 			e.p.pI && e.p.pD && (e.p.pI.rotation.x = c, e.p.pD.rotation.x = -c), e.p.bi.p.rotation.x = -c * .7, e.p.bd.p.rotation.x = c * .7, e.p.bi.ant.rotation.x = -.25, e.p.bd.ant.rotation.x = -.25;
@@ -14900,12 +14966,12 @@ function $d(e) {
 		for (let [e, t] of Be) !p.has(e) && t.muere == null && (t.muere = n, Ue(t.clave, e), t.clave = null);
 		let h = [], g = t.clientWidth, _ = t.clientHeight, v = null;
 		for (let [e, t] of Be) {
-			t.mov && Qd(t.mov, n, t.pos) && (t.pos.copy(t.mov.pts[t.mov.pts.length - 1]), t.mov = null);
+			t.mov && of(t.mov, n, t.pos) && (t.pos.copy(t.mov.pts[t.mov.pts.length - 1]), t.mov = null);
 			let r = t.sel ? 1.22 : 1, i = (n - t.nace) / 1e3;
-			i < 0 ? r = 1e-4 : !o && i < .45 && (r *= Math.max(1e-4, Yd(i / .45)));
+			i < 0 ? r = 1e-4 : !o && i < .45 && (r *= Math.max(1e-4, nf(i / .45)));
 			let s = 0;
 			if (t.muere != null) {
-				let i = qd((n - t.muere) / 350);
+				let i = ef((n - t.muere) / 350);
 				if (r *= 1 - i, s = i * .4, i >= 1 || o) {
 					l.remove(t.g), Be.delete(e);
 					continue;
@@ -14934,7 +15000,7 @@ function $d(e) {
 		for (let e of d.zonas) De.get(e.k)?.set(`${e.cola} en cola · ${e.atencion} en atención`, e.riesgo);
 		B(d, n), $e += (V - $e) * .06, et += (Qe - et) * .06;
 		let b = o ? 0 : Math.sin(a * .12) * .5 + $e * .7, x = o ? 0 : Math.cos(a * .1) * .3 + et * .4;
-		if (u.position.set(Sd.x + 30 + b, 30, Sd.z + 30 + x), u.lookAt(Sd.x + b * .5, .2, Sd.z + x * .5), ct.visible = !1, rt && dt % 3 == 0 && !o) {
+		if (u.position.set(kd.x + 30 + b, 30, kd.z + 30 + x), u.lookAt(kd.x + b * .5, .2, kd.z + x * .5), ct.visible = !1, rt && dt % 3 == 0 && !o) {
 			H.setFromCamera(new U(rt[0] / g * 2 - 1, -(rt[1] / _) * 2 + 1), u);
 			let e = [...O.values()].map((e) => e.g), t = H.intersectObjects(e, !0)[0]?.object;
 			for (; t && !t.userData.clave;) t = t.parent;
@@ -14956,7 +15022,7 @@ function $d(e) {
 		M.forEach((e) => e.dispose()), _e.dispose(), oe.remove(), s.dispose(), c.domElement.remove();
 	};
 }
-function ef(e, t = [
+function cf(e, t = [
 	128,
 	128,
 	128
@@ -14986,7 +15052,7 @@ function ef(e, t = [
 }
 //#endregion
 //#region node_modules/three/examples/jsm/controls/OrbitControls.js
-var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = new oi(), of = new Lr(), sf = Math.cos(70 * Dt.DEG2RAD), cf = new W(), lf = 2 * Math.PI, uf = {
+var lf = { type: "change" }, uf = { type: "start" }, df = { type: "end" }, ff = new oi(), pf = new Lr(), mf = Math.cos(70 * Dt.DEG2RAD), hf = new W(), gf = 2 * Math.PI, _f = {
 	NONE: -1,
 	ROTATE: 0,
 	DOLLY: 1,
@@ -14995,9 +15061,9 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 	TOUCH_PAN: 4,
 	TOUCH_DOLLY_PAN: 5,
 	TOUCH_DOLLY_ROTATE: 6
-}, df = 1e-6, ff = class extends Os {
+}, vf = 1e-6, yf = class extends Fs {
 	constructor(n, r = null) {
-		super(n, r), this.state = uf.NONE, this.target = new W(), this.cursor = new W(), this.minDistance = 0, this.maxDistance = Infinity, this.minZoom = 0, this.maxZoom = Infinity, this.minTargetRadius = 0, this.maxTargetRadius = Infinity, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -Infinity, this.maxAzimuthAngle = Infinity, this.enableDamping = !1, this.dampingFactor = .05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = {
+		super(n, r), this.state = _f.NONE, this.target = new W(), this.cursor = new W(), this.minDistance = 0, this.maxDistance = Infinity, this.minZoom = 0, this.maxZoom = Infinity, this.minTargetRadius = 0, this.maxTargetRadius = Infinity, this.minPolarAngle = 0, this.maxPolarAngle = Math.PI, this.minAzimuthAngle = -Infinity, this.maxAzimuthAngle = Infinity, this.enableDamping = !1, this.dampingFactor = .05, this.enableZoom = !0, this.zoomSpeed = 1, this.enableRotate = !0, this.rotateSpeed = 1, this.keyRotateSpeed = 1, this.enablePan = !0, this.panSpeed = 1, this.screenSpacePanning = !0, this.keyPanSpeed = 7, this.zoomToCursor = !1, this.autoRotate = !1, this.autoRotateSpeed = 2, this.keys = {
 			LEFT: "ArrowLeft",
 			UP: "ArrowUp",
 			RIGHT: "ArrowRight",
@@ -15009,7 +15075,7 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		}, this.touches = {
 			ONE: t.ROTATE,
 			TWO: t.DOLLY_PAN
-		}, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._cursorStyle = "auto", this._domElementKeyEvents = null, this._lastPosition = new W(), this._lastQuaternion = new Ot(), this._lastTargetPosition = new W(), this._quat = new Ot().setFromUnitVectors(n.up, new W(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Ds(), this._sphericalDelta = new Ds(), this._scale = 1, this._panOffset = new W(), this._rotateStart = new U(), this._rotateEnd = new U(), this._rotateDelta = new U(), this._panStart = new U(), this._panEnd = new U(), this._panDelta = new U(), this._dollyStart = new U(), this._dollyEnd = new U(), this._dollyDelta = new U(), this._dollyDirection = new W(), this._mouse = new U(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = mf.bind(this), this._onPointerDown = pf.bind(this), this._onPointerUp = hf.bind(this), this._onContextMenu = Sf.bind(this), this._onMouseWheel = vf.bind(this), this._onKeyDown = yf.bind(this), this._onTouchStart = bf.bind(this), this._onTouchMove = xf.bind(this), this._onMouseDown = gf.bind(this), this._onMouseMove = _f.bind(this), this._interceptControlDown = Cf.bind(this), this._interceptControlUp = wf.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
+		}, this.target0 = this.target.clone(), this.position0 = this.object.position.clone(), this.zoom0 = this.object.zoom, this._cursorStyle = "auto", this._domElementKeyEvents = null, this._lastPosition = new W(), this._lastQuaternion = new Ot(), this._lastTargetPosition = new W(), this._quat = new Ot().setFromUnitVectors(n.up, new W(0, 1, 0)), this._quatInverse = this._quat.clone().invert(), this._spherical = new Ps(), this._sphericalDelta = new Ps(), this._scale = 1, this._panOffset = new W(), this._rotateStart = new U(), this._rotateEnd = new U(), this._rotateDelta = new U(), this._panStart = new U(), this._panEnd = new U(), this._panDelta = new U(), this._dollyStart = new U(), this._dollyEnd = new U(), this._dollyDelta = new U(), this._dollyDirection = new W(), this._mouse = new U(), this._performCursorZoom = !1, this._pointers = [], this._pointerPositions = {}, this._controlActive = !1, this._onPointerMove = xf.bind(this), this._onPointerDown = bf.bind(this), this._onPointerUp = Sf.bind(this), this._onContextMenu = kf.bind(this), this._onMouseWheel = Tf.bind(this), this._onKeyDown = Ef.bind(this), this._onTouchStart = Df.bind(this), this._onTouchMove = Of.bind(this), this._onMouseDown = Cf.bind(this), this._onMouseMove = wf.bind(this), this._interceptControlDown = Af.bind(this), this._interceptControlUp = jf.bind(this), this.domElement !== null && this.connect(this.domElement), this.update();
 	}
 	set cursorStyle(e) {
 		this._cursorStyle = e, e === "grab" ? this.domElement.style.cursor = "grab" : this.domElement.style.cursor = "auto";
@@ -15024,7 +15090,7 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		}), this.domElement.style.touchAction = "none";
 	}
 	disconnect() {
-		this.state = uf.NONE, this.domElement.removeEventListener("pointerdown", this._onPointerDown), this.domElement.ownerDocument.removeEventListener("pointermove", this._onPointerMove), this.domElement.ownerDocument.removeEventListener("pointerup", this._onPointerUp), this.domElement.removeEventListener("pointercancel", this._onPointerUp), this.domElement.removeEventListener("wheel", this._onMouseWheel), this.domElement.removeEventListener("contextmenu", this._onContextMenu), this.stopListenToKeyEvents();
+		this.state = _f.NONE, this.domElement.removeEventListener("pointerdown", this._onPointerDown), this.domElement.ownerDocument.removeEventListener("pointermove", this._onPointerMove), this.domElement.ownerDocument.removeEventListener("pointerup", this._onPointerUp), this.domElement.removeEventListener("pointercancel", this._onPointerUp), this.domElement.removeEventListener("wheel", this._onMouseWheel), this.domElement.removeEventListener("contextmenu", this._onContextMenu), this.stopListenToKeyEvents();
 		let e = this.domElement.getRootNode();
 		e.removeEventListener("keydown", this._interceptControlDown, { capture: !0 }), e.removeEventListener("keyup", this._interceptControlUp, { capture: !0 }), this._controlActive = !1, this._pointers.length = 0, this._pointerPositions = {}, this.domElement.style.touchAction = "", this.domElement.style.cursor = "auto";
 	}
@@ -15050,7 +15116,7 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		this.target0.copy(this.target), this.position0.copy(this.object.position), this.zoom0 = this.object.zoom;
 	}
 	reset() {
-		this.target.copy(this.target0), this.object.position.copy(this.position0), this.object.zoom = this.zoom0, this.object.updateProjectionMatrix(), this.dispatchEvent(tf), this.update(), this.state = uf.NONE;
+		this.target.copy(this.target0), this.object.position.copy(this.position0), this.object.zoom = this.zoom0, this.object.updateProjectionMatrix(), this.dispatchEvent(lf), this.update(), this.state = _f.NONE;
 	}
 	pan(e, t) {
 		this._pan(e, t), this.update();
@@ -15069,19 +15135,19 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 	}
 	update(e = null) {
 		let t = this.object.position;
-		cf.copy(t).sub(this.target), cf.applyQuaternion(this._quat), this._spherical.setFromVector3(cf), this.autoRotate && this.state === uf.NONE && this._rotateLeft(this._getAutoRotationAngle(e)), this.enableDamping ? (this._spherical.theta += this._sphericalDelta.theta * this.dampingFactor, this._spherical.phi += this._sphericalDelta.phi * this.dampingFactor) : (this._spherical.theta += this._sphericalDelta.theta, this._spherical.phi += this._sphericalDelta.phi);
+		hf.copy(t).sub(this.target), hf.applyQuaternion(this._quat), this._spherical.setFromVector3(hf), this.autoRotate && this.state === _f.NONE && this._rotateLeft(this._getAutoRotationAngle(e)), this.enableDamping ? (this._spherical.theta += this._sphericalDelta.theta * this.dampingFactor, this._spherical.phi += this._sphericalDelta.phi * this.dampingFactor) : (this._spherical.theta += this._sphericalDelta.theta, this._spherical.phi += this._sphericalDelta.phi);
 		let n = this.minAzimuthAngle, r = this.maxAzimuthAngle;
-		isFinite(n) && isFinite(r) && (n < -Math.PI ? n += lf : n > Math.PI && (n -= lf), r < -Math.PI ? r += lf : r > Math.PI && (r -= lf), n <= r ? this._spherical.theta = Math.max(n, Math.min(r, this._spherical.theta)) : this._spherical.theta = this._spherical.theta > (n + r) / 2 ? Math.max(n, this._spherical.theta) : Math.min(r, this._spherical.theta)), this._spherical.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this._spherical.phi)), this._spherical.makeSafe(), this.enableDamping === !0 ? this.target.addScaledVector(this._panOffset, this.dampingFactor) : this.target.add(this._panOffset), this.target.sub(this.cursor), this.target.clampLength(this.minTargetRadius, this.maxTargetRadius), this.target.add(this.cursor);
+		isFinite(n) && isFinite(r) && (n < -Math.PI ? n += gf : n > Math.PI && (n -= gf), r < -Math.PI ? r += gf : r > Math.PI && (r -= gf), n <= r ? this._spherical.theta = Math.max(n, Math.min(r, this._spherical.theta)) : this._spherical.theta = this._spherical.theta > (n + r) / 2 ? Math.max(n, this._spherical.theta) : Math.min(r, this._spherical.theta)), this._spherical.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this._spherical.phi)), this._spherical.makeSafe(), this.enableDamping === !0 ? this.target.addScaledVector(this._panOffset, this.dampingFactor) : this.target.add(this._panOffset), this.target.sub(this.cursor), this.target.clampLength(this.minTargetRadius, this.maxTargetRadius), this.target.add(this.cursor);
 		let i = !1;
 		if (this.zoomToCursor && this._performCursorZoom || this.object.isOrthographicCamera) this._spherical.radius = this._clampDistance(this._spherical.radius);
 		else {
 			let e = this._spherical.radius;
 			this._spherical.radius = this._clampDistance(this._spherical.radius * this._scale), i = e != this._spherical.radius;
 		}
-		if (cf.setFromSpherical(this._spherical), cf.applyQuaternion(this._quatInverse), t.copy(this.target).add(cf), this.object.lookAt(this.target), this.enableDamping === !0 ? (this._sphericalDelta.theta *= 1 - this.dampingFactor, this._sphericalDelta.phi *= 1 - this.dampingFactor, this._panOffset.multiplyScalar(1 - this.dampingFactor)) : (this._sphericalDelta.set(0, 0, 0), this._panOffset.set(0, 0, 0)), this.zoomToCursor && this._performCursorZoom) {
+		if (hf.setFromSpherical(this._spherical), hf.applyQuaternion(this._quatInverse), t.copy(this.target).add(hf), this.object.lookAt(this.target), this.enableDamping === !0 ? (this._sphericalDelta.theta *= 1 - this.dampingFactor, this._sphericalDelta.phi *= 1 - this.dampingFactor, this._panOffset.multiplyScalar(1 - this.dampingFactor)) : (this._sphericalDelta.set(0, 0, 0), this._panOffset.set(0, 0, 0)), this.zoomToCursor && this._performCursorZoom) {
 			let e = null;
 			if (this.object.isPerspectiveCamera) {
-				let t = cf.length();
+				let t = hf.length();
 				e = this._clampDistance(t * this._scale);
 				let n = t - e;
 				this.object.position.addScaledVector(this._dollyDirection, n), this.object.updateMatrixWorld(), i = !!n;
@@ -15091,17 +15157,17 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 				let n = this.object.zoom;
 				this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom / this._scale)), this.object.updateProjectionMatrix(), i = n !== this.object.zoom;
 				let r = new W(this._mouse.x, this._mouse.y, 0);
-				r.unproject(this.object), this.object.position.sub(r).add(t), this.object.updateMatrixWorld(), e = cf.length();
+				r.unproject(this.object), this.object.position.sub(r).add(t), this.object.updateMatrixWorld(), e = hf.length();
 			} else console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled."), this.zoomToCursor = !1;
-			e !== null && (this.screenSpacePanning ? this.target.set(0, 0, -1).transformDirection(this.object.matrix).multiplyScalar(e).add(this.object.position) : (af.origin.copy(this.object.position), af.direction.set(0, 0, -1).transformDirection(this.object.matrix), Math.abs(this.object.up.dot(af.direction)) < sf ? this.object.lookAt(this.target) : (of.setFromNormalAndCoplanarPoint(this.object.up, this.target), af.intersectPlane(of, this.target))));
+			e !== null && (this.screenSpacePanning ? this.target.set(0, 0, -1).transformDirection(this.object.matrix).multiplyScalar(e).add(this.object.position) : (ff.origin.copy(this.object.position), ff.direction.set(0, 0, -1).transformDirection(this.object.matrix), Math.abs(this.object.up.dot(ff.direction)) < mf ? this.object.lookAt(this.target) : (pf.setFromNormalAndCoplanarPoint(this.object.up, this.target), ff.intersectPlane(pf, this.target))));
 		} else if (this.object.isOrthographicCamera) {
 			let e = this.object.zoom;
 			this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom / this._scale)), e !== this.object.zoom && (this.object.updateProjectionMatrix(), i = !0);
 		}
-		return this._scale = 1, this._performCursorZoom = !1, i || this._lastPosition.distanceToSquared(this.object.position) > df || 8 * (1 - this._lastQuaternion.dot(this.object.quaternion)) > df || this._lastTargetPosition.distanceToSquared(this.target) > df ? (this.dispatchEvent(tf), this._lastPosition.copy(this.object.position), this._lastQuaternion.copy(this.object.quaternion), this._lastTargetPosition.copy(this.target), !0) : !1;
+		return this._scale = 1, this._performCursorZoom = !1, i || this._lastPosition.distanceToSquared(this.object.position) > vf || 8 * (1 - this._lastQuaternion.dot(this.object.quaternion)) > vf || this._lastTargetPosition.distanceToSquared(this.target) > vf ? (this.dispatchEvent(lf), this._lastPosition.copy(this.object.position), this._lastQuaternion.copy(this.object.quaternion), this._lastTargetPosition.copy(this.target), !0) : !1;
 	}
 	_getAutoRotationAngle(e) {
-		return e === null ? lf / 60 / 60 * this.autoRotateSpeed : lf / 60 * this.autoRotateSpeed * e;
+		return e === null ? gf / 60 / 60 * this.autoRotateSpeed : gf / 60 * this.autoRotateSpeed * e;
 	}
 	_getZoomScale(e) {
 		let t = Math.abs(e * .01);
@@ -15114,17 +15180,17 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		this._sphericalDelta.phi -= e;
 	}
 	_panLeft(e, t) {
-		cf.setFromMatrixColumn(t, 0), cf.multiplyScalar(-e), this._panOffset.add(cf);
+		hf.setFromMatrixColumn(t, 0), hf.multiplyScalar(-e), this._panOffset.add(hf);
 	}
 	_panUp(e, t) {
-		this.screenSpacePanning === !0 ? cf.setFromMatrixColumn(t, 1) : (cf.setFromMatrixColumn(t, 0), cf.crossVectors(this.object.up, cf)), cf.multiplyScalar(e), this._panOffset.add(cf);
+		this.screenSpacePanning === !0 ? hf.setFromMatrixColumn(t, 1) : (hf.setFromMatrixColumn(t, 0), hf.crossVectors(this.object.up, hf)), hf.multiplyScalar(e), this._panOffset.add(hf);
 	}
 	_pan(e, t) {
 		let n = this.domElement;
 		if (this.object.isPerspectiveCamera) {
 			let r = this.object.position;
-			cf.copy(r).sub(this.target);
-			let i = cf.length();
+			hf.copy(r).sub(this.target);
+			let i = hf.length();
 			i *= Math.tan(this.object.fov / 2 * Math.PI / 180), this._panLeft(2 * e * i / n.clientHeight, this.object.matrix), this._panUp(2 * t * i / n.clientHeight, this.object.matrix);
 		} else this.object.isOrthographicCamera ? (this._panLeft(e * (this.object.right - this.object.left) / this.object.zoom / n.clientWidth, this.object.matrix), this._panUp(t * (this.object.top - this.object.bottom) / this.object.zoom / n.clientHeight, this.object.matrix)) : (console.warn("WARNING: OrbitControls.js encountered an unknown camera type - pan disabled."), this.enablePan = !1);
 	}
@@ -15155,7 +15221,7 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 	_handleMouseMoveRotate(e) {
 		this._rotateEnd.set(e.clientX, e.clientY), this._rotateDelta.subVectors(this._rotateEnd, this._rotateStart).multiplyScalar(this.rotateSpeed);
 		let t = this.domElement;
-		this._rotateLeft(lf * this._rotateDelta.x / t.clientHeight), this._rotateUp(lf * this._rotateDelta.y / t.clientHeight), this._rotateStart.copy(this._rotateEnd), this.update();
+		this._rotateLeft(gf * this._rotateDelta.x / t.clientHeight), this._rotateUp(gf * this._rotateDelta.y / t.clientHeight), this._rotateStart.copy(this._rotateEnd), this.update();
 	}
 	_handleMouseMoveDolly(e) {
 		this._dollyEnd.set(e.clientX, e.clientY), this._dollyDelta.subVectors(this._dollyEnd, this._dollyStart), this._dollyDelta.y > 0 ? this._dollyOut(this._getZoomScale(this._dollyDelta.y)) : this._dollyDelta.y < 0 && this._dollyIn(this._getZoomScale(this._dollyDelta.y)), this._dollyStart.copy(this._dollyEnd), this.update();
@@ -15170,15 +15236,15 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		let t = !1;
 		switch (e.code) {
 			case this.keys.UP:
-				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateUp(lf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(0, this.keyPanSpeed), t = !0;
+				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateUp(gf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(0, this.keyPanSpeed), t = !0;
 				break;
 			case this.keys.BOTTOM:
-				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateUp(-lf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(0, -this.keyPanSpeed), t = !0;
+				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateUp(-gf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(0, -this.keyPanSpeed), t = !0;
 				break;
 			case this.keys.LEFT:
-				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateLeft(lf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(this.keyPanSpeed, 0), t = !0;
+				e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateLeft(gf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(this.keyPanSpeed, 0), t = !0;
 				break;
-			case this.keys.RIGHT: e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateLeft(-lf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(-this.keyPanSpeed, 0), t = !0;
+			case this.keys.RIGHT: e.ctrlKey || e.metaKey || e.shiftKey ? this.enableRotate && this._rotateLeft(-gf * this.keyRotateSpeed / this.domElement.clientHeight) : this.enablePan && this._pan(-this.keyPanSpeed, 0), t = !0;
 		}
 		t && (e.preventDefault(), this.update());
 	}
@@ -15214,7 +15280,7 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		}
 		this._rotateDelta.subVectors(this._rotateEnd, this._rotateStart).multiplyScalar(this.rotateSpeed);
 		let t = this.domElement;
-		this._rotateLeft(lf * this._rotateDelta.x / t.clientHeight), this._rotateUp(lf * this._rotateDelta.y / t.clientHeight), this._rotateStart.copy(this._rotateEnd);
+		this._rotateLeft(gf * this._rotateDelta.x / t.clientHeight), this._rotateUp(gf * this._rotateDelta.y / t.clientHeight), this._rotateStart.copy(this._rotateEnd);
 	}
 	_handleTouchMovePan(e) {
 		if (this._pointers.length === 1) this._panEnd.set(e.pageX, e.pageY);
@@ -15273,16 +15339,16 @@ var tf = { type: "change" }, nf = { type: "start" }, rf = { type: "end" }, af = 
 		return e.ctrlKey && !this._controlActive && (n.deltaY *= 10), n;
 	}
 };
-function pf(e) {
+function bf(e) {
 	this.enabled !== !1 && (this._pointers.length === 0 && (this.domElement.setPointerCapture(e.pointerId), this.domElement.ownerDocument.addEventListener("pointermove", this._onPointerMove), this.domElement.ownerDocument.addEventListener("pointerup", this._onPointerUp)), !this._isTrackingPointer(e) && (this._addPointer(e), e.pointerType === "touch" ? this._onTouchStart(e) : this._onMouseDown(e), this._cursorStyle === "grab" && (this.domElement.style.cursor = "grabbing")));
 }
-function mf(e) {
+function xf(e) {
 	this.enabled !== !1 && (e.pointerType === "touch" ? this._onTouchMove(e) : this._onMouseMove(e));
 }
-function hf(e) {
+function Sf(e) {
 	switch (this._removePointer(e), this._pointers.length) {
 		case 0:
-			this.domElement.releasePointerCapture(e.pointerId), this.domElement.ownerDocument.removeEventListener("pointermove", this._onPointerMove), this.domElement.ownerDocument.removeEventListener("pointerup", this._onPointerUp), this.dispatchEvent(rf), this.state = uf.NONE, this._cursorStyle === "grab" && (this.domElement.style.cursor = "grab");
+			this.domElement.releasePointerCapture(e.pointerId), this.domElement.ownerDocument.removeEventListener("pointermove", this._onPointerMove), this.domElement.ownerDocument.removeEventListener("pointerup", this._onPointerUp), this.dispatchEvent(df), this.state = _f.NONE, this._cursorStyle === "grab" && (this.domElement.style.cursor = "grab");
 			break;
 		case 1:
 			let t = this._pointers[0], n = this._pointerPositions[t];
@@ -15293,7 +15359,7 @@ function hf(e) {
 			});
 	}
 }
-function gf(t) {
+function Cf(t) {
 	let n;
 	switch (t.button) {
 		case 0:
@@ -15310,114 +15376,114 @@ function gf(t) {
 	switch (n) {
 		case e.DOLLY:
 			if (this.enableZoom === !1) return;
-			this._handleMouseDownDolly(t), this.state = uf.DOLLY;
+			this._handleMouseDownDolly(t), this.state = _f.DOLLY;
 			break;
 		case e.ROTATE:
 			if (t.ctrlKey || t.metaKey || t.shiftKey) {
 				if (this.enablePan === !1) return;
-				this._handleMouseDownPan(t), this.state = uf.PAN;
+				this._handleMouseDownPan(t), this.state = _f.PAN;
 			} else {
 				if (this.enableRotate === !1) return;
-				this._handleMouseDownRotate(t), this.state = uf.ROTATE;
+				this._handleMouseDownRotate(t), this.state = _f.ROTATE;
 			}
 			break;
 		case e.PAN:
 			if (t.ctrlKey || t.metaKey || t.shiftKey) {
 				if (this.enableRotate === !1) return;
-				this._handleMouseDownRotate(t), this.state = uf.ROTATE;
+				this._handleMouseDownRotate(t), this.state = _f.ROTATE;
 			} else {
 				if (this.enablePan === !1) return;
-				this._handleMouseDownPan(t), this.state = uf.PAN;
+				this._handleMouseDownPan(t), this.state = _f.PAN;
 			}
 			break;
-		default: this.state = uf.NONE;
+		default: this.state = _f.NONE;
 	}
-	this.state !== uf.NONE && this.dispatchEvent(nf);
+	this.state !== _f.NONE && this.dispatchEvent(uf);
 }
-function _f(e) {
+function wf(e) {
 	switch (this.state) {
-		case uf.ROTATE:
+		case _f.ROTATE:
 			if (this.enableRotate === !1) return;
 			this._handleMouseMoveRotate(e);
 			break;
-		case uf.DOLLY:
+		case _f.DOLLY:
 			if (this.enableZoom === !1) return;
 			this._handleMouseMoveDolly(e);
 			break;
-		case uf.PAN:
+		case _f.PAN:
 			if (this.enablePan === !1) return;
 			this._handleMouseMovePan(e);
 	}
 }
-function vf(e) {
-	this.enabled !== !1 && this.enableZoom !== !1 && this.state === uf.NONE && (e.preventDefault(), this.dispatchEvent(nf), this._handleMouseWheel(this._customWheelEvent(e)), this.dispatchEvent(rf));
+function Tf(e) {
+	this.enabled !== !1 && this.enableZoom !== !1 && this.state === _f.NONE && (e.preventDefault(), this.dispatchEvent(uf), this._handleMouseWheel(this._customWheelEvent(e)), this.dispatchEvent(df));
 }
-function yf(e) {
+function Ef(e) {
 	this.enabled !== !1 && this._handleKeyDown(e);
 }
-function bf(e) {
+function Df(e) {
 	switch (this._trackPointer(e), this._pointers.length) {
 		case 1:
 			switch (this.touches.ONE) {
 				case t.ROTATE:
 					if (this.enableRotate === !1) return;
-					this._handleTouchStartRotate(e), this.state = uf.TOUCH_ROTATE;
+					this._handleTouchStartRotate(e), this.state = _f.TOUCH_ROTATE;
 					break;
 				case t.PAN:
 					if (this.enablePan === !1) return;
-					this._handleTouchStartPan(e), this.state = uf.TOUCH_PAN;
+					this._handleTouchStartPan(e), this.state = _f.TOUCH_PAN;
 					break;
-				default: this.state = uf.NONE;
+				default: this.state = _f.NONE;
 			}
 			break;
 		case 2:
 			switch (this.touches.TWO) {
 				case t.DOLLY_PAN:
 					if (this.enableZoom === !1 && this.enablePan === !1) return;
-					this._handleTouchStartDollyPan(e), this.state = uf.TOUCH_DOLLY_PAN;
+					this._handleTouchStartDollyPan(e), this.state = _f.TOUCH_DOLLY_PAN;
 					break;
 				case t.DOLLY_ROTATE:
 					if (this.enableZoom === !1 && this.enableRotate === !1) return;
-					this._handleTouchStartDollyRotate(e), this.state = uf.TOUCH_DOLLY_ROTATE;
+					this._handleTouchStartDollyRotate(e), this.state = _f.TOUCH_DOLLY_ROTATE;
 					break;
-				default: this.state = uf.NONE;
+				default: this.state = _f.NONE;
 			}
 			break;
-		default: this.state = uf.NONE;
+		default: this.state = _f.NONE;
 	}
-	this.state !== uf.NONE && this.dispatchEvent(nf);
+	this.state !== _f.NONE && this.dispatchEvent(uf);
 }
-function xf(e) {
+function Of(e) {
 	switch (this._trackPointer(e), this.state) {
-		case uf.TOUCH_ROTATE:
+		case _f.TOUCH_ROTATE:
 			if (this.enableRotate === !1) return;
 			this._handleTouchMoveRotate(e), this.update();
 			break;
-		case uf.TOUCH_PAN:
+		case _f.TOUCH_PAN:
 			if (this.enablePan === !1) return;
 			this._handleTouchMovePan(e), this.update();
 			break;
-		case uf.TOUCH_DOLLY_PAN:
+		case _f.TOUCH_DOLLY_PAN:
 			if (this.enableZoom === !1 && this.enablePan === !1) return;
 			this._handleTouchMoveDollyPan(e), this.update();
 			break;
-		case uf.TOUCH_DOLLY_ROTATE:
+		case _f.TOUCH_DOLLY_ROTATE:
 			if (this.enableZoom === !1 && this.enableRotate === !1) return;
 			this._handleTouchMoveDollyRotate(e), this.update();
 			break;
-		default: this.state = uf.NONE;
+		default: this.state = _f.NONE;
 	}
 }
-function Sf(e) {
+function kf(e) {
 	this.enabled !== !1 && e.preventDefault();
 }
-function Cf(e) {
+function Af(e) {
 	e.key === "Control" && (this._controlActive = !0, this.domElement.getRootNode().addEventListener("keyup", this._interceptControlUp, {
 		passive: !0,
 		capture: !0
 	}));
 }
-function wf(e) {
+function jf(e) {
 	e.key === "Control" && (this._controlActive = !1, this.domElement.getRootNode().removeEventListener("keyup", this._interceptControlUp, {
 		passive: !0,
 		capture: !0
@@ -15425,11 +15491,11 @@ function wf(e) {
 }
 //#endregion
 //#region src/three/grafo360.ts
-var Tf = () => {
+var Mf = () => {
 	let e = document.createElement("span");
 	return e.setAttribute("aria-hidden", "true"), e.style.cssText = "display:none;margin-right:3px;vertical-align:-1px", e.innerHTML = "<svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6.75 10.75h10.5a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z\"/><path d=\"M8.25 10.5V7.75a3.75 3.75 0 0 1 7.5 0v2.75\"/></svg>", e;
 };
-function Ef(e) {
+function Nf(e) {
 	let { canvas: t, host: n } = e, r = {
 		bad: e.color("feedback-danger-border"),
 		restringido: e.color("feedback-warning-border"),
@@ -15442,23 +15508,23 @@ function Ef(e) {
 		apagado: e.color("bg-surface-sunken"),
 		enlace: e.color("fg-link"),
 		centro: e.color("primary-900")
-	}, i = new Ju({
+	}, i = new td({
 		canvas: t,
 		antialias: !0,
 		alpha: !0
 	});
 	i.setPixelRatio(Math.min(2, devicePixelRatio || 1));
-	let a = nd(n), o = new In(), s = new rs(38, 1, .1, 100);
+	let a = ld(n), o = new In(), s = new us(38, 1, .1, 100);
 	s.position.set(0, -4, 17), s.lookAt(0, 0, 0);
-	let c = new ff(s, t);
+	let c = new yf(s, t);
 	c.enableZoom = !1, c.enablePan = !1, c.enableDamping = !0, c.minPolarAngle = Math.PI * .3, c.maxPolarAngle = Math.PI * .7, c.minAzimuthAngle = -.9, c.maxAzimuthAngle = .9, c.autoRotate = !e.reducido, c.autoRotateSpeed = .5, c.addEventListener("start", () => {
 		c.autoRotate = !1;
 	});
 	let l = /* @__PURE__ */ new Map(), u = [], d = "", f = new Dn();
 	o.add(f);
 	let p = {
-		mesh: new G(new co(.75, 24, 18), new si({ color: J(r.naranja) })),
-		halo: new G(new co(1.1, 24, 18), new si({
+		mesh: new G(new go(.75, 24, 18), new si({ color: J(r.naranja) })),
+		halo: new G(new go(1.1, 24, 18), new si({
 			color: J(r.naranja),
 			transparent: !0,
 			opacity: .25,
@@ -15468,16 +15534,16 @@ function Ef(e) {
 	m.style.cssText = "pointer-events:none;text-align:center;line-height:1.2";
 	let h = document.createElement("b");
 	h.style.cssText = `display:block;font:800 16px Montserrat,system-ui,sans-serif;color:${q(r.centro)}`, m.append(h);
-	let g = new Yu(m);
+	let g = new nd(m);
 	g.position.set(0, 0, .9);
 	let _ = document.createElement("div");
 	_.style.cssText = `pointer-events:none;font:700 11px Montserrat,system-ui,sans-serif;white-space:nowrap;color:${q(r.texto)}`;
-	let v = new Yu(_);
+	let v = new nd(_);
 	v.position.set(0, -1.4, 0), o.add(p.mesh, p.halo, g, v);
 	let y = 3.3, b = 6.4, x = !1, S = 17, C = (e) => {
 		f.clear(), l.clear(), u.length = 0;
 		let t = (e, t, n, i, a, o, s = "arriba") => {
-			let c = new G(new co(n, 18, 14), new si({ color: J(i) })), u = new G(new co(n * 1.9, 16, 12), new si({
+			let c = new G(new go(n, 18, 14), new si({ color: J(i) })), u = new G(new go(n * 1.9, 16, 12), new si({
 				color: J(r.naranja),
 				transparent: !0,
 				opacity: .2,
@@ -15490,7 +15556,7 @@ function Ef(e) {
 			p.style.cssText = "display:block;font:700 11px Montserrat,system-ui,sans-serif", p.textContent = a, d.append(p);
 			let m;
 			o != null && (m = document.createElement("small"), m.style.cssText = "display:block;font:500 9.5px Montserrat,system-ui,sans-serif", m.textContent = o, d.append(m));
-			let h = new Yu(d);
+			let h = new nd(d);
 			s === "der" || s === "izq" ? (h.position.set(t.x + (s === "der" ? 1 : -1) * (n + .2), t.y, t.z), h.center.set(s === "der" ? 0 : 1, .5), d.style.textAlign = s === "der" ? "left" : "right") : h.position.set(t.x, t.y + (s === "arriba" ? 1 : -1) * (n + .45), t.z), f.add(c, u, h), l.set(e, {
 				pos: t,
 				r: n,
@@ -15508,12 +15574,12 @@ function Ef(e) {
 			let a = -Math.PI / 2 + i * 2 * Math.PI / e.nodos.length + .1, o = Math.cos(a), s = o > .3 ? "der" : o < -.3 ? "izq" : Math.sin(a) > 0 ? "arriba" : "abajo";
 			t(n.id, new W(o * b * 1.05, Math.sin(a) * b * .8, x ? 0 : (i % 3 - 1) * 1.1), .26, r.apagado, n.n, void 0, s);
 			let c = l.get(n.id);
-			c.candado = Tf(), c.txt.prepend(c.candado);
+			c.candado = Mf(), c.txt.prepend(c.candado);
 		});
 		let n = (e) => e === "c" ? new W() : l.get(e).pos, i = (e, t, i) => {
 			let a = n(e), o = n(t), s = a.clone().add(o).multiplyScalar(.5);
 			s.x += (o.y - a.y) * .08, s.y -= (o.x - a.x) * .08;
-			let c = new ha(a, s, o), l = new Ei({
+			let c = new Sa(a, s, o), l = new Ei({
 				color: J(r.borde),
 				transparent: !0,
 				opacity: .3
@@ -15530,7 +15596,7 @@ function Ef(e) {
 			fuente: t,
 			dato: e.id
 		})));
-	}, w = null, T = [], E = new co(.1, 10, 8), D = new si({ color: J(r.naranja) }), O = new si({ color: J(r.bad) }), k = (e, t, n) => {
+	}, w = null, T = [], E = new go(.1, 10, 8), D = new si({ color: J(r.naranja) }), O = new si({ color: J(r.bad) }), k = (e, t, n) => {
 		let r = e.a === "c" ? new W() : l.get(e.a).pos, i = l.get(e.b).pos, a = (r.x + i.x) / 2 + (i.y - r.y) * .08, o = (r.y + i.y) / 2 - (i.x - r.x) * .08, s = 1 - t;
 		return n.set(s * s * r.x + 2 * s * t * a + t * t * i.x, s * s * r.y + 2 * s * t * o + t * t * i.y, s * s * r.z + t * t * i.z);
 	}, A = () => {
@@ -15540,7 +15606,7 @@ function Ef(e) {
 		t.style.height = `${r}px`, i.setSize(e, r, !1), a.setSize(e, r), S = e < 560 ? 30 : e < 800 ? 22 : 17, s.aspect = e / r, s.position.setLength(S), s.updateProjectionMatrix();
 	}, j = new ResizeObserver(A);
 	j.observe(n), A();
-	let ee = new W(), te = rd(e.reducido, (n) => {
+	let ee = new W(), te = ud(e.reducido, (n) => {
 		let f = e.vista.current;
 		if (!f) return;
 		let m = !!e.plano?.current;
@@ -15590,40 +15656,543 @@ function Ef(e) {
 	};
 }
 //#endregion
+//#region src/three/grafo360-daniel.ts
+var Pf = {
+	sigda: [
+		0,
+		229,
+		255
+	],
+	contr: [
+		0,
+		230,
+		118
+	],
+	cob: [
+		255,
+		196,
+		0
+	],
+	jose: [
+		255,
+		167,
+		38
+	],
+	repo: [
+		38,
+		222,
+		160
+	],
+	mail: [
+		179,
+		136,
+		255
+	],
+	cti: [
+		244,
+		114,
+		182
+	],
+	atc: [
+		129,
+		140,
+		248
+	]
+}, Ff = [
+	[
+		52,
+		211,
+		153
+	],
+	[
+		56,
+		189,
+		248
+	],
+	[
+		251,
+		191,
+		36
+	],
+	[
+		167,
+		139,
+		250
+	],
+	[
+		45,
+		212,
+		191
+	],
+	[
+		244,
+		114,
+		182
+	]
+];
+function If(e) {
+	let { canvas: t, host: n } = e, r = {
+		bad: [
+			255,
+			82,
+			82
+		],
+		warn: [
+			245,
+			158,
+			11
+		],
+		naranja: [
+			255,
+			167,
+			38
+		],
+		cyan: [
+			0,
+			229,
+			255
+		],
+		esmeralda: [
+			0,
+			230,
+			118
+		],
+		violeta: [
+			179,
+			136,
+			255
+		],
+		borde: [
+			56,
+			132,
+			152
+		],
+		src: e.color("primary-400"),
+		texto: [
+			248,
+			252,
+			255
+		],
+		mudo: [
+			165,
+			208,
+			220
+		],
+		apagado: [
+			24,
+			78,
+			92
+		],
+		centroTexto: [
+			1,
+			27,
+			35
+		]
+	}, i = new td({
+		canvas: t,
+		antialias: !0,
+		alpha: !0
+	});
+	i.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+	let a = ld(n), o = new In(), s = new us(38, 1, .1, 100);
+	s.position.set(0, -4.2, 17), s.lookAt(0, 0, 0);
+	let c = new yf(s, t);
+	c.enableZoom = !1, c.enablePan = !1, c.enableDamping = !0, c.minPolarAngle = Math.PI * .28, c.maxPolarAngle = Math.PI * .72, c.minAzimuthAngle = -.95, c.maxAzimuthAngle = .95, c.autoRotate = !e.reducido, c.autoRotateSpeed = .75, c.addEventListener("start", () => {
+		c.autoRotate = !1;
+	});
+	let l = 3.35, u = 6.45, d = new Dn();
+	o.add(d);
+	let f = (e, t, n, r, i = 0, a = 0) => {
+		let o = new G(new _o(e, t, 12, 96), new si({
+			color: J(n),
+			transparent: !0,
+			opacity: r,
+			depthWrite: !1
+		}));
+		return o.rotation.set(i, a, 0), d.add(o), o;
+	}, p = f(1.28, .022, r.naranja, .55, .45, .2), m = f(1.52, .016, r.cyan, .38, -.5, .35), h = f(l * 1.07, .02, r.naranja, .26, .08, -.06), g = f(u * .94, .018, r.cyan, .2, -.06, .08), _ = f(u * 1.12, .012, r.violeta, .14, .14, -.12), v = /* @__PURE__ */ new Float32Array(288), y = /* @__PURE__ */ new Float32Array(288), b = [
+		r.naranja,
+		r.cyan,
+		r.esmeralda,
+		r.violeta
+	];
+	for (let e = 0; e < 96; e++) {
+		let t = e / 96 * Math.PI * 2 + e % 7 * .31, n = 2.2 + e * 1.37 % 6.8;
+		v[e * 3] = Math.cos(t) * n * 1.15, v[e * 3 + 1] = Math.sin(t) * n * .9, v[e * 3 + 2] = (e % 9 - 4) * .55;
+		let r = b[e % b.length];
+		y[e * 3] = r[0] / 255, y[e * 3 + 1] = r[1] / 255, y[e * 3 + 2] = r[2] / 255;
+	}
+	let x = new Ar();
+	x.setAttribute("position", new hr(v, 3)), x.setAttribute("color", new hr(y, 3));
+	let S = new Ii({
+		size: .11,
+		vertexColors: !0,
+		transparent: !0,
+		opacity: .55,
+		depthWrite: !1
+	}), C = new Vi(x, S);
+	d.add(C);
+	let w = /* @__PURE__ */ new Map(), T = [], E = "", D = new Dn();
+	o.add(D);
+	let O = {
+		mesh: new G(new go(.82, 28, 20), new si({ color: J(r.naranja) })),
+		halo: new G(new go(1.26, 24, 18), new si({
+			color: J(r.naranja),
+			transparent: !0,
+			opacity: .28,
+			depthWrite: !1
+		})),
+		corona: new G(new go(1.62, 20, 14), new si({
+			color: J(r.cyan),
+			transparent: !0,
+			opacity: .1,
+			wireframe: !0,
+			depthWrite: !1
+		}))
+	}, k = document.createElement("div");
+	k.style.cssText = "pointer-events:none;text-align:center;line-height:1.15";
+	let A = document.createElement("b");
+	A.style.cssText = `display:block;font:800 16px Montserrat,system-ui,sans-serif;color:${q(r.centroTexto)}`, k.append(A);
+	let j = new nd(k);
+	j.position.set(0, 0, .92);
+	let ee = document.createElement("div");
+	ee.style.cssText = "pointer-events:none;font:700 11.5px Montserrat,system-ui,sans-serif;white-space:nowrap;color:#FFFFFF;padding:2px 8px;border-radius:999px;background:rgba(1,27,35,0.82);border:1px solid rgba(255,167,38,0.45)";
+	let te = new nd(ee);
+	te.position.set(0, -1.48, 0), o.add(O.mesh, O.halo, O.corona, j, te);
+	let M = (e, t) => Pf[e] ?? Ff[t % Ff.length], N = (t) => {
+		w.forEach((e) => e.et.element.remove()), D.clear(), w.clear(), T.length = 0;
+		let n = (t, n, r, i, a, o, s, c, l = "arriba") => {
+			let u = new G(new go(a, 20, 16), new si({ color: J(o) })), d = new G(new go(a * 1.95, 16, 12), new si({
+				color: J(o),
+				transparent: !0,
+				opacity: n === "fuente" ? .28 : .24,
+				depthWrite: !1
+			}));
+			u.position.copy(r), u.userData = {
+				id: t,
+				tipo: n
+			}, d.position.copy(r), d.visible = !0;
+			let f = document.createElement("div");
+			f.style.cssText = "pointer-events:auto;cursor:pointer;text-align:center;line-height:1.2;white-space:nowrap;padding:3px 7px;border-radius:8px;user-select:none;background:rgba(1,26,34,0.80);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(4px);transition:border-color .15s,transform .15s", f.title = n === "dato" ? `Clic para inspeccionar nodo «${s}»` : `Clic para inspeccionar fuente «${s}»`, f.addEventListener("mouseenter", () => {
+				e.hover.current = t;
+			}), f.addEventListener("mouseleave", () => {
+				e.hover.current === t && (e.hover.current = null);
+			}), f.addEventListener("click", (r) => {
+				r.stopPropagation(), n === "dato" ? e.alClickNodo?.(t) : e.alClickFuente?.(t);
+			});
+			let p = document.createElement("b");
+			p.style.cssText = "display:block;font:700 11px Montserrat,system-ui,sans-serif;color:#F8FCFF", p.textContent = s, f.append(p);
+			let m;
+			c != null && (m = document.createElement("small"), m.style.cssText = "display:block;font:600 9.5px Montserrat,system-ui,sans-serif", m.textContent = c, f.append(m));
+			let h = new nd(f);
+			l === "der" || l === "izq" ? (h.position.set(r.x + (l === "der" ? 1 : -1) * (a + .24), r.y, r.z), h.center.set(l === "der" ? 0 : 1, .5), f.style.textAlign = l === "der" ? "left" : "right") : h.position.set(r.x, r.y + (l === "arriba" ? 1 : -1) * (a + .5), r.z), D.add(u, d, h), w.set(t, {
+				pos: r,
+				baseZ: r.z,
+				fase: i,
+				r: a,
+				colorBase: o,
+				mesh: u,
+				halo: d,
+				et: h,
+				el: f,
+				sub: m,
+				txt: p
+			});
+		};
+		t.fuentes.forEach((e, r) => {
+			let i = -Math.PI / 2 + r * 2 * Math.PI / t.fuentes.length + .2, a = M(e.id, r);
+			n(e.id, "fuente", new W(Math.cos(i) * l * 1.15, Math.sin(i) * l, r % 2 ? .72 : -.72), r * .7, .44, a, e.n, e.d);
+		}), t.nodos.forEach((e, r) => {
+			let i = -Math.PI / 2 + r * 2 * Math.PI / t.nodos.length + .1, a = Math.cos(i), o = a > .3 ? "der" : a < -.3 ? "izq" : Math.sin(i) > 0 ? "arriba" : "abajo", s = Pf[e.fuentes[0] ?? ""] ?? Ff[r % Ff.length];
+			n(e.id, "dato", new W(a * u * 1.05, Math.sin(i) * u * .82, (r % 3 - 1) * 1.15), r * .55 + 1.2, .3, s, e.n, void 0, o);
+		});
+		let r = (e) => e === "c" ? new W() : w.get(e).pos, i = (e, t, n, i) => {
+			let a = r(e), o = r(t), s = a.clone().add(o).multiplyScalar(.5);
+			s.x += (o.y - a.y) * .09, s.y -= (o.x - a.x) * .09;
+			let c = new Sa(a, s, o), l = new Ei({
+				color: J(n),
+				transparent: !0,
+				opacity: .42
+			}), u = new Pi(new Ar().setFromPoints(c.getPoints(28)), l);
+			D.add(u), T.push({
+				linea: u,
+				mat: l,
+				a: e,
+				b: t,
+				colorBase: n,
+				...i
+			});
+		};
+		t.fuentes.forEach((e, t) => i("c", e.id, M(e.id, t), { fuente: e.id })), t.nodos.forEach((e, t) => {
+			let n = w.get(e.id)?.colorBase ?? Ff[t % Ff.length];
+			e.fuentes.forEach((t) => i(t, e.id, n, {
+				fuente: t,
+				dato: e.id
+			}));
+		});
+	}, P = null, ne = [], re = new go(.115, 12, 10), ie = (e, t, n) => {
+		let r = e.a === "c" ? new W() : w.get(e.a).pos, i = w.get(e.b).pos, a = (r.x + i.x) / 2 + (i.y - r.y) * .09, o = (r.y + i.y) / 2 - (i.x - r.x) * .09, s = 1 - t;
+		return n.set(s * s * r.x + 2 * s * t * a + t * t * i.x, s * s * r.y + 2 * s * t * o + t * t * i.y, s * s * r.z + t * t * i.z);
+	}, ae = 0, oe = () => {
+		let e = n.clientWidth;
+		if (!e) return;
+		ae = e;
+		let r = Math.max(540, Math.min(720, Math.round(e * .74)));
+		t.style.height = `${r}px`, i.setSize(e, r, !1), a.setSize(e, r), s.aspect = e / r, s.position.setLength(e < 560 ? 30 : e < 800 ? 22 : 17), s.updateProjectionMatrix();
+	}, se = new ResizeObserver(oe);
+	se.observe(n), oe();
+	let ce = new js(), F = new U(), I = null, le = (e) => {
+		I = {
+			x: e.clientX,
+			y: e.clientY
+		};
+	}, ue = (n) => {
+		if (!I) return;
+		let r = Math.hypot(n.clientX - I.x, n.clientY - I.y);
+		if (I = null, r > 6) return;
+		let i = t.getBoundingClientRect();
+		if (!i.width || !i.height) return;
+		F.x = (n.clientX - i.left) / i.width * 2 - 1, F.y = -((n.clientY - i.top) / i.height) * 2 + 1, ce.setFromCamera(F, s);
+		let a = [];
+		w.forEach((e) => a.push(e.mesh));
+		let o = ce.intersectObjects(a, !1);
+		if (o.length > 0) {
+			let t = o[0].object.userData;
+			if (t.id && t.tipo === "dato") {
+				e.alClickNodo?.(t.id);
+				return;
+			}
+			if (t.id && t.tipo === "fuente") {
+				e.alClickFuente?.(t.id);
+				return;
+			}
+		}
+	};
+	t.addEventListener("pointerdown", le), t.addEventListener("pointerup", ue);
+	let de = new W(), fe = ud(e.reducido, (l) => {
+		let u = n.clientWidth;
+		if (!u) return;
+		(u !== ae || !t.clientHeight) && oe();
+		let d = e.vista.current;
+		if (!d) return;
+		let f = d.cliente.nombre + "|" + d.fuentes.map((e) => e.id).join() + "|" + d.nodos.map((e) => e.id).join();
+		f !== E && (E = f, N(d));
+		let v = (e) => d.fuentes.find((t) => t.id === e)?.caida, y = l - e.t0.current, b = e.lit.current;
+		if (!e.reducido) {
+			let e = l * .001;
+			p.rotation.z = e * .65, p.rotation.x = .45 + Math.sin(e * .8) * .15, m.rotation.z = -e * .52, m.rotation.y = .35 + Math.cos(e * .7) * .15, h.rotation.z = e * .14, g.rotation.z = -e * .09, _.rotation.z = e * .06, C.rotation.z = e * .04, O.corona.rotation.y = e * .45, O.corona.rotation.x = e * .3;
+		}
+		P !== e.pulsos.current && (ne.forEach((e) => {
+			e.material.dispose(), o.remove(e);
+		}), P = e.pulsos.current, ne = P.map((e, t) => {
+			let n = v(e.src) ? r.bad : e.dst ? w.get(e.dst)?.colorBase ?? r.cyan : M(e.src, t), i = new G(re, new si({ color: J(n) }));
+			return i.visible = !1, o.add(i), i;
+		})), P.forEach((t, n) => {
+			let r = (y - t.t0) / t.dur;
+			r > 1 && t.dst && !v(t.src) && b.add(t.dst);
+			let i = ne[n];
+			if (e.reducido || v(t.src)) {
+				i.visible = !1;
+				return;
+			}
+			let a = r >= 0 && r <= 1 ? r : r > 1 ? (l * 52e-5 + n * .17) % 1 : -1;
+			if (i.visible = a >= 0 && a <= 1, i.visible) {
+				ie(t, a, i.position);
+				let e = .85 + Math.sin(l * .008 + n) * .22;
+				i.scale.setScalar(e);
+			}
+		});
+		for (let t of T) {
+			let n = !!(t.dato && (e.sel.current === t.dato || e.hover.current === t.dato) || t.fuente && (e.sel.current === t.fuente || e.hover.current === t.fuente)), i = !!v(t.fuente ?? "");
+			t.mat.color.copy(J(i ? r.bad : n ? r.naranja : t.colorBase)), t.mat.opacity = i ? .45 : n ? .96 : t.dato ? .36 : .58;
+		}
+		for (let t of d.fuentes) {
+			let n = w.get(t.id), i = e.sel.current === t.id || e.hover.current === t.id, a = t.caida ? r.bad : i ? r.naranja : n.colorBase;
+			n.mesh.material.color.copy(J(a)), n.halo.material.color.copy(J(a)), n.halo.visible = !0;
+			let o = e.reducido ? 0 : Math.sin(l * .0032 + n.fase) * .1;
+			if (n.mesh.scale.setScalar(1 + (i ? .34 : 0) + o * .3), n.halo.scale.setScalar(1.1 + (i ? .35 : 0) + o), !e.reducido) {
+				let e = Math.sin(l * .002 + n.fase) * .14;
+				n.mesh.position.z = n.baseZ + e, n.halo.position.z = n.baseZ + e;
+			}
+			if (n.txt.style.color = "#FFFFFF", n.txt.style.fontWeight = i ? "800" : "700", n.el.style.borderColor = t.caida ? q(r.bad) : i ? q(r.naranja) : `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.45)`, n.sub) {
+				n.sub.style.color = q(t.caida ? r.bad : n.colorBase);
+				let e = t.caida ? "no disponible" : t.d;
+				n.sub.textContent !== e && (n.sub.textContent = e);
+			}
+		}
+		for (let t of d.nodos) {
+			let n = w.get(t.id), i = t.estado === "restringido", a = t.estado === "caido", o = b.has(t.id) && t.estado === "ok", s = e.sel.current === t.id || e.hover.current === t.id, c = !!(e.sem.current?.hits.length && t.sem), u = a ? r.bad : i ? r.warn : s ? r.naranja : o ? n.colorBase : r.apagado;
+			n.mesh.material.color.copy(J(u)), n.halo.material.color.copy(J(u)), n.halo.visible = o || s || i || a;
+			let d = e.reducido ? 0 : Math.sin(l * .0036 + n.fase) * .1;
+			if (n.mesh.scale.setScalar(1 + (s ? .5 : 0) + (c ? .28 : 0) + d * .25), n.halo.scale.setScalar(1.08 + (s ? .4 : 0) + d), !e.reducido) {
+				let e = Math.sin(l * .0022 + n.fase) * .16;
+				n.mesh.position.z = n.baseZ + e, n.halo.position.z = n.baseZ + e;
+			}
+			n.txt.style.color = a ? q(r.bad) : i ? q(r.warn) : o || s ? "#FFFFFF" : q(r.mudo), n.txt.style.fontWeight = s ? "800" : "700", n.el.style.borderColor = s ? q(r.naranja) : a ? q(r.bad) : i ? q(r.warn) : o ? `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.42)` : "rgba(255,255,255,0.12)", n.el.style.boxShadow = s ? "0 0 14px rgba(255,167,38,0.45)" : "none";
+		}
+		A.textContent = d.cliente.nombre.split(" ").slice(0, 2).map((e) => e[0]).join(""), ee.textContent = d.cliente.nombre, O.halo.scale.setScalar(1 + (e.reducido ? 0 : Math.sin(l / 340) * .12)), c.update(), i.render(o, s), a.render(o, s);
+		let x = t.clientWidth, S = t.clientHeight;
+		if (x && S) {
+			let t = {}, n = (e, t) => (de.copy(e).project(s), {
+				x: (de.x + 1) / 2 * x,
+				y: (1 - de.y) / 2 * S,
+				r: t
+			});
+			t.c = n(new W(), 26), w.forEach((e, r) => {
+				t[r] = n(e.pos, e.r > .35 ? 14 : 10);
+			}), e.pos.current = t;
+		}
+	});
+	return () => {
+		fe(), t.removeEventListener("pointerdown", le), t.removeEventListener("pointerup", ue), se.disconnect(), c.dispose(), i.dispose(), a.domElement.remove(), ne.forEach((e) => e.material.dispose()), re.dispose(), x.dispose(), S.dispose();
+	};
+}
+//#endregion
+//#region src/three/red2d-daniel.ts
+var Lf = (e) => getComputedStyle(document.documentElement).getPropertyValue(e).trim();
+function Rf(e) {
+	let { canvas: t } = e, n = [], r = null, i = 0, a = (e) => {
+		let i = t.getBoundingClientRect(), a = e.clientX - i.left, o = e.clientY - i.top, s = null;
+		for (let e of n) if (Math.hypot(a - e.x, o - e.y) <= e.r + 5) {
+			s = e;
+			break;
+		}
+		r = s, t.style.cursor = s ? "pointer" : "default";
+	}, o = () => {
+		r = null;
+	}, s = () => {
+		let t = r;
+		t && (t.kind === "node" && t.n ? e.alClickNodo(t.n.id) : t.kind === "src" && t.s ? e.alClickFuente(t.s.id) : t.kind === "cli" && e.alClickCliente());
+	}, c = (i) => {
+		let a = e.estado.current;
+		if (!a) return;
+		let o = t.clientWidth, s = t.clientHeight || 560;
+		if (!o) return;
+		let c = window.devicePixelRatio || 1;
+		(t.width !== Math.floor(o * c) || t.height !== Math.floor(s * c)) && (t.width = Math.floor(o * c), t.height = Math.floor(s * c));
+		let l = t.getContext("2d");
+		if (!l) return;
+		l.save(), l.scale(c, c);
+		let u = Lf("--aybar-color-primary-900") || "#012B33", d = Lf("--aybar-color-primary-700") || "#02424E", f = Lf("--aybar-color-secondary-400") || "#FFA726", p = Lf("--aybar-color-success-500") || "#36A558", m = Lf("--aybar-color-warning-500") || "#B88100", h = Lf("--aybar-color-danger-500") || "#D63D4A", g = Lf("--aybar-color-neutral-0") || "#FFFFFF";
+		l.fillStyle = u, l.fillRect(0, 0, o, s);
+		let _ = o * .5, v = s * .51, y = Math.min(o, s), b = y * .24, x = y * .41;
+		[
+			b * .52,
+			b,
+			x
+		].forEach((e, t) => {
+			l.beginPath(), l.arc(_, v, e, 0, Math.PI * 2), l.strokeStyle = t === 1 ? "rgba(255, 167, 38, 0.20)" : "rgba(255, 255, 255, 0.08)", l.setLineDash(t === 2 ? [3, 6] : []), l.lineWidth = 1, l.stroke();
+		}), l.setLineDash([]);
+		let S = {};
+		a.fuentes.forEach((e, t) => {
+			let n = -Math.PI / 2 + t * 2 * Math.PI / a.fuentes.length;
+			S[e.id] = {
+				kind: "src",
+				s: e,
+				x: _ + Math.cos(n) * b,
+				y: v + Math.sin(n) * b,
+				r: 16
+			};
+		});
+		let C = {};
+		a.nodos.forEach((e, t) => {
+			let n = -Math.PI / 2 + t * 2 * Math.PI / a.nodos.length;
+			C[e.id] = {
+				kind: "node",
+				n: e,
+				x: _ + Math.cos(n) * x,
+				y: v + Math.sin(n) * x,
+				r: 13
+			};
+		});
+		let w = r, T = a.sel, E = a.caidas, D = i * .001, O = (e, t, n, r, i, a, o) => {
+			let s = 1 - o;
+			return [s * s * e + 2 * s * o * n + o * o * i, s * s * t + 2 * s * o * r + o * o * a];
+		};
+		a.nodos.forEach((e, t) => {
+			let n = C[e.id], r = e.codigo;
+			e.fuentes.forEach((i, a) => {
+				let o = S[i];
+				if (!o) return;
+				let s = E.includes(i), c = T === e.id || w?.kind === "node" && w.n?.id === e.id || w?.kind === "src" && w.s?.id === i, u = (o.x + n.x) * .5 + (_ - (o.x + n.x) * .5) * .18, d = (o.y + n.y) * .5 + (v - (o.y + n.y) * .5) * .18;
+				if (l.beginPath(), l.moveTo(o.x, o.y), l.quadraticCurveTo(u, d, n.x, n.y), l.strokeStyle = s ? "rgba(214, 61, 74, 0.42)" : c ? "rgba(255, 167, 38, 0.90)" : r === "locked" ? "rgba(184, 129, 0, 0.32)" : "rgba(255, 255, 255, 0.18)", l.lineWidth = c ? 2.2 : 1.1, l.stroke(), !s && r === "ok") {
+					let e = (D * .42 + t * .07 + a * .19) % 1, [r, i] = O(o.x, o.y, u, d, n.x, n.y, e);
+					l.beginPath(), l.arc(r, i, c ? 3.2 : 2.1, 0, Math.PI * 2), l.fillStyle = c ? f : "rgba(255, 255, 255, 0.78)", l.fill();
+				}
+			});
+		}), a.fuentes.forEach((e, t) => {
+			let n = S[e.id], r = E.includes(e.id), i = w?.kind === "src" && w.s?.id === e.id;
+			if (l.beginPath(), l.moveTo(_, v), l.lineTo(n.x, n.y), l.strokeStyle = r ? "rgba(214, 61, 74, 0.48)" : i ? "rgba(255, 167, 38, 0.85)" : "rgba(255, 255, 255, 0.22)", l.lineWidth = i ? 2 : 1.15, l.stroke(), !r) {
+				let e = (D * .55 + t * .13) % 1, r = _ + (n.x - _) * e, i = v + (n.y - v) * e;
+				l.beginPath(), l.arc(r, i, 2.3, 0, Math.PI * 2), l.fillStyle = f, l.fill();
+			}
+		}), n = [], a.fuentes.forEach((e) => {
+			let t = S[e.id];
+			n.push(t);
+			let r = E.includes(e.id), i = w?.kind === "src" && w.s?.id === e.id;
+			l.beginPath(), l.arc(t.x, t.y, t.r + (i ? 3 : 0), 0, Math.PI * 2), l.fillStyle = r ? "rgba(214, 61, 74, 0.28)" : "rgba(255, 167, 38, 0.20)", l.fill(), l.lineWidth = i ? 2.4 : 1.6, l.strokeStyle = r ? h : f, l.stroke(), l.beginPath(), l.arc(t.x, t.y, 4.5, 0, Math.PI * 2), l.fillStyle = r ? h : f, l.fill(), l.font = "600 10px Inter, system-ui, sans-serif", l.fillStyle = g, l.textAlign = "center", l.fillText(e.nombre, t.x, t.y + t.r + 13);
+		}), a.nodos.forEach((e) => {
+			let t = C[e.id];
+			n.push(t);
+			let r = e.codigo, i = T === e.id, a = w?.kind === "node" && w.n?.id === e.id, o = r === "ok" ? p : r === "locked" ? m : h;
+			(i || a) && (l.beginPath(), l.arc(t.x, t.y, t.r + 6, 0, Math.PI * 2), l.fillStyle = "rgba(255, 167, 38, 0.24)", l.fill()), l.beginPath(), l.arc(t.x, t.y, t.r, 0, Math.PI * 2), l.fillStyle = i ? d : "rgba(2, 66, 78, 0.92)", l.fill(), l.lineWidth = i || a ? 2.5 : 1.6, l.strokeStyle = i ? f : o, l.stroke(), l.beginPath(), l.arc(t.x, t.y, 4, 0, Math.PI * 2), l.fillStyle = o, l.fill();
+			let s = Math.atan2(t.y - v, t.x - _), c = t.x + Math.cos(s) * (t.r + 10), u = t.y + Math.sin(s) * (t.r + 10);
+			l.font = `${i ? "700" : "600"} 10.5px Inter, system-ui, sans-serif`, l.fillStyle = r === "locked" ? "rgba(255, 255, 255, 0.60)" : g, l.textAlign = Math.cos(s) > .22 ? "left" : Math.cos(s) < -.22 ? "right" : "center", l.textBaseline = "middle", l.fillText(e.nombre, c, u);
+		});
+		let k = a.cliente, A = 34 + Math.sin(D * 2.6) * 2.5;
+		l.beginPath(), l.arc(_, v, A + 8, 0, Math.PI * 2), l.fillStyle = "rgba(255, 167, 38, 0.16)", l.fill(), l.beginPath(), l.arc(_, v, 32, 0, Math.PI * 2), l.fillStyle = d, l.fill(), l.lineWidth = 3, l.strokeStyle = f, l.stroke(), l.fillStyle = g, l.textAlign = "center", l.textBaseline = "middle", l.font = "700 15px Inter, system-ui, sans-serif", l.fillText(k.iniciales, _, v - 4), l.font = "600 9.5px Inter, system-ui, sans-serif", l.fillStyle = f, l.fillText(k.lotes.join(" · "), _, v + 12), n.push({
+			kind: "cli",
+			x: _,
+			y: v,
+			r: 32
+		}), l.restore();
+	}, l = !1, u = (e) => {
+		try {
+			c(e);
+		} catch (e) {
+			l || (l = !0, console.error("[grafo 2D]", e));
+		}
+		i = requestAnimationFrame(u);
+	};
+	return i = requestAnimationFrame(u), t.addEventListener("mousemove", a), t.addEventListener("mouseleave", o), t.addEventListener("click", s), () => {
+		cancelAnimationFrame(i), t.removeEventListener("mousemove", a), t.removeEventListener("mouseleave", o), t.removeEventListener("click", s);
+	};
+}
+//#endregion
 //#region src/three/hud.ts
-var Df = (e, t = "0 0 24 24") => `<svg viewBox="${t}" aria-hidden="true">${e}</svg>`, Of = {
-	ticket: Df("<path d=\"M3 9a2 2 0 0 0 0 6v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a2 2 0 0 1 0-6V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z\"/><path d=\"M14 6v12\" stroke-dasharray=\"2 2.6\"/>"),
-	reloj: Df("<circle cx=\"12\" cy=\"12.5\" r=\"8.2\"/><path d=\"m8.4 12.6 2.5 2.5 4.7-5\"/><path d=\"M9.5 2.8h5\"/>"),
-	estrella: Df("<path d=\"m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.7 6.6 19.6l1.1-6L3.2 9.4l6.1-.8z\"/>"),
-	cara: Df("<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8.4 14.3a4.2 4.2 0 0 0 7.2 0\"/><path d=\"M9 9.6h.01M15 9.6h.01\"/>"),
-	llama: Df("<path d=\"M12 2.8c1 3.6 5.2 5.1 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.3 1-3.7 2.1-4.8.3 1.5 1 2.1 1.9 2.3C10.5 8 10.8 5.6 12 2.8z\"/>")
-}, kf = "<svg viewBox=\"0 0 46 46\" aria-hidden=\"true\"><path d=\"M23 3 40.3 13v20L23 43 5.7 33V13z\"/></svg>", Af = `<svg viewBox="0 0 90 16" aria-hidden="true" fill="currentColor">${[
+var zf = (e, t = "0 0 24 24") => `<svg viewBox="${t}" aria-hidden="true">${e}</svg>`, Bf = {
+	ticket: zf("<path d=\"M3 9a2 2 0 0 0 0 6v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a2 2 0 0 1 0-6V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1z\"/><path d=\"M14 6v12\" stroke-dasharray=\"2 2.6\"/>"),
+	reloj: zf("<circle cx=\"12\" cy=\"12.5\" r=\"8.2\"/><path d=\"m8.4 12.6 2.5 2.5 4.7-5\"/><path d=\"M9.5 2.8h5\"/>"),
+	estrella: zf("<path d=\"m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.7 6.6 19.6l1.1-6L3.2 9.4l6.1-.8z\"/>"),
+	cara: zf("<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8.4 14.3a4.2 4.2 0 0 0 7.2 0\"/><path d=\"M9 9.6h.01M15 9.6h.01\"/>"),
+	llama: zf("<path d=\"M12 2.8c1 3.6 5.2 5.1 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.3 1-3.7 2.1-4.8.3 1.5 1 2.1 1.9 2.3C10.5 8 10.8 5.6 12 2.8z\"/>")
+}, Vf = "<svg viewBox=\"0 0 46 46\" aria-hidden=\"true\"><path d=\"M23 3 40.3 13v20L23 43 5.7 33V13z\"/></svg>", Hf = `<svg viewBox="0 0 90 16" aria-hidden="true" fill="currentColor">${[
 	0,
 	1,
 	2,
 	3,
 	4
-].map((e) => `<g transform="translate(${e * 18} -1)"><path d="m9 1.5 2.1 4.4 4.7.6-3.4 3.2.9 4.7L9 12.1 4.7 14.4l.9-4.7L2.2 6.5l4.7-.6z"/></g>`).join("")}</svg>`, jf = () => typeof matchMedia < "u" && matchMedia("(prefers-reduced-motion: reduce)").matches, Mf = {
+].map((e) => `<g transform="translate(${e * 18} -1)"><path d="m9 1.5 2.1 4.4 4.7.6-3.4 3.2.9 4.7L9 12.1 4.7 14.4l.9-4.7L2.2 6.5l4.7-.6z"/></g>`).join("")}</svg>`, Uf = () => typeof matchMedia < "u" && matchMedia("(prefers-reduced-motion: reduce)").matches, Wf = {
 	int: (e) => String(Math.round(e)),
 	signed: (e) => e > 0 ? `+${Math.round(e)}` : String(Math.round(e)),
 	pct: (e) => String(Math.round(e)),
 	dec: (e) => e.toFixed(1).replace(".", ",")
-}, Nf = /* @__PURE__ */ new WeakMap(), Pf = (e, t = "", n = "") => {
+}, Gf = /* @__PURE__ */ new WeakMap(), Kf = (e, t = "", n = "") => {
 	let r = document.createElement(e);
 	return t && (r.className = t), n && (r.innerHTML = n), r;
 };
-function Ff(e) {
+function qf(e) {
 	e.replaceChildren(), e.classList.add("v3-hud");
-	let t = Pf("div", "v3-hud-grid");
+	let t = Kf("div", "v3-hud-grid");
 	e.append(t);
 	let n = {}, r = (e, n, r, i) => {
-		let a = Pf("article", "v3-k");
+		let a = Kf("article", "v3-k");
 		a.dataset.k = e, a.setAttribute("role", "group"), a.title = i;
-		let o = Pf("div"), s = Pf("span", "v3-k-lbl");
+		let o = Kf("div"), s = Kf("span", "v3-k-lbl");
 		s.textContent = n;
-		let c = Pf("b", "v3-k-val");
+		let c = Kf("b", "v3-k-val");
 		o.append(s, c);
-		let l = Pf("div", "v3-k-sub");
+		let l = Kf("div", "v3-k-sub");
 		return a.append(r, o, l), t.append(a), {
 			el: a,
 			val: c,
@@ -15631,29 +16200,29 @@ function Ff(e) {
 			actual: null,
 			raf: 0
 		};
-	}, i = (e) => Pf("div", "v3-k-ic", e), a = r("act", "Tickets activos", i(Of.ticket), "Tickets abiertos en este momento (incluye los que esperan al cliente o están escalados)."), o = Pf("svg", "v3-spark");
-	o.setAttribute("viewBox", "0 0 96 28"), o.setAttribute("aria-hidden", "true"), o.innerHTML = "<path class=\"area\"/><path class=\"linea\"/>", n.spark = o, n.chipAct = Pf("span", "v3-k-chip"), n.tend = Pf("span", "v3-tend"), a.sub.append(n.chipAct, n.tend, o);
-	let s = Pf("div", "v3-anillo", `<svg viewBox="0 0 56 56" aria-hidden="true"><circle class="base" cx="28" cy="28" r="23"/><circle class="meta" cx="28" cy="28" r="23" stroke-dashoffset="0"/><circle class="arco" cx="28" cy="28" r="23" stroke-dasharray="144.5" stroke-dashoffset="144.5"/></svg><span class="ic">${Of.reloj}</span>`);
+	}, i = (e) => Kf("div", "v3-k-ic", e), a = r("act", "Tickets activos", i(Bf.ticket), "Tickets abiertos en este momento (incluye los que esperan al cliente o están escalados)."), o = Kf("svg", "v3-spark");
+	o.setAttribute("viewBox", "0 0 96 28"), o.setAttribute("aria-hidden", "true"), o.innerHTML = "<path class=\"area\"/><path class=\"linea\"/>", n.spark = o, n.chipAct = Kf("span", "v3-k-chip"), n.tend = Kf("span", "v3-tend"), a.sub.append(n.chipAct, n.tend, o);
+	let s = Kf("div", "v3-anillo", `<svg viewBox="0 0 56 56" aria-hidden="true"><circle class="base" cx="28" cy="28" r="23"/><circle class="meta" cx="28" cy="28" r="23" stroke-dashoffset="0"/><circle class="arco" cx="28" cy="28" r="23" stroke-dasharray="144.5" stroke-dashoffset="144.5"/></svg><span class="ic">${Bf.reloj}</span>`);
 	n.arco = s.querySelector(".arco");
 	let c = s.querySelector(".meta");
 	c.setAttribute("stroke-dasharray", "1.8 142.7"), c.setAttribute("stroke-dashoffset", "-130.05");
 	let l = r("sla", "Resueltos en SLA", s, "Porcentaje de tickets resueltos dentro de su plazo. La marca blanca del anillo es la meta de 90 %.");
-	n.subSla = Pf("span"), n.chipMeta = Pf("span", "v3-k-chip"), l.sub.append(n.subSla);
-	let u = r("csat", "CSAT del día", i(Of.estrella), "Satisfacción promedio de las encuestas respondidas hoy (1 a 5).");
-	n.estrellas = Pf("span", "v3-estrellas", `<span class="fondo">${Af}</span><span class="lleno">${Af}</span>`), n.subCsat = Pf("span"), u.sub.append(n.estrellas, n.subCsat);
-	let d = Pf("div", "v3-hex", kf);
-	n.hexN = Pf("b"), d.append(n.hexN);
+	n.subSla = Kf("span"), n.chipMeta = Kf("span", "v3-k-chip"), l.sub.append(n.subSla);
+	let u = r("csat", "CSAT del día", i(Bf.estrella), "Satisfacción promedio de las encuestas respondidas hoy (1 a 5).");
+	n.estrellas = Kf("span", "v3-estrellas", `<span class="fondo">${Hf}</span><span class="lleno">${Hf}</span>`), n.subCsat = Kf("span"), u.sub.append(n.estrellas, n.subCsat);
+	let d = Kf("div", "v3-hex", Vf);
+	n.hexN = Kf("b"), d.append(n.hexN);
 	let f = r("niv", "Nivel del equipo", d, "Nivel, XP y racha del equipo: +10 XP por ticket dentro del SLA, +5 con rayo, +3 fuera del SLA.");
-	n.racha = Pf("span", "v3-racha", `${Of.llama}<span></span>`), n.faltan = Pf("span"), f.sub.append(n.racha, n.faltan);
-	let p = Pf("div", "v3-xp"), m = Pf("i");
+	n.racha = Kf("span", "v3-racha", `${Bf.llama}<span></span>`), n.faltan = Kf("span"), f.sub.append(n.racha, n.faltan);
+	let p = Kf("div", "v3-xp"), m = Kf("i");
 	p.append(m), n.xp = m, f.el.append(p);
-	let h = r("nps", "NPS", i(Of.cara), "Net Promoter Score: % de promotores (9–10) menos % de detractores (0–6).");
-	n.chipNps = Pf("span", "v3-k-chip"), n.cuentaNps = Pf("span", "v3-nps-cuenta"), h.sub.append(n.chipNps, n.cuentaNps);
-	let g = Pf("article", "v3-estados");
+	let h = r("nps", "NPS", i(Bf.cara), "Net Promoter Score: % de promotores (9–10) menos % de detractores (0–6).");
+	n.chipNps = Kf("span", "v3-k-chip"), n.cuentaNps = Kf("span", "v3-nps-cuenta"), h.sub.append(n.chipNps, n.cuentaNps);
+	let g = Kf("article", "v3-estados");
 	g.setAttribute("role", "group"), g.setAttribute("aria-label", "Tickets por estado");
-	let _ = Pf("header", "v3-est-cab"), v = Pf("span", "v3-k-lbl");
-	v.textContent = "Tickets por estado", n.totalEst = Pf("span", "v3-est-total"), _.append(v, n.totalEst);
-	let y = Pf("ul", "v3-est-lista");
+	let _ = Kf("header", "v3-est-cab"), v = Kf("span", "v3-k-lbl");
+	v.textContent = "Tickets por estado", n.totalEst = Kf("span", "v3-est-total"), _.append(v, n.totalEst);
+	let y = Kf("ul", "v3-est-lista");
 	return n.listaEst = y, g.append(_, y), t.append(g), {
 		t: {
 			act: a,
@@ -15669,11 +16238,11 @@ function Ff(e) {
 		est: /* @__PURE__ */ new Map()
 	};
 }
-function If(e, t, n, r = "") {
+function Jf(e, t, n, r = "") {
 	let i = (t) => {
 		e.val.innerHTML = t == null ? "—" : n(t) + (r ? `<small>${r}</small>` : "");
 	};
-	if (t == null || e.actual == null || jf() || t === e.actual) {
+	if (t == null || e.actual == null || Uf() || t === e.actual) {
 		cancelAnimationFrame(e.raf), e.actual = t, i(t);
 		return;
 	}
@@ -15685,59 +16254,59 @@ function If(e, t, n, r = "") {
 	};
 	e.raf = requestAnimationFrame(s), e.val.classList.remove("pop"), e.val.offsetWidth, e.val.classList.add("pop");
 }
-var Lf = (e, t) => {
+var Yf = (e, t) => {
 	e.classList.remove(t), e.offsetWidth, e.classList.add(t), setTimeout(() => e.classList.remove(t), 1e3);
-}, Rf = (e, t) => {
-	if (jf()) return;
-	let n = Pf("span", "v3-delta");
+}, Xf = (e, t) => {
+	if (Uf()) return;
+	let n = Kf("span", "v3-delta");
 	n.textContent = t, e.append(n), setTimeout(() => n.remove(), 1500);
-}, zf = (e) => {
-	if (!jf()) for (let t = 0; t < 10; t++) {
-		let n = Pf("i", "v3-chispa"), r = t / 10 * Math.PI * 2, i = 30 + Math.random() * 26;
+}, Zf = (e) => {
+	if (!Uf()) for (let t = 0; t < 10; t++) {
+		let n = Kf("i", "v3-chispa"), r = t / 10 * Math.PI * 2, i = 30 + Math.random() * 26;
 		n.style.setProperty("--dx", `${Math.cos(r) * i}px`), n.style.setProperty("--dy", `${Math.sin(r) * i}px`), n.style.animationDelay = `${t * 15}ms`, e.append(n), setTimeout(() => n.remove(), 1300);
 	}
-}, Bf = (e, t, n, r = !1) => {
-	e.textContent = "", e.className = "v3-k-chip" + (r ? " pulsa" : ""), e.dataset.e = n, e.style.setProperty("--v3-tono", `var(--v3-${n})`), e.append(Pf("i", "v3-dot"), document.createTextNode(t));
+}, Qf = (e, t, n, r = !1) => {
+	e.textContent = "", e.className = "v3-k-chip" + (r ? " pulsa" : ""), e.dataset.e = n, e.style.setProperty("--v3-tono", `var(--v3-${n})`), e.append(Kf("i", "v3-dot"), document.createTextNode(t));
 };
-function Vf(e, t) {
+function $f(e, t) {
 	if (t.length < 2) return;
 	let n = Math.min(...t), r = Math.max(...t), i = Math.max(1, r - n), a = t.map((e, r) => [r / (t.length - 1) * 96, 24 - (e - n) / i * 20]).map(([e, t], n) => `${n ? "L" : "M"}${e.toFixed(1)} ${t.toFixed(1)}`).join("");
 	e.querySelector(".linea").setAttribute("d", a), e.querySelector(".area").setAttribute("d", `${a}L96 28L0 28Z`);
 }
-function Hf(e, t) {
-	xd();
-	let n = Nf.get(e);
-	n || (n = Ff(e), Nf.set(e, n));
+function ep(e, t) {
+	Od();
+	let n = Gf.get(e);
+	n || (n = qf(e), Gf.set(e, n));
 	let { t: r, nodos: i } = n, a = n.prev, o = performance.now(), s = t.riesgo > 0 ? "warn" : "pri";
-	r.act.el.dataset.estado = s, If(r.act, t.act, Mf.int), Bf(i.chipAct, t.riesgo > 0 ? `${t.riesgo} en riesgo` : "Sin riesgos", t.riesgo > 0 ? "warn" : "ok", t.riesgo > 0), (o - n.ultimaMuestra > 1800 || n.hist.length < 2) && (n.hist.push(t.act), n.hist.length > 28 && n.hist.shift(), n.ultimaMuestra = o), Vf(i.spark, n.hist);
+	r.act.el.dataset.estado = s, Jf(r.act, t.act, Wf.int), Qf(i.chipAct, t.riesgo > 0 ? `${t.riesgo} en riesgo` : "Sin riesgos", t.riesgo > 0 ? "warn" : "ok", t.riesgo > 0), (o - n.ultimaMuestra > 1800 || n.hist.length < 2) && (n.hist.push(t.act), n.hist.length > 28 && n.hist.shift(), n.ultimaMuestra = o), $f(i.spark, n.hist);
 	let c = n.hist.length > 6 ? n.hist[n.hist.length - 7] : n.hist[0] ?? t.act, l = t.act - c;
 	i.tend.textContent = l === 0 ? "→" : l > 0 ? `▲ ${l}` : `▼ ${-l}`, i.tend.className = "v3-tend " + (l > 0 ? "sube" : l < 0 ? "baja" : ""), i.tend.title = "Diferencia frente a hace unos segundos";
 	let u = t.sla, d = u == null ? "pri" : u >= 90 ? "ok" : u >= 70 ? "warn" : "bad";
-	r.sla.el.dataset.estado = d, If(r.sla, u, Mf.pct, "%"), i.arco.setAttribute("stroke-dashoffset", String(144.5 * (1 - (u ?? 0) / 100))), Bf(i.chipMeta, "Meta 90 %", d === "ok" ? "ok" : "warn"), i.subSla.textContent = t.res ? `${t.enSla} de ${t.res} (Meta 90 %)` : "Aún sin resueltos (Meta 90 %)", r.csat.el.dataset.estado = t.csat == null ? "pri" : t.csat >= 4 ? "acc" : t.csat >= 3 ? "warn" : "bad", If(r.csat, t.csat, Mf.dec, "/5"), i.estrellas.querySelector(".lleno").style.setProperty("--r", `${100 - (t.csat ?? 0) / 5 * 100}%`), i.subCsat.textContent = t.nCsat ? `${t.nCsat} respuesta${t.nCsat === 1 ? "" : "s"}` : "Sin respuestas", r.niv.el.dataset.estado = "acc", r.niv.el.querySelector(".v3-k-lbl").textContent = `Nivel ${t.nivel} del equipo`, i.hexN.textContent = String(t.nivel), r.niv.actual == null || a == null ? (r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`) : (t.xp !== a.xp || t.nivel !== a.nivel) && (cancelAnimationFrame(r.niv.raf), r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`, r.niv.val.classList.remove("pop"), r.niv.val.offsetWidth, r.niv.val.classList.add("pop")), i.xp.style.setProperty("--p", String(Math.min(1, t.xp / t.meta))), i.racha.className = "v3-racha" + (t.racha > 0 ? " viva" : ""), i.racha.lastElementChild.textContent = `Racha ${t.racha}`, i.racha.title = "Tickets seguidos dentro del SLA", i.faltan.textContent = `Faltan ${Math.max(0, t.meta - t.xp)} XP`, globalThis.__ptNota?.("Tickets por estado: no incluye «cancelados». Ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO."), globalThis.__ptNota?.("NPS del turno: estimado sobre las encuestas respondidas del día con un reparto fijo de 72 % promotores y 18 % pasivos (dato de ejemplo de la presentación); el NPS-C real llegará con el motor de indicadores.");
+	r.sla.el.dataset.estado = d, Jf(r.sla, u, Wf.pct, "%"), i.arco.setAttribute("stroke-dashoffset", String(144.5 * (1 - (u ?? 0) / 100))), Qf(i.chipMeta, "Meta 90 %", d === "ok" ? "ok" : "warn"), i.subSla.textContent = t.res ? `${t.enSla} de ${t.res} (Meta 90 %)` : "Aún sin resueltos (Meta 90 %)", r.csat.el.dataset.estado = t.csat == null ? "pri" : t.csat >= 4 ? "acc" : t.csat >= 3 ? "warn" : "bad", Jf(r.csat, t.csat, Wf.dec, "/5"), i.estrellas.querySelector(".lleno").style.setProperty("--r", `${100 - (t.csat ?? 0) / 5 * 100}%`), i.subCsat.textContent = t.nCsat ? `${t.nCsat} respuesta${t.nCsat === 1 ? "" : "s"}` : "Sin respuestas", r.niv.el.dataset.estado = "acc", r.niv.el.querySelector(".v3-k-lbl").textContent = `Nivel ${t.nivel} del equipo`, i.hexN.textContent = String(t.nivel), r.niv.actual == null || a == null ? (r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`) : (t.xp !== a.xp || t.nivel !== a.nivel) && (cancelAnimationFrame(r.niv.raf), r.niv.actual = t.xp, r.niv.val.innerHTML = `${t.xp}<small>/ ${t.meta} XP</small>`, r.niv.val.classList.remove("pop"), r.niv.val.offsetWidth, r.niv.val.classList.add("pop")), i.xp.style.setProperty("--p", String(Math.min(1, t.xp / t.meta))), i.racha.className = "v3-racha" + (t.racha > 0 ? " viva" : ""), i.racha.lastElementChild.textContent = `Racha ${t.racha}`, i.racha.title = "Tickets seguidos dentro del SLA", i.faltan.textContent = `Faltan ${Math.max(0, t.meta - t.xp)} XP`, globalThis.__ptNota?.("Tickets por estado: no incluye «cancelados». Ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO."), globalThis.__ptNota?.("NPS del turno: estimado sobre las encuestas respondidas del día con un reparto fijo de 72 % promotores y 18 % pasivos (dato de ejemplo de la presentación); el NPS-C real llegará con el motor de indicadores.");
 	let f = t.nps.valor;
-	r.nps.el.dataset.estado = f == null ? "pri" : f >= 30 ? "ok" : f >= 0 ? "warn" : "bad", r.nps.el.querySelector(".v3-k-lbl").textContent = "NPS del turno", If(r.nps, f, Mf.signed), Bf(i.chipNps, `Encuestas · n=${t.nps.n}`, f != null && f >= 30 ? "ok" : "warn"), i.cuentaNps.textContent = t.nps.n ? `Prom: ${t.nps.prom} · Pas: ${t.nps.pas} · Det: ${t.nps.det}` : "Sin respuestas", i.cuentaNps.title = "Promotores · pasivos · detractores", r.nps.el.title = "NPS del turno = % de promotores menos % de detractores, estimado sobre las encuestas respondidas del día.";
+	r.nps.el.dataset.estado = f == null ? "pri" : f >= 30 ? "ok" : f >= 0 ? "warn" : "bad", r.nps.el.querySelector(".v3-k-lbl").textContent = "NPS del turno", Jf(r.nps, f, Wf.signed), Qf(i.chipNps, `Encuestas · n=${t.nps.n}`, f != null && f >= 30 ? "ok" : "warn"), i.cuentaNps.textContent = t.nps.n ? `Prom: ${t.nps.prom} · Pas: ${t.nps.pas} · Det: ${t.nps.det}` : "Sin respuestas", i.cuentaNps.title = "Promotores · pasivos · detractores", r.nps.el.title = "NPS del turno = % de promotores menos % de detractores, estimado sobre las encuestas respondidas del día.";
 	let p = Math.max(1, ...t.estados.map((e) => e.v)), m = t.estados.reduce((e, t) => e + t.v, 0);
 	i.totalEst.textContent = `${m} en total`, t.estados.forEach((e, t) => {
 		let r = n.est.get(e.id);
 		if (!r) {
-			let a = Pf("li", "v3-est");
+			let a = Kf("li", "v3-est");
 			a.dataset.e = e.id, t === 5 && a.classList.add("sep");
-			let o = Pf("b"), s = Pf("span");
+			let o = Kf("b"), s = Kf("span");
 			s.textContent = e.n;
-			let c = Pf("i"), l = Pf("span", "v3-est-pista");
-			l.append(c), a.append(Pf("span", "v3-dot"), o, s, l), i.listaEst.append(a), r = {
+			let c = Kf("i"), l = Kf("span", "v3-est-pista");
+			l.append(c), a.append(Kf("span", "v3-dot"), o, s, l), i.listaEst.append(a), r = {
 				li: a,
 				v: o,
 				barra: c,
 				ultimo: e.v
 			}, n.est.set(e.id, r);
 		}
-		r.ultimo !== e.v && (Lf(r.li, e.v > r.ultimo ? "sube" : "baja"), r.ultimo = e.v), r.v.textContent = String(e.v), r.barra.style.setProperty("--p", String(e.v / p));
-	}), a && (t.act !== a.act && (Lf(r.act.el, t.act > a.act ? "sube" : "baja"), Rf(r.act.el, `${t.act > a.act ? "+" : ""}${t.act - a.act}`)), u != null && a.sla != null && u !== a.sla && (Lf(r.sla.el, u > a.sla ? "sube-bien" : "baja-mal"), Rf(r.sla.el, `${u > a.sla ? "+" : ""}${u - a.sla} pp`)), t.csat != null && a.csat != null && Math.abs(t.csat - a.csat) >= .05 && (Lf(r.csat.el, t.csat > a.csat ? "sube-bien" : "baja-mal"), Rf(r.csat.el, `${t.csat > a.csat ? "+" : ""}${(t.csat - a.csat).toFixed(1).replace(".", ",")}`)), t.nivel > a.nivel ? (Lf(r.niv.el, "nivel-up"), zf(r.niv.el), Rf(r.niv.el, `¡Nivel ${t.nivel}!`)) : t.xp > a.xp && Rf(r.niv.el, `+${t.xp - a.xp} XP`), t.racha > 0 && t.racha % 10 == 0 && t.racha !== a.racha && zf(r.niv.el)), n.prev = { ...t };
+		r.ultimo !== e.v && (Yf(r.li, e.v > r.ultimo ? "sube" : "baja"), r.ultimo = e.v), r.v.textContent = String(e.v), r.barra.style.setProperty("--p", String(e.v / p));
+	}), a && (t.act !== a.act && (Yf(r.act.el, t.act > a.act ? "sube" : "baja"), Xf(r.act.el, `${t.act > a.act ? "+" : ""}${t.act - a.act}`)), u != null && a.sla != null && u !== a.sla && (Yf(r.sla.el, u > a.sla ? "sube-bien" : "baja-mal"), Xf(r.sla.el, `${u > a.sla ? "+" : ""}${u - a.sla} pp`)), t.csat != null && a.csat != null && Math.abs(t.csat - a.csat) >= .05 && (Yf(r.csat.el, t.csat > a.csat ? "sube-bien" : "baja-mal"), Xf(r.csat.el, `${t.csat > a.csat ? "+" : ""}${(t.csat - a.csat).toFixed(1).replace(".", ",")}`)), t.nivel > a.nivel ? (Yf(r.niv.el, "nivel-up"), Zf(r.niv.el), Xf(r.niv.el, `¡Nivel ${t.nivel}!`)) : t.xp > a.xp && Xf(r.niv.el, `+${t.xp - a.xp} XP`), t.racha > 0 && t.racha % 10 == 0 && t.racha !== a.racha && Zf(r.niv.el)), n.prev = { ...t };
 }
 //#endregion
 //#region src/three/bot.ts
-var Uf = [
+var tp = [
 	{
 		id: "empatico",
 		n: "Empático"
@@ -15750,7 +16319,7 @@ var Uf = [
 		id: "breve",
 		n: "Breve"
 	}
-], Wf = {
+], np = {
 	CTA: "tu consulta sobre tu estado de cuenta",
 	PED: "tu pedido",
 	VIS: "la visita técnica que solicitaste",
@@ -15761,9 +16330,9 @@ var Uf = [
 	RES: "el proceso sobre tu contrato",
 	ING: "tu solicitud de ingreso al proyecto",
 	RSV: "tu reserva de bus"
-}, Gf = (e) => (e.cliente ?? "cliente").split(" ")[0], Kf = (e) => Wf[e.tipoId] ?? "tu solicitud";
-function qf(e, t = !1) {
-	let n = Kf(e);
+}, rp = (e) => (e.cliente ?? "cliente").split(" ")[0], ip = (e) => np[e.tipoId] ?? "tu solicitud";
+function ap(e, t = !1) {
+	let n = ip(e);
 	switch (e.estadoId) {
 		case "OPEN": return t ? "ya la recibimos y la estamos asignando" : `hemos registrado ${n} y la estamos asignando al equipo de ${e.area}.`;
 		case "IN_PROGRESS": return t ? "estamos trabajando en ello" : `estamos trabajando en ${n} con el equipo de ${e.area}.`;
@@ -15775,10 +16344,10 @@ function qf(e, t = !1) {
 		default: return `estamos atendiendo ${n}.`;
 	}
 }
-function Jf(e, t = !1) {
+function op(e, t = !1) {
 	return e.estadoId === "CLOSED" ? "" : e.sla.nivel === "vencido" || e.sla.nivel === "fuera" ? t ? "Lamentamos la demora: ya lo priorizamos." : "Lamentamos la demora: ya lo estamos priorizando y te escribiremos hoy mismo con novedades." : e.sla.nivel === "cumplido" ? "" : t ? `Te respondemos antes del ${e.sla.vence}.` : `Te daremos una respuesta a más tardar el ${e.sla.vence}.`;
 }
-function Yf(e, t, n) {
+function sp(e, t, n) {
 	if (!e) return "Abre un ticket y te redacto la respuesta con su contexto.";
 	n && (e = {
 		...e,
@@ -15788,13 +16357,13 @@ function Yf(e, t, n) {
 			nivel: "cumplido"
 		}
 	});
-	let r = e.usuario, i = e.cliente ?? "cliente", a = Jf(e), o = qf(e);
-	if (t === "formal") return `Estimado(a) ${i}:\n\nEn relación con ${Kf(e)} (ticket ${e.numero}), ${o}${a ? `\n\n${a}` : ""}\n\nQuedamos atentos a cualquier consulta.\n\nAtentamente,\n${r}\nAtención al Cliente · Aybar`;
-	if (t === "breve") return `Hola ${Gf(e)}, sobre ${Kf(e)} (${e.numero}): ${qf(e, !0)}. ${Jf(e, !0)} — ${r}`.replace(/\s+—/, " —").replace(". .", ".");
-	let s = e.sla.nivel === "vencido" || e.estadoId === "REOPENED" ? "Sentimos mucho el inconveniente y te agradecemos tu paciencia." : `Gracias por escribirnos; sabemos que ${Kf(e)} es importante para ti.`;
-	return `Hola ${Gf(e)}, ${s}\n\n${o[0].toUpperCase() + o.slice(1)}${a ? `\n\n${a}` : ""}\n\nSi necesitas algo más mientras tanto, aquí estoy para ayudarte.\n\nUn saludo cordial,\n${r}`;
+	let r = e.usuario, i = e.cliente ?? "cliente", a = op(e), o = ap(e);
+	if (t === "formal") return `Estimado(a) ${i}:\n\nEn relación con ${ip(e)} (ticket ${e.numero}), ${o}${a ? `\n\n${a}` : ""}\n\nQuedamos atentos a cualquier consulta.\n\nAtentamente,\n${r}\nAtención al Cliente · Aybar`;
+	if (t === "breve") return `Hola ${rp(e)}, sobre ${ip(e)} (${e.numero}): ${ap(e, !0)}. ${op(e, !0)} — ${r}`.replace(/\s+—/, " —").replace(". .", ".");
+	let s = e.sla.nivel === "vencido" || e.estadoId === "REOPENED" ? "Sentimos mucho el inconveniente y te agradecemos tu paciencia." : `Gracias por escribirnos; sabemos que ${ip(e)} es importante para ti.`;
+	return `Hola ${rp(e)}, ${s}\n\n${o[0].toUpperCase() + o.slice(1)}${a ? `\n\n${a}` : ""}\n\nSi necesitas algo más mientras tanto, aquí estoy para ayudarte.\n\nUn saludo cordial,\n${r}`;
 }
-function Xf(e) {
+function cp(e) {
 	if (!e) return {
 		titulo: "Sin ticket abierto",
 		lineas: ["Abre un ticket desde la bandeja o la operación en vivo y te lo resumo."]
@@ -15811,13 +16380,13 @@ function Xf(e) {
 		lineas: t
 	};
 }
-function Zf(e) {
+function lp(e) {
 	return {
-		...Qf(e),
+		...up(e),
 		guia: e?.cierre.guia ?? null
 	};
 }
-function Qf(e) {
+function up(e) {
 	if (!e) return {
 		accion: "Abrir un ticket",
 		motivo: "No hay un ticket en pantalla.",
@@ -15880,14 +16449,14 @@ function Qf(e) {
 		criterios: t
 	};
 }
-var $f = [
+var dp = [
 	[/\bmentiros[oa]\b/gi, "incorrecto"],
 	[/\bculpa (tuya|suya|del cliente)\b/gi, "una confusión"],
 	[/\bincompetente(s)?\b/gi, "poco claro"],
 	[/\babsurd[oa]\b/gi, "difícil de entender"],
 	[/\bexager(a|ando|ación)\b/gi, "considera mucho"]
 ];
-function ep(e, t) {
+function fp(e, t) {
 	let n = t.trim();
 	if (!n) return {
 		hallazgos: [{
@@ -15902,7 +16471,7 @@ function ep(e, t) {
 		nivel: "alto",
 		texto: `Hay ${a} dato${a === 1 ? "" : "s"} personal${a === 1 ? "" : "es"} (DNI o tarjeta). No viajan a ningún modelo: ya los oculté en la versión corregida.`
 	});
-	for (let [e, t] of $f) e.test(i) && (r.push({
+	for (let [e, t] of dp) e.test(i) && (r.push({
 		nivel: "aviso",
 		texto: `Evita juicios de valor como «${(i.match(e) ?? [""])[0]}»: suena a reproche.`
 	}), i = i.replace(e, t));
@@ -15914,14 +16483,14 @@ function ep(e, t) {
 		nivel: "aviso",
 		texto: "Muchos signos de exclamación; baja el tono."
 	}), i = i.replace(/!{2,}/g, "!"));
-	let s = e ? Gf(e) : "cliente";
+	let s = e ? rp(e) : "cliente";
 	return /\b(hola|estimad[oa]|buen[oa]s)\b/i.test(i) || (r.push({
 		nivel: "aviso",
 		texto: "Falta un saludo."
 	}), i = `Hola ${s}, ${i.charAt(0).toLowerCase()}${i.slice(1)}`), !/\d{1,2}\s?(de|\/)|horas|días|plazo|hoy|mañana|antes del/i.test(i) && e && e.estadoId !== "CLOSED" && (r.push({
 		nivel: "aviso",
 		texto: "No dices cuándo tendrá novedades."
-	}), i += `\n\n${Jf(e)}`.trimEnd()), /saludos|atentamente|gracias|quedamos|cualquier consulta/i.test(i) || (r.push({
+	}), i += `\n\n${op(e)}`.trimEnd()), /saludos|atentamente|gracias|quedamos|cualquier consulta/i.test(i) || (r.push({
 		nivel: "aviso",
 		texto: "Falta un cierre cordial."
 	}), i += `\n\nQuedamos atentos a cualquier consulta.${e ? `\n${e.usuario}` : ""}`), n.length < 40 && r.push({
@@ -15939,8 +16508,8 @@ function ep(e, t) {
 		anonimizados: a
 	};
 }
-var tp = "Hola, soy tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.";
-function np(e, t) {
+var pp = "Hola, soy tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.";
+function mp(e, t) {
 	let n = t.toLowerCase();
 	return /redact|respuesta|escrib|mensaje/.test(n) ? {
 		texto: "Claro, elige el tono y te lo redacto.",
@@ -15957,9 +16526,9 @@ function np(e, t) {
 	} : !e && /ticket|cliente|plazo|sla/.test(n) ? { texto: "Ahora no hay un ticket abierto. Entra a uno y te respondo con su contexto." } : /plazo|sla|vence|cuánto tiempo/.test(n) && e ? { texto: e.estadoId === "CLOSED" ? "Este ticket ya está cerrado: no corre SLA." : `El SLA de ${e.sla.hito} vence el ${e.sla.vence} (${e.sla.restante}). Está ${e.sla.nivel === "vencido" ? "vencido" : e.sla.nivel === "riesgo" ? "en riesgo" : "en plazo"}.` } : /cliente|quién es/.test(n) && e ? { texto: e.cliente ? `El cliente es ${e.cliente}. Escribió por ${e.canal} por «${e.resumen}».` : "Este ticket se registró con datos mínimos y todavía no está ligado a un cliente." } : /cerrar|cierre/.test(n) && e ? e.estadoId === "CLOSED" ? { texto: "Este ticket ya está cerrado: no queda nada por revisar." } : {
 		texto: "Reviso el cierre: te listo los criterios pendientes de su guía y te propongo la respuesta.",
 		accion: "cierre"
-	} : /rayo/.test(n) ? { texto: "El rayo sube un ticket al tope de la bandeja. Solo lo marca un supervisor o líder, con motivo, y el área tiene un tope del 10 %." } : /deriv|escal/.test(n) ? { texto: "Deriva a otra área si no es tu competencia o falta información de ella; escala a Eje 3 si hay señal de conflicto. En ambos casos indica el motivo." } : /gracias/.test(n) ? { texto: "¡Con gusto! Aquí sigo." } : /hola|buen[oa]s/.test(n) ? { texto: tp } : { texto: "Aún no sé responder eso, pero puedo redactar la respuesta, resumir el ticket, sugerir el siguiente paso o revisar tu borrador." };
+	} : /rayo/.test(n) ? { texto: "El rayo sube un ticket al tope de la bandeja. Solo lo marca un supervisor o líder, con motivo, y el área tiene un tope del 10 %." } : /deriv|escal/.test(n) ? { texto: "Deriva a otra área si no es tu competencia o falta información de ella; escala a Eje 3 si hay señal de conflicto. En ambos casos indica el motivo." } : /gracias/.test(n) ? { texto: "¡Con gusto! Aquí sigo." } : /hola|buen[oa]s/.test(n) ? { texto: pp } : { texto: "Aún no sé responder eso, pero puedo redactar la respuesta, resumir el ticket, sugerir el siguiente paso o revisar tu borrador." };
 }
-var rp = (e, t) => {
+var hp = (e, t) => {
 	try {
 		let t = document.createElement("i");
 		t.style.color = `var(--aybar-color-${e})`, document.body.append(t);
@@ -15979,79 +16548,79 @@ var rp = (e, t) => {
 		return t;
 	}
 };
-function ip(e, t) {
+function gp(e, t) {
 	let n = {
-		teal: rp("primary-700", [
+		teal: hp("primary-700", [
 			2,
 			66,
 			78
 		]),
-		teal2: rp("primary-500", [
+		teal2: hp("primary-500", [
 			43,
 			97,
 			108
 		]),
-		orange: rp("secondary-400", [
+		orange: hp("secondary-400", [
 			246,
 			164,
 			44
 		]),
-		ok: rp("feedback-success-border", [
+		ok: hp("feedback-success-border", [
 			46,
 			139,
 			87
 		]),
-		warn: rp("feedback-warning-border", [
+		warn: hp("feedback-warning-border", [
 			227,
 			155,
 			28
 		]),
-		bad: rp("feedback-danger-border", [
+		bad: hp("feedback-danger-border", [
 			192,
 			69,
 			58
 		]),
-		line: rp("border-subtle", [
+		line: hp("border-subtle", [
 			45,
 			64,
 			72
 		]),
-		muted: rp("fg-muted", [
+		muted: hp("fg-muted", [
 			157,
 			180,
 			186
 		]),
-		texto: rp("fg-default", [
+		texto: hp("fg-default", [
 			232,
 			240,
 			242
 		]),
-		superficie: rp("bg-surface", [
+		superficie: hp("bg-surface", [
 			27,
 			42,
 			49
 		]),
-		suelo: rp("bg-surface-sunken", [
+		suelo: hp("bg-surface-sunken", [
 			20,
 			32,
 			38
 		]),
-		lienzo: rp("bg-canvas", [
+		lienzo: hp("bg-canvas", [
 			15,
 			26,
 			31
 		])
-	}, r = new Ju({
+	}, r = new td({
 		canvas: e,
 		antialias: !0,
 		alpha: !0
 	});
 	r.setPixelRatio(Math.min(2, devicePixelRatio || 1)), r.toneMapping = 4, r.toneMappingExposure = 1.25;
-	let i = new In(), a = new rs(26, 1, .1, 20);
-	i.add(new Go(16774374, 2112068, 1.9));
-	let o = new os(16777215, 2.4);
+	let i = new In(), a = new us(26, 1, .1, 20);
+	i.add(new Qo(16774374, 2112068, 1.9));
+	let o = new ps(16777215, 2.4);
 	o.position.set(1.5, 2.5, 3), i.add(o);
-	let s = fd(new ud(n), {
+	let s = yd(new _d(n), {
 		cuerpo: Y(n.orange, n.teal2, .45),
 		acento: n.orange,
 		escala: 1,
@@ -16068,9 +16637,9 @@ function ip(e, t) {
 		f = Math.max(-1, Math.min(1, (t.clientX - (n.left + n.width / 2)) / 400)), p = Math.max(-1, Math.min(1, (t.clientY - (n.top + n.height / 2)) / 400));
 	};
 	t.reducido || addEventListener("pointermove", m);
-	let h = rd(t.reducido, (e) => {
+	let h = ud(t.reducido, (e) => {
 		let n = e / 1e3;
-		if (n - d, pd(s, n, t.reducido, u === "pensando" ? 3 : u === "hablando" ? 2 : 1), !t.reducido) {
+		if (n - d, bd(s, n, t.reducido, u === "pensando" ? 3 : u === "hablando" ? 2 : 1), !t.reducido) {
 			let e = u === "pensando", t = u === "hablando", r = u === "feliz";
 			s.cabeza.rotation.y += ((e ? Math.sin(n * 3) * .35 : f * .5) - s.cabeza.rotation.y) * .1, s.cabeza.rotation.x += ((e ? -.2 : 0) + p * .25 + (t ? Math.sin(n * 12) * .05 : 0) - s.cabeza.rotation.x) * .1, s.g.position.y = Math.sin(n * 1.6) * .02 + (r ? Math.abs(Math.sin(n * 9)) * .06 : 0), s.ojos.forEach((i) => {
 				i.scale.y += ((r ? .35 : e ? .7 : i.scale.y > .95 ? 1 : i.scale.y) - i.scale.y) * .3, i.scale.x = t ? 1 + Math.sin(n * 14) * .18 : 1;
@@ -16091,4 +16660,4 @@ function ip(e, t) {
 	};
 }
 //#endregion
-export { tp as SALUDO, Uf as TONOS, Hf as actualizarHud, np as conversar, xd as inyectarEstilos, ef as leerTokenRgb, ip as montarBot, Ef as montarGrafo, Kd as montarVivo, $d as montarVivoDaniel, Yf as redactar, Xf as resumir, ep as revisar, Zf as siguientePaso };
+export { pp as SALUDO, tp as TONOS, ep as actualizarHud, mp as conversar, Od as inyectarEstilos, cf as leerTokenRgb, gp as montarBot, Nf as montarGrafo, If as montarGrafoDaniel, Rf as montarRed2D, $d as montarVivo, sf as montarVivoDaniel, sp as redactar, cp as resumir, fp as revisar, lp as siguientePaso };

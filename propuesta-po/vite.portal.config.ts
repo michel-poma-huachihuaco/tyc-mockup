@@ -17,14 +17,18 @@ const CHUNKS: Record<string, string> = {
   // Operación en Vivo de Daniel (src/vivo): barra de progreso del SDK y la escena 3D (escenas-three.js, del otro build)
   'aybar:ProgressBar': './ProgressBar-CxT9FNs6.js',
   'aybar:escenas': './escenas-three.js',
+  // Consulta 360 del Cliente de Daniel (src/c360): ventana del visor de contratos y tablas del expediente
+  'aybar:Dialog': './Dialog-BcfHiG-J.js',
+  'aybar:Table': './Table-BJWCycht.js',
 }
 
 export default defineConfig({
   build: {
     outDir: 'artefacto/assets',
     emptyOutDir: false,
-    // dos entradas: Mi Portal (mi-portal.js) y la Operación en Vivo de Daniel (vivo-daniel.js, src/vivo)
-    lib: { entry: { 'mi-portal': 'src/portal/index.ts', 'vivo-daniel': 'src/vivo/index.ts' }, formats: ['es'], fileName: (_f, nombre) => `${nombre}.js` },
+    // tres entradas: Mi Portal (mi-portal.js), la Operación en Vivo de Daniel (vivo-daniel.js, src/vivo) y la Consulta 360
+    // del Cliente de Daniel (consulta360-daniel.js, src/c360)
+    lib: { entry: { 'mi-portal': 'src/portal/index.ts', 'vivo-daniel': 'src/vivo/index.ts', 'consulta360-daniel': 'src/c360/index.ts' }, formats: ['es'], fileName: (_f, nombre) => `${nombre}.js` },
     rollupOptions: { external: Object.keys(CHUNKS), output: { paths: CHUNKS } },
   },
 })

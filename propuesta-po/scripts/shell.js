@@ -1,4 +1,3 @@
-const __G360=(0,P.lazy)(()=>import(`./Grafo360-BzaG42VX.js`).then(m=>({default:m.t})));
 // Mi Portal (autogestión del cliente, v1.3): src/portal compilado a mi-portal.js; se carga solo al entrar a #/portal…
 const __Portal=(0,P.lazy)(()=>import(`./mi-portal.js`).then(m=>({default:m.MiPortal})));
 function __clave(){let h=(location.hash||``).split(`?`)[0];return h===``||h===`#`||h===`#/`?`#/vivo`:h}
@@ -18,18 +17,22 @@ panel=vista===`notas`
 :(0,L.jsxs)(`div`,{className:`pt-herr__panel`,role:`region`,"aria-label":`Herramientas`,children:[(0,L.jsx)(`div`,{className:`pt-herr__cab`,children:(0,L.jsxs)(`div`,{children:[(0,L.jsx)(`h2`,{children:`Herramientas`}),(0,L.jsxs)(`small`,{children:[`Reloj: `,xe(q.ahora)]})]})}),(0,L.jsxs)(`div`,{className:`pt-herr__sec`,children:[(0,L.jsx)(_t,{label:`Ver como`,helper:`Usuarios, roles y líderes del maestro local de ATC.`,children:(0,L.jsx)(Yn,{value:q.rol,onChange:ev=>E.ajustar({personaId:We[ev.target.value]}),options:q.roles.map(q2=>({value:q2.rol,label:`${q2.etiqueta} · ${D(We[q2.rol])}`}))})})]}),(0,L.jsxs)(`div`,{className:`pt-herr__sec`,children:[(0,L.jsx)(`b`,{children:`Tema`}),(0,L.jsx)(bi,{})]}),(0,L.jsxs)(`div`,{className:`pt-herr__filas`,children:[fila(`eye`,`Apariencia`,`Paleta, grises, densidad y bordes`,()=>{setAbierto(!1);q.onApariencia()}),fila(`clock`,`Simulación`,`Reloj, escenarios y fuentes caídas`,()=>{setAbierto(!1);q.onSimulacion()}),fila(`file`,`Notas`,`Supuestos y pendientes de esta pantalla`,()=>setVista(`notas`),notas.length||null)]})]});
 return(0,L.jsxs)(`div`,{ref:ref,className:`pt-herr`,children:[abierto?panel:null,(0,L.jsx)(`button`,{type:`button`,className:`pt-herr__fab`,"aria-expanded":abierto,"aria-label":`Herramientas`,title:`Herramientas`,onClick:()=>setAbierto(!abierto),dangerouslySetInnerHTML:{__html:__SVG_ENGRANAJE}})]})}
 
-// Módulo «Consulta 360» (#/consulta360, también la raíz). El 20-oct dejó de compartir página con la Operación en vivo: cada uno
-// tiene su entrada en el grupo «Núcleo 360 y Planta» del menú (pedido del PO para la presentación). El cliente elegido se recuerda
-// en la sesión del navegador; `modulo` muestra las tarjetas propias del módulo (nodos y redirección, estado de los sistemas).
-// sistemas externos de la consulta 360 que la simulación puede tumbar (Tickets ATC es interno: no cae)
-const __F360=[`SIGDA`,`ACTIVOS`,`COBRANZA`,`MOTOR`,`CONTRATOS`,`CORREO`,`CALLCENTER`];
+// Módulo «Consulta 360 del Cliente» (#/consulta360, también la raíz; grupo «Núcleo 360 y Planta» del menú). 20-oct: es la de la
+// rama de Daniel tal cual (diseño, textos, datos de ejemplo, ventanas, visor de contratos y redirecciones): src/c360 compilado a
+// consulta360-daniel.js (tercera entrada de vite.portal.config.ts), que se carga solo al entrar a la página. El shell le pasa la sesión (usuario y rol),
+// los permisos del menú (`ua`: si el rol no ve un módulo, la página no ofrece su botón) y la navegación a nuestras rutas. La
+// Consulta 360 de la ficha del cliente (#/clientes/<id>) y la de la pestaña Cliente del ticket siguen siendo las del chunk Grafo360.
+const __C360D=(0,P.lazy)(()=>import(`./consulta360-daniel.js`).then(m=>({default:m.Consulta360Daniel})));
+const __PUEDE360={bandeja:()=>!0,detalle:()=>!0,nuevo:r=>Re.registrar(r),libro:r=>Re.verLibro(r),morosidad:r=>Ri(r),mesa:r=>Re.verMesa(r),garantias:r=>r!==`SIN_ATENCION`,fest:r=>r===`COORDINADOR_CX`||r===`MODERADOR_EVENTO`};
+const __sinTilde360=s=>(s||``).toLowerCase().normalize(`NFD`).replace(/[̀-ͯ]/g,``).trim();
 function __Consulta360(){
 __estilos();
-let[cid,setCid]=P.useState(()=>{try{return sessionStorage.getItem(`v3:cliente`)||`cli-001`}catch{return`cli-001`}}),
-elegir=id=>{setCid(id);try{sessionStorage.setItem(`v3:cliente`,id)}catch{}};
-// 20-oct (como en la rama de Daniel): migas, «En línea · n de 8 sistemas» según las fuentes caídas de la simulación y el usuario con su rol
-let{datos:__d}=N(),__q=n(),__en=8-__d.fuentesCaidas.filter(x=>__F360.includes(x)).length;
-return(0,L.jsxs)(`div`,{className:`pt-pagina pt-pagina--ancha`,children:[(0,L.jsx)(T,{title:`Consulta 360`,breadcrumb:(0,L.jsx)(Kt,{items:[{label:`Aybar Atiende`},{label:`Núcleo 360 y Planta`},{label:`Consulta 360`}]}),description:`Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas. Cada dato lleva a su módulo.`,actions:(0,L.jsxs)(`div`,{className:`pt-c360-cab`,children:[(0,L.jsx)(e,{tone:__en===8?`success`:`warning`,dot:!0,children:`En línea · ${__en} de 8 sistemas`}),(0,L.jsx)(e,{tone:`info`,children:`${__q.nombre} (${sa.find(x=>x.rol===__q.rol)?.etiqueta??__q.rol})`}),(0,L.jsx)(r,{variant:`secondary`,onClick:()=>{location.hash=g(`clientes/${cid}`)},children:`Abrir la ficha completa`})]})}),(0,L.jsx)(P.Suspense,{fallback:null,children:(0,L.jsx)(__G360,{clienteId:cid,onElegir:elegir,modulo:!0})})]})}
+let{datos:d}=N(),q=n(),
+puede=P.useCallback(k=>!!(__PUEDE360[k]&&__PUEDE360[k](q.rol)),[q.rol]),
+// «detalle»: el ticket de la rama de Daniel si existe en nuestro modelo (por número); si no, la Bandeja. «nuevo»: con el cliente
+// ya elegido si está en nuestro maestro (por DNI o por nombre), con el aviso previo que usa «Crear ticket» de la ficha
+ir=P.useCallback((k,c)=>{let ruta=k;if(k===`detalle`){let t=c&&c.numero&&d.tickets.find(x=>x.numero===c.numero);ruta=t?`ticket/${t.id}`:`bandeja`}else if(k===`nuevo`){let cl=c&&(se.find(x=>c.dni&&x.dni===c.dni)||se.find(x=>c.nombre&&__sinTilde360(x.nombre)===__sinTilde360(c.nombre)));Ye.cliente=cl||null}location.hash=g(ruta)},[d]);
+return(0,L.jsx)(P.Suspense,{fallback:null,children:(0,L.jsx)(__C360D,{usuario:q.nombre,rol:q.rol,area:q.area,etiquetaRol:sa.find(x=>x.rol===q.rol)?.etiqueta??q.rol,puede:puede,ir:ir})})}
 
 function __areaMensaje(){let a=document.activeElement;if(a&&a.tagName===`TEXTAREA`&&!a.closest(`.pt-bot`))return a;let u=globalThis.__ptUltimaArea;if(u&&document.contains(u))return u;for(let l of document.querySelectorAll(`label`))if(/Mensaje para el cliente/.test(l.textContent)){let f=l.htmlFor&&document.getElementById(l.htmlFor);if(f)return f;let t=l.parentElement&&l.parentElement.querySelector(`textarea`);if(t)return t}return null}
 function __escribir(area,txt){Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,`value`).set.call(area,txt);area.dispatchEvent(new Event(`input`,{bubbles:!0}));area.focus()}

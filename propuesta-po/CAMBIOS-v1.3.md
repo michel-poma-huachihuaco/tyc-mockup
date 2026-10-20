@@ -135,6 +135,17 @@ Pedido del equipo para la presentación: según el equipo, son requisitos del PO
 - **Pruebas:** por pedido del equipo, esta parte no tiene pruebas nuevas. Se verificó que compila y que las pantallas cargan sin
   errores. Las pruebas que ya existían de la Operación en vivo no reflejan los cambios: hay que ajustarlas.
 
+**Actualización del 20-oct:** el equipo pidió las dos páginas **igual que en la rama de Daniel**, con su estilo y su lógica.
+`#/consulta360` y `#/vivo` ahora son sus pantallas pasadas a React con las mismas clases del sistema de diseño:
+- **Código:** `src/c360/` y `src/vivo/`; sus escenas en `src/three/grafo360-daniel.ts`, `red2d-daniel.ts` y `vivo-daniel.ts`.
+- **Datos:** sus datos de ejemplo y su simulación. Por eso los clientes y los tickets de esas dos páginas son los de Daniel, no
+  los del resto del mockup.
+- **Lo que se agrega:** el visor «Expediente Contractual Inmobiliario».
+- **Redirecciones:** llevan a nuestros módulos. Si el ticket de su simulación no existe aquí, van a la Bandeja.
+- **Lo que se pierde de la versión anterior de la Operación en vivo:** el filtro por razón social, la tabla «Por área» y el color
+  por tipo.
+- **Pruebas:** `recorrer-operacion-vivo`, `recorrer-consulta360` y `recorrer-360-redireccion` quedan desactualizadas.
+
 Lo que contradice la HU-067 v1.3 y aun así se trajo, más la pregunta sobre la D-12 de esa rama, está en
 [DECISIONES.md §5.10](DECISIONES.md).
 
