@@ -54,8 +54,7 @@ Quedará como versión pendiente, porque lo aprueba el PO.
 
 ### `cobertura-v1.3.md`: el mockup frente a las 62 historias
 
-Para cada historia del PLT-04 dice si el mockup permite comprobar todos sus criterios, dónde verla y qué falta. Al 20-oct son
-50 completas y 12 parciales.
+Para cada historia del PLT-04 dice dónde verla en el mockup. Al 20-oct, las 62 permiten comprobar todos sus criterios.
 
 ## Qué no está aquí
 

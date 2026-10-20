@@ -156,8 +156,8 @@ Lo que no se hizo y queda abierto, con su porqué: `DECISIONES.md` §5.
 ## Quinta ronda: los criterios del PLT-04 v1.3 (20-oct)
 
 Se cerraron, criterio por criterio, las tres prioridades del PO (HU-043, 050 y 067) y las garantías postventa (HU-034, 035 y
-036). Con eso, la cobertura de la Etapa 1 queda en **50 historias completas y 12 parciales**
-(`documentacion/cobertura-v1.3.md`). Solo se hizo lo que pide cada criterio. Los supuestos y las preguntas para el PO están en
+036). Con eso, la cobertura de la Etapa 1 quedó en 50 completas. Después, el **bloque 3** cerró las 12 restantes: **las 62 historias
+de la Etapa 1 están completas** (`documentacion/cobertura-v1.3.md`, que dice dónde ver cada una). Solo se hizo lo que pide cada criterio. Los supuestos y las preguntas para el PO están en
 `DECISIONES.md` §5.7.
 
 | Historia | Cómo verlo |
@@ -166,6 +166,7 @@ Se cerraron, criterio por criterio, las tres prioridades del PO (HU-043, 050 y 0
 | **HU-050** · Consulta 360 dentro del ticket | `#/ticket/tk-460` › pestaña Cliente: ficha con «Datos visibles n de 16», panel del dato con fecha, candados (cambia de rol en «Ver como»). Para la excepción, busca `12345678`. Para la nota de la consulta, mira la pestaña Interacciones |
 | **HU-067** · Operación en vivo | `#/vivo`: cajas del color de su tipo; toca un área o su nombre en «Por área»; selector de razón social; pausa y velocidad (x1, x2) solo con el modo simulación (Herramientas › Simulación › Operación en vivo) |
 | **HU-034, 035 y 036** · Garantías | `#/garantias/gar-249` (motivo informado al cliente), `#/garantias/gar-585` › «Registrar la inspección» (varias fotos y PDF), `#/garantias/gar-314` › «Registrar carta notarial» |
+| **Bloque 3** · HU-026, 027, 031, 040, 041, 044, 046, 048, 055, 056, 057 y 066 | Gate y pestaña Legal en el ticket; Alertas SLA › «Handoffs sin confirmar»; Bandeja por áreas supervisadas; Mi día › Correos de asignación › «Ver»; «Cambiar estado › Resuelto» con el asistente; Torre › Informes al avanzar el reloj; `#/morosidad` (flujo y plantilla); Configuración › Cierre automático y `#/portal/ticket/tk-272` (SLA en pausa) |
 
 | Archivo nuevo | Qué es |
 |---|---|
@@ -180,5 +181,5 @@ Se cerraron, criterio por criterio, las tres prioridades del PO (HU-043, 050 y 0
 
 | Comando | Qué hace ahora |
 |---|---|
-| `npm run probar` | 40 casos en Node: Mi Portal (14), flujos (9), Consulta 360 (7) y garantías (10) |
-| `npm run recorrer` | Con el servidor arriba: 49 pasos en Chrome. Son el recorrido general (17), flujos (7), Consulta 360 (10), Operación en vivo (9) y garantías (6) |
+| `npm run probar` | 76 casos en Node, en 10 suites (Mi Portal, flujos, Consulta 360, garantías, morosidad, SLA de Mi Portal, Eje 3 y Legal, Bandeja, asistente de IA e informes) |
+| `npm run recorrer` | Con el servidor arriba: 90 pasos en Chrome, en 11 recorridos (el general y uno por tema) |

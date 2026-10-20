@@ -11,6 +11,9 @@ export interface Ticket {
   ultimaResolucion: Date | null; cierre: Date | null; reaperturas: number; venceReapertura: Date | null; inicioCiclo: Date
   /** Propio de Mi Portal: el subtipo que eligió el cliente (el modelo del prototipo no tiene subtipos). */
   subtipo?: string
+  /** HU-066 CA-01: desde cuándo está pausado el SLA (en «pendiente del cliente») y las pausas ya cerradas (scripts/hu066-sla.js). */
+  pausaSla?: Date | null
+  pausasSla?: { desde: Date; hasta: Date; horas: number }[]
 }
 export interface FilaEstado { id: string; ticketId: string; fecha: Date; de: Estado | null; a: Estado; autor: string | null; nota: string | null }
 export interface FilaAsignacion {
@@ -62,4 +65,8 @@ export interface Nucleo {
   error(status: number, codigo: string, mensaje: string, extra?: Record<string, unknown>): Error
   validacion(campos: { campo: string; mensaje: string }[]): Error
   pii(texto: string): string | null
+  /** HU-066 CA-04 (scripts/hu066-sla.js): días hábiles configurados, fin del plazo de confirmación y la regla del job para un ticket. */
+  diasConfirmacion(d: Datos): number
+  limiteConfirmacion(d: Datos, t: Ticket): Date | null
+  cerrarSinRespuesta(d: Datos, id: string): Datos
 }

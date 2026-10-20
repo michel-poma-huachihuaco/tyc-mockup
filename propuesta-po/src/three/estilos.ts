@@ -183,6 +183,9 @@ const CSS = `
 .pt-bot__m ul,.pt-bot__m ol{margin:var(--aybar-space-1) 0 0;padding-left:var(--aybar-space-4)}.pt-bot__m li{margin:var(--aybar-space-1) 0}
 .pt-bot__texto{margin:var(--aybar-space-1) 0;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-sm);background:var(--v3-sf);border:1px dashed var(--v3-ln);white-space:pre-wrap}
 .pt-bot__acc{display:flex;gap:var(--aybar-space-1);flex-wrap:wrap;margin-top:var(--aybar-space-2)}
+.pt-bot__editar{display:block;width:100%;box-sizing:border-box;resize:vertical;font:inherit;color:var(--v3-fg);line-height:1.5}
+.pt-bot__editar:focus{outline:2px solid var(--v3-acc);outline-offset:1px;border-style:solid}.pt-bot__editar[readonly]{color:var(--v3-mu)}
+.pt-bot__crit{margin-top:var(--aybar-space-2)}.pt-bot__nota{margin:var(--aybar-space-1) 0 0;color:var(--v3-mu);font-size:var(--aybar-font-size-xs)}
 .pt-bot__btn{font-family:inherit;font-size:var(--aybar-font-size-xs);font-weight:var(--aybar-font-weight-semibold);padding:var(--aybar-space-1) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-fg);cursor:pointer;transition:border-color .2s,background .2s}
 .pt-bot__btn:hover{border-color:var(--v3-acc)}.pt-bot__btn--p{background:var(--v3-acc);border-color:var(--v3-acc);color:var(--aybar-color-bg-canvas,#0f1a1f)}
 .pt-bot__btn[aria-pressed=true]{background:color-mix(in srgb,var(--v3-acc) 22%,transparent);border-color:var(--v3-acc)}

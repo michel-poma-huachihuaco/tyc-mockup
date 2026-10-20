@@ -10,8 +10,8 @@
     "build:portal": "vite build -c vite.portal.config.ts",
     "parchear": "node scripts/parchear.mjs",
     "build": "node scripts/parchear.mjs && vite build && vite build -c vite.portal.config.ts",
-    "probar": "node scripts/probar-portal.mjs && node scripts/probar-flujos.mjs && node scripts/probar-consulta360.mjs && node scripts/probar-garantias.mjs",
-    "recorrer": "node scripts/recorrer-navegador.mjs && node scripts/recorrer-flujos.mjs && node scripts/recorrer-consulta360.mjs && node scripts/recorrer-operacion-vivo.mjs && node scripts/recorrer-garantias.mjs",
+    "probar": "node scripts/probar-portal.mjs && node scripts/probar-flujos.mjs && node scripts/probar-consulta360.mjs && node scripts/probar-garantias.mjs && node scripts/probar-morosidad.mjs && node scripts/probar-portal-sla.mjs && node scripts/probar-eje3.mjs && node scripts/probar-bandeja.mjs && node scripts/probar-asistente-ia.mjs && node scripts/probar-informes.mjs",
+    "recorrer": "node scripts/recorrer-navegador.mjs && node scripts/recorrer-flujos.mjs && node scripts/recorrer-consulta360.mjs && node scripts/recorrer-operacion-vivo.mjs && node scripts/recorrer-garantias.mjs && node scripts/recorrer-morosidad.mjs && node scripts/recorrer-portal-sla.mjs && node scripts/recorrer-eje3.mjs && node scripts/recorrer-bandeja.mjs && node scripts/recorrer-asistente-ia.mjs && node scripts/recorrer-informes.mjs",
     "start": "npm run build && vite preview --outDir artefacto --port 5180",
     "preview": "vite preview --outDir artefacto --port 5180"
   },

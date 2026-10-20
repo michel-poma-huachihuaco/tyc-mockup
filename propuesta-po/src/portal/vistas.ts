@@ -9,8 +9,8 @@ import {
   clientePorId, clientes, lotesDe, nombreTipo, nombreArea, fechaCorta, fechaDia, usarMedia, DESDE_ESCRITORIO, ruta, ui, Nota,
 } from './kit.ts'
 import {
-  ADJUNTOS, CODIGO, DIAS_CONFIRMACION, ESTADO_CLIENTE, TIPOS, areaCliente, avisos, buscarPorDni, cerrarSinRespuesta,
-  cierreAutomaticoDesde, confirmar, contratoDelLote, crearTicket, enmascararCorreo, enmascararTelefono, lineaDeTiempo, mensajes,
+  ADJUNTOS, CODIGO, ESTADO_CLIENTE, TIPOS, areaCliente, avisos, buscarPorDni,
+  cierreAutomaticoDesde, confirmar, diasConfirmacion, contratoDelLote, crearTicket, enmascararCorreo, enmascararTelefono, lineaDeTiempo, mensajes,
   nuevoCodigo, rechazar, registrarIntentoAjeno, responder, ticketDelCliente, ticketsDelCliente, validarDni, type Entrada,
 } from './modelo.ts'
 import { inyectarEstilos } from './estilos.ts'
@@ -153,6 +153,9 @@ function Acceso({ datos, onEntrar }: { datos: Datos; onEntrar: (c: Cliente) => v
   )
 }
 
+/** HU-066 CA-01: mientras el ticket espera al cliente, el plazo (SLA) está en pausa; al responder se reanuda y la fecha se corre. */
+const compromisoTexto = (t: Ticket) => `${fechaCorta(nucleo.compromiso(t))}${t.estado === 'PENDING_CUSTOMER' ? ' · en pausa' : ''}`
+
 // ================================================================== mis tickets (HU-064 CA-02)
 function MisTickets({ datos, cliente }: { datos: Datos; cliente: Cliente }) {
   const filas = ticketsDelCliente(datos, cliente.id)
@@ -161,7 +164,7 @@ function MisTickets({ datos, cliente }: { datos: Datos; cliente: Cliente }) {
     { key: 'tipo', header: 'Tipo', width: '14rem', renderCell: (t: Ticket) => h('span', { className: 'pt-celda-doble' }, h('span', { className: 'pt-celda-doble__principal' }, nombreTipo(t.tipo)), t.subtipo ? h('span', { className: 'pt-celda-doble__secundaria' }, t.subtipo) : null) },
     { key: 'estado', header: 'Estado', width: '13rem', renderCell: (t: Ticket) => h(ui.Badge, { tone: ESTADO_CLIENTE[t.estado].tono, size: 'sm' }, ESTADO_CLIENTE[t.estado].texto) },
     { key: 'area', header: 'Área', renderCell: (t: Ticket) => areaCliente(t.area, nombreArea) },
-    { key: 'compromiso', header: 'Fecha de compromiso', width: '10rem', renderCell: (t: Ticket) => fechaCorta(nucleo.compromiso(t)) },
+    { key: 'compromiso', header: 'Fecha de compromiso', width: '10rem', renderCell: (t: Ticket) => compromisoTexto(t) },
     { key: 'registrado', header: 'Registrado', width: '9rem', renderCell: (t: Ticket) => fechaCorta(t.abierto) },
   ]
   const pendientes = filas.filter((t) => t.estado === 'PENDING_CUSTOMER' || t.estado === 'RESOLVED')
@@ -182,7 +185,7 @@ function MisTickets({ datos, cliente }: { datos: Datos; cliente: Cliente }) {
       : h('ul', { className: 'pt-tarjetas', 'aria-label': `Tickets de ${cliente.nombre}` }, filas.map((t) => h('li', { key: t.id }, h(ui.Card, null, h(ui.CardBody, { padding: 'sm' }, h('div', { className: 'pt-tarjeta' },
           h('div', { className: 'pt-tarjeta__cabeza' }, h('a', { className: 'pt-tarjeta__numero', href: ruta(`portal/ticket/${t.id}`) }, t.numero), h(ui.Badge, { tone: ESTADO_CLIENTE[t.estado].tono, size: 'sm' }, ESTADO_CLIENTE[t.estado].texto)),
           h('p', { className: 'pt-tarjeta__resumen' }, `${nombreTipo(t.tipo)}${t.subtipo ? ` · ${t.subtipo}` : ''}`),
-          h('p', { className: 'pt-texto-chico' }, `${areaCliente(t.area, nombreArea)} · compromiso ${fechaCorta(nucleo.compromiso(t))} · registrado ${fechaCorta(t.abierto)}`))))))),
+          h('p', { className: 'pt-texto-chico' }, `${areaCliente(t.area, nombreArea)} · compromiso ${compromisoTexto(t)} · registrado ${fechaCorta(t.abierto)}`))))))),
     h(Nota, null, 'Se listan todos los tickets del cliente, entren por el canal que entren (teléfono, WhatsApp, correo o Mi Portal). Pregunta abierta: ¿se muestra el nombre del área o uno genérico? Aquí, el del área («Atención al cliente» para ATC).'),
   )
 }
@@ -326,11 +329,11 @@ function Detalle({ datos, cliente, ticketId }: { datos: Datos; cliente: Cliente;
     h('dl', { className: 'pp-resumen' },
       h('div', null, h('dt', null, 'Tipo'), h('dd', null, `${nombreTipo(t.tipo)}${t.subtipo ? ` · ${t.subtipo}` : ''}`)),
       h('div', null, h('dt', null, 'Área responsable'), h('dd', null, areaCliente(t.area, nombreArea))),
-      h('div', null, h('dt', null, t.estado === 'CLOSED' ? 'Compromiso que tenía' : 'Fecha de compromiso'), h('dd', null, fechaCorta(compromiso))),
+      h('div', null, h('dt', null, t.estado === 'CLOSED' ? 'Compromiso que tenía' : 'Fecha de compromiso'), h('dd', null, t.estado === 'PENDING_CUSTOMER' ? `${fechaCorta(compromiso)} · en pausa hasta tu respuesta` : fechaCorta(compromiso))),
       h('div', null, h('dt', null, 'Registrado'), h('dd', null, fechaCorta(t.abierto))),
       h('div', null, h('dt', null, 'Empresa'), h('dd', null, nucleo.empresa(t.empresaId)?.nombre ?? '—'))),
     t.estado === 'PENDING_CUSTOMER' ? h(Responder, { ticket: t, cliente, pedido: ultimoPedido?.texto ?? null }) : null,
-    t.estado === 'RESOLVED' ? h(Confirmar, { ticket: t, cliente }) : null,
+    t.estado === 'RESOLVED' ? h(Confirmar, { ticket: t, cliente, datos }) : null,
     t.estado === 'CLOSED' && datos.encuestas.some((e) => e.ticketId === t.id && e.ciclo === t.reaperturas)
       ? h(ui.Alert, { tone: 'success', size: 'sm', title: 'Caso cerrado' }, texto('Te enviamos una encuesta corta sobre la atención. Tu opinión nos ayuda a mejorar.'))
       : null,
@@ -344,7 +347,7 @@ function Detalle({ datos, cliente, ticketId }: { datos: Datos; cliente: Cliente;
               h('div', { className: 'ay-timeline__body' },
                 h('p', { className: 'ay-timeline__title' }, h('strong', null, p.titulo)),
                 h('time', { className: 'ay-timeline__time', dateTime: p.fecha.toISOString() }, fechaCorta(p.fecha)),
-                h('p', { className: 'pp-paso__area' }, `Área responsable: ${p.area}${i === pasos.length - 1 && t.estado !== 'CLOSED' ? ` · compromiso: ${fechaCorta(compromiso)}` : ''}`),
+                h('p', { className: 'pp-paso__area' }, `Área responsable: ${p.area}${i === pasos.length - 1 && t.estado !== 'CLOSED' ? ` · compromiso: ${compromisoTexto(t)}` : ''}`),
                 p.detalle ? h('p', { className: 'pp-paso__det' }, p.detalle) : null)))))),
         h(ui.Card, null,
           h(ui.CardHeader, { as: 'h2', title: 'Mensajes', subtitle: 'Lo que nos escribimos sobre este ticket.' }),
@@ -365,7 +368,7 @@ function Detalle({ datos, cliente, ticketId }: { datos: Datos; cliente: Cliente;
     ),
     h(Nota, null, 'HU-065 CA-03: no se muestran las notas internas, las notas de la bitácora escritas por ATC ni el nombre del gestor; del lado de Aybar se firma «Aybar».'),
     h(Nota, null, 'HU-065 CA-02 (simulado): los avisos por correo y WhatsApp se derivan de la bitácora de estados; el envío real lo hace el servicio de notificaciones.'),
-    h(Nota, null, 'HU-066 CA-01: el prototipo no pausa el SLA mientras el ticket espera al cliente, así que «el SLA se reanuda» no tiene efecto visible aquí. Pendiente del modelo de SLA.'),
+    h(Nota, null, 'HU-066 CA-01: mientras el ticket espera tu respuesta, el plazo (SLA) queda en pausa; al responder, el ticket vuelve a atención, el plazo se reanuda y la fecha de compromiso se corre las horas hábiles que duró la espera.'),
   )
 }
 
@@ -377,7 +380,7 @@ function Responder({ ticket, cliente, pedido }: { ticket: Ticket; cliente: Clien
   const enviar = async (ev: Event) => {
     ev.preventDefault()
     const ok = await accion.ejecutar(async () => { await nucleo.tx('responder desde Mi Portal', (d) => responder(nucleo, d, ticket.id, cliente.id, respuesta, aAdjuntos(archivos))); return true })
-    if (ok) { setRespuesta(''); setArchivos([]); avisar({ message: 'Enviamos tu respuesta. Tu ticket volvió a atención.', tone: 'success' }) }
+    if (ok) { setRespuesta(''); setArchivos([]); avisar({ message: 'Enviamos tu respuesta. Tu ticket volvió a atención y el plazo se reanudó.', tone: 'success' }) }
   }
   return h(ui.Card, null,
     h(ui.CardHeader, { as: 'h2', title: 'Te necesitamos', subtitle: 'Responde lo que te pedimos para seguir con tu caso.' }),
@@ -393,12 +396,12 @@ function Responder({ ticket, cliente, pedido }: { ticket: Ticket; cliente: Clien
       h('div', { className: 'pp-acciones' }, h(ui.Button, { type: 'submit', variant: 'primary', loading: accion.enCurso }, 'Enviar mi respuesta')))))
 }
 
-function Confirmar({ ticket, cliente }: { ticket: Ticket; cliente: Cliente }) {
+function Confirmar({ ticket, cliente, datos }: { ticket: Ticket; cliente: Cliente; datos: Datos }) {
   const [rechazando, setRechazando] = useState(false)
   const [motivo, setMotivo] = useState('')
   const accion = usarAccion()
   const errores = erroresPorCampo(accion.error)
-  const limite = cierreAutomaticoDesde(nucleo, ticket)
+  const limite = cierreAutomaticoDesde(nucleo, ticket, datos), dias = diasConfirmacion(nucleo, datos)
   const hacer = async (nombre: string, fn: (d: Datos) => [Datos, void], aviso: string) => {
     const ok = await accion.ejecutar(async () => { await nucleo.tx(nombre, fn); return true })
     if (ok) avisar({ message: aviso, tone: 'success' })
@@ -419,10 +422,7 @@ function Confirmar({ ticket, cliente }: { ticket: Ticket; cliente: Cliente }) {
             h('div', { className: 'pp-acciones' },
               h(ui.Button, { variant: 'primary', loading: accion.enCurso, onClick: () => void hacer('confirmar la solución en Mi Portal', (d) => confirmar(nucleo, d, ticket.id, cliente.id), 'Gracias: cerramos tu ticket. Te enviamos una encuesta corta.') }, 'Sí, confirmar y cerrar'),
               h(ui.Button, { variant: 'secondary', onClick: () => { setRechazando(true); accion.limpiar() } }, 'No, rechazar la solución'))),
-      limite ? h('p', { className: 'pt-texto-chico' }, `Si no respondes, el ticket se cierra solo al terminar el ${fechaDia(limite)} (${DIAS_CONFIRMACION} días hábiles después de resuelto) y te avisamos.`) : null,
-      h(Simulacion, null,
-        h('span', null, 'Para ver el cierre automático sin esperar el plazo:'),
-        h('div', { className: 'pp-acciones' }, h(ui.Button, { size: 'sm', variant: 'secondary', onClick: () => void hacer('cierre automático de Mi Portal', (d) => cerrarSinRespuesta(nucleo, d, ticket.id, cliente.id), 'Simulado: el ticket se cerró solo y se avisó al cliente.') }, 'Simular que venció el plazo'))))),
-    h(Nota, null, `Supuesto: ${DIAS_CONFIRMACION} días hábiles para confirmar antes del cierre automático (pregunta abierta del PLT-04).`),
+      limite ? h('p', { className: 'pt-texto-chico' }, `Si no respondes, el ticket se cierra solo al terminar el ${fechaDia(limite)} (${dias} días hábiles después de resuelto) y te avisamos.`) : null)),
+    h(Nota, null, `HU-066 CA-04: el cierre automático lo hace el job del sistema al terminar el plazo; para verlo, Herramientas › Simulación › avanza el reloj o «Ejecutar el job ahora». Los días hábiles (hoy ${dias}) los configura el administrador funcional en Configuración › Cierre automático; el valor inicial, 5, es un supuesto del equipo (pregunta abierta del PLT-04).`),
   )
 }

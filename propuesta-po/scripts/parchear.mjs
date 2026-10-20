@@ -175,7 +175,7 @@ const especificos = {
   'comun-CVU2GQ4h.js': {
     // v1.3: Mi Portal compone las reglas del chunk con este núcleo (estado, transacción, SLA, flujo, transiciones)
     // y la semilla sin incidencias de ciudad (Etapa 1; ver scripts/etapa1.js)
-    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js'),
+    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js') + '\n' + leer('eje3-modelo.js') + '\n' + leer('hu044-areas.js') + '\n' + leer('hu046-carga.js') + '\n' + leer('hu055-correo.js') + '\n' + leer('hu056-modelo.js') + '\n' + leer('hu066-sla.js') + '\n' + leer('hu048-modelo.js') + '\n' + leer('hu031-informes.js'),
     prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/vivo`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
@@ -237,6 +237,36 @@ const especificos = {
       // en Postventa mientras el ticket esté abierto
       ['registrarAdenda:(e,t)=>Z(`registrar adenda`,n=>Q(ms(n,e,t,$()))),', 'registrarAdenda:(e,t)=>Z(`registrar adenda`,n=>Q(ms(n,e,t,$()))),registrarCartaNotarial:(e,t)=>Z(`registrar carta notarial`,n=>Q(__gCarta(n,e,t,$()))),'],
       ['return!!(n&&n.eje!==3&&B(e,n.id).length)', 'return!!(n&&B(e,n.id).length&&(n.eje!==3||E.includes(n.estado)))'],
+      // v1.3 · HU-031: al avanzar el reloj (corre el job programado) se generan el informe diario de cada jornada que cierra y el
+      // quincenal de cada quincena que cierra (scripts/hu031-informes.js); la respuesta del reloj trae la lista para el aviso
+      ['avanzar(e){X({...Y,datos:H(Y.datos,Kn(Y.datos.ahora,e))});let t=zc.ejecutarJob();return X({...Y,datos:oc(Y.datos)[0]}),t}', 'avanzar(e){let __a=Y.datos.ahora;X({...Y,datos:H(Y.datos,Kn(Y.datos.ahora,e))});let t=zc.ejecutarJob();X({...Y,datos:oc(Y.datos)[0]});let[__d,__i]=__ptInformes.job(Y.datos,__a);return X({...Y,datos:__d}),{...t,informes:__i}}'],
+      // v1.3 · HU-055 CA-01/02: el ticket nuevo que el balanceo de entrada (HU-046) manda a otro gestor es un movimiento propio:
+      // su correo sale solo; el resumen en un solo correo queda para las reasignaciones masivas (cese, rotación y «Balancear la carga»)
+      ['let e=n.motivo===`REASSIGNMENT_CESE`||n.motivo===`REASSIGNMENT_ROTACION`||n.motivo===`REASSIGNMENT_CARGA`,r=e?', 'let e=!n.alEntrar&&(n.motivo===`REASSIGNMENT_CESE`||n.motivo===`REASSIGNMENT_ROTACION`||n.motivo===`REASSIGNMENT_CARGA`),r=e?'],
+      // v1.3 · HU-026 CA-01/02 y HU-027 CA-01: a Eje 3 solo se pasa con «Derivar a Eje 3» (paquete mínimo y, con conflicto, nota
+      // emocional). El gate _i (que también deshabilita «Escalado» en «Cambiar estado») rechaza ESCALATED fuera de Eje 3; So pone el
+      // eje 3 antes de cambiar el estado. Sin señal, el rechazo lleva el código «gate-handoff» (con señal sigue «gate-conflicto»)
+      ['function _i(e,t,n){return(n===', 'function _i(e,t,n){return n===`ESCALATED`&&t.eje!==3?__h26escalar(e,t):(n==='],
+      ['if(c)throw new j(409,`gate-conflicto`,c,{auditar:!0})', 'if(c)throw new j(409,n===`ESCALATED`&&!B(e,o.id).length?`gate-handoff`:`gate-conflicto`,c,{auditar:!0})'],
+      ['s=z(s,{...R(s,t),area:`LEGAL`,responsable:an}),s=Oi[i.estado].includes(`ESCALATED`)?V(s,t,`ESCALATED`,r,`Derivado a Eje 3 con paquete mínimo`):z(s,{...R(s,t),eje:3})',
+       's=z(s,{...R(s,t),area:`LEGAL`,responsable:an,eje:3}),s=Oi[i.estado].includes(`ESCALATED`)?V(s,t,`ESCALATED`,r,`Derivado a Eje 3 con paquete mínimo`):s'],
+      // v1.3 · HU-041 CA-02: al alertar a Legal por la exposición (desde S/ 500) el ticket se marca como prioritario (prioridad
+      // urgente; la anterior queda en la alerta). Sin I(): la semilla no mueve ids
+      ['venceLegal:a?a.venceProrrogado??a.venceOriginal:null}]},`riesgo_denuncia`,{exposicion:i.total}),n++}', 'venceLegal:a?a.venceProrrogado??a.venceOriginal:null,prioridadAnterior:r.prioridad}]},`riesgo_denuncia`,{exposicion:i.total}),t=__h41priorizar(t,r.id),n++}'],
+      // v1.3 · HU-056 CA-01: la evaluación diaria registra el ticket «Resolución de contrato» con el subtipo «General» (el de los
+      // flujos del PO) y le aplica el flujo como el alta de la consola (__h43crear): Cobranza y Legal (scripts/hu056-modelo.js)
+      ['tipo:`RES`,prioridad:`HIGH`,', 'tipo:`RES`,subtipo:`General`,prioridad:`HIGH`,'],
+      ['[o,s]=Di(t,a,Ps,e.ahora)', '[o,s]=__h43crear(t,a,Ps,e.ahora)'],
+      ['cuotas impagas y derivado a Cobranza y Legal.`', 'cuotas impagas y ${__h56nota(s)}`'],
+      // v1.3 · HU-066 CA-01: el SLA se pausa en «pendiente del cliente» y se reanuda al salir (V corre los vencimientos); el nivel
+      // de SLA (wi) y el job de alertas (Fi) miden contra el vencimiento corrido por la espera en curso (scripts/hu066-sla.js)
+      ['let[d,f]=I(e,`fe`);return f=z(f,u),', 'u=__h66pausa(o,u,l);let[d,f]=I(e,`fe`);return f=z(f,u),'],
+      ['i=r===`respuesta`?e.venceRespuesta:n;if(t>i)return{nivel:`vencido`', 'i=__h66mover(r===`respuesta`?e.venceRespuesta:n,__h66pausaH(e,t));if(t>i)return{nivel:`vencido`'],
+      ['e.ahora>a.venceRespuesta&&o.push([`FIRST_RESPONSE_OVERDUE`,a.venceRespuesta]);let s=Ci(a);', 'e.ahora>__h66mover(a.venceRespuesta,__h66pausaH(a,e.ahora))&&o.push([`FIRST_RESPONSE_OVERDUE`,__h66mover(a.venceRespuesta,__h66pausaH(a,e.ahora))]);let s=__h66mover(Ci(a),__h66pausaH(a,e.ahora));'],
+      // v1.3 · HU-066 CA-04: el job del sistema (panel de simulación, «Ejecutar el job ahora» y cada avance del reloj) cierra los
+      // tickets resueltos sin respuesta del cliente al terminar los días hábiles configurados; el resumen del job lo cuenta
+      ['ejecutarJob(){let[e,t]=Ko(Y.datos);return X({...Y,datos:e}),t}', 'ejecutarJob(){let[e,t]=Ko(Y.datos),[__e,__c]=__h66cerrarVencidos(e);return X({...Y,datos:__e}),{...t,cierres:__c}}'],
+      ['${a.alertasRiesgo} alertas por riesgo de denuncia.`}', '${a.alertasRiesgo} alertas por riesgo de denuncia.${e.cierres?` Cierre automático: ${e.cierres.cerrados} tickets resueltos sin respuesta del cliente en ${e.cierres.dias} días hábiles.`:``}`}'],
     ],
   },
 
@@ -268,8 +298,23 @@ const especificos = {
     ],
   },
 
-  'Torre-Cw_qLOQG.js': {
+  // v1.3 · HU-027 CA-03: constancia de los avisos «handoff sin confirmar» a la jefatura del eje destino (scripts/eje3-alertas.js)
+  'Alertas-pLhNJ3bg.js': {
+    importa: 'import{$r as __Tag,gt as __hof}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('eje3-alertas.js') + '\n',
     reemplazos: [
+      ['(0,D.jsxs)(v,{children:[(0,D.jsx)(T,{as:`h2`,title:`Corridas del job`', '(0,D.jsx)(__AvisosHandoff,{datos:i,cargando:k.fase===`cargando`}),(0,D.jsxs)(v,{children:[(0,D.jsx)(T,{as:`h2`,title:`Corridas del job`'],
+    ],
+  },
+
+  'Torre-Cw_qLOQG.js': {
+    // v1.3 · HU-031: Informes sin botones (se generan al cierre) y el quincenal con las tendencias de los KPI; scripts/hu031-torre.js
+    // reemplaza la función «oe» del chunk y trae su propio import de comun (__ptInformes)
+    cortes: [['function oe({datos:e}){', 'function se({datos:t}){', leer('hu031-torre.js') + '\n']],
+    // v1.3 · HU-041 CA-02: la prioridad del ticket en «Riesgo de denuncia» (el que ya alertó a Legal queda como prioritario)
+    importa: 'import{a as __Prio}from"./comun-CVU2GQ4h.js";',
+    reemplazos: [
+      ['{key:`alerta`,header:`Alerta a Legal`', '{key:`prioridad`,header:`Prioridad`,width:`10rem`,renderCell:e=>(0,Z.jsx)(__Prio,{prioridad:e.ticket.prioridad,size:`sm`})},{key:`alerta`,header:`Alerta a Legal`'],
       ['{id:`nps`,label:`NPS preliminar`,value:l===null?`—`:String(l)}', '{id:`nps`,label:e.encuestas.some(q=>' + TIENE_NPS + ')?`NPS`:`NPS preliminar`,value:l===null?`—`:`${l>0?`+`:``}${l}`}'],
       ['children:`NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).`',
        'children:e.encuestas.some(q=>' + TIENE_NPS + ')?`NPS = % de respuestas 9–10 menos % de respuestas 0–6 a «¿Recomendarías…?». Propuesta del PO (P2), sin HU aprobada: su relación con el NPS-C (DEP-10) está por definir.`:`NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).`'],
@@ -286,8 +331,8 @@ const especificos = {
   // ------------------------------------------------------------------------- Detalle del ticket: el asistente es ahora el robot flotante
   'DetalleTicket-CTveBafq.js': {
     // v1.3 · HU-043: tarjeta «Actividades del flujo» (scripts/hu043-detalle.js) y el subtipo en la cabecera
-    importa: 'import{__h43 as __f}from"./comun-CVU2GQ4h.js";',
-    prefijo: leer('hu043-detalle.js') + '\n',
+    importa: 'import{__h43 as __f,kr as __nprio}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('hu043-detalle.js') + '\n' + leer('eje3-detalle.js') + '\n' + leer('hu048-detalle.js') + '\n',
     reemplazos: [
       ['g?(0,Q.jsx)(St,{ticket:p,datos:a}):null,', ''],
       // v1.3 · HU-043 CA-01/04/05: actividades del flujo (primera tarjeta del lateral) y subtipo junto al tipo
@@ -297,11 +342,33 @@ const especificos = {
       ['function Ct({ticket:e,datos:t}){', 'function Ct({ticket:e,datos:t,onDerivar:__od}){'],
       ['(0,Q.jsx)(lt,{clienteId:e.clienteId})', '(0,Q.jsx)(lt,{clienteId:e.clienteId,onDerivar:__od})'],
       ['(0,Q.jsx)(Ct,{ticket:p,datos:a})', '(0,Q.jsx)(Ct,{ticket:p,datos:a,onDerivar:g&&(w||p.estado!==`CLOSED`)?()=>f(w?`eje3`:`derivar`):void 0})'],
+      // v1.3 · HU-048 CA-02: el ticket muestra el registro de decisiones sobre la IA (debajo de la guía de solución)
+      ['g?(0,Q.jsx)(xt,{ticket:p,datos:a}):null,', 'g?(0,Q.jsx)(xt,{ticket:p,datos:a}):null,(0,Q.jsx)(__DecisionesIA,{ticket:p,datos:a}),'],
+      // HU-048 CA-01: al elegir «Resuelto» o «Cerrado» el asistente revisa los criterios de cierre de la guía; al confirmar, el robot
+      // se abre con la respuesta sugerida (aceptar, editar o descartar)
+      ['o===`CLOSED`?(0,Q.jsx)(j,{children:`El cierre formal', '(o===`RESOLVED`||o===`CLOSED`)?(0,Q.jsx)(__CierreIA,{ticket:e,datos:t,onRevisar:()=>{i(),__iaCierre(e.id,o)}}):null,o===`CLOSED`?(0,Q.jsx)(j,{children:`El cierre formal'],
+      ['E({message:`${e.numero}: ${A[e.estado]} → ${A[o]}.`,tone:`success`}),i())};', 'E({message:`${e.numero}: ${A[e.estado]} → ${A[o]}.`,tone:`success`}),i(),(o===`RESOLVED`||o===`CLOSED`)&&__iaCierre(e.id,o))};'],
+      // v1.3 · HU-026 CA-01/02 y HU-027 CA-01: en «Cambiar estado», «Escalado» queda deshabilitado fuera de Eje 3 (gate _i de comun) y
+      // el diálogo lleva a «Derivar a Eje 3» (paquete mínimo), también para un ticket sin señal de conflicto
+      ['function Qt({ticket:e,datos:t,abierto:n,onCerrar:i}){', 'function Qt({ticket:e,datos:t,abierto:n,onCerrar:i,onEje3:__e3}){'],
+      ['checked:o===n,onChange:()=>s(n)},n)})}),o===`REOPENED`?', 'checked:o===n,onChange:()=>s(n)},n)})}),__e3&&e.eje!==3&&!Se(e.estado,`ESCALATED`)?(0,Q.jsx)(m,{tone:`info`,size:`sm`,title:`Escalar a Eje 3`,actions:(0,Q.jsx)(r,{size:`sm`,variant:`secondary`,onClick:__e3,children:`Derivar a Eje 3`}),children:(0,Q.jsx)(`span`,{className:`pt-alerta__texto`,children:D(t,e.id).length?`Con señal de conflicto, el ticket se deriva a Eje 3 con la nota de estado emocional y el paquete mínimo de handoff (6 elementos).`:`El paso a Eje 3 se hace derivando con el paquete mínimo de handoff: los 6 elementos completos antes de enviar.`})}):null,o===`REOPENED`?'],
+      ['(0,Q.jsx)(Qt,{ticket:p,datos:a,abierto:d===`estado`,onCerrar:()=>f(null)})', '(0,Q.jsx)(Qt,{ticket:p,datos:a,abierto:d===`estado`,onCerrar:()=>f(null),onEje3:()=>f(`eje3`)})'],
+      // v1.3 · HU-027 CA-03: el aviso del job a la jefatura de Legal se ve en el ticket (scripts/eje3-detalle.js)
+      ['(0,Q.jsx)(e,{tone:h>=1?`danger`:`warning`,size:`sm`,dot:!0,children:h>=1?`Sin confirmar hace ${h} ${h===1?`día hábil`:`días hábiles`}: jefatura avisada`:`Pendiente de confirmar`})', '(0,Q.jsx)(__AvisoHandoff,{ticket:t,datos:n,dias:h})'],
+      // v1.3 · HU-040 CA-02: pestaña «Legal» del ticket con el estado sincronizado (la tarjeta lateral pasa a la pestaña)
+      ['...S(o)?[{value:`cliente`,label:`Cliente`}]:[]]', '...S(o)?[{value:`cliente`,label:`Cliente`}]:[],...__h40caso(a,p.id)?[{value:`legal`,label:`Legal`}]:[]]'],
+      [':(0,Q.jsx)(Jt,{datos:a,ticket:p})', ':l===`legal`?(0,Q.jsx)(Et,{ticket:p,datos:a}):(0,Q.jsx)(Jt,{datos:a,ticket:p})'],
+      ['(0,Q.jsx)(Dt,{ticket:p,datos:a}),(0,Q.jsx)(Et,{ticket:p,datos:a}),', '(0,Q.jsx)(Dt,{ticket:p,datos:a}),'],
+      // v1.3 · HU-041 CA-02: «Legal ya fue alertado» dice que el ticket quedó como prioritario
+      ['title:`Legal ya fue alertado`,children:(0,Q.jsxs)(`span`,{className:`pt-alerta__texto`,children:[`Alerta del `,M(a.fecha),` por una exposición de `,O(a.total,a.moneda),`.`]})', 'title:`Legal ya fue alertado`,children:(0,Q.jsxs)(`span`,{className:`pt-alerta__texto`,children:[`Alerta del `,M(a.fecha),` por una exposición de `,O(a.total,a.moneda),`.`,a.prioridadAnterior&&a.prioridadAnterior!==`URGENT`?` Se marcó como prioritario: pasó de prioridad ${__nprio(a.prioridadAnterior).toLowerCase()} a urgente.`:` Se marcó como prioritario (prioridad urgente).`]})'],
+      // v1.3 · HU-066 CA-01: la pausa del SLA en «pendiente del cliente», en «Compromisos SLA e hitos»
+      ['[`Vence resolución (original)`,k(e.venceResolucion)],', '[`Vence resolución (original)`,k(e.venceResolucion)],...e.pausaSla?[[`SLA en pausa`,`Desde ${k(e.pausaSla)}: espera la respuesta del cliente`]]:[],...e.pausasSla?.length?[[`Pausas del SLA`,`${le(e.pausasSla.reduce((q,w)=>q+w.horas,0))} hábiles en espera del cliente; los vencimientos se corrieron ese tiempo`]]:[],'],
     ],
   },
   // v1.3 · HU-043: Configuración › Flujos con la clave tipo + subtipo + área, bitácora de publicaciones y alerta «sin flujo»
   'Configuracion-CA83coxJ.js': {
     importa: 'import{__h43 as __f}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('hu066-configuracion.js') + '\n',
     cortes: [['function W({tipo:e,datos:t,onCerrar:i}){', 'function G({tipo:e,datos:t,onCerrar:i}){', leer('hu043-configuracion.js') + '\n']],
     reemplazos: [
       [COLUMNAS_FLUJOS, COLUMNAS_FLUJOS_043],
@@ -311,6 +378,8 @@ const especificos = {
       ['title:`Tipo sin guía`', 'title:e.tipo===`FLUJO_FALTANTE`?`Sin flujo en el área`:`Tipo sin guía`'],
       ['description:`Cuando un gestor abra un ticket de un tipo sin guía, se reporta aquí.', 'description:`Cuando un gestor abra un ticket de un tipo sin guía, o entre un ticket sin flujo publicado en su área, se reporta aquí.'],
       ['(0,V.jsx)(W,{tipo:w,datos:o,onCerrar:()=>E(null)})', '(0,V.jsx)(W,{flujo:w,datos:o,onCerrar:()=>E(null)})'],
+      // v1.3 · HU-066 CA-04: pestaña «Cierre automático» con los días hábiles que se espera la confirmación del cliente
+      ['}]})}),c.fase===`error`?(0,V.jsx)(S,{error:c.error,reintentar:p}):', '},{value:`cierre`,label:`Cierre automático`}]})}),c.fase===`error`?(0,V.jsx)(S,{error:c.error,reintentar:p}):h===`cierre`?(0,V.jsx)(__Cierre,{datos:o}):'],
     ],
   },
   // v1.3 · HU-043: subtipo al registrar y SLA de resolución según el flujo
@@ -325,19 +394,39 @@ const especificos = {
   },
   // v1.3 · Etapa 1: líderes y gestores del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
   'MiDia-Sl191JQ_.js': {
+    // v1.3 · HU-055: «Plantilla de correo de asignación» (scripts/hu055-plantilla.js; modelo en hu055-correo.js, sufijo de comun)
+    importa: 'import{__h55 as __c55}from"./comun-CVU2GQ4h.js";',
+    prefijo: leer('hu055-plantilla.js') + '\n',
     reemplazos: [
       ['children:`Sin líder en NEXUS`', 'children:`Sin líder en ' + MAESTRO + '`'],
       ['description:`Nadie te tiene como líder en NEXUS.`', 'description:`Nadie te tiene como líder en ' + MAESTRO + '.`'],
       ['title:`Completa el líder en NEXUS`', 'title:`Completa el líder en ' + MAESTRO + '`'],
       ['Líder de cada gestor según NEXUS (DEP-02): ', 'Líder de cada gestor según ' + MAESTRO + ': '],
+      // HU-055: «Ver» en cada correo enviado muestra la plantilla con su cuerpo (por defecto, el más reciente)
+      ['[E,k]=(0,V.useState)(`dia`)', '[E,k]=(0,V.useState)(`dia`),[__sel,__ss]=(0,V.useState)(null)'],
+      ['e.tickets.length>6?`…`:``]})]})}];', 'e.tickets.length>6?`…`:``]})]})},{key:`ver`,header:`Correo`,width:`7rem`,renderCell:__r=>(0,H.jsx)(n,{size:`sm`,variant:`ghost`,"aria-pressed":(__sel??X[0]?.id)===__r.id,"aria-label":`Ver el correo «${__r.asunto}»`,onClick:()=>__ss(__r.id),children:`Ver`})}];'],
+      ['depende del servicio de envío.`})]})})})]})', 'depende del servicio de envío.`})]})})}),(0,H.jsx)(__Plantilla,{correo:X.find(__r=>__r.id===__sel)??X[0],datos:s})]})'],
+      // HU-046 CA-01: el balanceo también corre al entrar un ticket nuevo (scripts/hu046-carga.js)
+      ['sin mover los de rayo, Eje 3 o con interacción en curso.`', 'sin mover los de rayo, Eje 3 o con interacción en curso. Un ticket nuevo cuyo responsable supera el límite entra directo al gestor disponible del área con menos carga.`'],
+      ['`; el balanceo corre a pedido. Disponibilidad', '`; el balanceo corre a pedido y también al entrar un ticket nuevo para alguien sobre el límite. Disponibilidad'],
     ],
   },
   'Ingreso-hnvFCZyT.js': { reemplazos: [['Hora actual simulada: ', 'Hora actual: ']] },
-  'Morosidad-CjqbEmCJ.js': { reemplazos: [[' Es una propuesta del PO, a validar con Legal.', '']] },
+  // v1.3 · HU-056 CA-01 (el flujo de Cobranza y Legal, en el caso) y HU-057 (plantilla de la alerta de cancelación al cliente):
+  // scripts/hu056-morosidad.js
+  'Morosidad-CjqbEmCJ.js': {
+    prefijo: leer('hu056-morosidad.js') + '\n',
+    reemplazos: [
+      [' Es una propuesta del PO, a validar con Legal.', ''],
+      ['(0,R.jsx)(F,{as:`h2`,title:`Alerta de cancelación al cliente`,subtitle:`Se envía al abrir el caso, por correo, WhatsApp y Mi Portal, sin esperar el flujo.`})', '(0,R.jsx)(F,{as:`h2`,title:`Alerta de cancelación al cliente`,subtitle:`Se envía al abrir el caso, por correo, WhatsApp y Mi Portal, sin esperar el flujo.`,actions:(0,R.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>U(`plantilla`),children:`Ver la plantilla`})})'],
+      ['X?(0,R.jsxs)(O,{children:[(0,R.jsx)(F,{as:`h2`,title:`Carta de alerta`})', '(0,R.jsx)(__FlujoCaso,{ticket:J}),X?(0,R.jsxs)(O,{children:[(0,R.jsx)(F,{as:`h2`,title:`Carta de alerta`})'],
+      ['(0,R.jsxs)(N,{open:H===`accion`,', '(0,R.jsx)(__Plantilla,{abierto:H===`plantilla`,onCerrar:()=>U(null),caso:q,cliente:Y}),(0,R.jsxs)(N,{open:H===`accion`,'],
+    ],
+  },
 
   // ------------------------------------------------------------------------- Shell
   'prototipo-B6qmgYQk.js': {
-    importa: 'import{inyectarEstilos as __estilos,montarBot as __mb,redactar as __redactar,resumir as __resumir,siguientePaso as __paso,revisar as __revisar,conversar as __conversar,TONOS as __TONOS,SALUDO as __SALUDO}from"./escenas-three.js";import{nn as __sla,Or as __nombre,Ar as __tipo,hr as __estados,mr as __areas,m as __fecha,Kn as __cli,wn as __rayo,E as __api}from"./comun-CVU2GQ4h.js";',
+    importa: 'import{__h44}from"./comun-CVU2GQ4h.js";import{inyectarEstilos as __estilos,montarBot as __mb,redactar as __redactar,resumir as __resumir,siguientePaso as __paso,revisar as __revisar,conversar as __conversar,TONOS as __TONOS,SALUDO as __SALUDO}from"./escenas-three.js";import{nn as __sla,Or as __nombre,Ar as __tipo,hr as __estados,mr as __areas,m as __fecha,Kn as __cli,wn as __rayo,E as __api,__ptIA as __ia}from"./comun-CVU2GQ4h.js";',
     reemplazos: [
       ['function ca(){let e=de(),', leer('shell.js') + '\nfunction ca(){let e=de(),'],
       [',(0,L.jsx)(`span`,{className:`pt-marca__etiqueta`,children:`What-if · propuesta del PO`})', ''],
@@ -348,6 +437,9 @@ const especificos = {
       // v1.3 · HU-067 CA-08: el modo simulación de la operación en vivo (Y.sim.vivoSimulacion; encendido por defecto, como el prototipo del PO; apagado, el visor solo refleja los cambios reales)
       ['(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-reloj`', '(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-vivo`,children:[(0,L.jsx)(`h2`,{id:`sim-vivo`,className:`pt-panel__titulo`,children:`Operación en vivo`}),(0,L.jsx)(Zn,{label:`Modo simulación`,description:`Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (x1, x2).`,checked:o.vivoSimulacion!==!1,onCheckedChange:e=>E.ajustar({vivoSimulacion:e})})]}),(0,L.jsxs)(`section`,{className:`pt-panel__seccion`,"aria-labelledby":`sim-reloj`'],
       ['Cambia la persona ficticia y sus permisos.', 'Cambia de usuario y sus permisos.'],
+      // v1.3 · HU-031: al avanzar el reloj también se generan los informes de las jornadas y quincenas que cierran
+      ['Al avanzar, corre el job de alertas como lo haría el programado.', 'Al avanzar, corre el job de alertas y, si pasa el cierre de una jornada o de una quincena, genera sus informes, como lo haría el programado.'],
+      ['ue({message:`Reloj +${t}. ${s(n)}`,tone:`info`})', 'ue({message:`Reloj +${t}. ${s(n)}${n.informes&&n.informes.length?` Informes generados: ${n.informes.join(`, `)}.`:``}`,tone:`info`})'],
       ['Prueba paletas y grises del sistema de diseño. Se recuerda en este navegador. No es parte del producto.', 'Prueba paletas y grises. Se recuerda en este navegador.'],
       ['Esta pantalla no existe en el prototipo', 'Esta pantalla no existe'],
       // v1.3 · Mi Portal: ruta propia y entradas en la navegación del cliente; la redirección del rol Cliente la deja pasar
@@ -357,7 +449,19 @@ const especificos = {
       // v1.3 · UrbeMind es de la Etapa 2: fuera del menú y #/urbemind lleva al inicio (no se carga su pantalla)
       ['...n!==`SIN_ATENCION`&&n!==`MODERADOR_EVENTO`&&n!==`MESA_SGD`&&n!==`ADMIN_FUNCIONAL`?[{href:g(`urbemind`),label:`Integración UrbeMind`,icon:(0,L.jsx)(R,{name:`grid`}),current:t.id===`urbemind`}]:[],', ''],
       ['case`urbemind`:return(0,L.jsx)($i,{});', 'case`urbemind`:return null;'],
+      // v1.3 · HU-044 CA-01: el «ticket entrante por Mi Portal» del panel de simulación entra con canal «Mi Portal» (antes, Correo)
+      ['E.ticketEntrante(`CTA`)', 'E.ticketEntrante(`CTA`,`Mi Portal`)'],
+      // v1.3 · HU-044 CA-03: en la Bandeja cada uno ve su área y, si es supervisor, las áreas que supervisa según el maestro local
+      // de ATC (su área y las de los gestores que lo tienen como líder; scripts/hu044-areas.js). Antes, el supervisor y el
+      // coordinador CX veían «Todas las áreas».
+      ['ie=(e,n)=>n===`mios`?e.responsable===t.id:n===`area`?e.area===t.area:n!==`sin-asignar`||!e.responsable&&(t.rol===`SUPERVISOR`||t.rol===`COORDINADOR_CX`||e.area===t.area)', '__ar=__h44.areas(t.id),ie=(e,n)=>n===`mios`?e.responsable===t.id:n===`area`?e.area===t.area:__ar.includes(e.area)&&(n!==`sin-asignar`||!e.responsable)'],
+      ['todas:`Todas las áreas`', 'todas:`Áreas que superviso`'],
+      ['description:`Tickets activos de ${A===`todas`?`todas las áreas`:', 'description:`Tickets activos de ${A===`todas`||A===`sin-asignar`&&__ar.length!==1?(__ar.length?`las áreas que supervisas (${__h44.lista(__ar)})`:`las áreas que supervisas`):'],
+      ['title:A===`sin-asignar`?`Nada sin asignar`', 'title:!__ar.length?`No supervisas ninguna área`:A===`sin-asignar`?`Nada sin asignar`'],
+      ['description:A===`sin-asignar`?`Todos los tickets de tu área tienen responsable.`', 'description:!__ar.length?`Según el maestro local de ATC no eres supervisor de ninguna área: aquí no ves tickets de otras áreas.`:A===`sin-asignar`?`Todos los tickets de tu área tienen responsable.`'],
       ['i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),', 't.id===`urbemind`&&location.replace(g(`vivo`)),i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),'],
+      // v1.3 · HU-040 CA-02: Simulación › «Legal pone en revisión el último caso enviado» (actualización intermedia, sin resolver)
+      ['(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!x,onClick:()=>{try{x&&E.legalActualiza(x.ticketId,`RESUELTO`', '(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!a.sincLegal.some(q=>q.estado===`ENVIADO`),onClick:()=>{try{let q=[...a.sincLegal].reverse().find(q=>q.estado===`ENVIADO`);q&&E.legalActualiza(q.ticketId,`EN_REVISION`,null),ue({message:`Legal puso en revisión el caso ${q?.idLegal??``} en su herramienta: el ticket lo refleja.`,tone:`info`})}catch(e){ue({message:e instanceof Error?e.message:`No se pudo sincronizar.`,tone:`warning`})}},children:`Legal pone en revisión el último caso enviado`}),(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!x,onClick:()=>{try{x&&E.legalActualiza(x.ticketId,`RESUELTO`'],
     ],
     // la barra superior queda con la marca y el usuario; el aviso «What-if» desaparece
     cortes: [

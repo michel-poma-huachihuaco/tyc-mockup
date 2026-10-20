@@ -117,6 +117,7 @@ detractor; marcado como supuesto hasta contar con el KPI Engine, DEP-10). El NPS
 > - **Cuarta ronda (19-oct):** Mi Portal (HU-064, 065 y 066), la Etapa 2 fuera de la vista y lo pequeño que faltaba de la HU-067.
 > - **Quinta ronda (20-oct):** las prioridades del PO (HU-043, 050 y 067) y las garantías (HU-034, 035 y 036), criterio por criterio;
 >   ver §5.7.
+> - **Bloque 3 (20-oct):** las 12 HU que seguían parciales; ver §5.8. Con eso, las 62 HU de la Etapa 1 quedan completas.
 >
 > Nada de esto está aprobado: el PLT-04 v1.3 está «Pendiente DoR» y el comité DoR es el 20-oct.
 
@@ -134,9 +135,10 @@ De las 62 historias de la Etapa 1: **50 sí, 12 parcial, 0 no** después de la q
 | HU-026 y 027 | «Cambiar estado › Escalado» pasa a Eje 3 sin gate de conflicto ni paquete mínimo de handoff; el aviso de handoff sin confirmar no se ve en ninguna pantalla |
 | HU-044, 046, 048, 031, 040, 041, 055, 056, 057, 034, 035, 036 | Faltas acotadas a uno o dos criterios (detalle en la tabla de cobertura entregada aparte) |
 
-**Quinta ronda:** quedan cubiertas la HU-043, la 050 y la 067 (las tres prioridades) y la 034, la 035 y la 036. Siguen
-parciales 12, con faltas acotadas: la 026 y la 027 (Jesús); la 031, 044, 046, 048 y 055 (Michel); y la 040, 041, 056, 057 y
-066 (Daniel).
+**Quinta ronda:** quedan cubiertas la HU-043, la 050 y la 067 (las tres prioridades) y la 034, la 035 y la 036.
+
+**Bloque 3:** se cierran las 12 restantes: la 026 y la 027 (Jesús); la 031, 044, 046, 048 y 055 (Michel); y la 040, 041, 056,
+057 y 066 (Daniel). **Cobertura final: 62 de 62.**
 
 ### 5.2 Mi Portal: decisiones de diseño para validar con el PO
 
@@ -235,3 +237,32 @@ Pruebas de esta ronda:
 - **En Chrome (`npm run recorrer`, con el servidor arriba):** flujos 7/7, recorrido general 17/17, Operación en vivo 9/9,
   garantías 6/6 y Consulta 360 10/10.
 - En todos los recorridos: sin errores de JS, consola ni red, y sin textos de la Etapa 2.
+
+### 5.8 Bloque 3 (20-oct): las 12 HU que faltaban
+
+Misma regla que en §5.7: solo lo que pide cada criterio del PLT-04 v1.3.
+
+| HU | Qué se cerró | Supuesto o decisión | Pregunta para el PO |
+|---|---|---|---|
+| **026** | Con señal de conflicto, «Cambiar estado › Escalado» queda deshabilitado («gate no compensable»). Resolver o cerrar en Eje 1/2 se rechaza y queda en la auditoría. La única salida es «Derivar a Eje 3» | — | — |
+| **027** | Los 6 elementos del handoff se exigen en todo paso a Eje 3, también sin señal. El aviso de handoff sin confirmar se ve en el ticket y en Alertas SLA › «Handoffs sin confirmar» | El paquete se exige al pasar a Eje 3, como dice el CA-01. «Supervisor del eje destino» = la jefatura de Legal del maestro local | El requerimiento dice «toda derivación entre ejes»: ¿también de Eje 1 a Eje 2? |
+| **040** | Pestaña Legal en el ticket con el estado sincronizado. La actualización intermedia («En revisión en Legal») y la resolución llegan sin registro manual | «Se confirma el handoff» (CA-01) se lee como la confirmación de la derivación por quien la envía | ¿El caso llega a Legal al derivar o cuando Legal confirma la recepción? |
+| **041** | Al alertar a Legal por la exposición, el ticket queda como prioritario; se ve en el ticket y en la Torre › «Riesgo de denuncia» | «Prioritario» = prioridad Urgente, sin tocar el SLA. El rayo no se usa, porque la RN-SVC-031 lo reserva al supervisor, con motivo y tope | ¿«Prioritario» es prioridad Urgente o el rayo? |
+| **044** | El simulador de Mi Portal entra con canal «Mi Portal». En la Bandeja, cada persona ve su área y las áreas que supervisa en el maestro local | «Nuevo ticket» de la consola no ofrece el canal Mi Portal, porque lo usa el cliente. El Coordinador CX no supervisa áreas y ya no ve tickets en la Bandeja. La Operación en vivo (HU-067, cuyo actor es el supervisor ATC) mantiene su regla: supervisor y coordinador ven todas las áreas | ¿El Coordinador CX ve la Bandeja? ¿El supervisor ve todas las áreas en la Operación en vivo o solo las que supervisa, como en la Bandeja? |
+| **046** | Al entrar un ticket, si el responsable del flujo pasa del límite de carga, va al gestor disponible del área con menos carga ponderada, con el motivo REASSIGNMENT_CARGA. Sin nadie disponible, queda en la cola con alerta al supervisor | La habilidad no se usa, porque el PLT no la define | ¿Qué habilidades tiene cada gestor? |
+| **048** | El asistente lista los criterios de cierre pendientes de la guía del ticket. Se activa a pedido y al elegir Resuelto o Cerrado. La sugerencia se acepta, se edita o se descarta. El ticket muestra el registro de decisiones sin texto ni datos personales | «Ir a cerrar» = elegir Resuelto o Cerrado en «Cambiar estado». El aviso va en el mismo diálogo, porque el diálogo bloquea el resto de la pantalla. La IA está simulada con reglas locales | ¿Cuándo se da por cumplido un criterio de la guía? |
+| **031** | Ya no hay botones para generar informes. Al avanzar el reloj, se genera el diario al cierre de cada jornada hábil y el quincenal al cierre de cada quincena, con tendencias de SLA, CSAT, NPS y adopción de Mi Portal | Cierre de la jornada a las 18:00. Las quincenas son del 1 al 15 y del 16 a fin de mes. Adopción = % de tickets nuevos registrados en Mi Portal. No se agregó el envío a jefaturas, porque no está en los CA | ¿Hora de cierre, definición de quincena y de adopción? |
+| **055** | «Plantilla de correo de asignación» en Mi día › Correos de asignación: con líder, sin líder (sale solo al gestor y se avisa al administrador) y el resumen de una reasignación masiva | El correo no lleva datos del cliente, por protección de datos. El envío en 1 minuto o menos depende del servicio real | ¿Qué datos del ticket lleva el correo? |
+| **056** | El ticket de resolución por 3 meses impagos se deriva al flujo de Cobranza y Legal (el flujo del PO con el subtipo «General»): «Flujo de resolución» en el caso y «Actividades del flujo» en el ticket | El CA dice «se deriva»; no se agregó un aviso aparte a Legal | ¿La suspensión por reclamo frena también el flujo? |
+| **057** | «Plantilla de alerta de cancelación» con los datos del caso y las constancias de envío | Ni el PLT-04 ni el artifact traen el texto: el texto, las consecuencias y el plazo dicen «Pendiente de Legal» | Texto de la alerta (Legal) |
+| **066** | El SLA se pausa en «pendiente del cliente» y, al responder, los vencimientos se corren lo que duró la espera. El cierre automático lo hace el job, con los días hábiles configurables en Configuración › Cierre automático | 5 días hábiles es el valor inicial, y es un supuesto | ¿Cuántos días? ¿La pausa también corre el SLA de las actividades del flujo? |
+
+Pruebas al cerrar el bloque 3:
+- **En Node (`npm run probar`): 76 de 76 casos.** Mi Portal 14, flujos 9, Consulta 360 7, garantías 10, morosidad 6, SLA de
+  Mi Portal 7, Eje 3 y Legal 6, Bandeja 9, asistente de IA 4 e informes 4.
+- **En Chrome (`npm run recorrer`): 90 de 90 pasos.** Recorrido general 17, flujos 7, Consulta 360 10, Operación en vivo 9,
+  garantías 6, morosidad 7, SLA de Mi Portal 8, Eje 3 5, Bandeja 8, asistente de IA 7 e informes 6.
+- En todos los recorridos: sin errores de JS, consola ni red.
+
+Un problema anterior, que no es de esta ronda: en móvil, la Torre de Control vista como Coordinador CX es más ancha que la
+pantalla por sus cinco pestañas. Ya pasaba en el artifact del PO sin tocar.

@@ -124,7 +124,9 @@ caso('«ticket entrante» (simulación) y Mi Portal pasan por el mismo orquestad
   const r = comun.O.ticketEntrante('CTA')
   assert.equal(r.resultado, 'asignado')
   const t = n.datos().tickets.find((x) => x.numero === r.numero)
-  assert.equal(t.area, 'COBRANZA'); assert.equal(t.responsable, 'p-rsalazar'); assert.equal(t.subtipo, 'General')
+  assert.equal(t.area, 'COBRANZA'); assert.equal(t.flujo.responsable, 'p-rsalazar'); assert.equal(t.subtipo, 'General')
+  // HU-046 CA-01: el responsable del flujo entra con carga 28 (límite 12), así que va al disponible de Cobranza con menos carga
+  assert.equal(t.responsable, 'p-jccama')
   assert.deepEqual(t.actividades.map((a) => [a.nombre, a.estado]), [['Recepción', 'EN_CURSO'], ['Revisión de cobranza', 'PENDIENTE'], ['Respuesta al cliente', 'PENDIENTE']])
   // un subtipo sin flujo (como los de Mi Portal) no se asigna: queda en la cola de su área y se alerta al administrador
   const [dx, tx] = f.crear(d0, alta({ tipo: 'CTA', subtipo: 'Pago no reflejado' }), GESTOR, d0.ahora)

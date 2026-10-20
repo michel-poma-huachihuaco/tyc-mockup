@@ -16,8 +16,12 @@ export const ADJUNTOS = {
   maxArchivos: 3,
   texto: 'JPG, PNG o PDF de hasta 10 MB; máximo 3 archivos.',
 }
-/** HU-066 CA-04: días hábiles que se espera la confirmación. Supuesto: es una pregunta abierta del PLT-04. */
-export const DIAS_CONFIRMACION = 5
+/**
+ * HU-066 CA-04: días hábiles que se espera la confirmación antes del cierre automático. Los configura el administrador funcional
+ * (Configuración › Cierre automático) y los lee el job del sistema en «comun» (scripts/hu066-sla.js); el valor inicial, 5, es
+ * un supuesto del equipo (pregunta abierta del PLT-04).
+ */
+export const diasConfirmacion = (n: Nucleo, d: Datos = n.datos()): number => n.diasConfirmacion(d)
 /** HU-064 CA-01: el código de un solo uso vence a los 5 minutos y admite 3 intentos. Supuesto (no está en el PLT-04). */
 export const CODIGO = { minutos: 5, intentos: 3 }
 
@@ -129,17 +133,19 @@ export function lineaDeTiempo(d: Datos, t: Ticket, nombres: Record<string, strin
   })
   return pasos.sort((a, b) => a.fecha.getTime() - b.fecha.getTime() || a.orden - b.orden).map(({ orden: _o, ...p }) => p)
 }
+/** HU-066 CA-04: si la fila es el cierre del job por falta de respuesta, los días hábiles que se esperó (van en su nota). */
+const cierreAutomatico = (f: FilaEstado): string | null => (f.a === 'CLOSED' && f.nota?.match(/^Cierre automático: .* en (\d+) días hábiles/)?.[1]) || null
 function pasoDeEstado(f: FilaEstado, t: Ticket): Pick<Paso, 'titulo' | 'detalle' | 'tono'> {
   const delCliente = f.autor === AUTOR_CLIENTE
   switch (f.a) {
     case 'OPEN': return { titulo: 'Registrado', detalle: t.canal === CANAL ? 'Lo registraste en Mi Portal.' : `Se registró por ${t.canal}.`, tono: 'accent' }
-    case 'IN_PROGRESS': return { titulo: 'En atención', detalle: delCliente ? 'Respondiste lo que te pedimos; tu caso volvió a atención.' : f.de === 'PENDING_CUSTOMER' ? 'Retomamos la atención.' : null, tono: 'default' }
-    case 'PENDING_CUSTOMER': return { titulo: 'Pendiente de tu respuesta', detalle: 'Necesitamos un dato o un documento tuyo para seguir.', tono: 'accent' }
+    case 'IN_PROGRESS': return { titulo: 'En atención', detalle: delCliente ? 'Respondiste lo que te pedimos; tu caso volvió a atención y el plazo se reanudó.' : f.de === 'PENDING_CUSTOMER' ? 'Retomamos la atención y el plazo se reanudó.' : null, tono: 'default' }
+    case 'PENDING_CUSTOMER': return { titulo: 'Pendiente de tu respuesta', detalle: 'Necesitamos un dato o un documento tuyo para seguir. Mientras tanto, el plazo queda en pausa.', tono: 'accent' }
     case 'ESCALATED': return { titulo: 'En revisión especializada', detalle: null, tono: 'default' }
     case 'RESOLVED': return { titulo: 'Resuelto · por confirmar', detalle: 'Revisa la solución y confírmala o recházala.', tono: 'success' }
     case 'CLOSED': return {
       titulo: 'Cerrado',
-      detalle: delCliente ? 'Confirmaste la solución (cierre formal en Mi Portal).' : f.nota?.startsWith('Cierre automático') ? `Se cerró solo: no hubo respuesta en ${DIAS_CONFIRMACION} días hábiles.` : null,
+      detalle: delCliente ? 'Confirmaste la solución (cierre formal en Mi Portal).' : cierreAutomatico(f) ? `Se cerró solo: no hubo respuesta en ${cierreAutomatico(f)} días hábiles.` : null,
       tono: 'success',
     }
     case 'REOPENED': return { titulo: 'Reabierto', detalle: delCliente && f.nota ? `Rechazaste la solución: «${f.nota}»` : null, tono: 'danger' }
@@ -162,7 +168,7 @@ export function avisos(d: Datos, t: Ticket, c: Cliente, enlace: string): Aviso[]
     .map((f) => ({
       id: `av-${f.id}`, fecha: f.fecha, estado: ESTADO_CLIENTE[f.a].texto, canales: ['Correo', 'WhatsApp'],
       destino: `${enmascararCorreo(c.correo)} · ${enmascararTelefono(c.telefono)}`,
-      texto: `Tu ticket ${t.numero} ahora está «${ESTADO_CLIENTE[f.a].texto}».${f.a === 'CLOSED' && f.autor !== AUTOR_CLIENTE ? ' Se cerró automáticamente.' : ''}`,
+      texto: `Tu ticket ${t.numero} ahora está «${ESTADO_CLIENTE[f.a].texto}».${cierreAutomatico(f) ? ' Se cerró automáticamente.' : ''}`,
       enlace,
     }))
     .reverse()
@@ -249,7 +255,10 @@ const exigir = (n: Nucleo, t: Ticket | null, c: string, estado: Estado, que: str
   return t
 }
 
-/** CA-01: la respuesta queda como interacción visible del cliente y el ticket vuelve a «en atención». */
+/**
+ * CA-01: la respuesta queda como interacción visible del cliente y el ticket vuelve a «en atención». El cambio de estado es el
+ * de la consola (V en «comun»), que reanuda el SLA pausado en «pendiente del cliente» (scripts/hu066-sla.js).
+ */
 export function responder(n: Nucleo, d0: Datos, ticketId: string, clienteId: string, texto: string, adjuntos: Adjunto[]): [Datos, void] {
   const t = exigir(n, d0.tickets.find((x) => x.id === ticketId) ?? null, clienteId, 'PENDING_CUSTOMER', 'responder')
   const err: { campo: string; mensaje: string }[] = []
@@ -286,14 +295,15 @@ export function rechazar(n: Nucleo, d0: Datos, ticketId: string, clienteId: stri
   return [d, undefined]
 }
 
-/** Desde cuándo se cierra solo un ticket resuelto sin respuesta (CA-04). */
-export function cierreAutomaticoDesde(n: Nucleo, t: Ticket): Date | null {
-  return t.estado === 'RESOLVED' && t.ultimaResolucion ? n.sumarDiasHabiles(t.ultimaResolucion, DIAS_CONFIRMACION) : null
+/** Desde cuándo se cierra solo un ticket resuelto sin respuesta (CA-04): fin del n-ésimo día hábil configurado desde la resolución. */
+export function cierreAutomaticoDesde(n: Nucleo, t: Ticket, d: Datos = n.datos()): Date | null {
+  return n.limiteConfirmacion(d, t)
 }
-/** CA-04 (simulado): lo que hará el sistema al vencer el plazo; lo dispara el panel de simulación del detalle. */
+/**
+ * CA-04: la regla que el job del sistema aplica a cada ticket resuelto cuyo plazo terminó (scripts/hu066-sla.js, en «comun»).
+ * Mi Portal ya no la dispara: el cierre lo hace el job (Herramientas › Simulación › reloj o «Ejecutar el job ahora»).
+ */
 export function cerrarSinRespuesta(n: Nucleo, d0: Datos, ticketId: string, clienteId: string): [Datos, void] {
   const t = exigir(n, d0.tickets.find((x) => x.id === ticketId) ?? null, clienteId, 'RESOLVED', 'cerrarlo automáticamente')
-  let d = n.cambiarEstado(d0, t.id, 'CLOSED', null, `Cierre automático: sin respuesta del cliente en ${DIAS_CONFIRMACION} días hábiles (simulado)`)
-  d = n.evento(d, 'portal_cierre', { resultado: 'automatico' })
-  return [d, undefined]
+  return [n.cerrarSinRespuesta(d0, t.id), undefined]
 }

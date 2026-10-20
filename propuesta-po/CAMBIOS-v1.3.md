@@ -83,7 +83,19 @@ icono `lock`) y con colores por token, sin colores escritos a mano. Además, el 
 pasó a usar los tokens del SDK para tamaño y peso de letra, espacios y radios. Solo quedan en px las medidas que el SDK no
 tiene como token: bordes, tamaño de iconos, sombras, animaciones y cortes de pantalla.
 
-### 5. Documentación de consulta en el repositorio
+### 6. Las 12 HU que faltaban (bloque 3, 20-oct)
+
+| HU | Dueño | Qué se agregó (criterios) |
+|---|---|---|
+| 026 y 027 | Jesús | Con señal de conflicto no se escala a mano ni se resuelve en Eje 1/2: todo paso a Eje 3 va por «Derivar a Eje 3» con los 6 elementos. El aviso de handoff sin confirmar se ve en el ticket y en Alertas SLA |
+| 040 y 041 | Daniel | Pestaña Legal con el estado sincronizado, incluido «En revisión en Legal». El ticket con riesgo de denuncia queda prioritario al alertar a Legal |
+| 044, 046 y 055 | Michel | Canal Mi Portal en el simulador. La Bandeja muestra las áreas que cada persona supervisa. Reparto por carga al entrar el ticket. «Plantilla de correo de asignación» |
+| 048 y 031 | Michel | Asistente de IA al ir a cerrar, con los criterios pendientes de la guía y el registro de decisiones en el ticket. Informes diario y quincenal generados al cierre, con tendencias |
+| 056, 057 y 066 | Daniel | Resolución por morosidad derivada al flujo de Cobranza y Legal. «Plantilla de alerta de cancelación» (texto pendiente de Legal). SLA en pausa mientras se espera al cliente y cierre automático con días configurables |
+
+Supuestos y preguntas para el PO: [DECISIONES.md §5.8](DECISIONES.md).
+
+### 7. Documentación de consulta en el repositorio
 
 [`documentacion/`](documentacion/README.md) contiene tres cosas:
 - los 6 documentos del PO v1.3, tal cual y con su huella;
@@ -105,14 +117,8 @@ No reemplaza a Nexora: el paquete se aprueba allí, y la carpeta `docs/` solo la
 
 ## Cobertura frente a las 62 HU de la v1.3
 
-**50 completas, 12 parciales y 0 sin pantalla** al 20-oct. Antes eran 44 y 18; y antes del 19-oct, la HU-064, 065 y 066 no
-tenían pantalla. Las tres prioridades del PO están completas.
-
-Siguen parciales, con faltas acotadas (detalle en [documentacion/cobertura-v1.3.md](documentacion/cobertura-v1.3.md)):
-
-- HU-026 y 027, de Jesús;
-- HU-031, 044, 046, 048 y 055, de Michel;
-- HU-040, 041, 056, 057 y 066, de Daniel.
+**Las 62 HU de la Etapa 1 están completas** al 20-oct: el mockup permite comprobar cada criterio de aceptación. Antes eran 50
+completas (quinta ronda) y 44 (19-oct). Dónde ver cada una: [documentacion/cobertura-v1.3.md](documentacion/cobertura-v1.3.md).
 
 ## Cómo probarlo
 
@@ -120,9 +126,15 @@ Siguen parciales, con faltas acotadas (detalle en [documentacion/cobertura-v1.3.
 cd propuesta-po
 npm install
 npm start          # compila (escenas three.js y Mi Portal) y sirve http://localhost:5180
-npm run probar     # 40 casos en Node: Mi Portal, flujos, Consulta 360 y garantías (uno por criterio)
-npm run recorrer   # con el servidor arriba: 49 pasos en Chrome sin interfaz, en 5 recorridos
+npm run probar     # 76 casos en Node, en 10 suites (uno por criterio)
+npm run recorrer   # con el servidor arriba: 90 pasos en Chrome sin interfaz, en 11 recorridos
 ```
+
+Verificado el 20-oct-2026, después de la sección 6:
+
+- **`npm run probar`:** 76/76 casos.
+- **`npm run recorrer`:** 90/90 pasos.
+- En todos: sin errores de JS, consola ni red.
 
 Verificado el 20-oct-2026, después de la sección 4:
 
@@ -149,6 +161,7 @@ Verificado el 19-oct-2026 (secciones 1 a 3):
 | Regenerados | `artefacto/assets/` (`comun`, `prototipo`, `VistaEnVivo`, `MiDia`, `escenas-three.js`) |
 | Nuevos el 20-oct | `documentacion/` (documentos del PO, paquete de Dev 1 y cobertura), `scripts/hu043-modelo.js`, `hu043-configuracion.js`, `hu043-detalle.js`, `consulta360.js`, `garantias.js`, `garantia-ui.js`, `probar-flujos.mjs`, `probar-consulta360.mjs`, `probar-garantias.mjs`, `recorrer-flujos.mjs`, `recorrer-consulta360.mjs`, `recorrer-operacion-vivo.mjs`, `recorrer-garantias.mjs` |
 | Modificados el 20-oct | `scripts/parchear.mjs`, `componentes-vivo.js`, `efecto-vivo.js`, `shell.js`, `probar-portal.mjs`, `recorrer-navegador.mjs`; `src/three/vivo.ts`, `grafo360.ts`, `estilos.ts`, `bot.ts`; `package.json`, `README.md`, `DECISIONES.md` (§5.7) y los chunks regenerados de `artefacto/assets/` |
+| Nuevos en el bloque 3 | `scripts/eje3-modelo.js`, `eje3-detalle.js`, `eje3-alertas.js`, `hu044-areas.js`, `hu046-carga.js`, `hu055-correo.js`, `hu055-plantilla.js`, `hu048-*.js`, `hu031-*.js`, `hu056-*.js` (morosidad y plantilla de la HU-057), `hu066-*.js` y sus pruebas (`probar-eje3`, `probar-bandeja`, `probar-asistente-ia`, `probar-informes`, `probar-morosidad`, `probar-portal-sla` y sus `recorrer-*`) |
 | Sin tocar | `original/`, `frontend/`, `docs/` y el resto del repositorio |
 
 ## Para tener en cuenta
