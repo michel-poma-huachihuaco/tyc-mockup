@@ -7,8 +7,9 @@ Revisión del 19-oct-2026 en PJ-06 contra los documentos del PO v1.3 (16-oct). S
 - PJ-06 tiene 68 documentos, ninguno aprobado, y 0 ítems: sigue sin G0 ni ticket AYB.
 - Tus 27 documentos siguen en la v1 que publicamos el 16-oct (las huellas coinciden), escrita sobre la v1.2. El `analisis/decisiones.md` que subió Jesús lo anota como pendiente P-013: «hoy conviven v1.2 (épicas, features, historias y DoR) y v1.3 (roadmap, ADR y datos)».
 - Faltan los 6 documentos de la EP-ATC-08 EntregaFest, que en la v1.3 pasa de Dev 3 a ti.
-- **Actualización del 20-oct por la tarde:** Daniel subió la HU-037, 038 y 039 idénticas a las de este paquete. Ahora faltan 3
-  (EP-ATC-08, FT-ATC-15 y su DoR). El estado completo está en `PLAN-NEXORA.md`.
+- **Actualización del 20-oct por la tarde: publicado.** Daniel había subido la HU-037, 038 y 039 idénticas a las de este paquete.
+  Brayan publicó sus 27 versiones 2 y los otros 3 documentos nuevos (EP-ATC-08, FT-ATC-15 y su DoR), todo pendiente de
+  aprobación. El registro está en `PLAN-NEXORA.md`.
 
 ## Documento por documento (33)
 

@@ -26,7 +26,7 @@ están sin cambios; la huella sha256 permite comprobarlo.
 
 Una diferencia entre los documentos, ya avisada: el Excel (regla RN-SVC-043) dice «salida 30-oct» y los PDF, 03-nov.
 
-### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1, subido en parte a Nexora
+### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1, publicado en Nexora (pendiente de aprobación)
 
 Son todas las épicas, funcionalidades e historias de la Etapa 1 según la v1.3, en el formato del SDK (frontmatter de 11 campos
 y `ui:`), generadas desde los PDF del PO:
@@ -42,8 +42,9 @@ Para recorrerlo:
 - [`explorador.html`](paquete-definir-etapa1-v1.3/explorador.html) es la página del SDK (`aybar paquete explorador`) y se abre
   en el navegador sin instalar nada.
 
-[`PLAN-NEXORA.md`](paquete-definir-etapa1-v1.3/PLAN-NEXORA.md) dice qué falta subir, documento por documento. Al 20-oct por la
-tarde ya están en Nexora 48 historias, idénticas; faltan 27 versiones 2 y 44 documentos nuevos.
+[`PLAN-NEXORA.md`](paquete-definir-etapa1-v1.3/PLAN-NEXORA.md) registra la publicación del 20-oct documento por documento. Se
+subieron 27 versiones 2 y 44 documentos nuevos; 48 historias ya estaban iguales. Nexora tiene ahora los 119 documentos, con las
+mismas huellas y todos pendientes de aprobación.
 [`NEXORA-BRAYAN-v1.3.md`](paquete-definir-etapa1-v1.3/NEXORA-BRAYAN-v1.3.md) tiene el detalle de lo que cambia para Dev 1.
 
 Para validarlo hace falta Java 21:
@@ -57,8 +58,9 @@ Resultado al 20-oct: **sin errores, con 24 advertencias que se esperan en esta e
 - todavía no hay tareas (`backlog/tareas`);
 - las 23 funcionalidades tienen pantallas y aún no tienen G2, que aprueban el PO y UX.
 
-Cada documento termina con «Generado por IA … — Revisado por: (pendiente)». Brayan publica en Nexora lo que falta cuando dé
-la luz verde (decisión del 20-oct). Queda como versión pendiente, porque lo aprueba el PO.
+Cada documento termina con «Generado por IA … — Revisado por: (pendiente)». Brayan los publicó en Nexora el 20-oct. Quedan
+como versión pendiente hasta que los aprueben el PO (épicas, funcionalidades e historias) y el líder técnico con el project
+manager (DoR).
 
 ### `cobertura-v1.3.md`: el mockup frente a las 62 historias
 
