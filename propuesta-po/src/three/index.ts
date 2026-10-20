@@ -1,4 +1,7 @@
 export { montarVivo } from './vivo.ts'
+// Operación en Vivo de la rama de Daniel (src/vivo la monta desde escenas-three.js)
+export { montarVivo as montarVivoDaniel, leerTokenRgb } from './vivo-daniel.ts'
+export type { Cols as ColsDaniel, Estatico as EstaticoDaniel, Snap as SnapDaniel, OptsVivo as OptsVivoDaniel } from './vivo-daniel.ts'
 export { montarGrafo } from './grafo360.ts'
 export { actualizarHud } from './hud.ts'
 export type { HudProps } from './hud.ts'

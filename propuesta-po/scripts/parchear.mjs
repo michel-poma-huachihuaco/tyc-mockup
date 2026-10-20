@@ -520,6 +520,12 @@ const especificos = {
       ['i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),', 't.id===`urbemind`&&location.replace(g(`vivo`)),i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),'],
       // v1.3 · HU-040 CA-02: Simulación › «Legal pone en revisión el último caso enviado» (actualización intermedia, sin resolver)
       ['(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!x,onClick:()=>{try{x&&E.legalActualiza(x.ticketId,`RESUELTO`', '(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!a.sincLegal.some(q=>q.estado===`ENVIADO`),onClick:()=>{try{let q=[...a.sincLegal].reverse().find(q=>q.estado===`ENVIADO`);q&&E.legalActualiza(q.ticketId,`EN_REVISION`,null),ue({message:`Legal puso en revisión el caso ${q?.idLegal??``} en su herramienta: el ticket lo refleja.`,tone:`info`})}catch(e){ue({message:e instanceof Error?e.message:`No se pudo sincronizar.`,tone:`warning`})}},children:`Legal pone en revisión el último caso enviado`}),(0,L.jsx)(r,{size:`sm`,variant:`secondary`,disabled:!x,onClick:()=>{try{x&&E.legalActualiza(x.ticketId,`RESUELTO`'],
+      // 20-oct (b3-i): #/vivo es la «Operación en Vivo» de la rama de Daniel tal cual (diseño, escena 3D, datos de ejemplo,
+      // simulación, cajón y acciones): src/vivo → vivo-daniel.js (npm run build:portal) y su escena, src/three/vivo-daniel.ts.
+      // Se carga bajo demanda, como Mi Portal; el chunk VistaEnVivo del PO queda sin ruta.
+      ['function ca(){let e=de(),', 'const __VivoD=(0,P.lazy)(()=>import(`./vivo-daniel.js`).then(m=>({default:m.VivoDaniel})));\nfunction ca(){let e=de(),'],
+      ['case`vivo`:return(0,L.jsx)(Gi,{});', 'case`vivo`:return(0,L.jsx)(__VivoD,{});'],
+      ['Entran tickets de ejemplo y avanzan solos; aparecen la pausa y la velocidad (x1, x2).', 'La planta avanza sola con tickets de ejemplo; apagado, queda en pausa (se reanuda con «Reanudar planta»).'],
     ],
     // la barra superior queda con la marca y el usuario; el aviso «What-if» desaparece
     cortes: [
