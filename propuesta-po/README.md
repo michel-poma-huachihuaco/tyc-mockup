@@ -176,7 +176,7 @@ de la Etapa 1 están completas** (`documentacion/cobertura-v1.3.md`, que dice d�
 | `scripts/garantias.js` y `garantia-ui.js` | Aviso al cliente, carta notarial (modelo) y carga de varias evidencias (pantalla) |
 | `scripts/probar-flujos.mjs`, `probar-consulta360.mjs`, `probar-garantias.mjs` | Pruebas en Node, una por criterio |
 | `scripts/recorrer-flujos.mjs`, `recorrer-consulta360.mjs`, `recorrer-operacion-vivo.mjs`, `recorrer-garantias.mjs` | Recorridos en Chrome sin interfaz |
-| `documentacion/` | Copia de consulta de los documentos del PO v1.3, del paquete Definir de Dev 1 y de la cobertura (ver su README) |
+| `documentacion/` | Copia de consulta de los documentos del PO v1.3, del paquete Definir de toda la Etapa 1 (formato del SDK, con su explorador) y de la cobertura (ver su README) |
 | `src/three/estilos.ts` (cambio) | El CSS del visor usa los tokens del SDK para letra, espacios y radios (`--aybar-font-size-*`, `--aybar-font-weight-*`, `--aybar-space-*`, `--aybar-radius-*`) |
 
 | Comando | Qué hace ahora |

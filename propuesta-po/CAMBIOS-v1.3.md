@@ -99,7 +99,7 @@ Supuestos y preguntas para el PO: [DECISIONES.md §5.8](DECISIONES.md).
 
 [`documentacion/`](documentacion/README.md) contiene tres cosas:
 - los 6 documentos del PO v1.3, tal cual y con su huella;
-- el borrador del paquete Definir de Dev 1 (33 documentos, valida sin errores; todavía no subido a Nexora);
+- el paquete Definir de toda la Etapa 1 en el formato del SDK: 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (119 documentos, valida sin errores, con su índice y el explorador del SDK; todavía no subido a Nexora);
 - la [cobertura](documentacion/cobertura-v1.3.md) del mockup historia por historia.
 
 No reemplaza a Nexora: el paquete se aprueba allí, y la carpeta `docs/` solo la escribe `aybar paquete sellar`.
