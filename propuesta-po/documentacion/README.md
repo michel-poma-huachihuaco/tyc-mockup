@@ -26,7 +26,7 @@ están sin cambios; la huella sha256 permite comprobarlo.
 
 Una diferencia entre los documentos, ya avisada: el Excel (regla RN-SVC-043) dice «salida 30-oct» y los PDF, 03-nov.
 
-### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1, todavía no subido a Nexora
+### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1, subido en parte a Nexora
 
 Son todas las épicas, funcionalidades e historias de la Etapa 1 según la v1.3, en el formato del SDK (frontmatter de 11 campos
 y `ui:`), generadas desde los PDF del PO:
@@ -42,8 +42,9 @@ Para recorrerlo:
 - [`explorador.html`](paquete-definir-etapa1-v1.3/explorador.html) es la página del SDK (`aybar paquete explorador`) y se abre
   en el navegador sin instalar nada.
 
-[`NEXORA-BRAYAN-v1.3.md`](paquete-definir-etapa1-v1.3/NEXORA-BRAYAN-v1.3.md) dice qué cambia en Nexora documento por documento
-para Dev 1: 27 pasan a versión 2 y 6 son nuevos (la EP-ATC-08 EntregaFest pasa de Dev 3 a Dev 1).
+[`PLAN-NEXORA.md`](paquete-definir-etapa1-v1.3/PLAN-NEXORA.md) dice qué falta subir, documento por documento. Al 20-oct por la
+tarde ya están en Nexora 48 historias, idénticas; faltan 27 versiones 2 y 44 documentos nuevos.
+[`NEXORA-BRAYAN-v1.3.md`](paquete-definir-etapa1-v1.3/NEXORA-BRAYAN-v1.3.md) tiene el detalle de lo que cambia para Dev 1.
 
 Para validarlo hace falta Java 21:
 
@@ -56,8 +57,8 @@ Resultado al 20-oct: **sin errores, con 24 advertencias que se esperan en esta e
 - todavía no hay tareas (`backlog/tareas`);
 - las 23 funcionalidades tienen pantallas y aún no tienen G2, que aprueban el PO y UX.
 
-Cada documento termina con «Generado por IA … — Revisado por: (pendiente)». Cada responsable publica los suyos en Nexora
-cuando el equipo lo decida. Quedan como versión pendiente, porque los aprueba el PO.
+Cada documento termina con «Generado por IA … — Revisado por: (pendiente)». Brayan publica en Nexora lo que falta cuando dé
+la luz verde (decisión del 20-oct). Queda como versión pendiente, porque lo aprueba el PO.
 
 ### `cobertura-v1.3.md`: el mockup frente a las 62 historias
 
@@ -65,6 +66,6 @@ Para cada historia del PLT-04 dice dónde verla en el mockup. Al 20-oct, las 62 
 
 ## Qué no está aquí
 
-- **El paquete del resto del equipo** (Jesús, Michel, Daniel) está en Nexora a nombre de cada uno.
+- **El resto del paquete de Jesús** (ADR, análisis, arquitectura, datos, roadmap y los gates G0 y G1) está solo en Nexora.
 - **El modelo de datos corporativo v7 y el arquetipo Party** se compartieron como referencia y no son documentos del alcance
   de ATC. Además, la presentación pesa 18 MB. Se pide al Líder Técnico.

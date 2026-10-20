@@ -7,6 +7,8 @@ Revisión del 19-oct-2026 en PJ-06 contra los documentos del PO v1.3 (16-oct). S
 - PJ-06 tiene 68 documentos, ninguno aprobado, y 0 ítems: sigue sin G0 ni ticket AYB.
 - Tus 27 documentos siguen en la v1 que publicamos el 16-oct (las huellas coinciden), escrita sobre la v1.2. El `analisis/decisiones.md` que subió Jesús lo anota como pendiente P-013: «hoy conviven v1.2 (épicas, features, historias y DoR) y v1.3 (roadmap, ADR y datos)».
 - Faltan los 6 documentos de la EP-ATC-08 EntregaFest, que en la v1.3 pasa de Dev 3 a ti.
+- **Actualización del 20-oct por la tarde:** Daniel subió la HU-037, 038 y 039 idénticas a las de este paquete. Ahora faltan 3
+  (EP-ATC-08, FT-ATC-15 y su DoR). El estado completo está en `PLAN-NEXORA.md`.
 
 ## Documento por documento (33)
 
@@ -51,7 +53,7 @@ En todos cambian la versión (1.2 → 1.3), la fecha (16-oct-2026) y la línea d
 ## Lo que te toca hacer a ti
 
 1. **Revisar el paquete local**: `paquete-brayan-v13/docs`, 33 documentos, 0 errores con `aybar paquete validar`.
-2. **Publicarlo cuando decidas** (mejor después del comité del 20-oct): 27 versiones 2 y 6 nuevos, todos pendientes de aprobación. Se hace con el MCP de Nexora, primero en simulación.
+2. **Publicarlo cuando decidas** (mejor después del comité del 20-oct): 27 versiones 2 y 3 nuevos (desde el 20-oct por la tarde; ver `PLAN-NEXORA.md`), todos pendientes de aprobación. Se hace con el MCP de Nexora, primero en simulación.
 3. **Pedir que se retire la HU-001 duplicada** (`historias/HU-DOC-001 HU-ATC-001-…md.md`, de Daniel). Solo Eddie puede rechazarla.
 4. **Ticket:** tus HU dicen «(pendiente: AYB-NNNN)». El `decisiones.md` propone AYB-0001 como marcador provisional (D-005, «Equipo · Provisional»). Si Eddie lo aprueba, va en la versión 2.
 5. **Llevar al comité lo que no puedes resolver solo:**

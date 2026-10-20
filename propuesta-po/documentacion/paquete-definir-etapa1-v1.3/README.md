@@ -6,7 +6,7 @@ Cada documento lleva el frontmatter del contrato (11 campos y `ui:` en las histo
 **De dónde sale.** Se transcribió de los documentos del PO v1.3 (`../po-v1.3/`) sin cambiar su contenido: «Como / quiero / para», criterios de aceptación, reglas, horas, fechas, dependencias y riesgos.
 Solo se omitieron las frases que remiten a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por: (pendiente)».
 
-**Estado.** Todo está en `estado: draft` y todavía no se publicó en Nexora. Cada responsable publica en Nexora los suyos y los aprueba el PO; `NEXORA-BRAYAN-v1.3.md` es el plan de publicación de Dev 1.
+**Estado.** Todo está en `estado: draft`. En Nexora ya están, idénticas, 48 de las 62 historias (las subió Daniel el 20-oct). Faltan 71 documentos: 27 versiones 2 de Brayan y 44 nuevos (épicas, funcionalidades y DoR). Los sube Brayan cuando dé la luz verde, y los aprueba el PO. El detalle está en `PLAN-NEXORA.md`.
 
 **Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`): **0 errores**. Hay 24 advertencias esperadas en esta etapa:
 - las 23 funcionalidades tienen pantallas y aún no tienen G2;
