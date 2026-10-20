@@ -53,7 +53,9 @@ const TEXTOS_COMUNES = [
 ]
 const aplicaComunes = (archivo, t) => TEXTOS_COMUNES.filter(([a]) => t.includes(a))
 
-const NPS_VIVO = '(()=>{let q=Z.filter(w=>w.respuesta&&w.respuesta.nps!==void 0).map(w=>w.respuesta.nps),r=q.length>0,v=r?q:Z.map(w=>w.respuesta.csat),pr=r?v.filter(w=>w>=9).length:v.filter(w=>w===5).length,de=r?v.filter(w=>w<=6).length:v.filter(w=>w<=3).length,n=v.length;return{real:r,n:n,prom:pr,det:de,pas:n-pr-de,valor:n?Math.round((pr-de)/n*100):null}})()'
+// 20-oct (visor de Daniel, aceptado por el usuario): «NPS del turno» con un reparto fijo de 72 % promotores y 18 % pasivos sobre
+// las encuestas respondidas del día; sin encuestas no se muestra número
+const NPS_VIVO = '(()=>{let n=Z.length,pr=Math.round(n*.72),pa=Math.round(n*.18),de=Math.max(0,n-pr-pa);return{real:!1,n:n,prom:pr,pas:pa,det:de,valor:n?Math.round((pr-de)/n*100):null}})()'
 const ESTADOS_VIVO = '[`OPEN`,`IN_PROGRESS`,`PENDING_CUSTOMER`,`ESCALATED`,`REOPENED`,`RESOLVED`,`CLOSED`].map(q=>({id:q,n:y[q],v:o.tickets.filter(w=>w.estado===q).length}))'
 const TIENE_NPS = 'q.respuesta&&q.respuesta.nps!==void 0'
 const NOTA = 'globalThis.__ptNota&&globalThis.__ptNota(e),null'
@@ -102,13 +104,14 @@ const especificos = {
     },
     // v1.3 · HU-067: equipo y nombre del líder (maestro local de ATC), carga y disponibilidad del gestor, razones sociales y el
     // selector del sistema de diseño (exportado por el shell)
-    importa: 'import{montarVivo as __mv,actualizarHud as __hud}from"./escenas-three.js";import{Kn as __cli,mn as __equipo,yn as __lider,dn as __carga,pn as __disp,nr as __empresas}from"./comun-CVU2GQ4h.js";import{x as __Sel}from"./prototipo-B6qmgYQk.js";',
+    importa: 'import{montarVivo as __mv,actualizarHud as __hud}from"./escenas-three.js";import{Kn as __cli,mn as __equipo,yn as __lider,dn as __carga,pn as __disp,nr as __empresas,fn as __correos,__vivo}from"./comun-CVU2GQ4h.js";import{x as __Sel,u as __Drawer,n as __Seg,m as __Pares}from"./prototipo-B6qmgYQk.js";',
     prefijo: leer('componentes-vivo.js') + '\n',
     reemplazos: [
       ['(0,k.jsx)(oe,{items:[{id:`act`,label:`Tickets activos`,value:String(X.length)},{id:`sla`,label:`Resueltos en SLA`,value:Te},{id:`csat`,label:`CSAT del día`,value:we},{id:`niv`,label:`Nivel del equipo`,value:`${Y.nivel} · ${Y.xp}/${Y.meta} XP · racha ${Y.racha}`}]})',
        '(0,k.jsx)(__Hud,{act:X.length,riesgo:X.filter(q=>{let w=S(q,o.ahora).nivel;return w===`vencido`||w===`en-riesgo`}).length,sla:Y.resueltos?Math.round(Y.enSla/Y.resueltos*100):null,enSla:Y.enSla,res:Y.resueltos,csat:Z.length?Z.reduce((q,w)=>q+(w.respuesta?.csat??0),0)/Z.length:null,nCsat:Z.length,nivel:Y.nivel,xp:Y.xp,meta:Y.meta,racha:Y.racha,estados:' + ESTADOS_VIVO + ',nps:' + NPS_VIVO + '})'],
       ['(0,k.jsx)(`div`,{ref:be,className:`pt-escena`,children:(0,k.jsx)(`canvas`,{ref:xe,', '(0,k.jsxs)(`div`,{ref:be,className:`pt-escena`,children:[(0,k.jsx)(`canvas`,{ref:xe,'],
-      [',onClick:Oe})})', ',onClick:Oe}),$?(0,k.jsx)(__Ficha,{t:$,datos:o,puedeRayo:h(c),onCerrar:()=>pe(null),onRayo:Ae,onAbrir:()=>ne(u(`ticket/${$.id}`)),onC360:()=>ne(u(`clientes/${$.clienteId}`))}):__z?(0,k.jsx)(__Area,{zona:__z,datos:o,todo:__o0,onCerrar:()=>__sz(null),onTicket:q=>{__sz(null);pe(q)}}):null]})'],
+      // 20-oct: «Ver expediente» abre #/ticket/<id del ticket elegido>; Rayo/Quitar Rayo, Resolver y Reasignar a menor carga según el rol
+      [',onClick:Oe})})', ',onClick:Oe}),$?(0,k.jsx)(__Ficha,{t:$,datos:o,ac:__ac,puedeRayo:h(c),puedeResolver:Q,puedeReasignar:c.rol===`SUPERVISOR`||c.rol===`COORDINADOR_CX`,onCerrar:()=>pe(null),onAbrir:()=>ne(u(`ticket/${$.id}`)),onC360:()=>ne(u(`clientes/${$.clienteId}`))}):null]})'],
       ['i=null,a=20;', 'i=null,a=30;'],
       // v1.3 · HU-067 CA-03/06: la bitácora suma las alertas de SLA vencido; CA-09: tabla por área antes de la tabla por ticket
       ['Me=[...o.filasEstado].sort((e,t)=>t.fecha.getTime()-e.fecha.getTime()).slice(0,6);', 'Me=__bitacora(o);'],
@@ -123,20 +126,33 @@ const especificos = {
       ['function ue({children:e}){return(0,k.jsxs)(`span`,{className:`pt-supuesto`,children:[(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Propuesta del PO`}),(0,k.jsx)(`span`,{className:`pt-supuesto__texto`,children:e})]})}', 'function ue({children:e}){return ' + NOTA + '}'],
       // v1.3 · HU-067 CA-07: `o` pasa a ser la vista filtrada (razón social y áreas permitidas); `__o0`, los datos completos.
       // CA-08: `__s` es el estado de simulación (Herramientas › Simulación). CA-04: `__z` es el área abierta en el panel.
-      ['let{datos:o}=b(),c=t(),', 'let{datos:__o0,sim:__s}=b(),c=t(),[__emp,__se]=(0,O.useState)(``),[__z,__sz]=(0,O.useState)(null),o=(0,O.useMemo)(()=>__filtrar(__o0,c,__emp),[__o0,c,__emp]),'],
+      ['let{datos:o}=b(),c=t(),', 'let{datos:__o0,sim:__s}=b(),c=t(),[__emp,__se]=(0,O.useState)(``),__cj=__useCajon(),__sz=q=>{q&&__cj.abrir(`sala:${q}`)},o=(0,O.useMemo)(()=>__filtrar(__o0,c,__emp),[__o0,c,__emp]),'],
       // CA-08: el flujo de ejemplo, la pausa y la velocidad (x1, x2) solo existen en el modo simulación
       ['if(v||l||!Q)return;let e=setInterval(()=>void De(),1500/V);return()=>clearInterval(e)},[v,l,Q,V,De])', 'if(__s.vivoSimulacion===!1||v||l||!Q)return;let e=setInterval(()=>void De(),1500/V);return()=>clearInterval(e)},[__s.vivoSimulacion,v,l,Q,V,De])'],
       // CA-07 (filtro por razón social) y CA-08 (pausa y velocidad x1/x2 solo en el modo simulación)
       ['(0,k.jsx)(n,{variant:`secondary`,"aria-pressed":v,disabled:!Q||l,onClick:()=>de(!v),children:v||l?`Reanudar`:`Pausa`}),(0,k.jsx)(n,{variant:`secondary`,disabled:!Q||l,onClick:()=>fe(V===1?2:V===2?4:1),children:`Velocidad x${V}`}),',
-       '(0,k.jsx)(__Sel,{size:`sm`,"aria-label":`Razón social`,value:__emp,onChange:q=>__se(q.target.value),options:[{value:``,label:`Todas las razones sociales`},...__empresas.map(q=>({value:q.id,label:q.nombre}))]}),__s.vivoSimulacion!==!1?(0,k.jsx)(n,{variant:`secondary`,"aria-pressed":v,disabled:!Q||l,onClick:()=>de(!v),children:v||l?`Reanudar`:`Pausa`}):null,__s.vivoSimulacion!==!1?(0,k.jsx)(n,{variant:`secondary`,disabled:!Q||l,onClick:()=>fe(V===1?2:1),children:`Velocidad x${V}`}):null,'],
+       '(0,k.jsx)(__Sel,{size:`sm`,"aria-label":`Razón social`,value:__emp,onChange:q=>__se(q.target.value),options:[{value:``,label:`Todas las razones sociales`},...__empresas.map(q=>({value:q.id,label:q.nombre}))]}),'],
       // CA-04: tocar un ticket cierra el panel del área (tocar un área lo avisa la escena con onZona)
       ['pe(i)},ke=()=>', 'pe(i),i&&__sz(null)},ke=()=>'],
       ['bandeja orquestadora y seis áreas.', 'bandeja orquestadora y ${__nAreas(c)}.'],
       // nombre del PLT-04: «Operación en vivo»
       ['title:`Vista en vivo`,', 'title:`Operación en vivo`,'],
-      ['cada área los atiende. Toca un ticket para seguirlo.`', 'cada área los atiende. Toca un ticket para seguirlo o un área para ver su detalle.`'],
+      ['cada área los atiende. Toca un ticket para seguirlo.`', 'cada área los atiende. Toca un ticket para seguirlo, o un canal, la bandeja o una sala para ver su detalle en «Bandejas operativas».`'],
       ['`Resuelto desde la vista en vivo`', '`Resuelto desde la operación en vivo`'],
       ['`Seguimiento desde la vista en vivo`', '`Seguimiento desde la operación en vivo`'],
+      // 20-oct · mejoras del visor de la rama de Daniel (pedido del PO para la presentación; scripts/componentes-vivo.js):
+      // cabecera con la sala de la bandeja y «Bandejas operativas (n)», que abre el cajón; controles de simulación (solo en el modo
+      // simulación: pausa, 1×/2×/4×, ticket entrante, con rayo, escalar a Comité SGD y pico multicanal); cajón con bandeja, inspector
+      // y correos CC; resumen y leyenda de la escena; __ac son las acciones (modelo real: E, O y __vivo de comun)
+      ['(0,k.jsx)(n,{variant:`primary`,disabled:!Q,onClick:ke,children:`Ticket`}),h(c)?(0,k.jsx)(n,{variant:`secondary`,disabled:!H,onClick:Ae,children:`Rayo`}):null]})}),', '(0,k.jsx)(__Sel,{size:`sm`,"aria-label":`Sala de la bandeja`,value:__cj.fsala,onChange:q=>__cj.setFsala(q.target.value),options:[{value:``,label:`Todas las salas (${__nAreas(c)})`},...A.filter(q=>{let zp=__zonasPermitidas(c);return!zp||zp.has(q.k)}).map(q=>({value:q.k,label:q.n}))]}),(0,k.jsx)(n,{variant:__cj.abierto?`primary`:`secondary`,"aria-expanded":__cj.abierto,onClick:()=>__cj.setAbierto(!__cj.abierto),children:__cj.abierto?`Cerrar cajón de bandejas`:`Bandejas operativas (${__nBandeja(o,__cj.fsala)})`})]})}),(0,k.jsx)(__Controles,{sim:__s.vivoSimulacion!==!1,Q:Q,l:l,pausa:v,alternar:()=>de(!v),vel:V,setVel:fe,ac:__ac,puedeRayo:h(c)}),'],
+      ['me?(0,k.jsx)(te,{error:me,titulo:`No se marcó el rayo`}):null,', 'me?(0,k.jsx)(te,{error:me,titulo:`No se completó la acción`}):null,(0,k.jsx)(__Cajon,{cj:__cj,datos:o,todo:__o0,sel:H,sim:__s.vivoSimulacion!==!1,Q:Q,puedeRayo:h(c),ac:__ac,onTicket:q=>{pe(q);__alTicketCajon(__cj)},onIr:q=>ne(u(q))}),'],
+      ['(0,k.jsx)(T,{children:(0,k.jsxs)(E,{padding:`sm`,children:[', '(0,k.jsx)(T,{children:(0,k.jsxs)(E,{padding:`sm`,children:[(0,k.jsx)(__CabEscena,{datos:o}),'],
+      ['className:`pt-texto-chico`,role:`status`,"aria-live":`polite`,children:ge})', 'className:`pt-texto-chico`,role:`status`,"aria-live":`polite`,children:ge}),(0,k.jsx)(__Leyenda,{})'],
+      ['U.current=o,Se.current=H;', 'U.current=o,Se.current=H;let __ac=__accionesVivo({o:o,todo:__o0,pe:pe,_e:_e,he:he,J:J,emp:__emp});'],
+      // los tickets de ejemplo de la simulación entran con un resumen según su tipo y canal (antes, todos «Consulta recibida por Mi Portal»)
+      ['f.ticketEntrante(n,r,g[t*7%30].id)', '__vivo.entrante(n,r,g[t*7%30].id,__resEj(n,r))'],
+      // sala «Postventa (Eje 4)», como en el visor de Daniel
+      ['n:`Postventa`,x:8.4', 'n:`Postventa (Eje 4)`,x:8.4'],
     ],
   },
 
@@ -213,7 +229,7 @@ const especificos = {
   'comun-CVU2GQ4h.js': {
     // v1.3: Mi Portal compone las reglas del chunk con este núcleo (estado, transacción, SLA, flujo, transiciones)
     // y la semilla sin incidencias de ciudad (Etapa 1; ver scripts/etapa1.js)
-    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js') + '\n' + leer('eje3-modelo.js') + '\n' + leer('hu044-areas.js') + '\n' + leer('hu046-carga.js') + '\n' + leer('hu055-correo.js') + '\n' + leer('hu056-modelo.js') + '\n' + leer('hu066-sla.js') + '\n' + leer('hu048-modelo.js') + '\n' + leer('hu031-informes.js'),
+    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js') + '\n' + leer('eje3-modelo.js') + '\n' + leer('hu044-areas.js') + '\n' + leer('hu046-carga.js') + '\n' + leer('hu055-correo.js') + '\n' + leer('hu056-modelo.js') + '\n' + leer('hu066-sla.js') + '\n' + leer('hu048-modelo.js') + '\n' + leer('hu031-informes.js') + '\n' + leer('vivo-modelo.js'),
     prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/consulta360`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
       // 20-oct · Consulta 360 (c360-mejoras.js): las consultas rápidas al motor también desde el módulo, sin ticket. Se llama con

@@ -28,6 +28,8 @@ export interface OptsVivo {
   canvas: HTMLCanvasElement; host: HTMLElement; cols: Cols; color: (token: string) => RGB; reducido: boolean
   est: Estatico; hits: { current: { id: string; x: number; y: number }[] }; obtener: () => Snap
   onZona?: (k: string | null) => void              // HU-067 CA-04: se tocó el suelo de un área (o fuera de las áreas: null)
+  onCanal?: (k: string) => void                    // 20-oct (visor de Daniel): se tocó la entrada de un canal o su cartel
+  onEtapa?: (k: 'bandeja' | 'comite' | 'salida') => void  // …la bandeja orquestadora, la Sala de Comité o el cierre
 }
 
 // ------------------------------------------------------------------ utilidades de animación
@@ -116,7 +118,8 @@ export function montarVivo(o: OptsVivo): () => void {
 
   // ---------------------------------------------------------------- etiquetas (carteles de cristal)
   const signos: { set: (sub: string, riesgo?: boolean) => void }[] = []
-  const signo = (titulo: string, sub: string, x: number, y: number, z: number, acento: RGB, compacto = false) => {
+  // 20-oct (visor de Daniel): con `alTocar`, el cartel es un botón (ratón y teclado) que abre el detalle en el cajón de bandejas
+  const signo = (titulo: string, sub: string, x: number, y: number, z: number, acento: RGB, compacto = false, alTocar?: () => void) => {
     const el = document.createElement('div'); el.style.pointerEvents = 'none'
     const pill = document.createElement('div')  // CSS2DRenderer pisa el `display` del elemento raíz: el flex va en un hijo
     pill.style.cssText = `pointer-events:none;display:flex;align-items:center;gap:8px;padding:5px 11px 5px 9px;border-radius:999px;white-space:nowrap;background:${css(C.superficie, 0.78)};backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid ${css(C.line, 0.9)};box-shadow:0 4px 14px rgba(0,0,0,.28);color:${css(C.texto)}`
@@ -125,6 +128,15 @@ export function montarVivo(o: OptsVivo): () => void {
     const t = document.createElement('b'); t.style.cssText = 'display:block;font:700 11.5px Montserrat,system-ui,sans-serif'; t.textContent = titulo
     const s = document.createElement('small'); s.style.cssText = `display:block;font:500 10px Montserrat,system-ui,sans-serif;color:${css(C.muted)}`; s.textContent = sub
     if (compacto) { s.style.display = 'none'; pill.style.padding = '3px 9px 3px 7px' }
+    if (alTocar) {
+      Object.assign(pill.style, { pointerEvents: 'auto', cursor: 'pointer', transition: 'border-color .18s' })
+      pill.setAttribute('role', 'button'); pill.tabIndex = 0; pill.title = `Ver el detalle de «${titulo}»`; pill.setAttribute('aria-label', pill.title)
+      const marca = (on: boolean) => { pill.style.borderColor = on ? css(acento) : css(C.line, 0.9) }
+      pill.addEventListener('mouseenter', () => marca(true)); pill.addEventListener('mouseleave', () => marca(false))
+      pill.addEventListener('focus', () => marca(true)); pill.addEventListener('blur', () => marca(false))
+      pill.addEventListener('click', (ev) => { ev.stopPropagation(); alTocar() })
+      pill.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); alTocar() } })
+    }
     caja.append(t, s); pill.append(punto, caja); el.append(pill)
     const obj = new CSS2DObject(el); obj.position.set(x, y, z); escena.add(obj)
     const api = { set: (n: string, riesgo = false) => { if (s.textContent !== n) s.textContent = n; const c = riesgo ? C.bad : acento; punto.style.background = css(c); punto.style.boxShadow = `0 0 0 3px ${css(c, 0.25)}` } }
@@ -184,9 +196,9 @@ export function montarVivo(o: OptsVivo): () => void {
     for (const c of CANALES) {
       const info = estSnap.get(c.k)!
       const e = crearEntrada(estiloEntrada, c.k, info.color, kit, glifos.get(c.k)!, (hash(c.k) % 628) / 100)
-      e.g.position.set(ESTACION.x, 0, c.z); e.g.rotation.y = Math.PI / 2; e.g.scale.setScalar(1.3); grupoEntradas.add(e.g); entradas.set(c.k, e)
+      e.g.position.set(ESTACION.x, 0, c.z); e.g.rotation.y = Math.PI / 2; e.g.scale.setScalar(1.3); e.g.userData.canal = c.k; grupoEntradas.add(e.g); entradas.set(c.k, e)
       e.g.updateMatrixWorld(true); posEstacion.set(c.k, e.g.localToWorld(e.spawn.clone()))
-      letreros.push(signo(info.n, '', 0.15, 1.5, c.z - 0.45, info.color, true).obj)
+      letreros.push(signo(info.n, '', 0.15, 1.5, c.z - 0.45, info.color, true, () => o.onCanal?.(c.k)).obj)
     }
   }
   montarEntradas()
@@ -232,7 +244,9 @@ export function montarVivo(o: OptsVivo): () => void {
   const orq = crearOrquestador(kit, C.orange, pechoBandeja)
   orq.g.position.set(HUB.despachador[0], 0, HUB.despachador[1]); orq.g.rotation.y = Math.PI; escena.add(orq.g)
   const miraBandeja = new THREE.Vector3(6.55, 0.9, 6.65)
-  const pHub = signo('Bandeja orquestadora', '', HUB.x, 2.5, HUB.pantallas - 0.2, C.orange)
+  const pHub = signo('Bandeja orquestadora', '', HUB.x, 2.5, HUB.pantallas - 0.2, C.orange, false, () => o.onEtapa?.('bandeja'))
+  // 20-oct: la mesa de la bandeja, el suelo de la Sala de Comité y el del cierre también se tocan (abren su detalle)
+  const suelosEtapa: THREE.Object3D[] = [mesa, cuerpoMesa, bandeja]; suelosEtapa.forEach((m) => { m.userData.etapa = 'bandeja' })
 
   // ---------------------------------------------------------------- salas
   const puertaHueco = 1.1
@@ -275,28 +289,28 @@ export function montarVivo(o: OptsVivo): () => void {
     const s = SALAS[z.k]; if (!s) continue
     grande(s, z.color)
     const sx = s.lado === 'oeste' ? s.x - 0.1 : s.puerta[0], sz = s.lado === 'oeste' ? s.puerta[1] : s.z - 0.1
-    pZona.set(z.k, signo(z.n, '', sx, 2.0, sz, z.color))
+    pZona.set(z.k, signo(z.n, '', sx, 2.0, sz, z.color, false, () => o.onZona?.(z.k)))
   }
   // comité
-  alfombra(COMITE.x, COMITE.z, COMITE.w, COMITE.d, C.bad)
+  { const a = alfombra(COMITE.x, COMITE.z, COMITE.w, COMITE.d, C.bad); a.userData.etapa = 'comite'; suelosEtapa.push(a) }
   { const v = (l: number, e: 'x' | 'z', cx: number, cz: number) => { const m = kit.vidrio(l, e, C.bad); m.position.set(cx, 0, cz); escena.add(m) }
     v(COMITE.w, 'x', COMITE.x + COMITE.w / 2, COMITE.z); v(COMITE.w, 'x', COMITE.x + COMITE.w / 2, COMITE.z + COMITE.d); v(COMITE.d, 'z', COMITE.x, COMITE.z + COMITE.d / 2); v(COMITE.d, 'z', COMITE.x + COMITE.w, COMITE.z + COMITE.d / 2) }
   const tablaC = new THREE.Mesh(kit.caja(2.5, 0.06, 1.0, 0.04), kit.mat(mezcla(C.superficie, C.texto, 0.25), { r: 0.4 })); tablaC.position.set(COMITE.mesa[0], 0.74, COMITE.mesa[1]); Kit.sombrear(tablaC); escena.add(tablaC)
   for (const sx of [-1, 1]) { const p = new THREE.Mesh(kit.caja(0.1, 0.72, 0.8, 0.02), kit.mat(mezcla(C.suelo, C.texto, 0.4), { r: 0.4, m: 0.3 })); p.position.set(COMITE.mesa[0] + sx * 1.0, 0.36, COMITE.mesa[1]); Kit.sombrear(p); escena.add(p) }
   ;[[-0.8, -0.85, 0], [0.8, -0.85, 0], [-0.8, 0.85, Math.PI], [0.8, 0.85, Math.PI]].forEach(([dx, dz, rot], i) => nuevaPersona(`comite:${i}`, `Comité ${i + 1}`, mezcla(C.bad, C.suelo, 0.45 + i * 0.05), true, COMITE.mesa[0] + dx!, COMITE.mesa[1] + dz!, rot!))
-  const pCom = signo('Sala de Comité', '', COMITE.x + COMITE.w + 0.3, 2.0, COMITE.z + 0.3, C.bad)
+  const pCom = signo('Sala de Comité', '', COMITE.x + COMITE.w + 0.3, 2.0, COMITE.z + 0.3, C.bad, false, () => o.onEtapa?.('comite'))
   const cartasComite: THREE.Object3D[] = []
   for (let i = 0; i < 6; i++) { const c = kit.tarjeta(C.bad); c.scale.setScalar(0.8); c.position.set(COMITE.mesa[0] - 0.9 + i * 0.36, 0.8, COMITE.mesa[1] + (i % 2 ? 0.14 : -0.14)); c.visible = false; escena.add(c); cartasComite.push(c) }
   // cierre
-  alfombra(SALIDA.x, SALIDA.z, SALIDA.w, SALIDA.d, C.ok)
+  { const a = alfombra(SALIDA.x, SALIDA.z, SALIDA.w, SALIDA.d, C.ok); a.userData.etapa = 'salida'; suelosEtapa.push(a) }
   { const v = (l: number, e: 'x' | 'z', cx: number, cz: number) => { const m = kit.vidrio(l, e, C.ok); m.position.set(cx, 0, cz); escena.add(m) }
     v(SALIDA.w, 'x', SALIDA.x + SALIDA.w / 2, SALIDA.z); v(SALIDA.w, 'x', SALIDA.x + SALIDA.w / 2, SALIDA.z + SALIDA.d); v(SALIDA.d, 'z', SALIDA.x, SALIDA.z + SALIDA.d / 2)
     const a = SALIDA.puerta[1] - 0.55 - SALIDA.z, b = SALIDA.z + SALIDA.d - (SALIDA.puerta[1] + 0.55); v(a, 'z', SALIDA.x + SALIDA.w, SALIDA.z + a / 2); v(b, 'z', SALIDA.x + SALIDA.w, SALIDA.z + SALIDA.d - b / 2) }
   const arco = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.05, 8, 28, Math.PI), kit.mat(C.ok, { r: 0.3, e: C.ok, ei: 0.9 })); arco.position.set(SALIDA.puerta[0], 0.62, SALIDA.puerta[1]); arco.rotation.y = Math.PI / 2; escena.add(arco)
   const estante = new THREE.Mesh(kit.caja(2.4, 0.05, 1.5, 0.03), kit.mat(mezcla(C.superficie, C.texto, 0.2), { r: 0.5 })); estante.position.set(1.7, 0.86, 13.45); Kit.sombrear(estante); escena.add(estante)
   const patas = new THREE.Mesh(kit.caja(2.2, 0.82, 1.3, 0.03), kit.mat(mezcla(C.ok, C.suelo, 0.6), { r: 0.6 })); patas.position.set(1.7, 0.41, 13.45); Kit.sombrear(patas); escena.add(patas)
-  nuevaPersona('salida:recep', 'Cierre', mezcla(C.ok, C.suelo, 0.3), false, 1.7, 12.55, 0)
-  const pSal = signo('Cierre en Mi Portal', '', 1.5, 1.7, 14.9, C.ok)
+  nuevaPersona('salida:recep', 'Recepción Mi Portal', mezcla(C.ok, C.suelo, 0.3), false, 1.7, 12.55, 0)
+  const pSal = signo('Cierre en Mi Portal', '', 1.5, 1.7, 14.9, C.ok, false, () => o.onEtapa?.('salida'))
   // peatones que dan vida a los pasillos
   const paseantes = [0, 2].map((i) => ({ p: nuevaPersona(`paseo:${i}`, `Supervisor ${i + 1}`, mezcla(C.teal2, C.suelo, 0.15), false, PASEO[i]!.x, PASEO[i]!.z, 0), seg: i, u: 0 }))
 
@@ -423,12 +437,17 @@ export function montarVivo(o: OptsVivo): () => void {
 
   // HU-067 CA-04: tocar el suelo de un área la abre en un panel (lo pinta el chunk). Si el toque cae sobre un ticket gana el
   // ticket, con el mismo radio (30 px) que usa el chunk para elegirlo; fuera de las áreas se cierra (null).
+  // 20-oct (visor de Daniel): tocar la entrada de un canal, la mesa de la bandeja, la Sala de Comité o el cierre abre su detalle
+  const objetivo = (obj: THREE.Object3D | undefined, clave: string) => { let g: THREE.Object3D | null | undefined = obj; while (g && g.userData[clave] == null) g = g.parent; return g?.userData[clave] as string | undefined }
   const tocar = (ev: MouseEvent) => {
-    if (!o.onZona) return
     const b = canvas.getBoundingClientRect(), x = ev.clientX - b.left, y = ev.clientY - b.top
     if (o.hits.current.some((p) => Math.hypot(p.x - x, p.y - y) < 30)) return
     rayo.setFromCamera(new THREE.Vector2((x / b.width) * 2 - 1, -(y / b.height) * 2 + 1), cam)
-    o.onZona((rayo.intersectObjects(suelosZona, false)[0]?.object.userData.zona as string | undefined) ?? null)
+    const canal = o.onCanal && objetivo(rayo.intersectObjects(grupoEntradas.children, true)[0]?.object, 'canal')
+    if (canal) { o.onCanal!(canal); return }
+    const etapa = o.onEtapa && objetivo(rayo.intersectObjects(suelosEtapa, false)[0]?.object, 'etapa')
+    if (etapa) { o.onEtapa!(etapa as 'bandeja' | 'comite' | 'salida'); return }
+    o.onZona?.((rayo.intersectObjects(suelosZona, false)[0]?.object.userData.zona as string | undefined) ?? null)
   }
   canvas.addEventListener('click', tocar)
 

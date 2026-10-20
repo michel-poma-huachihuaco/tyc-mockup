@@ -218,6 +218,31 @@ const CSS = `
 
 @media(prefers-reduced-motion:reduce){.pt-herr *,.pt-bot *,.pt-inicio__ancla *{animation:none!important;transition:none!important}}
 @media(prefers-reduced-motion:reduce){.v3-hud *,.v3-ficha,.v3-ficha *{animation:none!important;transition:none!important}}
+/* 20-oct · Operación en vivo con las mejoras del visor de Daniel: la ficha del ticket pasa a la izquierda (el cajón de bandejas
+   abre a la derecha), controles de simulación, resumen y leyenda de la escena y el cajón (bandeja, inspector y correos CC).
+   Solo tokens del SDK. */
+.v3-ficha{left:var(--aybar-space-3);right:auto}
+@media(max-width:640px){.v3-ficha{left:var(--aybar-space-2);right:var(--aybar-space-2)}}
+.v3-sim{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}
+.v3-escena-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-block-end:var(--aybar-space-2)}
+.v3-escena-ayuda{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted)}
+.v3-leyenda{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin:var(--aybar-space-2) 0 0;padding:0;list-style:none}
+.v3-cajon{--v3-ok:var(--aybar-color-feedback-success-border);--v3-warn:var(--aybar-color-feedback-warning-border);--v3-bad:var(--aybar-color-feedback-danger-border);--v3-acc:var(--aybar-color-secondary-400);--v3-fg:var(--aybar-color-fg-default);--v3-mu:var(--aybar-color-fg-muted);--v3-sf:var(--aybar-color-bg-surface);--v3-sk:var(--aybar-color-bg-surface-sunken);--v3-ln:var(--aybar-color-border-subtle);--v3-pri:var(--aybar-color-primary-500);display:grid;gap:var(--aybar-space-4);min-inline-size:0}
+.v3-cajon .v3-f-grid,.v3-cajon .v3-f-t,.v3-cajon .v3-f-lista,.v3-cajon .v3-f-nota{padding-inline:0}
+.v3-acc{display:flex;flex-wrap:wrap;gap:var(--aybar-space-2);margin-block-start:var(--aybar-space-3)}
+.v3-area{margin-block-start:var(--aybar-space-3);padding-block-start:var(--aybar-space-2);border-block-start:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle)}
+.v3-bj{display:grid;gap:var(--aybar-space-2);margin:0;padding:0;list-style:none}
+.v3-bj-item{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);padding:var(--aybar-space-2) var(--aybar-space-3);border:var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);border-radius:var(--aybar-radius-md);background:var(--aybar-color-bg-surface)}
+.v3-bj-item[data-sel]{border-color:var(--aybar-color-secondary-400)}
+.v3-bj-btn{flex:1 1 14rem;min-inline-size:0;display:grid;gap:var(--aybar-space-1);padding:0;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}
+.v3-bj-btn:focus-visible{outline:var(--aybar-border-width-thick) solid var(--aybar-color-secondary-400);outline-offset:var(--aybar-space-1);border-radius:var(--aybar-radius-sm)}
+.v3-bj-l1{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);font-size:var(--aybar-font-size-sm)}
+.v3-bj-l1 b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:var(--aybar-font-weight-bold)}
+.v3-bj-l2{font-size:var(--aybar-font-size-xs);color:var(--aybar-color-fg-muted);overflow-wrap:anywhere}
+.v3-bj-der{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);margin-inline-start:auto}
+/* a 390 px los selects de la cabecera (razón social y sala) no desbordan la página */
+.pt-pagina .ay-pageheader__actions{min-inline-size:0;max-inline-size:100%;flex-wrap:wrap}
+.pt-pagina .ay-pageheader__actions .ay-selectwrap,.pt-pagina .ay-pageheader__actions select{min-inline-size:0;max-inline-size:100%}
 `
 
 let hecho = false

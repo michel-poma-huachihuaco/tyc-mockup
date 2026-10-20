@@ -107,6 +107,37 @@ Brayan contestó, una por una, las 27 preguntas de `DECISIONES.md`, y 5 respuest
 El detalle, la tabla de equivalencias con el catálogo actual y las preguntas que siguen abiertas para el comité están en
 [DECISIONES.md §5.9](DECISIONES.md). Pruebas: `scripts/probar-decisiones.mjs`, con 6 de 6 casos.
 
+### 9. Consulta 360 y Operación en vivo con las mejoras de la rama de Daniel (20-oct)
+
+Pedido del equipo para la presentación: según el equipo, son requisitos del PO. Las mejoras vienen de la rama `prototipo-polar`
+(Angular) y se rehicieron sobre este mockup.
+
+- **Menú:** grupo «Núcleo 360 y Planta» con «Consulta 360» (`#/consulta360`) y «Operación en vivo» (`#/vivo`), cada uno con
+  su propia página. Desaparece «Inicio» y la raíz abre la Consulta 360.
+- **Consulta 360:**
+  - Al tocar un dato o un sistema se ve su información de ejemplo: sistema de origen, criterio y consulta en línea.
+  - El botón de redirección lleva a su módulo, solo si el rol lo puede ver. No hay visor de contratos: lleva a la ficha del
+    cliente.
+  - «+ Crear ticket» abre el formulario con el cliente ya elegido.
+  - Tarjetas «Nodos del Grafo 360 y Redirección» y «Estado de sistemas de origen», y malla de los 16 datos.
+  - Cabecera con los sistemas en línea y el usuario con su rol; cambio entre Grafo 3D y Grafo 2D; más clientes de ejemplo;
+    coincidencias semánticas.
+  - Ficha con «Llamar», «Tickets en Bandeja» y «Síntesis IA», y consultas rápidas al motor.
+- **Operación en vivo:**
+  - «Bandejas operativas», un cajón con tres vistas: la bandeja orquestadora, el inspector de canal, bandeja o sala con su
+    información de ejemplo, y los correos con copia al líder.
+  - Controles de simulación (pausa, 1×/2×/4×, ticket entrante, con Rayo, escalar a Comité SGD, pico +5) y KPIs con «NPS del
+    turno».
+  - Ficha del ticket con Rayo, Resolver, Reasignar a menor carga y «Ver expediente».
+  - Sala «Postventa (Eje 4)».
+- **Lo que no se trajo:** visor de contratos, catálogo de HU, insignias de «Fase 2» ni datos de personas reales. Daniel usa el
+  nombre del PO como cliente.
+- **Pruebas:** por pedido del equipo, esta parte no tiene pruebas nuevas. Se verificó que compila y que las pantallas cargan sin
+  errores. Las pruebas que ya existían de la Operación en vivo no reflejan los cambios: hay que ajustarlas.
+
+Lo que contradice la HU-067 v1.3 y aun así se trajo, más la pregunta sobre la D-12 de esa rama, está en
+[DECISIONES.md §5.10](DECISIONES.md).
+
 ### 7. Documentación de consulta en el repositorio
 
 [`documentacion/`](documentacion/README.md) contiene tres cosas:

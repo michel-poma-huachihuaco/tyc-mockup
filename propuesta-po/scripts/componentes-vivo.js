@@ -16,17 +16,19 @@ reg=d.filasEstado.find(q=>q.ticketId===t.id&&!q.de),
 hist=[...d.filasEstado.filter(q=>q.ticketId===t.id).map(q=>({id:q.id,fecha:q.fecha,o:q.de?3:0,txt:q.de?`${y[q.de]} → ${y[q.a]}`:`Registrado`})),{id:`bandeja`,fecha:reg?reg.fecha:t.abierto,o:1,txt:se.bandeja},...d.filasAsignacion.filter(q=>q.ticketId===t.id&&q.aResponsable).map(q=>({id:q.id,fecha:q.fecha,o:2,txt:`Asignado a ${p(q.aResponsable)}`}))].sort((a,b)=>b.fecha.getTime()-a.fecha.getTime()||b.o-a.o).slice(0,7),
 enc=t.estado===`CLOSED`?d.encuestas.filter(q=>q.ticketId===t.id&&q.respuesta).at(-1):null,
 rayo=re(d,t.id),
-zona=A.find(q=>q.k===I(d,t));
+zona=A.find(q=>q.k===I(d,t)),
+// 20-oct (mejoras del visor de Daniel): prioridad, cliente y lote, canal de entrada y las acciones del ticket
+ac=__p.ac,PRIO={LOW:`Baja`,MEDIUM:`Media`,HIGH:`Alta`,URGENT:`Urgente`},lote=cli&&cli.proyectos?.[0],resta=hecho?0:Math.round((1-pct)*100);
 return(0,k.jsxs)(`aside`,{ref:ref,tabIndex:-1,role:`dialog`,"aria-label":`Detalle del ticket ${t.numero}`,className:`v3-ficha`,"data-nivel":nivel,children:[
 (0,k.jsxs)(`div`,{className:`v3-f-cab`,children:[
 (0,k.jsxs)(`div`,{children:[(0,k.jsx)(`div`,{className:`v3-f-num`,children:t.numero}),
-(0,k.jsxs)(`div`,{className:`v3-f-chips`,children:[(0,k.jsx)(C,{sla:sla,size:`sm`}),rayo?(0,k.jsx)(e,{tone:`danger`,size:`sm`,children:`Rayo`}):null,(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:y[t.estado]})]})]}),
+(0,k.jsxs)(`div`,{className:`v3-f-chips`,children:[(0,k.jsx)(C,{sla:sla,size:`sm`}),rayo?(0,k.jsx)(e,{tone:`danger`,size:`sm`,children:`Prioridad Rayo`}):(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Prioridad ${PRIO[t.prioridad]??t.prioridad}`}),(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:y[t.estado]})]})]}),
 (0,k.jsx)(`button`,{type:`button`,className:`v3-f-x`,"aria-label":`Cerrar el detalle`,onClick:__p.onCerrar,dangerouslySetInnerHTML:{__html:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>`}})]}),
 (0,k.jsx)(`p`,{className:`v3-f-res`,children:t.resumen}),
-(0,k.jsxs)(`div`,{className:`v3-f-sla`,children:[(0,k.jsxs)(`div`,{className:`v3-f-sla-t`,children:[(0,k.jsxs)(`span`,{children:[`SLA de `,sla.hito===`respuesta`?`primera respuesta`:`resolución`,` · vence `,(0,k.jsx)(`b`,{children:x(sla.vence)})]}),(0,k.jsxs)(`b`,{children:[Math.round(pct*100),` %`]})]}),(0,k.jsx)(`div`,{className:`v3-f-barra`,children:(0,k.jsx)(`i`,{style:{"--p":pct}})})]}),
-(0,k.jsxs)(`dl`,{className:`v3-f-grid`,children:[fila(`Canal`,t.canal),fila(`Tipo`,r(t.tipo)),fila(`Área`,zona?zona.n:`—`),fila(`Etapa`,se[L(t)]),fila(`Responsable`,t.responsable?p(t.responsable):`Sin responsable`),fila(`Cliente`,cli?cli.nombre:`—`),t.estado===`CLOSED`?fila(`CSAT`,enc?`${enc.respuesta.csat}/5${enc.respuesta.nps!==void 0?` · NPS ${enc.respuesta.nps}`:``}`:`Encuesta sin respuesta`):null]}),
+(0,k.jsxs)(`div`,{className:`v3-f-sla`,children:[(0,k.jsxs)(`div`,{className:`v3-f-sla-t`,children:[(0,k.jsxs)(`span`,{children:[`SLA de `,sla.hito===`respuesta`?`primera respuesta`:`resolución`,` · vence `,(0,k.jsx)(`b`,{children:x(sla.vence)})]}),(0,k.jsx)(`b`,{children:hecho?`${Math.round(pct*100)} %`:`${Math.round(pct*100)} % · resta ${resta} %`})]}),(0,k.jsx)(`div`,{className:`v3-f-barra`,children:(0,k.jsx)(`i`,{style:{"--p":pct}})})]}),
+(0,k.jsxs)(`dl`,{className:`v3-f-grid`,children:[fila(`Canal de entrada`,j.find(q=>q.k===F(t))?.n??t.canal),fila(`Tipo`,r(t.tipo)),fila(`Sala / área`,zona?zona.n:`—`),fila(`Etapa`,se[L(t)]),fila(`Responsable`,t.responsable?p(t.responsable):`Sin responsable`),fila(`Cliente / lote`,cli?[cli.nombre,lote].filter(Boolean).join(` · `):`—`),t.estado===`CLOSED`?fila(`CSAT`,enc?`${enc.respuesta.csat}/5${enc.respuesta.nps!==void 0?` · NPS ${enc.respuesta.nps}`:``}`:`Encuesta sin respuesta`):null]}),
 hist.length?(0,k.jsxs)(k.Fragment,{children:[(0,k.jsx)(`h3`,{className:`v3-f-t`,children:`Recorrido`}),(0,k.jsx)(`ol`,{className:`v3-f-hist`,children:hist.map(q=>(0,k.jsxs)(`li`,{children:[x(q.fecha),` · `,q.txt]},q.id))})]}):null,
-(0,k.jsxs)(`div`,{className:`v3-f-acc`,children:[(0,k.jsx)(n,{size:`sm`,variant:`primary`,onClick:__p.onAbrir,children:`Abrir el ticket`}),t.clienteId&&t.clienteId!==`cli-int`?(0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:__p.onC360,children:`Consulta 360`}):null,__p.puedeRayo&&!hecho&&!rayo?(0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:__p.onRayo,children:`Rayo`}):null]})]})}
+(0,k.jsxs)(`div`,{className:`v3-f-acc`,children:[__p.puedeRayo&&!hecho?(0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>rayo?ac.quitarRayo(t.id):ac.rayo(t.id),children:rayo?`Quitar Rayo`:`Prioridad Rayo`}):null,__p.puedeResolver&&!hecho?(0,k.jsx)(n,{size:`sm`,variant:`primary`,onClick:()=>ac.resolver(t.id),children:`Resolver`}):null,__p.puedeReasignar&&!hecho?(0,k.jsx)(n,{size:`sm`,variant:`ghost`,onClick:()=>ac.reasignar(t.id),children:`Reasignar a menor carga`}):null,(0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:__p.onAbrir,children:`Ver expediente`}),t.clienteId&&t.clienteId!==`cli-int`?(0,k.jsx)(n,{size:`sm`,variant:`ghost`,onClick:__p.onC360,children:`Consulta 360`}):null]})]})}
 // HU-067 CA-03 y CA-06: registro de actividad con la hora de cada evento: cambios de estado y, al vencer el SLA (la alerta del job),
 // el correo al responsable con copia a su líder (como RN-SVC-035 y HU-055). El líder sale del maestro local de ATC (`__equipo(líder)` es su
 // equipo); sin líder se dice, como en Mi día. Sin responsable, el correo va a quien registra la alerta. y estados, p persona.
@@ -49,12 +51,12 @@ function __resumenArea(o,z){let ts=o.tickets.filter(q=>w.includes(q.estado)&&I(o
 // Solo las áreas permitidas (CA-07); el nombre abre el mismo panel que tocar el área en la escena.
 function __Areas(__p){let o=__p.datos,fil=A.filter(z=>!__p.zonas||__p.zonas.has(z.k)).map(z=>__resumenArea(o,z));
 return(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Por área`,subtitle:`La escena resumida por área: cola, gestores ocupados, riesgo y resueltos dentro del SLA.`}),(0,k.jsx)(E,{children:(0,k.jsx)(ae,{caption:`Tickets por área`,rows:fil,getRowId:q=>q.id,columns:[{key:`n`,header:`Área`,renderCell:q=>__p.onZona?(0,k.jsx)(`button`,{type:`button`,tabIndex:-1,className:`pt-enlace-celda`,onClick:()=>__p.onZona(q.id),children:q.n}):q.n},{key:`cola`,header:`En cola`,align:`end`},{key:`aten`,header:`En atención`,align:`end`},{key:`ocup`,header:`Gestores ocupados`,align:`end`,renderCell:q=>`${q.ocup} de ${q.tot}`},{key:`riesgo`,header:`En riesgo o vencidos`,align:`end`},{key:`res`,header:`Resueltos`,align:`end`},{key:`sla`,header:`% en SLA`,align:`end`,renderCell:q=>q.sla===null?`—`:`${q.sla} %`}]})})]})}
-// HU-067 CA-04: panel del área (al tocarla en la escena o su nombre en «Por área»): en cola, gestores ocupados, resueltos y % en
-// SLA, sus tickets y la carga de cada gestor con las reasignaciones por carga ya hechas. Solo informativo: desde el visor no se
-// reasigna (fuera de alcance). La carga sale de todos los tickets del gestor (`todo`), no de la vista filtrada.
-function __Area(__p){
-let o=__p.datos,z=A.find(q=>q.k===__p.zona),ref=O.useRef(null);
-O.useEffect(()=>{let el=ref.current;el&&el.focus({preventScroll:!0});let f=ev=>{ev.key===`Escape`&&__p.onCerrar()};document.addEventListener(`keydown`,f);return()=>document.removeEventListener(`keydown`,f)},[__p.zona]);
+// HU-067 CA-04: panel del área (al tocarla en la escena, su cartel o su nombre en «Por área»): en cola, gestores ocupados, resueltos
+// y % en SLA, sus tickets y la carga de cada gestor con las reasignaciones por carga ya hechas. Desde el 20-oct va dentro del
+// inspector de la sala del cajón «Bandejas operativas», junto a la ficha de ejemplo de la sala (una sola vista por área, sin
+// duplicar el panel sobre la escena). La carga sale de todos los tickets del gestor (`todo`), no de la vista filtrada.
+function __AreaDetalle(__p){
+let o=__p.datos,z=A.find(q=>q.k===__p.zona);
 if(!z)return null;
 let r0=__resumenArea(o,z),
 fila=(l,v)=>(0,k.jsxs)(`div`,{className:`v3-f-fila`,children:[(0,k.jsx)(`dt`,{children:l}),(0,k.jsx)(`dd`,{children:v})]}),
@@ -62,9 +64,7 @@ tks=[...r0.ts].sort((a,b)=>S(a,o.ahora).vence.getTime()-S(b,o.ahora).vence.getTi
 ids=new Set(o.tickets.filter(q=>I(o,q)===z.k).map(q=>q.id)),
 reas=o.filasAsignacion.filter(q=>q.motivo===`REASSIGNMENT_CARGA`&&ids.has(q.ticketId)).sort((a,b)=>b.fecha.getTime()-a.fecha.getTime()).slice(0,5),
 num=q=>o.tickets.find(t=>t.id===q)?.numero??``;
-return(0,k.jsxs)(`aside`,{ref:ref,tabIndex:-1,role:`dialog`,"aria-label":`Detalle del área ${z.n}`,className:`v3-ficha`,children:[
-(0,k.jsxs)(`div`,{className:`v3-f-cab`,children:[(0,k.jsx)(`h3`,{className:`v3-f-area`,children:z.n}),
-(0,k.jsx)(`button`,{type:`button`,className:`v3-f-x`,"aria-label":`Cerrar el detalle del área`,onClick:__p.onCerrar,dangerouslySetInnerHTML:{__html:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>`}})]}),
+return(0,k.jsxs)(`section`,{className:`v3-area`,"aria-label":`Detalle del área ${z.n}`,children:[
 (0,k.jsxs)(`dl`,{className:`v3-f-grid`,children:[fila(`En cola`,r0.cola),fila(`Gestores ocupados`,`${r0.ocup} de ${r0.tot}`),fila(`Resueltos`,r0.res),fila(`% en SLA`,r0.sla===null?`—`:`${r0.sla} %`)]}),
 (0,k.jsx)(`h4`,{className:`v3-f-t`,children:`Tickets del área`}),
 tks.length?(0,k.jsx)(`ul`,{className:`v3-f-lista`,children:tks.map(q=>(0,k.jsxs)(`li`,{children:[(0,k.jsx)(`button`,{type:`button`,className:`pt-enlace-celda`,onClick:()=>__p.onTicket(q.id),children:q.numero}),(0,k.jsx)(`span`,{children:se[L(q)]}),(0,k.jsx)(C,{sla:S(q,o.ahora),size:`sm`})]},q.id))}):(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Sin tickets activos.`}),
@@ -72,4 +72,118 @@ tks.length?(0,k.jsx)(`ul`,{className:`v3-f-lista`,children:tks.map(q=>(0,k.jsxs)
 (0,k.jsx)(`ul`,{className:`v3-f-lista`,children:z.gente.map(g=>{let c0=__carga(__p.todo,g).carga;return(0,k.jsxs)(`li`,{children:[(0,k.jsx)(`span`,{children:p(g)}),(0,k.jsx)(`span`,{children:`Carga ${c0} (límite 12)`}),c0>12?(0,k.jsx)(e,{tone:`warning`,size:`sm`,children:`Sobre el límite`}):null,__disp(__p.todo,g)?null:(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`No disponible`})]},g)})}),
 (0,k.jsx)(`h4`,{className:`v3-f-t`,children:`Reasignaciones por carga`}),
 reas.length?(0,k.jsx)(`ul`,{className:`v3-f-lista`,children:reas.map(q=>(0,k.jsx)(`li`,{children:`${x(q.fecha)} · ${num(q.ticketId)}: ${p(q.deResponsable)} → ${q.aResponsable?p(q.aResponsable):`cola del área`}`},q.id))}):(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Sin reasignaciones por carga.`}),
-(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`La reasignación por carga se hace en Mi día › Equipo; aquí solo se consulta.`})]})}
+(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Para mover un ticket, ábrelo y usa «Reasignar a menor carga»; el balanceo de todo el equipo está en Mi día › Equipo.`})]})}
+
+// ------------------------------------------------------------------------------------------------------------------------------
+// 20-oct · Mejoras del visor de la rama de Daniel (pedido del PO para la presentación): cajón «Bandejas operativas» con tres vistas
+// (bandeja orquestadora y salas, inspector de estación/sala/canal y correos con copia al líder), controles de simulación, resumen
+// y leyenda de la escena. Todo sale del modelo del mockup: a = E (acciones con transacción), f = O (simulación), __vivo (sufijo de
+// comun, scripts/vivo-modelo.js), __correos = correos de asignación que ya deriva Mi día (para, copia al líder, asunto).
+// Componentes del sistema de diseño: n Button, e Badge, m Tag, T Card, E CardBody, D SectionHeader, C SLA, __Drawer, __Seg
+// (control segmentado), __Pares (pares de la tarjeta) y __Sel (select). Sin nombres de personas reales: los líderes salen del maestro.
+function __useCajon(){let[ab,sab]=O.useState(!1),[vi,svi]=O.useState(`todo`),[es,ses]=O.useState(`etapa:bandeja`),[fs,sfs]=O.useState(``);
+return{abierto:ab,setAbierto:sab,vista:vi,setVista:svi,est:es,fsala:fs,setFsala:sfs,abrir:q=>{ses(q);svi(`estacion`);sab(!0);q.startsWith(`sala:`)?sfs(q.slice(5)):q===`etapa:bandeja`&&sfs(``)}}}
+// Sala de Comité: activos con el SLA vencido y ya avisados al líder en su ciclo (lo mismo que dibuja la escena)
+function __comite(o){return o.tickets.filter(q=>w.includes(q.estado)&&S(q,o.ahora).nivel===`vencido`&&o.alertas.some(a0=>a0.ticketId===q.id&&a0.ciclo===q.reaperturas))}
+function __pctResta(q,ahora){let s0=S(q,ahora),ini=s0.hito===`respuesta`?q.abierto:q.inicioCiclo,tot=s0.vence.getTime()-ini.getTime();return tot>0?Math.max(0,Math.min(100,Math.round((s0.vence.getTime()-ahora.getTime())/tot*100))):0}
+function __activosSala(o,fs){return o.tickets.filter(q=>w.includes(q.estado)&&(!fs||I(o,q)===fs))}
+const __NOMSALA={post:`Postventa (Eje 4)`};
+// Datos de ejemplo de cada estación (la ficha de Daniel, sin nombres de personas): categoría, entidad, política operativa, líder
+// o custodio, acuerdo de servicio e información que se gestiona. En las salas, el SLA sale de las políticas vigentes del modelo.
+const __EST={
+'canal:tel':{cat:`Canal de entrada`,n:`Call center · teléfono`,d:`Identificación automática y grabación`,ent:`Central telefónica`,pol:`Enlace telefónico con apertura de un ticket por consulta`,lid:`Supervisión ATC`,sla:`Identificación automática por número o DNI y grabación vinculada al ticket.`,inf:`Teléfono entrante, DNI o CE, motivo tipificado, grabación de la llamada y un ticket por consulta.`,gate:`tel`},
+'canal:wa':{cat:`Canal de entrada`,n:`WhatsApp corporativo`,d:`Mensajería verificada`,ent:`Canal oficial de WhatsApp`,pol:`Un ticket independiente por cada consulta`,lid:`Supervisión ATC`,sla:`Un ticket por cada consulta distinta del cliente.`,inf:`Número verificado, textos, audios o fotos de sustento, lote asociado y consentimiento.`,gate:`wa`},
+'canal:mail':{cat:`Canal de entrada`,n:`Correo electrónico ATC`,d:`Buzón corporativo con acuse`,ent:`Buzón digital ATC`,pol:`Aviso automático al cliente y al líder del área`,lid:`Supervisión ATC`,sla:`Acuse automático con el número del ticket y correo al gestor, con copia a su líder, en cada asignación.`,inf:`Remitente, asunto, cuerpo del mensaje, adjuntos en PDF o imagen y vínculo con el contrato o el lote.`,gate:`mail`},
+'canal:portal':{cat:`Canal de entrada`,n:`Mi Portal (autogestión del cliente)`,d:`Seguimiento en vivo y conformidad`,ent:`Portal del propietario`,pol:`El titular confirma la solución para cerrar el ticket`,lid:`Coordinación CX`,sla:`El cliente ve el estado en vivo y confirma la solución para cerrar el ticket.`,inf:`Sesión del titular en Mi Portal, lote elegido, tipo de solicitud y adjuntos.`,gate:`portal`},
+'canal:form':{cat:`Canal de entrada`,n:`Formulario simple · QR de obra`,d:`Visitas y registros en el pórtico`,ent:`Control de acceso a obra`,pol:`Registro rápido en el pórtico y captura de evidencias`,lid:`Administración de proyectos`,sla:`Registro rápido del ingreso al proyecto en el pórtico y derivación directa a obra.`,inf:`DNI del visitante o propietario, manzana y lote, placa del vehículo, motivo de la visita y pase QR.`,gate:`form`},
+'etapa:bandeja':{cat:`Orquestación`,n:`Bandeja orquestadora (robot despachador)`,d:`Despacho por prioridad y carga`,ent:`Motor de despacho ATC`,pol:`Rayo con motivo, solo del supervisor y con tope del 10 % de los tickets activos del área`,lid:`Supervisión ATC`,sla:`Orden: 1.º rayo · 2.º SLA más próximo a vencer · 3.º prioridad; se asigna al gestor disponible con menos carga (límite 12).`,inf:`Tipo y subtipo del flujo, prioridad, rayo con motivo, carga de cada gestor y correo con copia al líder.`},
+'sala:eje1':{cat:`Área operativa`,d:`Consultas, pedidos y primera línea`,ent:`Área de Atención Eje 1`,pol:`Guía de solución y un ticket por consulta`,tipos:[`PED`,`QUE`,`REC`,`VIS`],inf:`Consultas generales, pedidos simples, guía de solución recomendada y un ticket independiente por consulta.`,nuevo:[`PED`,`Correo`,`Pedido de copia simple del contrato`]},
+'sala:cob':{cat:`Área operativa`,d:`Validación de abonos y prevención de la morosidad`,ent:`Área de Cobranza y cartera`,pol:`Evaluación diaria de la morosidad y control de la resolución`,tipos:[`CTA`,`RES`],regla:`Abre la resolución al acumular 3 cuotas vencidas e impagas.`,inf:`Vouchers de pago, cronograma de cuotas, estado de la cartera, carta de resolución y alerta paralela.`,nuevo:[`CTA`,`WhatsApp`,`Validación de un voucher de cuota pagada en agente bancario`]},
+'sala:libro':{cat:`Área operativa`,d:`Quejas y reclamos de consumo`,ent:`Oficialía de cumplimiento`,pol:`Plazo legal con control de prórroga y cargo`,tipos:[],regla:`Plazo legal de 15 días hábiles desde el registro, prorrogable una sola vez con motivo.`,inf:`Asiento correlativo (queja o reclamo), pedido del consumidor, cargo de la notificación al cliente y control de huérfanos.`,ir:[`libro`,`Ir al Libro de Reclamaciones`]},
+'sala:legal':{cat:`Área operativa`,d:`Dictamen jurídico y custodia de la prueba`,ent:`Legal · Eje 3`,pol:`Solo entra con el paquete mínimo completo (6 de 6)`,tipos:[],regla:`No acepta una derivación sin el paquete mínimo de 6 elementos; se deriva desde el ticket con «Derivar a Eje 3».`,inf:`Paquete mínimo (contrato, estado de cuenta, cartas previas, evidencias, hoja de ruta y dictamen), resolución legal y custodia de la prueba.`},
+'sala:post':{cat:`Área operativa`,d:`Garantías, visitas técnicas e inspección`,ent:`Ingeniería de postventa`,pol:`Vigencia en meses desde la entrega del lote`,tipos:[`GAR`],regla:`Cobertura según los meses desde el acta de entrega, inspección de campo y control de reincidencia.`,inf:`Fecha del acta de entrega, partida observada, vigencia en meses, informe de la visita técnica, presupuesto y acta de conformidad.`,nuevo:[`GAR`,`WhatsApp`,`Inspección de una fisura en el muro perimétrico (garantía)`]},
+'sala:proy':{cat:`Área operativa`,d:`Visitas al proyecto y logística de la entrega`,ent:`Administración de proyectos`,pol:`Cupos por bus, asistencia con QR y encuestas`,tipos:[`ING`,`RSV`],regla:`Control del aforo de cada bus y bloqueo del sobrecupo en el Entrega Fest.`,inf:`Formulario de ingreso al proyecto (DNI, lote, motivo, fecha y hora) y padrón de buses, asientos y pases QR.`,nuevo:[`RSV`,`Mi Portal`,`Confirmación de asistencia familiar al Entrega Fest`]},
+'etapa:comite':{cat:`Escalamiento`,n:`Sala de Comité (Mesa SGD)`,d:`Casos con el SLA vencido y escalamiento en cadena`,ent:`Mesa de Comité SGD`,pol:`Matriz de riesgo y acuerdos con responsables`,lid:`Comité multidisciplinario (ATC, Legal, Cobranza y Proyectos)`,sla:`Al vencer el SLA, correo al responsable con copia a su líder y el caso sube a la Sala de Comité; la Mesa SGD escala en cadena.`,inf:`Registro por lote o contrato, matriz de riesgo, acuerdos del comité con responsables y casos cruzados.`},
+'etapa:salida':{cat:`Cierre y CX`,n:`Cierre en Mi Portal y encuesta`,d:`Conformidad del propietario y satisfacción`,ent:`Experiencia del cliente (CX)`,pol:`Doble paso: resuelto y luego cerrado`,lid:`Coordinación CX`,sla:`Un ticket resuelto pasa a cerrado cuando el cliente confirma en Mi Portal; al cerrar se envía la encuesta CSAT y CES.`,inf:`Evidencia de la solución, confirmación del cliente en Mi Portal y calificación CSAT (1 a 5) y CES.`}};
+// Ejemplos de lo que entra por cada canal (tipo del modelo, canal y resumen); «+ Ticket entrante» los recorre en orden
+const __EJ={tel:[`CTA`,`Teléfono`,`Solicita su estado de cuenta y el cronograma de cuotas actualizado`],wa:[`GAR`,`WhatsApp`,`Envía fotos de una fisura en el muro del lote para revisar la garantía`],mail:[`QUE`,`Correo`,`Queja por la demora en la entrega de la minuta`],portal:[`RSV`,`Mi Portal`,`Consulta de cupo en el bus del Entrega Fest y su pase QR`],form:[`ING`,`Formulario simple`,`Visita del propietario a obra registrada en el pórtico`]},__ORDEN=[`tel`,`wa`,`mail`,`portal`,`form`];
+const __horas=h=>h<1?`${Math.round(h*60)} min`:`${h} h`;
+function __slaTipos(o,tipos){return tipos.map(t0=>{let ps=o.politicas.filter(q=>q.tipo===t0&&!q.prioridad).sort((a0,b0)=>b0.version-a0.version),q=ps[0]??o.politicas.filter(q=>!q.tipo&&!q.prioridad).sort((a0,b0)=>b0.version-a0.version)[0];return q?`${r(t0)}: 1.ª respuesta ${__horas(q.respuestaH)} y resolución ${__horas(q.resolucionH)} hábiles`:null}).filter(Boolean).join(` · `)}
+function __lideres(z){let ids=[...new Set(z.gente.map(__lid).filter(Boolean))];return ids.length?ids.map(q=>p(q)).join(`, `):__lider(null)}
+function __meta(k0,o){let m0=__EST[k0];if(!m0)return null;if(!k0.startsWith(`sala:`))return{...m0,k:k0};let z=A.find(q=>q.k===k0.slice(5));if(!z)return null;
+let sl=[__slaTipos(o,m0.tipos),m0.regla].filter(Boolean).join(`. `);return{...m0,k:k0,n:__NOMSALA[z.k]??z.n,zona:z,lid:__lideres(z),sla:sl||`Según la política del tipo de cada ticket.`}}
+// Acciones de la operación en vivo (modelo real del mockup). `x` trae lo que vive en el render de la vista.
+function __accionesVivo(x0){let{o,todo,pe,_e,he,J,emp}=x0,
+num=id=>todo.tickets.find(q=>q.id===id)?.numero??``,
+cli=()=>g[(J.current++*7)%30].id,
+nombreCanal=k0=>j.find(q=>q.k===k0)?.n??k0,
+rayo=async(id,silencio)=>{he(null);try{await a.marcarRayo(id,`Prioridad Rayo desde la operación en vivo`,!1);silencio||_e(`Prioridad Rayo en ${num(id)}: sube al tope de la cola de su área.`);return!0}catch(z0){he(z0);return!1}},
+nuevo=async(tipo,canal,res,conRayo)=>{he(null);let tk;try{tk=__vivo.entrante(tipo,canal,cli(),res,emp||void 0)}catch(z0){he(z0);return null}
+let gate=F({tipo,canal});_e(`Entró ${tk.numero} por ${nombreCanal(gate)}: ${tk.resultado===`asignado`?`la bandeja lo asignó por carga`:`quedó en la cola de su área`}.`);
+if(conRayo&&await rayo(tk.id,!0))_e(`Entró ${tk.numero} por ${nombreCanal(gate)} con Prioridad Rayo: sube al tope de la cola.`);pe(tk.id);return tk};
+return{
+entrante:(op={})=>{let k0=op.gate??__ORDEN[J.current%5],[t0,c0,r0]=__EJ[k0];return nuevo(t0,c0,r0,op.rayo)},
+haciaSala:(k0,conRayo)=>{let m0=__EST[`sala:${k0}`]?.nuevo;return m0?nuevo(m0[0],m0[1],m0[2],conRayo):null},
+pico:async op=>{for(let i0=0;i0<5;i0++){let[t0,c0,r0]=__EJ[__ORDEN[i0]];await nuevo(t0,c0,r0,i0===0&&op?.rayo)}_e(`Pico multicanal: entraron 5 tickets, uno por canal; la bandeja los ordena por rayo, SLA y prioridad.`)},
+rayo:id=>rayo(id),
+quitarRayo:async id=>{he(null);try{await a.retirarRayo(id);_e(`Rayo retirado de ${num(id)}.`)}catch(z0){he(z0)}},
+resolver:async id=>{he(null);try{await a.cambiarEstado(id,`RESOLVED`,`Resuelto desde la operación en vivo`);_e(`${num(id)} resuelto: pasa a Cierre en Mi Portal, donde el cliente confirma y responde la encuesta.`)}catch(z0){he(z0)}},
+reasignar:async id=>{he(null);try{let d0=await __vivo.reasignar(id);_e(`${num(id)} reasignado a ${p(d0)}, el gestor disponible con menos carga del área; le llega el correo con copia a su líder.`)}catch(z0){he(z0)}},
+// «Escalar a Comité SGD»: adelanta el reloj las horas hábiles que faltan para que venza el SLA del ticket más próximo a vencer
+// (de la vista filtrada); el job de SLA avisa por correo al responsable con copia a su líder y el caso pasa a la Sala de Comité
+escalar:()=>{he(null);let cand=o.tickets.filter(q=>w.includes(q.estado)&&S(q,o.ahora).nivel!==`vencido`).sort((a0,b0)=>S(a0,o.ahora).vence-S(b0,o.ahora).vence)[0];
+if(!cand){_e(`No hay tickets activos por vencer en la vista.`);return}let h0=__vivo.horas(todo,cand.id);if(h0==null){_e(`El SLA de ${cand.numero} no vence en los próximos 60 días hábiles.`);return}
+h0>0&&f.avanzar(h0);pe(cand.id);_e(`El reloj avanzó ${h0} h hábil${h0===1?``:`es`}: venció el SLA de ${cand.numero}, se avisó por correo a su responsable con copia a su líder y el caso pasó a la Sala de Comité.`)}}}
+// Controles de simulación (solo en el modo simulación, HU-067 CA-08): pausa, velocidad 1×/2×/4× y los ejemplos de entrada
+function __Controles(q){if(!q.sim)return null;
+return(0,k.jsxs)(`div`,{className:`v3-sim`,role:`group`,"aria-label":`Controles de la simulación`,children:[
+(0,k.jsx)(n,{size:`sm`,variant:`primary`,"aria-pressed":q.pausa||q.l,disabled:!q.Q||q.l,onClick:q.alternar,children:q.pausa||q.l?`Reanudar planta`:`Pausar planta`}),
+(0,k.jsx)(__Seg,{label:`Velocidad de la planta`,size:`sm`,disabled:!q.Q||q.l,value:String(q.vel),onValueChange:v0=>q.setVel(Number(v0)),options:[{value:`1`,label:`1× Normal`},{value:`2`,label:`2× Rápido`},{value:`4`,label:`4× Turbo`}]}),
+(0,k.jsx)(n,{size:`sm`,variant:`secondary`,disabled:!q.Q,onClick:()=>q.ac.entrante(),children:`+ Ticket entrante`}),
+q.puedeRayo?(0,k.jsx)(n,{size:`sm`,variant:`secondary`,disabled:!q.Q,onClick:()=>q.ac.entrante({rayo:!0}),children:`Ticket con Prioridad Rayo`}):null,
+(0,k.jsx)(n,{size:`sm`,variant:`danger`,disabled:!q.Q,onClick:q.ac.escalar,children:`Escalar a Comité SGD`}),
+(0,k.jsx)(n,{size:`sm`,variant:`ghost`,disabled:!q.Q,onClick:()=>q.ac.pico({rayo:q.puedeRayo}),children:`Pico +5 multicanal`})]})}
+// Resumen sobre la escena (resueltos hoy, con rayo, en la Sala de Comité) y leyenda de luces, rayo, robot y color de la caja
+function __CabEscena({datos:o}){let hoy=o.ahora.toDateString(),res=o.tickets.filter(q=>q.ultimaResolucion&&q.ultimaResolucion.toDateString()===hoy).length,ray=o.tickets.filter(q=>w.includes(q.estado)&&re(o,q.id)).length,com=__comite(o).length;
+return(0,k.jsxs)(`div`,{className:`v3-escena-cab`,role:`group`,"aria-label":`Resumen de la planta`,children:[(0,k.jsx)(e,{tone:`success`,size:`sm`,children:`${res} resueltos hoy`}),(0,k.jsx)(e,{tone:ray?`warning`:`neutral`,size:`sm`,children:`${ray} con Rayo`}),(0,k.jsx)(e,{tone:com?`danger`:`neutral`,size:`sm`,children:`${com} en Comité SGD`}),(0,k.jsx)(`span`,{className:`v3-escena-ayuda`,children:`Toca un ticket, un canal, la bandeja o una sala para ver su detalle.`})]})}
+function __Leyenda(){let t0=(c0,txt)=>(0,k.jsx)(`li`,{children:(0,k.jsx)(m,{variant:`outline`,size:`sm`,dotColor:`var(--aybar-color-${c0})`,children:txt})});
+return(0,k.jsxs)(`ul`,{className:`v3-leyenda`,"aria-label":`Leyenda de la escena`,children:[t0(`feedback-success-border`,`Luz verde: SLA en plazo`),t0(`feedback-warning-border`,`Luz ámbar que late: SLA en riesgo (menos del 25 %)`),t0(`feedback-danger-border`,`Luz roja y Sala de Comité: SLA vencido`),t0(`secondary-400`,`Relámpago que gira: Prioridad Rayo`),t0(`primary-500`,`Robot orquestador: despacho automático por carga`),t0(`neutral-450`,`Color de la caja: tipo de ticket`)]})}
+// Vista 1 del cajón: bandeja orquestadora y salas (rayo · SLA · menor carga). Tocar un ticket abre su ficha en la escena.
+function __BandejaLista(q){let o=q.datos,fs=q.cj.fsala,act=__activosSala(o,fs),com=new Set(__comite(o).map(t0=>t0.id)),
+car=t0=>t0.responsable?__carga(q.todo,t0.responsable).carga:0,
+lista=[...act].sort((a0,b0)=>(re(o,b0.id)-re(o,a0.id))||(S(a0,o.ahora).vence-S(b0,o.ahora).vence)||(car(a0)-car(b0))),ver=lista.slice(0,10),
+zn=t0=>{let z=A.find(z0=>z0.k===I(o,t0));return z?__NOMSALA[z.k]??z.n:`—`},nomFs=fs?(__NOMSALA[fs]??A.find(z0=>z0.k===fs)?.n):`Todas las salas`;
+return(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h3`,title:`Bandeja orquestadora y salas (${act.length})`,subtitle:`Orden: rayo · SLA · menor carga. Toca un ticket para abrir su ficha en la escena.`,actions:(0,k.jsxs)(k.Fragment,{children:[(0,k.jsx)(e,{tone:`info`,size:`sm`,children:nomFs}),(0,k.jsx)(n,{size:`sm`,variant:`ghost`,onClick:()=>q.onIr(`bandeja`),children:`Ir a Bandeja`})]})}),
+(0,k.jsx)(E,{children:ver.length?(0,k.jsxs)(k.Fragment,{children:[(0,k.jsx)(`ul`,{className:`v3-bj`,children:ver.map(t0=>{let ry=re(o,t0.id),c1=t0.clienteId&&__cli(t0.clienteId),niv=S(t0,o.ahora).nivel,pc=__pctResta(t0,o.ahora);
+return(0,k.jsxs)(`li`,{className:`v3-bj-item`,"data-sel":q.sel===t0.id||void 0,children:[(0,k.jsxs)(`button`,{type:`button`,className:`v3-bj-btn`,"aria-current":q.sel===t0.id||void 0,onClick:()=>q.onTicket(t0.id),children:[(0,k.jsxs)(`span`,{className:`v3-bj-l1`,children:[(0,k.jsx)(`b`,{children:t0.numero}),ry?(0,k.jsx)(e,{tone:`danger`,size:`sm`,children:`Rayo`}):null,c1?(0,k.jsx)(`span`,{children:c1.nombre}):null]}),(0,k.jsx)(`span`,{className:`v3-bj-l2`,children:`${r(t0.tipo)} · ${zn(t0)} (${se[L(t0)]})`})]}),
+(0,k.jsxs)(`span`,{className:`v3-bj-der`,children:[com.has(t0.id)?(0,k.jsx)(e,{tone:`danger`,size:`sm`,children:`Comité SGD`}):(0,k.jsx)(e,{tone:niv===`vencido`?`danger`:niv===`en-riesgo`?`warning`:`success`,size:`sm`,children:`${pc} % SLA`}),q.puedeRayo?(0,k.jsx)(n,{size:`sm`,variant:`ghost`,"aria-label":`${ry?`Quitar Rayo`:`Prioridad Rayo`} a ${t0.numero}`,onClick:()=>ry?q.ac.quitarRayo(t0.id):q.ac.rayo(t0.id),children:ry?`Quitar Rayo`:`Rayo`}):null]})]},t0.id)})}),
+lista.length>ver.length?(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Y ${lista.length-ver.length} más en la Bandeja.`}):null]}):(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Sin tickets activos${fs?` en ${nomFs}`:``}.`})})]})}
+// Vista 2: inspector de la estación, sala o canal tocado en la escena (o en su cartel). En las salas incluye el panel del área.
+function __Inspector(q){let o=q.datos,m0=__meta(q.cj.est,o)??__meta(`etapa:bandeja`,o),k0=m0.k,sim=q.sim&&q.Q,
+dato=k0.startsWith(`canal:`)?[`Activos que entraron por aquí`,String(o.tickets.filter(t0=>w.includes(t0.estado)&&F(t0)===m0.gate).length)]:k0===`etapa:bandeja`?[`En espera ahora`,String(o.tickets.filter(t0=>L(t0)===`bandeja`).length)]:k0===`etapa:comite`?[`En la sala ahora`,`${__comite(o).length} con SLA vencido · ${o.escalamientos.length} escalados en cadena`]:k0===`etapa:salida`?[`Resueltos hoy`,String(o.tickets.filter(t0=>t0.ultimaResolucion&&t0.ultimaResolucion.toDateString()===o.ahora.toDateString()).length)]:null,
+pares=[[`Política operativa`,m0.pol],[`Líder / custodio`,m0.lid],[`Acuerdo de servicio (SLA)`,m0.sla],[`Información gestionada`,m0.inf],...dato?[dato]:[]],
+z=m0.zona,acc=[];
+if(m0.gate&&sim){acc.push((0,k.jsx)(n,{size:`sm`,variant:`primary`,onClick:()=>q.ac.entrante({gate:m0.gate}),children:`+ Ingresar por ${j.find(g0=>g0.k===m0.gate)?.n??m0.n}`},`in`));q.puedeRayo&&acc.push((0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>q.ac.entrante({gate:m0.gate,rayo:!0}),children:`Ingresar con Rayo`},`inr`))}
+if(z){m0.nuevo&&sim&&acc.push((0,k.jsx)(n,{size:`sm`,variant:`primary`,onClick:()=>q.ac.haciaSala(z.k,!1),children:`+ Ticket hacia ${m0.n}`},`ts`));m0.nuevo&&sim&&q.puedeRayo&&acc.push((0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>q.ac.haciaSala(z.k,!0),children:`Con Rayo a esta sala`},`tsr`));
+acc.push(q.cj.fsala===z.k?(0,k.jsx)(n,{size:`sm`,variant:`ghost`,onClick:()=>q.cj.setFsala(``),children:`Ver todas las salas`},`fs`):(0,k.jsx)(n,{size:`sm`,variant:`ghost`,onClick:()=>q.cj.setFsala(z.k),children:`Filtrar la bandeja por esta sala`},`fs`))}
+m0.ir&&acc.push((0,k.jsx)(n,{size:`sm`,variant:`secondary`,onClick:()=>q.onIr(m0.ir[0]),children:m0.ir[1]},`ir`));
+k0===`etapa:comite`&&sim&&acc.push((0,k.jsx)(n,{size:`sm`,variant:`danger`,onClick:q.ac.escalar,children:`Escalar caso a Comité SGD`},`esc`));
+return(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h3`,title:m0.n,subtitle:`${m0.cat} · ${m0.d}`,actions:(0,k.jsx)(e,{tone:`info`,size:`sm`,children:m0.ent})}),
+(0,k.jsxs)(E,{children:[(0,k.jsx)(__Pares,{pairs:pares}),acc.length?(0,k.jsx)(`div`,{className:`v3-acc`,children:acc}):null,
+k0===`etapa:comite`?(0,k.jsx)(`ul`,{className:`v3-f-lista`,"aria-label":`Casos en la Sala de Comité`,children:__comite(o).slice(0,8).map(t0=>(0,k.jsxs)(`li`,{children:[(0,k.jsx)(`button`,{type:`button`,className:`pt-enlace-celda`,onClick:()=>q.onTicket(t0.id),children:t0.numero}),(0,k.jsx)(C,{sla:S(t0,o.ahora),size:`sm`})]},t0.id))}):null,
+z?(0,k.jsx)(__AreaDetalle,{zona:z.k,datos:o,todo:q.todo,onTicket:q.onTicket}):null]})]})}
+// Vista 3: correos de asignación con copia al líder del área (los que deriva el modelo de las filas de asignación)
+function __CorreosCC(q){let o=q.datos,ls=__correos(o).slice(0,8),zn=num=>{let t0=o.tickets.find(t1=>t1.numero===num),z=t0&&A.find(z0=>z0.k===I(o,t0));return z?__NOMSALA[z.k]??z.n:null};
+return(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h3`,title:`Correos de asignación (copia al líder del área)`,subtitle:`Aviso automático en cada asignación.`,actions:(0,k.jsx)(e,{tone:`info`,size:`sm`,children:`${ls.length} recientes`})}),
+(0,k.jsx)(E,{children:ls.length?(0,k.jsx)(`ol`,{className:`ay-timeline`,"aria-label":`Correos de asignación enviados`,children:ls.map(c1=>{let s1=c1.masivo?`${c1.tickets.length} tickets reasignados a ${p(c1.para)}`:`Ticket ${c1.tickets[0]} asignado a ${p(c1.para)}${zn(c1.tickets[0])?` en ${zn(c1.tickets[0])}`:``}`;
+return(0,k.jsxs)(`li`,{className:`ay-timeline__event`,children:[(0,k.jsx)(`span`,{className:`ay-timeline__dot ay-timeline__dot--accent`,"aria-hidden":`true`}),(0,k.jsxs)(`div`,{className:`ay-timeline__body`,children:[(0,k.jsx)(`p`,{className:`ay-timeline__title`,children:s1}),(0,k.jsx)(`p`,{className:`v3-f-nota`,children:c1.cc?`Con copia a ${p(c1.cc)}, su líder.`:`${__lider(null)}: sin copia.`}),(0,k.jsx)(`time`,{className:`ay-timeline__time`,dateTime:c1.fecha.toISOString(),children:x(c1.fecha)})]})]},c1.id)})}):(0,k.jsx)(`p`,{className:`v3-f-nota`,children:`Aún no hay correos de asignación.`})})]})}
+// Cajón lateral (no modal) «Bandejas operativas» con su control segmentado
+function __Cajon(q){let cj=q.cj,vi=cj.vista,ver=v0=>vi===`todo`||vi===v0;
+return(0,k.jsx)(__Drawer,{open:cj.abierto,onOpenChange:cj.setAbierto,modal:!1,side:`end`,size:`lg`,title:`Bandejas, estación 3D y correos CC`,children:(0,k.jsxs)(`div`,{className:`v3-cajon`,children:[(0,k.jsx)(__Seg,{label:`Vista del cajón`,size:`sm`,value:vi,onValueChange:cj.setVista,options:[{value:`todo`,label:`Todas`},{value:`bandeja`,label:`Bandeja`},{value:`estacion`,label:`Estación`},{value:`correos`,label:`Correos CC`}]}),
+ver(`bandeja`)?(0,k.jsx)(__BandejaLista,{...q}):null,ver(`estacion`)?(0,k.jsx)(__Inspector,{...q}):null,ver(`correos`)?(0,k.jsx)(__CorreosCC,{...q}):null]})})}
+function __nBandeja(o,fs){return __activosSala(o,fs).length}
+// En pantallas angostas el cajón tapa la escena: al elegir un ticket se cierra y se baja a la escena para ver su ficha
+function __alTicketCajon(cj){try{if(matchMedia(`(max-width: 700px)`).matches){cj.setAbierto(!1);setTimeout(()=>document.querySelector(`.pt-escena`)?.scrollIntoView({block:`center`}),60)}}catch{}}
+// Resumen de ejemplo para los tickets que la simulación hace entrar (según tipo y canal)
+const __EJ_MAS=[[`CTA`,`WhatsApp`,`Envía el voucher de una cuota pagada en agente bancario para validarla`],[`CTA`,`Correo`,`Pide la constancia de no adeudo de su lote`],[`QUE`,`Teléfono`,`Queja por la atención recibida en la caseta del proyecto`]];
+const __resEj=(t0,c0)=>([...__EJ_MAS,...Object.values(__EJ)].find(q=>q[0]===t0&&q[1]===c0)??Object.values(__EJ).find(q=>q[0]===t0))?.[2]??`Consulta recibida por ${c0}`;

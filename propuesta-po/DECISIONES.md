@@ -339,3 +339,20 @@ subtipo marcado para el portal y con su flujo terminado.
   flujo».
 - **Encuesta:** sin la pregunta 0–10, y la Torre sin la columna NPS ni la tabla «Por resultado del cierre».
 - **Áreas:** las 7 áreas de la plataforma actual al derivar y en Configuración › Flujos, marcadas «plataforma actual».
+
+### 5.10 Mejoras traídas de la rama de Daniel (20-oct): lo que contradice la v1.3
+
+El equipo pidió traer todas las mejoras de la Consulta 360 y de la Operación en vivo de la rama `prototipo-polar`, que considera
+aprobadas por el PO. Estas cuatro chocan con un criterio de la HU-067 v1.3 y se trajeron igual, por indicación expresa de Brayan.
+El PO tiene que confirmarlas:
+
+| Mejora | Qué dice la v1.3 |
+|---|---|
+| Velocidad 4× | CA-08: «pausa y velocidad (x1, x2)» |
+| «Resolver» y «Reasignar a menor carga» desde la ficha del visor | Fuera de alcance: «reasignar desde el visor (se hace en la bandeja)» |
+| Sala «Postventa (Eje 4)» | La v1.3 solo tiene los ejes 1 a 3 |
+| «NPS del turno» con porcentajes fijos (72 % promotores, 18 % pasivos) | La Torre usa el «NPS preliminar» derivado del CSAT (§5.9, pregunta 24) |
+
+**Pregunta para el PO: la decisión D-12 de esa rama.** Saca la HU-048 (IA al cerrar) y la HU-053 (búsqueda semántica) de la
+Etapa 1. La tomó la sesión de trabajo de esa rama el 19-oct, no el PO, y los documentos del PO v1.3 siguen contando ambas HU
+en la Etapa 1. Aquí no se aplicó: ¿el PO confirma que salen?
