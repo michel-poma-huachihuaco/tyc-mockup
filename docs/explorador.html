@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="generator" content="aybar paquete explorador">
-<meta name="aybar-huella" content="sha256:d603dce185a2b9af82a4028a6457b8ee8fc618924f3f1405b8eee4feb1e3d7d1">
+<meta name="aybar-huella" content="sha256:8ac5175d4300563139905c4a88ac22012872c679f6c15e54d585b3219625b918">
 <title>Explorador del paquete</title>
 <!--
   Generado por `aybar paquete explorador` desde el docs/ del servicio. No se
@@ -1593,7 +1593,7 @@ const D = {
             "que": "Proveedor de IA aprobado por TI y Seguridad",
             "tipo": "Interna/Seguridad",
             "dueno": "Gerencia ATC · TI · Seguridad",
-            "fecha": "2026-10-21",
+            "fecha": "Sin fecha (Etapa 3)",
             "estado": "Pendiente"
           }
         ]
@@ -1607,6 +1607,9 @@ const D = {
       "endpoints": [
         "GET /api/v1/guias-solucion/{tipoTicket}",
         "POST /api/v1/tickets/{id}/sugerencia-ia"
+      ],
+      "adrs": [
+        "ADR-009"
       ],
       "secciones": [
         {
@@ -1691,6 +1694,9 @@ const D = {
         "GET /api/v1/clientes/{id}/documentos/buscar-semantico",
         "GET /api/v1/tickets/{id}/consulta-360",
         "POST /api/v1/tickets"
+      ],
+      "adrs": [
+        "ADR-009"
       ],
       "secciones": [
         {
@@ -3854,7 +3860,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "Va en `docs/historias/HU-ATC-048-retroalimentacion-ia-agente-atencion.md`.\n\n- Ticket: [AYB-0001] - Tipo: T3 - Epica/BRD: EP-ATC-09 / docs/analisis/BRD.md\n- Como gestor de tickets quiero que la IA me sugiera respuesta y me avise qué criterios de cierre faltan para cerrar con mejor calidad y aprender en el momento.\n- Requerimiento origen (RF-SVC-048 — Retroalimentacion de IA al agente durante la atencion): El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. Feedback presentación · ítem 8 · Proceso: PROC-SVC-018 (Asistencia al agente para resolver y cerrar) · Fuente: PLT-04 · HU-ATC-048 · traza RF-SVC-048\n- Etapa del proyecto (RN-SVC-043): **Etapa 1** — Salida 30-oct-2026\n- Planificación (PLT-04 v1.2): Prioridad: **PODRIA** · Iteración: **I1** · Estimación: **5 h** · Asignado: **Dev 3** (2026-10-22 → 2026-10-23) · *Flexible* · Depende de HU: HU-ATC-047 · Dependencias externas: DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales)\n- Observaciones de alcance: Fuera de alcance: Respuesta automática de la IA al cliente.\n- Diagramas asociados (PLT-04 §6): 6.1 Diagrama de estados · atención asistida | 6.2 Diagrama de procesos AS-IS · situación actual (hipótesis a validar) | 6.3 Diagrama de procesos TO-BE · situación objetivo | 6.4 Diagrama de secuencia · sugerencia de IA | 6.5 Diagrama entidad-relación · guías y sugerencias"
+          "md": "Va en `docs/historias/HU-ATC-048-retroalimentacion-ia-agente-atencion.md`.\n\n- Ticket: [AYB-0001] - Tipo: T3 - Epica/BRD: EP-ATC-09 / docs/analisis/BRD.md\n- Como gestor de tickets quiero que la IA me sugiera respuesta y me avise qué criterios de cierre faltan para cerrar con mejor calidad y aprender en el momento.\n- Requerimiento origen (RF-SVC-048 — Retroalimentacion de IA al agente durante la atencion): El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. Feedback presentación · ítem 8 · Proceso: PROC-SVC-018 (Asistencia al agente para resolver y cerrar) · Fuente: PLT-04 · HU-ATC-048 · traza RF-SVC-048\n- Etapa del proyecto (RN-SVC-043): **Fuera de la Etapa 1 (Etapa 3, por definir)** — se integra a futuro con el asistente interno del gestor (ADR-009); decisión D-12 de 2026-10-19. La iteración y las fechas de la línea de planificación (PLT-04 v1.2) ya no aplican.\n- Planificación (PLT-04 v1.2): Prioridad: **PODRIA** · Iteración: **I1** · Estimación: **5 h** · Asignado: **Dev 3** (2026-10-22 → 2026-10-23) · *Flexible* · Depende de HU: HU-ATC-047 · Dependencias externas: DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales)\n- Observaciones de alcance: Fuera de alcance: Respuesta automática de la IA al cliente.\n- Diagramas asociados (PLT-04 §6): 6.1 Diagrama de estados · atención asistida | 6.2 Diagrama de procesos AS-IS · situación actual (hipótesis a validar) | 6.3 Diagrama de procesos TO-BE · situación objetivo | 6.4 Diagrama de secuencia · sugerencia de IA | 6.5 Diagrama entidad-relación · guías y sugerencias"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4049,7 +4055,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "Va en `docs/historias/HU-ATC-053-busqueda-inteligente-archivos-documentos.md`.\n\n- Ticket: [AYB-0001] - Tipo: T3 - Epica/BRD: EP-ATC-10 / docs/analisis/BRD.md\n- Como gestor de tickets quiero buscar en lenguaje natural dentro de los documentos del cliente para encontrar el documento aunque no sepa cómo está escrito.\n- Requerimiento origen (RF-SVC-053 — Busqueda inteligente en archivos y documentos del cliente): El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19 · Proceso: PROC-SVC-019 (Consulta 360 y busqueda del cliente) · Fuente: PLT-04 · HU-ATC-053 · traza RF-SVC-053\n- Etapa del proyecto (RN-SVC-043): **Etapa 1** — Salida 30-oct-2026\n- Planificación (PLT-04 v1.2): Prioridad: **PODRIA** · Iteración: **I1** · Estimación: **5 h** · Asignado: **Dev 4** (2026-10-21 → 2026-10-22) · *Flexible* · Depende de HU: HU-ATC-049 · Dependencias externas: DEP-06 (Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI); DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales)\n- Observaciones de alcance: Fuera de alcance: Indexación de repositorios no aprobados.\n- Diagramas asociados (PLT-04 §6): 6.1 Diagrama de estados · consulta del cliente | 6.2 Diagrama de procesos AS-IS · situación actual (hipótesis a validar) | 6.3 Diagrama de procesos TO-BE · situación objetivo | 6.4 Diagrama de secuencia · consulta 360 | 6.5 Diagrama entidad-relación · búsqueda y consulta"
+          "md": "Va en `docs/historias/HU-ATC-053-busqueda-inteligente-archivos-documentos.md`.\n\n- Ticket: [AYB-0001] - Tipo: T3 - Epica/BRD: EP-ATC-10 / docs/analisis/BRD.md\n- Como gestor de tickets quiero buscar en lenguaje natural dentro de los documentos del cliente para encontrar el documento aunque no sepa cómo está escrito.\n- Requerimiento origen (RF-SVC-053 — Busqueda inteligente en archivos y documentos del cliente): El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19 · Proceso: PROC-SVC-019 (Consulta 360 y busqueda del cliente) · Fuente: PLT-04 · HU-ATC-053 · traza RF-SVC-053\n- Etapa del proyecto (RN-SVC-043): **Fuera de la Etapa 1 (Etapa 3, por definir)** — se integra a futuro con el asistente interno del gestor (ADR-009); decisión D-12 de 2026-10-19. La iteración y las fechas de la línea de planificación (PLT-04 v1.2) ya no aplican. Pregunta abierta: `HU-ATC-042` la tiene como predecesora (ver D-12).\n- Planificación (PLT-04 v1.2): Prioridad: **PODRIA** · Iteración: **I1** · Estimación: **5 h** · Asignado: **Dev 4** (2026-10-21 → 2026-10-22) · *Flexible* · Depende de HU: HU-ATC-049 · Dependencias externas: DEP-06 (Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI); DEP-14 (Proveedor de IA aprobado por TI y Seguridad, con política de datos personales)\n- Observaciones de alcance: Fuera de alcance: Indexación de repositorios no aprobados.\n- Diagramas asociados (PLT-04 §6): 6.1 Diagrama de estados · consulta del cliente | 6.2 Diagrama de procesos AS-IS · situación actual (hipótesis a validar) | 6.3 Diagrama de procesos TO-BE · situación objetivo | 6.4 Diagrama de secuencia · consulta 360 | 6.5 Diagrama entidad-relación · búsqueda y consulta"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",

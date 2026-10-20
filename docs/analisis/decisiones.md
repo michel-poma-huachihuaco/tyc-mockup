@@ -173,6 +173,33 @@ oficialmente en dos etapas sin bloquear la salida inicial:
 `HU-ATC-061`..`063`. Ninguna funcionalidad de la Etapa 1 queda bloqueada por
 NEXUS, DAEDALUS ni UrbeMind. — Tomada por: PO / usuario (humano), 2026-10-19.
 
+**D-12** — 2026-10-19 — **`HU-ATC-048` y `HU-ATC-053` salen de la Etapa 1**: las
+dos únicas historias que usan IA (sugerir respuesta y verificar cierre;
+búsqueda semántica) no se integran ahora. Se dejan para cuando se integre el
+asistente interno del gestor, que `ADR-009` (borrador) define como un puerto
+con capacidades. Pasan a **Etapa 3 (por definir, sin fecha)**.
+- **Etapa 1 queda en 56 HU · 210 h** (antes 58 HU · 220 h): cada una era de 5 h.
+  La Etapa 2 no cambia (5 HU · 23 h).
+- `FT-ATC-19` conserva `HU-ATC-047` (guía de solución) en la Etapa 1;
+  `FT-ATC-20` pierde `HU-ATC-053`. El alcance flexible del `PLT-01` (R-01) queda
+  en `HU-ATC-037`, `038` y `039`.
+- `DEP-14` (proveedor de IA) deja de bloquear algo de la Etapa 1.
+- **Pregunta abierta (PO):** `HU-ATC-042` (Debe, Etapa 1) figura con
+  predecesora `HU-ATC-053` en `PLT-04`. Hay que confirmar si la ficha del
+  cliente en la llamada se resuelve con la consulta 360 (`HU-ATC-050`) en la
+  Etapa 1 y se quita esa predecesora, o si `HU-ATC-042` también se mueve. Hasta
+  entonces el calendario no la trata como bloqueo y el documento de la HU no se
+  toca.
+- **Alineado** (2026-10-19): el backlog de tareas (`EP-ATC-09` y `EP-ATC-10`,
+  primera tarea de cada HU), los `DOR` de `FT-ATC-19` y `FT-ATC-20` y el roadmap
+  (`RMP-001`). El roadmap además corrige la Etapa 2 de «21 h» a 23 h y
+  `FT-ATC-24` de «14 h» a 16 h, que no coincidían con `PLT-04`.
+- **Pendiente de actualizar**: `RN-SVC-043` solo define dos etapas; los
+  documentos `FT-ATC-19` y `FT-ATC-20` (horas y release de la funcionalidad), el
+  `BRD`, el plan de pruebas (`docs/pruebas/`) y los `PLT-01`..`05` externos
+  aún cuentan estas HU en la Etapa 1. — Contexto: instrucción del usuario al decidir que la IA se
+  integrará a futuro. — Tomada por: usuario (humano), 2026-10-19.
+
 ---
 
 ## Precedencia (recordatorio del marco)

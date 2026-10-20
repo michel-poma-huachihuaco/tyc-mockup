@@ -297,7 +297,7 @@
       "tareas": [
         {
           "id": "HU-ATC-048-T01",
-          "titulo": "Nota D-10 (nomenclatura menor): entidad SVC_IA_SUGGESTION (sugerencia, decision del gestor) y puerto en domain.port.out; respeta ADR-008 (anonimizacion y registro)",
+          "titulo": "Etapa 3 (D-12, fuera de la Etapa 1, sin fecha; asistente IA a futuro, ADR-009): Nota D-10 (nomenclatura menor): entidad SVC_IA_SUGGESTION (sugerencia, decision del gestor) y puerto en domain.port.out; respeta ADR-008 (anonimizacion y registro)",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",

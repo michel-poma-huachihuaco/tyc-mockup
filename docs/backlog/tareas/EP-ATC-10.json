@@ -398,7 +398,7 @@
       "tareas": [
         {
           "id": "HU-ATC-053-T01",
-          "titulo": "Puerto IndexadorSemanticoPort en domain.port.out (repositorios de documentos a confirmar, ver pregunta abierta de FT-ATC-20)",
+          "titulo": "Etapa 3 (D-12, fuera de la Etapa 1, sin fecha; asistente IA a futuro, ADR-009): Puerto IndexadorSemanticoPort en domain.port.out (repositorios de documentos a confirmar, ver pregunta abierta de FT-ATC-20)",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
