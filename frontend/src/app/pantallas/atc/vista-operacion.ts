@@ -10,7 +10,6 @@ import {
 import {
   AyAlert,
   AyBadge,
-  AyBanner,
   AyButton,
   AyCard,
   AyCardBody,
@@ -73,7 +72,6 @@ import {
   imports: [
     AyAlert,
     AyBadge,
-    AyBanner,
     AyButton,
     AyCard,
     AyCardBody,
@@ -110,17 +108,16 @@ import {
     <!-- ====================================================================== -->
     @if (subvista() === 'bandeja') {
       <div ayStack gap="4">
-        <!-- Pop-up CTI de llamada entrante con AyBanner oficial -->
+        <!-- Pop-up CTI de llamada entrante con AyAlert oficial -->
         @if (ctiEntranteVisible()) {
-          <ay-banner tono="info" size="md" [descartable]="false">
-            <div ayRow gap="2" [ajuste]="true">
-              <ay-badge tono="success" [punto]="true">LLAMADA ENTRANTE CTI</ay-badge>
-              <strong>+51 991 224 266 · Jorge Mamani Ccori (DNI 7013••••)</strong>
-              <span ayText="body" size="xs">
-                Los Álamos · Mz. F Lt. 3 · Ticket activo: ALT-001204 (Eje 3 Legal)
-              </span>
-            </div>
-            <div ayAccion ayRow gap="2" [ajuste]="true">
+          <ay-alert
+            tono="info"
+            titulo="Llamada entrante CTI · +51 991 224 266 · Jorge Mamani Ccori (DNI 7013••••)"
+            [descartable]="true"
+            (cerrar)="ctiEntranteVisible.set(false)"
+          >
+            Los Álamos · Mz. F Lt. 3 · Ticket activo: ALT-001204 (Eje 3 Legal)
+            <div ayAcciones ayRow gap="2" [ajuste]="true">
               <ay-button tamano="sm" variante="primary" (click)="atenderLlamadaCti('ALT-001204')">
                 Atender y ver ticket ALT-001204
               </ay-button>
@@ -131,7 +128,7 @@ import {
                 Ocultar CTI
               </ay-button>
             </div>
-          </ay-banner>
+          </ay-alert>
         }
 
         <!-- Tablero de Avance Diario Individual y de Equipo -->

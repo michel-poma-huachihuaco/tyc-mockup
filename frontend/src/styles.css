@@ -1050,6 +1050,10 @@ body {
   inline-size: auto;
 }
 
+.pl-atc-marco .ay-banner__action .ay-btn {
+  color: var(--button-fg);
+}
+
 .pl-atc-cuerpo {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
