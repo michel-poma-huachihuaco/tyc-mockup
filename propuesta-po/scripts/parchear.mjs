@@ -148,8 +148,8 @@ const especificos = {
       nuevo: 'efecto-grafo.js',
     },
     // HU-050: icono del sistema (candado), aviso previo de «Nuevo ticket» (modo interesado) y permisos por rol
-    importa: 'import{montarGrafo as __mg}from"./escenas-three.js";import{S as __Ico}from"./prototipo-B6qmgYQk.js";import{y as __pre,sn as __perm}from"./comun-CVU2GQ4h.js";',
-    sufijo: leer('consulta360.js') + '\n' + leer('c360-redireccion.js'),
+    importa: 'import{montarGrafo as __mg}from"./escenas-three.js";import{S as __Ico}from"./prototipo-B6qmgYQk.js";import{y as __pre,sn as __perm}from"./comun-CVU2GQ4h.js";import{n as __Seg}from"./prototipo-B6qmgYQk.js";import{t as __Dlg}from"./Dialog-BcfHiG-J.js";',
+    sufijo: leer('consulta360.js') + '\n' + leer('c360-redireccion.js') + '\n' + leer('c360-mejoras.js'),
     reemplazos: [
       // el grafo puede elegir al cliente sin salir de la pantalla (lo usa el inicio); dentro del ticket recibe «Derivar» (HU-050 CA-08)
       ['function ge({clienteId:e}){', 'function ge({clienteId:e,onElegir:__oe,onDerivar:__od}){'],
@@ -163,7 +163,7 @@ const especificos = {
       ['subtitle:`Fuente: ${le} · consulta en línea, sin copia`', 'subtitle:`Fuente: ${le} · consulta en línea, sin copiar el dato`'],
       // HU-050 CA-05: la vista suma las cuotas vencidas de todos los lotes y los tickets del cliente; la ficha va en scripts/consulta360.js
       ['nodos:A,totalMs:M}}', 'nodos:A,totalMs:M,venc:f.reduce((e,{e:t})=>e+t.cuotas.filter(e=>e.estado===`Vencida`).length,0),nTk:h.length}}'],
-      ['(0,G.jsxs)(`p`,{className:`pt-texto-chico`,children:[`DNI `,re(z.cliente.dni),` · `,z.cliente.proyectos[0]?.split(` · `)[0],` · cliente del maestro`]}),(0,G.jsxs)(`div`,{className:`pt-en-linea`,children:[(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Lotes `,z.nodos.find(e=>e.id===`lote`)?.filas.length]}),(0,G.jsx)(t,{tone:`neutral`,size:`sm`,children:ge(`cuotas`)}),(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Exposición: `,ge(`expo`)]})]})', '(0,G.jsx)(__Ficha,{v:z})'],
+      ['(0,G.jsxs)(`p`,{className:`pt-texto-chico`,children:[`DNI `,re(z.cliente.dni),` · `,z.cliente.proyectos[0]?.split(` · `)[0],` · cliente del maestro`]}),(0,G.jsxs)(`div`,{className:`pt-en-linea`,children:[(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Lotes `,z.nodos.find(e=>e.id===`lote`)?.filas.length]}),(0,G.jsx)(t,{tone:`neutral`,size:`sm`,children:ge(`cuotas`)}),(0,G.jsxs)(t,{tone:`neutral`,size:`sm`,children:[`Exposición: `,ge(`expo`)]})]})', '(0,G.jsx)(__Ficha,{v:z}),__mod?(0,G.jsx)(__FichaMod360,{c:__cx}):null'],
       // HU-050 CA-07: lo restringido lleva candado y se distingue de lo caído (leyenda, panel del dato y tarjetas)
       ['(0,G.jsx)(S,{size:`sm`,variant:`outline`,children:`Restringido / caído`})', '(0,G.jsxs)(S,{size:`sm`,variant:`outline`,dotColor:`var(--aybar-color-feedback-warning-border)`,children:[(0,G.jsx)(__Ico,{name:`lock`,size:16}),` Restringido`]}),(0,G.jsx)(S,{size:`sm`,variant:`outline`,dotColor:`var(--aybar-color-feedback-danger-border)`,children:`Caído`})'],
       ['e.estado===`restringido`?(0,G.jsx)(f,{tone:`warning`,size:`sm`,title:`Restringido`,', 'e.estado===`restringido`?(0,G.jsx)(f,{tone:`warning`,size:`sm`,title:(0,G.jsxs)(`span`,{className:`pt-en-linea`,children:[(0,G.jsx)(__Ico,{name:`lock`,size:16}),`Restringido`]}),'],
@@ -189,7 +189,21 @@ const especificos = {
       ['let Y=z.nodos.find(e=>e.id===f)??z.nodos[0],', 'let __cx={v:z,d:n,rol:a.rol,cid:e,tk:__tk,mod:__mod,sel:f,fs:__fs,elegir:p,fuente:__sfs,oculta:__oc,ocultar:__soc,aqui:(location.hash||``).split(`?`)[0]},Y=__fs&&z.fuentes.some(q=>q.id===__fs)?__nodoFuente360(z,__fs):z.nodos.find(e=>e.id===f)??z.nodos[0],'],
       [']})})}),(0,G.jsxs)(`aside`,{className:`pt-lateral`,"aria-label":`Cliente, controles y detalle`,children:[', ',__mod?null:(0,G.jsx)(__ListaFuentes360,{c:__cx})]})})}),(0,G.jsxs)(`aside`,{className:`pt-lateral`,"data-sin-ficha":__mod&&__oc?``:void 0,"aria-label":`Cliente, controles y detalle`,children:['],
       ['(0,G.jsx)(_e,{nodo:Y,', '(0,G.jsx)(_e,{__c:__cx,nodo:Y,'],
-      [',sem:g})})]})]})]})}function _e({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return ', ',sem:g})})]})]}),__mod?(0,G.jsx)(__Modulo360,{c:__cx}):null]})}function _e(__a){return __Dato360(__a,__e0)}function __e0({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return '],
+      [',sem:g})})]})]})]})}function _e({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return ', ',sem:g})})]})]}),__mod?(0,G.jsx)(__Modulo360,{c:__cx}):null,__mod?(0,G.jsx)(__Mejoras360,{c:__cx}):null]})}function _e(__a){return __Dato360(__a,__e0)}function __e0({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return '],
+      // 20-oct · resto de las mejoras de la Consulta 360 de la rama de Daniel (scripts/c360-mejoras.js): búsqueda por sección (nombre
+      // de un dato o de un sistema), relevancia de las coincidencias, chips de búsqueda que consultan al momento, más clientes de
+      // ejemplo (fuera del ticket), conteos en la leyenda, el estado de la búsqueda a la vista y la vista «Grafo 3D / Grafo 2D»
+      // (__modo; __pl llega a la escena como `plano`, ver efecto-grafo.js)
+      ['c=ae(s,r).map(e=>({titulo:e.documento.titulo,fragmento:e.fragmento}));', '__sx=__buscaSeccion360(z,r),c=__sx?[]:ae(s,r).map(e=>({titulo:e.documento.titulo,fragmento:e.fragmento,relevancia:e.relevancia}));if(__sx){y(null),__sx.fuente?__sfs(__sx.id):p(__sx.id),k(__sx.texto),K();return}'],
+      ['x.find(e=>e.id===n.garantias[0]?.entregaId)?.clienteId]', 'x.find(e=>e.id===n.garantias[0]?.entregaId)?.clienteId,...__tk?[]:__CLIENTES360]'],
+      ['onClick:()=>{d(e)},children:`«${e}»`', 'onClick:__ev=>{d(e);let __f=__ev.currentTarget.closest(`.pt-grafo`)?.querySelector(`form[role=search]`);setTimeout(()=>__f&&__f.requestSubmit(),0)},children:`«${e}»`'],
+      ['children:`Sistema de origen`})', 'children:`Sistema de origen (${z.fuentes.filter(q=>!q.caida).length}/${z.fuentes.length})`})'],
+      ['children:`Dato del cliente`})', 'children:`Dato del cliente (${z.nodos.filter(q=>q.estado===`ok`).length}/${z.nodos.length})`})'],
+      ['(0,G.jsx)(`span`,{className:`ay-visually-hidden`,role:`status`,children:O})', '(0,G.jsx)(`p`,{className:O?`pt-texto-chico`:`ay-visually-hidden`,role:`status`,children:O})'],
+      ['K()};if(!z)return null;', 'K()},[__modo,__smodo0]=(0,W.useState)(__modoInicial360),__smodo=__x=>(__guardaModo360(__x),__smodo0(__x)),__pl=(0,W.useRef)(!1);__pl.current=__modo===`2d`;(0,W.useEffect)(()=>{k(``)},[se]);if(!z)return null;'],
+      ['(0,G.jsx)(`div`,{ref:c,className:`pt-escena-grafo`,', '(0,G.jsx)(__ModoGrafo360,{modo:__modo,cambiar:__smodo}),(0,G.jsx)(`div`,{ref:c,className:`pt-escena-grafo`,"data-plano":__modo===`2d`?``:void 0,'],
+      ['r?r.hits.length?(0,G.jsx)(`ul`,{className:`pt-lista-simple`,children:r.hits.map(e=>(0,G.jsxs)(`li`,{children:[(0,G.jsx)(`strong`,{children:e.titulo}),', 'r?r.hits.length?(0,G.jsxs)(G.Fragment,{children:[(0,G.jsx)(`p`,{className:`pt-texto`,children:(0,G.jsx)(`strong`,{children:`Coincidencias semánticas`})}),(0,G.jsx)(`ul`,{className:`pt-lista-simple`,"aria-label":`Coincidencias semánticas`,children:r.hits.map(e=>(0,G.jsxs)(`li`,{children:[e.relevancia==null?null:(0,G.jsxs)(S,{size:`sm`,variant:`outline`,children:[`Relevancia `,e.relevancia,` %`]}),e.relevancia==null?null:` `,(0,G.jsx)(`strong`,{children:e.titulo}),'],
+      ['},e.titulo))}):', '},e.titulo))})]}):'],
     ],
     // «Ver como» y «Simular caída» ya están en las herramientas flotantes: no se repiten en la ficha del cliente
     cortes: [['(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:`Ver como`,', '(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:Y.n,', '']],
@@ -202,6 +216,10 @@ const especificos = {
     sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js') + '\n' + leer('eje3-modelo.js') + '\n' + leer('hu044-areas.js') + '\n' + leer('hu046-carga.js') + '\n' + leer('hu055-correo.js') + '\n' + leer('hu056-modelo.js') + '\n' + leer('hu066-sla.js') + '\n' + leer('hu048-modelo.js') + '\n' + leer('hu031-informes.js'),
     prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/consulta360`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
+      // 20-oct · Consulta 360 (c360-mejoras.js): las consultas rápidas al motor también desde el módulo, sin ticket. Se llama con
+      // {clienteId} en lugar del ticket; la consulta queda registrada con el cliente y sin ticket (solo que se consultó, no el valor)
+      ['let s=k(R(e,t).clienteId);', 'let s=k(t&&t.clienteId?t.clienteId:R(e,t).clienteId);'],
+      ['p={id:d,ticketId:t,fecha:e.ahora,autor:i,consulta:o.id}', 'p={id:d,ticketId:t&&t.clienteId?null:t,clienteId:s.id,fecha:e.ahora,autor:i,consulta:o.id}'],
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
       ['function il({children:e}){return(0,c.jsxs)(`span`,{className:`pt-supuesto`,children:[(0,c.jsx)(Me,{size:`sm`,variant:`outline`,children:`Supuesto`}),(0,c.jsx)(`span`,{className:`pt-supuesto__texto`,children:e})]})}', 'function il({children:e}){return ' + NOTA + '}'],
       // cálculo del NPS: si algún día hay respuestas con NPS lo usa; sin ellas (v1.3: encuesta CSAT/CES) es el «NPS preliminar» del CSAT

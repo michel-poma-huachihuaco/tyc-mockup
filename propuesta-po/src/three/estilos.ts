@@ -162,6 +162,17 @@ const CSS = `
 @media(min-width:1024px){.pt-c360-modulo{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}}
 .pt-c360-caido>.ay-btn{--button-fg:var(--aybar-color-feedback-danger-fg);--button-border:var(--aybar-color-feedback-danger-border);--button-bg:var(--aybar-color-feedback-danger-bg)}
 .pt-lateral[data-sin-ficha]>:has(.pt-c360-dato){display:none}
+/* Consulta 360 (20-oct, resto de las mejoras): control «Grafo 3D / 2D», bloque bajo las tarjetas del módulo y malla de los 16 datos */
+.pt-grafo__modo{display:flex;justify-content:flex-end}
+.ay-pageheader__actions:has(>.pt-c360-cab){flex:0 1 auto;max-inline-size:100%}
+.pt-c360-cab{display:flex;flex-wrap:wrap;align-items:center;gap:var(--aybar-space-2);min-inline-size:0}
+.pt-c360-extra{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0}
+.pt-c360-malla{display:grid;gap:var(--aybar-space-3);grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));align-items:start}
+.pt-c360-malla>.ay-card{cursor:pointer}
+.pt-c360-malla .ay-card__pairs{grid-template-columns:minmax(0,1fr)}
+.pt-c360-malla .ay-card__pairs dd{margin-block-end:var(--aybar-space-2)}
+.pt-c360-malla .ay-card__pairs :is(dt,dd){overflow-wrap:anywhere;white-space:normal}
+.pt-pie-c360{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--aybar-space-2)}
 .pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-6);background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}
 .pt-inicio__ancla button{font:var(--aybar-font-weight-semibold) var(--aybar-font-size-xs)/1 inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
 .pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}

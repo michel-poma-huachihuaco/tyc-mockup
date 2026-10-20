@@ -30,11 +30,15 @@ return(0,L.jsxs)(`div`,{ref:ref,className:`pt-herr`,children:[abierto?panel:null
 // Módulo «Consulta 360» (#/consulta360, también la raíz). El 20-oct dejó de compartir página con la Operación en vivo: cada uno
 // tiene su entrada en el grupo «Núcleo 360 y Planta» del menú (pedido del PO para la presentación). El cliente elegido se recuerda
 // en la sesión del navegador; `modulo` muestra las tarjetas propias del módulo (nodos y redirección, estado de los sistemas).
+// sistemas externos de la consulta 360 que la simulación puede tumbar (Tickets ATC es interno: no cae)
+const __F360=[`SIGDA`,`ACTIVOS`,`COBRANZA`,`MOTOR`,`CONTRATOS`,`CORREO`,`CALLCENTER`];
 function __Consulta360(){
 __estilos();
 let[cid,setCid]=P.useState(()=>{try{return sessionStorage.getItem(`v3:cliente`)||`cli-001`}catch{return`cli-001`}}),
 elegir=id=>{setCid(id);try{sessionStorage.setItem(`v3:cliente`,id)}catch{}};
-return(0,L.jsxs)(`div`,{className:`pt-pagina pt-pagina--ancha`,children:[(0,L.jsx)(T,{title:`Consulta 360`,description:`Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas. Cada dato lleva a su módulo.`,actions:(0,L.jsx)(r,{variant:`secondary`,onClick:()=>{location.hash=g(`clientes/${cid}`)},children:`Abrir la ficha completa`})}),(0,L.jsx)(P.Suspense,{fallback:null,children:(0,L.jsx)(__G360,{clienteId:cid,onElegir:elegir,modulo:!0})})]})}
+// 20-oct (como en la rama de Daniel): migas, «En línea · n de 8 sistemas» según las fuentes caídas de la simulación y el usuario con su rol
+let{datos:__d}=N(),__q=n(),__en=8-__d.fuentesCaidas.filter(x=>__F360.includes(x)).length;
+return(0,L.jsxs)(`div`,{className:`pt-pagina pt-pagina--ancha`,children:[(0,L.jsx)(T,{title:`Consulta 360`,breadcrumb:(0,L.jsx)(Kt,{items:[{label:`Aybar Atiende`},{label:`Núcleo 360 y Planta`},{label:`Consulta 360`}]}),description:`Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas. Cada dato lleva a su módulo.`,actions:(0,L.jsxs)(`div`,{className:`pt-c360-cab`,children:[(0,L.jsx)(e,{tone:__en===8?`success`:`warning`,dot:!0,children:`En línea · ${__en} de 8 sistemas`}),(0,L.jsx)(e,{tone:`info`,children:`${__q.nombre} (${sa.find(x=>x.rol===__q.rol)?.etiqueta??__q.rol})`}),(0,L.jsx)(r,{variant:`secondary`,onClick:()=>{location.hash=g(`clientes/${cid}`)},children:`Abrir la ficha completa`})]})}),(0,L.jsx)(P.Suspense,{fallback:null,children:(0,L.jsx)(__G360,{clienteId:cid,onElegir:elegir,modulo:!0})})]})}
 
 function __areaMensaje(){let a=document.activeElement;if(a&&a.tagName===`TEXTAREA`&&!a.closest(`.pt-bot`))return a;let u=globalThis.__ptUltimaArea;if(u&&document.contains(u))return u;for(let l of document.querySelectorAll(`label`))if(/Mensaje para el cliente/.test(l.textContent)){let f=l.htmlFor&&document.getElementById(l.htmlFor);if(f)return f;let t=l.parentElement&&l.parentElement.querySelector(`textarea`);if(t)return t}return null}
 function __escribir(area,txt){Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,`value`).set.call(area,txt);area.dispatchEvent(new Event(`input`,{bubbles:!0}));area.focus()}

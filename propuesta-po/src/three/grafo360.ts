@@ -7,6 +7,7 @@ import { bucle, capaEtiquetas, color, css, type RGB } from './comun.ts'
 // mantiene los pulsos y los nodos encendidos en refs; aquí solo se dibuja y se escribe en `pos` la
 // posición en pantalla de cada nodo, que es lo que usan sus manejadores de clic y de hover.
 // `sel` puede ser un dato o un sistema de origen (20-oct): el sistema elegido se agranda y resalta sus aristas.
+// `plano` (20-oct, «Grafo 2D»): la misma red en un solo plano, de frente y sin girar (misma información, clics y estados).
 
 interface Fuente { id: string; n: string; d: string; caida: boolean }
 interface NodoDato { id: string; n: string; estado: 'ok' | 'restringido' | 'caido'; sem?: boolean; fuentes: string[] }
@@ -18,6 +19,7 @@ export interface OptsGrafo {
   canvas: HTMLCanvasElement; host: HTMLElement; color: (token: string) => RGB; reducido: boolean
   vista: Ref<Vista | null>; sel: Ref<string>; sem: Ref<{ hits: unknown[] } | null>; hover: Ref<string | null>
   lit: Ref<Set<string>>; pulsos: Ref<Pulso[]>; t0: Ref<number>; pos: Ref<Record<string, { x: number; y: number; r: number }>>
+  plano?: Ref<boolean>
 }
 
 interface NodoEsc { pos: THREE.Vector3; r: number; mesh: THREE.Mesh; halo: THREE.Mesh; et: CSS2DObject; sub?: HTMLElement; txt: HTMLElement; candado?: HTMLElement }
@@ -65,6 +67,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
   escena.add(centro.mesh, centro.halo, objCentro, objNom)
 
   const R1 = 3.3, R2 = 6.4
+  let plano = false, largo = 17
   const construir = (v: Vista) => {
     grupo.clear(); nodos.clear(); aristas.length = 0
     const nuevo = (id: string, p: THREE.Vector3, rad: number, c: RGB, texto: string, sub?: string, lado: 'arriba' | 'abajo' | 'der' | 'izq' = 'arriba') => {
@@ -82,12 +85,12 @@ export function montarGrafo(o: OptsGrafo): () => void {
     }
     v.fuentes.forEach((s, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / v.fuentes.length + 0.2
-      nuevo(s.id, new THREE.Vector3(Math.cos(a) * R1 * 1.15, Math.sin(a) * R1, i % 2 ? 0.7 : -0.7), 0.42, T.src, s.n, s.d)
+      nuevo(s.id, new THREE.Vector3(Math.cos(a) * R1 * 1.15, Math.sin(a) * R1, plano ? 0 : i % 2 ? 0.7 : -0.7), 0.42, T.src, s.n, s.d)
     })
     v.nodos.forEach((d, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / v.nodos.length + 0.1
       const cx = Math.cos(a), lado = cx > 0.3 ? 'der' : cx < -0.3 ? 'izq' : Math.sin(a) > 0 ? 'arriba' : 'abajo'
-      nuevo(d.id, new THREE.Vector3(cx * R2 * 1.05, Math.sin(a) * R2 * 0.8, ((i % 3) - 1) * 1.1), 0.26, T.apagado, d.n, undefined, lado)
+      nuevo(d.id, new THREE.Vector3(cx * R2 * 1.05, Math.sin(a) * R2 * 0.8, plano ? 0 : ((i % 3) - 1) * 1.1), 0.26, T.apagado, d.n, undefined, lado)
       const n = nodos.get(d.id)!
       n.candado = candado(); n.txt.prepend(n.candado)
     })
@@ -120,7 +123,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const h = Math.max(420, Math.min(640, Math.round(w * 0.7)))
     canvas.style.height = `${h}px`
     r.setSize(w, h, false); etiquetas.setSize(w, h)
-    cam.aspect = w / h; cam.position.setLength(w < 560 ? 30 : w < 800 ? 22 : 17); cam.updateProjectionMatrix()
+    largo = w < 560 ? 30 : w < 800 ? 22 : 17
+    cam.aspect = w / h; cam.position.setLength(largo); cam.updateProjectionMatrix()
   }
   const ro = new ResizeObserver(ajustar); ro.observe(host); ajustar()
 
@@ -128,6 +132,12 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const frame = (ahora: number) => {
     const v = o.vista.current
     if (!v) return
+    // «Grafo 2D»: todo en z = 0, cámara de frente y sin órbita; al volver al 3D se recupera la vista inicial
+    const pl = !!o.plano?.current
+    if (pl !== plano) {
+      plano = pl; firma = ''; ctl.enabled = !pl; ctl.autoRotate = !pl && !o.reducido
+      if (!pl) { cam.position.set(0, -4, 17).setLength(largo); cam.lookAt(0, 0, 0) }
+    }
     const f = v.fuentes.map((s) => s.id).join() + '|' + v.nodos.map((n) => n.id).join()
     if (f !== firma) { firma = f; construir(v) }
     const caida = (id: string) => v.fuentes.find((s) => s.id === id)?.caida
@@ -179,7 +189,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
     etNom.textContent = v.cliente.nombre
     centro.halo.scale.setScalar(1 + (o.reducido ? 0 : Math.sin(ahora / 400) * 0.1))
 
-    ctl.update()
+    if (plano) { cam.position.set(0, 0, largo); cam.lookAt(0, 0, 0) } else ctl.update()
     r.render(escena, cam); etiquetas.render(escena, cam)
 
     // posiciones en pantalla para el clic y el hover del chunk

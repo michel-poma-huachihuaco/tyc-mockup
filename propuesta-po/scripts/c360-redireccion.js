@@ -118,8 +118,11 @@ function __Dato360(a, Orig) {
   let cuerpo
   if (n.fuente) {
     cuerpo = [
-      (0, G.jsx)(`p`, { className: `pt-en-linea`, children: (0, G.jsx)(t, { tone: n.caida ? `danger` : `success`, size: `sm`, children: n.caida ? `No disponible` : `En línea` }) }, `e`),
+      (0, G.jsx)(`p`, { className: `pt-en-linea`, children: [(0, G.jsx)(t, { tone: n.caida ? `danger` : `success`, size: `sm`, children: n.caida ? `No disponible` : `En línea` }, `e`), __Latencia360(n.id, n.caida)] }, `e`),
       (0, G.jsx)(U, { pairs: __paresFuente360(n.id, n.n) }, `p`),
+      // 20-oct (c360-mejoras.js): datos que alimenta y, en el módulo, «Probar desconexión» / «Restaurar en línea»
+      (0, G.jsx)(__Alimenta360, { c, id: n.id }, `f`),
+      c.mod && !c.tk ? (0, G.jsx)(__Desconexion360, { c, id: n.id }, `d`) : null,
     ]
   } else {
     const r = __redir360(n, c), nuevo = !c.tk && __perm.registrar(c.rol)
@@ -171,7 +174,8 @@ function __Modulo360({ c }) {
         (0, G.jsx)(t, { tone: enLinea === fs.length ? `success` : `danger`, size: `sm`, children: enLinea === fs.length ? `Todas en línea` : `${enLinea} de ${fs.length} en línea` }),
         ...fs.map((s) => (0, G.jsx)(__Chip360, { id: s.id, texto: `${s.n} · ${s.caida ? `no disponible` : `en línea`}`, on: c.fs === s.id, caido: !!s.caida, onClick: () => c.fuente(c.fs === s.id ? null : s.id) }, s.id)),
       ] }),
-      fsel ? (0, G.jsxs)(`div`, { className: `pt-pila pt-pila--chica`, "aria-live": `polite`, children: [(0, G.jsx)(`p`, { className: `pt-texto`, children: (0, G.jsx)(`strong`, { children: fsel.n }) }), (0, G.jsx)(U, { pairs: __paresFuente360(fsel.id, fsel.n) })] }) : null,
+      enLinea < fs.length ? (0, G.jsx)(`div`, { className: `pt-en-linea`, children: (0, G.jsx)(i, { size: `sm`, variant: `secondary`, onClick: () => __restaurar360(fs.filter((q) => q.caida).map((q) => q.id)), children: `Todas en línea` }) }) : null,
+      fsel ? (0, G.jsxs)(`div`, { className: `pt-pila pt-pila--chica`, "aria-live": `polite`, children: [(0, G.jsx)(`p`, { className: `pt-texto`, children: (0, G.jsx)(`strong`, { children: fsel.n }) }), (0, G.jsx)(U, { pairs: __paresFuente360(fsel.id, fsel.n) }), (0, G.jsx)(__Desconexion360, { c, id: fsel.id })] }) : null,
     ] }) }),
   ] })
   return (0, G.jsxs)(`div`, { className: `pt-c360-modulo`, children: [nodos, sistemas] })
