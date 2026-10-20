@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Aybar Atiende · what-if de la propuesta del PO</title>
+  <link rel="stylesheet" href="/src/estilo.css">
+</head>
+<body>
+<header class="brand">
+  <div class="wrap">
+    <div class="eyebrow">Aybar Atiende · Plataforma de Atención al Cliente</div>
+    <h1>What-if de la <span>propuesta del PO</span></h1>
+    <p class="lead">Réplica local de las dos escenas del artifact del PO, dibujadas con three.js. Compara la propuesta tal cual con las reglas que ya tienen las HU del paquete SCRUM. <b>No es el producto:</b> los datos son de ejemplo y la lógica es una simulación.</p>
+    <div class="barra">
+      <div class="grupo" role="group" aria-label="Modo what-if">
+        <span class="lbl">Modo</span>
+        <button class="btn" type="button" data-modo="po" aria-pressed="true">Como lo propone el PO</button>
+        <button class="btn" type="button" data-modo="hu" aria-pressed="false">Con las reglas de las HU</button>
+      </div>
+      <div class="grupo" role="group" aria-label="Rol del usuario">
+        <span class="lbl">Rol</span>
+        <button class="btn" type="button" data-rol="gestor" aria-pressed="true">Gestor de tickets</button>
+        <button class="btn" type="button" data-rol="supervisor" aria-pressed="false">Supervisor ATC</button>
+      </div>
+      <nav class="jump" aria-label="Secciones"><a href="#consulta360">Consulta 360</a><a href="#gestion">Tickets en vivo</a><a href="#conflictos">Qué cambia</a></nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="scene" id="consulta360">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Funcionalidad destacada 1 · FT-ATC-20</div>
+        <h2>Motor de consulta 360 del cliente</h2>
+        <p>Una búsqueda despierta la red: el motor consulta en línea cada sistema de origen y trae lotes, cronograma, cuotas, contratos, documentos, correos y llamadas, sin copiar el dato del cliente. Arrastra para girar la red.</p>
+      </div>
+      <div class="tagrow"><span class="tag">RF-SVC-049…053</span><span class="tag">RN-SVC-036 permisos del origen</span><span class="tag o">≤ 2 s (RF-SVC-049)</span></div>
+    </div>
+    <div class="nn">
+      <div class="nn-stage" id="nnStage">
+        <div class="nn-bar">
+          <form class="search" id="nnForm" role="search">
+            <input id="nnQuery" aria-label="Buscar cliente o documento" autocomplete="off" placeholder="DNI, lote, teléfono, N.º de ticket o pregunta en lenguaje natural">
+            <button class="btn accent" type="submit">Consultar</button>
+          </form>
+          <div class="nn-chips" id="nnClients" aria-label="Clientes de ejemplo"></div>
+        </div>
+        <div class="nn-legend"><span><i style="background:#F6A42C"></i>Cliente</span><span><i style="background:#7FC4CF"></i>Sistema de origen</span><span><i style="background:#fff"></i>Dato del cliente</span><span><i style="background:#C0453A"></i>Restringido / caído</span></div>
+        <div class="nn-time" id="nnTime" role="status">listo para consultar</div>
+      </div>
+      <aside class="nn-side">
+        <div class="card client" id="clientCard"></div>
+        <div class="card" style="padding:14px">
+          <div class="sub" style="margin-top:0">Ver como <span>RN-SVC-036</span></div>
+          <div class="role" id="roles"></div>
+          <div class="sub">Simular caída de una fuente <span>RF-SVC-051</span></div>
+          <div class="role" id="downs"></div>
+          <p class="note">Estos dos controles son del prototipo, no del producto.</p>
+        </div>
+        <div class="card detail" id="detail" aria-live="polite"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="gestion">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Funcionalidad destacada 2 · FT-ATC-18 · 21 · 04</div>
+        <h2>Gestión y atención de tickets en vivo</h2>
+        <p>Los tickets llegan por cada canal, la bandeja orquestadora los ordena (rayo, SLA, prioridad), los asigna al gestor con menos carga y cada área los atiende. Toca un edificio, un canal o un ticket; también puedes usar el panel lateral con el teclado.</p>
+      </div>
+      <div class="tagrow"><span class="tag">Bandeja orquestadora</span><span class="tag">Reasignación por carga</span><span class="tag">Escalamiento por SLA</span><span class="tag o">Simulación con datos de ejemplo</span></div>
+    </div>
+    <div class="city" id="city">
+      <div class="lienzo" id="cityCanvas"></div>
+      <div class="hud" id="hud">
+        <div class="kpis">
+          <div class="kpi"><span>Tickets activos</span><b id="kActive">0</b></div>
+          <div class="kpi"><span>Resueltos en SLA</span><b id="kSla">—</b></div>
+          <div class="kpi"><span>CSAT del día</span><b id="kCsat">—</b></div>
+          <div class="xp" id="xpBox"><div><span>Nivel del equipo</span><b id="kLvl">1</b></div><div><div class="bar"><i class="o" id="kXpBar" style="width:0%"></i></div><span id="kXp">0 / 100 XP · racha 0</span></div><span class="chip warn">Propuesta del PO · sin HU</span></div>
+        </div>
+        <div class="ctrl">
+          <div class="clock" id="clock">lun 19-oct · 09:00</div>
+          <button class="btn" id="bPause" type="button" aria-pressed="false" title="Pausar simulación">Pausa</button>
+          <button class="btn" id="bSpeed" type="button" title="Velocidad">x1</button>
+          <button class="btn primary" id="bNew" type="button">+ Ticket</button>
+          <button class="btn accent" id="bRay" type="button" title="Marcar con rayo el ticket seleccionado">⚡ Rayo</button>
+          <button class="btn" id="bReset" type="button" title="Reinicia el escenario con la misma semilla">Reiniciar</button>
+        </div>
+        <div class="panel" id="panel"></div>
+        <div class="track" id="track"></div>
+        <div class="toast" id="toast" role="status" style="opacity:0"></div>
+      </div>
+    </div>
+    <div class="legend" id="cityLegend"></div>
+  </div>
+</section>
+
+<section class="scene" id="conflictos">
+  <div class="wrap">
+    <div class="sec-head"><div><div class="eyebrow">What-if</div><h2>Qué cambia entre el PO y las HU</h2><p>La fila resaltada es la regla que está activa en el modo actual.</p></div></div>
+    <div class="card" style="overflow:auto"><table class="tabla" id="tablaConf"></table></div>
+  </div>
+</section>
+</main>
+
+<dialog id="dlgRayo" aria-labelledby="dlgTitulo">
+  <form method="dialog" id="frmRayo">
+    <h3 id="dlgTitulo">Marcar con rayo</h3>
+    <p id="dlgTicket" class="note"></p>
+    <label class="campo">Motivo (queda en la bitácora)
+      <select id="dlgMotivo" required>
+        <option value="">Selecciona un motivo…</option>
+        <option>Riesgo de denuncia o INDECOPI</option>
+        <option>Plazo legal próximo a vencer</option>
+        <option>Cliente crítico</option>
+        <option>Instrucción de la jefatura</option>
+      </select>
+    </label>
+    <p class="aviso" id="dlgAviso" hidden></p>
+    <div class="acciones"><button class="btn" type="button" id="dlgCancelar">Cancelar</button><button class="btn accent" type="submit" id="dlgOk">Marcar</button></div>
+  </form>
+</dialog>
+
+<footer><div class="wrap"><span>Aybar Atiende · DOM-SVC-001 · propuesta del PO v1.2 (14-oct-2026)</span><span>Datos ficticios. Proyecto local aparte: <code>propuesta-po/</code>.</span></div></footer>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
