@@ -63,11 +63,14 @@ interface Linea {
             </div>
           }
           <div class="pl-heroe__acciones">
-            <a class="pl-accion pl-accion--primaria pl-accion--lg" [routerLink]="ingreso">
-              Ingresar
+            <a class="pl-accion pl-accion--primaria pl-accion--lg" routerLink="/consola">
+              Abrir Consola ATC (60 HU · 360 ASTRA · 3D)
               <svg class="pl-accion__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
+            </a>
+            <a class="pl-accion pl-accion--secundaria pl-accion--lg" [routerLink]="ingreso">
+              Ingresar
             </a>
             <!-- aybar:demo:inicio — «Ver la vitrina»: la de la galería de demostración, pasando por el
                  mismo ingreso. Solo con ng serve: en producción ENLACES_GALERIA es null. -->

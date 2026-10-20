@@ -39,6 +39,11 @@ import { TarjetaSesion } from './tarjeta-sesion';
     <app-marco>
       <ay-container size="page">
         <div ayStack gap="12">
+          <div>
+            <a class="pl-accion pl-accion--primaria" href="/consola">
+              Abrir Consola Aybar Atiende (60 HU · Consulta 360 ASTRA · Operación en Vivo 3D) →
+            </a>
+          </div>
           <div ayGrid [columnas]="2" gap="lg">
             @if (acceso.sesion(); as sesion) {
               <app-tarjeta-sesion [sesion]="sesion" />

@@ -1008,3 +1008,135 @@ body {
     transform: none;
   }
 }
+
+/* ── Consola Aybar Atiende (Marco de página y contenedores de escena 3D/2D) ── */
+
+.pl-atc-marco {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.pl-atc-marco .ay-navbar__inner {
+  max-inline-size: none;
+  column-gap: var(--aybar-space-4);
+}
+
+.pl-atc-marco .ay-navbar__search {
+  flex: 1 1 calc(var(--aybar-space-24) * 2.5);
+  max-inline-size: calc(var(--aybar-space-24) * 4.5);
+}
+
+.pl-atc-marco .ay-navbar__actions {
+  gap: var(--aybar-space-2);
+}
+
+/* En filas flex (.ay-row, .ay-navbar__actions, .ay-toolbar), los controles en línea
+   conservan su ancho natural (fit-content) y el buscador crece para llenar el espacio. */
+.pl-atc-marco .ay-segmented:not(.ay-segmented--fill) {
+  min-inline-size: 0;
+  flex-shrink: 0;
+}
+
+.pl-atc-marco .ay-row > .ay-search {
+  flex: 1 1 calc(var(--aybar-space-16) * 3);
+  max-inline-size: none;
+}
+
+.pl-atc-marco .ay-row > .ay-selectwrap {
+  inline-size: auto;
+}
+
+.pl-atc-cuerpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.pl-atc-lateral {
+  position: sticky;
+  inset-block-start: var(--pl-atc-navbar-alto, 0px);
+  align-self: start;
+  block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
+  min-inline-size: 0;
+}
+
+.pl-atc-lateral .ay-sidebar {
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.pl-atc-marco .ay-sidepanel:not([data-compacto]) {
+  position: sticky;
+  inset-block-start: var(--pl-atc-navbar-alto, 0px);
+  align-self: start;
+  box-sizing: border-box;
+  block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.pl-atc-principal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-4);
+  padding: var(--aybar-space-6) clamp(var(--aybar-space-4), 3vw, var(--aybar-space-12)) var(--aybar-space-20);
+  min-inline-size: 0;
+  scroll-margin-block-start: var(--pl-atc-navbar-alto, 0px);
+}
+
+.pl-atc-principal:focus {
+  outline: none;
+}
+
+.pl-atc-ficha-flotante {
+  position: absolute;
+  inset-block-end: var(--aybar-space-4);
+  inset-inline-end: var(--aybar-space-4);
+  z-index: 6;
+  inline-size: min(calc(var(--aybar-space-4) * 24), calc(100% - var(--aybar-space-8)));
+  max-block-size: calc(100% - var(--aybar-space-8));
+  overflow-y: auto;
+}
+
+.pl-atc-ficha-flotante--izq {
+  inset-inline-start: var(--aybar-space-4);
+  inset-inline-end: auto;
+  inline-size: auto;
+  max-inline-size: calc(100% - var(--aybar-space-8));
+}
+
+.atc-vivo-stage-area {
+  position: relative;
+  overflow: hidden;
+  min-block-size: calc(var(--aybar-space-4) * 38);
+}
+
+.atc-astra-canvas,
+.atc-three-host {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(var(--aybar-space-4) * 35);
+}
+
+.atc-vivo-escena-full {
+  block-size: calc(var(--aybar-space-4) * 38);
+}
+
+.atc-astra-canvas[hidden],
+.atc-three-host[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 1023.98px) {
+  .pl-atc-cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+

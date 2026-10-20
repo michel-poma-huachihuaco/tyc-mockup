@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { conSesion, sinSesion } from './guardas';
+import { conSesion, requiereSesion, sinSesion } from './guardas';
 // aybar:demo:inicio — galería de demostración, solo en desarrollo (npm run demo:quitar la borra)
 import { RUTAS_GALERIA } from './galeria';
 // aybar:demo:fin
@@ -20,16 +20,32 @@ export const routes: Routes = [
     loadComponent: () => import('./pantallas/ingreso').then((m) => m.Ingreso),
   },
   {
-    path: '',
+    path: 'ingreso',
+    redirectTo: RUTA_INGRESO.slice(1),
     pathMatch: 'full',
-    canMatch: [conSesion],
-    loadComponent: () => import('./pantallas/inicio').then((m) => m.Inicio),
   },
   {
     path: '',
     pathMatch: 'full',
-    title: `${NOMBRE_PROYECTO} · Aybar`,
+    title: `Aybar Atiende · Sistema Central de Atención al Cliente · ${NOMBRE_PROYECTO}`,
+    canActivate: [requiereSesion],
+    loadComponent: () => import('./pantallas/atc/consola-atc').then((m) => m.ConsolaAtcComponent),
+  },
+  {
+    path: 'consola',
+    title: `Aybar Atiende · Sistema Central de Atención al Cliente · ${NOMBRE_PROYECTO}`,
+    canActivate: [requiereSesion],
+    loadComponent: () => import('./pantallas/atc/consola-atc').then((m) => m.ConsolaAtcComponent),
+  },
+  {
+    path: 'bienvenida',
+    title: `Portada SDK · ${NOMBRE_PROYECTO} · Aybar`,
     loadComponent: () => import('./pantallas/bienvenida').then((m) => m.Bienvenida),
+  },
+  {
+    path: 'inicio-sdk',
+    canMatch: [conSesion],
+    loadComponent: () => import('./pantallas/inicio').then((m) => m.Inicio),
   },
   // aybar:demo:inicio — /demo, la galería de demostración: la declara galeria.development.ts con
   // ng serve; en producción galeria.ts la deja vacía (fileReplacements de angular.json). Va

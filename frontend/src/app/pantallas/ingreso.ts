@@ -39,29 +39,43 @@ import { codigoDe, mensajeDe } from './utiles';
         <header class="pl-ingreso__panel">
           <a class="pl-ingreso__inicio" routerLink="/"><app-marca [nombre]="nombre" /></a>
           <div class="pl-ingreso__mensaje">
-            <p class="pl-ingreso__lema">Cada lote, cada cuota y cada cliente en un solo lugar.</p>
+            <p class="pl-ingreso__lema">Aybar Atiende · Sistema Central de Atención al Cliente</p>
             <p class="pl-ingreso__texto">
-              Entra con tu cuenta corporativa. En local, la sesión demo te deja recorrer la aplicación sin emisor ni token.
+              Ingresa con tu cuenta corporativa o selecciona directamente uno de los perfiles operativos para explorar la plataforma desde su perspectiva.
             </p>
           </div>
           <ul class="pl-ingreso__sellos">
-            <li>Contraste AA en claro y oscuro</li>
-            <li>Login demo en local, OIDC en producción</li>
+            <li>Consulta 360 en tiempo real desde 9 fuentes de origen</li>
+            <li>Control de acceso por perfil (Gestor, Supervisor, Legal, CX y Postventa)</li>
+            <li>Operación multicanal, Libro de Reclamaciones INDECOPI y Comité SGD</li>
           </ul>
         </header>
         <div class="pl-ingreso__lado">
-          <aside class="pl-ingreso__aviso" aria-label="Sesión demo">
+          <aside class="pl-ingreso__aviso" aria-label="Perfiles disponibles para ingreso">
             <svg class="pl-ingreso__aviso-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
               <circle cx="12" cy="12" r="9" />
               <path d="M12 8v5M12 16v.5" />
             </svg>
-            <div class="pl-ingreso__aviso-texto">
-              <p>Sesión demo: solo en tu máquina, sin token.{{ usuarios.length > 0 ? ' Entra con:' : '' }}</p>
+            <div class="pl-ingreso__aviso-texto" style="width: 100%;">
+              <p><strong>Ingreso rápido por perfil o mediante credenciales:</strong></p>
               @if (usuarios.length > 0) {
-                <ul class="pl-ingreso__usuarios">
+                <ul class="pl-ingreso__usuarios" style="display: grid; gap: 6px; margin-top: 8px;">
                   @for (usuario of usuarios; track usuario.usuario) {
-                    <li>
-                      <code>{{ usuario.usuario }}</code> · clave <code>{{ usuario.clave }}</code> · {{ roles(usuario) }}
+                    <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 8px; background: color-mix(in oklab, var(--aybar-color-bg-surface) 75%, transparent); border: 1px solid var(--aybar-color-border-subtle);">
+                      <span>
+                        <strong>{{ usuario.nombre || usuario.usuario }}</strong>
+                        <span style="display: block; font-size: 11.5px; color: var(--aybar-color-fg-muted);">
+                          Usuario: <code>{{ usuario.usuario }}</code> · Clave: <code>{{ usuario.clave }}</code> · Rol: {{ roles(usuario) }}
+                        </span>
+                      </span>
+                      <ay-button
+                        size="sm"
+                        variante="secondary"
+                        [disabled]="enviando()"
+                        (click)="ingresarRapido(usuario)"
+                      >
+                        Entrar →
+                      </ay-button>
                     </li>
                   }
                 </ul>
@@ -95,7 +109,7 @@ import { codigoDe, mensajeDe } from './utiles';
                   </ay-button>
                 }
               </div>
-              <p class="pl-proveedores__nota" [id]="idNota">Próximamente: la siguiente fase conecta estos accesos.</p>
+              <p class="pl-proveedores__nota" [id]="idNota">Próximamente: inicio de sesión federado corporativo.</p>
             </div>
           </ay-login-form>
         </div>
@@ -139,10 +153,12 @@ export class Ingreso {
     }
   }
 
+  protected async ingresarRapido(usuario: UsuarioDemo): Promise<void> {
+    await this.enviar({ identificador: usuario.usuario, password: usuario.clave, recordar: false });
+  }
+
   protected async enviar({ identificador, password }: AyCredenciales): Promise<void> {
     this.enviando.set(true);
-    // Se limpia antes de reintentar: el Login Form lleva el foco al resumen cuando cambia
-    // el mensaje, y el mismo error dos veces seguidas no cambiaría nada.
     this.error.set(undefined);
     try {
       await this.acceso.ingresar(identificador, password);

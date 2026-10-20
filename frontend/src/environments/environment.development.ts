@@ -26,8 +26,48 @@ export const environment = {
       baseUrl: 'http://localhost:8081',
     },
     demo: [
-      { usuario: 'admin', clave: 'demo-admin', nombre: 'Administrador Aybar', roles: ['ADMIN', 'USER'] },
-      { usuario: 'usuario', clave: 'demo-usuario', nombre: 'Usuario Aybar', roles: ['USER'] },
+      {
+        usuario: 'gestor',
+        clave: 'demo-gestor',
+        nombre: 'Ana Torres · Gestora de Tickets ATC',
+        roles: ['GESTOR_ATC', 'USER'],
+      },
+      {
+        usuario: 'supervisor',
+        clave: 'demo-supervisor',
+        nombre: 'Carlos Mendoza · Supervisor ATC',
+        roles: ['SUPERVISOR_ATC', 'ADMIN', 'USER'],
+      },
+      {
+        usuario: 'legal',
+        clave: 'demo-legal',
+        nombre: 'Dra. Lucía Paredes · Comité SGD y Legal',
+        roles: ['LEGAL_SGD', 'USER'],
+      },
+      {
+        usuario: 'cx',
+        clave: 'demo-cx',
+        nombre: 'Rodrigo Vargas · Coordinador CX',
+        roles: ['COORDINADOR_CX', 'USER'],
+      },
+      {
+        usuario: 'postventa',
+        clave: 'demo-postventa',
+        nombre: 'Ing. Martín Salazar · Postventa y Garantías',
+        roles: ['POSTVENTA_ATC', 'USER'],
+      },
+      {
+        usuario: 'admin',
+        clave: 'demo-admin',
+        nombre: 'Administrador Aybar',
+        roles: ['ADMIN', 'USER'],
+      },
+      {
+        usuario: 'usuario',
+        clave: 'demo-usuario',
+        nombre: 'Usuario Aybar',
+        roles: ['USER'],
+      },
     ],
   },
 };
