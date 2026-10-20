@@ -14263,7 +14263,7 @@ function Kd(e) {
 		ye.set(`${d.bandeja} en espera · rayo > SLA > prioridad`), Oe.set(`${d.escalados} escalados en cadena`, d.escalados > 0), ke.forEach((e, t) => {
 			e.visible = t < d.escalados, e.visible && !o && (e.position.y = .8 + Math.sin(a * 2 + t) * .02);
 		}), Me.set(`${d.tickets.filter((e) => e.etapa === "salida").length} resueltos recientes`);
-		for (let e of d.zonas) Ee.get(e.k)?.set(`${e.cola} en cola · ${e.atencion} en atención`, e.riesgo);
+		for (let e of d.zonas) Ee.get(e.k)?.set(e.total ? `${e.cola} en cola · ${e.ocupados ?? 0}/${e.total} ocupados` : `${e.cola} en cola · ${e.atencion} en atención`, e.riesgo);
 		V(d, n), Qe += (H - Qe) * .06, $e += (Ze - $e) * .06;
 		let b = o ? 0 : Math.sin(a * .12) * .5 + Qe * .7, x = o ? 0 : Math.cos(a * .1) * .3 + $e * .4;
 		if (u.position.set(yd.x + 30 + b, 30, yd.z + 30 + x), u.lookAt(yd.x + b * .5, .2, yd.z + x * .5), ot.visible = !1, rt && lt % 3 == 0 && !o) {

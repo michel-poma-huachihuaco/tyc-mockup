@@ -110,3 +110,97 @@ detractor; marcado como supuesto hasta contar con el KPI Engine, DEP-10). El NPS
 - **Herramientas flotantes** (botón abajo a la izquierda): Ver como, Tema, Apariencia, Simulación y Notas. La barra superior queda con la marca y el usuario.
 - **Inicio** (antes «Vista en vivo»): Consulta 360 arriba y Vista en vivo debajo, en una sola página con anclas fijas. El 360 arranca con un cliente preseleccionado (cli-001) para mostrar el grafo; en la ficha del 360 se quitaron «Ver como» y «Simular caída», que duplicaban las herramientas.
 - **Asistente de IA** (robot 3D, abajo a la derecha; no aparece para Control de acceso ni Cliente): redactar respuesta (Empático/Formal/Breve → «Insertar en el mensaje»), resumir ticket, siguiente paso y revisar borrador. Todo es plantilla local; reemplaza la tarjeta «Asistente de IA» del detalle del ticket.
+
+## 5. v1.3 (16-oct): lo que queda abierto
+
+> **Estado: aplicado en el what-if (cuarta ronda, ver README).** Mi Portal (HU-064, 065 y 066), la Etapa 2 fuera de la vista y lo pequeño
+> que faltaba de la HU-067. Nada de esto está aprobado: el PLT-04 v1.3 está «Pendiente DoR» y el comité DoR es el 20-oct.
+
+### 5.1 Cobertura del mockup frente al PLT-04 v1.3
+
+De las 62 historias de la Etapa 1: **44 sí, 18 parcial, 0 no** (después de esta ronda; antes, HU-064, 065 y 066 eran «no»).
+Las faltas que más pesan, por prioridad del plan:
+
+| HU | Qué falta |
+|---|---|
+| **HU-043** (prioridad 1) | El flujo es por tipo, sin subtipo; no crea actividades en el ticket ni SLA por actividad; no calcula el SLA total; sin flujo por defecto ni alerta al administrador; sin bitácora de publicaciones |
+| **HU-050** (prioridad 2) | La consulta 360 no deja rastro en la bitácora del ticket; a la ficha le faltan etapa, n.º de tickets y «datos visibles n de 16»; lo restringido no lleva candado; un DNI inexistente en el buscador del grafo no abre la excepción |
+| **HU-067** (prioridad 3) | Ver §5.4 |
+| HU-026 y 027 | «Cambiar estado › Escalado» pasa a Eje 3 sin gate de conflicto ni paquete mínimo de handoff; el aviso de handoff sin confirmar no se ve en ninguna pantalla |
+| HU-044, 046, 048, 031, 040, 041, 055, 056, 057, 034, 035, 036 | Faltas acotadas a uno o dos criterios (detalle en la tabla de cobertura entregada aparte) |
+
+### 5.2 Mi Portal: decisiones de diseño para validar con el PO
+
+Del PLT-04 se tomaron literalmente el «Como/quiero/para» y los criterios. Lo demás lo decidí yo y hay que confirmarlo:
+
+| Decisión | Por qué | Pregunta para el PO |
+|---|---|---|
+| Acceso con DNI y código de 6 dígitos al correo **y** al celular; vence a los 5 min; 3 intentos | CA-01 dice «correo o celular» | Es pregunta abierta del PLT-04: ¿correo, celular o ambos? |
+| Tipos para el cliente: Consulta de cuenta, Pedido simple, Visita técnica, Garantía postventa (+ Reclamo y Queja, que van al Libro); subtipos propuestos | El modelo del prototipo no tiene subtipos; incidencia de ciudad es Etapa 2 | ¿Qué tipos y subtipos se habilitan en el piloto? (pregunta abierta del PLT-04) |
+| El cliente elige el lote; la razón social y la línea salen del contrato (regla fija por proyecto en el prototipo) | RN-SVC-005 exige empresa y línea; el cliente no conoce la razón social | ¿De dónde sale la razón social de un ticket de Mi Portal? |
+| Prioridad Media al registrar | El cliente no elige prioridad | ¿La pone el flujo o el gestor? |
+| Adjuntos: JPG, PNG o PDF, hasta 10 MB, máximo 3 | CA-05 pide «tamaño y formatos permitidos» sin listarlos | ¿Formatos y cantidad? |
+| Fecha de compromiso = vencimiento de resolución congelado con la política SLA (HU-003) | El flujo del prototipo no calcula su SLA total (falta de HU-043) | «Según el flujo»: ¿es la suma de las actividades o la política del tipo? |
+| Estados en voz del cliente: Registrado, En atención, Pendiente de tu respuesta, En revisión especializada, Resuelto · por confirmar, Cerrado, Reabierto | Diagrama 6.1 de FT-ATC-24 | Textos finales |
+| Se muestra el nombre del área («Atención al cliente» para ATC) | Pregunta abierta del PLT-04 | ¿Área o nombre genérico? |
+| 5 días hábiles para confirmar antes del cierre automático | Pregunta abierta del PLT-04 | ¿Cuántos días? |
+| El rol Cliente sigue entrando por «Buses del Entrega Fest»; «Mis tickets» y «Nuevo ticket» se suman a su navegación | No cambiar el recorrido del PO | ¿Mi Portal debe abrir en «Mis tickets»? |
+| Con otro rol, `#/portal` también abre, con un aviso «Vista del cliente» | Para revisarlo sin cambiar de rol | — |
+
+### 5.3 Mi Portal: brechas que quedan
+
+- **HU-066 CA-01:** el prototipo no pausa el SLA en «pendiente del cliente», así que «el SLA se reanuda» no tiene efecto visible.
+  Hace falta modelar la pausa (toca el cálculo de SLA de toda la consola, `wi` en `comun`).
+- **HU-066 CA-04:** el cierre automático se simula con un botón en el detalle. Falta un job del sistema con los días hábiles
+  configurables (encajaría en el job del panel de simulación, `Ko` en `comun`).
+- **HU-065 CA-02:** los avisos por correo y WhatsApp se derivan de la bitácora y se listan; no hay servicio de notificaciones.
+- **Encuesta:** confirmar dispara la encuesta (HU-019), pero sigue sin existir la pantalla donde el cliente la contesta (§4).
+- **Libro de Reclamaciones desde Mi Portal** está fuera de alcance de la HU-064: el botón solo avisa.
+- El simulador «Ticket entrante por Mi Portal» del panel de simulación (del PO) sigue creando tickets con canal Correo, y en la
+  consola el canal de respuesta «Mi Portal» sale «no disponible». No los toqué: son del PO.
+
+### 5.4 HU-067 (visor 3D): qué falta frente a sus criterios
+
+Se agregó lo pequeño: ocupados/total por sala (CA-01), recorrido con asignaciones y CSAT en la ficha (CA-05), alertas de SLA
+vencido en la bitácora (CA-03/06), tabla «Por área» (CA-09) y la compuerta de Mi Portal para su canal. Queda:
+
+| CA | Brecha | Esfuerzo |
+|---|---|---|
+| CA-02 | La tarjeta lleva el color del **área**, no el del **tipo** | Bajo, pero cambia la lectura de la escena: decidir con el PO |
+| CA-03 | La alerta registrada va a la supervisora por «notificación en consola», no es un correo al líder con copia; el caso vencido no entra a la Sala de Comité (ahí van los escalamientos de la Mesa SGD) | Medio |
+| CA-04 | No se puede tocar un área: falta el panel con su lista de tickets y la carga de cada gestor con la reasignación por carga (HU-046). La tabla «Por área» da los números | Medio (selección de sala en la escena + panel) |
+| CA-07 | Sin filtro por razón social ni por áreas permitidas (RN-SVC-036) | Medio |
+| CA-08 | Pausa y velocidad (x1, x2 y x4) están siempre, no solo en un «modo simulación» | Bajo |
+| Nombre | El PLT-04 la llama «Operación en vivo»; aquí es «Vista en vivo» dentro de Inicio | Decisión del PO |
+
+### 5.5 Etapa 2 (NEXUS, DAEDALUS, UrbeMind): se quitó, no se marcó
+
+Decisión del usuario (19-oct): el mockup es de la Etapa 1 y no muestra nada de la Etapa 2. Una primera versión de esta ronda lo
+marcaba con «Etapa 2 · simulado»; se cambió por quitarlo. Donde el plan dice cómo opera la Etapa 1 mientras tanto, se muestra eso.
+
+| Sistema | Qué se quitó o reescribió | Dónde |
+|---|---|---|
+| **UrbeMind** (FT-ATC-11, HU-017/018; Etapa 1: «sin incidencias de ciudad en ATC») | Entrada «Integración UrbeMind» del menú (todos los roles); `#/urbemind` redirige al inicio y no carga la pantalla; el tipo «Incidencia de ciudad» de los selectores (Nuevo ticket, Configuración › Flujos y Guías, filtros); la línea «Servicios de ciudad»; de la semilla, el ticket de incidencia de ciudad, sus políticas SLA, su vínculo a contrato y las llamadas y eventos de UrbeMind | `parchear.mjs` (prototipo y comun) y `scripts/etapa1.js` |
+| **NEXUS** (Etapa 1: usuarios, roles y líderes locales, ADR-09) | «Sin líder en NEXUS», «Completa el líder en NEXUS», «Nadie te tiene como líder en NEXUS» y «según NEXUS» pasan a «maestro local de ATC»; la ayuda de «Ver como» dice «Usuarios, roles y líderes del maestro local de ATC.»; Mi Portal ya no menciona NEXUS | `parchear.mjs` (comun y MiDia), `scripts/shell.js`, `src/portal/vistas.ts` |
+| **DAEDALUS** (Etapa 1: consulta 360 sin esa sección) | La nota que había agregado en el panel Notas del inicio. El artifact no tenía ninguna otra mención | `parchear.mjs` (Grafo360) |
+
+Lo que **se queda a propósito** y no es de la Etapa 2:
+- «Aybar Ciudad S.A.C.» (una de las razones sociales del grupo, en el selector de empresa) y «Ciudad Aybar Norte» (un proyecto):
+  son nombres propios, no la integración de incidencias de ciudad. Si el PO quiere ocultar también esa razón social, es una línea.
+- El grupo del menú se sigue llamando «Gestión e integraciones» (es del PO); ahora tiene Configuración, Torre de Control y
+  EntregaFest según el rol.
+- La pantalla de UrbeMind y el código de su API siguen en el bundle (son del PO y el chunk no se puede recortar sin fuente), pero
+  nada los enlaza, ni la ruta los carga, ni la semilla tiene datos para ellos. Las tarjetas de «Incidencia de ciudad» del detalle
+  del ticket solo se pintan para ese tipo, que ya no existe.
+- En los comentarios del código quedan referencias a la Etapa 2, para quien lo mantenga.
+
+Abierto: «Servicios de ciudad» se quitó como línea de negocio porque en el mockup solo servía a las incidencias de ciudad. Si en
+la Etapa 1 Aybar Ciudad atiende otras solicitudes (por ejemplo, consultas por la cuota de servicios), hay que reponerla.
+
+### 5.6 Riesgos técnicos
+
+- Todo sigue dependiendo de los nombres minificados del artifact publicado. Si se vuelve a publicar con otros hashes,
+  `parchear.mjs` falla con un mensaje claro; además hay que actualizar las rutas de `vite.portal.config.ts` y los nombres de
+  export de `src/portal/externos.d.ts` y `kit.ts` (`Ii`, `Ai`, `k`…).
+- Mi Portal escribe en el mismo estado en memoria que la consola: al recargar, todo vuelve a la semilla (como el resto del prototipo).
+- El navegador pide `/favicon.ico` por su cuenta y responde 404: ya pasaba antes (el `index.html` del artifact no enlaza icono).

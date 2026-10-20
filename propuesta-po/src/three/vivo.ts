@@ -17,7 +17,7 @@ export interface Estatico {
   compuertas: { k: string; n: string; sigla: string; color: RGB }[]
 }
 export interface Snap {
-  zonas: { k: string; cola: number; atencion: number; riesgo: boolean; gente: { id: string; nombre: string; ocupado: boolean }[] }[]
+  zonas: { k: string; cola: number; atencion: number; riesgo: boolean; gente: { id: string; nombre: string; ocupado: boolean }[]; ocupados?: number; total?: number }[]
   bandeja: number; escalados: number
   tickets: { id: string; numero: string; gate: string; zona: string; etapa: string; sla: 'ok' | 'riesgo' | 'vencido'; rayo: boolean; sel: boolean; resp?: string }[]
 }
@@ -521,7 +521,8 @@ export function montarVivo(o: OptsVivo): () => void {
     pCom.set(`${s.escalados} escalados en cadena`, s.escalados > 0)
     cartasComite.forEach((c, i) => { c.visible = i < s.escalados; if (c.visible && !RM) c.position.y = 0.8 + Math.sin(t * 2 + i) * 0.02 })
     pSal.set(`${s.tickets.filter((x) => x.etapa === 'salida').length} resueltos recientes`)
-    for (const z of s.zonas) pZona.get(z.k)?.set(`${z.cola} en cola · ${z.atencion} en atención`, z.riesgo)
+    // HU-067 CA-01: cada área con sus gestores ocupados sobre el total y los tickets en cola
+    for (const z of s.zonas) pZona.get(z.k)?.set(z.total ? `${z.cola} en cola · ${z.ocupados ?? 0}/${z.total} ocupados` : `${z.cola} en cola · ${z.atencion} en atención`, z.riesgo)
     dibujarHub(s, ahora)
 
     // --- cámara: deriva muy lenta + paralaje con el cursor (apagado con «menos movimiento»)

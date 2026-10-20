@@ -7,6 +7,9 @@
 //  · Encuesta de cierre (comun + Torre): pregunta NPS 0–10 y desglose por tipo, área, gestor y resultado.
 //  · Limpieza: fuera el lenguaje de Scrum de la interfaz; las notas explicativas van al panel «Notas».
 //  · Shell: herramientas flotantes, usuario en la barra, inicio (360 + vista en vivo) y asistente de IA.
+//  · v1.3 (16-oct): Mi Portal (HU-064/065/066; src/portal → mi-portal.js, ruta #/portal y núcleo prestado por «comun»),
+//    lo pequeño que faltaba de la HU-067 en «Vista en vivo» y fuera de la vista lo que el plan deja para la Etapa 2
+//    (UrbeMind e incidencias de ciudad, NEXUS, DAEDALUS): en la Etapa 1 no se muestra nada de eso.
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 const leer = (f) => readFileSync(`scripts/${f}`, 'utf8').trim()
@@ -20,7 +23,7 @@ const LIMPIEZAS = [
 ]
 const limpiar = (t) => LIMPIEZAS.reduce((a, [re, b]) => a.replace(re, b), t)
 
-function parchear(archivo, { efecto, importa = '', prefijo = '', reemplazos = [], cortes = [] } = {}) {
+function parchear(archivo, { efecto, importa = '', prefijo = '', sufijo = '', reemplazos = [], cortes = [] } = {}) {
   let t = readFileSync(`original/${archivo}`, 'utf8')
   if (efecto) {
     const i = t.indexOf(efecto.inicio), j = t.indexOf(efecto.fin, i)
@@ -37,7 +40,7 @@ function parchear(archivo, { efecto, importa = '', prefijo = '', reemplazos = []
     if (!t.includes(a)) falla(archivo, `«${a.slice(0, 70)}…»`)
     t = todos ? t.split(a).join(b) : t.replace(a, b)
   }
-  writeFileSync(`artefacto/assets/${archivo}`, importa + prefijo + limpiar(t))
+  writeFileSync(`artefacto/assets/${archivo}`, importa + prefijo + limpiar(t) + (sufijo ? '\n' + sufijo + '\n' : ''))
 }
 
 // Frases de todas las pantallas que hablaban de «prototipo», «sesión» o «persona ficticia»
@@ -52,6 +55,9 @@ const NPS_VIVO = '(()=>{let q=Z.filter(w=>w.respuesta&&w.respuesta.nps!==void 0)
 const ESTADOS_VIVO = '[`OPEN`,`IN_PROGRESS`,`PENDING_CUSTOMER`,`ESCALATED`,`REOPENED`,`RESOLVED`,`CLOSED`].map(q=>({id:q,n:y[q],v:o.tickets.filter(w=>w.estado===q).length}))'
 const TIENE_NPS = 'q.respuesta&&q.respuesta.nps!==void 0'
 const NOTA = 'globalThis.__ptNota&&globalThis.__ptNota(e),null'
+// v1.3: NEXUS, DAEDALUS y UrbeMind pasan a la Etapa 2 (PLT-01 v1.3, «Fuera de este plan · Etapa 2») y no se muestran. Lo que
+// queda es el comportamiento de la Etapa 1 («Cómo opera la Etapa 1 mientras tanto»): líderes y roles del maestro local de ATC.
+const MAESTRO = 'el maestro local de ATC'
 
 const especificos = {
   // ------------------------------------------------------------------------- Vista en vivo
@@ -69,6 +75,12 @@ const especificos = {
       ['(0,k.jsx)(`div`,{ref:be,className:`pt-escena`,children:(0,k.jsx)(`canvas`,{ref:xe,', '(0,k.jsxs)(`div`,{ref:be,className:`pt-escena`,children:[(0,k.jsx)(`canvas`,{ref:xe,'],
       [',onClick:Oe})})', ',onClick:Oe}),$?(0,k.jsx)(__Ficha,{t:$,datos:o,puedeRayo:h(c),onCerrar:()=>pe(null),onRayo:Ae,onAbrir:()=>ne(u(`ticket/${$.id}`)),onC360:()=>ne(u(`clientes/${$.clienteId}`))}):null]})'],
       ['i=null,a=20;', 'i=null,a=30;'],
+      // v1.3 · HU-067 CA-03/06: la bitácora suma las alertas de SLA vencido; CA-09: tabla por área antes de la tabla por ticket
+      ['Me=[...o.filasEstado].sort((e,t)=>t.fecha.getTime()-e.fecha.getTime()).slice(0,6);', 'Me=__bitacora(o);'],
+      ['children:[x(e.fecha),` · `,o.tickets.find(t=>t.id===e.ticketId)?.numero,` · `,y[e.a]]},e.id))', 'children:[x(e.fecha),` · `,e.alerta?(0,k.jsx)(`strong`,{children:e.txt}):e.txt]},e.id))'],
+      ['(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`', '(0,k.jsx)(__Areas,{datos:o}),(0,k.jsxs)(`div`,{className:`pt-dos-columnas`,children:[(0,k.jsxs)(T,{children:[(0,k.jsx)(D,{as:`h2`,title:`Los mismos tickets, en tabla`'],
+      // v1.3: los tickets registrados en Mi Portal (canal «Mi Portal») entran por la compuerta de Mi Portal, no por la de correo
+      ['F=e=>e.tipo===`ING`?`form`:e.tipo===`RSV`?`portal`:', 'F=e=>e.tipo===`ING`?`form`:e.tipo===`RSV`||e.canal===`Mi Portal`?`portal`:'],
       // fuera la etiqueta de la propuesta y el aviso «What-if»; los textos pasan al panel de notas
       ['meta:(0,k.jsx)(m,{size:`sm`,variant:`outline`,children:`Propuesta del PO · FT-ATC-18, 21 y 04`}),', ''],
       ['(0,k.jsx)(s,{tone:`info`,size:`sm`,title:`What-if: propuesta del PO, sin HU aprobada`,children:(0,k.jsx)(`span`,{className:`pt-alerta__texto`,children:', '(0,k.jsx)(ue,{children:(0,k.jsx)(`span`,{children:'],
@@ -98,6 +110,9 @@ const especificos = {
 
   // ------------------------------------------------------------------------- Encuesta con NPS (modelo, notas y textos comunes)
   'comun-CVU2GQ4h.js': {
+    // v1.3: Mi Portal compone las reglas del chunk con este núcleo (estado, transacción, SLA, flujo, transiciones)
+    // y la semilla sin incidencias de ciudad (Etapa 1; ver scripts/etapa1.js)
+    sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js'),
     prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/vivo`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
@@ -122,6 +137,15 @@ const especificos = {
       ['(Gabriela Núñez, persona ficticia)', '(Gabriela Núñez)'],
       ['Solicitud simulada: en la consola real le llegaría a la supervisora ATC.', 'Solicitud enviada a la supervisora ATC.'],
       ['Error inesperado del prototipo.', 'Error inesperado.'],
+      // v1.3: rutas de Mi Portal (#/portal, #/portal/nuevo, #/portal/ticket/<id>)
+      ['case`ticket`:return r?{id:`ticket`,ticketId:r}:{id:`desconocida`,hash:e};', 'case`portal`:return{id:`portal`,vista:r??`mis-tickets`,ticketId:t[2]??null};case`ticket`:return r?{id:`ticket`,ticketId:r}:{id:`desconocida`,hash:e};'],
+      // v1.3 · Etapa 1: el líder sale del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
+      ['mi=e=>e?Qt(e):`Sin líder en NEXUS`', 'mi=e=>e?Qt(e):`Sin líder en ' + MAESTRO + '`'],
+      // v1.3 · Etapa 1 sin incidencias de ciudad (UrbeMind): fuera el tipo de los selectores, la línea «Servicios de ciudad»
+      // y, de la semilla, el ticket de incidencia de ciudad con sus políticas, llamadas y eventos de UrbeMind
+      ['{id:`CIT`,nombre:`Incidencia de ciudad`},', ''],
+      ['It=[`Lotes urbanos`,`Vivienda`,`Comercial`,`Servicios de ciudad`]', 'It=[`Lotes urbanos`,`Vivienda`,`Comercial`]'],
+      ['return a=ks(a),a=Os(a),a=Ds(a),', 'return a=__etapa1(ks(a)),a=Os(a),a=Ds(a),'],
     ],
   },
 
@@ -141,7 +165,20 @@ const especificos = {
   },
 
   // ------------------------------------------------------------------------- Detalle del ticket: el asistente es ahora el robot flotante
-  'DetalleTicket-CTveBafq.js': { reemplazos: [['g?(0,Q.jsx)(St,{ticket:p,datos:a}):null,', '']] },
+  'DetalleTicket-CTveBafq.js': {
+    reemplazos: [
+      ['g?(0,Q.jsx)(St,{ticket:p,datos:a}):null,', ''],
+    ],
+  },
+  // v1.3 · Etapa 1: líderes y gestores del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
+  'MiDia-Sl191JQ_.js': {
+    reemplazos: [
+      ['children:`Sin líder en NEXUS`', 'children:`Sin líder en ' + MAESTRO + '`'],
+      ['description:`Nadie te tiene como líder en NEXUS.`', 'description:`Nadie te tiene como líder en ' + MAESTRO + '.`'],
+      ['title:`Completa el líder en NEXUS`', 'title:`Completa el líder en ' + MAESTRO + '`'],
+      ['Líder de cada gestor según NEXUS (DEP-02): ', 'Líder de cada gestor según ' + MAESTRO + ': '],
+    ],
+  },
   'Ingreso-hnvFCZyT.js': { reemplazos: [['Hora actual simulada: ', 'Hora actual: ']] },
   'Morosidad-CjqbEmCJ.js': { reemplazos: [[' Es una propuesta del PO, a validar con Legal.', '']] },
 
@@ -158,6 +195,14 @@ const especificos = {
       ['Cambia la persona ficticia y sus permisos.', 'Cambia de usuario y sus permisos.'],
       ['Prueba paletas y grises del sistema de diseño. Se recuerda en este navegador. No es parte del producto.', 'Prueba paletas y grises. Se recuerda en este navegador.'],
       ['Esta pantalla no existe en el prototipo', 'Esta pantalla no existe'],
+      // v1.3 · Mi Portal: ruta propia y entradas en la navegación del cliente; la redirección del rol Cliente la deja pasar
+      ['case`buses`:return(0,L.jsx)(Yi,{});', 'case`buses`:return(0,L.jsx)(Yi,{});case`portal`:return(0,L.jsx)(__Portal,{ruta:e});'],
+      ['i.rol===`CLIENTE`&&t.id!==`buses`&&(location.hash=g(`buses`))', 'i.rol===`CLIENTE`&&t.id!==`buses`&&t.id!==`portal`&&(location.hash=g(`buses`))'],
+      ['if(n===`CLIENTE`)return[{label:`Mi Portal`,items:[{href:g(`buses`)', 'if(n===`CLIENTE`)return[{label:`Mi Portal`,items:[{href:g(`portal`),label:`Mis tickets`,icon:(0,L.jsx)(R,{name:`list`}),current:t.id===`portal`&&t.vista!==`nuevo`},{href:g(`portal/nuevo`),label:`Nuevo ticket`,icon:(0,L.jsx)(R,{name:`plus`}),current:t.id===`portal`&&t.vista===`nuevo`},{href:g(`buses`)'],
+      // v1.3 · UrbeMind es de la Etapa 2: fuera del menú y #/urbemind lleva al inicio (no se carga su pantalla)
+      ['...n!==`SIN_ATENCION`&&n!==`MODERADOR_EVENTO`&&n!==`MESA_SGD`&&n!==`ADMIN_FUNCIONAL`?[{href:g(`urbemind`),label:`Integración UrbeMind`,icon:(0,L.jsx)(R,{name:`grid`}),current:t.id===`urbemind`}]:[],', ''],
+      ['case`urbemind`:return(0,L.jsx)($i,{});', 'case`urbemind`:return null;'],
+      ['i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),', 't.id===`urbemind`&&location.replace(g(`vivo`)),i.rol===`CONTROL_ACCESO`&&t.id!==`ingreso`&&(location.hash=g(`ingreso`)),'],
     ],
     // la barra superior queda con la marca y el usuario; el aviso «What-if» desaparece
     cortes: [
