@@ -60,10 +60,22 @@ await cdp('Page.navigate', { url: BASE + '#/vivo' })
 await dormir(3500)
 await evaluar(H)
 
-await paso('Inicio (#/vivo) carga con la escena 3D y la ficha', async () => {
+await paso('Menú: grupo «Núcleo 360 y Planta» con «Consulta 360» y «Operación en vivo»; la raíz abre la Consulta 360', async () => {
+  const menu = await evaluar('[...document.querySelectorAll("nav, aside")].map(e=>e.innerText).join("\\n")')
+  for (const s of ['Núcleo 360 y Planta', 'Consulta 360', 'Operación en vivo']) if (!menu.includes(s)) throw new Error('falta en el menú: ' + s)
+  if (/\bInicio\b/.test(menu)) throw new Error('el menú aún muestra «Inicio»')
+  await ir('#/'); await dormir(1500); await esperarTexto('Consulta 360')
+  if (!(await evaluar('location.hash===""||location.hash==="#/"'))) throw new Error('la raíz cambió de hash')
+  const n = await evaluar('document.querySelectorAll("canvas").length'); if (n < 1) throw new Error('la Consulta 360 sin grafo')
+  if ((await texto()).includes('Tickets por estado')) throw new Error('la Consulta 360 sigue mostrando la Operación en vivo')
+  await captura('00-consulta360')
+  await ir('#/vivo'); await dormir(1500)
+})
+await paso('Operación en vivo (#/vivo) carga con la escena 3D', async () => {
   await esperarTexto('Operación en vivo')
   const n = await evaluar('document.querySelectorAll("canvas").length'); if (n < 1) throw new Error('sin canvas')
-  await evaluar('document.getElementById("inicio-vivo")?.scrollIntoView()'); await dormir(1200); await captura('01-vivo')
+  if ((await texto()).includes('Busca a un cliente y consulta en línea')) throw new Error('la Operación en vivo sigue mostrando la Consulta 360')
+  await dormir(1200); await captura('01-vivo')
   const sala = await evaluar('[...document.querySelectorAll("small")].map(e=>e.textContent).find(t=>/ocupados/.test(t))??""')
   if (!/\d+ en cola · \d+\/\d+ ocupados/.test(sala)) throw new Error('rótulo de sala sin «ocupados/total»: ' + sala)
 })
@@ -96,8 +108,8 @@ await paso('UrbeMind fuera: no está en el menú de ningún rol y #/urbemind lle
 })
 await paso('Ningún texto de la Etapa 2 en las pantallas (por rol, con selectores y notas)', async () => {
   const recorrido = [
-    ['SUPERVISOR', ['#/vivo', '#/bandeja', '#/nuevo', '#/midia', '#/clientes', '#/clientes/cli-001', '#/ticket/tk-460', '#/ticket/tk-90', '#/torre', '#/politicas', '#/alertas', '#/cierre', '#/reasignar', '#/garantias', '#/morosidad', '#/ingreso', '#/buses', '#/libro']],
-    ['GESTOR', ['#/vivo', '#/bandeja', '#/nuevo', '#/midia', '#/ticket/tk-272']],
+    ['SUPERVISOR', ['#/consulta360', '#/vivo', '#/bandeja', '#/nuevo', '#/midia', '#/clientes', '#/clientes/cli-001', '#/ticket/tk-460', '#/ticket/tk-90', '#/torre', '#/politicas', '#/alertas', '#/cierre', '#/reasignar', '#/garantias', '#/morosidad', '#/ingreso', '#/buses', '#/libro']],
+    ['GESTOR', ['#/consulta360', '#/vivo', '#/bandeja', '#/nuevo', '#/midia', '#/ticket/tk-272']],
     ['COORDINADOR_CX', ['#/torre', '#/fest', '#/cierre']],
     ['ADMIN_FUNCIONAL', ['#/configuracion', '#/midia']],
     ['MESA_SGD', ['#/mesa']],

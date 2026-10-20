@@ -7,7 +7,8 @@
 //  · Encuesta de cierre: CSAT y CES (HU-019). La pregunta «¿Recomendarías…?» (0–10) que se probó en una ronda anterior se quitó
 //    el 20-oct porque la v1.3 no la incluye; el NPS de la Torre y de los informes es el «NPS preliminar» derivado del CSAT.
 //  · Limpieza: fuera el lenguaje de Scrum de la interfaz; las notas explicativas van al panel «Notas».
-//  · Shell: herramientas flotantes, usuario en la barra, inicio (360 + vista en vivo) y asistente de IA.
+//  · Shell: herramientas flotantes, usuario en la barra, módulos «Consulta 360» y «Operación en vivo» (grupo «Núcleo 360 y
+//    Planta» del menú; la raíz abre la Consulta 360) y asistente de IA.
 //  · v1.3 (16-oct): Mi Portal (HU-064/065/066; src/portal → mi-portal.js, ruta #/portal y núcleo prestado por «comun»),
 //    lo pequeño que faltaba de la HU-067 en «Vista en vivo» y fuera de la vista lo que el plan deja para la Etapa 2
 //    (UrbeMind e incidencias de ciudad, NEXUS, DAEDALUS): en la Etapa 1 no se muestra nada de eso.
@@ -148,7 +149,7 @@ const especificos = {
     },
     // HU-050: icono del sistema (candado), aviso previo de «Nuevo ticket» (modo interesado) y permisos por rol
     importa: 'import{montarGrafo as __mg}from"./escenas-three.js";import{S as __Ico}from"./prototipo-B6qmgYQk.js";import{y as __pre,sn as __perm}from"./comun-CVU2GQ4h.js";',
-    sufijo: leer('consulta360.js'),
+    sufijo: leer('consulta360.js') + '\n' + leer('c360-redireccion.js'),
     reemplazos: [
       // el grafo puede elegir al cliente sin salir de la pantalla (lo usa el inicio); dentro del ticket recibe «Derivar» (HU-050 CA-08)
       ['function ge({clienteId:e}){', 'function ge({clienteId:e,onElegir:__oe,onDerivar:__od}){'],
@@ -175,6 +176,20 @@ const especificos = {
       ['children:`Consultar`})]}),', 'children:`Consultar`})]}),__nf?(0,G.jsx)(__NoEnc,{q:__nf.q,onInteresado:__perm.registrar(a.rol)?()=>{__pre.telefono=``,M(_(`nuevo`))}:void 0,onDerivar:__od}):null,'],
       // HU-050 CA-10: la consulta hecha desde el ticket lleva el ticket para dejar la traza en su bitácora
       ['l.consultar360(e).then(e=>s({fase:`listo`,vista:e,ms:performance.now()-t}),e=>s({fase:`error`,error:e}))},[e]);', 'l.consultar360(e,n).then(e=>s({fase:`listo`,vista:e,ms:performance.now()-t}),e=>s({fase:`error`,error:e}))},[e,n]);'],
+      // 20-oct · Consulta 360 (pedido del PO para la presentación; scripts/c360-redireccion.js): información de cada dato y de cada
+      // sistema de origen, redirección a los módulos que ya existen, «Crear ticket» y, con la prop `modulo` (página Consulta 360),
+      // las tarjetas «Nodos del Grafo 360 y Redirección» y «Estado de sistemas de origen». Dentro del ticket (recibe onDerivar) no hay
+      // redirecciones. __fs es el sistema de origen elegido (el grafo lo resalta como a un dato) y __oc, la ficha oculta.
+      ['let{datos:n}=te(),a=r(),o=s(`(prefers-reduced-motion: reduce)`)', 'let __pr=arguments[0],__mod=!!__pr.modulo,__tk=`onDerivar`in __pr||(location.hash||``).startsWith(`#/ticket/`),[__fs,__sfs0]=(0,W.useState)(null),[__oc,__soc]=(0,W.useState)(!1),__sfs=__x=>(__sfs0(__x),__soc(!1)),{datos:n}=te(),a=r(),o=s(`(prefers-reduced-motion: reduce)`)'],
+      ['[f,p]=(0,W.useState)(`lote`)', '[f,__p0]=(0,W.useState)(`lote`),p=__x=>(__sfs0(null),__soc(!1),__p0(__x))'],
+      ['V.current=f;', 'V.current=__fs||f;'],
+      ['}),i&&p(i)},J=e=>{', '}),z?.fuentes.forEach(e=>{let t=P.current[e.id];if(!t)return;let o=Math.hypot(t.x-n,t.y-r);o<a&&(a=o,i=`@`+e.id)}),i&&(i[0]===`@`?__sfs(i.slice(1)):p(i))},J=e=>{'],
+      ['z?.nodos.forEach(r=>{let i=P.current[r.id];i&&Math.hypot(', '[...z?.nodos??[],...z?.fuentes??[]].forEach(r=>{let i=P.current[r.id];i&&Math.hypot('],
+      ['"aria-pressed":f===e.id,', '"aria-pressed":!__fs&&f===e.id,'],
+      ['let Y=z.nodos.find(e=>e.id===f)??z.nodos[0],', 'let __cx={v:z,d:n,rol:a.rol,cid:e,tk:__tk,mod:__mod,sel:f,fs:__fs,elegir:p,fuente:__sfs,oculta:__oc,ocultar:__soc,aqui:(location.hash||``).split(`?`)[0]},Y=__fs&&z.fuentes.some(q=>q.id===__fs)?__nodoFuente360(z,__fs):z.nodos.find(e=>e.id===f)??z.nodos[0],'],
+      [']})})}),(0,G.jsxs)(`aside`,{className:`pt-lateral`,"aria-label":`Cliente, controles y detalle`,children:[', ',__mod?null:(0,G.jsx)(__ListaFuentes360,{c:__cx})]})})}),(0,G.jsxs)(`aside`,{className:`pt-lateral`,"data-sin-ficha":__mod&&__oc?``:void 0,"aria-label":`Cliente, controles y detalle`,children:['],
+      ['(0,G.jsx)(_e,{nodo:Y,', '(0,G.jsx)(_e,{__c:__cx,nodo:Y,'],
+      [',sem:g})})]})]})]})}function _e({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return ', ',sem:g})})]})]}),__mod?(0,G.jsx)(__Modulo360,{c:__cx}):null]})}function _e(__a){return __Dato360(__a,__e0)}function __e0({nodo:e,encendido:t,nombresCaidos:n,sem:r}){return '],
     ],
     // «Ver como» y «Simular caída» ya están en las herramientas flotantes: no se repiten en la ficha del cliente
     cortes: [['(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:`Ver como`,', '(0,G.jsxs)(L,{children:[(0,G.jsx)(H,{as:`h2`,title:Y.n,', '']],
@@ -185,7 +200,7 @@ const especificos = {
     // v1.3: Mi Portal compone las reglas del chunk con este núcleo (estado, transacción, SLA, flujo, transiciones)
     // y la semilla sin incidencias de ciudad (Etapa 1; ver scripts/etapa1.js)
     sufijo: leer('nucleo-portal.js') + '\n' + leer('etapa1.js') + '\n' + leer('garantias.js') + '\n' + leer('hu043-modelo.js') + '\n' + leer('eje3-modelo.js') + '\n' + leer('hu044-areas.js') + '\n' + leer('hu046-carga.js') + '\n' + leer('hu055-correo.js') + '\n' + leer('hu056-modelo.js') + '\n' + leer('hu066-sla.js') + '\n' + leer('hu048-modelo.js') + '\n' + leer('hu031-informes.js'),
-    prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/vivo`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
+    prefijo: 'globalThis.__ptNotas=new Map;globalThis.__ptNota=e=>{let t=n=>n==null||n===!1?``:typeof n==`string`||typeof n==`number`?String(n):Array.isArray(n)?n.map(t).join(``):n.props?t(n.props.children):``,r=(location.hash||``).split(`?`)[0];r=r===``||r===`#`||r===`#/`?`#/consulta360`:r;let k=t(e);if(!k)return;let m=globalThis.__ptNotas.get(r);m||globalThis.__ptNotas.set(r,m=new Map);m.has(k)||m.set(k,e)};\n',
     reemplazos: [
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
       ['function il({children:e}){return(0,c.jsxs)(`span`,{className:`pt-supuesto`,children:[(0,c.jsx)(Me,{size:`sm`,variant:`outline`,children:`Supuesto`}),(0,c.jsx)(`span`,{className:`pt-supuesto__texto`,children:e})]})}', 'function il({children:e}){return ' + NOTA + '}'],
@@ -202,6 +217,9 @@ const especificos = {
       ['(Gabriela Núñez, persona ficticia)', '(Gabriela Núñez)'],
       ['Solicitud simulada: en la consola real le llegaría a la supervisora ATC.', 'Solicitud enviada a la supervisora ATC.'],
       ['Error inesperado del prototipo.', 'Error inesperado.'],
+      // 20-oct (pedido del PO para la presentación): Consulta 360 y Operación en vivo son módulos propios; la página de inicio
+      // (#/ sin ruta) abre la Consulta 360
+      ['[n=`vivo`,r]=t;switch(n){case`vivo`:', '[n=`consulta360`,r]=t;switch(n){case`consulta360`:case`vivo`:'],
       // v1.3: rutas de Mi Portal (#/portal, #/portal/nuevo, #/portal/ticket/<id>)
       ['case`ticket`:return r?{id:`ticket`,ticketId:r}:{id:`desconocida`,hash:e};', 'case`portal`:return{id:`portal`,vista:r??`mis-tickets`,ticketId:t[2]??null};case`ticket`:return r?{id:`ticket`,ticketId:r}:{id:`desconocida`,hash:e};'],
       // v1.3 · Etapa 1: el líder sale del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
@@ -391,6 +409,9 @@ const especificos = {
       ['X=y.tipo&&y.prioridad?ne(e,y.tipo,y.prioridad,Y):null,', 'X=y.tipo&&y.prioridad?ne(e,y.tipo,y.prioridad,Y):null,__P=X?__f.prever(e,y,n.personaId,Y,X):null,'],
       ['(0,R.jsx)(I,{value:y.tipo,placeholder:`Elige el tipo`,onChange:e=>Z(`tipo`,e.target.value),options:a.map(e=>({value:e.id,label:e.nombre}))})}),', SUBTIPO_043],
       ['[`Resolución`,`${b(X.venceResolucion)} (${v(X.politica.resolucionH)} hábiles)`]]', RESOLUCION_043],
+      // 20-oct · Consulta 360 › «Crear ticket»: el cliente llega ya elegido por el aviso previo (y.cliente, como y.telefono)
+      ['[y,C]=(0,L.useState)(z),[w,A]=(0,L.useState)({}),[B,V]=(0,L.useState)(null),', '[y,C]=(0,L.useState)(()=>E.cliente?{...z,clienteId:E.cliente.id}:z),[w,A]=(0,L.useState)({}),[B,V]=(0,L.useState)(()=>E.cliente??null),'],
+      ['(0,L.useEffect)(()=>{E.telefono=null,', '(0,L.useEffect)(()=>{E.telefono=null,E.cliente=null,'],
     ],
   },
   // v1.3 · Etapa 1: líderes y gestores del maestro local de ATC (NEXUS es de la Etapa 2 y no se nombra)
@@ -431,8 +452,10 @@ const especificos = {
     reemplazos: [
       ['function ca(){let e=de(),', leer('shell.js') + '\nfunction ca(){let e=de(),'],
       [',(0,L.jsx)(`span`,{className:`pt-marca__etiqueta`,children:`What-if · propuesta del PO`})', ''],
-      ['case`vivo`:return(0,L.jsx)(Gi,{});', 'case`vivo`:return(0,L.jsx)(__Inicio,{Vivo:Gi});'],
-      ['label:`Vista en vivo`,icon:(0,L.jsx)(R,{name:`eye`}),current:t.id===`vivo`,badge:(0,L.jsx)(te,{size:`sm`,variant:`outline`,children:`PO`})}', 'label:`Inicio`,icon:(0,L.jsx)(R,{name:`grid`}),current:t.id===`vivo`}'],
+      ['case`vivo`:return(0,L.jsx)(Gi,{});', 'case`consulta360`:return(0,L.jsx)(__Consulta360,{});case`vivo`:return(0,L.jsx)(Gi,{});'],
+      ['...n===`SIN_ATENCION`?[]:[{href:g(`vivo`),label:`Vista en vivo`,icon:(0,L.jsx)(R,{name:`eye`}),current:t.id===`vivo`,badge:(0,L.jsx)(te,{size:`sm`,variant:`outline`,children:`PO`})}],', ''],
+      // 20-oct: Consulta 360 y Operación en vivo, cada una en su módulo, en un grupo propio arriba del menú (como en la rama de Daniel)
+      ['return[a,...s.items.length?[s]:[],...o.items.length?[o]:[]]}', 'return[...n===`SIN_ATENCION`?[]:[{label:`Núcleo 360 y Planta`,items:[{href:g(`consulta360`),label:`Consulta 360`,icon:(0,L.jsx)(R,{name:`grid`}),current:t.id===`consulta360`},{href:g(`vivo`),label:`Operación en vivo`,icon:(0,L.jsx)(R,{name:`eye`}),current:t.id===`vivo`}]}],a,...s.items.length?[s]:[],...o.items.length?[o]:[]]}'],
       ['(0,L.jsx)(ce,{})]})}function la({ruta:e}){', '(0,L.jsx)(ce,{}),i.rol!==`CONTROL_ACCESO`&&i.rol!==`CLIENTE`?(0,L.jsx)(__Bot,{ruta:t,datos:a,usuario:i.nombre}):null,(0,L.jsx)(__Herramientas,{rol:i.rol,roles:sa,ahora:a.ahora,onApariencia:()=>{d(!u),l(!1)},onSimulacion:()=>{l(!c),d(!1)}})]})}function la({ruta:e}){'],
       ['Mandos para revisar el prototipo. No son parte del producto ni de la consola real.', 'Mandos de prueba para recorrer el sistema como distintos usuarios y en distintos momentos.'],
       // v1.3 · HU-067 CA-08: el modo simulación de la operación en vivo (Y.sim.vivoSimulacion; encendido por defecto, como el prototipo del PO; apagado, el visor solo refleja los cambios reales)

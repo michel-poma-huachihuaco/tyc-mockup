@@ -66,14 +66,13 @@ const comoRol = (rol) => evaluar(`${MOD}.then(m=>m.O.ajustar({personaId:m.w[${JS
 const sim = (on) => evaluar(`${MOD}.then(m=>m.O.ajustar({vivoSimulacion:${on}}))`)
 const botones = () => evaluar('[...document.querySelectorAll("main button")].map(b=>b.textContent.trim())')
 const filasTabla = (cap) => evaluar(`[...document.querySelectorAll("table")].find(t=>t.getAttribute("aria-label")===${JSON.stringify(cap)})?.querySelectorAll("tbody tr").length ?? -1`)
-const alVivo = async () => { await evaluar('document.getElementById("inicio-vivo")?.scrollIntoView()'); await dormir(900) }
+const alVivo = async () => { await evaluar('scrollTo(0,0)'); await dormir(900) }
 
-await paso('Nombre: «Operación en vivo» en el título, el ancla del inicio y la sección', async () => {
+await paso('Nombre: «Operación en vivo» en el título y en su propio módulo del menú', async () => {
   await comoRol('SUPERVISOR'); await ir('#/vivo'); await dormir(1500); await esperarTexto('Operación en vivo')
   if ((await texto()).includes('Vista en vivo')) throw new Error('aún se lee «Vista en vivo»')
-  const ancla = await evaluar('[...document.querySelectorAll(".pt-inicio__ancla button")].map(b=>b.textContent).join("|")')
-  const sec = await evaluar('document.getElementById("inicio-vivo")?.getAttribute("aria-label")')
-  if (!ancla.includes('Operación en vivo') || sec !== 'Operación en vivo') throw new Error(`ancla «${ancla}» · sección «${sec}»`)
+  const item = await evaluar('[...document.querySelectorAll("nav a, aside a")].find(a=>a.textContent.trim()==="Operación en vivo")?.getAttribute("aria-current")')
+  if (item !== 'page' && item !== 'true') throw new Error('el menú no marca «Operación en vivo» como la página actual: ' + item)
 })
 await paso('CA-08: pausa y velocidad (x1 ↔ x2) solo en el modo simulación, que se apaga y enciende en Herramientas › Simulación', async () => {
   let b = await botones(); if (!b.includes('Pausa') || !b.includes('Velocidad x1')) throw new Error('el modo simulación (por defecto) no muestra pausa y velocidad: ' + b.join('|'))

@@ -6,6 +6,7 @@ import { bucle, capaEtiquetas, color, css, type RGB } from './comun.ts'
 // Red 3D de la «Búsqueda 360». El chunk del artifact calcula la vista (fuentes, datos, estados) y
 // mantiene los pulsos y los nodos encendidos en refs; aquí solo se dibuja y se escribe en `pos` la
 // posición en pantalla de cada nodo, que es lo que usan sus manejadores de clic y de hover.
+// `sel` puede ser un dato o un sistema de origen (20-oct): el sistema elegido se agranda y resalta sus aristas.
 
 interface Fuente { id: string; n: string; d: string; caida: boolean }
 interface NodoDato { id: string; n: string; estado: 'ok' | 'restringido' | 'caido'; sem?: boolean; fuentes: string[] }
@@ -148,7 +149,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
 
     // aristas
     for (const a of aristas) {
-      const hl = a.dato && (o.sel.current === a.dato || o.hover.current === a.dato)
+      // un sistema de origen elegido (o bajo el puntero) resalta sus aristas: las del cliente y las de los datos que alimenta
+      const hl = (!!a.dato && (o.sel.current === a.dato || o.hover.current === a.dato)) || (!!a.fuente && (o.sel.current === a.fuente || o.hover.current === a.fuente))
       a.mat.color.copy(color(caida(a.fuente ?? '') ? T.bad : hl ? T.naranja : a.dato ? T.borde : T.src))
       a.mat.opacity = hl ? 0.95 : a.dato ? 0.35 : 0.5
     }
@@ -158,6 +160,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
       ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(s.caida ? T.bad : T.src))
       n.txt.style.color = css(T.texto)
       if (n.sub) { n.sub.style.color = css(s.caida ? T.bad : T.mudo); const t = s.caida ? 'no disponible' : s.d; if (n.sub.textContent !== t) n.sub.textContent = t }
+      const sel = o.sel.current === s.id || o.hover.current === s.id
+      n.mesh.scale.setScalar(sel ? 1.35 : 1); n.halo.visible = sel; n.txt.style.fontWeight = sel ? '800' : '700'
     }
     // datos
     for (const d of v.nodos) {

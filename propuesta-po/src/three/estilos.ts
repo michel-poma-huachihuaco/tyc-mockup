@@ -156,6 +156,12 @@ const CSS = `
 .pt-grafo__busca>.ay-field>:nth-child(2){grid-row:2}
 .pt-grafo__busca>.ay-field>.ay-error:empty{display:none}
 .pt-grafo__busca>.ay-btn{grid-column:2;grid-row:2}
+/* Consulta 360 (20-oct): en el módulo, las tarjetas de nodos y de sistemas van debajo del grafo, a todo el ancho y alineadas con
+   sus columnas; «Ocultar ficha» esconde el panel del dato; un dato o sistema caído se pinta en rojo (solo tokens del SDK) */
+.pt-c360-modulo{grid-column:1/-1;display:grid;gap:var(--aybar-space-4);min-inline-size:0;align-items:start}
+@media(min-width:1024px){.pt-c360-modulo{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}}
+.pt-c360-caido>.ay-btn{--button-fg:var(--aybar-color-feedback-danger-fg);--button-border:var(--aybar-color-feedback-danger-border);--button-bg:var(--aybar-color-feedback-danger-bg)}
+.pt-lateral[data-sin-ficha]>:has(.pt-c360-dato){display:none}
 .pt-inicio__ancla{position:sticky;top:var(--pt-navbar-alto,0px);z-index:5;display:flex;gap:var(--aybar-space-2);align-items:center;padding:var(--aybar-space-2) var(--aybar-space-6);background:color-mix(in srgb,var(--aybar-color-bg-canvas,#0f1a1f) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--v3-ln)}
 .pt-inicio__ancla button{font:var(--aybar-font-weight-semibold) var(--aybar-font-size-xs)/1 inherit;font-family:inherit;padding:var(--aybar-space-2) var(--aybar-space-3);border-radius:var(--aybar-radius-full);border:1px solid var(--v3-ln);background:transparent;color:var(--v3-mu);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
 .pt-inicio__ancla button:hover{color:var(--v3-fg);border-color:var(--v3-mu)}
