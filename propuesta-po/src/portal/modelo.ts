@@ -27,13 +27,16 @@ export const CODIGO = { minutos: 5, intentos: 3 }
 
 export interface TipoPortal { id: string; nombre: string; ayuda: string; subtipos: string[]; libro?: boolean }
 /**
- * Tipos y subtipos que ve el cliente. Supuesto: el PLT-04 deja abierto «¿qué tipos y subtipos se habilitan al cliente en el
- * piloto?». Los tipos son los del catálogo del prototipo; los subtipos son una propuesta (el modelo no tiene subtipos).
- * Fuera: incidencia de ciudad (UrbeMind, Etapa 2), resolución de contrato, ingreso a proyecto y reserva de bus.
+ * Tipos y subtipos que ve el cliente. El PLT-04 deja abierto «¿qué tipos y subtipos se habilitan al cliente en el piloto?».
+ * Los tipos son los del catálogo del prototipo. Subtipos (decisión del 20-oct, DECISIONES §5.9): donde la plataforma actual
+ * (Front Digital) ya tiene el subtipo, se usa su nombre: «Estado de cuenta del lote» (SOLICITUD DE EE.CC - LOTE, nombre de
+ * portal), «Actualización de datos» (SOLICITUD DE ACTUALIZACION DE DATOS), «Copia legalizada de contrato» (COPIA LEGALIZADA
+ * DE CONTRATO) y «Otra solicitud» (OTROS, nombre de portal). Los demás siguen siendo una propuesta nuestra, sin equivalente.
+ * Fuera: incidencia de ciudad (Etapa 2), resolución de contrato, ingreso a proyecto y reserva de bus.
  */
 export const TIPOS: TipoPortal[] = [
-  { id: 'CTA', nombre: 'Consulta de cuenta', ayuda: 'Cuotas, pagos, estado de cuenta o constancias.', subtipos: ['Pago no reflejado', 'Estado de cuenta y cuotas', 'Constancia de pagos', 'Cronograma de pagos'] },
-  { id: 'PED', nombre: 'Pedido simple', ayuda: 'Copias de documentos o cambios de datos de contacto.', subtipos: ['Copia de minuta o contrato', 'Actualizar mis datos de contacto', 'Información de cambio de titular', 'Otro pedido'] },
+  { id: 'CTA', nombre: 'Consulta de cuenta', ayuda: 'Cuotas, pagos, estado de cuenta o constancias.', subtipos: ['Estado de cuenta del lote', 'Pago no reflejado', 'Constancia de pagos', 'Cronograma de pagos'] },
+  { id: 'PED', nombre: 'Pedido simple', ayuda: 'Copias de documentos o cambios de datos de contacto.', subtipos: ['Copia legalizada de contrato', 'Actualización de datos', 'Información de cambio de titular', 'Otra solicitud'] },
   { id: 'VIS', nombre: 'Visita técnica', ayuda: 'Coordinar una visita a tu lote o vivienda.', subtipos: ['Visita al lote', 'Revisión de linderos', 'Coordinación de la entrega'] },
   { id: 'GAR', nombre: 'Garantía postventa', ayuda: 'Algo de tu vivienda entregada necesita reparación.', subtipos: ['Estructural', 'Impermeabilización', 'Acabados', 'Instalaciones eléctricas o sanitarias'] },
   { id: 'REC', nombre: 'Reclamo', ayuda: 'Disconformidad con un producto o servicio.', subtipos: [], libro: true },

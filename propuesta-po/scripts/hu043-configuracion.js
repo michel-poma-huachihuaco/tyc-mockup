@@ -16,7 +16,7 @@ children:(0,V.jsxs)(D,{id:`${__o}-f`,onSubmit:__pub,errors:Object.fromEntries(Ob
 (0,V.jsxs)(`div`,{className:`pt-rejilla-campos`,children:[
 (0,V.jsx)(E,{label:`Tipo de ticket`,id:`${__o}-tipo`,error:__g.tipo,required:!0,children:(0,V.jsx)(z,{value:__t,placeholder:`Elige el tipo`,disabled:__v,onChange:e=>__st(e.target.value),options:[{value:`*`,label:`Por defecto del área (sin flujo propio)`},...i.map(e=>({value:e.id,label:e.nombre}))]})}),
 __def?null:(0,V.jsx)(E,{label:`Subtipo`,id:`${__o}-subtipo`,error:__g.subtipo,required:!0,children:(0,V.jsx)(O,{value:__s,disabled:__v,onChange:e=>__ss(e.target.value)})}),
-(0,V.jsx)(E,{label:`Área`,id:`${__o}-area`,error:__g.area,required:!0,children:(0,V.jsx)(z,{value:__a,placeholder:`Elige el área`,disabled:__v,onChange:e=>__sa(e.target.value),options:H.map(e=>({value:e,label:b[e]}))})}),
+(0,V.jsx)(E,{label:`Área`,id:`${__o}-area`,error:__g.area,required:!0,children:(0,V.jsx)(z,{value:__a,placeholder:`Elige el área`,disabled:__v,onChange:e=>__sa(e.target.value),options:H.map(e=>({value:e,label:__AP.has(e)?`${b[e]} · plataforma actual`:b[e]}))})}),
 (0,V.jsx)(E,{label:`Responsable del flujo`,id:`${__o}-responsable`,error:__g.responsable,required:!0,helper:`Recibe el ticket cuando se registra.`,children:(0,V.jsx)(z,{value:__r,placeholder:`Elige al responsable`,onChange:e=>__sr(e.target.value),options:__per})})]}),
 __p.map((e,q)=>(0,V.jsx)(j,{variant:`elevated`,children:(0,V.jsx)(M,{padding:`sm`,children:(0,V.jsxs)(`div`,{className:`pt-pila pt-pila--chica`,children:[
 (0,V.jsx)(`p`,{className:`pt-texto`,children:(0,V.jsxs)(`strong`,{children:[`Actividad `,q+1]})}),

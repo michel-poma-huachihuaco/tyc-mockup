@@ -89,8 +89,9 @@ await paso('CA-06 combinación única: no la permite y ofrece una nueva versión
   const t = await texto()
   if (!t.includes('Respuesta al cliente (Colaborador de área (rol) · 8 h)') || !/v2/.test(t)) throw new Error('la tabla no muestra la versión 2\n' + t.slice(0, 1200))
   const filas = await evaluar('Math.max(0,...[...document.querySelectorAll(\'[aria-label="Bitácora de publicaciones"]\')].map(e=>e.querySelectorAll("tbody tr").length))')
-  // la semilla trae 5 flujos (los 4 del PO con subtipo «General» y el del CA-01): con la versión 2, 6 publicaciones
-  if (filas !== 6) throw new Error('bitácora con ' + filas + ' filas')
+  // la semilla trae 6 flujos (los 4 del PO con subtipo «General», «Consulta de cuenta · Estado de cuenta del lote» y el del
+  // CA-01): con la versión 2, 7 publicaciones
+  if (filas !== 7) throw new Error('bitácora con ' + filas + ' filas')
   await captura('043-04-version2')
 })
 let numero

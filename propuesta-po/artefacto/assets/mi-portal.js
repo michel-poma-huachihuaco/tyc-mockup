@@ -52,8 +52,8 @@ var F = "Mi Portal", I = "p-cliente", L = "p-portal", R = {
 		nombre: "Consulta de cuenta",
 		ayuda: "Cuotas, pagos, estado de cuenta o constancias.",
 		subtipos: [
+			"Estado de cuenta del lote",
 			"Pago no reflejado",
-			"Estado de cuenta y cuotas",
 			"Constancia de pagos",
 			"Cronograma de pagos"
 		]
@@ -63,10 +63,10 @@ var F = "Mi Portal", I = "p-cliente", L = "p-portal", R = {
 		nombre: "Pedido simple",
 		ayuda: "Copias de documentos o cambios de datos de contacto.",
 		subtipos: [
-			"Copia de minuta o contrato",
-			"Actualizar mis datos de contacto",
+			"Copia legalizada de contrato",
+			"Actualización de datos",
 			"Información de cambio de titular",
-			"Otro pedido"
+			"Otra solicitud"
 		]
 	},
 	{

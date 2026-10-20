@@ -4,7 +4,8 @@
 //
 //  · Vista en vivo y Búsqueda 360: el efecto que dibujaba el canvas 2D pasa a las escenas three.js.
 //  · Vista en vivo: HUD de indicadores (con tickets por estado y NPS) y ficha del ticket.
-//  · Encuesta de cierre (comun + Torre): pregunta NPS 0–10 y desglose por tipo, área, gestor y resultado.
+//  · Encuesta de cierre: CSAT y CES (HU-019). La pregunta «¿Recomendarías…?» (0–10) que se probó en una ronda anterior se quitó
+//    el 20-oct porque la v1.3 no la incluye; el NPS de la Torre y de los informes es el «NPS preliminar» derivado del CSAT.
 //  · Limpieza: fuera el lenguaje de Scrum de la interfaz; las notas explicativas van al panel «Notas».
 //  · Shell: herramientas flotantes, usuario en la barra, inicio (360 + vista en vivo) y asistente de IA.
 //  · v1.3 (16-oct): Mi Portal (HU-064/065/066; src/portal → mi-portal.js, ruta #/portal y núcleo prestado por «comun»),
@@ -58,6 +59,12 @@ const NOTA = 'globalThis.__ptNota&&globalThis.__ptNota(e),null'
 // v1.3: NEXUS, DAEDALUS y UrbeMind pasan a la Etapa 2 (PLT-01 v1.3, «Fuera de este plan · Etapa 2») y no se muestran. Lo que
 // queda es el comportamiento de la Etapa 1 («Cómo opera la Etapa 1 mientras tanto»): líderes y roles del maestro local de ATC.
 const MAESTRO = 'el maestro local de ATC'
+// Decisión del 20-oct (DECISIONES §5.9): el catálogo de áreas suma, a las del mockup, las áreas reales de la plataforma actual
+// (Front Digital, producción al 14-oct-2026) que no estaban. Se usan al derivar, en los flujos y en los filtros; sin gestores
+// asignados (un ticket derivado ahí queda en la cola del área). La Operación en vivo no gana salas (HU-067 CA-01).
+const AREAS_PLATAFORMA = [['BACK_OFFICE', 'Back Office'], ['LEGAL_FORMALIZACION', 'Legal Formalización'], ['LEGAL_CORPORATIVO', 'Legal Corporativo'], ['ARCHIVOS', 'Archivos'], ['PROYECTOS', 'Proyectos'], ['MARKETING', 'Marketing'], ['SOPORTE_WEB', 'Soporte Web']]
+const IDS_PLATAFORMA = AREAS_PLATAFORMA.map(([id]) => '`' + id + '`').join(',')
+const NOMBRES_PLATAFORMA = AREAS_PLATAFORMA.map(([id, n]) => id + ':`' + n + '`').join(',')
 // v1.3 · HU-043 (prioridad 1): flujo por tipo + subtipo + área, con responsable, actividades en orden y SLA por actividad.
 // El modelo vive en scripts/hu043-modelo.js (sufijo de comun); estas son las piezas que se cambian dentro de los chunks.
 // Semilla de flujos (clave tipo + subtipo + área):
@@ -66,9 +73,11 @@ const MAESTRO = 'el maestro local de ATC'
 //    (supuesto, a definir con el PO). Responsable del flujo: la persona del área que ya aparece en sus actividades;
 //  · el del CA-01/04/05 (Reclamo · Garantía postventa · Postventa; Inspección 8 h, Informe técnico 16 h y Respuesta al cliente 8 h).
 // Los tickets de ejemplo de la simulación («ticket entrante») entran con el subtipo «General», así que siguen el flujo de su tipo.
-const FLUJO_PO = (id, tipo, area, responsable, pasos) => `{id:\`${id}\`,tipo:\`${tipo}\`,subtipo:\`General\`,area:\`${area}\`,responsable:\`${responsable}\`,version:1,pasos:${pasos},slaTotalH:${[...pasos.matchAll(/slaH:(\d+)/g)].reduce((s, m) => s + Number(m[1]), 0)},publicado:Ss,autor:\`p-aperez\`}`
+const FLUJO_PO = (id, tipo, area, responsable, pasos, subtipo = 'General') => `{id:\`${id}\`,tipo:\`${tipo}\`,subtipo:\`${subtipo}\`,area:\`${area}\`,responsable:\`${responsable}\`,version:1,pasos:${pasos},slaTotalH:${[...pasos.matchAll(/slaH:(\d+)/g)].reduce((s, m) => s + Number(m[1]), 0)},publicado:Ss,autor:\`p-aperez\`}`
 const FLUJOS_043 = 'ws=[' + [
   FLUJO_PO('flu-0-1', 'CTA', 'COBRANZA', 'p-rsalazar', '[{nombre:`Recepción`,responsable:`p-crojas`,slaH:2},{nombre:`Revisión de cobranza`,responsable:`p-rsalazar`,slaH:24},{nombre:`Respuesta al cliente`,responsable:`p-crojas`,slaH:4}]'),
+  // decisión del 20-oct: el subtipo real «Estado de cuenta del lote» (Front Digital) con los mismos pasos del flujo del PO de Consulta de cuenta
+  FLUJO_PO('flu-0-6', 'CTA', 'COBRANZA', 'p-rsalazar', '[{nombre:`Recepción`,responsable:`p-crojas`,slaH:2},{nombre:`Revisión de cobranza`,responsable:`p-rsalazar`,slaH:24},{nombre:`Respuesta al cliente`,responsable:`p-crojas`,slaH:4}]', 'Estado de cuenta del lote'),
   FLUJO_PO('flu-0-2', 'QUE', 'ATC', 'p-dlazo', '[{nombre:`Registro`,responsable:`p-dlazo`,slaH:2},{nombre:`Respuesta`,responsable:`p-dlazo`,slaH:24}]'),
   FLUJO_PO('flu-0-4', 'RES', 'COBRANZA', 'p-rsalazar', '[{nombre:`Verificación de la deuda`,responsable:`p-rsalazar`,slaH:24},{nombre:`Revisión legal de la causal`,responsable:`p-pvilchez`,slaH:48},{nombre:`Carta de resolución`,responsable:`p-pvilchez`,slaH:72}]'),
   FLUJO_PO('flu-0-3', 'GAR', 'POSTVENTA', 'p-lccahuana', '[{nombre:`Recepción`,responsable:`p-lccahuana`,slaH:4},{nombre:`Inspección técnica`,responsable:`p-omedina`,slaH:72}]'),
@@ -180,14 +189,7 @@ const especificos = {
     reemplazos: [
       // el componente «Supuesto» ya no pinta nada: registra su texto para el panel de notas
       ['function il({children:e}){return(0,c.jsxs)(`span`,{className:`pt-supuesto`,children:[(0,c.jsx)(Me,{size:`sm`,variant:`outline`,children:`Supuesto`}),(0,c.jsx)(`span`,{className:`pt-supuesto__texto`,children:e})]})}', 'function il({children:e}){return ' + NOTA + '}'],
-      ['function rr(e,t,n,r){', 'function rr(e,t,n,r,s){'],
-      ['throw M([{campo:`csat`,mensaje:`CSAT de 1 a 5 y CES de 1 a 7.`}]);return L(',
-       'throw M([{campo:`csat`,mensaje:`CSAT de 1 a 5 y CES de 1 a 7.`}]);if(s!==void 0&&!(Number.isInteger(s)&&s>=0&&s<=10))throw M([{campo:`nps`,mensaje:`NPS (¿recomendarías?) de 0 a 10.`}]);return L('],
-      ['respuesta:{csat:n,ces:r,fecha:e.ahora}}:i)},`encuesta_respondida`,{csat:n,ces:r})}',
-       'respuesta:{csat:n,ces:r,...s===void 0?{}:{nps:s},fecha:e.ahora}}:i)},`encuesta_respondida`,{csat:n,ces:r,...s===void 0?{}:{nps:s}})}'],
-      ['t=rr(t,e.id,[5,4,2][n],[6,5,3][n])', 't=rr(t,e.id,[5,4,2][n],[6,5,3][n],[10,8,3][n])'],
-      ['responderEncuesta(e,t,n){X({...Y,datos:rr(Y.datos,e,t,n)})}', 'responderEncuesta(e,t,n,s){X({...Y,datos:rr(Y.datos,e,t,n,s)})}'],
-      ['let a=t===`tipo`?i.tipo:t===`area`?i.area:i.responsable??`Sin asignar`;', 'let a=t===`tipo`?i.tipo:t===`area`?i.area:t===`resultado`?__res(e,i):i.responsable??`Sin asignar`;'],
+      // cálculo del NPS: si algún día hay respuestas con NPS lo usa; sin ellas (v1.3: encuesta CSAT/CES) es el «NPS preliminar» del CSAT
       ['ces:t.reduce((e,t)=>e+t.ces,0)/t.length}))}function ar(e){',
        'ces:t.reduce((e,t)=>e+t.ces,0)/t.length,nps:__nps(t),npsN:t.filter(q=>q.nps!==void 0).length}))}' +
        'function __nps(rs){let c=rs.filter(q=>q.nps!==void 0);return c.length?Math.round((c.filter(q=>q.nps>=9).length-c.filter(q=>q.nps<=6).length)/c.length*100):null}' +
@@ -209,6 +211,13 @@ const especificos = {
       ['{id:`CIT`,nombre:`Incidencia de ciudad`},', ''],
       ['It=[`Lotes urbanos`,`Vivienda`,`Comercial`,`Servicios de ciudad`]', 'It=[`Lotes urbanos`,`Vivienda`,`Comercial`]'],
       ['return a=ks(a),a=Os(a),a=Ds(a),', 'return a=__etapa1(ks(a)),a=Os(a),a=Ds(a),'],
+      // áreas reales de la plataforma actual (decisión del 20-oct)
+      ['Wt=[`ATC`,`COBRANZA`,`LEGAL`,`POSTVENTA`,`TI`,`ADMINISTRACION`],Gt={ATC:`ATC`,COBRANZA:`Cobranza`,LEGAL:`Legal`,POSTVENTA:`Postventa`,TI:`TI`,ADMINISTRACION:`Administración`}',
+       'Wt=[`ATC`,`COBRANZA`,`LEGAL`,`POSTVENTA`,`TI`,`ADMINISTRACION`,' + IDS_PLATAFORMA + '],Gt={ATC:`ATC`,COBRANZA:`Cobranza`,LEGAL:`Legal`,POSTVENTA:`Postventa`,TI:`TI`,ADMINISTRACION:`Administración`,' + NOMBRES_PLATAFORMA + '}'],
+      // v1.3 · HU-056 CA-03 (decisión del 20-oct): el caso «suspendido por reclamo» frena el flujo de su ticket y lo reanuda al
+      // responderse el reclamo (scripts/hu043-modelo.js: __h43pausarFlujo / __h43reanudarFlujo)
+      ['t=L(t,`resolucion_abierta`,{cuotas:i.impagas,suspendido:c}),c?r++:t=rc(t,l),n++}', 't=L(t,`resolucion_abierta`,{cuotas:i.impagas,suspendido:c}),c&&(t=__h43pausarFlujo(t,s.id)),c?r++:t=rc(t,l),n++}'],
+      ['t=rc(t,e.id),i++);return[t,{nuevos', 't=__h43reanudarFlujo(t,e.ticketId),t=rc(t,e.id),i++);return[t,{nuevos'],
       // v1.3 · HU-043: semilla con la clave tipo + subtipo + área; el ticket guarda su subtipo; Pr anota el flujo de esa clave;
       // Zr (Mi Portal, «ticket entrante») y el alta de la consola aplican el flujo (área, responsable, actividades y SLA);
       // publicar valida la HU y «cerrarActividad» habilita la siguiente actividad
@@ -315,16 +324,6 @@ const especificos = {
     importa: 'import{a as __Prio}from"./comun-CVU2GQ4h.js";',
     reemplazos: [
       ['{key:`alerta`,header:`Alerta a Legal`', '{key:`prioridad`,header:`Prioridad`,width:`10rem`,renderCell:e=>(0,Z.jsx)(__Prio,{prioridad:e.ticket.prioridad,size:`sm`})},{key:`alerta`,header:`Alerta a Legal`'],
-      ['{id:`nps`,label:`NPS preliminar`,value:l===null?`—`:String(l)}', '{id:`nps`,label:e.encuestas.some(q=>' + TIENE_NPS + ')?`NPS`:`NPS preliminar`,value:l===null?`—`:`${l>0?`+`:``}${l}`}'],
-      ['children:`NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).`',
-       'children:e.encuestas.some(q=>' + TIENE_NPS + ')?`NPS = % de respuestas 9–10 menos % de respuestas 0–6 a «¿Recomendarías…?». Propuesta del PO (P2), sin HU aprobada: su relación con el NPS-C (DEP-10) está por definir.`:`NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor) hasta contar con el KPI Engine (DEP-10).`'],
-      ['{key:`ces`,header:`CES (1-7)`,align:`end`,render:e=>e.ces.toFixed(1)}]', '{key:`ces`,header:`CES (1-7)`,align:`end`,render:e=>e.ces.toFixed(1)},{key:`nps`,header:`NPS (0-10)`,align:`end`,render:e=>e.nps===null||e.nps===void 0?`—`:`${e.nps>0?`+`:``}${e.nps} (n=${e.npsN})`}]'],
-      ['(0,Z.jsx)($,{titulo:`Por gestor de tickets`,filas:u(t,`gestor`),nombre:e=>p(e)})})}),',
-       '(0,Z.jsx)($,{titulo:`Por gestor de tickets`,filas:u(t,`gestor`),nombre:e=>p(e)})})}),(0,Z.jsx)(R,{children:(0,Z.jsx)(z,{padding:`sm`,children:(0,Z.jsx)($,{titulo:`Por resultado del cierre`,filas:u(t,`resultado`),nombre:e=>({"en-plazo":`Cerrado en plazo`,"fuera-de-plazo":`Cerrado fuera de plazo`,reabierto:`Reabierto`,abierto:`En curso`})[e]??e})})}),'],
-      ['`CSAT ${t.respuesta.csat} · CES ${t.respuesta.ces}`', '`CSAT ${t.respuesta.csat} · CES ${t.respuesta.ces}${t.respuesta.nps===void 0?``:` · NPS ${t.respuesta.nps}`}`'],
-      ['{key:`resp`,header:`Respuesta`,width:`11rem`', '{key:`resp`,header:`Respuesta`,width:`15rem`'],
-      ['onClick:()=>f.responderEncuesta(e.id,4,6)', 'onClick:()=>{let q=[[5,6,10],[4,5,9],[4,6,8],[3,4,6],[5,7,10],[2,3,3],[4,5,7]][([...e.id].reduce((a,b)=>a+b.charCodeAt(0),0)+e.ciclo)%7];f.responderEncuesta(e.id,q[0],q[1],q[2])}'],
-      ['aquí «Simular respuesta» pone CSAT 4 y CES 6. El diseño de las preguntas queda fuera de alcance.', 'aquí «Simular respuesta» elige una combinación de CSAT, CES y NPS («¿Recomendarías…?», 0 a 10; propuesta del PO). El diseño de las preguntas queda fuera de alcance.'],
     ],
   },
 
@@ -371,6 +370,8 @@ const especificos = {
     prefijo: leer('hu066-configuracion.js') + '\n',
     cortes: [['function W({tipo:e,datos:t,onCerrar:i}){', 'function G({tipo:e,datos:t,onCerrar:i}){', leer('hu043-configuracion.js') + '\n']],
     reemplazos: [
+      // áreas reales de la plataforma actual (decisión del 20-oct): también en la lista local de Configuración
+      [',H=[`ATC`,`COBRANZA`,`LEGAL`,`POSTVENTA`,`TI`,`ADMINISTRACION`]', ',H=[`ATC`,`COBRANZA`,`LEGAL`,`POSTVENTA`,`TI`,`ADMINISTRACION`,' + IDS_PLATAFORMA + '],__AP=new Set([' + IDS_PLATAFORMA + '])'],
       [COLUMNAS_FLUJOS, COLUMNAS_FLUJOS_043],
       ['{value:`flujos`,label:`Flujos`,count:F.length}', '{value:`flujos`,label:`Flujos`,count:__f.vigentes(o).length}'],
       [TABLA_FLUJOS, TABLA_FLUJOS_043],

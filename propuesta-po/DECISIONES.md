@@ -118,6 +118,8 @@ detractor; marcado como supuesto hasta contar con el KPI Engine, DEP-10). El NPS
 > - **Quinta ronda (20-oct):** las prioridades del PO (HU-043, 050 y 067) y las garantías (HU-034, 035 y 036), criterio por criterio;
 >   ver §5.7.
 > - **Bloque 3 (20-oct):** las 12 HU que seguían parciales; ver §5.8. Con eso, las 62 HU de la Etapa 1 quedan completas.
+> - **Respuestas del equipo (20-oct):** las 27 preguntas de este documento, contestadas por Brayan (Dev 1); ver §5.9. Son la
+>   propuesta del equipo y las confirma el PO en el comité.
 >
 > Nada de esto está aprobado: el PLT-04 v1.3 está «Pendiente DoR» y el comité DoR es el 20-oct.
 
@@ -266,3 +268,74 @@ Pruebas al cerrar el bloque 3:
 
 Un problema anterior, que no es de esta ronda: en móvil, la Torre de Control vista como Coordinador CX es más ancha que la
 pantalla por sus cinco pestañas. Ya pasaba en el artifact del PO sin tocar.
+
+### 5.9 Respuestas del equipo a las preguntas abiertas (20-oct)
+
+Las contestó Brayan (Dev 1), una por una, el 20-oct-2026. Son la **propuesta del equipo**: las decide el PO en el comité. Solo 5
+cambian el mockup; las demás confirman lo que ya hace.
+
+| # | Tema (sección) | Respuesta | ¿Cambia el mockup? |
+|---|---|---|---|
+| 1 | Subtipo de los 4 flujos del PO (§5.7, HU-043) | Se quedan con «General». Donde la plataforma actual ya tiene el subtipo, se usa su nombre. En Mi Portal: «Estado de cuenta del lote», «Actualización de datos», «Copia legalizada de contrato» y «Otra solicitud». Se agrega el flujo «Consulta de cuenta · Estado de cuenta del lote» con los pasos del flujo del PO de Consulta de cuenta | **Sí** |
+| 2 | Modo simulación del visor (§5.7, HU-067 CA-08) | Encendido por defecto | No |
+| 3 | Correo al vencer el SLA (§5.7, HU-067 CA-03) | Al responsable, con copia a su líder (RN-SVC-035 y HU-055) | No |
+| 4 | Áreas del supervisor en el visor (§5.8, HU-067 CA-07) | Todas las áreas en Operación en vivo; en la Bandeja, solo las que supervisa | No |
+| 5 | Coordinador CX en la Bandeja (§5.8, HU-044 CA-03) | Sin Bandeja: trabaja en la Torre de Control CX | No |
+| 6 | «Prioritario» (§5.8, HU-041 CA-02) | Prioridad Urgente, sin tocar el SLA | No |
+| 7 | Paquete de handoff (§5.8, HU-027) | Solo al pasar a Eje 3 | No |
+| 8 | Cuándo llega el caso a Legal (§5.8, HU-040 CA-01) | Al confirmar la derivación | No |
+| 9 | «Derivar» en la excepción de la 360 (§5.7, HU-050 CA-08) | Derivar el ticket a otra área (HU-007) | No |
+| 10 | «Etapa» del proyecto (§5.7, HU-050 CA-05) | El nombre del proyecto; se pregunta a Datos si hay un campo aparte | No |
+| 11 | Adjuntos de la inspección (§5.7, HU-035) | JPG, PNG o PDF de hasta 10 MB, máximo 5, al menos una foto | No |
+| 12 | Quién cierra el reclamo tras Legal (§5.7, HU-036) | Postventa registra el resultado | No |
+| 13 | Habilidad en el reparto (§5.8, HU-046) | Sin habilidad por ahora; se pregunta al PO | No |
+| 14 | Criterio de cierre cumplido (§5.8, HU-048) | Reglas simples: respuesta al cliente, asiento del Libro y confirmación (ticket cerrado); el resto lo decide el gestor | No |
+| 15 | Informes (§5.8, HU-031) | Jornada que cierra a las 18:00, quincenas del 1 al 15 y del 16 a fin de mes, adopción = % de tickets nuevos registrados en Mi Portal | No |
+| 16 | Correo de asignación (§5.8, HU-055) | Sin datos del cliente | No |
+| 17 | Suspensión por reclamo (§5.8, HU-056 CA-03) | Frena el flujo del ticket: la actividad en curso no se cierra ni corre su SLA; al responderse el reclamo, su vencimiento se corre lo que duró la suspensión | **Sí** |
+| 18 | Días para el cierre automático (§5.8, HU-066 CA-04) | 5 días hábiles, configurables | No |
+| 19 | Pausa del SLA y actividades (§5.8, HU-066 CA-01) | La pausa en «pendiente del cliente» también corre el vencimiento de la actividad en curso | **Sí** |
+| 20 | Código de acceso de Mi Portal (§5.2) | Al correo y al celular, 6 dígitos, 5 minutos, 3 intentos | No |
+| 21 | Alta en Mi Portal (§5.2) | Lote → razón social y línea; prioridad Media; adjuntos JPG, PNG o PDF de hasta 10 MB, máximo 3; compromiso = vencimiento congelado o SLA del flujo | No |
+| 22 | Textos y navegación de Mi Portal (§5.2) | Estados en voz del cliente, nombre del área, «Mis tickets» y «Nuevo ticket» junto a «Buses» | No |
+| 23 | Línea «Servicios de ciudad» (§5.5) | Fuera | No |
+| 24 | Pregunta NPS 0–10 en la encuesta (§4, P2) | Se quita: la encuesta es CSAT y CES (HU-019) y el NPS es el «NPS preliminar» del CSAT. P2 queda como propuesta para una HU futura | **Sí** |
+| 25 | Áreas (§3) | El catálogo suma, a las del mockup, las áreas reales de la plataforma actual: Back Office, Legal Formalización, Legal Corporativo, Archivos, Proyectos, Marketing y Soporte Web. Se usan al derivar, en los flujos y en los filtros, sin gestores asignados. El visor no gana salas | **Sí** |
+| 26 | Estilo de las entradas del visor (§1) | Terminales por defecto | No |
+| 27 | Final del recorrido en el visor (§2) | No se hacen las 5 propuestas (no las pide la v1.3) | No |
+
+**Referencia: el catálogo actual de la plataforma interna (Front Digital).** No está en el código: vive en la base de producción y
+lo administra el supervisor de ATC desde el ERP. La foto más completa es un volcado del 21-jul-2026. Se revisó sin copiar datos de
+personas.
+
+| ATC v1.3 (PLT-04) | En la plataforma actual |
+|---|---|
+| Consulta de cuenta | Repartido en EE.CC (SOLICITUD DE EE.CC - LOTE, en el portal «Estado de cuenta del lote»), PAGOS, CONSTANCIA DE NO ADEUDO y BOLETAS Y/O TICKETS DE PAGO |
+| Pedido simple | SOLICITUD DE INFORMACION (17 subtipos), ACTUALIZACION DE DATOS, COPIA LEGALIZADA DE CONTRATO, OTROS (en el portal «Otra solicitud») |
+| Visita técnica | PROGRAMACION DE VISITA AL PROYECTO (visita al proyecto, no técnica) |
+| Queja y Reclamo | Subtipos QUEJA y RECLAMO del tipo LIBRO DE RECLAMACION |
+| Resolución de contrato | No existe; lo más cercano: DESISTIMIENTOS y CITA CON ASESOR LEGAL (Legal) |
+| Garantía postventa, Ingreso a proyecto, Reserva de bus | No existen |
+| Áreas Cobranza y Postventa | No existen; hoy hacen ese papel Back Office y Legal Formalización |
+
+SLA en la plataforma actual: por tarea del flujo, en minutos; el tiempo del tipo es solo informativo. El portal solo ofrece un
+subtipo marcado para el portal y con su flujo terminado.
+
+**Preguntas que siguen abiertas para el comité:**
+1. ¿El ATC nuevo hereda el catálogo de tipos, subtipos y áreas de la plataforma actual o adopta el del PLT-04 (con Cobranza y
+   Postventa, que hoy no existen)? ¿Cuáles son las combinaciones tipo · subtipo · área del piloto y sus responsables?
+2. ¿Cuál es el flujo por defecto de cada área (HU-043 CA-07)?
+3. ¿Qué habilidades tiene cada gestor (HU-046)?
+4. ¿Qué campo de SIGDA/TAXON es la «etapa» del proyecto (HU-050)?
+5. Texto de la alerta de cancelación (HU-057, Legal).
+6. Confirmar los supuestos de esta tabla que el PO quiera cambiar.
+
+**Lo que cambió en el mockup con estas respuestas** (pruebas en `scripts/probar-decisiones.mjs`):
+- **Mi Portal:** los subtipos con nombre real y el flujo «Consulta de cuenta · Estado de cuenta del lote». Un ticket de ese
+  subtipo va a Cobranza con sus actividades.
+- **Morosidad:** el ticket del caso suspendido tiene el flujo en pausa: «Cerrar la actividad» no aparece y el modelo lo
+  rechaza. Al responderse el reclamo, la actividad recupera el tiempo que duró la suspensión.
+- **Pausa del SLA:** en «pendiente del cliente», la actividad en curso también se pausa. Se ve «En pausa» en «Actividades del
+  flujo».
+- **Encuesta:** sin la pregunta 0–10, y la Torre sin la columna NPS ni la tabla «Por resultado del cierre».
+- **Áreas:** las 7 áreas de la plataforma actual al derivar y en Configuración › Flujos, marcadas «plataforma actual».

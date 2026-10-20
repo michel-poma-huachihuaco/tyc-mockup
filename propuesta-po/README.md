@@ -181,5 +181,5 @@ de la Etapa 1 están completas** (`documentacion/cobertura-v1.3.md`, que dice d�
 
 | Comando | Qué hace ahora |
 |---|---|
-| `npm run probar` | 76 casos en Node, en 10 suites (Mi Portal, flujos, Consulta 360, garantías, morosidad, SLA de Mi Portal, Eje 3 y Legal, Bandeja, asistente de IA e informes) |
+| `npm run probar` | 82 casos en Node, en 11 suites (Mi Portal, flujos, Consulta 360, garantías, morosidad, SLA de Mi Portal, Eje 3 y Legal, Bandeja, asistente de IA, informes y las decisiones del 20-oct) |
 | `npm run recorrer` | Con el servidor arriba: 90 pasos en Chrome, en 11 recorridos (el general y uno por tema) |

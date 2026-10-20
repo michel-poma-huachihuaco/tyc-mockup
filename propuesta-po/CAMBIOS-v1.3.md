@@ -95,6 +95,18 @@ tiene como token: bordes, tamaño de iconos, sombras, animaciones y cortes de pa
 
 Supuestos y preguntas para el PO: [DECISIONES.md §5.8](DECISIONES.md).
 
+### 8. Respuestas del equipo a las preguntas abiertas (20-oct)
+
+Brayan contestó, una por una, las 27 preguntas de `DECISIONES.md`, y 5 respuestas cambiaron el mockup:
+1. subtipos reales de la plataforma actual en Mi Portal, con su flujo;
+2. la suspensión por reclamo frena el flujo del ticket;
+3. la pausa del SLA también corre la actividad en curso;
+4. la encuesta sin la pregunta NPS de 0 a 10;
+5. las áreas de la plataforma actual en el catálogo.
+
+El detalle, la tabla de equivalencias con el catálogo actual y las preguntas que siguen abiertas para el comité están en
+[DECISIONES.md §5.9](DECISIONES.md). Pruebas: `scripts/probar-decisiones.mjs`, con 6 de 6 casos.
+
 ### 7. Documentación de consulta en el repositorio
 
 [`documentacion/`](documentacion/README.md) contiene tres cosas:
@@ -126,13 +138,13 @@ completas (quinta ronda) y 44 (19-oct). Dónde ver cada una: [documentacion/cobe
 cd propuesta-po
 npm install
 npm start          # compila (escenas three.js y Mi Portal) y sirve http://localhost:5180
-npm run probar     # 76 casos en Node, en 10 suites (uno por criterio)
+npm run probar     # 82 casos en Node, en 11 suites (uno por criterio y por decisión)
 npm run recorrer   # con el servidor arriba: 90 pasos en Chrome sin interfaz, en 11 recorridos
 ```
 
 Verificado el 20-oct-2026, después de la sección 6:
 
-- **`npm run probar`:** 76/76 casos.
+- **`npm run probar`:** 82/82 casos (con `probar-decisiones`, el 20-oct).
 - **`npm run recorrer`:** 90/90 pasos.
 - En todos: sin errores de JS, consola ni red.
 
