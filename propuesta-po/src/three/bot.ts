@@ -14,6 +14,8 @@ export interface CtxBot {
   sla: { nivel: 'ok' | 'riesgo' | 'vencido' | 'cumplido' | 'fuera'; hito: string; vence: string; restante: string }
   historial: { fecha: string; texto: string }[]
   mensajes: number; notas: number; ultimoMensaje: string | null
+  /** HU-048: criterios de cierre de la guía vigente del tipo (HU-047) que el ticket aún no cumple; guía null = tipo sin guía. */
+  cierre: { guia: number | null; pendientes: string[] }
 }
 export type Tono = 'empatico' | 'formal' | 'breve'
 export const TONOS: { id: Tono; n: string }[] = [{ id: 'empatico', n: 'Empático' }, { id: 'formal', n: 'Formal' }, { id: 'breve', n: 'Breve' }]
@@ -45,9 +47,11 @@ function slaLinea(c: CtxBot, corto = false): string {
   return corto ? `Te respondemos antes del ${c.sla.vence}.` : `Te daremos una respuesta a más tardar el ${c.sla.vence}.`
 }
 
-/** Propone el mensaje al cliente según el contexto del ticket y el tono elegido. */
-export function redactar(c: CtxBot | null, tono: Tono): string {
+/** Propone el mensaje al cliente según el contexto del ticket y el tono elegido. Con `destino` (HU-048: el gestor va a resolver
+ *  o cerrar) redacta la respuesta de cierre: el ticket como si ya estuviera en ese estado, sin la línea del plazo del SLA. */
+export function redactar(c: CtxBot | null, tono: Tono, destino?: string): string {
   if (!c) return 'Abre un ticket y te redacto la respuesta con su contexto.'
+  if (destino) c = { ...c, estadoId: destino, sla: { ...c.sla, nivel: 'cumplido' } }
   const yo = c.usuario, cl = c.cliente ?? 'cliente', sla = slaLinea(c), est = estadoLinea(c)
   if (tono === 'formal') return `Estimado(a) ${cl}:\n\nEn relación con ${contexto(c)} (ticket ${c.numero}), ${est}${sla ? `\n\n${sla}` : ''}\n\nQuedamos atentos a cualquier consulta.\n\nAtentamente,\n${yo}\nAtención al Cliente · Aybar`
   if (tono === 'breve') return `Hola ${primerNombre(c)}, sobre ${contexto(c)} (${c.numero}): ${estadoLinea(c, true)}. ${slaLinea(c, true)} — ${yo}`.replace(/\s+—/, ' —').replace('. .', '.')
@@ -56,7 +60,7 @@ export function redactar(c: CtxBot | null, tono: Tono): string {
 }
 
 export function resumir(c: CtxBot | null): { titulo: string; lineas: string[] } {
-  if (!c) return { titulo: 'Sin ticket abierto', lineas: ['Abre un ticket desde la bandeja o la vista en vivo y te lo resumo.'] }
+  if (!c) return { titulo: 'Sin ticket abierto', lineas: ['Abre un ticket desde la bandeja o la operación en vivo y te lo resumo.'] }
   const lineas = [
     `${c.tipo} por ${c.canal}${c.cliente ? ` · cliente: ${c.cliente}` : ''}.`,
     `Está «${c.estado}» en ${c.area}${c.responsable ? ` con ${c.responsable}` : ', sin responsable'}${c.rayo ? ' y tiene rayo' : ''}.`,
@@ -68,13 +72,13 @@ export function resumir(c: CtxBot | null): { titulo: string; lineas: string[] } 
   return { titulo: `${c.numero} · ${c.resumen}`, lineas }
 }
 
-const CRITERIOS: Record<string, string[]> = {
-  REC: ['Asiento del Libro de Reclamaciones registrado', 'Respuesta formal con cargo de entrega'], QUE: ['Asiento del Libro de Reclamaciones registrado', 'Respuesta formal con cargo de entrega'],
-  GAR: ['Inspección técnica registrada', 'Resolución comunicada al cliente'], CTA: ['Datos de cuenta verificados con el cliente'], VIS: ['Visita realizada y constancia adjunta'],
+export function siguientePaso(c: CtxBot | null): { accion: string; motivo: string; pasos: string[]; criterios: string[]; guia: number | null } {
+  return { ...pasoSegunEstado(c), guia: c?.cierre.guia ?? null }
 }
-export function siguientePaso(c: CtxBot | null): { accion: string; motivo: string; pasos: string[]; criterios: string[] } {
-  if (!c) return { accion: 'Abrir un ticket', motivo: 'No hay un ticket en pantalla.', pasos: ['Elige uno en la bandeja o en la vista en vivo.'], criterios: [] }
-  const criterios = ['Respuesta enviada al cliente', ...(CRITERIOS[c.tipoId] ?? []), 'Cliente informado del cierre']
+// HU-048: «para cerrar» son los criterios de cierre pendientes del ticket según su guía (no una lista fija por tipo)
+function pasoSegunEstado(c: CtxBot | null): { accion: string; motivo: string; pasos: string[]; criterios: string[] } {
+  if (!c) return { accion: 'Abrir un ticket', motivo: 'No hay un ticket en pantalla.', pasos: ['Elige uno en la bandeja o en la operación en vivo.'], criterios: [] }
+  const criterios = c.cierre.pendientes
   if (c.sla.nivel === 'vencido' && c.estadoId !== 'CLOSED') return { accion: 'Priorizar y avisar al cliente', motivo: 'El SLA ya venció.', pasos: ['Escribe al cliente reconociendo la demora y dando una nueva fecha.', 'Si no puedes resolverlo hoy, pide apoyo al supervisor (rayo) o deriva.', 'Deja una nota interna con el motivo del retraso.'], criterios }
   if (c.estadoId === 'OPEN' && !c.primeraRespuesta) return { accion: 'Registrar la primera respuesta', motivo: 'Sin primera respuesta el ticket sigue en «Abierto» y corre el SLA de respuesta.', pasos: ['Responde al cliente con lo que ya sabes.', 'El ticket pasa solo a «En atención».'], criterios }
   if (c.estadoId === 'PENDING_CUSTOMER') return { accion: 'Recordar al cliente lo que falta', motivo: 'Estamos esperando su respuesta.', pasos: ['Envía un recordatorio amable por el mismo canal.', 'Si no responde en 2 días hábiles, cierra la espera y avisa a tu líder.'], criterios }
@@ -113,7 +117,7 @@ export function revisar(c: CtxBot | null, borrador: string): Revision {
 
 // ------------------------------------------------------------------ conversación libre
 export const SALUDO = 'Hola, soy tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.'
-export function conversar(c: CtxBot | null, texto: string): { texto: string; accion?: 'redactar' | 'resumir' | 'paso' | 'revisar' } {
+export function conversar(c: CtxBot | null, texto: string): { texto: string; accion?: 'redactar' | 'resumir' | 'paso' | 'revisar' | 'cierre' } {
   const t = texto.toLowerCase()
   if (/redact|respuesta|escrib|mensaje/.test(t)) return { texto: 'Claro, elige el tono y te lo redacto.', accion: 'redactar' }
   if (/resum|qué pas|cómo va|situaci/.test(t)) return { texto: 'Te lo resumo.', accion: 'resumir' }
@@ -122,7 +126,7 @@ export function conversar(c: CtxBot | null, texto: string): { texto: string; acc
   if (!c && /ticket|cliente|plazo|sla/.test(t)) return { texto: 'Ahora no hay un ticket abierto. Entra a uno y te respondo con su contexto.' }
   if (/plazo|sla|vence|cuánto tiempo/.test(t) && c) return { texto: c.estadoId === 'CLOSED' ? 'Este ticket ya está cerrado: no corre SLA.' : `El SLA de ${c.sla.hito} vence el ${c.sla.vence} (${c.sla.restante}). Está ${c.sla.nivel === 'vencido' ? 'vencido' : c.sla.nivel === 'riesgo' ? 'en riesgo' : 'en plazo'}.` }
   if (/cliente|quién es/.test(t) && c) return { texto: c.cliente ? `El cliente es ${c.cliente}. Escribió por ${c.canal} por «${c.resumen}».` : 'Este ticket se registró con datos mínimos y todavía no está ligado a un cliente.' }
-  if (/cerrar|cierre/.test(t) && c) return { texto: `Para cerrar: ${siguientePaso(c).criterios.join('; ') || 'ya está cerrado'}. El cierre formal lo confirma el cliente en Mi Portal.` }
+  if (/cerrar|cierre/.test(t) && c) return c.estadoId === 'CLOSED' ? { texto: 'Este ticket ya está cerrado: no queda nada por revisar.' } : { texto: 'Reviso el cierre: te listo los criterios pendientes de su guía y te propongo la respuesta.', accion: 'cierre' }
   if (/rayo/.test(t)) return { texto: 'El rayo sube un ticket al tope de la bandeja. Solo lo marca un supervisor o líder, con motivo, y el área tiene un tope del 10 %.' }
   if (/deriv|escal/.test(t)) return { texto: 'Deriva a otra área si no es tu competencia o falta información de ella; escala a Eje 3 si hay señal de conflicto. En ambos casos indica el motivo.' }
   if (/gracias/.test(t)) return { texto: '¡Con gusto! Aquí sigo.' }

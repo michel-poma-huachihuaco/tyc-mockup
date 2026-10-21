@@ -75,7 +75,7 @@ function construir(root: HTMLElement): Estado {
   // marca de la meta (90 %) sobre el anillo: un tramo muy corto del trazo, girado a la posición
   meta.setAttribute('stroke-dasharray', '1.8 142.7'); meta.setAttribute('stroke-dashoffset', String(-144.5 * 0.9))
   const sla = tarjeta('sla', 'Resueltos en SLA', anillo, 'Porcentaje de tickets resueltos dentro de su plazo. La marca blanca del anillo es la meta de 90 %.')
-  nodos.subSla = h('span'); nodos.chipMeta = h('span', 'v3-k-chip'); sla.sub.append(nodos.chipMeta, nodos.subSla)
+  nodos.subSla = h('span'); nodos.chipMeta = h('span', 'v3-k-chip'); sla.sub.append(nodos.subSla) // 20-oct: la meta va en el texto
 
   const csat = tarjeta('csat', 'CSAT del día', icono(ICONO.estrella), 'Satisfacción promedio de las encuestas respondidas hoy (1 a 5).')
   nodos.estrellas = h('span', 'v3-estrellas', `<span class="fondo">${ESTRELLAS}</span><span class="lleno">${ESTRELLAS}</span>`)
@@ -154,7 +154,7 @@ export function actualizarHud(root: HTMLElement, p: HudProps) {
   t.act.el.dataset.estado = estadoAct
   numero(t.act, p.act, fmt.int)
   chip(nodos.chipAct!, p.riesgo > 0 ? `${p.riesgo} en riesgo` : 'Sin riesgos', p.riesgo > 0 ? 'warn' : 'ok', p.riesgo > 0)
-  if (ahora - s.ultimaMuestra > 1800) { s.hist.push(p.act); if (s.hist.length > 28) s.hist.shift(); s.ultimaMuestra = ahora }
+  if (ahora - s.ultimaMuestra > 1800 || s.hist.length < 2) { s.hist.push(p.act); if (s.hist.length > 28) s.hist.shift(); s.ultimaMuestra = ahora }
   sparkline(nodos.spark!, s.hist)
   const ref = s.hist.length > 6 ? s.hist[s.hist.length - 7]! : s.hist[0] ?? p.act, d = p.act - ref
   nodos.tend!.textContent = d === 0 ? '→' : d > 0 ? `▲ ${d}` : `▼ ${-d}`
@@ -168,7 +168,7 @@ export function actualizarHud(root: HTMLElement, p: HudProps) {
   numero(t.sla, sl, fmt.pct, '%')
   nodos.arco!.setAttribute('stroke-dashoffset', String(144.5 * (1 - (sl ?? 0) / 100)))
   chip(nodos.chipMeta!, 'Meta 90 %', estadoSla === 'ok' ? 'ok' : 'warn')
-  nodos.subSla!.textContent = p.res ? `${p.enSla} de ${p.res} en plazo` : 'Aún sin resueltos'
+  nodos.subSla!.textContent = p.res ? `${p.enSla} de ${p.res} (Meta 90 %)` : 'Aún sin resueltos (Meta 90 %)'
 
   // --- CSAT
   t.csat.el.dataset.estado = p.csat == null ? 'pri' : p.csat >= 4 ? 'acc' : p.csat >= 3 ? 'warn' : 'bad'
@@ -178,28 +178,29 @@ export function actualizarHud(root: HTMLElement, p: HudProps) {
 
   // --- nivel del equipo
   t.niv.el.dataset.estado = 'acc'
+  t.niv.el.querySelector('.v3-k-lbl')!.textContent = `Nivel ${p.nivel} del equipo`
   nodos.hexN!.textContent = String(p.nivel)
   if (t.niv.actual == null || prev == null) { t.niv.actual = p.xp; t.niv.val.innerHTML = `${p.xp}<small>/ ${p.meta} XP</small>` }
   else if (p.xp !== prev.xp || p.nivel !== prev.nivel) { cancelAnimationFrame(t.niv.raf); t.niv.actual = p.xp; t.niv.val.innerHTML = `${p.xp}<small>/ ${p.meta} XP</small>`; t.niv.val.classList.remove('pop'); void t.niv.val.offsetWidth; t.niv.val.classList.add('pop') }
   nodos.xp!.style.setProperty('--p', String(Math.min(1, p.xp / p.meta)))
   nodos.racha!.className = 'v3-racha' + (p.racha > 0 ? ' viva' : '')
-  nodos.racha!.lastElementChild!.textContent = `racha ${p.racha}`
+  nodos.racha!.lastElementChild!.textContent = `Racha ${p.racha}`
   nodos.racha!.title = 'Tickets seguidos dentro del SLA'
-  nodos.faltan!.textContent = `faltan ${Math.max(0, p.meta - p.xp)} XP`
+  nodos.faltan!.textContent = `Faltan ${Math.max(0, p.meta - p.xp)} XP`
 
   // --- notas de revisión (van al panel «Notas», no a la pantalla)
   ;(globalThis as { __ptNota?: (t: string) => void }).__ptNota?.('Tickets por estado: no incluye «cancelados». Ese estado no existe en el flujo (RF-SVC-004) y está pendiente de decisión del PO.')
-  ;(globalThis as { __ptNota?: (t: string) => void }).__ptNota?.(p.nps.real ? 'NPS real: pregunta «¿Recomendarías…?» de 0 a 10 agregada a la encuesta de cierre (propuesta del PO, sin HU aprobada). Su relación con el NPS-C (DEP-10) está por definir.' : 'NPS preliminar derivado del CSAT hasta contar con el KPI Engine (DEP-10).')
+  ;(globalThis as { __ptNota?: (t: string) => void }).__ptNota?.('NPS del turno: estimado sobre las encuestas respondidas del día con un reparto fijo de 72 % promotores y 18 % pasivos (dato de ejemplo de la presentación); el NPS-C real llegará con el motor de indicadores.')
 
   // --- NPS
   const npsV = p.nps.valor
   t.nps.el.dataset.estado = npsV == null ? 'pri' : npsV >= 30 ? 'ok' : npsV >= 0 ? 'warn' : 'bad'
-  t.nps.el.querySelector('.v3-k-lbl')!.textContent = p.nps.real ? 'NPS' : 'NPS preliminar'
+  t.nps.el.querySelector('.v3-k-lbl')!.textContent = 'NPS del turno'
   numero(t.nps, npsV, fmt.signed)
-  chip(nodos.chipNps!, p.nps.real ? `Encuesta · n=${p.nps.n}` : 'Estimado desde CSAT', p.nps.real ? 'ok' : 'warn')
-  nodos.cuentaNps!.textContent = p.nps.n ? `▲${p.nps.prom} ●${p.nps.pas} ▼${p.nps.det}` : 'Sin respuestas'
+  chip(nodos.chipNps!, `Encuestas · n=${p.nps.n}`, npsV != null && npsV >= 30 ? 'ok' : 'warn')
+  nodos.cuentaNps!.textContent = p.nps.n ? `Prom: ${p.nps.prom} · Pas: ${p.nps.pas} · Det: ${p.nps.det}` : 'Sin respuestas'
   nodos.cuentaNps!.title = 'Promotores · pasivos · detractores'
-  t.nps.el.title = p.nps.real ? 'NPS = % que responde 9–10 menos % que responde 0–6 a «¿Recomendarías…?».' : 'NPS preliminar derivado del CSAT (5 promotor, 4 pasivo, 1 a 3 detractor).'
+  t.nps.el.title = 'NPS del turno = % de promotores menos % de detractores, estimado sobre las encuestas respondidas del día.'
 
   // --- tickets por estado
   const maxE = Math.max(1, ...p.estados.map((e) => e.v)), totalE = p.estados.reduce((a, e) => a + e.v, 0)

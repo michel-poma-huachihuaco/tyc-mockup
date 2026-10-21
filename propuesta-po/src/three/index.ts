@@ -1,5 +1,13 @@
 export { montarVivo } from './vivo.ts'
+// Operación en Vivo de la rama de Daniel (src/vivo la monta desde escenas-three.js)
+export { montarVivo as montarVivoDaniel, leerTokenRgb } from './vivo-daniel.ts'
+export type { Cols as ColsDaniel, Estatico as EstaticoDaniel, Snap as SnapDaniel, OptsVivo as OptsVivoDaniel } from './vivo-daniel.ts'
 export { montarGrafo } from './grafo360.ts'
+// Consulta 360 de la rama de Daniel (src/c360 → consulta360-daniel.js): su escena 3D y su vista 2D
+export { montarGrafoDaniel } from './grafo360-daniel.ts'
+export type { VistaGrafo as VistaGrafoDaniel, PulsoGrafo as PulsoGrafoDaniel } from './grafo360-daniel.ts'
+export { montarRed2D } from './red2d-daniel.ts'
+export type { Estado2D } from './red2d-daniel.ts'
 export { actualizarHud } from './hud.ts'
 export type { HudProps } from './hud.ts'
 export { inyectarEstilos } from './estilos.ts'

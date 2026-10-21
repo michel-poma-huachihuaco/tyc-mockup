@@ -72,16 +72,6 @@ export const rutaCola = (s: Sala, slot: THREE.Vector3) => {
 }
 export const rutaAtencion = (s: Sala, destino: THREE.Vector3) =>
   [nodo(s.fuera[0], s.fuera[1]), nodo(s.puerta[0], s.puerta[1]), nodo(s.dentro[0], s.dentro[1]), V(destino.x, destino.y, s.lado === 'oeste' ? destino.z : s.dentro[1]), destino]
-export const rutaEntreSalas = (desde: Sala, etapaDesde: string, hacia: Sala, etapaHacia: string, destino: THREE.Vector3) => {
-  const salir = etapaDesde === 'atencion'
-    ? [nodo(desde.dentro[0], desde.dentro[1]), nodo(desde.puerta[0], desde.puerta[1])]
-    : []
-  const pDesde = desde.lado === 'oeste' ? nodo(11.6, desde.fuera[1]) : nodo(desde.fuera[0], 10.9)
-  const esquina = desde.lado !== hacia.lado ? [nodo(11.6, 10.9)] : []
-  const pHacia = hacia.lado === 'oeste' ? nodo(11.6, hacia.fuera[1]) : nodo(hacia.fuera[0], 10.9)
-  const entrar = etapaHacia === 'atencion' ? rutaAtencion(hacia, destino) : [destino]
-  return [...salir, pDesde, ...esquina, pHacia, ...entrar]
-}
 export const rutaSalida = (s: Sala, slot: THREE.Vector3) => {
   const camino = s.lado === 'oeste'
     ? [nodo(s.dentro[0], s.dentro[1]), nodo(s.puerta[0], s.puerta[1]), nodo(11.6, s.fuera[1]), nodo(11.6, 10.9)]
