@@ -571,7 +571,7 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     area: 'CLIENTE',
     rol360: 'gestor',
     nodoInicial360: 'lote',
-    vistaPrincipal: 'buses',
+    vistaPrincipal: 'evento',
     resumenPerspectiva:
       'Experiencia de autogestión en Mi Portal para reservar cupo con acompañantes en los Buses del Entrega Fest o anotarse en lista de espera.',
   },
@@ -1948,7 +1948,7 @@ export class EstadoPrototipoAtcService {
 
   vistasPermitidasParaRol(rol: RolPrototipoAtc = this.rolActivo()): readonly VistaAtc[] {
     if (rol === 'CONTROL_ACCESO') return ['ingreso'];
-    if (rol === 'CLIENTE') return ['buses'];
+    if (rol === 'CLIENTE') return ['evento'];
 
     const vistas: VistaAtc[] = [];
     if (rol !== 'SIN_ATENCION') {
@@ -1964,9 +1964,6 @@ export class EstadoPrototipoAtcService {
     }
     if (rol === 'SUPERVISOR') {
       vistas.push('ingreso');
-    }
-    if (['COORDINADOR_CX', 'MODERADOR_EVENTO', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('buses');
     }
     if (this.puedeVerLibro(rol)) {
       vistas.push('libro');

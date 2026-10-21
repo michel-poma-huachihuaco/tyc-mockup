@@ -1399,12 +1399,13 @@ export class ConsolaAtcComponent {
       subtitulo: 'Casos en evento presencial y reserva de cupo en transporte',
       icono:
         'M8 6v6 M15 6v6 M2 12h19.6 M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3 M7 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M16 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+      oculto: true,
     },
     {
       id: 'evento',
       grupo: 'OPERACION',
       titulo: 'EntregaFest en vivo',
-      subtitulo: 'Moderación presencial, 6 frases ancla y derivación inmediata a Estación 4 Legal',
+      subtitulo: 'Moderación presencial, 6 frases ancla, Estación 4 Legal y buses del evento',
       icono:
         'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
     },
@@ -1550,9 +1551,9 @@ export class ConsolaAtcComponent {
           abiertoInicial: true,
           elementos: [
             {
-              href: '#vista:buses',
-              etiqueta: 'Buses del Entrega Fest',
-              actual: activa === 'buses',
+              href: '#vista:evento',
+              etiqueta: 'EntregaFest en vivo',
+              actual: activa === 'evento' || activa === 'buses',
             },
             {
               href: '#vista:nuevo',
@@ -2047,6 +2048,9 @@ export class ConsolaAtcComponent {
 
   /** El expediente solo se abre desde un ticket concreto; sin él se vuelve a la Bandeja. */
   irAVista(vista: VistaAtc): void {
+    if (vista === 'buses') {
+      vista = 'evento';
+    }
     if (vista === 'detalle') {
       this.avisoNavegacion.set('Abre un ticket desde la Bandeja de tickets (botón «Ver ticket») para ver su expediente.');
       this.vistaActiva.set('bandeja');

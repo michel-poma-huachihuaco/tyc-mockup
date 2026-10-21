@@ -1271,128 +1271,7 @@ export type SubvistaEspecializadaAtc =
     }
 
     <!-- ====================================================================== -->
-    <!-- 9. BUSES DEL ENTREGA FEST (ADAPTADO A CLIENTE MI PORTAL Y STAFF)       -->
-    <!-- ====================================================================== -->
-    @if (subvista() === 'buses') {
-      <div ayStack gap="6">
-        <ay-page-header
-          titulo="Buses del Entrega Fest"
-          [descripcion]="
-            estadoProto.rolActivo() === 'CLIENTE'
-              ? 'Reserva tu cupo con tus acompañantes (hasta 3) y tu punto de embarque desde Mi Portal.'
-              : 'Aforo por bus y reservas de los clientes convocados al Entrega Fest.'
-          "
-        >
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ estadoProto.reservasBusFest().length }} reservas registradas
-          </ay-badge>
-        </ay-page-header>
-
-        <div ayGrid [columnas]="3" gap="sm">
-          @for (b of estadoProto.busesFest; track b.id) {
-            <ay-card superficie="solid">
-              <ay-card-body padding="sm">
-                <ay-statistic
-                  [etiqueta]="b.nombre"
-                  [valor]="cuposLibresBus(b.id) + ' de ' + b.aforo + ' libres'"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-          }
-        </div>
-
-        @if (estadoProto.rolActivo() === 'CLIENTE') {
-          <ay-card variante="elevated" superficie="solid">
-            <ay-card-header
-              titulo="Mi Portal · Reservar mi cupo en el bus"
-              subtitulo="Hasta 3 acompañantes por titular convocado. Si el bus no tiene cupo, puedes entrar en la lista de espera."
-              nivel="h2"
-              [separador]="true"
-            />
-            <ay-card-body padding="md" gap="md">
-              <ay-form (enviar)="confirmarReservaBusCliente()">
-                <div ayGrid [columnas]="3" gap="sm">
-                  <ay-form-field etiqueta="Bus y horario" obligatorio>
-                    <ay-select
-                      [opciones]="opcionesBusesSelect()"
-                      [valor]="formBusId()"
-                      (valorChange)="formBusId.set($event)"
-                    />
-                  </ay-form-field>
-                  <ay-form-field etiqueta="Punto de embarque" obligatorio>
-                    <ay-select
-                      [opciones]="opcionesPuntosEmbarque"
-                      [valor]="formBusPunto()"
-                      (valorChange)="formBusPunto.set($event)"
-                    />
-                  </ay-form-field>
-                  <ay-form-field etiqueta="Acompañantes (0 a 3)" obligatorio>
-                    <ay-select
-                      [opciones]="opcionesAcompanantesBus"
-                      [valor]="formBusAcompanantes()"
-                      (valorChange)="formBusAcompanantes.set($event)"
-                    />
-                  </ay-form-field>
-                </div>
-                <div ayRow gap="2" justificar="end">
-                  <ay-button tipo="submit" variante="primary">Reservar mi cupo</ay-button>
-                </div>
-              </ay-form>
-            </ay-card-body>
-          </ay-card>
-        }
-
-        <ay-card variante="elevated" superficie="solid">
-          <ay-card-header titulo="Reservas de los clientes convocados" nivel="h2" [separador]="true" />
-          <ay-card-body padding="sm">
-            <ay-table
-              leyenda="Reservas de bus del Entrega Fest"
-              [columnas]="columnasReservasBus"
-              [filas]="estadoProto.reservasBusFest()"
-              [rayada]="true"
-            >
-              <ng-template ayCelda="cliente" let-fila>
-                @let r = comoReservaBus(fila);
-                <strong>{{ r.clienteNombre }}</strong>
-              </ng-template>
-              <ng-template ayCelda="bus" let-fila>
-                @let r = comoReservaBus(fila);
-                <span>{{ nombreBus(r.busId) }}</span>
-              </ng-template>
-              <ng-template ayCelda="punto" let-fila>
-                @let r = comoReservaBus(fila);
-                <span ayText="body" size="xs">{{ r.punto }}</span>
-              </ng-template>
-              <ng-template ayCelda="personas" let-fila>
-                @let r = comoReservaBus(fila);
-                <strong>{{ 1 + r.acompanantes }} ({{ r.acompanantes }} acomp.)</strong>
-              </ng-template>
-              <ng-template ayCelda="estado" let-fila>
-                @let r = comoReservaBus(fila);
-                <ay-badge
-                  size="sm"
-                  [tono]="r.estado === 'CONFIRMADA' ? 'success' : r.estado === 'EN_ESPERA' ? 'warning' : 'neutral'"
-                >
-                  {{ r.estado === 'CONFIRMADA' ? 'Confirmada' : r.estado === 'EN_ESPERA' ? 'En lista de espera' : 'Cancelada' }}
-                </ay-badge>
-              </ng-template>
-              <ng-template ayCelda="accion" let-fila>
-                @let r = comoReservaBus(fila);
-                @if (r.estado !== 'CANCELADA') {
-                  <ay-button tamano="sm" variante="ghost" (click)="cancelarReservaBus(r)">
-                    Cancelar reserva
-                  </ay-button>
-                }
-              </ng-template>
-            </ay-table>
-          </ay-card-body>
-        </ay-card>
-      </div>
-    }
-
-    <!-- ====================================================================== -->
-    <!-- 10. LIBRO DE RECLAMACIONES (ASIENTOS, ALERTAS LEGALES, HUÉRFANOS)      -->
+    <!-- 9. LIBRO DE RECLAMACIONES (ASIENTOS, ALERTAS LEGALES, HUÉRFANOS)       -->
     <!-- ====================================================================== -->
     @if (subvista() === 'libro') {
       <div ayStack gap="6">
@@ -1769,113 +1648,230 @@ export type SubvistaEspecializadaAtc =
     }
 
     <!-- ====================================================================== -->
-    <!-- 13. ENTREGAFEST EN VIVO (6 FRASES ANCLA Y ESTACIÓN 4 LEGAL)            -->
+    <!-- 13. ENTREGAFEST EN VIVO Y BUSES DEL EVENTO                             -->
     <!-- ====================================================================== -->
-    @if (subvista() === 'evento') {
+    @if (subvista() === 'evento' || subvista() === 'buses') {
       <div ayStack gap="6">
         <ay-page-header
           titulo="EntregaFest en vivo"
-          descripcion="Tablero del evento: casos por criticidad, protocolo de contención con las 6 frases ancla y derivación inmediata a la Estación 4."
+          [descripcion]="
+            estadoProto.rolActivo() === 'CLIENTE'
+              ? 'Reserva tu cupo con tus acompañantes (hasta 3) y tu punto de embarque desde Mi Portal.'
+              : 'Tablero del evento: casos por criticidad, protocolo de contención con las 6 frases ancla, derivación inmediata a Estación 4 y aforo y reservas de buses.'
+          "
         >
-          <ay-badge ayEstado size="sm" tono="danger">
-            {{ estadoProto.casosEventoFest().filter(c => c.criticidad === 'CRITICA').length }} críticos activos
+          @if (estadoProto.rolActivo() !== 'CLIENTE') {
+            <ay-badge ayEstado size="sm" tono="danger">
+              {{ estadoProto.casosEventoFest().filter(c => c.criticidad === 'CRITICA').length }} críticos activos
+            </ay-badge>
+          }
+          <ay-badge ayEstado size="sm" tono="info">
+            {{ estadoProto.reservasBusFest().length }} reservas de bus
           </ay-badge>
         </ay-page-header>
 
-        @if (imputacionPenalDetectada()) {
-          <ay-alert
-            tono="danger"
-            titulo="Imputación penal detectada: criticidad CRÍTICA obligatoria"
-          >
-            La descripción menciona vocabulario penal («estafa», «robo», «denuncia penal», «fiscalía»). El anfitrión aplica la Frase Ancla #3 y deriva de inmediato a la Estación 4 (Legal).
-          </ay-alert>
+        @if (estadoProto.rolActivo() !== 'CLIENTE') {
+          @if (imputacionPenalDetectada()) {
+            <ay-alert
+              tono="danger"
+              titulo="Imputación penal detectada: criticidad CRÍTICA obligatoria"
+            >
+              La descripción menciona vocabulario penal («estafa», «robo», «denuncia penal», «fiscalía»). El anfitrión aplica la Frase Ancla #3 y deriva de inmediato a la Estación 4 (Legal).
+            </ay-alert>
+          }
+
+          <div ayGrid [columnas]="2" gap="md">
+            <ay-card variante="elevated" superficie="solid">
+              <ay-card-header
+                titulo="Casos registrados en el evento"
+                subtitulo="Ordenados por criticidad y hora de registro."
+                nivel="h2"
+                [separador]="true"
+              />
+              <ay-card-body padding="sm" gap="md">
+                <ay-table
+                  leyenda="Casos del evento EntregaFest"
+                  [columnas]="columnasCasosEvento"
+                  [filas]="estadoProto.casosEventoFest()"
+                  [rayada]="true"
+                >
+                  <ng-template ayCelda="ticket" let-fila>
+                    @let c = comoCasoEvento(fila);
+                    <strong ayText="mono" size="xs">{{ c.ticketNum }}</strong>
+                  </ng-template>
+                  <ng-template ayCelda="cliente" let-fila>
+                    @let c = comoCasoEvento(fila);
+                    <div ayStack gap="1">
+                      <strong>{{ c.cliente }}</strong>
+                      <span ayText="body" size="xs">{{ c.proyecto }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="criticidad" let-fila>
+                    @let c = comoCasoEvento(fila);
+                    <ay-badge size="sm" [tono]="c.criticidad === 'CRITICA' ? 'danger' : 'warning'">
+                      {{ c.criticidad }}
+                    </ay-badge>
+                  </ng-template>
+                  <ng-template ayCelda="situacion" let-fila>
+                    @let c = comoCasoEvento(fila);
+                    @if (c.estacion4) {
+                      <ay-badge size="sm" tono="danger">En Estación 4 (Legal)</ay-badge>
+                    } @else {
+                      <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
+                        Derivar a Estación 4
+                      </ay-button>
+                    }
+                  </ng-template>
+                </ay-table>
+
+                <ay-divider espaciado="sm" />
+
+                <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de imputación penal)">
+                  <ay-textarea
+                    [filas]="2"
+                    [valor]="textoEvento()"
+                    (valorChange)="textoEvento.set($event)"
+                    placeholder="Escribe aquí lo manifestado por el asistente..."
+                  />
+                </ay-form-field>
+                <div ayRow gap="2">
+                  <ay-button
+                    tamano="sm"
+                    variante="danger"
+                    (click)="textoEvento.set('Exijo mi minuta hoy mismo, esto es una estafa y robo')"
+                  >
+                    Probar frase con imputación penal
+                  </ay-button>
+                  <ay-button
+                    tamano="sm"
+                    variante="primary"
+                    (click)="registrarCasoEnEntregaFest()"
+                  >
+                    + Registrar caso del evento
+                  </ay-button>
+                </div>
+              </ay-card-body>
+            </ay-card>
+
+            <ay-card superficie="solid">
+              <ay-card-header
+                titulo="Protocolo de contención: las 6 frases ancla"
+                subtitulo="Guía verbal obligatoria para moderadores y anfitriones del evento."
+                nivel="h2"
+                [separador]="true"
+              />
+              <ay-card-body padding="sm">
+                <app-protocolo-frases [frases]="estadoProto.frasesAnclaEvento" />
+              </ay-card-body>
+            </ay-card>
+          </div>
         }
 
-        <div ayGrid [columnas]="2" gap="md">
+        <div ayGrid [columnas]="3" gap="sm">
+          @for (b of estadoProto.busesFest; track b.id) {
+            <ay-card superficie="solid">
+              <ay-card-body padding="sm">
+                <ay-statistic
+                  [etiqueta]="b.nombre"
+                  [valor]="cuposLibresBus(b.id) + ' de ' + b.aforo + ' libres'"
+                  size="sm"
+                />
+              </ay-card-body>
+            </ay-card>
+          }
+        </div>
+
+        @if (estadoProto.rolActivo() === 'CLIENTE') {
           <ay-card variante="elevated" superficie="solid">
             <ay-card-header
-              titulo="Casos registrados en el evento"
-              subtitulo="Ordenados por criticidad y hora de registro."
+              titulo="Mi Portal · Reservar mi cupo en el bus"
+              subtitulo="Hasta 3 acompañantes por titular convocado. Si el bus no tiene cupo, puedes entrar en la lista de espera."
               nivel="h2"
               [separador]="true"
             />
-            <ay-card-body padding="sm" gap="md">
-              <ay-table
-                leyenda="Casos del evento EntregaFest"
-                [columnas]="columnasCasosEvento"
-                [filas]="estadoProto.casosEventoFest()"
-                [rayada]="true"
-              >
-                <ng-template ayCelda="ticket" let-fila>
-                  @let c = comoCasoEvento(fila);
-                  <strong ayText="mono" size="xs">{{ c.ticketNum }}</strong>
-                </ng-template>
-                <ng-template ayCelda="cliente" let-fila>
-                  @let c = comoCasoEvento(fila);
-                  <div ayStack gap="1">
-                    <strong>{{ c.cliente }}</strong>
-                    <span ayText="body" size="xs">{{ c.proyecto }}</span>
-                  </div>
-                </ng-template>
-                <ng-template ayCelda="criticidad" let-fila>
-                  @let c = comoCasoEvento(fila);
-                  <ay-badge size="sm" [tono]="c.criticidad === 'CRITICA' ? 'danger' : 'warning'">
-                    {{ c.criticidad }}
-                  </ay-badge>
-                </ng-template>
-                <ng-template ayCelda="situacion" let-fila>
-                  @let c = comoCasoEvento(fila);
-                  @if (c.estacion4) {
-                    <ay-badge size="sm" tono="danger">En Estación 4 (Legal)</ay-badge>
-                  } @else {
-                    <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
-                      Derivar a Estación 4
-                    </ay-button>
-                  }
-                </ng-template>
-              </ay-table>
-
-              <ay-divider espaciado="sm" />
-
-              <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de imputación penal)">
-                <ay-textarea
-                  [filas]="2"
-                  [valor]="textoEvento()"
-                  (valorChange)="textoEvento.set($event)"
-                  placeholder="Escribe aquí lo manifestado por el asistente..."
-                />
-              </ay-form-field>
-              <div ayRow gap="2">
-                <ay-button
-                  tamano="sm"
-                  variante="danger"
-                  (click)="textoEvento.set('Exijo mi minuta hoy mismo, esto es una estafa y robo')"
-                >
-                  Probar frase con imputación penal
-                </ay-button>
-                <ay-button
-                  tamano="sm"
-                  variante="primary"
-                  (click)="registrarCasoEnEntregaFest()"
-                >
-                  + Registrar caso del evento
-                </ay-button>
-              </div>
+            <ay-card-body padding="md" gap="md">
+              <ay-form (enviar)="confirmarReservaBusCliente()">
+                <div ayGrid [columnas]="3" gap="sm">
+                  <ay-form-field etiqueta="Bus y horario" obligatorio>
+                    <ay-select
+                      [opciones]="opcionesBusesSelect()"
+                      [valor]="formBusId()"
+                      (valorChange)="formBusId.set($event)"
+                    />
+                  </ay-form-field>
+                  <ay-form-field etiqueta="Punto de embarque" obligatorio>
+                    <ay-select
+                      [opciones]="opcionesPuntosEmbarque"
+                      [valor]="formBusPunto()"
+                      (valorChange)="formBusPunto.set($event)"
+                    />
+                  </ay-form-field>
+                  <ay-form-field etiqueta="Acompañantes (0 a 3)" obligatorio>
+                    <ay-select
+                      [opciones]="opcionesAcompanantesBus"
+                      [valor]="formBusAcompanantes()"
+                      (valorChange)="formBusAcompanantes.set($event)"
+                    />
+                  </ay-form-field>
+                </div>
+                <div ayRow gap="2" justificar="end">
+                  <ay-button tipo="submit" variante="primary">Reservar mi cupo</ay-button>
+                </div>
+              </ay-form>
             </ay-card-body>
           </ay-card>
+        }
 
-          <ay-card superficie="solid">
-            <ay-card-header
-              titulo="Protocolo de contención: las 6 frases ancla"
-              subtitulo="Guía verbal obligatoria para moderadores y anfitriones del evento."
-              nivel="h2"
-              [separador]="true"
-            />
-            <ay-card-body padding="sm">
-              <app-protocolo-frases [frases]="estadoProto.frasesAnclaEvento" />
-            </ay-card-body>
-          </ay-card>
-        </div>
+        <ay-card variante="elevated" superficie="solid">
+          <ay-card-header
+            titulo="Buses del Entrega Fest · Reservas de los clientes convocados"
+            subtitulo="Aforo por bus, puntos de embarque y acompañantes registrados."
+            nivel="h2"
+            [separador]="true"
+          />
+          <ay-card-body padding="sm">
+            <ay-table
+              leyenda="Reservas de bus del Entrega Fest"
+              [columnas]="columnasReservasBus"
+              [filas]="estadoProto.reservasBusFest()"
+              [rayada]="true"
+            >
+              <ng-template ayCelda="cliente" let-fila>
+                @let r = comoReservaBus(fila);
+                <strong>{{ r.clienteNombre }}</strong>
+              </ng-template>
+              <ng-template ayCelda="bus" let-fila>
+                @let r = comoReservaBus(fila);
+                <span>{{ nombreBus(r.busId) }}</span>
+              </ng-template>
+              <ng-template ayCelda="punto" let-fila>
+                @let r = comoReservaBus(fila);
+                <span ayText="body" size="xs">{{ r.punto }}</span>
+              </ng-template>
+              <ng-template ayCelda="personas" let-fila>
+                @let r = comoReservaBus(fila);
+                <strong>{{ 1 + r.acompanantes }} ({{ r.acompanantes }} acomp.)</strong>
+              </ng-template>
+              <ng-template ayCelda="estado" let-fila>
+                @let r = comoReservaBus(fila);
+                <ay-badge
+                  size="sm"
+                  [tono]="r.estado === 'CONFIRMADA' ? 'success' : r.estado === 'EN_ESPERA' ? 'warning' : 'neutral'"
+                >
+                  {{ r.estado === 'CONFIRMADA' ? 'Confirmada' : r.estado === 'EN_ESPERA' ? 'En lista de espera' : 'Cancelada' }}
+                </ay-badge>
+              </ng-template>
+              <ng-template ayCelda="accion" let-fila>
+                @let r = comoReservaBus(fila);
+                @if (r.estado !== 'CANCELADA') {
+                  <ay-button tamano="sm" variante="ghost" (click)="cancelarReservaBus(r)">
+                    Cancelar reserva
+                  </ay-button>
+                }
+              </ng-template>
+            </ay-table>
+          </ay-card-body>
+        </ay-card>
       </div>
     }
 
