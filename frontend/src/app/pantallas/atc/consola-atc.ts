@@ -32,7 +32,6 @@ import {
   AyModal,
   AyNavbar,
   AyRow,
-  AySearchInput,
   AySegmentedControl,
   AySelect,
   AySidePanel,
@@ -127,7 +126,6 @@ interface ItemMenuAtc {
     AyModal,
     AyNavbar,
     AyRow,
-    AySearchInput,
     AySegmentedControl,
     AySelect,
     AySidePanel,
@@ -168,17 +166,6 @@ interface ItemMenuAtc {
         <span>Aybar Atiende</span>
         <ay-badge size="sm" tono="info">ATC</ay-badge>
       </a>
-
-      <div ayBusqueda>
-        <ay-search-input
-          etiqueta="Buscar módulo, HU o contrato"
-          placeholder="Buscar en 60 HUs, módulos o contratos (Ctrl+K)…"
-          size="sm"
-          [valor]="consultaPaleta()"
-          (focus)="paletaAbierta.set(true)"
-          (valorChange)="consultaPaleta.set($event); paletaAbierta.set(true)"
-        />
-      </div>
 
       <ng-container ayAcciones>
         <ay-dropdown-menu
