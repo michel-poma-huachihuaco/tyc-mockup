@@ -1379,11 +1379,12 @@ export class ConsolaAtcComponent {
         'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
     },
     {
-      id: 'morosidad',
+      id: 'evento',
       grupo: 'OPERACION',
-      titulo: 'Morosidad 3 meses',
-      subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
-      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
+      titulo: 'EntregaFest en vivo',
+      subtitulo: 'Moderación presencial, 6 frases ancla, Estación 4 Legal y buses del evento',
+      icono:
+        'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
     },
     {
       id: 'ingreso',
@@ -1393,6 +1394,13 @@ export class ConsolaAtcComponent {
       icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
     },
     {
+      id: 'morosidad',
+      grupo: 'OPERACION',
+      titulo: 'Morosidad 3 meses',
+      subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
+      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
+    },
+    {
       id: 'buses',
       grupo: 'OPERACION',
       titulo: 'Buses del Entrega Fest',
@@ -1400,14 +1408,6 @@ export class ConsolaAtcComponent {
       icono:
         'M8 6v6 M15 6v6 M2 12h19.6 M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3 M7 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M16 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
       oculto: true,
-    },
-    {
-      id: 'evento',
-      grupo: 'OPERACION',
-      titulo: 'EntregaFest en vivo',
-      subtitulo: 'Moderación presencial, 6 frases ancla, Estación 4 Legal y buses del evento',
-      icono:
-        'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
     },
     {
       id: 'libro',
@@ -1541,6 +1541,7 @@ export class ConsolaAtcComponent {
           abiertoInicial: true,
           elementos: this.menuEstrella.map((m) => ({
             href: `#vista:${m.id}`,
+            icono: m.id,
             etiqueta: m.titulo,
             actual: activa === m.id,
           })),
@@ -1552,16 +1553,19 @@ export class ConsolaAtcComponent {
           elementos: [
             {
               href: '#vista:evento',
+              icono: 'evento',
               etiqueta: 'EntregaFest en vivo',
               actual: activa === 'evento' || activa === 'buses',
             },
             {
               href: '#vista:nuevo',
+              icono: 'nuevo',
               etiqueta: 'Mis solicitudes y nueva solicitud',
               actual: activa === 'nuevo',
             },
             {
               href: '#vista:libro',
+              icono: 'libro',
               etiqueta: 'Libro de reclamaciones',
               actual: activa === 'libro',
             },
@@ -1607,6 +1611,7 @@ export class ConsolaAtcComponent {
           .filter((m) => m.grupo === d.grupo)
           .map((m) => ({
             href: `#vista:${m.id}`,
+            icono: m.id,
             etiqueta: m.titulo,
             actual: resaltada === m.id,
             insignia: insigniaDe(m.id),

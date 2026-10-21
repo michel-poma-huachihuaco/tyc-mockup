@@ -82,11 +82,13 @@ body {
   /* 34px */
   inline-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
   block-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
-  color: var(--aybar-color-bg-brand);
+  /* mandarina del sistema (secondary-400, #ffa726) */
+  color: var(--aybar-color-secondary-400);
 }
 
 .pl-marca__letra {
-  fill: var(--aybar-color-fg-on-brand);
+  /* sobre la mandarina la letra va oscura: el blanco no llega a 2:1 */
+  fill: var(--aybar-color-fg-on-accent);
 }
 
 /* Enlaces con forma de botón: las acciones del héroe y de la barra navegan (son <a>), y el
@@ -1928,3 +1930,40 @@ body {
   border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
   border-radius: var(--aybar-radius-lg);
 }
+
+/* Iconos del sidebar de Aybar Atiende. El Sidebar del framework pinta `icono` como texto: aquí es la clave
+   (id de la vista), se oculta el texto y el glifo sale de public/iconos-menu.svg (una celda de 24 por icono)
+   como máscara, así toma el color del elemento (reposo, hover y página actual) y sirve en el rail colapsado. */
+.ay-sidebar__icon {
+  --pl-i: 0;
+  font-size: 0;
+}
+
+.ay-sidebar__icon::before {
+  content: '';
+  display: block;
+  inline-size: var(--aybar-space-5);
+  aspect-ratio: 1;
+  background: currentColor;
+  -webkit-mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
+  mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
+}
+
+.ay-sidebar__item[href='#vista:c360'] .ay-sidebar__icon { --pl-i: 0; }
+.ay-sidebar__item[href='#vista:vivo'] .ay-sidebar__icon { --pl-i: 1; }
+.ay-sidebar__item[href='#vista:bandeja'] .ay-sidebar__icon { --pl-i: 2; }
+.ay-sidebar__item[href='#vista:tudia'] .ay-sidebar__icon { --pl-i: 3; }
+.ay-sidebar__item[href='#vista:nuevo'] .ay-sidebar__icon { --pl-i: 4; }
+.ay-sidebar__item[href='#vista:evento'] .ay-sidebar__icon { --pl-i: 5; }
+.ay-sidebar__item[href='#vista:ingreso'] .ay-sidebar__icon { --pl-i: 6; }
+.ay-sidebar__item[href='#vista:morosidad'] .ay-sidebar__icon { --pl-i: 7; }
+.ay-sidebar__item[href='#vista:buses'] .ay-sidebar__icon { --pl-i: 8; }
+.ay-sidebar__item[href='#vista:libro'] .ay-sidebar__icon { --pl-i: 9; }
+.ay-sidebar__item[href='#vista:garantias'] .ay-sidebar__icon { --pl-i: 10; }
+.ay-sidebar__item[href='#vista:sgd'] .ay-sidebar__icon { --pl-i: 11; }
+.ay-sidebar__item[href='#vista:reasignar'] .ay-sidebar__icon { --pl-i: 12; }
+.ay-sidebar__item[href='#vista:alertas'] .ay-sidebar__icon { --pl-i: 13; }
+.ay-sidebar__item[href='#vista:cierre'] .ay-sidebar__icon { --pl-i: 14; }
+.ay-sidebar__item[href='#vista:torre'] .ay-sidebar__icon { --pl-i: 15; }
+.ay-sidebar__item[href='#vista:politicas'] .ay-sidebar__icon { --pl-i: 16; }
+.ay-sidebar__item[href='#vista:configuracion'] .ay-sidebar__icon { --pl-i: 17; }

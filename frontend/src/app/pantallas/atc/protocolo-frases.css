@@ -39,7 +39,7 @@
 .pc__cab { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); min-block-size: var(--aybar-space-8); }
 .pc__momento { margin: 0; color: var(--aybar-color-fg-default); font-size: var(--aybar-font-size-sm); font-weight: var(--aybar-font-weight-semibold); }
 
-/* La frase, como cita: barra del color de la situación. */
+/* La frase, como cita: borde fino del color de la situación. */
 .pc__frase {
   display: flex;
   flex-wrap: wrap;
@@ -48,8 +48,7 @@
   gap: var(--aybar-space-2) var(--aybar-space-4);
   margin: 0;
   padding: var(--aybar-space-3) var(--aybar-space-4);
-  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
-  border-inline-start: 4px solid var(--pc-c);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--pc-c) 55%, var(--aybar-color-border-subtle));
   border-radius: var(--aybar-radius-md);
   background: var(--aybar-color-bg-surface-raised);
 }
