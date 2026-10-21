@@ -26,12 +26,14 @@ están sin cambios; la huella sha256 permite comprobarlo.
 
 Una diferencia entre los documentos, ya avisada: el Excel (regla RN-SVC-043) dice «salida 30-oct» y los PDF, 03-nov.
 
-### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1, publicado en Nexora (pendiente de aprobación)
+### `paquete-definir-etapa1-v1.3/`: el paquete Definir de toda la Etapa 1
 
 Son todas las épicas, funcionalidades e historias de la Etapa 1 según la v1.3, en el formato del SDK (frontmatter de 11 campos
 y `ui:`), generadas desde los PDF del PO:
 
-- 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (uno por funcionalidad);
+- 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (uno por funcionalidad), ya publicados en Nexora y pendientes de aprobación;
+- desde el 21-oct, también análisis, roadmap, 14 ADR, arquitectura, datos, backlog de tareas (318 tareas, 243 h) y los gates G0 a G4 del
+  ticket provisional AYB-0001, llevados a la v1.3 desde la última versión de Nexora. Estos todavía no se subieron;
 - de los 4 desarrolladores: cada documento dice a quién le toca según el PLT-01;
 - solo la Etapa 1: no nombra NEXUS, DAEDALUS ni UrbeMind;
 - textos del PO tal cual: el «Como / quiero / para», los criterios de aceptación, las reglas, las horas y las fechas no se
@@ -61,6 +63,11 @@ Resultado al 20-oct: **sin errores, con 24 advertencias que se esperan en esta e
 Cada documento termina con «Generado por IA … — Revisado por: (pendiente)». Brayan los publicó en Nexora el 20-oct. Quedan
 como versión pendiente hasta que los aprueben el PO (épicas, funcionalidades e historias) y el líder técnico con el project
 manager (DoR).
+
+### `correcciones-excel-v1.3.md`: lo que se le propone corregir al Excel del PO
+
+El Excel es documento del PO y no se toca. Este archivo lista cada corrección con su hoja, celda, valor actual, valor propuesto y la
+fuente en los PDF: RF-SVC-064 a 067 que faltan, la salida del 30-oct frente al 03-nov y la prioridad de RF-001 a 039, entre otras.
 
 ### `cobertura-v1.3.md`: el mockup frente a las 62 historias
 

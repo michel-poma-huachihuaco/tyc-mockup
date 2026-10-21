@@ -1,0 +1,83 @@
+flowchart LR
+  subgraph Deps["Dependencias del producto (PLT-01 v1.3)"]
+    DEP01["DEP-01 · SIGDA/TAXON<br/>21-oct · Pendiente"]
+    DEP02["DEP-02 · Roles locales<br/>21-oct · Pendiente"]
+    DEP03["DEP-03 · Matriz SLA<br/>22-oct · Pendiente"]
+    DEP04["DEP-04 · Calendario<br/>22-oct · En curso"]
+    DEP05["DEP-05 · Validación legal<br/>26-oct · Pendiente"]
+    DEP06["DEP-06 · Documental y GLI<br/>23-oct · En curso"]
+    DEP07["DEP-07 · Contratos<br/>29-oct · Pendiente"]
+    DEP08["DEP-08 · Cobranza<br/>21-oct · Pendiente"]
+    DEP10["DEP-10 · KPI y encuestas<br/>29-oct · Pendiente"]
+    DEP11["DEP-11 · Call center<br/>21-oct · Por evaluar"]
+    DEP12["DEP-12 · Herramienta de Legal<br/>26-oct · Por evaluar"]
+    DEP13["DEP-13 · Motor de José<br/>23-oct · Por evaluar"]
+    DEP14["DEP-14 · Proveedor de IA<br/>23-oct · Por evaluar"]
+    DEP15["DEP-15 · Proyectos<br/>29-oct · Pendiente"]
+  end
+  subgraph Epicas["Épicas (Etapa 1)"]
+    EPATC01["EP-01 · Núcleo de tickets omnicanal<br/>Dev 1 · 21-oct a 26-oct"]
+    EPATC02["EP-02 · Enrutamiento, SLA y alertas<br/>Dev 2 · 21-oct a 26-oct"]
+    EPATC03["EP-03 · Libro de Reclamaciones y apelaciones<br/>Dev 1 · 26-oct a 29-oct"]
+    EPATC04["EP-04 · Gate legal Eje 3 y Mesa de Casos sensibles<br/>Dev 2 · 27-oct a 2-nov"]
+    EPATC05["EP-05 · Postventa: reclamos de garantía<br/>Dev 1 · 29-oct a 30-oct"]
+    EPATC06["EP-06 · Autogestión del cliente y trazabilidad (Mi Portal)<br/>Dev 4 · 30-oct a 2-nov"]
+    EPATC07["EP-07 · Calidad de atención y Torre de Control CX<br/>Dev 3 · 29-oct a 2-nov"]
+    EPATC08["EP-08 · EntregaFest: contención y derivación en vivo<br/>Dev 1 · 30-oct a 2-nov"]
+    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct"]
+    EPATC10["EP-10 · Consulta 360 e integraciones operativas<br/>Dev 4 · 21-oct a 28-oct"]
+    EPATC11["EP-11 · Resolución por morosidad y formularios simples<br/>Dev 4 · 28-oct a 30-oct"]
+  end
+  DEP01 --> EPATC01
+  DEP01 --> EPATC04
+  DEP01 --> EPATC06
+  DEP01 --> EPATC10
+  DEP02 --> EPATC01
+  DEP02 --> EPATC02
+  DEP02 --> EPATC09
+  DEP03 --> EPATC02
+  DEP03 --> EPATC04
+  DEP04 --> EPATC02
+  DEP04 --> EPATC03
+  DEP05 --> EPATC03
+  DEP05 --> EPATC11
+  DEP06 --> EPATC01
+  DEP06 --> EPATC03
+  DEP06 --> EPATC04
+  DEP06 --> EPATC10
+  DEP07 --> EPATC05
+  DEP08 --> EPATC04
+  DEP08 --> EPATC10
+  DEP08 --> EPATC11
+  DEP10 --> EPATC07
+  DEP11 --> EPATC10
+  DEP12 --> EPATC10
+  DEP13 --> EPATC10
+  DEP14 --> EPATC09
+  DEP14 --> EPATC10
+  DEP15 --> EPATC11
+  EPATC01 -..-> EPATC03
+  EPATC01 -..-> EPATC11
+  EPATC02 -..-> EPATC04
+  EPATC02 -..-> EPATC07
+  EPATC09 -..-> EPATC06
+  EPATC04 -. no se respeta .-> EPATC08
+  classDef pend fill:#FFA726,stroke:#9A5B00,color:#02424E
+  classDef curso fill:#36C76C,stroke:#1B8A4A,color:#02424E
+  classDef eval fill:#EEEEEE,stroke:#777,color:#333,stroke-dasharray:4 3
+  classDef ep fill:#02424E,stroke:#012F38,color:#FFFFFF
+  class DEP01 pend
+  class DEP02 pend
+  class DEP03 pend
+  class DEP04 curso
+  class DEP05 pend
+  class DEP06 curso
+  class DEP07 pend
+  class DEP08 pend
+  class DEP10 pend
+  class DEP11 eval
+  class DEP12 eval
+  class DEP13 eval
+  class DEP14 eval
+  class DEP15 pend
+  class EPATC01,EPATC02,EPATC03,EPATC04,EPATC05,EPATC06,EPATC07,EPATC08,EPATC09,EPATC10,EPATC11 ep

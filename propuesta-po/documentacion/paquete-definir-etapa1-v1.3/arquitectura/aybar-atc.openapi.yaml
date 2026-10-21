@@ -1,0 +1,2607 @@
+openapi: 3.0.3
+info:
+  title: Aybar Atiende · Plataforma ATC
+  version: 0.2.0-borrador
+  description: |
+    BORRADOR del contrato de API (criterio de G3). Estado: draft. Generado el 2026-10-19 a partir de las 62 historias del PLT-04 v1.3 (en refinamiento).
+    Es una PROPUESTA de operaciones por módulo: los campos de cada esquema los completa el desarrollador backend con el modelo de datos aprobado.
+    Revisión del 20-oct: los campos de clave siguen los nombres del Modelo de Datos Corporativo v7 (cada propiedad dice cuál); los ids del v7 son enteros y el contrato los expone como cadenas opacas hasta que G3 decida. Tipos, largos y obligatoriedad de los demás atributos siguen pendientes.
+    Revisión del 21-oct (versión base v4 de Jesús Chávez Elías en Nexora; actualizada por Brayan con IA a la v1.3 del PO): los esquemas que estaban vacíos se completan solo con campos que salen del PO (PLT-03, PLT-04 y PLT-05 v1.3), del Excel del PO (02_RF_Micro, 03_RNF y 05_Catalogos) y del diccionario de datos; cada propiedad cita su fuente. Lo que todavía no está definido lleva `x-pendiente`. El estado del ticket y el de la apelación usan los códigos de las listas del Excel (`SVC_TICKET_STATUS` y `SVC_COMPLAINT_APPEAL_STATUS`). La clave foránea del ticket a PARTY frente al ADR-03 del PO es un conflicto abierto que decide el líder técnico.
+    Generado por IA — Revisado por: (pendiente).
+    No incluye WebSocket: el visor 3D recibe eventos en tiempo real por `/ws/visor` (ADR-010), que OpenAPI no describe.
+    Errores: RFC 7807 con `codigo` (formato AYB-SVC-HTTP del SDK), `correlationId`, `timestamp` y `campos` (aybar-starter-web, que hay que encender: `aybar add starter web`). Cada operación declara 400, 401, 403, 404, 429 y 500; las de negocio (409 y 422) se declaran donde un criterio de aceptación las pide.
+    Versionado: `/api/v1`; un cambio incompatible crea `/api/v2` y vuelve a G3. Compatibilidad: por declarar.
+servers:
+  - url: http://localhost:8081
+    description: local
+security:
+  - bearer-jwt: []
+tags:
+  - name: tickets
+  - name: sla
+  - name: bandeja
+  - name: libro
+  - name: consulta360
+  - name: portal
+  - name: casos_legales
+  - name: postventa
+  - name: morosidad
+paths:
+  /api/v1/tickets:
+    post:
+      tags: [tickets]
+      operationId: registrarTicket
+      summary: "Registrar un ticket tipificado desde cualquier canal y entregar su número por razón social (cliente identificado o interesado con datos mínimos)"
+      x-historias: [HU-001, HU-002, HU-051]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TicketNuevo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}:
+    get:
+      tags: [tickets]
+      operationId: obtenerTicket
+      summary: "Obtener un ticket con sus hitos probatorios"
+      x-historias: [HU-004, HU-006, HU-050]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/estado:
+    post:
+      tags: [tickets]
+      operationId: cambiarEstado
+      summary: "Cambiar el estado del ticket con historial inmutable (rechaza cerrar con señal de conflicto en Eje 1/2)"
+      x-historias: [HU-004, HU-026]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CambioEstado' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/interacciones:
+    post:
+      tags: [tickets]
+      operationId: registrarInteraccion
+      summary: "Registrar una interacción visible o una nota interna, con adjuntos"
+      x-historias: [HU-005]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Interaccion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Interaccion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/derivaciones:
+    post:
+      tags: [tickets]
+      operationId: derivarTicket
+      summary: "Derivar un ticket a otra área con motivo tipificado"
+      x-historias: [HU-007]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Derivacion' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/reaperturas:
+    post:
+      tags: [tickets]
+      operationId: reabrirTicket
+      summary: "Reabrir un ticket con un nuevo compromiso, sin borrar el original"
+      x-historias: [HU-011]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Reapertura' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/colaboradores/{colaboradorId}/reasignaciones:
+    post:
+      tags: [tickets]
+      operationId: reasignarEnBloque
+      summary: "Reasignar en bloque los tickets de un colaborador que cesa"
+      x-historias: [HU-008]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: colaboradorId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Reasignacion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ResultadoReasignacion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/sla:
+    get:
+      tags: [sla]
+      operationId: consultarSla
+      summary: "Consultar los compromisos de SLA del ticket"
+      x-historias: [HU-003, HU-010]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sla' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/bandeja:
+    get:
+      tags: [bandeja]
+      operationId: listarBandeja
+      summary: "Bandeja única ordenada por urgencia"
+      x-historias: [HU-044, HU-045]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: area, in: query, schema: { type: string }, description: 'Solo áreas a las que pertenece el usuario, salvo supervisor (HU-044 CA-03).' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaTickets' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casillero:
+    get:
+      tags: [bandeja]
+      operationId: listarCasillero
+      summary: "Casillero de tareas por área y responsable"
+      x-historias: [HU-009]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: filtro, in: query, schema: { type: string, enum: [en_riesgo_o_vencidos, sin_asignar] }, description: 'HU-009 CA-02 y CA-03' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaTickets' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/flujos/{tipoId}/{subtipoId}/{areaId}:
+    put:
+      tags: [bandeja]
+      operationId: configurarFlujo
+      summary: "Configurar el flujo de trabajo de un tipo de ticket por área (nueva versión)"
+      x-historias: [HU-043]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: tipoId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: subtipoId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: areaId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Flujo' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Flujo' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/libro/asientos:
+    post:
+      tags: [libro]
+      operationId: registrarAsiento
+      summary: "Registrar el asiento del Libro de Reclamaciones"
+      x-historias: [HU-012]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AsientoNuevo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Asiento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/libro/asientos/{asientoId}/prorroga:
+    post:
+      tags: [libro]
+      operationId: prorrogarPlazo
+      summary: "Calcular el plazo legal y gestionar la prórroga única"
+      x-historias: [HU-013]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: asientoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Prorroga' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Asiento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/libro/asientos/{asientoId}/respuesta:
+    post:
+      tags: [libro]
+      operationId: registrarRespuestaFormal
+      summary: "Registrar la respuesta formal con cargo"
+      x-historias: [HU-014]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: asientoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RespuestaFormal' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Asiento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/libro/asientos/{asientoId}/apelaciones:
+    post:
+      tags: [libro]
+      operationId: registrarApelacion
+      summary: "Dar seguimiento a apelaciones internas y ante INDECOPI"
+      x-historias: [HU-016]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: asientoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Apelacion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Apelacion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/clientes:
+    get:
+      tags: [consulta360]
+      operationId: buscarClientes
+      summary: "Buscar al cliente por DNI, nombre, código, lote, teléfono o número de ticket"
+      x-historias: [HU-049]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaClientes' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/clientes/{partyId}/consulta-360:
+    get:
+      tags: [consulta360]
+      operationId: consulta360
+      summary: "Ver la consulta 360 del cliente (respuesta degradada si una fuente falla)"
+      x-historias: [HU-050, HU-051]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: partyId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Consulta360' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/codigos:
+    post:
+      tags: [portal]
+      operationId: solicitarCodigo
+      summary: "Solicitar el código de un solo uso con el DNI"
+      x-historias: [HU-064]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SolicitudCodigo' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CodigoEnviado' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/sesiones:
+    post:
+      tags: [portal]
+      operationId: abrirSesion
+      summary: "Abrir la sesión del cliente con el código"
+      x-historias: [HU-064]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AperturaSesion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sesion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/tickets:
+    get:
+      tags: [portal]
+      operationId: listarMisTickets
+      summary: "Consultar mis tickets"
+      x-historias: [HU-064]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaTickets' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+    post:
+      tags: [portal]
+      operationId: registrarMiTicket
+      summary: "Registrar un ticket desde Mi Portal"
+      x-historias: [HU-064]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TicketNuevo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/tickets/{ticketId}/trazabilidad:
+    get:
+      tags: [portal]
+      operationId: verTrazabilidad
+      summary: "Ver la trazabilidad de mi ticket"
+      x-historias: [HU-065]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trazabilidad' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/tickets/{ticketId}/respuestas:
+    post:
+      tags: [portal]
+      operationId: responderMiTicket
+      summary: "Responder, adjuntar y confirmar la solución de mi ticket"
+      x-historias: [HU-066]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Interaccion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Interaccion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/visor/estado:
+    get:
+      tags: [bandeja]
+      operationId: estadoVisor
+      summary: "Estado actual del visor 3D (el tiempo real va por WebSocket)"
+      x-historias: [HU-067]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstadoVisor' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/tipos:
+    get:
+      tags: [portal]
+      operationId: listarTiposPortal
+      summary: "Tipos y subtipos que ve el cliente al registrar un ticket"
+      x-historias: [HU-064]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TiposPortal' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/portal/tickets/{ticketId}/confirmacion:
+    post:
+      tags: [portal]
+      operationId: confirmarSolucion
+      summary: "Confirmar o rechazar la solución de mi ticket"
+      x-historias: [HU-066]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConfirmacionSolucion' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/flujos/publicaciones:
+    get:
+      tags: [bandeja]
+      operationId: listarPublicacionesFlujo
+      summary: "Bitácora de publicaciones de flujos (autor, fecha y versión)"
+      x-historias: [HU-043]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaFlujos' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/actividades/{numero}/cierre:
+    post:
+      tags: [tickets]
+      operationId: cerrarActividad
+      summary: "Cerrar la actividad en curso del flujo del ticket"
+      x-historias: [HU-043]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: numero
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/rayo:
+    post:
+      tags: [bandeja]
+      operationId: marcarRayo
+      summary: "Marcar un ticket crítico con el rayo de prioridad, con motivo (solo el líder; tope del área)"
+      x-historias: [HU-045]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Rayo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/guia:
+    get:
+      tags: [bandeja]
+      operationId: obtenerGuia
+      summary: "Consultar la guía de solución del tipo del ticket (última versión publicada)"
+      x-historias: [HU-047]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Guia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/sugerencias-ia:
+    post:
+      tags: [bandeja]
+      operationId: pedirSugerenciaIa
+      summary: "Pedir una sugerencia de IA al redactar o cerrar (el texto va anonimizado; ADR-007)"
+      x-historias: [HU-048]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SolicitudSugerencia' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sugerencia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision:
+    post:
+      tags: [bandeja]
+      operationId: decidirSugerenciaIa
+      summary: "Registrar si el gestor aceptó, editó o descartó la sugerencia"
+      x-historias: [HU-048]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: sugerenciaId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DecisionSugerencia' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Sugerencia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tablero:
+    get:
+      tags: [bandeja]
+      operationId: verTablero
+      summary: "Avance diario del gestor y, para el líder, el de su equipo; casos en riesgo"
+      x-historias: [HU-030, HU-054]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: ambito, in: query, schema: { type: string, enum: [GESTOR, EQUIPO], default: GESTOR }, description: 'EQUIPO solo para el líder (HU-054 CA-03).' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Tablero' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/libro/asientos/{asientoId}/apelaciones/{apelacionId}/estado:
+    post:
+      tags: [libro]
+      operationId: cambiarEstadoApelacion
+      summary: "Registrar la resolución de INDECOPI o el desistimiento de una apelación"
+      x-historias: [HU-016]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: asientoId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: apelacionId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CambioEstadoApelacion' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Apelacion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/clientes/{partyId}/llamadas:
+    post:
+      tags: [consulta360]
+      operationId: llamarCliente
+      summary: "Iniciar la llamada desde la ficha por la plataforma del call center y dejarla como interacción"
+      x-historias: [HU-049]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: partyId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Llamada' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Interaccion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/consultas-motor:
+    post:
+      tags: [consulta360]
+      operationId: consultarMotor
+      summary: "Consultar un dato específico del cliente con el motor de José (el permiso del rol decide)"
+      x-historias: [HU-052]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConsultaMotor' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ResultadoConsulta' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/clientes/{partyId}/documentos:
+    get:
+      tags: [consulta360]
+      operationId: buscarDocumentos
+      summary: "Buscar documentos del cliente por significado (solo los que el rol puede ver)"
+      x-historias: [HU-053]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: partyId
+          in: path
+          required: true
+          schema: { type: string }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: q, in: query, required: true, schema: { type: string }, description: 'Búsqueda en lenguaje natural (HU-053 CA-01); sin coincidencias sugiere búsqueda por palabras exactas.' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaDocumentos' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles:
+    post:
+      tags: [casos_legales]
+      operationId: registrarCasoSensible
+      summary: "Registrar un caso sensible y entregar su Código Único"
+      x-historias: [HU-020]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CasoSensibleNuevo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/reclasificacion:
+    post:
+      tags: [casos_legales]
+      operationId: reclasificarCaso
+      summary: "Reclasificar un caso preventivo como reclamo formal (línea 2) conservando el origen"
+      x-historias: [HU-020]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Reclasificacion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/cargos:
+    post:
+      tags: [casos_legales]
+      operationId: emitirCargo
+      summary: "Emitir el cargo previo o el cargo de activación (el SLA de línea corre desde la activación)"
+      x-historias: [HU-021]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Cargo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/riesgo:
+    put:
+      tags: [casos_legales]
+      operationId: clasificarRiesgo
+      summary: "Clasificar o recalibrar el riesgo con la matriz objetiva (queda quién, cuándo y por qué)"
+      x-historias: [HU-022]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Riesgo' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/escalamientos:
+    post:
+      tags: [casos_legales]
+      operationId: escalarCaso
+      summary: "Escalar el caso al siguiente nivel de la cadena, sin saltar niveles"
+      x-historias: [HU-023]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Escalamiento' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/coincidencias:
+    get:
+      tags: [casos_legales]
+      operationId: buscarCoincidencias
+      summary: "Buscar casos abiertos del mismo cliente y hechos antes de registrar"
+      x-historias: [HU-024]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { name: clienteId, in: query, required: true, schema: { type: string } }
+        - { name: hechos, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaCasos' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/vinculos:
+    post:
+      tags: [casos_legales]
+      operationId: vincularCasos
+      summary: "Vincular dos casos en un único hilo de evidencia"
+      x-historias: [HU-024]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Vinculo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/casos-sensibles/{casoId}/cierre:
+    post:
+      tags: [casos_legales]
+      operationId: cerrarCaso
+      summary: "Cerrar el caso con uno de los 8 estados homologados y evidencia"
+      x-historias: [HU-025]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: casoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CierreCaso' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoSensible' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/conflicto:
+    post:
+      tags: [casos_legales]
+      operationId: marcarConflicto
+      summary: "Marcar la señal de conflicto: bloquea la resolución en Eje 1/2 y exige derivar a Eje 3"
+      x-historias: [HU-026]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Conflicto' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/conflicto/retiro:
+    post:
+      tags: [casos_legales]
+      operationId: retirarConflicto
+      summary: "Retirar con justificación una señal de conflicto marcada por error (solo supervisor)"
+      x-historias: [HU-026]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RetiroConflicto' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/handoff:
+    post:
+      tags: [casos_legales]
+      operationId: armarHandoff
+      summary: "Armar el paquete mínimo de handoff a Eje 3 (6 elementos completos antes de enviar)"
+      x-historias: [HU-027]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Handoff' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Handoff' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/handoff/confirmacion:
+    post:
+      tags: [casos_legales]
+      operationId: confirmarHandoff
+      summary: "Confirmar en el mismo ticket la recepción del handoff en Eje 3"
+      x-historias: [HU-027]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConfirmacionHandoff' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Handoff' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/tickets/{ticketId}/notas-estado:
+    post:
+      tags: [casos_legales]
+      operationId: registrarNotaEstado
+      summary: "Registrar la nota de estado emocional sin juicios de valor"
+      x-historias: [HU-028]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NotaEstado' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Interaccion' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/postventa/reclamos:
+    post:
+      tags: [postventa]
+      operationId: registrarReclamoGarantia
+      summary: "Registrar un reclamo de garantía vinculado a la entrega y validar su vigencia"
+      x-historias: [HU-033, HU-034]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/postventa/reclamos/{reclamoId}/inspecciones:
+    post:
+      tags: [postventa]
+      operationId: registrarInspeccion
+      summary: "Programar y registrar la inspección técnica antes de resolver"
+      x-historias: [HU-035]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: reclamoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Inspeccion' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/postventa/reclamos/{reclamoId}/resolucion:
+    post:
+      tags: [postventa]
+      operationId: resolverReclamo
+      summary: "Resolver el reclamo: aprobado, rechazado o resuelto, con fecha y descripción"
+      x-historias: [HU-035]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: reclamoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ResolucionReclamo' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/postventa/reclamos/{reclamoId}/escalamiento:
+    post:
+      tags: [postventa]
+      operationId: escalarGarantia
+      summary: "Derivar a Eje 3 un reclamo con carta notarial, sin resolverlo en Eje 2"
+      x-historias: [HU-036]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: reclamoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EscalamientoGarantia' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/postventa/reclamos/{reclamoId}/adenda:
+    post:
+      tags: [postventa]
+      operationId: registrarAdenda
+      summary: "Registrar la adenda de una reincorporación contractual tras una devolución"
+      x-historias: [HU-036]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: reclamoId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Adenda' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReclamoGarantia' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/entregafest/frases-ancla:
+    post:
+      tags: [tickets]
+      operationId: registrarFraseAncla
+      summary: "Registrar el riesgo verbal y la Frase Ancla aplicada (la Frase 6 obliga a registrar el caso)"
+      x-historias: [HU-037]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FraseAncla' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoEvento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '422': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/entregafest/casos:
+    post:
+      tags: [tickets]
+      operationId: registrarCasoEvento
+      summary: "Registrar el caso sensible del evento con la etiqueta estándar y derivarlo de inmediato a la Estación 4"
+      x-historias: [HU-038, HU-039]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CasoEventoNuevo' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CasoEvento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+    get:
+      tags: [tickets]
+      operationId: listarCasosEvento
+      summary: "Revisar los casos del bloque con su estado (derivado o no a la Estación 4)"
+      x-historias: [HU-039]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaCasosEvento' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/formularios/ingresos:
+    post:
+      tags: [morosidad]
+      operationId: registrarIngreso
+      summary: "Registrar el ingreso de una persona al proyecto (máximo 6 campos; idempotente para el envío sin conexión)"
+      x-historias: [HU-059]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Ingreso' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/formularios/reservas-bus:
+    post:
+      tags: [morosidad]
+      operationId: reservarBus
+      summary: "Reservar un cupo en el bus del Entrega Fest; sin cupo ofrece otro bus o la lista de espera"
+      x-historias: [HU-060]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReservaBus' }
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reserva' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '409': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+  /api/v1/formularios/reservas-bus/{reservaId}/cancelacion:
+    post:
+      tags: [morosidad]
+      operationId: cancelarReserva
+      summary: "Cancelar la reserva: libera el cupo y lo pasa al primero de la lista de espera"
+      x-historias: [HU-060]
+      x-estado: borrador
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: reservaId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reserva' }
+        '400': { $ref: '#/components/responses/Problema' }
+        '401': { $ref: '#/components/responses/Problema' }
+        '403': { $ref: '#/components/responses/Problema' }
+        '404': { $ref: '#/components/responses/Problema' }
+        '429': { $ref: '#/components/responses/Problema' }
+        '500': { $ref: '#/components/responses/Problema' }
+components:
+  securitySchemes:
+    bearer-jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Si falta, el servicio genera uno y lo devuelve en la respuesta.
+      schema: { type: string }
+  responses:
+    Problema:
+      description: Error (RFC 7807)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+  schemas:
+    ProblemaAybar:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        codigo: { type: string, pattern: '^AYB-[A-Z]{3}-[0-9]{3}$', description: 'Código público AYB-SVC-HTTP. Plataforma (CodigoErrorAybar del SDK): AYB-GEN-500, AYB-VAL-400, AYB-SEG-401, AYB-SEG-403, AYB-REC-404, AYB-MET-405 y AYB-MED-415. Los de negocio de ATC se lanzan con AybarException y llevan el área ATC, por ejemplo AYB-ATC-409: catálogo propio por definir, porque el catálogo CodigoNegocio del SDK aún no existe (skill aybar-errores).' }
+        correlationId: { type: string }
+        timestamp: { type: string, format: date-time }
+        campos:
+          type: array
+          items: { type: object, properties: { campo: { type: string }, mensaje: { type: string } } }
+    TicketNuevo:
+      type: object
+      description: "Cuerpo de la solicitud (campos por completar)."
+      required: [canal, empresaId, lineaNegocioId, tipoId, prioridadId, resumen]
+      properties:
+        canal: { type: string }
+        empresaId: { type: string }
+        lineaNegocioId: { type: string }
+        tipoId: { type: string }
+        prioridadId: { type: string }
+        resumen: { type: string }
+        clienteId: { type: string, description: 'PartyID del v7. Va este campo o `interesado`: uno de los dos (HU-051).' }
+        interesado: { type: object, description: 'Datos mínimos cuando el cliente no existe en SIGDA/TAXON o la fuente está caída; el ticket queda con la vinculación al cliente pendiente (HU-051, propuesta: sin columna en el v7).', properties: { nombre: { type: string }, documento: { type: string }, contacto: { type: string } } }
+        subtipo: { type: string, description: 'Subtipo del ticket. El v7 no trae clave de subtipo en SVC_TICKET: por confirmar.' }
+        descripcion: { type: string }
+        establecimientoId: { type: string, description: 'CompanyAddressID del v7.' }
+        contratoId: { type: string, description: 'ContractID del v7.' }
+        unidadId: { type: string, description: 'UnitID del v7.' }
+        productoId: { type: string, description: 'ProductID del v7.' }
+    Ticket:
+      type: object
+      description: "Ticket (SVC_TICKET, ENT-SVC-001). Cada propiedad cita la columna del v7 o del Excel del PO y su fuente; los ids del v7 son enteros y se exponen como cadenas opacas."
+      x-pendiente: "Tipos, largos y obligatoriedad de los atributos no clave (archivos de Drive del v7). Rayo, señal de conflicto, eje actual, vinculación pendiente, subtipo, flujo y actividades no tienen columna en el v7 (los dibuja el PLT-04 §6.5). La clave foránea PartyID → PARTY del v7 frente al ADR-03 del PO («el dato del cliente no se copia») es un conflicto abierto: decide el líder técnico."
+      required: [ticketId, numero, empresaId, lineaNegocioId, canal, tipoId, prioridadId, estado]
+      properties:
+        ticketId: { type: string, description: 'TicketID.' }
+        numero: { type: string, description: 'TicketNumber: número visible por razón social, único por CompanyID (RN-SVC-004; HU-002).', x-pendiente: 'Formato visible del número (pregunta abierta de FT-01).' }
+        empresaId: { type: string, description: 'CompanyID: obligatoria y no derivable (RN-SVC-005).' }
+        lineaNegocioId: { type: string, description: 'BusinessLineID: obligatoria y no derivable (RN-SVC-005).' }
+        establecimientoId: { type: string, nullable: true, description: 'CompanyAddressID: vacío si el canal es remoto (HU-001 CA-02).' }
+        clienteId: { type: string, nullable: true, description: 'PartyID. Vacío mientras la vinculación al cliente está pendiente (HU-051 CA-01).', x-pendiente: 'Nulabilidad en el v7 y clave foránea a PARTY frente al ADR-03 del PO: conflicto abierto, decide el líder técnico.' }
+        contratoId: { type: string, nullable: true, description: 'ContractID: opcional (RN-SVC-005).' }
+        unidadId: { type: string, description: 'UnitID.', x-pendiente: 'Nulabilidad (Drive v7).' }
+        productoId: { type: string, description: 'ProductID.', x-pendiente: 'Nulabilidad (Drive v7).' }
+        canal: { type: string, description: 'ChannelID (MAE_CHANNEL, ENT-REF-001): teléfono, WhatsApp o correo (HU-001), Mi Portal (HU-064) o formulario (RN-SVC-041).' }
+        tipoId: { type: string, description: 'TicketTypeID (MAE_TICKET_TYPE, ENT-SVC-005).' }
+        subtipo: { type: string, description: 'Subtipo del ticket (PLT-04 HU-064 §6.5: SubtypeID).', x-pendiente: 'El v7 no trae clave de subtipo en SVC_TICKET.' }
+        prioridadId: { type: string, description: 'PriorityID (MAE_TICKET_PRIORITY, ENT-SVC-006: LOW, MEDIUM, HIGH, URGENT).' }
+        politicaSlaId: { type: string, description: 'SLAPolicyID: política congelada al abrir el ticket (RN-SVC-002).' }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        areaActualId: { type: string, description: 'CurrentAreaID (MAE_AREA, ENT-SVC-007).' }
+        responsableActualId: { type: string, nullable: true, description: 'CurrentOwnerPartyID; vacío es «sin asignar» (HU-009 CA-03).' }
+        creadoPorId: { type: string, description: 'CreatedByPartyID.' }
+        resumen: { type: string, description: 'Resumen de la solicitud (HU-001). Narrativa visible solo para roles de atención o Legal (RNF-SEC-008).' }
+        descripcion: { type: string, description: 'Descripción (RF-SVC-001). Narrativa restringida por rol (RNF-SEC-008).' }
+        abiertoEn: { type: string, format: date-time, description: 'OpenedDateTime.' }
+        venceRespuesta: { type: string, format: date-time, description: 'FirstResponseDueDateTime: congelado al abrir (RN-SVC-002).' }
+        venceResolucion: { type: string, format: date-time, description: 'ResolutionDueDateTime: congelado al abrir (RN-SVC-002).' }
+        venceResolucionReapertura: { type: string, format: date-time, nullable: true, description: 'ReopenedResolutionDueDateTime: nuevo compromiso al reabrir; el original no se reescribe (RN-SVC-007; HU-011).' }
+        primeraRespuestaEn: { type: string, format: date-time, nullable: true, description: 'FirstRespondedDateTime (HU-005 CA-01).' }
+        primeraResolucionEn: { type: string, format: date-time, nullable: true, description: 'FirstResolvedDateTime: nunca se sobrescribe (HU-006).' }
+        resueltoEn: { type: string, format: date-time, nullable: true, description: 'ResolvedDateTime: el del último ciclo (HU-006).' }
+        cerradoEn: { type: string, format: date-time, nullable: true, description: 'ClosedDateTime: no cambia salvo reapertura (HU-006).' }
+        reaperturas: { type: integer, minimum: 0, description: 'ReopenCount (HU-011 CA-02).' }
+        activo: { type: boolean, description: 'IsActive (Excel, RF-SVC-015).' }
+        rayo: { type: boolean, description: 'Marca de rayo (HU-045; PLT-04 §6.5 «Rayo · Motivo»).', x-pendiente: 'Sin columna en el v7.' }
+        motivoRayo: { type: string, nullable: true, description: 'Motivo del rayo (HU-045 CA-01).', x-pendiente: 'Sin columna en el v7.' }
+        conflicto: { type: boolean, description: 'Señal de conflicto que bloquea la resolución en Eje 1/2 (HU-026; PLT-04 §6.5 «ConflictFlag»).', x-pendiente: 'Sin columna en el v7.' }
+        ejeActual: { type: string, description: 'Eje actual del ticket (PLT-04 HU-026 §6.5).', x-pendiente: 'Sin columna en el v7; los ejes (1, 2 y 3) no tienen códigos.' }
+        vinculacionPendiente: { type: boolean, description: 'Ticket de «Interesado» pendiente de vincular al cliente (HU-051; PLT-04 §6.5 «VinculaciónPendiente»).', x-pendiente: 'Sin columna en el v7.' }
+        flujoId: { type: string, nullable: true, description: 'Flujo (versión) congelado al abrir el ticket (HU-043 CA-02; PLT-04 §6.5 «FK WorkflowID»).', x-pendiente: 'SVC_WORKFLOW_DEFINITION (ENT-SVC-014) no existe en el v7.' }
+        actividades:
+          type: array
+          description: 'Actividades del flujo en orden, cada una con su SLA (HU-043 CA-01 y CA-04).'
+          x-pendiente: 'Estado de cada actividad, fecha en que se habilita y su vencimiento: sin tabla en el v7.'
+          items:
+            type: object
+            properties:
+              numero: { type: integer, description: 'Orden de la actividad (es el `numero` de cerrarActividad).' }
+              nombre: { type: string }
+              responsableId: { type: string, description: 'Persona o rol (HU-043 CA-04).' }
+              slaHoras: { type: number, description: 'SLA de la actividad en horas hábiles (HU-043 CA-05).' }
+    EstadoTicket:
+      type: string
+      description: "Estado del ticket: lista `SVC_TICKET_STATUS` del Excel (RF-SVC-004; PLT-04 HU-004). Transiciones en docs/datos/estados.md."
+      enum: [OPEN, IN_PROGRESS, PENDING_CUSTOMER, ESCALATED, RESOLVED, CLOSED, REOPENED]
+    TicketResumen:
+      type: object
+      description: "Fila de la bandeja, del casillero y de «Mis tickets» (HU-009, HU-044, HU-045 y HU-064 CA-02)."
+      x-pendiente: "Orden por urgencia de la bandeja (HU-044 CA-01: rayo, SLA más próximo y prioridad) y definición de «en riesgo» (HU-009 CA-02)."
+      properties:
+        ticketId: { type: string }
+        numero: { type: string, description: 'TicketNumber.' }
+        canal: { type: string, description: 'Canal de entrada (HU-044 CA-01).' }
+        tipoId: { type: string }
+        subtipo: { type: string, x-pendiente: 'Sin clave de subtipo en el v7.' }
+        prioridadId: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        areaActualId: { type: string, description: 'Área responsable (HU-064 CA-02).' }
+        responsableActualId: { type: string, nullable: true, description: 'Vacío es «sin asignar» (HU-009 CA-03). No se devuelve en Mi Portal (RN-SVC-044).' }
+        venceResolucion: { type: string, format: date-time, description: 'Fecha de compromiso (HU-064 CA-02): ResolutionDueDateTime, o ReopenedResolutionDueDateTime si el ticket se reabrió.' }
+        abiertoEn: { type: string, format: date-time }
+        rayo: { type: boolean, description: 'Los tickets con rayo van primero (HU-045 CA-01).', x-pendiente: 'Sin columna en el v7.' }
+    CambioEstado:
+      type: object
+      description: "Cambio de estado del ticket (HU-004). Cada cambio agrega una fila a SVC_TICKET_STATUS_LOG, bitácora firmada (RNF-AUD-004). Un ticket CLOSED no pasa a IN_PROGRESS sin reabrirse, y con señal de conflicto no se resuelve ni se cierra en Eje 1/2: 409 (HU-004 CA-04; HU-026)."
+      required: [estado]
+      properties:
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+    Interaccion:
+      type: object
+      description: "Interacción (SVC_TICKET_INTERACTION, ENT-SVC-004): visible al cliente o nota interna, con la evidencia adjunta."
+      required: [tipo, visible, texto]
+      properties:
+        interaccionId: { type: string, readOnly: true, description: 'TicketInteractionID.' }
+        tipo: { type: string, description: 'InteractionTypeID: lista SVC_TICKET_INTERACTION_TYPE del Excel (RF-SVC-005): CUSTOMER_MESSAGE, AGENT_RESPONSE, INTERNAL_NOTE, STATUS_CHANGE.', x-pendiente: 'El PLT-04 (HU-042 §6.5) dibuja la llamada como «Tipo = LLAMADA», que no está en la lista del Excel: el PO fija la lista.' }
+        visible: { type: boolean, description: 'IsVisibleToCustomer: false es nota interna y no se muestra en Mi Portal (HU-005 CA-03; RN-SVC-044).' }
+        texto: { type: string, description: 'El sistema advierte si una nota trae un DNI o una tarjeta (HU-005 CA-04; RN-SVC-012).' }
+        canal: { type: string, description: 'ChannelID.' }
+        autor: { type: string, readOnly: true, description: 'Cliente o gestor (PLT-04 HU-064 a 066 §6.5); el gestor es AgentPartyID.' }
+        adjuntos: { type: array, items: { type: string }, description: 'La evidencia va dentro de la interacción, sin tabla de adjuntos aparte (HU-005 CA-02); máximo 10 MB y formatos admitidos (HU-064 CA-05).' }
+        duracionSegundos: { type: integer, description: 'Para la llamada registrada como interacción (HU-042 CA-02).' }
+        enlaceGrabacion: { type: string }
+    Derivacion:
+      type: object
+      description: "Derivación a otra área con motivo tipificado (HU-007). Sin persona, AssignedToPartyID queda vacío y se actualiza CurrentAreaID (HU-007 CA-01)."
+      required: [areaId, motivoId]
+      properties:
+        areaId: { type: string, description: 'AreaID (MAE_AREA, ENT-SVC-007: ATC, COBRANZA, LEGAL, POSTVENTA, TI, ADMINISTRACION).' }
+        responsableId: { type: string, nullable: true, description: 'AssignedToPartyID: opcional (HU-007 CA-01).' }
+        motivoId: { type: string, description: 'AssignmentReasonID: motivo obligatorio del catálogo (HU-007 CA-03). Lista SVC_ASSIGNMENT_REASON del Excel (RF-SVC-007): ESCALATION, DERIVATION_TO_AREA, REASSIGNMENT_ROTATION, REASSIGNMENT_RESIGNATION, REASSIGNMENT_TERMINATION.', x-pendiente: 'El PLT-04 usa REASSIGNMENT_CESE (HU-008) y REASSIGNMENT_CARGA (HU-046), que no están en la lista del Excel: el PO fija la lista.' }
+    Reapertura:
+      type: object
+      description: "Reapertura (HU-011): se calcula ReopenedResolutionDueDateTime con la política vigente, sube ReopenCount y el compromiso original no se reescribe (RN-SVC-007); cada ciclo tiene sus alertas (RN-SVC-008)."
+      required: [motivo]
+      properties:
+        motivo: { type: string }
+    Reasignacion:
+      type: object
+      description: "Reasignación en bloque a uno o varios destinatarios (HU-008)."
+      x-pendiente: "Código del motivo: REASSIGNMENT_CESE (PLT-04 HU-008 CA-01) frente a la lista SVC_ASSIGNMENT_REASON del Excel (REASSIGNMENT_TERMINATION, REASSIGNMENT_RESIGNATION, REASSIGNMENT_ROTATION): el PO fija la lista."
+      required: [destinatarios]
+      properties:
+        destinatarios:
+          type: array
+          minItems: 1
+          description: 'Uno o varios; el resumen de la respuesta dice cuántos tickets recibió cada uno (HU-008 CA-02). Cada fila nueva lleva el motivo REASSIGNMENT_CESE.'
+          items:
+            type: object
+            required: [responsableId]
+            properties:
+              responsableId: { type: string }
+              areaDestinoId: { type: string }
+    ResultadoReasignacion:
+      type: object
+      description: "Resumen de la reasignación en bloque: cuántos tickets recibió cada destinatario (HU-008 CA-02)."
+      properties:
+        total: { type: integer, description: 'Tickets reasignados.' }
+        porDestinatario:
+          type: array
+          items:
+            type: object
+            properties:
+              responsableId: { type: string }
+              tickets: { type: integer }
+        motivo: { type: string, description: 'Motivo de cada fila nueva en SVC_TICKET_ASSIGNMENT_LOG: REASSIGNMENT_CESE (PLT-04 HU-008 CA-01).', x-pendiente: 'El Excel usa REASSIGNMENT_TERMINATION, REASSIGNMENT_RESIGNATION y REASSIGNMENT_ROTATION: el PO fija la lista.' }
+    CodigoEnviado:
+      type: object
+      description: "Código de un solo uso enviado al contacto registrado en SIGDA/TAXON (HU-064 CA-01; ADR-011). No devuelve el código ni el contacto completo."
+      x-pendiente: "Canal y proveedor del envío: no figuran en las dependencias del PLT-01 (ADR-011)."
+      properties:
+        canal: { type: string, description: 'Correo o celular (HU-064 CA-01).' }
+        vigenciaMinutos: { type: integer, description: 'Vence en 5 minutos (PLT-03 FT-24).', example: 5 }
+        intentosMaximos: { type: integer, description: 'Máximo 3 intentos (PLT-03 FT-24).', example: 3 }
+    Sla:
+      type: object
+      description: "Compromisos de SLA del ticket, sus pausas y sus alertas (HU-003, HU-010 y HU-011)."
+      properties:
+        politicaId: { type: string, description: 'Política congelada al abrir el ticket (SLAPolicyID del v7); manda la específica (tipo + prioridad) sobre la genérica (RN-SVC-001).' }
+        baseTiempo: { type: string, description: 'TimeBasis de la política: BUSINESS_HOURS o BUSINESS_DAYS, contra MAE_TIME y MAE_HOLIDAY por geografía del establecimiento (RN-SVC-003; HU-003 CA-02).', x-pendiente: 'ListCode de la lista de bases de tiempo.' }
+        venceRespuesta: { type: string, format: date-time, description: 'FirstResponseDueDateTime (RN-SVC-002).' }
+        venceResolucion: { type: string, format: date-time, description: 'ResolutionDueDateTime (RN-SVC-002).' }
+        venceResolucionReapertura: { type: string, format: date-time, nullable: true, description: 'ReopenedResolutionDueDateTime: las alertas evalúan este vencimiento mientras exista (HU-011 CA-01).' }
+        pausas:
+          type: array
+          description: 'Pausas del SLA mientras el ticket espera al cliente: el SLA se reanuda cuando responde (HU-066 CA-01). El detalle (desde, hasta, horas y motivo) es propuesta del mockup; el v7 no tiene tabla para ellas.'
+          items:
+            type: object
+            properties:
+              desde: { type: string, format: date-time }
+              hasta: { type: string, format: date-time, nullable: true }
+              horas: { type: number }
+              motivo: { type: string }
+        alertas:
+          type: array
+          description: 'Alertas de incumplimiento (SVC_SLA_BREACH_ALERT): una sola por ticket, tipo y ciclo (RN-SVC-008; HU-010 CA-01).'
+          items: { $ref: '#/components/schemas/AlertaSla' }
+    AlertaSla:
+      type: object
+      description: "Constancia de la alerta (HU-010 CA-02): destinatario, fecha, canal, vencimiento evaluado y ciclo. Es bitácora firmada (RNF-AUD-004)."
+      properties:
+        tipo: { type: string, enum: [FIRST_RESPONSE_OVERDUE, RESOLUTION_OVERDUE, LEGAL_RESPONSE_OVERDUE, LEGAL_EXTENSION_WINDOW_CLOSING], description: 'BreachTypeID: lista SVC_SLA_BREACH_TYPE del Excel (RF-SVC-010).' }
+        ciclo: { type: integer, description: 'ReopenCycleNumber (RN-SVC-008).' }
+        vencimientoEvaluado: { type: string, format: date-time, description: 'EvaluatedDueDateTime (HU-010 CA-02).' }
+        destinatarioId: { type: string, description: 'AlertedPartyID.' }
+        canal: { type: string, description: 'ChannelID.' }
+        fecha: { type: string, format: date-time, description: 'Fecha de la alerta (HU-010 CA-02).', x-pendiente: 'Nombre de la columna (Drive v7).' }
+    PaginaTickets:
+      type: object
+      description: "Página de tickets."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/TicketResumen' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    Flujo:
+      type: object
+      description: "Definición de flujo versionada con actividades (propuesta del equipo: SVC_WORKFLOW_DEFINITION no existe en el v7)."
+      required: [responsableId, actividades]
+      properties:
+        responsableId: { type: string, description: 'Persona del área responsable del flujo (propuesta del mockup).' }
+        version: { type: integer, readOnly: true, description: 'Versión del flujo; una nueva versión solo aplica a los tickets nuevos.' }
+        slaTotalHoras: { type: number, readOnly: true, description: 'Suma de las actividades; prevalece la política del tipo si es menor.' }
+        actividades:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [nombre, responsableId, slaHoras]
+            properties:
+              nombre: { type: string }
+              responsableId: { type: string, description: 'Persona o rol.' }
+              slaHoras: { type: number, minimum: 0, exclusiveMinimum: true, description: 'SLA de la actividad en horas hábiles.' }
+    AsientoNuevo:
+      type: object
+      description: "Asiento del Libro de Reclamaciones: extensión 1:1 del ticket que califica como queja o reclamo (HU-012; RF-SVC-012)."
+      required: [ticketId, empresaId, establecimientoId, tipo]
+      properties:
+        ticketId: { type: string }
+        empresaId: { type: string, description: 'CompanyID: inmutable una vez registrado (RN-SVC-013).' }
+        establecimientoId: { type: string, description: 'CompanyAddressID: obligatorio en el libro, que lleva el correlativo por establecimiento (RN-SVC-004).' }
+        tipo: { type: string, enum: [QUEJA, RECLAMO], description: 'ComplaintTypeID (Excel, ENT-SVC-010).', x-pendiente: 'ListCode de la lista de tipos de asiento.' }
+        hechos: { type: string, description: 'Narrativa restringida por rol (RNF-SEC-008).' }
+        pedido: { type: string, description: 'Narrativa restringida por rol (RNF-SEC-008).' }
+        monto: { type: number, nullable: true, description: 'ClaimedAmount. Con monto, la moneda es obligatoria; sin monto, ambos vacíos (ck_complaint_amount_currency; HU-012 CA-02).' }
+        moneda: { type: string, nullable: true, description: 'CurrencyID del v7.' }
+    Asiento:
+      type: object
+      description: "Asiento del Libro (SVC_COMPLAINT_BOOK_ENTRY, ENT-SVC-010). Plazo legal de 15 días hábiles, prorrogable una sola vez por 15 (Ley 29571, art. 24; Ley 31435; RN-SVC-009)."
+      x-pendiente: "Valores de la lista de estados del asiento (ComplaintStatus): no los definen ni el PLT ni el Excel. Columnas de la justificación y del cargo de la prórroga. Tipos y largos (Drive v7)."
+      properties:
+        ticketId: { type: string, description: 'TicketID: PK del asiento (extensión 1:1); es el `asientoId` de las rutas.' }
+        empresaId: { type: string, description: 'CompanyID (RN-SVC-013).' }
+        establecimientoId: { type: string, description: 'CompanyAddressID.' }
+        numero: { type: string, description: 'Correlativo por empresa y establecimiento (RN-SVC-004; PLT-04 §6.5 «EntryNumber»).' }
+        tipo: { type: string, enum: [QUEJA, RECLAMO] }
+        estado: { type: string, description: 'ComplaintStatusID.', x-pendiente: 'Valores de la lista sin definir.' }
+        hechos: { type: string }
+        pedido: { type: string }
+        monto: { type: number, nullable: true, description: 'ClaimedAmount.' }
+        moneda: { type: string, nullable: true, description: 'CurrencyID.' }
+        registradoEn: { type: string, format: date, description: 'ComplaintRegistrationDate: desde aquí corren los 15 días hábiles (RF-SVC-013).' }
+        vencimientoLegal: { type: string, format: date, description: 'LegalResponseDueDate.' }
+        prorrogado: { type: boolean, description: 'IsResponseExtended: una sola prórroga (HU-013 CA-03).' }
+        vencimientoProrrogado: { type: string, format: date, nullable: true, description: 'ExtendedResponseDueDate: una vez poblado no se reescribe (HU-013 CA-02).' }
+        prorrogaComunicadaEn: { type: string, format: date, nullable: true, description: 'ExtensionCommunicatedDate: anterior o igual a LegalResponseDueDate (HU-013 CA-04).' }
+        canalProrroga: { type: string, nullable: true, description: 'ExtensionCommunicationChannelID.' }
+        justificacionProrroga: { type: string, nullable: true, description: 'HU-013 CA-01.', x-pendiente: 'Columna por confirmar (Drive v7).' }
+        cargoProrroga: { type: string, nullable: true, description: 'Cargo de la prórroga (HU-013 CA-01; documento probatorio, RNF-CUM-007).', x-pendiente: 'Columna por confirmar (Drive v7).' }
+        respondidoEn: { type: string, format: date, nullable: true, description: 'CompanyResponseDate (HU-014 CA-01).' }
+        responsableRespuestaId: { type: string, nullable: true, description: 'ResponderPartyID.' }
+        cartaRespuesta: { type: string, nullable: true, description: 'CompanyResponseDocumentPath: carta con cargo en PDF, con espejo y checksum en GOV_DOCUMENT_REPOSITORY (RF-SVC-014; RNF-CUM-007); entra al IntegrityHash (RN-SVC-010).' }
+        derechoIndecopiInformado: { type: boolean, description: 'CustomerNotifiedOfIndecopiRight (HU-014 CA-02).' }
+        cerradoPorId: { type: string, nullable: true, description: 'ClosedByPartyID.' }
+    Prorroga:
+      type: object
+      description: "Prórroga única de 15 días hábiles (HU-013). Una segunda prórroga devuelve 409; fuera de la ventana, 422."
+      required: [justificacion, cargo, canal, fechaComunicacion]
+      properties:
+        justificacion: { type: string }
+        cargo: { type: string, description: 'Cargo de la comunicación al consumidor (documento probatorio, RNF-CUM-007).' }
+        canal: { type: string, description: 'ExtensionCommunicationChannelID (MAE_CHANNEL).' }
+        fechaComunicacion: { type: string, format: date, description: 'ExtensionCommunicatedDate: anterior al vencimiento original (HU-013 CA-01 y CA-04).' }
+    RespuestaFormal:
+      type: object
+      description: "Cuerpo de la solicitud (campos por completar)."
+      required: [cargo, firmante]
+      properties:
+        cargo: { type: string }
+        firmante: { type: string }
+        responsableId: { type: string, description: 'ResponderPartyID del v7.' }
+        derechoIndecopiInformado: { type: boolean, description: 'Constancia de que se informó el derecho a acudir a INDECOPI (HU-014 CA-02).' }
+    Apelacion:
+      type: object
+      description: "Apelación (SVC_COMPLAINT_APPEAL, ENT-SVC-012), interna o ante INDECOPI; un asiento puede tener varias (PLT-04 HU-016 §6.5: 1 a N)."
+      required: [instancia]
+      properties:
+        apelacionId: { type: string, readOnly: true, description: 'ComplaintAppealID.' }
+        instancia: { type: string, description: 'AppealLevelID: instancia interna o INDECOPI (HU-016).', x-pendiente: 'El Excel solo nombra el valor INDECOPI; el código de la instancia interna y el ListCode no están definidos.' }
+        estado: { $ref: '#/components/schemas/EstadoApelacion' }
+        numeroCasoIndecopi: { type: string, nullable: true, description: 'IndecopiCaseNumber: solo si la instancia es INDECOPI (RF-SVC-016).' }
+        fechaResolucion: { type: string, format: date, nullable: true, description: 'HU-016 CA-01.', x-pendiente: 'Columna por confirmar (Drive v7).' }
+        resumenResolucion: { type: string, nullable: true, description: 'HU-016 CA-01.', x-pendiente: 'Columna por confirmar (Drive v7).' }
+    EstadoApelacion:
+      type: string
+      description: "Estado de la apelación: lista `SVC_COMPLAINT_APPEAL_STATUS` del Excel (RF-SVC-016). Transiciones del PLT-04 (HU-016 §6.1): PENDING → UNDER_REVIEW (se admite) → RESOLVED_FAVOR_CUSTOMER o RESOLVED_FAVOR_COMPANY; PENDING → WITHDRAWN (desiste)."
+      enum: [PENDING, UNDER_REVIEW, RESOLVED_FAVOR_CUSTOMER, RESOLVED_FAVOR_COMPANY, WITHDRAWN]
+    ClienteEncontrado:
+      type: object
+      description: "Cliente encontrado en SIGDA/TAXON (HU-049). Se consulta en línea y no se guarda en ATC (ADR-003; RN-SVC-026)."
+      x-pendiente: "Qué expone SIGDA/TAXON (DEP-01) y con qué permisos por rol (RN-SVC-036)."
+      properties:
+        clienteId: { type: string, description: 'PartyID.' }
+        nombres: { type: string, description: 'PLT-04 §6.5 «Party (SIGDA): Documento, Nombres».' }
+        documentoParcial: { type: string, description: 'DNI parcial para elegir entre varias coincidencias (HU-049 CA-03).' }
+        lotes: { type: array, items: { type: string }, description: 'Lotes del cliente (HU-049 CA-01 y CA-03).' }
+        tickets: { type: array, items: { type: string }, description: 'Números de sus tickets (HU-049 CA-01).' }
+    PaginaClientes:
+      type: object
+      description: "Página de clientes encontrados (HU-049): solo lo que el rol puede ver y sin copiar el dato (RN-SVC-036; ADR-003)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/ClienteEncontrado' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    Consulta360:
+      type: object
+      description: "Consulta 360 federada en línea, sin copiar el dato (HU-050; ADR-003): una sección por fuente con su estado; si una fuente falla, las demás cargan (CA-03)."
+      x-pendiente: "Fuentes de cada sección y datos visibles por rol; códigos del estado de la sección."
+      properties:
+        clienteId: { type: string, description: 'PartyID.' }
+        ficha:
+          type: object
+          description: 'Ficha resumen (HU-050 CA-05).'
+          properties:
+            nombre: { type: string }
+            documento: { type: string }
+            proyecto: { type: string }
+            etapa: { type: string }
+            lotes: { type: array, items: { type: string } }
+            cuotasVencidas: { type: integer }
+            tickets: { type: integer }
+        datosVisibles: { type: integer, description: 'Contador «datos visibles n de 16» según el rol (HU-050 CA-05).' }
+        datosTotales: { type: integer, example: 16 }
+        secciones:
+          type: array
+          description: 'Lotes, cuotas y estado de cuenta, correos y mensajes, tickets e interacciones previas y documentos (RF-SVC-050).'
+          items:
+            type: object
+            properties:
+              seccion: { type: string }
+              fuente: { type: string, description: 'Sistema de origen: SIGDA/TAXON, Tickets ATC, Call center, Correo, Repositorio S3/GLI, Motor de José, Cobranza, Contratos y Activos (HU-050 CA-04).' }
+              estado: { type: string, description: 'Disponible, restringido (candado por rol, CA-07) o no disponible (CA-03).' }
+              intentoEn: { type: string, format: date-time, nullable: true, description: 'Hora del intento cuando la fuente no responde (HU-050 CA-03).' }
+              datos:
+                type: array
+                items:
+                  type: object
+                  description: 'Detalle del dato (HU-050 CA-06).'
+                  properties:
+                    nombre: { type: string }
+                    valor: { type: string }
+                    estado: { type: string, description: 'Por ejemplo «verificado» o «conforme».' }
+                    fecha: { type: string, format: date, nullable: true }
+        tiempoRespuestaMs: { type: integer, description: 'Tiempo de respuesta (HU-050 CA-09; p95 de 2 s o menos, RNF-REN-007).' }
+        fuentesRespondieron: { type: integer, description: 'Cuántas fuentes respondieron (HU-050 CA-09).' }
+        fuentesConsultadas: { type: integer, example: 8 }
+    SolicitudCodigo:
+      type: object
+      description: "Cuerpo de la solicitud (campos por completar)."
+      required: [dni]
+      properties:
+        dni: { type: string }
+    AperturaSesion:
+      type: object
+      description: "Cuerpo de la solicitud (campos por completar)."
+      required: [dni, codigo]
+      properties:
+        dni: { type: string }
+        codigo: { type: string }
+    Sesion:
+      type: object
+      description: "Sesión del cliente en Mi Portal, limitada a sus propios tickets (ADR-011; PLT-05 §3 y PLT-04 §6.5: PORTAL_SESSION, por modelar, con DNI, OTP y expiración)."
+      x-pendiente: "Cómo se emite el token de la sesión frente al emisor OIDC (ADR-011 y ADR-014); tabla candidata IDN_USER_SESSION del v7 (por confirmar)."
+      properties:
+        sesionId: { type: string }
+        expiraEn: { type: string, format: date-time }
+    Trazabilidad:
+      type: object
+      description: "Línea de tiempo del ticket en Mi Portal (HU-065): cada paso con fecha y hora, área responsable y fecha de compromiso, en el orden de la bitácora de estados. Sin notas internas ni nombre del gestor (CA-03; RN-SVC-044)."
+      x-pendiente: "Si se muestra el nombre del área o uno genérico (pregunta abierta de FT-24)."
+      properties:
+        ticketId: { type: string }
+        numero: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        venceResolucion: { type: string, format: date-time, description: 'Fecha de compromiso.' }
+        pasos:
+          type: array
+          items:
+            type: object
+            properties:
+              paso: { type: string, description: 'Registrado, asignado, en atención, pendiente del cliente, resuelto o cerrado (RF-SVC-065).' }
+              fechaHora: { type: string, format: date-time }
+              areaId: { type: string, description: 'Área responsable.' }
+        interacciones:
+          type: array
+          description: 'Solo las visibles al cliente (IsVisibleToCustomer).'
+          items: { $ref: '#/components/schemas/Interaccion' }
+    EstadoVisor:
+      type: object
+      description: "Instantánea de la operación en vivo (HU-067); los cambios llegan por WebSocket en 5 s o menos (CA-08; ADR-010). Solo las áreas y tickets que el rol puede ver (CA-07; RN-SVC-036). Sin ranking individual (CA-10)."
+      x-pendiente: "Posición de cada área en la sede (PLT-04 §6.5 «Posición en sede» en MAE_AREA, sin columna en el v7) y áreas de la sede del piloto."
+      properties:
+        indicadores:
+          type: object
+          description: 'HU-067 CA-06.'
+          properties:
+            ticketsActivos: { type: integer }
+            porcentajeResueltosEnSla: { type: number }
+            metaSla: { type: number, example: 90 }
+            csatDia: { type: number }
+        areas:
+          type: array
+          items:
+            type: object
+            description: 'Área de la sede y su panel (HU-067 CA-01 y CA-04).'
+            properties:
+              areaId: { type: string }
+              nombre: { type: string }
+              enCola: { type: integer }
+              gestoresOcupados: { type: integer }
+              gestoresTotal: { type: integer }
+              resueltos: { type: integer }
+              porcentajeEnSla: { type: number }
+              cargaPorGestor:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    gestorId: { type: string }
+                    tickets: { type: integer }
+        tickets:
+          type: array
+          items:
+            type: object
+            description: 'Ticket en la escena (HU-067 CA-02 y CA-03).'
+            properties:
+              ticketId: { type: string }
+              tipoId: { type: string }
+              areaId: { type: string }
+              estado: { $ref: '#/components/schemas/EstadoTicket' }
+              estadoSla: { type: string, description: 'Holgado (verde), en riesgo (naranja) o vencido (rojo) (HU-067 CA-03).', x-pendiente: 'Códigos y umbral de «en riesgo» (el PLT-04 §6.1 del visor dibuja SLA ≥ 75 %).' }
+              rayo: { type: boolean }
+              prioridadId: { type: string }
+        actividad:
+          type: array
+          description: 'Registro de actividad con la hora de cada evento (HU-067 CA-06).'
+          items:
+            type: object
+            properties:
+              fechaHora: { type: string, format: date-time }
+              evento: { type: string }
+    TiposPortal:
+      type: object
+      description: "Tipos y subtipos habilitados para el cliente en Mi Portal (propuesta del equipo)."
+      properties:
+        tipos:
+          type: array
+          items:
+            type: object
+            properties:
+              tipoId: { type: string }
+              nombre: { type: string }
+              libro: { type: boolean, description: 'Reclamo y queja van al Libro de Reclamaciones.' }
+              subtipos: { type: array, items: { type: string } }
+    ConfirmacionSolucion:
+      type: object
+      description: "Confirmación o rechazo de la solución por el cliente (HU-066)."
+      required: [acepta]
+      properties:
+        acepta: { type: boolean, description: 'true confirma la solución; false la rechaza y reabre el ticket.' }
+        motivo: { type: string }
+    PublicacionFlujo:
+      type: object
+      description: "Publicación de un flujo en la bitácora: autor, fecha y versión (HU-043 CA-08)."
+      x-pendiente: "Sin tabla en el v7 (SVC_WORKFLOW_DEFINITION, ENT-SVC-014)."
+      properties:
+        tipoId: { type: string }
+        subtipoId: { type: string }
+        areaId: { type: string }
+        version: { type: integer }
+        autorId: { type: string }
+        publicadoEn: { type: string, format: date-time }
+    PaginaFlujos:
+      type: object
+      description: "Página de publicaciones de flujos."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/PublicacionFlujo' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    Rayo:
+      type: object
+      description: "Marca de rayo con motivo (HU-045); queda en la bitácora."
+      required: [motivo]
+      properties:
+        motivo: { type: string }
+    Guia:
+      type: object
+      description: "Guía de solución del tipo de ticket, última versión publicada (HU-047; SVC_KNOWLEDGE_ARTICLE, ENT-SVC-015: sin tabla en el v7)."
+      x-pendiente: "Respuesta cuando el tipo no tiene guía (HU-047 CA-03: aviso «sin guía»); tabla de guías y su historial de versiones."
+      properties:
+        tipoId: { type: string }
+        version: { type: integer, description: 'Queda el historial de versiones (HU-047 CA-02).' }
+        pasos: { type: array, items: { type: string } }
+        plantillas: { type: array, items: { type: string }, description: 'Plantillas de respuesta.' }
+        documentosRequeridos: { type: array, items: { type: string } }
+        criteriosCierre: { type: array, items: { type: string } }
+    SolicitudSugerencia:
+      type: object
+      description: "Texto sobre el que se pide ayuda a la IA; se anonimiza antes de enviarse (HU-048)."
+      required: [texto]
+      properties:
+        texto: { type: string }
+    Sugerencia:
+      type: object
+      description: "Sugerencia de IA y criterios de cierre pendientes (HU-048 CA-01). El registro guarda la decisión y la fecha, sin datos personales (CA-02; PLT-04 §6.5 SVC_AI_SUGGESTION_LOG «Decisión · Fecha»)."
+      x-pendiente: "Sin tabla en el v7 (SVC_AI_SUGGESTION_LOG, ENT-SVC-016); proveedor de IA aprobado (DEP-14)."
+      properties:
+        sugerenciaId: { type: string }
+        texto: { type: string, description: 'Texto sugerido; el gestor lo acepta, edita o descarta.' }
+        criteriosCierrePendientes: { type: array, items: { type: string } }
+        decision: { type: string, enum: [ACEPTADA, EDITADA, DESCARTADA], description: 'Vacía hasta que el gestor decide.' }
+        fecha: { type: string, format: date-time, nullable: true }
+    DecisionSugerencia:
+      type: object
+      description: "Decisión del gestor sobre la sugerencia de IA (HU-048 CA-02)."
+      required: [decision]
+      properties:
+        decision: { type: string, enum: [ACEPTADA, EDITADA, DESCARTADA], description: 'Sin datos personales en el registro (HU-048 CA-02).' }
+    Tablero:
+      type: object
+      description: "Tablero de avance (HU-054) y Torre de Control (HU-030). El gestor ve solo el suyo; el del equipo, su líder (HU-054 CA-03)."
+      x-pendiente: "Metas diarias (pregunta abierta), fuente del NPS (DEP-10) y unidad del tiempo medio."
+      properties:
+        avance:
+          type: array
+          description: 'Una fila para el gestor; una por gestor para el líder (HU-054 CA-01 y CA-02).'
+          items:
+            type: object
+            properties:
+              gestorId: { type: string }
+              atendidos: { type: integer }
+              pendientes: { type: integer }
+              enRiesgo: { type: integer }
+              cumplimientoSla: { type: number }
+              tiempoMedio: { type: number }
+              csat: { type: number }
+        ticketsEnRiesgo:
+          type: array
+          description: 'Casos en riesgo antes del incumplimiento (HU-030 CA-01; HU-054 CA-02).'
+          items: { $ref: '#/components/schemas/TicketResumen' }
+        ticketsActivos: { type: integer, description: 'HU-030.' }
+        nps: { type: number, nullable: true, description: 'HU-030.' }
+        derivacionesEnCurso: { type: integer, description: 'HU-030.' }
+    CambioEstadoApelacion:
+      type: object
+      description: "Admisión, resolución de INDECOPI o desistimiento de la apelación (HU-016 CA-01 a CA-03). WITHDRAWN cierra la apelación y el ticket no puede volver a apelarse por la misma respuesta (409)."
+      required: [estado]
+      properties:
+        estado: { $ref: '#/components/schemas/EstadoApelacion' }
+        numeroCasoIndecopi: { type: string }
+        fechaResolucion: { type: string, format: date }
+        resumenResolucion: { type: string }
+    Llamada:
+      type: object
+      description: "Llamada iniciada desde la ficha del cliente (HU-049)."
+      required: [ticketId]
+      properties:
+        ticketId: { type: string }
+        telefono: { type: string }
+    ConsultaMotor:
+      type: object
+      description: "Consulta específica al motor de José (HU-052)."
+      required: [consulta]
+      properties:
+        consulta: { type: string }
+    ResultadoConsulta:
+      type: object
+      description: "Respuesta del motor de José vía API (HU-052 CA-01). Si no está disponible, el ticket avisa y no se bloquea la atención (CA-02); un dato que el rol no puede ver no se devuelve y el intento queda registrado (CA-03)."
+      x-pendiente: "Qué expone el motor de José y en qué formato (DEP-13)."
+      properties:
+        disponible: { type: boolean }
+        respuesta: { type: string, nullable: true }
+    DocumentoEncontrado:
+      type: object
+      description: "Documento del cliente encontrado por significado, con su fragmento (HU-053 CA-01). Solo los que el rol puede ver (CA-02; RN-SVC-036)."
+      x-pendiente: "Repositorios que se indexan (DEP-06); SVC_SEARCH_INDEX (ENT-SVC-017) no existe en el v7."
+      properties:
+        documentoId: { type: string, description: 'DocumentID de GOV_DOCUMENT_REPOSITORY (ENT-GOV-004).' }
+        origen: { type: string, description: 'Origen del documento (PLT-04 §6.5 SVC_SEARCH_INDEX «Origen · Permisos»).' }
+        fragmento: { type: string }
+    PaginaDocumentos:
+      type: object
+      description: "Página de documentos del cliente (HU-053)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/DocumentoEncontrado' } }
+        sugerencias: { type: array, items: { type: string }, description: 'Sin coincidencias relevantes: sugerencias por palabras exactas (HU-053 CA-03).' }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    CasoSensibleNuevo:
+      type: object
+      description: "Caso sensible de una de las 5 líneas de ingreso (HU-020; RN-SVC-014). Antes de registrarlo se buscan coincidencias (HU-024)."
+      required: [lineaIngreso, clienteId]
+      properties:
+        lineaIngreso: { type: string, description: 'Indecopi, Libro de Reclamaciones, Cartas Notariales, Legal Atiende o Backlog Histórico (RN-SVC-014).', x-pendiente: 'Códigos (MAE_INTAKE_LINE del PLT-04 §6.5, por modelar).' }
+        clienteId: { type: string }
+        ticketId: { type: string, description: 'Opcional (PLT-04 §6.5: «FK TicketID (opc.)»).' }
+        descripcion: { type: string }
+    CasoSensible:
+      type: object
+      description: "Caso sensible de la Mesa SGD (HU-020 a 025), según el esbozo del PLT-04 §6.5 (SENSITIVE_CASE, RISK_ASSESSMENT, ESCALATION_LOG y CASE_CLOSURE, «por modelar», R-06)."
+      x-pendiente: "Sin tablas en el v7; códigos de líneas, estados, niveles de riesgo y de los 8 estados de cierre; criterios y pesos de la matriz (Mesa SGD, R-08)."
+      properties:
+        codigoUnico: { type: string, description: 'CaseCode: nunca se reutiliza (HU-020 CA-01).' }
+        lineaIngreso: { type: string, description: 'RN-SVC-014.' }
+        clienteId: { type: string }
+        ticketId: { type: string, nullable: true }
+        estado: { type: string, description: 'Registrado, cargo previo (limbo), activado, riesgo clasificado o recalibrado; en la cadena, alerta temprana, memorándum a jefatura, Comité y Directorio; cerrado (PLT-04 §6.1 de HU-020 a 025).' }
+        cargoPrevioEn: { type: string, format: date-time, nullable: true, description: 'PreChargeAt: el SLA de línea todavía no corre (HU-021 CA-01).' }
+        activadoEn: { type: string, format: date-time, nullable: true, description: 'ActivatedAt: el SLA de línea corre desde aquí (HU-021 CA-02).' }
+        riesgo:
+          type: object
+          nullable: true
+          description: 'RISK_ASSESSMENT: el nivel resulta de la matriz (HU-022 CA-01); recalibrar guarda quién, cuándo y por qué (CA-02).'
+          properties:
+            nivel: { type: string }
+            puntaje: { type: number }
+            criterios: { type: array, items: { type: string } }
+            evaluadoEn: { type: string, format: date-time }
+            evaluadoPorId: { type: string }
+        escalamientos:
+          type: array
+          description: 'ESCALATION_LOG: historial de niveles alcanzados (HU-023 CA-03).'
+          items:
+            type: object
+            properties:
+              nivel: { type: string, enum: [JEFATURA, COMITE, DIRECTORIO] }
+              fecha: { type: string, format: date-time }
+        casoVinculadoId: { type: string, nullable: true, description: 'LinkedCaseCode: un solo hilo de evidencia (HU-024; RN-SVC-018).' }
+        cierre:
+          type: object
+          nullable: true
+          description: 'CASE_CLOSURE (HU-025).'
+          properties:
+            estado: { type: string, description: 'Uno de los 8 estados homologados (RN-SVC-019; ver CierreCaso).' }
+            evidencia: { type: string }
+            referenciaGli: { type: string, description: 'Referencia al original en el Repositorio Legal GLI (HU-025 CA-02; RN-SVC-020).' }
+    Reclasificacion:
+      type: object
+      description: "Reclasificación de un caso preventivo a reclamo formal (HU-020 CA-02)."
+      required: [motivo]
+      properties:
+        motivo: { type: string }
+    Cargo:
+      type: object
+      description: "Cargo previo o de activación (HU-021)."
+      required: [tipo]
+      properties:
+        tipo: { type: string, enum: [PREVIO, ACTIVACION], description: 'El SLA de línea corre desde el cargo de activación (HU-021 CA-02).' }
+    Riesgo:
+      type: object
+      description: "Criterios de la matriz de riesgo (HU-022)."
+      required: [criterios]
+      properties:
+        criterios: { type: array, minItems: 1, items: { type: string }, description: 'Criterios marcados; el nivel resulta de la matriz, no de un campo de opinión (HU-022 CA-01).' }
+        motivoRecalibracion: { type: string }
+    Escalamiento:
+      type: object
+      description: "Nivel de la cadena de escalamiento (HU-023)."
+      required: [nivel]
+      properties:
+        nivel: { type: string, enum: [JEFATURA, COMITE, DIRECTORIO], description: 'No se puede saltar un nivel (409; HU-023 CA-02).' }
+    PaginaCasos:
+      type: object
+      description: "Casos abiertos del mismo cliente y hechos (HU-024 CA-01)."
+      x-pendiente: "Criterio de coincidencia (pregunta abierta)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/CasoSensible' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    Vinculo:
+      type: object
+      description: "Vínculo entre casos con el mismo cliente y hechos (HU-024)."
+      required: [casoRelacionadoId]
+      properties:
+        casoRelacionadoId: { type: string }
+    CierreCaso:
+      type: object
+      description: "Cierre del caso con estado homologado y evidencia (HU-025): sin evidencia no hay cierre (422)."
+      required: [estado, evidencia]
+      properties:
+        estado: { type: string, description: 'Uno de los 8 estados homologados (RN-SVC-019; RF-SVC-025): conforme, con observación, con riesgo mitigado, con contingencia, por desistimiento, por derivación legal, por regularización documentaria y por acuerdo con el cliente.', x-pendiente: 'Códigos de los 8 estados: el Excel solo da los nombres.' }
+        evidencia: { type: string }
+        referenciaGli: { type: string, description: 'Referencia al original crítico custodiado en el GLI (HU-025 CA-02).' }
+    Conflicto:
+      type: object
+      description: "Señal de conflicto, por ejemplo una carta notarial (HU-026)."
+      required: [motivo]
+      properties:
+        motivo: { type: string }
+    RetiroConflicto:
+      type: object
+      description: "Retiro de una señal marcada por error, con justificación (HU-026 CA-03)."
+      required: [justificacion]
+      properties:
+        justificacion: { type: string }
+    Handoff:
+      type: object
+      description: "Paquete mínimo de handoff a Eje 3: los 6 elementos completos antes de enviar (HU-027 CA-01)."
+      required: [identificacion, kycValidado, proyectoLote, pagosEstadoCuenta, atencionPrevia, proximoPaso]
+      properties:
+        identificacion: { type: string }
+        kycValidado: { type: boolean }
+        proyectoLote: { type: string }
+        pagosEstadoCuenta: { type: string }
+        atencionPrevia: { type: string }
+        proximoPaso: { type: string }
+    ConfirmacionHandoff:
+      type: object
+      description: "Confirmación de recepción del handoff por el especialista de Eje 3 (HU-027 CA-02)."
+      required: [recibidoPor]
+      properties:
+        recibidoPor: { type: string }
+    NotaEstado:
+      type: object
+      description: "Nota de estado emocional sin juicios de valor (HU-028)."
+      required: [texto]
+      properties:
+        texto: { type: string }
+    ReclamoGarantia:
+      type: object
+      description: "Reclamo de garantía vinculado a una entrega (HU-033 a 036; CONTRACT_WARRANTY_CLAIM del fragmento CONTRACT). Sin entrega no hay reclamo (RN-SVC-027); fuera de cobertura es «no procedente por vigencia» (422)."
+      required: [entregaId, tipo, descripcion]
+      properties:
+        reclamoId: { type: string, readOnly: true }
+        entregaId: { type: string, description: 'CONTRACT_UNIT_HANDOVER: la vigencia se valida contra la fecha real de entrega (ActualHandoverDate; RF-SVC-034).' }
+        tipo: { type: string, description: 'Catálogo cerrado: estructural, impermeabilización, acabados o instalaciones (HU-033 CA-02; PROC-SVC-013).', x-pendiente: 'Códigos del catálogo.' }
+        descripcion: { type: string }
+        estado: { type: string, readOnly: true, enum: [REPORTED, UNDER_REVIEW, APPROVED, REJECTED, RESOLVED], description: 'ClaimStatusID: lista CONTRACT_WARRANTY_CLAIM_STATUS del Excel (RF-SVC-035).' }
+    Inspeccion:
+      type: object
+      description: "Inspección técnica previa a resolver (HU-035)."
+      required: [fecha]
+      properties:
+        fecha: { type: string }
+        informe: { type: string }
+        fotos: { type: array, items: { type: string } }
+    ResolucionReclamo:
+      type: object
+      description: "Resolución del reclamo de garantía (HU-035 CA-02)."
+      required: [estado, descripcion]
+      properties:
+        estado: { type: string, enum: [APPROVED, REJECTED, RESOLVED] }
+        descripcion: { type: string }
+    EscalamientoGarantia:
+      type: object
+      description: "Derivación a Eje 3 por carta notarial (HU-036)."
+      required: [motivo]
+      properties:
+        motivo: { type: string }
+    Adenda:
+      type: object
+      description: "Adenda de reincorporación contractual (HU-036 CA-02)."
+      required: [descripcion]
+      properties:
+        descripcion: { type: string }
+    FraseAncla:
+      type: object
+      description: "Frase Ancla aplicada y su secuencia (HU-037; propuesta: sin tabla en el v7). La Frase 6 obliga a registrar el caso (HU-037 CA-02)."
+      required: [numero]
+      properties:
+        numero: { type: string, description: 'Frase 4 (concreción), 5 (invocación de reglas) o 6 (compromiso formal) (RN-SVC-030).' }
+    CasoEvento:
+      type: object
+      description: "Caso sensible del Entrega Fest (HU-037 a 039), según el esbozo del PLT-04 §6.5 (SENSITIVE_EVENT_CASE, por modelar, R-06)."
+      x-pendiente: "Sin tabla en el v7 (candidatas del fragmento EVENT); niveles de riesgo y lista de palabras gatillo."
+      properties:
+        casoId: { type: string }
+        eventoId: { type: string, description: 'Evento de entrega (PLT-04 §6.5 EVENT: proyecto, etapa y fecha).' }
+        riesgo: { type: string, description: 'Riesgo verbal; «estafa», «fraude», «abuso» o «delito» son riesgo muy alto (RN-SVC-029).' }
+        frases: { type: array, items: { type: string }, description: 'Frases Ancla aplicadas en orden: 4, 5 y 6 (RN-SVC-030).' }
+        etiqueta: { type: string, description: 'Literal «Atención especial — derivación a Legal» (HU-039 CA-01).' }
+        derivadoEstacion4: { type: boolean, description: 'Sí o no derivado a la Estación 4 (HU-039 CA-02); una vez derivado, el moderador no puede reabrirlo (HU-038 CA-02).' }
+    CasoEventoNuevo:
+      type: object
+      description: "Caso sensible del Entrega Fest con la etiqueta estándar (HU-038, HU-039)."
+      required: [descripcion]
+      properties:
+        descripcion: { type: string }
+    PaginaCasosEvento:
+      type: object
+      description: "Casos del bloque con su estado (HU-039 CA-02)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/CasoEvento' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    Ingreso:
+      type: object
+      description: "Formulario simple de ingreso al proyecto, máximo 6 campos (HU-059; propuesta: sin tabla en el v7)."
+      required: [nombre, documento, proyectoId]
+      properties:
+        nombre: { type: string }
+        documento: { type: string }
+        proyectoId: { type: string }
+    ReservaBus:
+      type: object
+      description: "Reserva de cupo en el bus del Entrega Fest (HU-060)."
+      required: [busId, puntoEmbarque, acompanantes]
+      properties:
+        busId: { type: string }
+        puntoEmbarque: { type: string }
+        acompanantes: { type: string }
+    Reserva:
+      type: object
+      description: "Reserva de cupo en el bus del Entrega Fest (HU-060; SVC_EVENT_BUS_BOOKING, ENT-SVC-020: sin tabla en el v7, candidatas EVT_ATTENDEE y EVT_TRANSPORT)."
+      x-pendiente: "Códigos del estado; aforo y alcance de «Buses entrega fest» (pregunta abierta)."
+      properties:
+        reservaId: { type: string }
+        ticketId: { type: string, description: 'Cada reserva crea un ticket (HU-060 CA-01; RN-SVC-041).' }
+        clienteId: { type: string }
+        busId: { type: string }
+        horario: { type: string }
+        puntoEmbarque: { type: string }
+        acompanantes: { type: string }
+        estado: { type: string, description: 'Confirmada, en lista de espera o cancelada (HU-060; RN-SVC-042).' }

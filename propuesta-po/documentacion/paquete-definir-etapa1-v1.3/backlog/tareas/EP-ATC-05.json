@@ -1,0 +1,286 @@
+{
+  "epica": "EP-ATC-05",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "titulo": "Postventa: reclamos de garantía",
+  "responsable": "Brayan (Dev 1)",
+  "horas": 12,
+  "ventana": "2026-10-29 -> 2026-10-30",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
+  "historias": [
+    {
+      "hu": "HU-ATC-033",
+      "titulo": "Registrar un reclamo de garantía vinculado a la entrega",
+      "feature": "FT-ATC-10",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 2,
+      "inicio": "2026-10-29",
+      "fin": "2026-10-29",
+      "tareas": [
+        {
+          "id": "HU-ATC-033-T01",
+          "titulo": "Entidad CONTRACT_WARRANTY_CLAIM (tipo de defecto, vinculo al Acta de Entrega CONTRACT_UNIT_HANDOVER) y puerto en domain.port.out; el Acta se consulta a Contratos y Activos (DEP-07) con un adaptador contract-first con simulador (ADR-004), sin copia local",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-033-T02",
+          "titulo": "Migracion Flyway V25__crear_tabla_contract_warranty_claim.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-033-T03",
+          "titulo": "Caso de uso RegistrarReclamoGarantiaUseCase, vinculado obligatoriamente a la entrega de la unidad",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-033-T04",
+          "titulo": "Endpoint POST /api/v1/reclamos-garantia",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-033-T05",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-033 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-033-T06",
+          "titulo": "Pantalla de registro de reclamo de garantia tipificado (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-033-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-034",
+      "titulo": "Validar la vigencia de la garantía contra la cobertura",
+      "feature": "FT-ATC-10",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 2,
+      "iteracion": 2,
+      "inicio": "2026-10-29",
+      "fin": "2026-10-29",
+      "tareas": [
+        {
+          "id": "HU-ATC-034-T01",
+          "titulo": "Migracion Flyway V26__crear_tabla_mae_warranty_coverage_period.sql y columna de estado de cobertura en CONTRACT_WARRANTY_CLAIM (MAE_WARRANTY_COVERAGE_PERIOD segun docs/datos; cobertura de DEP-07)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-034-T02",
+          "titulo": "Caso de uso ValidarVigenciaGarantiaUseCase (rechaza automaticamente fuera de cobertura, contra fecha real de entrega)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-034-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-034-T03",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-034 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-034-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-034-T04",
+          "titulo": "Chip de cobertura de la garantia en la pantalla de Garantias (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-034-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-035",
+      "titulo": "Registrar la inspección técnica antes de resolver",
+      "feature": "FT-ATC-10",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 2,
+      "inicio": "2026-10-30",
+      "fin": "2026-10-30",
+      "tareas": [
+        {
+          "id": "HU-ATC-035-T01",
+          "titulo": "Modelo de la inspeccion tecnica (evidencia, resultado) asociado a CONTRACT_WARRANTY_CLAIM segun docs/datos/diccionario.md, y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-035-T02",
+          "titulo": "Migracion Flyway V31__agregar_inspeccion_tecnica_warranty_claim.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-035-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-035-T03",
+          "titulo": "Caso de uso RegistrarInspeccionYResolverReclamoUseCase (aprobar/rechazar/resolver con trazabilidad) y endpoint POST /api/v1/reclamos-garantia/{id}/inspeccion",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-035-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-035-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-035 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-035-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-035-T05",
+          "titulo": "Pantalla de inspeccion tecnica con evidencia documental (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-035-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-036",
+      "titulo": "Escalar la garantía a Eje 3 y gestionar la adenda",
+      "feature": "FT-ATC-10",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 2,
+      "inicio": "2026-10-30",
+      "fin": "2026-10-30",
+      "tareas": [
+        {
+          "id": "HU-ATC-036-T01",
+          "titulo": "Migracion Flyway V32__agregar_columna_escalated_to_legal_warranty_claim.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-033-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-036-T02",
+          "titulo": "Caso de uso EscalarGarantiaYReincorporarUseCase: escala a Eje 3 reutilizando el gate y el paquete de handoff de FT-ATC-07 (RN-SVC-021) y gestiona la reincorporacion contractual por adenda",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-036-T01",
+            "HU-ATC-035-T03",
+            "HU-ATC-026-T02",
+            "HU-ATC-027-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-036-T03",
+          "titulo": "Endpoint POST /api/v1/reclamos-garantia/{id}/escalamiento",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-036-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-036-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-036 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-036-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-036-T05",
+          "titulo": "Pantalla de escalamiento y adenda contractual (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-036-T03"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,571 @@
+{
+  "epica": "EP-ATC-10",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "titulo": "Consulta 360 e integraciones operativas",
+  "responsable": "Daniel (Dev 4)",
+  "horas": 36,
+  "ventana": "2026-10-21 -> 2026-10-28",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
+  "historias": [
+    {
+      "hu": "HU-ATC-049",
+      "titulo": "Buscar al cliente y llamarlo desde su ficha",
+      "feature": "FT-ATC-20",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-21",
+      "tareas": [
+        {
+          "id": "HU-ATC-049-T01",
+          "titulo": "Adaptador de busqueda de clientes contra SIGDA/TAXON (DNI, nombre, codigo, lote, telefono, N.º de ticket) con el indice SVC_SEARCH_INDEX (ENT-SVC-017), contract-first con simulador (ADR-004)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-049-T02",
+          "titulo": "Caso de uso BuscarClienteUseCase",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-049-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-049-T03",
+          "titulo": "Endpoint GET /api/v1/clientes/buscar (p95 <= 2s, RNF-REN-007; respeta permisos, RN-SVC-036)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-049-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-049-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-049 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-049-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-049-T05",
+          "titulo": "Motor de busqueda de clientes con opcion de llamar desde la ficha (click-to-call, DEP-11) (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-049-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-050",
+      "titulo": "Ver la consulta 360 del cliente dentro del ticket",
+      "feature": "FT-ATC-20",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 7,
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-22",
+      "tareas": [
+        {
+          "id": "HU-ATC-050-T01",
+          "titulo": "Servicio de dominio PoliticaVisibilidad360 (clase Java pura en domain) que aplica los permisos del rol sobre el agregado 360 (RN-SVC-036)",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-050-T02",
+          "titulo": "Orquestacion de fan-out en paralelo con timeout a SIGDA/TAXON (DEP-01: lotes, cuotas, correos, documentos), a Cobranza (DEP-08) y al read model local de tickets previos, con degradacion por fuente (ADR-003)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-049-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-050-T03",
+          "titulo": "Caso de uso ConsultarVista360UseCase: agrega, aplica PoliticaVisibilidad360 y nunca persiste copia (RN-SVC-026, ADR-003)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-050-T01",
+            "HU-ATC-050-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-050-T04",
+          "titulo": "Endpoint GET /api/v1/tickets/{id}/consulta-360",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-050-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-050-T05",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-050 (CA-01 a CA-10) con datos sinteticos; incluye verificar accesos_indebidos_busqueda: 0, RNF-SEC-010; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-050-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-050-T06",
+          "titulo": "Submodulo de consulta 360 embebido en la pantalla de ticket (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2.5,
+          "depende_de": [
+            "HU-ATC-050-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-051",
+      "titulo": "Continuar la atención cuando la consulta del cliente falla",
+      "feature": "FT-ATC-20",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 1,
+      "inicio": "2026-10-22",
+      "fin": "2026-10-22",
+      "tareas": [
+        {
+          "id": "HU-ATC-051-T01",
+          "titulo": "Caso de uso ManejarExcepcionesConsultaClienteUseCase (cliente no encontrado, interesado sin contrato, datos incompletos, fuente caida -> flujo controlado; RN-SVC-005, RN-SVC-026)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-050-T02",
+            "HU-ATC-049-T02",
+            "HU-ATC-001-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-051-T02",
+          "titulo": "Extender POST /api/v1/tickets para aceptar registro con vinculacion de cliente pendiente",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-051-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-051-T03",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-051 (CA-01 a CA-03) con datos sinteticos; simular caida de fuente, RF-SVC-051; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-051-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-051-T04",
+          "titulo": "Mensajes de excepcion de consulta y continuidad del registro en el formulario (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-051-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-052",
+      "titulo": "Consultar datos específicos con el motor de José",
+      "feature": "FT-ATC-20",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-23",
+      "tareas": [
+        {
+          "id": "HU-ATC-052-T01",
+          "titulo": "Adaptador del motor de consultas de Jose (DEP-13, por API), contract-first con simulador (ADR-004): integrar en vez de desarrollar uno nuevo",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-050-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-052-T02",
+          "titulo": "Integrar el adaptador del motor de Jose en ConsultarVista360UseCase para los datos especificos que resuelve",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-052-T01",
+            "HU-ATC-050-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-052-T03",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-052 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-052-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-052-T04",
+          "titulo": "Consultas rapidas en el ticket con las respuestas del motor de Jose (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-052-T02",
+            "HU-ATC-050-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-053",
+      "titulo": "Buscar documentos del cliente por significado",
+      "feature": "FT-ATC-20",
+      "prioridad": "Podría",
+      "flexible": true,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-26",
+      "tareas": [
+        {
+          "id": "HU-ATC-053-T01",
+          "titulo": "Puerto IndexadorSemanticoPort en domain.port.out sobre SVC_SEARCH_INDEX y GOV_DOCUMENT_REPOSITORY (los repositorios a indexar son la pregunta abierta P-01 de FT-ATC-20)",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-053-T02",
+          "titulo": "Adaptador de indexacion y de busqueda semantica via el servicio de asistencia de IA (DEP-14, ADR-007: anonimizacion y registro) sobre el repositorio documental S3 (DEP-06)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-053-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-053-T03",
+          "titulo": "Caso de uso BuscarSemanticamenteUseCase (resultados con fragmento y permisos aplicados via PoliticaVisibilidad360, RN-SVC-036; DLP RN-SVC-012)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-053-T02",
+            "HU-ATC-050-T01",
+            "HU-ATC-049-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-053-T04",
+          "titulo": "Endpoint GET /api/v1/clientes/{id}/documentos/buscar-semantico (p95 <= 3s)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-053-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-053-T05",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-053 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-053-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-053-T06",
+          "titulo": "Resultados de busqueda semantica con fragmento resaltado en la pantalla de busqueda (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-053-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-042",
+      "titulo": "Atender la llamada con la ficha del cliente y registrarla en el ticket",
+      "feature": "FT-ATC-17",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-26",
+      "fin": "2026-10-26",
+      "tareas": [
+        {
+          "id": "HU-ATC-042-T01",
+          "titulo": "Adaptador CTI de la plataforma del call center (screen pop, registro de llamada y grabacion; DEP-11, por evaluar), contract-first con simulador (ADR-004)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-042-T02",
+          "titulo": "Caso de uso AtenderLlamadaUseCase (screen pop con los datos del cliente, abrir o ubicar el ticket; empresa y linea obligatorias, RN-SVC-005)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-042-T01",
+            "HU-ATC-005-T01",
+            "HU-ATC-049-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-042-T03",
+          "titulo": "Endpoint GET /api/v1/call-center/screen-pop; registra la llamada como SVC_TICKET_INTERACTION con su grabacion y canal de MAE_CHANNEL",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-042-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-042-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-042 (CA-01 a CA-03) con datos sinteticos; RNF-INT-008: p95 <= 2s; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-042-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-042-T05",
+          "titulo": "Pantalla de screen pop al recibir la llamada (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-042-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-040",
+      "titulo": "Sincronizar con Legal los tickets derivados a Eje 3",
+      "feature": "FT-ATC-16",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-26",
+      "fin": "2026-10-27",
+      "tareas": [
+        {
+          "id": "HU-ATC-040-T01",
+          "titulo": "Puerto LegalPort en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-040-T02",
+          "titulo": "Adaptador de sincronizacion con la herramienta de Legal (DEP-12), contract-first con simulador (ADR-004)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-040-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-040-T03",
+          "titulo": "Caso de uso SincronizarTicketConLegalUseCase: envia el ticket derivado a Eje 3 con su paquete de handoff (contrato de FT-ATC-07), recibe estado y resolucion, sin doble registro (RNF-INT-009; RN-SVC-021, RN-SVC-022)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-040-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-040-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-040 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-040-T03",
+            "HU-ATC-040-T05"
+          ]
+        },
+        {
+          "id": "HU-ATC-040-T05",
+          "titulo": "Endpoint GET /api/v1/tickets/{id}/legal (estado y resolucion sincronizados con Legal)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-040-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-040-T06",
+          "titulo": "Pestana Legal del ticket con el estado y la resolucion sincronizados (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-040-T05"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-041",
+      "titulo": "Priorizar los reclamos con riesgo de denuncia por su exposición",
+      "feature": "FT-ATC-16",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 2,
+      "inicio": "2026-10-27",
+      "fin": "2026-10-28",
+      "tareas": [
+        {
+          "id": "HU-ATC-041-T01",
+          "titulo": "Servicio de dominio CalculadoraExposicionEconomica (monto reclamado + interes legal referencial 8%, RN-SVC-034) sobre SVC_COMPLAINT_BOOK_ENTRY",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-012-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-041-T02",
+          "titulo": "Caso de uso IdentificarRiesgoDenunciaUseCase (riesgo objetivo y recalibrable, RN-SVC-016) y alerta a Legal (DEP-12)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1.5,
+          "depende_de": [
+            "HU-ATC-041-T01",
+            "HU-ATC-040-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-041-T03",
+          "titulo": "Endpoint GET /api/v1/tickets/riesgo-denuncia",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-041-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-041-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-041 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-041-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-041-T05",
+          "titulo": "Vista de tickets con riesgo de denuncia priorizados (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-041-T03"
+          ]
+        }
+      ]
+    }
+  ]
+}

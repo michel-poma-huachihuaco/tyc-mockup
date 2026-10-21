@@ -1,16 +1,35 @@
 # Paquete Definir · Etapa 1 (v1.3)
 
-Borrador del paquete Definir de toda la Etapa 1 en el formato del SDK. Son 11 épicas, 23 funcionalidades, 62 historias y un DoR por funcionalidad.
-Cada documento lleva el frontmatter del contrato (11 campos y `ui:` en las historias).
+Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 155 documentos y 11 archivos de tareas.
 
-**De dónde sale.** Se transcribió de los documentos del PO v1.3 (`../po-v1.3/`) sin cambiar su contenido: «Como / quiero / para», criterios de aceptación, reglas, horas, fechas, dependencias y riesgos.
-Solo se omitieron las frases que remiten a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por: (pendiente)».
+| Carpeta | Qué hay | Base |
+|---|---|---|
+| `epicas/`, `features/`, `historias/`, `dor/` | 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (índice abajo) | Documentos del PO v1.3, sin cambiar su contenido |
+| [`analisis/`](analisis/) | BRD, ficha de intake, cobertura de requisitos y `decisiones.md` | Versión de Nexora (Jesús y Daniel), llevada a la v1.3 |
+| [`roadmap/`](roadmap/) | RMP-001, análisis de dependencias, dependencias y olas (Mermaid) | Versión de Nexora (Jesús), con la flecha EP-09→EP-06 del Gantt del PLT-01 |
+| [`adr/`](adr/) | 14 ADR: ADR-001…011 son las ADR-01…11 del PO; 012 stack, 013 outbox y 014 plataforma las propone el equipo | Versión de Nexora (Jesús). No se cambia ninguna decisión: los conflictos con el PO quedan anotados |
+| [`arquitectura/`](arquitectura/) | OpenAPI (61 operaciones), C4, módulos, seguridad, operaciones y trazabilidad por historia | Versión de Nexora (Jesús), con los esquemas del OpenAPI completados desde el PO y el Excel |
+| [`datos/`](datos/) | Modelo entidad-relación, diccionario, estados, linaje y acta | Versión de Nexora (Jesús), con lo que el PO y el Excel ya definen |
+| [`backlog/tareas/`](backlog/tareas/) | 318 tareas en 11 archivos (uno por épica), 243 h | Versión de Nexora (Daniel), rehecha con la v1.3 |
+| [`gates/AYB-0001/`](gates/AYB-0001/) | G0, G1, G2, G3 y G4 en borrador | Versión de Nexora y de `main`, llevada a la v1.3. G2 es nuevo |
 
-**Estado.** Todo está en `estado: draft`. Los 119 documentos están en Nexora desde el 20-oct, con las mismas huellas, pendientes de aprobación: épicas, funcionalidades e historias los aprueba el PO, y los DoR, el líder técnico con el project manager. El detalle está en `PLAN-NEXORA.md`.
+**Qué no se decide aquí.** Las decisiones abiertas están en [`analisis/decisiones.md`](analisis/decisiones.md):
+- el stack (D-001): el PO pide NestJS + React + PostgreSQL y las ADR-001 y 012 proponen Java/Spring + Angular + MongoDB + Kafka;
+- la clave foránea del ticket a `PARTY`, frente a la ADR-03 del PO;
+- la D-12 de la rama de Daniel, que saca la HU-048 y la 053 de la Etapa 1 y no se aplicó.
 
-**Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`): **0 errores**. Hay 24 advertencias esperadas en esta etapa:
-- las 23 funcionalidades tienen pantallas y aún no tienen G2;
-- todavía no hay tareas.
+Las correcciones que se le proponen al Excel del PO están en [`../correcciones-excel-v1.3.md`](../correcciones-excel-v1.3.md).
+
+**De dónde sale.** Épicas, funcionalidades, historias y DoR se transcribieron de los documentos del PO v1.3 (`../po-v1.3/`) sin cambiar su contenido:
+«Como / quiero / para», criterios de aceptación, reglas, horas, fechas, dependencias y riesgos. Solo se omitieron las frases que remiten
+a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por: (pendiente)».
+
+**Estado.** Todo está en borrador y nada está aprobado. Épicas, funcionalidades, historias y DoR están en Nexora desde el 20-oct, con las
+mismas huellas. Las demás carpetas de este repositorio son versiones nuevas que todavía **no se subieron**: ver `PLAN-NEXORA.md`.
+
+**Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`, 21-oct): **0 errores y 0 advertencias**.
+Son 155 documentos y 318 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. Ninguna funcionalidad está lista para construir,
+porque los DoR y los gates siguen sin aprobar.
 
 **Para leerlo** sin instalar nada, abre `explorador.html` en el navegador. Lo generó `aybar paquete explorador` del SDK.
 

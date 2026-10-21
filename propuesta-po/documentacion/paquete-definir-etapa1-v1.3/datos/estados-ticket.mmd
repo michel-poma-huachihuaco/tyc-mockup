@@ -1,0 +1,16 @@
+stateDiagram-v2
+  %% Estados: lista SVC_TICKET_STATUS del Excel del PO (RF-SVC-004).
+  %% Transiciones: PLT-04 v1.3, HU-004 §6.1. RESOLVED --> REOPENED sale del PLT-04 HU-064 a 066 §6.1 y de HU-066 CA-03.
+  %% ESCALATED --> IN_PROGRESS es propuesta del equipo: el PLT-04 no dibuja la salida de ESCALATED.
+  [*] --> OPEN
+  OPEN --> IN_PROGRESS : toma el caso
+  IN_PROGRESS --> PENDING_CUSTOMER : pide datos
+  PENDING_CUSTOMER --> IN_PROGRESS : cliente responde
+  IN_PROGRESS --> ESCALATED : escala
+  ESCALATED --> IN_PROGRESS : vuelve a atención (propuesta)
+  IN_PROGRESS --> RESOLVED : resuelve
+  RESOLVED --> CLOSED : cierre formal en Mi Portal
+  RESOLVED --> REOPENED : cliente rechaza la solución
+  CLOSED --> REOPENED : reabre
+  REOPENED --> IN_PROGRESS : nuevo ciclo
+  %% Generado por IA (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO. — Revisado por: (pendiente)

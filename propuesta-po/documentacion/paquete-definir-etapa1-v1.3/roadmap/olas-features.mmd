@@ -1,0 +1,49 @@
+flowchart LR
+  subgraph O0["Ola 0 · fundación"]
+    FTATC01["FT-01 · Registro multicanal<br/>EP-01 · Dev 1"]
+    FTATC03["FT-03 · Derivación<br/>EP-02 · Dev 2"]
+    FTATC04["FT-04 · Motor SLA<br/>EP-02 · Dev 2"]
+    FTATC10["FT-10 · Reclamos de garantía postventa<br/>EP-05 · Dev 1"]
+    FTATC16["FT-16 · Integración con Legal<br/>EP-10 · Dev 4"]
+    FTATC18["FT-18 · Bandeja orquestadora<br/>EP-09 · Dev 3"]
+    FTATC19["FT-19 · Asistencia al gestor<br/>EP-09 · Dev 3"]
+    FTATC20["FT-20 · Búsqueda y consulta 360<br/>EP-10 · Dev 4"]
+    FTATC23["FT-23 · Formularios simples<br/>EP-11 · Dev 4"]
+  end
+  subgraph O1["Ola 1"]
+    FTATC02["FT-02 · Ciclo de vida<br/>EP-01 · Dev 1"]
+    FTATC07["FT-07 · Gate de derivación a Eje 3<br/>EP-04 · Dev 2"]
+    FTATC13["FT-13 · Encuesta post-atención<br/>EP-07 · Dev 3"]
+    FTATC17["FT-17 · Integración con el call center<br/>EP-10 · Dev 4"]
+    FTATC21["FT-21 · Productividad y notificaciones<br/>EP-09 · Dev 3"]
+    FTATC25["FT-25 · Visor del proceso 3D<br/>EP-09 · Dev 3"]
+  end
+  subgraph O2["Ola 2"]
+    FTATC05["FT-05 · Libro de Reclamaciones<br/>EP-03 · Dev 1"]
+    FTATC08["FT-08 · Mesa SGD<br/>EP-04 · Dev 2"]
+    FTATC14["FT-14 · Torre de Control CX<br/>EP-07 · Dev 3"]
+    FTATC22["FT-22 · Resolución por morosidad<br/>EP-11 · Dev 4"]
+    FTATC24["FT-24 · Autogestión en Mi Portal<br/>EP-06 · Dev 4"]
+  end
+  subgraph O3["Ola 3"]
+    FTATC06["FT-06 · Apelaciones internas e INDECOPI<br/>EP-03 · Dev 1"]
+    FTATC09["FT-09 · Escalamiento y cierre tipificado<br/>EP-04 · Dev 2"]
+  end
+  subgraph O4["Ola 4"]
+    FTATC15["FT-15 · EntregaFest<br/>EP-08 · Dev 1"]
+  end
+  FTATC01 --> FTATC02
+  FTATC02 --> FTATC05
+  FTATC05 --> FTATC06
+  FTATC04 --> FTATC07
+  FTATC07 --> FTATC08
+  FTATC08 --> FTATC09
+  FTATC04 --> FTATC13
+  FTATC13 --> FTATC14
+  FTATC09 -. no se respeta .-> FTATC15
+  FTATC20 --> FTATC17
+  FTATC18 --> FTATC21
+  FTATC02 --> FTATC22
+  FTATC18 --> FTATC25
+  FTATC21 --> FTATC24
+  FTATC18 --> FTATC24

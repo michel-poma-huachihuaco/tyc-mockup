@@ -1,0 +1,44 @@
+flowchart TB
+  user([Gestor / supervisor / cliente])
+  emisor[["Emisor OIDC<br/>(ADR-014)"]]
+  subgraph front["Presentación · Angular"]
+    consola[Consola ATC]
+    mp[Mi Portal]
+    visor[Visor 3D]
+    forms[Formularios PWA]
+  end
+  gw[Pasarela de API + WAF]
+  subgraph app["Aybar Atiende · Java 21 · Spring Boot 3.5 · un despliegue · monolito modular"]
+    direction TB
+    m1[tickets]
+    m2[sla]
+    m3[libro]
+    m4[casos_legales]
+    m5[postventa]
+    m6[portal]
+    m7[calidad]
+    m8[bandeja]
+    m9[consulta360]
+    m10[morosidad]
+    m11[integraciones<br/>adaptador + simulador]
+    m12[identidad<br/>roles locales]
+    jobs[Jobs idempotentes<br/>SLA y plazo legal]
+    outb[Outbox]
+    proy[Proyector]
+  end
+  pg[(PostgreSQL<br/>se escribe<br/>una instancia, tablas del v7)]
+  mg[(Almacén de lectura<br/>API de MongoDB<br/>vistas de ATC)]
+  kf{{Bus de eventos<br/>protocolo Kafka}}
+  s3[(Almacenamiento de objetos<br/>Object Lock · evidencia)]
+  ext[Sistemas externos]
+  user --> front --> gw --> app
+  emisor -. JWT .-> gw
+  app -- escribe --> pg
+  app -- evento en la misma transacción --> outb
+  outb --> kf
+  kf --> proy
+  proy --> mg
+  app -- lee --> mg
+  app --> s3
+  m11 <--> ext
+  kf -. WebSocket .-> visor

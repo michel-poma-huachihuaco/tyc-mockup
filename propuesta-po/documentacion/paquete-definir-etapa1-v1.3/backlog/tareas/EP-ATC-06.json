@@ -1,0 +1,227 @@
+{
+  "epica": "EP-ATC-06",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "titulo": "Autogestión del cliente y trazabilidad (Mi Portal)",
+  "responsable": "Daniel (Dev 4)",
+  "horas": 9,
+  "ventana": "2026-10-30 -> 2026-11-02",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
+  "historias": [
+    {
+      "hu": "HU-ATC-064",
+      "titulo": "Registrar y consultar mis tickets en Mi Portal",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 2,
+      "inicio": "2026-10-30",
+      "fin": "2026-11-02",
+      "tareas": [
+        {
+          "id": "HU-ATC-064-T01",
+          "titulo": "Acceso del cliente a Mi Portal con DNI y codigo de un solo uso enviado al contacto registrado en SIGDA/TAXON (ADR-011, DEP-01), contract-first con simulador (ADR-004)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-049-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T02",
+          "titulo": "Migracion Flyway V36__agregar_canal_mi_portal.sql (canal MI_PORTAL en MAE_CHANNEL y subtipos habilitados al cliente)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-001-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T03",
+          "titulo": "Caso de uso RegistrarTicketMiPortalUseCase: crea el ticket con canal MI_PORTAL, tipo y subtipo con el flujo publicado (HU-ATC-043) y su fecha de compromiso; datos del cliente desde SIGDA/TAXON sin copia (RN-SVC-026); Reclamo o Queja se deriva al Libro de Reclamaciones con el aviso legal",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-064-T01",
+            "HU-ATC-064-T02",
+            "HU-ATC-001-T03",
+            "HU-ATC-043-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T04",
+          "titulo": "Endpoints POST y GET /api/v1/portal/tickets (solo los tickets del cliente autenticado, RN-SVC-044) con adjuntos de hasta 10 MB y formatos admitidos en S3 (ADR-006)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-064-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T05",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-064 (CA-01 a CA-05) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-064-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T06",
+          "titulo": "Mi Portal: Nuevo ticket (registro guiado con adjunto) y Mis tickets (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-064-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-065",
+      "titulo": "Ver la trazabilidad de mi ticket",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 2,
+      "inicio": "2026-11-02",
+      "fin": "2026-11-02",
+      "tareas": [
+        {
+          "id": "HU-ATC-065-T01",
+          "titulo": "Caso de uso ConsultarTrazabilidadClienteUseCase: linea de tiempo desde SVC_TICKET_STATUS_LOG e interacciones con Visible = si, sin notas internas ni nombre del gestor (RN-SVC-044); un ticket ajeno no se muestra y el intento queda en bitacora",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-064-T03",
+            "HU-ATC-004-T03",
+            "HU-ATC-005-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T02",
+          "titulo": "Endpoint GET /api/v1/portal/tickets/{id}/trazabilidad segun el contrato OpenAPI",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T03",
+          "titulo": "Aviso al cliente por correo y WhatsApp en cada cambio de estado, con el enlace al ticket, reutilizando los adaptadores de notificacion de HU-ATC-055 y HU-ATC-057",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01",
+            "HU-ATC-055-T01",
+            "HU-ATC-057-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T04",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-065 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T02",
+            "HU-ATC-065-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T05",
+          "titulo": "Linea de tiempo del ticket en Mi Portal (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-066",
+      "titulo": "Responder, adjuntar y confirmar la solución de mi ticket",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 2,
+      "iteracion": 2,
+      "inicio": "2026-11-02",
+      "fin": "2026-11-02",
+      "tareas": [
+        {
+          "id": "HU-ATC-066-T01",
+          "titulo": "Caso de uso GestionarRespuestaClienteUseCase: la respuesta con adjunto queda como interaccion visible (autor = cliente) y reanuda el SLA; confirmar cierra formalmente en Mi Portal (RN-SVC-023) y dispara la encuesta de HU-ATC-019; rechazar reabre el ticket con motivo (REOPENED en STATUS_LOG)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01",
+            "HU-ATC-019-T02",
+            "HU-ATC-011-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T02",
+          "titulo": "Endpoints POST /api/v1/portal/tickets/{id}/respuestas y /api/v1/portal/tickets/{id}/conformidad, y job idempotente de cierre automatico sin respuesta tras los dias habiles configurados (ADR-005)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T03",
+          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-066 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T04",
+          "titulo": "Detalle del ticket en Mi Portal: responder, adjuntar y confirmar o rechazar la solucion (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T02"
+          ]
+        }
+      ]
+    }
+  ]
+}

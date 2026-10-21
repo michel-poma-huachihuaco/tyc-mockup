@@ -1,0 +1,32 @@
+flowchart LR
+  ident[identidad<br/>roles locales]
+  tickets[tickets]
+  sla[sla]
+  libro[libro]
+  casos[casos_legales]
+  posv[postventa]
+  portal[portal]
+  cal[calidad]
+  band[bandeja]
+  c360[consulta360]
+  moro[morosidad]
+  integ[integraciones]
+  bus{{eventos}}
+  ident -. roles .-> tickets
+  portal -- API --> tickets
+  libro -- API --> tickets
+  casos -- API --> tickets
+  posv -- API --> tickets
+  moro -- API --> tickets
+  band -- API --> tickets
+  tickets -- ticket.assigned · ticket.closed --> bus
+  sla -- sla.breached --> bus
+  bus --> band
+  bus --> cal
+  bus --> portal
+  c360 --> integ
+  moro --> integ
+  casos --> integ
+  posv --> integ
+  tickets --> integ
+  integ --> ext[(Sistemas externos)]

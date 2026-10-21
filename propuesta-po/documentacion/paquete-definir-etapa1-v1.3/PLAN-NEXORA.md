@@ -26,6 +26,23 @@ exactamente este paquete, con las mismas huellas sha256.
 | Dev 3 (Michel) | 0 | 14 | 13 |
 | Dev 4 (Daniel) | 0 | 15 | 16 |
 
+## Pendiente de subir: el resto del paquete en la v1.3 (21-oct)
+
+El 21-oct se llevaron a la v1.3, en este repositorio, las demás carpetas del paquete, partiendo de la última versión de Nexora.
+**Todavía no se subieron**: esperan la luz verde de Brayan y avisar a sus autores (Jesús y Daniel), porque las versiones nuevas
+quedarían a nombre de Brayan.
+
+| Carpeta | En Nexora hoy | Al subir |
+|---|---|---|
+| `adr/` | 14, de Jesús | 14 versiones nuevas: referencias a la v1.3 y conflictos con el PO anotados, sin cambiar decisiones |
+| `arquitectura/` | 10, de Jesús | 5 versiones nuevas (OpenAPI con esquemas, contexto, diagrama, seguridad y trazabilidad); 5 iguales |
+| `datos/` | 7, de Jesús | 6 versiones nuevas (5 bitácoras, estados, listas y transiciones del PO y el Excel); 1 igual |
+| `analisis/` y `roadmap/` | 8, de Jesús y Daniel | 8 versiones nuevas en la v1.3 |
+| `backlog/tareas/` | 10, de Daniel (v1.2) | 10 versiones nuevas y 1 nueva (EP-ATC-06) |
+| `gates/AYB-0001/` | 4 en `gates/` sin carpeta de ticket (v1.2) | 5 nuevos en `gates/AYB-0001/` (G2 es nuevo). Retirar los 4 viejos lo decide el PO o el admin |
+
+En total son unas 49 versiones o documentos. Antes de publicar se hace el `dry_run` para confirmar el plan del servidor.
+
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
 - **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO) y los 23 DoR (el líder técnico y el project manager).

@@ -1,0 +1,35 @@
+flowchart LR
+  subgraph Quien["Quién pide y atiende"]
+    tel[Teléfono]
+    wa[WhatsApp]
+    mail[Correo]
+    portal[Mi Portal<br/>cliente]
+    ges[Gestores, supervisores<br/>y áreas]
+  end
+  atc(["<b>Aybar Atiende</b><br/>plataforma ATC<br/>Java con Spring Boot · un despliegue"])
+  subgraph Ext["Sistemas externos (con simulador)"]
+    sigda[SIGDA/TAXON<br/>DEP-01]
+    con[Contratos y Activos<br/>DEP-07]
+    cob[Cobranza<br/>DEP-08]
+    cti[Call center CTI<br/>DEP-11]
+    leg[Herramienta de Legal<br/>DEP-12]
+    jose[Motor de José<br/>DEP-13]
+    ia[Proveedor de IA<br/>DEP-14]
+    kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
+  end
+  emisor[["Emisor OIDC de tokens<br/>(por decidir, ADR-014)"]]
+  tel --> atc
+  wa --> atc
+  mail --> atc
+  portal --> atc
+  ges --> atc
+  emisor -. JWT .-> atc
+  atc <--> sigda
+  atc <--> con
+  atc <--> cob
+  atc <--> cti
+  atc <--> leg
+  atc <--> jose
+  atc <--> ia
+  atc --> kpi
+%% Generado por IA (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21): alcance de la Etapa 1. — Revisado por: (pendiente)

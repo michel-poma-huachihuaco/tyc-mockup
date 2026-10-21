@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="generator" content="aybar paquete explorador">
-<meta name="aybar-huella" content="sha256:06d12db36b2e4abb80697c1d22829473cef68e86c613b6ff15ef9bde711edefe">
+<meta name="aybar-huella" content="sha256:78a5530b71e05559c8819c7610ecfa298040c2cfdb0c3a0e1d273a6b8ae03b2b">
 <title>Explorador del paquete</title>
 <!--
   Generado por `aybar paquete explorador` desde el docs/ del servicio. No se
@@ -217,12 +217,15 @@ const D = {
   "esquema": "aybar.paquete.explorador/1",
   "cabecera": {
     "producto": "Aybar Atiende · Plataforma ATC (DOM-SVC-001)",
-    "fecha": "2026-10-16",
+    "tickets": [
+      "AYB-0001"
+    ],
+    "fecha": "2026-10-21",
     "totales": {
       "epicas": 11,
       "features": 23,
       "historias": 62,
-      "tareas": 0,
+      "tareas": 318,
       "flujos": 0,
       "casos": 0
     }
@@ -324,6 +327,15 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "MAE_CHANNEL",
+        "MAE_TICKET_PRIORITY",
+        "MAE_TICKET_TYPE",
+        "SVC_TICKET"
+      ],
+      "endpoints": [
+        "POST /api/v1/tickets"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -388,6 +400,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "IN_PROGRESS",
+        "SVC_TICKET",
+        "SVC_TICKET_INTERACTION",
+        "SVC_TICKET_STATUS_LOG"
+      ],
+      "endpoints": [
+        "PATCH /api/v1/tickets/{id}/estado",
+        "POST /api/v1/tickets/{id}/interacciones"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -452,6 +474,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "REASSIGNMENT_CESE",
+        "SVC_TICKET",
+        "SVC_TICKET_ASSIGNMENT_LOG"
+      ],
+      "endpoints": [
+        "GET /api/v1/tickets/casillero",
+        "POST /api/v1/tickets/reasignacion-masiva",
+        "POST /api/v1/tickets/{id}/derivaciones"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -525,6 +557,21 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "BUSINESS_DAYS",
+        "BUSINESS_HOURS",
+        "FIRST_RESPONSE_OVERDUE",
+        "MAE_HOLIDAY",
+        "MAE_SLA_POLICY",
+        "MAE_TIME",
+        "PENDING_CUSTOMER",
+        "RESOLUTION_OVERDUE",
+        "SVC_SLA_BREACH_ALERT",
+        "SVC_TICKET"
+      ],
+      "endpoints": [
+        "PATCH /api/v1/tickets/{id}/reapertura"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -606,6 +653,23 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "BUSINESS_DAYS",
+        "BUSINESS_HOURS",
+        "GOV_INTEGRITY_EXCEPTION",
+        "LEGAL_EXTENSION_WINDOW_CLOSING",
+        "LEGAL_RESPONSE_OVERDUE",
+        "MAE_HOLIDAY",
+        "MAE_TIME",
+        "ORPHAN_REFERENCE",
+        "SVC_COMPLAINT_BOOK_ENTRY",
+        "SVC_SLA_BREACH_ALERT"
+      ],
+      "endpoints": [
+        "POST /api/v1/libro-reclamaciones/{id}/prorroga",
+        "POST /api/v1/libro-reclamaciones/{id}/respuesta",
+        "POST /api/v1/tickets/{id}/libro-reclamaciones"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -668,6 +732,12 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_COMPLAINT_APPEAL"
+      ],
+      "endpoints": [
+        "POST /api/v1/libro-reclamaciones/{id}/apelaciones"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -740,6 +810,13 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_TICKET"
+      ],
+      "endpoints": [
+        "POST /api/v1/tickets/{id}/estado-emocional",
+        "POST /api/v1/tickets/{id}/handoff"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -794,6 +871,11 @@ const D = {
         "veredicto": "NO READY",
         "origen": "humano"
       },
+      "endpoints": [
+        "PATCH /api/v1/casos-sensibles/{id}/riesgo",
+        "POST /api/v1/casos-sensibles",
+        "POST /api/v1/casos-sensibles/{id}/activacion"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -858,6 +940,10 @@ const D = {
           }
         ]
       },
+      "endpoints": [
+        "POST /api/v1/casos-sensibles/{id}/cierre",
+        "POST /api/v1/casos-sensibles/{id}/vinculacion"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -923,6 +1009,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "CONTRACT_UNIT_HANDOVER",
+        "CONTRACT_WARRANTY_CLAIM",
+        "MAE_WARRANTY_COVERAGE_PERIOD"
+      ],
+      "endpoints": [
+        "POST /api/v1/reclamos-garantia",
+        "POST /api/v1/reclamos-garantia/{id}/escalamiento",
+        "POST /api/v1/reclamos-garantia/{id}/inspeccion"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -985,6 +1081,13 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_TICKET",
+        "SVY_SURVEY_RESPONSE"
+      ],
+      "endpoints": [
+        "GET /api/v1/metricas/csat-ces"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1057,6 +1160,15 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_SLA_BREACH_ALERT",
+        "SVC_TICKET"
+      ],
+      "endpoints": [
+        "GET /api/v1/torre-control/auditoria-registros-paralelos",
+        "GET /api/v1/torre-control/informes",
+        "GET /api/v1/torre-control/tiempo-real"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1111,6 +1223,11 @@ const D = {
         "veredicto": "NO READY",
         "origen": "humano"
       },
+      "endpoints": [
+        "POST /api/v1/entregafest/casos",
+        "POST /api/v1/entregafest/casos/{id}/derivacion",
+        "POST /api/v1/entregafest/registro-casos-sensibles"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1174,6 +1291,15 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_COMPLAINT_BOOK_ENTRY",
+        "SVC_TICKET",
+        "SVC_TICKET_ASSIGNMENT_LOG"
+      ],
+      "endpoints": [
+        "GET /api/v1/tickets/riesgo-denuncia",
+        "GET /api/v1/tickets/{id}/legal"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1236,6 +1362,14 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "MAE_CHANNEL",
+        "SVC_TICKET",
+        "SVC_TICKET_INTERACTION"
+      ],
+      "endpoints": [
+        "GET /api/v1/call-center/screen-pop"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1301,6 +1435,19 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "MAE_AREA",
+        "MAE_SLA_POLICY",
+        "REASSIGNMENT_CARGA",
+        "SVC_TICKET",
+        "SVC_TICKET_ASSIGNMENT_LOG",
+        "SVC_WORKFLOW_DEFINITION"
+      ],
+      "endpoints": [
+        "GET /api/v1/tickets/bandeja",
+        "POST /api/v1/flujos",
+        "POST /api/v1/tickets/{id}/rayo"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1364,6 +1511,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "MAE_TICKET_TYPE",
+        "SVC_AI_SUGGESTION_LOG",
+        "SVC_KNOWLEDGE_ARTICLE",
+        "SVC_TICKET_INTERACTION"
+      ],
+      "endpoints": [
+        "GET /api/v1/guias-solucion/{tipoTicket}",
+        "POST /api/v1/tickets/{id}/sugerencia-ia"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1470,6 +1627,18 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "GOV_DOCUMENT_REPOSITORY",
+        "SVC_SEARCH_INDEX",
+        "SVC_TICKET",
+        "SVC_TICKET_INTERACTION"
+      ],
+      "endpoints": [
+        "GET /api/v1/clientes/buscar",
+        "GET /api/v1/clientes/{id}/documentos/buscar-semantico",
+        "GET /api/v1/tickets/{id}/consulta-360",
+        "POST /api/v1/tickets"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1533,6 +1702,14 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "SVC_TICKET",
+        "SVC_TICKET_ASSIGNMENT_LOG",
+        "SVY_SURVEY_RESPONSE"
+      ],
+      "endpoints": [
+        "GET /api/v1/gestores/{id}/avance-diario"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1605,6 +1782,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "GOV_DOCUMENT_REPOSITORY",
+        "SVC_CONTRACT_DEFAULT_ALERT",
+        "SVC_TICKET",
+        "SVC_TICKET_INTERACTION",
+        "SVC_WORKFLOW_DEFINITION"
+      ],
+      "endpoints": [
+        "GET /api/v1/casos-resolucion"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1658,6 +1845,16 @@ const D = {
         "veredicto": "NO READY",
         "origen": "humano"
       },
+      "entidades": [
+        "MAE_CHANNEL",
+        "SVC_EVENT_BUS_BOOKING",
+        "SVC_SIMPLE_FORM_DEFINITION",
+        "SVC_TICKET"
+      ],
+      "endpoints": [
+        "POST /api/v1/formularios/entregafest-bus",
+        "POST /api/v1/formularios/ingreso-proyecto"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1722,6 +1919,16 @@ const D = {
           }
         ]
       },
+      "entidades": [
+        "MAE_TICKET_TYPE",
+        "SVC_TICKET",
+        "SVC_TICKET_INTERACTION"
+      ],
+      "endpoints": [
+        "GET /api/v1/portal/tickets",
+        "GET /api/v1/portal/tickets/{id}/trazabilidad",
+        "POST /api/v1/portal/tickets/{id}/respuestas"
+      ],
       "secciones": [
         {
           "titulo": "Resumen",
@@ -1774,6 +1981,13 @@ const D = {
         "veredicto": "NO READY",
         "origen": "humano"
       },
+      "entidades": [
+        "MAE_AREA",
+        "SVC_WORKFLOW_DEFINITION"
+      ],
+      "endpoints": [
+        "GET /api/v1/operacion-en-vivo"
+      ],
       "adrs": [
         "ADR-10"
       ],
@@ -4605,7 +4819,717 @@ const D = {
       ]
     }
   },
-  "tareas": {},
+  "tareas": {
+    "HU-ATC-001": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 6,
+      "sin_estimar": 0
+    },
+    "HU-ATC-002": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-003": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 6,
+      "sin_estimar": 0
+    },
+    "HU-ATC-004": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-005": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-006": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-007": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-008": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-009": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-010": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-011": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-012": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-013": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 6,
+      "sin_estimar": 0
+    },
+    "HU-ATC-014": {
+      "n": 6,
+      "capas": {
+        "adapters": 3,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-015": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-016": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-019": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-020": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-021": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-022": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-023": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-024": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-025": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-026": {
+      "n": 4,
+      "capas": {
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-027": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-028": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-029": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-030": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 6,
+      "sin_estimar": 0
+    },
+    "HU-ATC-031": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-032": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-033": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-034": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-035": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-036": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-037": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-038": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-039": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-040": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-041": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-042": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-043": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 8,
+      "sin_estimar": 0
+    },
+    "HU-ATC-044": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-045": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-046": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-047": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-048": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-049": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-050": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 7,
+      "sin_estimar": 0
+    },
+    "HU-ATC-051": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-052": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-053": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 5,
+      "sin_estimar": 0
+    },
+    "HU-ATC-054": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-055": {
+      "n": 4,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-056": {
+      "n": 7,
+      "capas": {
+        "adapters": 3,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-057": {
+      "n": 4,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-058": {
+      "n": 4,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-059": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-060": {
+      "n": 5,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-064": {
+      "n": 6,
+      "capas": {
+        "adapters": 3,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 4,
+      "sin_estimar": 0
+    },
+    "HU-ATC-065": {
+      "n": 5,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 3,
+      "sin_estimar": 0
+    },
+    "HU-ATC-066": {
+      "n": 4,
+      "capas": {
+        "adapters": 1,
+        "application": 1,
+        "boot": 1,
+        "frontend": 1
+      },
+      "horas": 2,
+      "sin_estimar": 0
+    },
+    "HU-ATC-067": {
+      "n": 6,
+      "capas": {
+        "adapters": 2,
+        "application": 1,
+        "boot": 1,
+        "domain": 1,
+        "frontend": 1
+      },
+      "horas": 10,
+      "sin_estimar": 0
+    }
+  },
   "casos": {},
   "flujos": []
 };

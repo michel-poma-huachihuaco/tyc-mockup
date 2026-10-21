@@ -382,3 +382,16 @@ Hecho el 20-oct. Supuestos que quedan para revisar:
 - **Operación en vivo, rayo desde la ficha:** solo lo marca el supervisor, que es lo que permite el mockup (RN-SVC-031), con motivo
   y tope del 10 %.
 - **Operación en vivo, CSAT del día:** la semilla no tiene encuestas de hoy, así que muestra «—» con el acumulado al lado.
+
+### 5.12 Paquete completo en la v1.3 y merge de la rama de Daniel (21-oct)
+
+- **Merge de `prototipo-polar` en esta rama** (52ee6f3, Daniel, 21-oct). Dejó en `propuesta-po` la copia que tenía polar, una foto del
+  19-oct, y con eso se perdían del árbol el paquete v1.3, los documentos del PO, la cobertura, Mi Portal, la Operación en vivo y la
+  Consulta 360 alineadas. Se restauró `propuesta-po` tal como estaba en 32eb628 y se conservó todo lo demás: el frontend Angular,
+  `docs/`, el backend y los dos archivos que agregó Daniel. **Para hablar con Daniel y Michel:** `docs/` de esta rama ahora tiene el
+  paquete de polar, que mezcla la v1.2 y la v1.3 e incluye la D-12. El paquete v1.3 completo está en
+  `documentacion/paquete-definir-etapa1-v1.3/`.
+- **Paquete completo.** Por encargo del PO a Brayan, se llevaron a la v1.3 las demás carpetas del paquete: análisis, roadmap, ADR,
+  arquitectura, datos, backlog de tareas y gates. Valida con 0 errores y 0 advertencias. No se decidió nada que no esté en los
+  documentos del PO: lo abierto está en `analisis/decisiones.md` (stack, `PARTY` frente a ADR-03, D-12, Excel, ítems y aprobaciones).
+  Todavía no se subió a Nexora (ver `PLAN-NEXORA.md`).
