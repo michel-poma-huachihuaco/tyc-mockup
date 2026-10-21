@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.aybarsac</groupId>
+    <artifactId>aybar-atc</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>aybar-atc-boot</artifactId>
+  <name>aybar-atc :: boot</name>
+  <dependencies>
+    <dependency>
+      <groupId>com.aybarsac</groupId>
+      <artifactId>aybar-atc-adapters</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.aybarsac</groupId>
+      <artifactId>aybar-atc-infrastructure</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--
+      Tests de la aplicacion: smoke test del arranque (ApplicationTest) y la
+      norma hexagonal (NormaHexagonalTest). Ambos viven aqui, en boot, porque
+      es el unico modulo que ve en su classpath las clases producidas por
+      domain, application, adapters e infrastructure juntas.
+    -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <!-- Nombre fijo y sin version: boot/target/aybar-atc.jar. El Dockerfile lo
+         copia por ese nombre, que no cambia al subir la version del servicio. -->
+    <finalName>aybar-atc</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <!--
+      './mvnw -pl boot spring-boot:run' sin SPRING_PROFILES_ACTIVE arranca en
+      'local'. El application.yml ya no trae perfil por defecto (un despliegue sin
+      la variable no debe caer en 'local'), asi que el arranque de desarrollo lo
+      pide aqui de forma explicita. Solo afecta a spring-boot:run, nunca al jar.
+      Si la variable existe (aybar run la exporta siempre) este perfil no se
+      activa y manda ella.
+    -->
+    <profile>
+      <id>perfil-spring-local</id>
+      <activation>
+        <property>
+          <name>!env.SPRING_PROFILES_ACTIVE</name>
+        </property>
+      </activation>
+      <properties>
+        <spring-boot.run.profiles>local</spring-boot.run.profiles>
+      </properties>
+    </profile>
+  </profiles>
+</project>

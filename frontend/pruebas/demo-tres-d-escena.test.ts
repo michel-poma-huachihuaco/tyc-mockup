@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import type { Object3D } from 'three'
 
 /**
- * La escena three.js del visor 3D (src/demo/tres-d/escena-lotes.ts) sin WebGL: el modelo
+ * La escena three.js del visor 3D (src/app/demo/visor/escena-lotes.ts) sin WebGL: el modelo
  * —cajas, colores, marcas— se construye y se consulta en Node, sin renderer. Se prueba
  * que cada lote tiene la altura y el color de su estado, que el encuadre muestra el plano
  * entero, que el rayo de un clic devuelve el id del lote (los 160) y no uno filtrado, y
@@ -30,9 +30,9 @@ registerHooks({
 })
 
 const { Color, Matrix4, PerspectiveCamera, Quaternion, Raycaster, Vector2, Vector3 } = await import('three')
-const escena = await import('../src/demo/tres-d/escena-lotes.ts')
-const plano = await import('../src/demo/tres-d/plano.ts')
-const { LOTES, PLANO } = await import('../src/demo/datos/lotes.ts')
+const escena = await import('../src/app/demo/visor/escena-lotes.ts')
+const plano = await import('../src/app/demo/visor/plano.ts')
+const { LOTES, PLANO } = await import('../src/app/demo/datos/lotes.ts')
 
 /** Colores fijos, distintos entre sí: lo que `readColor` daría en una página. */
 const COLORES = escena.leerColores((token) => {

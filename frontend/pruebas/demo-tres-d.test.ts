@@ -4,7 +4,7 @@ import { registerHooks } from 'node:module'
 import { test } from 'node:test'
 
 /**
- * El plano del visor 3D de la galería (src/demo/tres-d/plano.ts), sin three.js ni DOM:
+ * El plano del visor 3D de la galería (src/app/demo/visor/plano.ts), sin three.js ni DOM:
  * colores, alturas y tramas por estado, filtros, geometría del plano, la lista por
  * manzanas, la ficha y la vista de entrada. Y una guarda de código: three.js solo entra por
  * el `import()` del lienzo 3D. `npm run demo:quitar` borra este archivo con la galería.
@@ -32,10 +32,10 @@ registerHooks({
   },
 })
 
-const plano = await import('../src/demo/tres-d/plano.ts')
-const datos = await import('../src/demo/datos/lotes.ts')
+const plano = await import('../src/app/demo/visor/plano.ts')
+const datos = await import('../src/app/demo/datos/lotes.ts')
 
-const DIR = new URL('../src/demo/tres-d/', import.meta.url)
+const DIR = new URL('../src/app/demo/visor/', import.meta.url)
 
 test('visor · cada estado tiene token de color, tono, altura y trama propios', () => {
   assert.deepEqual([...plano.ESTADOS].sort(), ['bloqueado', 'disponible', 'reservado', 'vendido'])
@@ -174,7 +174,7 @@ test('visor · la vista de entrada: 2D sin WebGL o con movimiento reducido', () 
 })
 
 test('visor · three.js solo entra por el import() del lienzo 3D', () => {
-  const archivos = readdirSync(DIR).filter((f) => /\.tsx?$/.test(f))
+  const archivos = readdirSync(DIR).filter((f) => f.endsWith('.ts'))
   const estatico = /^\s*import\s+(?!type\b)[^;]*?from\s+['"]([^'"]+)['"]/gm
   for (const archivo of archivos) {
     const codigo = readFileSync(new URL(archivo, DIR), 'utf8')
@@ -186,12 +186,12 @@ test('visor · three.js solo entra por el import() del lienzo 3D', () => {
     assert.ok(!importados.some((de) => de === 'three' || de?.startsWith('three/')), `${archivo} importa three`)
     assert.ok(!importados.includes('./escena-lotes'), `${archivo} importa la escena sin import()`)
   }
-  const lienzo = readFileSync(new URL('Lienzo3D.tsx', DIR), 'utf8')
+  const lienzo = readFileSync(new URL('lienzo-3d.ts', DIR), 'utf8')
   assert.match(lienzo, /import\('\.\/escena-lotes'\)/)
   // El plano no depende de three (lo usan el 2D y la pantalla).
   assert.doesNotMatch(readFileSync(new URL('plano.ts', DIR), 'utf8'), /from 'three/)
-  // La galería carga la pantalla perezosa: nada de tres-d en el chunk de la galería.
-  const galeria = readFileSync(new URL('../Galeria.tsx', DIR), 'utf8')
-  assert.match(galeria, /lazy\(\(\) => import\('\.\/tres-d\/PantallaVisor'\)\)/)
-  assert.doesNotMatch(galeria, /from '\.\/tres-d\//)
+  // Las rutas de la galería cargan la pantalla perezosa: nada del visor en otro chunk.
+  const rutas = readFileSync(new URL('../rutas.ts', DIR), 'utf8')
+  assert.match(rutas, /loadComponent: \(\) => import\('\.\/visor\/visor'\)\.then\(\(m\) => m\.PantallaVisor\)/)
+  assert.doesNotMatch(rutas, /from '\.\/visor\//)
 })

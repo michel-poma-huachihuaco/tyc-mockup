@@ -3,6 +3,7 @@
 # maquina no viaja al daemon de Docker ni a una capa de la imagen.
 node_modules
 dist
+.angular
 coverage
 .env
 .env.*

@@ -3,8 +3,8 @@
 # Imagen del frontend: se construye con Node y se sirve estatica con nginx,
 # sin root. Desde frontend/:
 #
-#   docker build -t tyc-frontend .
-#   docker run --rm -p 8080:8080 tyc-frontend
+#   docker build -t aybar-atc-frontend .
+#   docker run --rm -p 8080:8080 aybar-atc-frontend
 #
 # Los @aybarcorp/* entran con el contexto (paquetes/, file: en package.json):
 # npm ci no habla con GitHub Packages y la imagen no necesita ningun secreto.

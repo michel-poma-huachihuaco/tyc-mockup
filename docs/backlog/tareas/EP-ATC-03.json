@@ -1,0 +1,341 @@
+{
+  "epica": "EP-ATC-03",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-012",
+      "tareas": [
+        {
+          "id": "HU-ATC-012-T01",
+          "titulo": "Entidad SVC_COMPLAINT_BOOK_ENTRY (1:0..1 con ticket, FK compuesta TicketID+CompanyID) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-012-T02",
+          "titulo": "Migracion Flyway V11__crear_tabla_complaint_book_entry.sql (correlativo por empresa y establecimiento, FK CompanyID con RESTRICT)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-012-T03",
+          "titulo": "Caso de uso RegistrarAsientoLibroUseCase (tipo QUEJA/RECLAMO, moneda solo si hay monto)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-012-T04",
+          "titulo": "Endpoint POST /api/v1/tickets/{id}/libro-reclamaciones",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T02",
+            "HU-ATC-012-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-012-T05",
+          "titulo": "Un test por cada TC de HU-ATC-012 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-012-T06",
+          "titulo": "Formulario del asiento del Libro de Reclamaciones conforme al formato regulado (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-012-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-013",
+      "tareas": [
+        {
+          "id": "HU-ATC-013-T01",
+          "titulo": "Servicio de dominio CalculadoraPlazoLegal (15 dias habiles + prorroga unica de 15, bloqueo de segunda prorroga) en domain",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-013-T02",
+          "titulo": "Migracion Flyway V12__agregar_columnas_plazo_legal_complaint_book.sql (LegalDue, ExtendedDue, justificacion, canal, cargo documental)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-013-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-013-T03",
+          "titulo": "Caso de uso ComputarPlazoLegalYProrrogaUseCase, calendario filtrado por geografia del establecimiento (MAE_TIME/MAE_HOLIDAY)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-013-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-013-T04",
+          "titulo": "Endpoint POST /api/v1/libro-reclamaciones/{id}/prorroga",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-013-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-013-T05",
+          "titulo": "Un test por cada TC de HU-ATC-013 en docs/pruebas/test-plan.md (incluye bloqueo de la segunda prorroga)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-013-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-013-T06",
+          "titulo": "Pantalla para solicitar y registrar la prorroga con cargo documental (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-013-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-014",
+      "tareas": [
+        {
+          "id": "HU-ATC-014-T01",
+          "titulo": "Migracion Flyway V13__agregar_columnas_respuesta_formal_complaint_book.sql (ResponseDate, ResponseSummary, ResponseLetterUrl, SignedBy)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-014-T02",
+          "titulo": "Adaptador de generacion de carta PDF con cargo al consumidor y almacenamiento en object storage (adapters.outbound.external, segun ADR-002/006, con simulador ADR-007)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-014-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-014-T03",
+          "titulo": "Caso de uso RegistrarRespuestaFormalUseCase, incluye constancia del derecho a acudir a INDECOPI",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-014-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-014-T04",
+          "titulo": "Endpoint POST /api/v1/libro-reclamaciones/{id}/respuesta",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-014-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-014-T05",
+          "titulo": "Un test por cada TC de HU-ATC-014 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-014-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-014-T06",
+          "titulo": "Pantalla de respuesta formal con descarga de la carta (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-014-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-015",
+      "tareas": [
+        {
+          "id": "HU-ATC-015-T01",
+          "titulo": "Entidades SVC_COMPLAINT_BOOK_ALERTA y GOV_INTEGRITY_EXCEPTION (excepcion ORPHAN_REFERENCE) y puertos en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-013-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-015-T02",
+          "titulo": "Migracion Flyway V14__crear_tablas_alerta_legal_y_excepcion_integridad.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-015-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-015-T03",
+          "titulo": "Caso de uso VigilarPlazoLegalYDetectarHuerfanosUseCase (LEGAL_RESPONSE_OVERDUE, LEGAL_EXTENSION_WINDOW_CLOSING, deteccion diaria de tickets con RequiresComplaintBook sin asiento)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-015-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-015-T04",
+          "titulo": "Job batch idempotente diario (ADR-005) que invoca VigilarPlazoLegalYDetectarHuerfanosUseCase",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-015-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-015-T05",
+          "titulo": "Un test por cada TC de HU-ATC-015 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-015-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-016",
+      "tareas": [
+        {
+          "id": "HU-ATC-016-T01",
+          "titulo": "Entidad SVC_COMPLAINT_APPEAL (estados PENDING..WITHDRAWN, numero de caso INDECOPI, historial) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-012-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-016-T02",
+          "titulo": "Migracion Flyway V15__crear_tabla_complaint_appeal.sql y endpoint POST /api/v1/libro-reclamaciones/{id}/apelaciones",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-016-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-016-T03",
+          "titulo": "Caso de uso GestionarApelacionUseCase (segunda instancia interna o INDECOPI, con historial de estados)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-016-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-016-T04",
+          "titulo": "Un test por cada TC de HU-ATC-016 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-016-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-016-T05",
+          "titulo": "Pantalla de seguimiento de la apelacion hasta su resolucion final (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan (Dev 1)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-016-T02"
+          ]
+        }
+      ]
+    }
+  ]
+}

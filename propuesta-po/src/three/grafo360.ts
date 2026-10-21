@@ -6,8 +6,6 @@ import { bucle, capaEtiquetas, color, css, type RGB } from './comun.ts'
 // Red 3D de la «Búsqueda 360». El chunk del artifact calcula la vista (fuentes, datos, estados) y
 // mantiene los pulsos y los nodos encendidos en refs; aquí solo se dibuja y se escribe en `pos` la
 // posición en pantalla de cada nodo, que es lo que usan sus manejadores de clic y de hover.
-// `sel` puede ser un dato o un sistema de origen (20-oct): el sistema elegido se agranda y resalta sus aristas.
-// `plano` (20-oct, «Grafo 2D»): la misma red en un solo plano, de frente y sin girar (misma información, clics y estados).
 
 interface Fuente { id: string; n: string; d: string; caida: boolean }
 interface NodoDato { id: string; n: string; estado: 'ok' | 'restringido' | 'caido'; sem?: boolean; fuentes: string[] }
@@ -19,24 +17,14 @@ export interface OptsGrafo {
   canvas: HTMLCanvasElement; host: HTMLElement; color: (token: string) => RGB; reducido: boolean
   vista: Ref<Vista | null>; sel: Ref<string>; sem: Ref<{ hits: unknown[] } | null>; hover: Ref<string | null>
   lit: Ref<Set<string>>; pulsos: Ref<Pulso[]>; t0: Ref<number>; pos: Ref<Record<string, { x: number; y: number; r: number }>>
-  plano?: Ref<boolean>
 }
 
-interface NodoEsc { pos: THREE.Vector3; r: number; mesh: THREE.Mesh; halo: THREE.Mesh; et: CSS2DObject; sub?: HTMLElement; txt: HTMLElement; candado?: HTMLElement }
-
-/** Candado del sistema de diseño (mismo trazo que el icono «lock»), delante del nombre del dato restringido (HU-050 CA-07). */
-const candado = () => {
-  const s = document.createElement('span')
-  s.setAttribute('aria-hidden', 'true')
-  s.style.cssText = 'display:none;margin-right:3px;vertical-align:-1px'
-  s.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.75 10.75h10.5a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2H6.75a2 2 0 0 1-2-2v-5.5a2 2 0 0 1 2-2Z"/><path d="M8.25 10.5V7.75a3.75 3.75 0 0 1 7.5 0v2.75"/></svg>'
-  return s
-}
+interface NodoEsc { pos: THREE.Vector3; r: number; mesh: THREE.Mesh; halo: THREE.Mesh; et: CSS2DObject; sub?: HTMLElement; txt: HTMLElement }
 
 export function montarGrafo(o: OptsGrafo): () => void {
   const { canvas, host } = o
   const T = {
-    bad: o.color('feedback-danger-border'), restringido: o.color('feedback-warning-border'), naranja: o.color('secondary-400'), borde: o.color('border-default'), src: o.color('primary-500'),
+    bad: o.color('feedback-danger-border'), naranja: o.color('secondary-400'), borde: o.color('border-default'), src: o.color('primary-500'),
     texto: o.color('fg-default'), mudo: o.color('fg-muted'), superficie: o.color('bg-surface'), apagado: o.color('bg-surface-sunken'),
     enlace: o.color('fg-link'), centro: o.color('primary-900'),
   }
@@ -67,7 +55,6 @@ export function montarGrafo(o: OptsGrafo): () => void {
   escena.add(centro.mesh, centro.halo, objCentro, objNom)
 
   const R1 = 3.3, R2 = 6.4
-  let plano = false, largo = 17
   const construir = (v: Vista) => {
     grupo.clear(); nodos.clear(); aristas.length = 0
     const nuevo = (id: string, p: THREE.Vector3, rad: number, c: RGB, texto: string, sub?: string, lado: 'arriba' | 'abajo' | 'der' | 'izq' = 'arriba') => {
@@ -85,14 +72,12 @@ export function montarGrafo(o: OptsGrafo): () => void {
     }
     v.fuentes.forEach((s, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / v.fuentes.length + 0.2
-      nuevo(s.id, new THREE.Vector3(Math.cos(a) * R1 * 1.15, Math.sin(a) * R1, plano ? 0 : i % 2 ? 0.7 : -0.7), 0.42, T.src, s.n, s.d)
+      nuevo(s.id, new THREE.Vector3(Math.cos(a) * R1 * 1.15, Math.sin(a) * R1, i % 2 ? 0.7 : -0.7), 0.42, T.src, s.n, s.d)
     })
     v.nodos.forEach((d, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / v.nodos.length + 0.1
       const cx = Math.cos(a), lado = cx > 0.3 ? 'der' : cx < -0.3 ? 'izq' : Math.sin(a) > 0 ? 'arriba' : 'abajo'
-      nuevo(d.id, new THREE.Vector3(cx * R2 * 1.05, Math.sin(a) * R2 * 0.8, plano ? 0 : ((i % 3) - 1) * 1.1), 0.26, T.apagado, d.n, undefined, lado)
-      const n = nodos.get(d.id)!
-      n.candado = candado(); n.txt.prepend(n.candado)
+      nuevo(d.id, new THREE.Vector3(cx * R2 * 1.05, Math.sin(a) * R2 * 0.8, ((i % 3) - 1) * 1.1), 0.26, T.apagado, d.n, undefined, lado)
     })
     const posDe = (id: string) => (id === 'c' ? new THREE.Vector3() : nodos.get(id)!.pos)
     const arista = (a: string, b: string, extra: { fuente?: string; dato?: string }) => {
@@ -123,8 +108,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const h = Math.max(420, Math.min(640, Math.round(w * 0.7)))
     canvas.style.height = `${h}px`
     r.setSize(w, h, false); etiquetas.setSize(w, h)
-    largo = w < 560 ? 30 : w < 800 ? 22 : 17
-    cam.aspect = w / h; cam.position.setLength(largo); cam.updateProjectionMatrix()
+    cam.aspect = w / h; cam.position.setLength(w < 560 ? 30 : w < 800 ? 22 : 17); cam.updateProjectionMatrix()
   }
   const ro = new ResizeObserver(ajustar); ro.observe(host); ajustar()
 
@@ -132,12 +116,6 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const frame = (ahora: number) => {
     const v = o.vista.current
     if (!v) return
-    // «Grafo 2D»: todo en z = 0, cámara de frente y sin órbita; al volver al 3D se recupera la vista inicial
-    const pl = !!o.plano?.current
-    if (pl !== plano) {
-      plano = pl; firma = ''; ctl.enabled = !pl; ctl.autoRotate = !pl && !o.reducido
-      if (!pl) { cam.position.set(0, -4, 17).setLength(largo); cam.lookAt(0, 0, 0) }
-    }
     const f = v.fuentes.map((s) => s.id).join() + '|' + v.nodos.map((n) => n.id).join()
     if (f !== firma) { firma = f; construir(v) }
     const caida = (id: string) => v.fuentes.find((s) => s.id === id)?.caida
@@ -159,8 +137,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
 
     // aristas
     for (const a of aristas) {
-      // un sistema de origen elegido (o bajo el puntero) resalta sus aristas: las del cliente y las de los datos que alimenta
-      const hl = (!!a.dato && (o.sel.current === a.dato || o.hover.current === a.dato)) || (!!a.fuente && (o.sel.current === a.fuente || o.hover.current === a.fuente))
+      const hl = a.dato && (o.sel.current === a.dato || o.hover.current === a.dato)
       a.mat.color.copy(color(caida(a.fuente ?? '') ? T.bad : hl ? T.naranja : a.dato ? T.borde : T.src))
       a.mat.opacity = hl ? 0.95 : a.dato ? 0.35 : 0.5
     }
@@ -170,26 +147,23 @@ export function montarGrafo(o: OptsGrafo): () => void {
       ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(s.caida ? T.bad : T.src))
       n.txt.style.color = css(T.texto)
       if (n.sub) { n.sub.style.color = css(s.caida ? T.bad : T.mudo); const t = s.caida ? 'no disponible' : s.d; if (n.sub.textContent !== t) n.sub.textContent = t }
-      const sel = o.sel.current === s.id || o.hover.current === s.id
-      n.mesh.scale.setScalar(sel ? 1.35 : 1); n.halo.visible = sel; n.txt.style.fontWeight = sel ? '800' : '700'
     }
     // datos
     for (const d of v.nodos) {
       const n = nodos.get(d.id)!
-      const restringido = d.estado === 'restringido', malo = d.estado !== 'ok', on = lit.has(d.id) && !malo
+      const malo = d.estado !== 'ok', on = lit.has(d.id) && !malo
       const sel = o.sel.current === d.id || o.hover.current === d.id, sem = !!o.sem.current?.hits.length && !!d.sem
-      ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(restringido ? T.restringido : malo ? T.bad : on ? T.enlace : T.apagado))
+      ;(n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(malo ? T.bad : on ? T.enlace : T.apagado))
       n.mesh.scale.setScalar(1 + (sel ? 0.45 : 0) + (sem ? 0.25 : 0))
       n.halo.visible = on; n.halo.scale.setScalar(1 + (o.reducido ? 0 : Math.sin(ahora / 300 + n.pos.x) * 0.08))
-      n.txt.style.color = css(restringido ? T.mudo : malo ? T.bad : on || sel ? T.texto : T.mudo)
-      if (n.candado) n.candado.style.display = restringido ? 'inline-block' : 'none'
+      n.txt.style.color = css(malo ? T.bad : on || sel ? T.texto : T.mudo)
       n.txt.style.fontWeight = sel ? '800' : '700'
     }
     ini.textContent = v.cliente.nombre.split(' ').slice(0, 2).map((p) => p[0]).join('')
     etNom.textContent = v.cliente.nombre
     centro.halo.scale.setScalar(1 + (o.reducido ? 0 : Math.sin(ahora / 400) * 0.1))
 
-    if (plano) { cam.position.set(0, 0, largo); cam.lookAt(0, 0, 0) } else ctl.update()
+    ctl.update()
     r.render(escena, cam); etiquetas.render(escena, cam)
 
     // posiciones en pantalla para el clic y el hover del chunk

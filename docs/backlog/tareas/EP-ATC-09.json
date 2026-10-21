@@ -1,0 +1,468 @@
+{
+  "epica": "EP-ATC-09",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-043",
+      "tareas": [
+        {
+          "id": "HU-ATC-043-T01",
+          "titulo": "BLOQUEADO (ver docs/analisis/decisiones.md D-09): no esta resuelto si el flujo configurable aqui es sub-pasos dentro de IN_PROGRESS o reemplaza el Status de SVC_TICKET. Tambien D-10 (nomenclatura): esta HU usa SVC_WORKFLOW_CONFIG, confirmar nombre final con Gobierno de Datos. Una vez resuelto: entidad y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-004-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-043-T02",
+          "titulo": "Migracion Flyway V33__crear_tabla_workflow_config.sql (pasos, estados, responsables, aprobaciones, SLA por paso)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-043-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-043-T03",
+          "titulo": "Caso de uso ConfigurarFlujoUseCase (publicacion sin despliegue, RNF-USA-002)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-043-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-043-T04",
+          "titulo": "Endpoint POST /api/v1/flujos",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-043-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-043-T05",
+          "titulo": "Un test por cada TC de HU-ATC-043 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-043-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-043-T06",
+          "titulo": "Pantalla de configuracion de flujos para el administrador funcional (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-043-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-044",
+      "tareas": [
+        {
+          "id": "HU-ATC-044-T01",
+          "titulo": "Repositorio de lectura CQRS (Mongo) que combina SVC_TICKET y SVC_WORKFLOW_CONFIG, orden rayo > SLA mas proximo > prioridad",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-043-T02",
+            "HU-ATC-010-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-044-T02",
+          "titulo": "Caso de uso ObtenerBandejaUseCase",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-044-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-044-T03",
+          "titulo": "Endpoint GET /api/v1/tickets/bandeja",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-044-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-044-T04",
+          "titulo": "Un test por cada TC de HU-ATC-044 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-044-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-044-T05",
+          "titulo": "Bandeja orquestadora unica con lo mas urgente primero (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-044-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-045",
+      "tareas": [
+        {
+          "id": "HU-ATC-045-T01",
+          "titulo": "Migracion Flyway V34__agregar_columna_rayo_ticket.sql y endpoint POST /api/v1/tickets/{id}/rayo",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-045-T02",
+          "titulo": "Caso de uso MarcarRayoUseCase (solo supervisor o lider, con motivo, en bitacora; umbral 10% de la bandeja del area a validar RN-SVC-031)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-045-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-045-T03",
+          "titulo": "Un test por cada TC de HU-ATC-045 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-045-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-045-T04",
+          "titulo": "Icono de rayo en la bandeja, solo visible/accionable para supervisor o lider (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-045-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-046",
+      "tareas": [
+        {
+          "id": "HU-ATC-046-T01",
+          "titulo": "Caso de uso ReasignarPorMenorCargaUseCase (gestor disponible del mismo area/habilidad con menor carga ponderada por prioridad)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-007-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-046-T02",
+          "titulo": "Job/trigger que detecta indisponibilidad o sobrecarga y consulta disponibilidad (NEXUS) para invocar ReasignarPorMenorCargaUseCase",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-046-T01",
+            "HU-ATC-008-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-046-T03",
+          "titulo": "Un test por cada TC de HU-ATC-046 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-046-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-047",
+      "tareas": [
+        {
+          "id": "HU-ATC-047-T01",
+          "titulo": "Nota D-10 (nomenclatura menor, confirmar nombre final con Gobierno de Datos): entidad SVC_SOLUTION_GUIDE (pasos, plantillas, documentos, criterios de cierre) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-047-T02",
+          "titulo": "Migracion Flyway V35__crear_tabla_solution_guide.sql (mantenida por administrador funcional)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-047-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-047-T03",
+          "titulo": "Caso de uso ObtenerGuiaSolucionUseCase",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-047-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-047-T04",
+          "titulo": "Endpoint GET /api/v1/guias-solucion/{tipoTicket}",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-047-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-047-T05",
+          "titulo": "Un test por cada TC de HU-ATC-047 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-047-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-047-T06",
+          "titulo": "Vista de guia de solucion dentro del ticket (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-047-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-048",
+      "tareas": [
+        {
+          "id": "HU-ATC-048-T01",
+          "titulo": "Etapa 3 (D-12, fuera de la Etapa 1, sin fecha; asistente IA a futuro, ADR-009): Nota D-10 (nomenclatura menor): entidad SVC_IA_SUGGESTION (sugerencia, decision del gestor) y puerto en domain.port.out; respeta ADR-008 (anonimizacion y registro)",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-047-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-048-T02",
+          "titulo": "Migracion Flyway V36__crear_tabla_ia_suggestion.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-048-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-048-T03",
+          "titulo": "Caso de uso SugerirRespuestaIaUseCase: sugiere respuesta, verifica criterios de cierre de la guia, senala tono o datos faltantes; el gestor acepta/edita/descarta (RN-SVC-032)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-048-T02",
+            "HU-ATC-047-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-048-T04",
+          "titulo": "Endpoint POST /api/v1/tickets/{id}/sugerencia-ia",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-048-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-048-T05",
+          "titulo": "Un test por cada TC de HU-ATC-048 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-048-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-048-T06",
+          "titulo": "Sugerencia de IA visible en el ticket, con aceptar/editar/descartar (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-048-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-054",
+      "tareas": [
+        {
+          "id": "HU-ATC-054-T01",
+          "titulo": "Repositorio de lectura CQRS (Mongo) de productividad por gestor (atendidos, pendientes, SLA, tiempo medio, CSAT)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-030-T02",
+            "HU-ATC-019-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-054-T02",
+          "titulo": "Caso de uso ObtenerAvanceDiarioUseCase",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-054-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-054-T03",
+          "titulo": "Endpoint GET /api/v1/gestores/{id}/avance-diario",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-054-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-054-T04",
+          "titulo": "Un test por cada TC de HU-ATC-054 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-054-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-054-T05",
+          "titulo": "Tablero de avance diario del gestor y su lider (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-054-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-055",
+      "tareas": [
+        {
+          "id": "HU-ATC-055-T01",
+          "titulo": "Adaptador de envio de correo (notificaciones) con copia al lider, consultando NEXUS para identificar al lider del gestor",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-008-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-055-T02",
+          "titulo": "Caso de uso EnviarAlertaAsignacionUseCase, disparado al asignar/reasignar un ticket (N.º, tipo, prioridad, vencimiento de SLA)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-055-T01",
+            "HU-ATC-007-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-055-T03",
+          "titulo": "Un test por cada TC de HU-ATC-055 en docs/pruebas/test-plan.md (RNF-REN-008: envio en <= 1 min en el 99%)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-055-T02"
+          ]
+        }
+      ]
+    }
+  ]
+}

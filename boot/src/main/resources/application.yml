@@ -1,0 +1,169 @@
+# Configuracion del servicio.
+#
+# Los ${VARIABLE:valor-por-defecto} son placeholders de Spring, no de Maven:
+# el defecto sirve para arrancar en local y la variable de entorno manda en
+# Docker/ECS. aybar-sdk-parent filtra este fichero con delimitador @, asi que el
+# ${...} llega intacto al jar.
+spring:
+  application:
+    name: aybar-atc
+  # El perfil NO se declara aqui: Spring Boot lee SPRING_PROFILES_ACTIVE por su
+  # cuenta. Sin valor por defecto a proposito: un despliegue al que le falte la
+  # variable arranca SIN perfil, que el SDK trata como entorno real (y lo avisa),
+  # y nunca en 'local' con H2 en memoria y un emisor OIDC de mentira. En local el
+  # perfil lo pone cada camino de forma explicita: aybar run, el .env.example,
+  # @ActiveProfiles("local") de ApplicationTest y el spring-boot:run de boot/pom.xml.
+
+  # --- aybar-starter-security ---
+  # Sin issuer no hay JwtDecoder y el contexto no arranca. Se declara SIN valor
+  # por defecto a proposito: un despliegue real al que le falte AYBAR_ISSUER_URI
+  # tiene que romper nombrando la variable, no apuntar en silencio a un emisor
+  # equivocado. Solo el perfil 'local' de mas abajo trae un defecto. Va aqui
+  # dentro, y no en un bloque suelto, porque un segundo "spring:" en el mismo
+  # documento YAML es una clave duplicada y SnakeYAML lo rechaza.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AYBAR_ISSUER_URI}
+          # Audiencia (claim aud) que tiene que traer el token: la de ESTE servicio.
+          # Sin ella, cualquier token del mismo emisor para otra aplicacion se
+          # aceptaria aqui. Sin valor por defecto, como el issuer: fuera de 'local'
+          # un despliegue sin AYBAR_JWT_AUDIENCE no acepta ningun token (fail-closed).
+          # Varias audiencias: separadas por comas.
+          audiences: ${AYBAR_JWT_AUDIENCE}
+
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # health e info son los que consumen el healthcheck del contenedor y el
+        # startup report. aybar-starter-config anade encima los grupos
+        # liveness/readiness (/actuator/health/liveness y /readiness).
+        include: health,info
+
+
+# aybar-starter-security deja publico /actuator/health, pero NO sus subrutas.
+# Las sondas que consulta el orquestador (ECS, Kubernetes) van sin token, asi que
+# hay que declararlas publicas aqui o devuelven 401 y el orquestador reinicia el
+# contenedor una y otra vez sin decir por que. Esta es la unica clave "aybar:" del
+# documento principal: si anades mas, van dentro de esta misma, no en un bloque
+# nuevo (dos "aybar:" en un mismo documento YAML es clave duplicada y falla).
+aybar:
+  security:
+    rutas-publicas:
+      - /actuator/health/**
+    # CORS para un frontend servido desde otro origen: origenes exactos separados
+    # por comas (https://app.ejemplo.com), nunca "*". Vacia = CORS apagado, que es
+    # lo correcto si el front llega por el mismo origen (proxy o CDN delante). Si
+    # application-local.yml trae su propia lista, en el perfil 'local' manda esa.
+    cors:
+      origenes-permitidos: ${AYBAR_CORS_ORIGENES:}
+
+
+
+# --- aybar-starter-data ---
+# La conexion NO se escribe aqui: llega por variables de entorno, una URI por
+# almacen y con las credenciales embebidas.
+#   AYBAR_DATASOURCE_URI=postgresql://usuario:clave@host:5432/basededatos
+#   AYBAR_MONGO_URI=mongodb://usuario:clave@host:27017/basededatos
+# Si faltan y el perfil no es 'local', el SDK aborta el arranque a proposito:
+# vale mas un despliegue caido que un servicio que se declara sano leyendo de una
+# base que no esta. Las migraciones Flyway van en src/main/resources/db/migration.
+
+
+
+# --- aybar-starter-messaging ---
+# Broker por AYBAR_KAFKA_BOOTSTRAP (host:puerto). Es obligatorio siempre: el
+# starter aborta el arranque si spring.kafka.bootstrap-servers no esta. El perfil
+# 'local' de mas abajo lo apunta al Kafka del docker-compose del SDK.
+
+
+
+# --- aybar-starter-client ---
+# Hosts a los que el RestClient corporativo adjunta el Authorization Bearer:
+# exactos (api.ejemplo.com) o sufijos con punto inicial (.ejemplo.com), separados
+# por comas. Vacia = no se adjunta a NINGUN destino (fail-closed): el token no
+# sale hacia un tercero por olvido. Clave plana a proposito: convive con el
+# bloque "aybar:" de aybar-starter-security sin duplicarlo.
+aybar.client.hosts-con-token: ${AYBAR_CLIENT_HOSTS_CON_TOKEN:}
+
+
+
+---
+# Perfil 'local' unicamente. Nada de este documento llega a un entorno real, y
+# ademas el SDK aborta si fallback-h2 aparece fuera de 'local'. Las tres piezas de
+# abajo son muletas para que 'mvn verify' y 'mvn spring-boot:run' funcionen en un
+# portatil sin Docker; segun tengas infraestructura de verdad, las vas quitando.
+spring:
+  config:
+    activate:
+      on-profile: local
+  # En local este servicio no habla con Mongo en absoluto. No es que se le
+  # silencie el health: es que no se crea el cliente. Sin esto, Spring Boot crea
+  # un MongoClient apuntando a localhost:27017 por defecto, su hilo monitor deja
+  # un stacktrace de conexion rechazada en cada arranque y el indicador de salud
+  # tumba /actuator/health entero, incluido el que comprueba ApplicationTest.
+  # Cuando tengas un Mongo de verdad: exporta AYBAR_MONGO_URI y borra estas dos
+  # lineas junto con el aybar.data.mongo.required de abajo.
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+  data:
+    mongodb:
+      # Va de la mano de la exclusion de arriba: el auditing de Mongo del SDK
+      # necesita el mongoMappingContext que crea MongoDataAutoConfiguration, y sin
+      # el el contexto no arranca. Se reactiva solo al volver a poner Mongo.
+      auditing-enabled: false
+
+aybar:
+  data:
+    postgres:
+      # H2 en memoria en modo PostgreSQL. Con un Postgres de desarrollo: exporta
+      # AYBAR_DATASOURCE_URI, quita esta linea y la dependencia h2 del pom.xml.
+      fallback-h2: true
+    mongo:
+      # Apaga el fail-fast de Mongo, coherente con la exclusion de arriba.
+      required: false
+
+
+
+---
+# Perfil 'local' unicamente: bootstrap del Kafka que levanta docker/docker-compose.yml
+# del SDK. En cualquier otro entorno la variable AYBAR_KAFKA_BOOTSTRAP es obligatoria.
+spring:
+  config:
+    activate:
+      on-profile: local
+  kafka:
+    bootstrap-servers: ${AYBAR_KAFKA_BOOTSTRAP:localhost:9094}
+
+
+
+---
+# Perfil 'local' unicamente: arranca SIN emisor OIDC. Spring Boot construye el
+# JwtDecoder de issuer-uri de forma perezosa (SupplierJwtDecoder): no contacta al
+# emisor al arrancar, solo con el primer token. Asi lo publico responde y lo
+# protegido da 401 sin token, que es lo que espera el login demo del front.
+# El defecto es un dominio .invalid (reservado, nunca resuelve): no apunta a
+# ningun emisor. Con tokens reales, exporta AYBAR_ISSUER_URI con el emisor OIDC
+# que fije el ADR; sin ella, un token se rechaza y el log nombra este dominio.
+# La audiencia por defecto es el nombre del servicio: el emisor de desarrollo
+# tiene que incluirlo en el claim aud (en Keycloak, un mapper "Audience") o
+# exportar AYBAR_JWT_AUDIENCE con la que emita.
+spring:
+  config:
+    activate:
+      on-profile: local
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AYBAR_ISSUER_URI:http://emisor-no-configurado.invalid}
+          audiences: ${AYBAR_JWT_AUDIENCE:aybar-atc}
+

@@ -1,27 +1,19 @@
+/* Opciones de TypeScript: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html */
+/* Opciones del compilador de Angular: https://angular.dev/reference/configs/angular-compiler-options */
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "es2023",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "module": "esnext",
-    "types": ["vite/client"],
-    "skipLibCheck": true,
-
-    /* Modo empaquetador: Vite resuelve los imports, tsc solo comprueba tipos */
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Rigor */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "types": []
   },
-  "include": ["src"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    // aybar:demo:inicio — la galería entra al programa solo por lo que importa
+    // galeria.development.ts (ng serve): en producción no se compila ni pasa por los budgets.
+    "src/app/demo/**",
+    "src/app/galeria.development.ts",
+    // aybar:demo:fin
+    "src/**/*.spec.ts"
+  ]
 }

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Hook post-checkout del marco Aybar: git reescribe el .gitignore y le devuelve el
+# permiso de escritura; esto lo deja otra vez en solo lectura. Nunca falla.
+"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../proteger-gitignore.sh" || true

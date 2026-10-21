@@ -1,3 +1,0 @@
-// Mi Portal: autogestión del cliente (HU-ATC-064, 065 y 066 · FT-ATC-24 · EP-ATC-06 · PLT-04 v1.3).
-// Se compila con `npm run build:portal` a artefacto/assets/mi-portal.js; el shell lo carga bajo demanda en las rutas #/portal…
-export { MiPortal } from './vistas.ts'

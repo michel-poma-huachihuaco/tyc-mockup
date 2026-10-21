@@ -1,89 +1,91 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
-import { test } from 'node:test'
-import { buscar, entradasDeCatalogo, entradasDeGaleria, puntuar, sinonimosDe } from '../src/demo/busqueda.ts'
-import { SINONIMOS } from '../src/demo/sinonimos.ts'
-import { indexarFichas, normalizar } from '../src/demo/vitrina/catalogo.ts'
-import type { Catalogo } from '../src/demo/vitrina/catalogo.ts'
-
 /**
- * El buscador global de la galería (Ctrl K): el índice de pantallas, componentes y casos, y
- * los sinónimos en español. Se prueba contra el catálogo instalado de @aybarcorp/ui.
- * `npm run demo:quitar` borra este archivo con la galería.
+ * La búsqueda global de la galería (Ctrl K) y sus sinónimos en español, sobre un catálogo
+ * de prueba con la forma de CATALOGO_VITRINA.
  */
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import './demo-soporte.ts';
 
-const requerir = createRequire(import.meta.url)
-const catalogo = JSON.parse(readFileSync(requerir.resolve('@aybarcorp/ui/ejemplos'), 'utf8')) as Catalogo
-const fichas = indexarFichas(JSON.parse(readFileSync(requerir.resolve('@aybarcorp/ui/props'), 'utf8')))
-const indice = [...entradasDeGaleria(), ...entradasDeCatalogo(catalogo, fichas)]
-const titulos = (consulta: string, n = 5) => buscar(indice, consulta).slice(0, n).map((e) => e.titulo)
+const { alternativas, normalizar } = await import('../src/app/demo/sinonimos.ts');
+const { buscar, crearIndice } = await import('../src/app/demo/busqueda.ts');
 
-test('el índice tiene las pantallas, cada componente y cada caso, sin ids repetidos', () => {
-  const casos = catalogo.grupos.reduce((t, g) => t + g.casos.length, 0)
-  assert.equal(indice.filter((e) => e.tipo === 'caso').length, casos)
-  assert.equal(indice.filter((e) => e.tipo === 'componente').length, new Set(catalogo.grupos.map((g) => g.componente)).size)
-  assert.ok(indice.some((e) => e.ruta === '/demo/ingreso/enlace-magico'))
-  assert.equal(new Set(indice.map((e) => e.id)).size, indice.length)
-  for (const e of indice.filter((x) => x.tipo === 'caso').slice(0, 20)) assert.match(e.ruta, /^\/demo\/vitrina\/[a-z0-9-]+\/[a-z0-9-]+#caso-\d+$/)
-})
+const caso = (etiqueta: string) => ({ etiqueta });
+const CATALOGO = {
+  familias: [
+    {
+      id: 'data',
+      nombre: 'Data',
+      componentes: [
+        { nombre: 'Data Grid', slug: 'data-grid', descripcion: 'Rejilla para trabajar sobre registros.', grupos: [{ titulo: 'Selección', casos: [caso('con selección'), caso('vacía')] }] },
+        { nombre: 'Table', slug: 'table', grupos: [{ titulo: 'Orden', casos: [caso('ordenable')] }] },
+      ],
+    },
+    {
+      id: 'overlays',
+      nombre: 'Overlays',
+      componentes: [
+        { nombre: 'Modal', slug: 'modal', grupos: [{ titulo: 'Tamaños', casos: [caso('sm'), caso('lg')] }] },
+        { nombre: 'Dialog', slug: 'dialog', grupos: [] },
+      ],
+    },
+    {
+      id: 'form-controls',
+      nombre: 'Form Controls',
+      componentes: [{ nombre: 'Password Input', slug: 'password-input', grupos: [{ titulo: 'Creación', casos: [caso('con requisitos')] }] }],
+    },
+  ],
+};
+const indice = crearIndice(CATALOGO);
+const titulos = (consulta: string) => buscar(indice, consulta).flatMap((g) => g.entradas.map((e) => e.titulo));
 
-test('sin tildes ni mayúsculas: «CONTRASEÑA» y «contrasena» encuentran lo mismo', () => {
-  assert.equal(normalizar('  CONTRASEÑA '), 'contrasena')
-  assert.deepEqual(titulos('CONTRASEÑA'), titulos('contrasena'))
-  assert.equal(titulos('contraseña')[0], 'PasswordInput')
-})
+test('sinónimos · normaliza sin tildes, mayúsculas ni signos', () => {
+  assert.equal(normalizar('  Contraseña  ÚNICA! '), 'contrasena unica');
+  assert.equal(normalizar('Data-Grid'), 'data grid');
+});
 
-test('los sinónimos en español llevan al componente en inglés', () => {
-  const esperado: [string, string][] = [
-    ['tabla', 'DataGrid'],
-    ['ventana', 'Modal'],
-    ['aviso', 'Alert'],
-    ['menú', 'DropdownMenu'],
-    ['fecha', 'DatePicker'],
-    ['subir', 'FileUpload'],
-    ['cargando', 'Spinner'],
-    ['interruptor', 'Switch'],
-    ['árbol', 'TreeView'],
-  ]
-  for (const [consulta, componente] of esperado) {
-    assert.ok(titulos(consulta, 8).includes(componente), `«${consulta}» → ${componente}: ${titulos(consulta, 8).join(', ')}`)
-  }
-  assert.equal(titulos('3d')[0], 'Visor 3D')
-  assert.ok(titulos('paleta').includes('Personalización'))
-  assert.ok(titulos('tema').includes('AppearancePanel'))
-})
+test('sinónimos · la consulta va primera y suma las palabras de su grupo', () => {
+  const tabla = alternativas('Tabla');
+  assert.equal(tabla[0], 'tabla');
+  assert.ok(tabla.includes('data grid') && tabla.includes('table'));
+  assert.ok(alternativas('tabla de usuarios').includes('data grid de usuarios'), 'cambia la palabra dentro de la frase');
+  assert.ok(alternativas('ventana').includes('modal'));
+  assert.ok(alternativas('contraseña').includes('password input'));
+  assert.ok(alternativas('contra').includes('password input'), 'una palabra a medias, de cuatro letras o más');
+  assert.deepEqual(alternativas('con'), ['con'], 'tres letras no completan');
+  assert.deepEqual(alternativas('   '), []);
+  assert.ok(alternativas('tema').includes('personalizacion'));
+});
 
-test('una palabra a medias, desde tres letras, ya vale por su sinónimo', () => {
-  assert.ok(sinonimosDe('tabl').includes('datagrid'))
-  assert.deepEqual(sinonimosDe('ta'), [], 'con dos letras no se expande')
-  assert.ok(titulos('tabl', 8).includes('DataGrid'))
-})
+test('búsqueda · encuentra por sinónimo componentes, casos y pantallas', () => {
+  const tabla = titulos('tabla');
+  assert.ok(tabla.includes('Data Grid') && tabla.includes('Table'));
+  assert.ok(titulos('ventana').includes('Modal'));
+  assert.ok(titulos('contraseña').includes('Password Input'));
+  assert.ok(titulos('3d').includes('Visor 3D'));
+  assert.ok(titulos('paleta').includes('Personalización'));
+  assert.ok(titulos('login').some((t) => t.startsWith('Ingreso')));
+  assert.ok(titulos('usuarios').includes('Usuarios'));
+  assert.deepEqual(buscar(indice, ''), []);
+});
 
-test('un nombre exacto gana a un sinónimo y un componente a sus casos', () => {
-  const [primero] = buscar(indice, 'table')
-  assert.equal(primero?.titulo, 'Table')
-  const conCasos = buscar(indice, 'login form')
-  assert.equal(conCasos[0]?.tipo, 'componente')
-  const entrada = indice.find((e) => e.titulo === 'DataGrid')
-  assert.ok(entrada)
-  assert.ok(puntuar(entrada, 'datagrid') > puntuar(entrada, 'tabla'))
-  assert.equal(puntuar(entrada, 'zzzz'), 0)
-  assert.equal(puntuar(entrada, '   '), 0)
-})
+test('búsqueda · lo exacto primero, agrupado y con su ruta', () => {
+  const grupos = buscar(indice, 'modal');
+  const componentes = grupos.find((g) => g.etiqueta === 'Componentes');
+  assert.equal(componentes?.entradas[0]?.titulo, 'Modal');
+  assert.equal(componentes?.entradas[0]?.ruta, '/demo/vitrina/overlays/modal');
+  const casos = grupos.find((g) => g.etiqueta === 'Casos');
+  assert.equal(casos?.entradas[1]?.ruta, '/demo/vitrina/overlays/modal/caso/2', 'el caso n cuenta desde 1 a través de los grupos');
+  assert.deepEqual(
+    grupos.map((g) => g.etiqueta),
+    ['Componentes', 'Casos'],
+  );
+  const cuenta = buscar(indice, 'cuenta');
+  assert.equal(cuenta[0]?.etiqueta, 'Galería');
+  assert.equal(cuenta[0]?.entradas[0]?.ruta, '/demo/cuenta');
+});
 
-test('varios términos se cumplen todos; «porTipo» limita cada grupo; sin ADMIN no salen sus pantallas', () => {
-  assert.ok(buscar(indice, 'ingreso celular').every((e) => /celular/i.test(`${e.titulo} ${e.contexto}`)))
-  const limitados = buscar(indice, 'button', { porTipo: { caso: 2 } })
-  assert.ok(limitados.filter((e) => e.tipo === 'caso').length <= 2)
-  assert.ok(buscar(indice, 'usuarios').some((e) => e.ruta === '/demo/admin/usuarios'))
-  assert.ok(!buscar(indice, 'usuarios', { admin: false }).some((e) => e.ruta.startsWith('/demo/admin')))
-})
-
-test('cada sinónimo apunta a algo que existe en el índice', () => {
-  const nombres = new Set(indice.map((e) => normalizar(e.titulo)))
-  for (const [clave, destinos] of Object.entries(SINONIMOS)) {
-    assert.equal(clave, normalizar(clave), `la clave «${clave}» va normalizada`)
-    for (const destino of destinos) assert.ok(nombres.has(normalizar(destino)), `«${clave}» → «${destino}» no está en el índice`)
-  }
-})
+test('búsqueda · sin catálogo, las pantallas de la galería', () => {
+  const solo = crearIndice();
+  assert.ok(solo.every((e) => e.tipo === 'pantalla'));
+  assert.ok(solo.length >= 10 + 5 + 4 + 11, 'secciones, subsecciones y variantes de ingreso');
+});

@@ -1,0 +1,5 @@
+# El Dockerfile solo necesita el jar ya construido del modulo boot. Se excluye
+# todo lo demas: el contexto de build queda minimo y ningun .env (con sus
+# credenciales) viaja al daemon de Docker ni a una capa de la imagen.
+*
+!boot/target/aybar-atc.jar

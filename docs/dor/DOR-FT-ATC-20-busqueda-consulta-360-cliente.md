@@ -1,0 +1,91 @@
+---
+id: "DOR-FT-ATC-20"
+tipo: dor
+titulo: "Definition of Ready (G4) - FT-ATC-20 Búsqueda y consulta 360 del cliente"
+estado: draft
+producto: "Aybar Atiende (aybar-atc)"
+version: "0.2"
+owner: "Eddie Huamaní (PO)"
+aprobadores: []
+fecha: "2026-10-19"
+relacionados: ["FT-ATC-20", "EP-ATC-10", "AYB-0001"]
+tags: [dor, plt-05, g4]
+---
+
+# PLT-05 - Definition of Ready (G4) - FT-ATC-20 Búsqueda y consulta 360 del cliente
+
+Va en `docs/dor/DOR-FT-ATC-20-busqueda-consulta-360-cliente.md`.
+
+| Item evaluado | Product Owner | Lider tecnico |
+|---|---|---|
+| EP-ATC-10 / FT-ATC-20 Búsqueda y consulta 360 del cliente | Eddie Huamaní | [por asignar] |
+| **Fecha de revision** | **Sprint / release destino** | **Resultado** |
+| 2026-10-16 | Iteración 1 (19-23 oct 2026) · v1.0 | NO READY |
+
+## 1 Checklist de G4
+
+| # | Criterio | Cumple | Evidencia |
+|---|---|---|---|
+| 1 | Valor claro | [x] | HU-ATC-049..052 (Etapa 1); HU-ATC-053 (Etapa 3, D-12) |
+| 2 | Gherkin verificable | [x] | HU-ATC-049..052 (Etapa 1); HU-ATC-053 (Etapa 3, D-12) |
+| 3 | Reglas explícitas | [x] | RN-SVC-036, 026, 012 — pero la matriz rol→campo visible de RN-SVC-036 **no existe en ninguna fuente** (confirmado leyendo el artefacto de Nexora en esta misma sesión) |
+| 4 | G2 si `ui: true` | [ ] | HU-ATC-050 es `ui: true`; G2 no existe |
+| 5 | G3 si aplica | [ ] | ADR-001, 003, 007; ADR-008 y ADR-009 (borrador) solo para la búsqueda semántica de HU-ATC-053, que pasa a Etapa 3; G3 en `draft` |
+| 6 | Dependencias desbloqueadas | [ ] | DEP-01 (SIGDA/TAXON) y DEP-13 (motor de José) sin resolver |
+| 7 | Técnicas y de datos | [x] | `SVC_SEARCH_INDEX` (ENT-SVC-017) en diccionario; arquitectura de agregación discutida en esta sesión (fan-out en paralelo, sin copiar datos) |
+| 8 | TC iniciales QA | [ ] | Verificar test-plan.md |
+| 9 | Estimada por el equipo | [ ] | 15 h de producto en Etapa 1 (HU-ATC-049..052), sin confirmar; las 5 h de HU-ATC-053 quedan fuera de la Etapa 1 (antes: 20 h, talla L) |
+| 10 | Cabe en un sprint | [x] | Ajustado |
+| IA | Revisión humana | [ ] | Pendiente |
+
+### Historias evaluadas en esta funcionalidad (artefacto PLT-04 v1.2)
+
+| HU | Título (PLT-04) | Escenarios Gherkin | Horas | Desarrollador | Fechas | Condición en tablero (PLT-05) |
+|---|---|---|---|---|---|---|
+| HU-ATC-049 | Buscar al cliente y llamarlo desde su ficha | 3 (CA-01, CA-02, CA-03) | 4 h | Dev 4 (Daniel) | 2026-10-19 → 2026-10-19 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-050 | Ver la consulta 360 del cliente dentro del ticket | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 4 (Daniel) | 2026-10-20 → 2026-10-20 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-051 | Continuar la atención cuando la consulta del cliente falla | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-20 → 2026-10-21 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-052 | Consultar datos específicos con el motor de José | 3 (CA-01, CA-02, CA-03) | 3 h | Dev 4 (Daniel) | 2026-10-21 → 2026-10-21 | CON CONDICIONES (DEP-01 · DEP-13 · «llamar la cuenta») |
+| HU-ATC-053 | Buscar documentos del cliente por significado | 3 (CA-01, CA-02, CA-03) | 5 h | Dev 4 (Daniel) | Sin fecha (Etapa 3) | FUERA DE LA ETAPA 1 (D-12): se integra a futuro con el asistente interno (ADR-009) |
+
+Etapa 1 de esta funcionalidad: 4 HU · 15 h (`HU-ATC-049`..`052`). Decisión D-12 de 2026-10-19: `HU-ATC-053` pasa a Etapa 3 (por definir), sin fecha. Pregunta abierta para el PO: `HU-ATC-042` (Etapa 1) la tiene como predecesora en PLT-04.
+
+## 2 Dependencias
+
+| ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha | Estado |
+|---|---|---|---|---|---|---|
+| DEP-01 | API SIGDA/TAXON | Externa | HU-ATC-049, 050, 051 | Líder técnico | 2026-10-19 | Pendiente |
+| DEP-13 | Motor de consultas de José: contrato de API | Interna/Técnica | HU-ATC-052 | Líder técnico | 2026-10-21 | Pendiente |
+
+## 3 Modelado
+
+- `SVC_SEARCH_INDEX` en `docs/datos/diccionario.md`; consulta 360 es agregación en línea, sin tabla propia (RN-SVC-026)
+
+## 4 Arquitectura
+
+- ADR: ADR-001, ADR-003 (consulta sin copiar), ADR-007 (adaptadores con simulador), ADR-008 (si la búsqueda semántica de HU-ATC-053 usa un modelo externo, anonimización obligatoria)
+
+## 5 Riesgos
+
+| ID | Riesgo | Prob. | Impacto | Mitigación | Dueño | Estado |
+|---|---|---|---|---|---|---|
+| R-02 (PLT-05) | APIs externas (SIGDA/TAXON, motor de José) no disponibles en 2 semanas | Alta | Alto | Contrato de interfaz y simulador | Líder técnico | Abierto |
+
+## 6 Decision y aprobacion
+
+Decision: NO READY
+
+Condiciones pendientes:
+- [ ] **Bloqueante crítico**: no existe la matriz rol→campo visible que RN-SVC-036 exige (según RNF-SEC-010: 0 accesos indebidos) — sin ella, `PoliticaVisibilidad360` (discutida en esta sesión) no se puede implementar con reglas reales, solo con la forma vacía
+- [ ] DEP-01 y DEP-13 sin resolver
+- [ ] P-02 (qué sistemas alimentan cada sección) de FT-ATC-20 bloquea G4; P-03 (qué repositorios se indexan semánticamente) solo afecta a HU-ATC-053 (Etapa 3)
+- [ ] G3 no `approved`
+
+| Rol | Nombre | Fecha | Firma |
+|---|---|---|---|
+| Product Owner (aprueba) | | | |
+| Lider tecnico (consultivo) | | | |
+| QA (consultivo) | | | |
+| UX (consultivo) | | | |
+
+Generado por IA: actualizado con el detalle del artefacto de Claude «Tablero Aybar Atiende» (PLT-01..05 v1.2, versión `1792099647-bef0`) — Revisado por: pendiente

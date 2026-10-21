@@ -1,7 +1,7 @@
 {
   "version": "0.3.0",
   "papel": "app",
-  "anfitrion": "vite-react",
+  "anfitrion": "angular",
   "tema": {
     "predeterminado": "sistema"
   },

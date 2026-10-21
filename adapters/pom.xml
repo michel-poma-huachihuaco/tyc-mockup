@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.aybarsac</groupId>
+    <artifactId>aybar-atc</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>aybar-atc-adapters</artifactId>
+  <name>aybar-atc :: adapters</name>
+  <dependencies>
+    <dependency>
+      <groupId>com.aybarsac</groupId>
+      <artifactId>aybar-atc-application</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-web</artifactId>
+    </dependency>
+    <!-- springdoc dejo de llegar por aybar-starter-web, que ahora lo declara
+         <optional> para no imponer Swagger UI a todo consumidor. Quien enciende el
+         starter web quiere Swagger UI, asi que el servicio lo declara por su cuenta.
+         La version la gobierna aybar-sdk-parent. -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-client</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-audit</artifactId>
+    </dependency>
+
+
+    <!-- aybar-starter-security vive en el modulo infrastructure para la
+         configuracion del resource server, pero los controladores REST de
+         este modulo necesitan AybarUserContext y @PreAuthorize en tiempo
+         de compilacion. Declararlo aqui es idempotente: el BOM ya lo fija
+         en version y scope compile. -->
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-security</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-messaging</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-data</artifactId>
+    </dependency>
+    <!-- Solo para arrancar en local sin Postgres. La activa el flag
+         aybar.data.postgres.fallback-h2 del perfil 'local' (application.yml),
+         que levanta un H2 en memoria en modo PostgreSQL. El SDK aborta el
+         arranque si ese flag aparece fuera de 'local', asi que no puede
+         colarse en un entorno real. Cuando tengas un Postgres de verdad
+         para desarrollo, borra esta dependencia y la bandera. -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+
+    <!--
+      Lombok: RECOMENDADO, no obligatorio. El SDK gobierna su version pero no
+      lo declara, asi que aqui va sin <version>. Si tu servicio no lo usa,
+      borra esta dependencia y no pasa nada.
+
+      CUANDO USARLO: para quitar ruido repetitivo en clases que no son
+      valores inmutables - @AllArgsConstructor / @RequiredArgsConstructor en
+      adaptadores con varias dependencias, @Builder cuando construir un objeto
+      a mano se vuelve ilegible, @Slf4j para el logger.
+
+      CUANDO NO: para un dato inmutable, un record de Java 21 es mejor que
+      una clase con @Data o @Value - no necesita procesador de anotaciones,
+      lo entienden el IDE y el depurador sin plugin, y es del lenguaje. El
+      modelo de domain que genera este template es un record a proposito.
+
+      NUNCA @Data en una @Entity JPA: genera equals/hashCode sobre todos los
+      campos, incluidas las relaciones perezosas, y acaba en consultas
+      inesperadas o en StackOverflowError con relaciones bidireccionales.
+
+      El scope 'provided' es lo correcto: Lombok actua en tiempo de
+      compilacion como procesador de anotaciones y no hace falta en el jar
+      final ni en runtime. <optional>true</optional> evita ademas que se
+      propague a quien dependa de este artefacto.
+    -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>

@@ -1,0 +1,50 @@
+import { Component, computed, input } from '@angular/core';
+
+/**
+ * Los glifos de la galería: trazos de 24 × 24 con `currentColor`, decorativos (el nombre
+ * lo lleva el texto que acompañan). Uno por sección y unos pocos de acciones.
+ */
+const TRAZOS = {
+  portada: ['M4 5h7v6H4zM13 5h7v4h-7zM13 11h7v8h-7zM4 13h7v6H4z'],
+  vitrina: ['M12 3 3 8l9 5 9-5-9-5Z', 'm3 13 9 5 9-5', 'm3 17.5 9 4.5 9-4.5'],
+  ingreso: ['M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3', 'M10 17l5-5-5-5', 'M15 12H4'],
+  cuenta: ['M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z', 'M4 20.5c1.4-3.6 4.4-5.5 8-5.5s6.6 1.9 8 5.5'],
+  admin: ['M12 3 5 6v5.5c0 4.4 3 8.3 7 9.5 4-1.2 7-5.1 7-9.5V6l-7-3Z', 'm9 12 2 2 4-4'],
+  personalizacion: ['M4 7h10M18 7h2M4 17h4M12 17h8', 'M16 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM10 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z'],
+  profundidad: ['M8 4h12v12H8z', 'M4 8h12v12H4z'],
+  '3d': ['M12 2.5 3.5 7v10l8.5 4.5 8.5-4.5V7L12 2.5Z', 'M3.5 7 12 11.5 20.5 7', 'M12 11.5v10'],
+  redimensionado: ['M3 5h18v14H3z', 'M10 5v14', 'M14 10l2 2-2 2'],
+  accesibilidad: ['M12 6.5a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5Z', 'M5 9l7 1.5L19 9', 'M12 10.5V15l-3 6M12 15l3 6'],
+  flecha: ['M5 12h14', 'm13 6 6 6-6 6'],
+  buscar: ['M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z', 'm20 20-3.5-3.5'],
+  candado: ['M6 11h12v10H6z', 'M8 11V8a4 4 0 0 1 8 0v3'],
+  copiar: ['M9 9h11v11H9z', 'M5 15H4V4h11v1'],
+  chispa: ['M12 3v4M12 17v4M3 12h4M17 12h4', 'm6 6 2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18'],
+  pausa: ['M8 5v14M16 5v14'],
+  reproducir: ['M7 4.5v15l12-7.5-12-7.5Z'],
+  izquierda: ['M19 12H5', 'm11 6-6 6 6 6'],
+  derecha: ['M5 12h14', 'm13 6 6 6-6 6'],
+  cerrar: ['M6 6l12 12M18 6 6 18'],
+  codigo: ['m8 7-5 5 5 5', 'm16 7 5 5-5 5', 'm14 4-4 16'],
+  correo: ['M3 6h18v12H3z', 'm3 7 9 6 9-6'],
+  celular: ['M7 2.5h10v19H7z', 'M11 18h2'],
+  descargar: ['M12 4v11', 'm7 10 5 5 5-5', 'M5 20h14'],
+} as const;
+
+export type NombreIcono = keyof typeof TRAZOS;
+
+@Component({
+  selector: 'gl-icono',
+  host: { class: 'gl-icono', 'aria-hidden': 'true' },
+  template: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+      @for (d of trazos(); track $index) {
+        <path [attr.d]="d" />
+      }
+    </svg>
+  `,
+})
+export class Icono {
+  readonly nombre = input.required<NombreIcono>();
+  protected readonly trazos = computed(() => TRAZOS[this.nombre()]);
+}

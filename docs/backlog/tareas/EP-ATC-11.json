@@ -1,0 +1,255 @@
+{
+  "epica": "EP-ATC-11",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-056",
+      "tareas": [
+        {
+          "id": "HU-ATC-056-T01",
+          "titulo": "Servicio de dominio CausalResolucionContrato (3 meses/cuotas impagos, RN-SVC-037) en domain",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-056-T02",
+          "titulo": "Adaptador de consulta a Cobranza (estado de cuotas, DEP-08), con simulador (ADR-007)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-056-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-056-T03",
+          "titulo": "Caso de uso GenerarCasoResolucionContratoUseCase (automatico por cuotas o por reclamo con 3 meses de no pago), deriva a Cobranza y Legal",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-056-T02",
+            "HU-ATC-040-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-056-T04",
+          "titulo": "Un test por cada TC de HU-ATC-056 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-056-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-057",
+      "tareas": [
+        {
+          "id": "HU-ATC-057-T01",
+          "titulo": "Adaptador de notificaciones multicanal (correo, WhatsApp, Mi Portal) con constancia de envio",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-056-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-057-T02",
+          "titulo": "Caso de uso EnviarAlertaCancelacionUseCase, en paralelo al proceso de resolucion (deuda, plazo, consecuencias)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-057-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-057-T03",
+          "titulo": "Un test por cada TC de HU-ATC-057 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-057-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-058",
+      "tareas": [
+        {
+          "id": "HU-ATC-058-T01",
+          "titulo": "Adaptador de maestro de responsables de proyecto y supervisores (DEP-15) y de envio de correo",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-056-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-058-T02",
+          "titulo": "Caso de uso GenerarCartaAlertaResponsableUseCase (cliente, deuda, estado del caso, fecha prevista de resolucion, copia al supervisor)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-058-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-058-T03",
+          "titulo": "Un test por cada TC de HU-ATC-058 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-058-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-059",
+      "tareas": [
+        {
+          "id": "HU-ATC-059-T01",
+          "titulo": "Entidad SVC_SIMPLE_FORM_DEFINITION (formulario de ingreso a proyecto, maximo 6 campos) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-059-T02",
+          "titulo": "Migracion Flyway V37__crear_tabla_simple_form_definition.sql y endpoint POST /api/v1/formularios/ingreso-proyecto",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-059-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-059-T03",
+          "titulo": "Caso de uso RegistrarIngresoProyectoUseCase: genera automaticamente un ticket asignado al responsable del proyecto",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-059-T02",
+            "HU-ATC-001-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-059-T04",
+          "titulo": "Un test por cada TC de HU-ATC-059 en docs/pruebas/test-plan.md (RNF-USA-004: <=1 min, maximo 6 campos)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-059-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-059-T05",
+          "titulo": "Formulario simple y movil de ingreso de personas al proyecto (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-059-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-060",
+      "tareas": [
+        {
+          "id": "HU-ATC-060-T01",
+          "titulo": "Nota D-10 (nomenclatura menor): entidad SVC_BUS_SEAT_RESERVATION (control de aforo por bus y horario) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-059-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-060-T02",
+          "titulo": "Migracion Flyway V38__crear_tabla_bus_seat_reservation.sql y endpoint POST /api/v1/formularios/entregafest-bus",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-060-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-060-T03",
+          "titulo": "Caso de uso ReservarCupoBusUseCase: controla aforo por bus/horario, genera ticket, confirma punto y hora de embarque (lista de espera si no hay cupo)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-060-T02",
+            "HU-ATC-059-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-060-T04",
+          "titulo": "Un test por cada TC de HU-ATC-060 en docs/pruebas/test-plan.md (incluye aforo lleno)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-060-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-060-T05",
+          "titulo": "Formulario simple de solicitud de cupo con confirmacion de embarque (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel (Dev 4)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-060-T02"
+          ]
+        }
+      ]
+    }
+  ]
+}

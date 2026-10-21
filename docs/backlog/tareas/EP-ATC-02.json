@@ -1,0 +1,410 @@
+{
+  "epica": "EP-ATC-02",
+  "generado_por_ia": true,
+  "revisado_por": null,
+  "historias": [
+    {
+      "hu": "HU-ATC-007",
+      "tareas": [
+        {
+          "id": "HU-ATC-007-T01",
+          "titulo": "Entidad SVC_TICKET_ASIGNACION (append-only, area/responsable/motivo) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-007-T02",
+          "titulo": "Migracion Flyway V7__crear_tabla_ticket_asignacion.sql",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-007-T03",
+          "titulo": "Caso de uso DerivarTicketUseCase (permite derivar a area sin persona asignada)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-007-T04",
+          "titulo": "Endpoint POST /api/v1/tickets/{id}/derivaciones",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T02",
+            "HU-ATC-007-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-007-T05",
+          "titulo": "Un test por cada TC de HU-ATC-007 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-007-T06",
+          "titulo": "Accion de derivar ticket entre areas en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-007-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-008",
+      "tareas": [
+        {
+          "id": "HU-ATC-008-T01",
+          "titulo": "Adaptador NEXUS (adapters.outbound.external) para consultar colaboradores que cesan/rotan, con simulador (ADR-007)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-008-T02",
+          "titulo": "Caso de uso ReasignarMasivamenteUseCase: genera filas REASSIGNMENT_CESE sin borrar el rastro anterior",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-007-T01",
+            "HU-ATC-008-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-008-T03",
+          "titulo": "Endpoint POST /api/v1/tickets/reasignacion-masiva",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-008-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-008-T04",
+          "titulo": "Un test por cada TC de HU-ATC-008 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-008-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-008-T05",
+          "titulo": "Pantalla administrativa de reasignacion masiva para supervisor (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-008-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-009",
+      "tareas": [
+        {
+          "id": "HU-ATC-009-T01",
+          "titulo": "Repositorio de lectura CQRS (Mongo) para el casillero: proyeccion de SVC_TICKET + ultimo movimiento de SVC_TICKET_ASIGNACION",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-007-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-009-T02",
+          "titulo": "Caso de uso ConsultarCasilleroUseCase (consulta sobre el read model, sin tabla adicional)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-009-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-009-T03",
+          "titulo": "Endpoint GET /api/v1/tickets/casillero",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-009-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-009-T04",
+          "titulo": "Un test por cada TC de HU-ATC-009 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-009-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-009-T05",
+          "titulo": "Vista de casillero de tareas por area/responsable (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-009-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-003",
+      "tareas": [
+        {
+          "id": "HU-ATC-003-T01",
+          "titulo": "Entidad MAE_SLA_POLICY y servicio de dominio SelectorPoliticaSla (precedencia tipo+prioridad sobre generica) en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-001-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-003-T02",
+          "titulo": "Migracion Flyway V8__crear_tabla_sla_policy_y_columnas_vencimiento_ticket.sql (MAE_SLA_POLICY + FirstResponseDueDateTime/ResolutionDueDateTime en SVC_TICKET, expand)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-003-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-003-T03",
+          "titulo": "Congelar vencimientos al abrir el ticket dentro de RegistrarTicketUseCase, usando MAE_TIME/MAE_HOLIDAY por geografia del establecimiento",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-001-T03",
+            "HU-ATC-003-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-003-T04",
+          "titulo": "Un test por cada TC de HU-ATC-003 en docs/pruebas/test-plan.md (incluye cambio de politica posterior sin afectar el vencimiento ya congelado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-003-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-010",
+      "tareas": [
+        {
+          "id": "HU-ATC-010-T01",
+          "titulo": "Entidad SVC_TICKET_ALERTA_SLA y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-003-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-010-T02",
+          "titulo": "Migracion Flyway V9__crear_tabla_ticket_alerta_sla.sql (UNIQUE TicketID+BreachTypeID+ReopenCycleNumber)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-010-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-010-T03",
+          "titulo": "Caso de uso DetectarIncumplimientosSlaUseCase: FIRST_RESPONSE_OVERDUE y RESOLUTION_OVERDUE, una alerta por tipo y ciclo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-010-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-010-T04",
+          "titulo": "Job batch idempotente programado (segun ADR-005) que invoca DetectarIncumplimientosSlaUseCase",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-010-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-010-T05",
+          "titulo": "Un test por cada TC de HU-ATC-010 en docs/pruebas/test-plan.md (incluye no duplicar alerta en el mismo ciclo)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-010-T04"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-011",
+      "tareas": [
+        {
+          "id": "HU-ATC-011-T01",
+          "titulo": "Migracion Flyway V10__agregar_columnas_reapertura_ticket.sql (ReopenCount, ReopenedResolutionDueDateTime, expand)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-003-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-011-T02",
+          "titulo": "Caso de uso ReabrirTicketUseCase: incrementa ReopenCount, calcula nuevo vencimiento con la politica vigente, conserva el original",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-004-T03",
+            "HU-ATC-011-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-011-T03",
+          "titulo": "Endpoint PATCH /api/v1/tickets/{id}/reapertura",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-011-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-011-T04",
+          "titulo": "Un test por cada TC de HU-ATC-011 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-011-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-011-T05",
+          "titulo": "Boton de reapertura y vencimiento vigente visible en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-011-T03"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-029",
+      "tareas": [
+        {
+          "id": "HU-ATC-029-T01",
+          "titulo": "Logica de medicion del cierre end-to-end del ticket (sin escalamiento vs. con escalamiento) dentro del servicio de estado/alertas",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-004-T03",
+            "HU-ATC-010-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-029-T02",
+          "titulo": "Exponer la metrica de riesgo de cierre E2E a traves del mismo read model que consume /api/v1/torre-control/tiempo-real (HU-ATC-030)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-029-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-029-T03",
+          "titulo": "Un test por cada TC de HU-ATC-029 en docs/pruebas/test-plan.md",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Jesús (Dev 2)",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-029-T02"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1896 @@
+/*
+ * Estilos globales del esqueleto. Las hojas del framework las declara angular.json
+ * (build.options.styles, las agrega aybar-front init): los tokens de @aybarcorp/tokens y
+ * ui.css de @aybarcorp/ui-angular. Aquí solo van las clases de las pantallas (prefijo pl-,
+ * para no chocar con las ay- del sistema de diseño), con tokens --aybar-*: nada de hex ni
+ * medidas sueltas. Las proporciones multiplican tokens, como hace el propio ui.css; las
+ * medidas de maquetación van en rem como múltiplos de --aybar-space-4 (1rem), con su valor
+ * al lado. La única excepción es la altura de la ventana, que no tiene token.
+ *
+ * Composición de la guía visual v2 «Petróleo refinado» (docs/diseno del framework): aire,
+ * bordes de un pelo, sombras en capas y movimiento corto. Los tokens nuevos de la v2
+ * (--aybar-color-focus-halo, --aybar-color-bg-brand-subtle) van siempre con un respaldo
+ * de los que ya existen, para que se vea bien con @aybarcorp/tokens 0.2.0. Es la misma
+ * composición que la plantilla React (src/plantilla.css).
+ *
+ * Las media queries no admiten var(): 1024px es --aybar-breakpoint-lg y 768px,
+ * --aybar-breakpoint-md.
+ */
+
+/*
+ * Tipografía de la guía visual v2, servida desde la propia aplicación: ninguna petición a
+ * un CDN de fuentes (un tercero vería el tráfico de cada usuario). Figtree para el cuerpo
+ * (Proxima Nova no tiene licencia web todavía) y Montserrat 600–800 para los títulos.
+ * Solo el subconjunto latin, que cubre el español (tildes, ñ, ¿ ¡); los .woff2 salen de
+ * @fontsource y ng build los copia a dist/media/. Licencia OFL-1.1: README, «Avisos de
+ * terceros». Los @import van antes que cualquier regla.
+ */
+@import '@fontsource/figtree/latin-400.css';
+@import '@fontsource/figtree/latin-500.css';
+@import '@fontsource/figtree/latin-600.css';
+@import '@fontsource/figtree/latin-700.css';
+@import '@fontsource/montserrat/latin-600.css';
+@import '@fontsource/montserrat/latin-700.css';
+@import '@fontsource/montserrat/latin-800.css';
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+  /* Guía visual v2: el cuerpo es Proxima Nova servida como Figtree mientras no haya
+     licencia web (los @import de arriba). @aybarcorp/tokens 0.2.0 todavía no la nombra en
+     --aybar-family-sans; cuando lo haga, estos dos nombres sobran pero no estorban. */
+  font-family: 'Proxima Nova', 'Figtree', var(--aybar-family-sans);
+  line-height: var(--aybar-font-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Pantallas de un solo mensaje ──────────────────────────────────────── */
+.pl-centro {
+  display: grid;
+  place-items: center;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  box-sizing: border-box;
+  padding: var(--aybar-space-6);
+  background: var(--aybar-color-bg-canvas);
+}
+
+/* ── Piezas comunes ────────────────────────────────────────────────────── */
+
+/* La marca: el símbolo y el nombre del proyecto. */
+.pl-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  /* 800, el extra-bold de la guía v2 para marca y títulos grandes: no tiene token. */
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  letter-spacing: var(--aybar-font-tracking-tight);
+  overflow-wrap: anywhere;
+}
+
+.pl-marca__simbolo {
+  flex: none;
+  /* 34px */
+  inline-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  color: var(--aybar-color-bg-brand);
+}
+
+.pl-marca__letra {
+  fill: var(--aybar-color-fg-on-brand);
+}
+
+/* Enlaces con forma de botón: las acciones del héroe y de la barra navegan (son <a>), y el
+   Button del sistema de diseño es un <button>. */
+.pl-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-2);
+  box-sizing: border-box;
+  min-block-size: var(--aybar-control-height-md);
+  padding-inline: var(--aybar-control-padding-lg);
+  border: var(--aybar-border-width-thin) solid transparent;
+  border-radius: var(--aybar-radius-md);
+  font-family: inherit;
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-semibold);
+  line-height: var(--aybar-font-leading-tight);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pl-accion:hover {
+  transform: translateY(calc(var(--aybar-space-px) * -1));
+}
+
+.pl-accion:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Foco v2: el anillo global del framework más un halo de 4px. */
+.pl-accion:focus-visible {
+  box-shadow: 0 0 0 var(--aybar-space-1)
+    var(--aybar-color-focus-halo, color-mix(in oklab, var(--aybar-color-border-focus) 22%, transparent));
+}
+
+.pl-accion--lg {
+  /* 52px */
+  min-block-size: calc(var(--aybar-control-height-lg) + var(--aybar-space-1));
+  padding-inline: var(--aybar-space-6);
+  border-radius: var(--aybar-radius-lg);
+  font-size: var(--aybar-font-size-base);
+}
+
+.pl-accion--primaria {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--aybar-color-action-primary-bg), var(--aybar-color-neutral-0) 8%),
+    var(--aybar-color-action-primary-bg)
+  );
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow:
+    inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-neutral-0) 15%, transparent),
+    0 var(--aybar-space-2) var(--aybar-space-6) calc(var(--aybar-space-2) * -1.25)
+      color-mix(in oklab, var(--aybar-color-action-primary-bg) 70%, transparent);
+}
+
+.pl-accion--primaria:hover {
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow:
+    inset 0 var(--aybar-space-px) 0 color-mix(in oklab, var(--aybar-color-neutral-0) 15%, transparent),
+    0 var(--aybar-space-3) var(--aybar-space-8) calc(var(--aybar-space-2) * -1.25)
+      color-mix(in oklab, var(--aybar-color-action-primary-bg) 80%, transparent);
+}
+
+.pl-accion--secundaria {
+  background: var(--aybar-color-action-secondary-bg);
+  border-color: color-mix(in oklab, var(--aybar-color-action-secondary-border) 45%, transparent);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.pl-accion--secundaria:hover {
+  background: var(--aybar-color-action-secondary-bg-hover);
+  color: var(--aybar-color-fg-default);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.pl-accion--inversa {
+  background: var(--aybar-color-bg-inverse);
+  color: var(--aybar-color-fg-inverse);
+  box-shadow: var(--aybar-shadow-md);
+}
+
+.pl-accion--inversa:hover {
+  color: var(--aybar-color-fg-inverse);
+}
+
+.pl-accion__icono {
+  flex: none;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+/* Insignia «Nuevo»: mandarina con texto oscuro, el par de acento medido en foundations. */
+.pl-insignia {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--aybar-space-px) * 3) var(--aybar-space-3);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-action-accent-bg);
+  color: var(--aybar-color-action-accent-fg);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-bold);
+  line-height: var(--aybar-font-leading-tight);
+}
+
+.pl-codigo-chip {
+  padding: calc(var(--aybar-space-px) * 2) calc(var(--aybar-space-1) * 1.5);
+  border-radius: var(--aybar-radius-sm);
+  background: color-mix(in oklab, var(--aybar-color-fg-link) 9%, transparent);
+  color: var(--aybar-color-fg-link);
+  font-family: var(--aybar-family-mono);
+  font-size: 0.9em;
+}
+
+/* Puntos de estado: siempre al lado de un texto que dice lo mismo. */
+.pl-punto {
+  flex: none;
+  inline-size: var(--aybar-space-2);
+  block-size: var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--pl-punto);
+  box-shadow: 0 0 0 var(--aybar-space-1) color-mix(in oklab, var(--pl-punto) 18%, transparent);
+}
+
+.pl-punto--ok {
+  --pl-punto: var(--aybar-color-success-500);
+}
+
+.pl-punto--acento {
+  --pl-punto: var(--aybar-color-action-accent-bg);
+}
+
+.pl-punto--marca {
+  --pl-punto: var(--aybar-color-fg-link);
+}
+
+.pl-punto--neutro {
+  --pl-punto: var(--aybar-color-fg-subtle);
+}
+
+/* ── Bienvenida pública ────────────────────────────────────────────────── */
+
+.pl-bienvenida {
+  /* 1200px: el ancho del contenido de la bienvenida */
+  --pl-ancho: calc(var(--aybar-breakpoint-xl) - var(--aybar-space-20));
+
+  position: relative;
+  isolation: isolate;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  overflow-x: clip;
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El brillo radial, petróleo hacia mandarina, muy tenue, detrás del héroe. */
+.pl-bienvenida::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  /* 900 × 520px, asomando 220px por arriba */
+  inset-block-start: calc(var(--aybar-space-4) * -13.75);
+  inset-inline-start: 50%;
+  inline-size: calc(var(--aybar-space-4) * 56.25);
+  block-size: calc(var(--aybar-space-4) * 32.5);
+  translate: -50% 0;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--aybar-color-primary-400) 28%, transparent),
+    color-mix(in oklab, var(--aybar-color-action-accent-bg) 6%, transparent) 60%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* La rejilla de 44px, que se desvanece hacia abajo y hacia los lados. */
+.pl-bienvenida__fondo {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  /* 760px */
+  block-size: calc(var(--aybar-space-4) * 47.5);
+  --pl-linea: color-mix(in oklab, var(--aybar-color-fg-link) 8%, transparent);
+  background-image:
+    linear-gradient(to right, var(--pl-linea) var(--aybar-space-px), transparent var(--aybar-space-px)),
+    linear-gradient(to bottom, var(--pl-linea) var(--aybar-space-px), transparent var(--aybar-space-px));
+  background-size: calc(var(--aybar-space-10) + var(--aybar-space-1)) calc(var(--aybar-space-10) + var(--aybar-space-1));
+  background-position: center top;
+  /* De la máscara solo cuenta la opacidad: el color da igual. */
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, var(--aybar-color-neutral-1000) 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, var(--aybar-color-neutral-1000) 40%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Barra superior translúcida, fija al desplazar. */
+.pl-barra {
+  position: sticky;
+  z-index: var(--aybar-z-sticky);
+  inset-block-start: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-4);
+  padding-block: var(--aybar-space-4);
+  padding-inline: max(var(--aybar-space-6), calc((100% - var(--pl-ancho)) / 2 + var(--aybar-space-6)));
+  border-block-end: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-border-subtle) 70%, transparent);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 78%, transparent);
+  backdrop-filter: saturate(1.4) blur(var(--aybar-space-3));
+}
+
+.pl-barra__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+}
+
+.pl-bienvenida__principal > * {
+  box-sizing: border-box;
+  max-inline-size: var(--pl-ancho);
+  margin-inline: auto;
+  padding-inline: var(--aybar-space-6);
+}
+
+.pl-heroe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--aybar-space-6);
+  /* 72px arriba y 56px abajo */
+  padding-block: calc(var(--aybar-space-16) + var(--aybar-space-2)) calc(var(--aybar-space-12) + var(--aybar-space-2));
+  text-align: center;
+}
+
+.pl-heroe__aviso {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: calc(var(--aybar-space-1) * 1.5) var(--aybar-space-4) calc(var(--aybar-space-1) * 1.5) calc(var(--aybar-space-1) * 1.5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-bg-surface) 85%, transparent);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  box-shadow: var(--aybar-shadow-sm);
+}
+
+.pl-heroe__titulo {
+  /* 880px */
+  max-inline-size: calc(var(--aybar-space-4) * 55);
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  /* 2.5rem … 4.25rem, la escala del héroe de la guía v2 */
+  font-size: clamp(calc(var(--aybar-font-size-5xl) * 5 / 6), 6vw, calc(var(--aybar-font-size-5xl) * 17 / 12));
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  line-height: calc(var(--aybar-font-leading-tight) * 0.875);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.75);
+  text-wrap: balance;
+}
+
+.pl-heroe__resalte {
+  color: var(--aybar-color-fg-link);
+}
+
+.pl-heroe__texto {
+  max-inline-size: var(--aybar-breakpoint-sm);
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: clamp(var(--aybar-font-size-base), 2vw, var(--aybar-font-size-xl));
+  line-height: var(--aybar-font-leading-normal);
+  text-wrap: pretty;
+}
+
+.pl-heroe__error {
+  inline-size: 100%;
+  max-inline-size: var(--aybar-breakpoint-sm);
+  text-align: start;
+}
+
+.pl-heroe__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--aybar-space-3);
+  padding-block-start: var(--aybar-space-1);
+}
+
+/* El bloque «terminal»: oscuro en los dos temas, con los colores fijos de la rampa. */
+.pl-terminal {
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* 720px */
+  max-inline-size: calc(var(--aybar-space-4) * 45);
+  margin: var(--aybar-space-6) 0 0;
+  overflow: hidden;
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-primary-400) 18%, transparent);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-primary-900);
+  color: var(--aybar-color-primary-200);
+  text-align: start;
+  box-shadow: var(--aybar-shadow-xl);
+}
+
+.pl-terminal__barra {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border-block-end: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-primary-400) 18%, transparent);
+  color: var(--aybar-color-primary-300);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.pl-terminal__luces {
+  display: inline-flex;
+  gap: var(--aybar-space-2);
+}
+
+.pl-terminal__luces > span {
+  /* 11px */
+  inline-size: calc(var(--aybar-space-3) - var(--aybar-space-px));
+  block-size: calc(var(--aybar-space-3) - var(--aybar-space-px));
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-danger-500);
+}
+
+.pl-terminal__luces > span:nth-child(2) {
+  background: var(--aybar-color-warning-300);
+}
+
+.pl-terminal__luces > span:nth-child(3) {
+  background: var(--aybar-color-success-500);
+}
+
+.pl-terminal__codigo {
+  margin: 0;
+  padding: var(--aybar-space-5) var(--aybar-space-6);
+  overflow-x: auto;
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-sm);
+  line-height: calc(var(--aybar-font-leading-relaxed) + 0.1);
+  white-space: pre-wrap;
+  overflow-wrap: normal;
+}
+
+/* Una línea por comando, con su «Copiar» a la derecha. */
+.pl-terminal__linea {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aybar-space-3);
+}
+
+/* Sangría francesa de 2ch: lo que no cabe sigue bajo el comando, no bajo el «$». */
+.pl-terminal__texto {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-inline-start: 2ch;
+  text-indent: -2ch;
+}
+
+/* Cada pieza del comando entera: la línea solo se corta en los espacios entre piezas. */
+.pl-terminal__pieza,
+.pl-terminal__nota {
+  white-space: nowrap;
+}
+
+.pl-terminal__copiar {
+  flex: none;
+  /* 24px: el objetivo táctil de WCAG 2.5.8 */
+  min-block-size: var(--aybar-space-6);
+  padding: 0 var(--aybar-space-2);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-primary-400) 45%, transparent);
+  border-radius: var(--aybar-radius-sm);
+  background: transparent;
+  color: var(--aybar-color-primary-200);
+  font-family: var(--aybar-family-sans);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  line-height: var(--aybar-font-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pl-terminal__copiar:hover {
+  background: color-mix(in oklab, var(--aybar-color-primary-400) 20%, transparent);
+}
+
+/* La terminal es oscura en los dos temas: el anillo usa su color de texto, que contrasta. */
+.pl-terminal__copiar:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-primary-200);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.pl-terminal__prompt {
+  color: var(--aybar-color-primary-400);
+  user-select: none;
+}
+
+/* La salida de `aybar run`, con la misma sangría francesa: la URL no se pega al borde. */
+.pl-terminal__salida {
+  display: block;
+  padding-inline-start: 2ch;
+  color: var(--aybar-color-success-300);
+  text-indent: -2ch;
+}
+
+.pl-terminal__nota {
+  color: var(--aybar-color-neutral-400);
+}
+
+/* Las tres tarjetas de lo que trae la plantilla. */
+.pl-intro {
+  display: grid;
+  gap: var(--aybar-space-5);
+  /* columnas de 260px como mínimo */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--aybar-space-4) * 16.25)), 1fr));
+  padding-block: var(--aybar-space-6) var(--aybar-space-10);
+}
+
+.pl-intro__tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-6);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface);
+  box-shadow: var(--aybar-shadow-sm);
+  transition:
+    transform var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
+    box-shadow var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard);
+}
+
+.pl-intro__tarjeta:hover {
+  transform: translateY(calc(var(--aybar-space-px) * -3));
+  border-color: color-mix(in oklab, var(--aybar-color-fg-link) 28%, var(--aybar-color-border-subtle));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.pl-intro__icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 42px */
+  inline-size: calc(var(--aybar-space-10) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-10) + var(--aybar-space-px) * 2);
+  border-radius: var(--aybar-radius-lg);
+}
+
+.pl-intro__icono svg {
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+/* Fondo tonal de marca (token v2); con 0.2.0, el de info, que es la misma rampa petróleo. */
+.pl-intro__icono--marca {
+  background: var(--aybar-color-bg-brand-subtle, var(--aybar-color-feedback-info-bg));
+  color: var(--aybar-color-fg-link);
+}
+
+.pl-intro__icono--acento {
+  background: var(--aybar-color-bg-accent-subtle);
+  color: var(--aybar-color-fg-accent);
+}
+
+.pl-intro__icono--neutro {
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.pl-intro__titulo {
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-family: var(--aybar-family-heading);
+  font-size: var(--aybar-font-size-lg);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-tight);
+}
+
+.pl-intro__texto {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  /* 15px */
+  font-size: calc((var(--aybar-font-size-sm) + var(--aybar-font-size-base)) / 2);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-intro__texto code {
+  font-family: var(--aybar-family-mono);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* La franja de estado del entorno. */
+.pl-entorno {
+  padding-block-end: calc(var(--aybar-space-12) + var(--aybar-space-2));
+}
+
+.pl-entorno__lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-3) var(--aybar-space-8);
+  margin: 0;
+  padding: var(--aybar-space-4) var(--aybar-space-5);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+  list-style: none;
+}
+
+.pl-entorno__dato {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.pl-entorno__dato--codigo {
+  font-family: var(--aybar-family-mono);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* ── Ingreso: pantalla partida ─────────────────────────────────────────── */
+
+.pl-ingreso {
+  display: flex;
+  flex-wrap: wrap;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-surface);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El panel de marca: petróleo con textura topográfica, igual en los dos temas. */
+.pl-ingreso__panel {
+  position: relative;
+  /* dos columnas a partir de --aybar-breakpoint-lg; por debajo, el panel queda arriba */
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--aybar-space-10);
+  box-sizing: border-box;
+  /* 320px */
+  min-block-size: calc(var(--aybar-space-4) * 20);
+  padding: var(--aybar-space-12);
+  overflow: hidden;
+  background-color: var(--aybar-color-primary-800);
+  background-image:
+    radial-gradient(circle at 20% 30%, color-mix(in oklab, var(--aybar-color-primary-400) 22%, transparent), transparent 40%),
+    radial-gradient(circle at 85% 75%, color-mix(in oklab, var(--aybar-color-secondary-400) 14%, transparent), transparent 35%),
+    repeating-radial-gradient(
+      circle at 70% 120%,
+      transparent 0 calc(var(--aybar-space-5) + var(--aybar-space-px) * 2),
+      color-mix(in oklab, var(--aybar-color-neutral-0) 4.5%, transparent) calc(var(--aybar-space-5) + var(--aybar-space-px) * 2)
+        calc(var(--aybar-space-5) + var(--aybar-space-px) * 3)
+    );
+  color: var(--aybar-color-primary-100);
+}
+
+.pl-ingreso__inicio {
+  align-self: flex-start;
+  border-radius: var(--aybar-radius-md);
+  text-decoration: none;
+}
+
+.pl-ingreso__inicio .pl-marca {
+  color: var(--aybar-color-neutral-0);
+}
+
+/* Sobre el petróleo, el símbolo pasa a vidrio: el fondo de marca se confundiría con el panel. */
+.pl-ingreso__inicio .pl-marca__simbolo {
+  border-radius: var(--aybar-radius-md);
+  color: color-mix(in oklab, var(--aybar-color-neutral-0) 10%, transparent);
+  box-shadow: inset 0 0 0 var(--aybar-space-px) color-mix(in oklab, var(--aybar-color-neutral-0) 18%, transparent);
+}
+
+.pl-ingreso__inicio .pl-marca__letra {
+  fill: var(--aybar-color-neutral-0);
+}
+
+.pl-ingreso__inicio:focus-visible {
+  outline-color: var(--aybar-color-secondary-400);
+}
+
+.pl-ingreso__mensaje {
+  display: grid;
+  gap: var(--aybar-space-5);
+  /* 480px */
+  max-inline-size: calc(var(--aybar-space-4) * 30);
+}
+
+.pl-ingreso__lema {
+  margin: 0;
+  color: var(--aybar-color-neutral-0);
+  font-family: var(--aybar-family-heading);
+  /* 1.875rem … 2.75rem */
+  font-size: clamp(var(--aybar-font-size-3xl), 3.4vw, calc(var(--aybar-font-size-5xl) * 11 / 12));
+  font-weight: calc(var(--aybar-font-weight-bold) + 100);
+  line-height: calc(var(--aybar-font-leading-tight) * 11 / 12);
+  letter-spacing: calc(var(--aybar-font-tracking-tight) * 1.5);
+  text-wrap: balance;
+}
+
+.pl-ingreso__texto {
+  margin: 0;
+  color: var(--aybar-color-primary-300);
+  font-size: var(--aybar-font-size-lg);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-ingreso__sellos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl-ingreso__sellos > li {
+  padding: var(--aybar-space-2) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid color-mix(in oklab, var(--aybar-color-neutral-0) 12%, transparent);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-neutral-0) 7%, transparent);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.pl-ingreso__lado {
+  flex: 1 1 calc(var(--aybar-breakpoint-lg) / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--aybar-space-5);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--aybar-space-12) var(--aybar-space-6);
+}
+
+/* El Login Form es el <main> de la página (como="main"), sin su fondo de pantalla completa:
+   aquí solo ocupa su columna. */
+.pl-ingreso__lado .ay-login {
+  inline-size: 100%;
+  min-block-size: auto;
+  padding: 0;
+  background: transparent;
+}
+
+.pl-ingreso__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aybar-space-3);
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* el ancho de la tarjeta lg del Login Form: 0.7 × breakpoint sm */
+  max-inline-size: calc(var(--aybar-breakpoint-sm) * 0.7);
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid
+    color-mix(in oklab, var(--aybar-color-feedback-warning-border) 35%, transparent);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-feedback-warning-bg);
+  color: var(--aybar-color-feedback-warning-fg);
+  font-size: var(--aybar-font-size-sm);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pl-ingreso__aviso p {
+  margin: 0;
+}
+
+.pl-ingreso__aviso-icono {
+  flex: none;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+}
+
+.pl-ingreso__aviso-texto {
+  display: grid;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+/* Los usuarios de prueba, uno por línea: usuario y clave en monoespaciada, como se escriben. */
+.pl-ingreso__usuarios {
+  display: grid;
+  gap: var(--aybar-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pl-ingreso__usuarios code {
+  font-family: var(--aybar-family-mono);
+  font-weight: var(--aybar-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+/* Los accesos de la siguiente fase, en dos columnas. El hueco de proveedores del Login
+   Form es una rejilla de dos columnas pensada para un botón por celda: el grupo y su nota
+   van como un bloque cada uno, a todo el ancho, para que «Microsoft» quepa en su botón. */
+.ay-login__providers > .pl-proveedores,
+.ay-login__providers > .pl-proveedores__nota {
+  grid-column: 1 / -1;
+}
+
+.pl-proveedores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--aybar-space-3);
+}
+
+.pl-proveedores__marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+  border-radius: var(--aybar-radius-full);
+  background: color-mix(in oklab, var(--aybar-color-fg-default) 8%, transparent);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.pl-proveedores__marca svg {
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+}
+
+.pl-proveedores__nota {
+  margin: 0;
+  color: var(--aybar-color-fg-subtle);
+  font-size: var(--aybar-font-size-xs);
+  text-align: center;
+}
+
+@media (max-width: 1023.98px) {
+  .pl-ingreso__panel {
+    flex-basis: 100%;
+    gap: var(--aybar-space-5);
+    min-block-size: auto;
+    padding: var(--aybar-space-6);
+  }
+
+  .pl-ingreso__lema {
+    font-size: clamp(var(--aybar-font-size-2xl), 5vw, var(--aybar-font-size-3xl));
+  }
+
+  .pl-ingreso__texto {
+    font-size: var(--aybar-font-size-sm);
+  }
+
+  .pl-ingreso__sellos {
+    display: none;
+  }
+
+  .pl-ingreso__lado {
+    padding: var(--aybar-space-8) var(--aybar-space-4);
+  }
+}
+
+/* Lo que se proyecta en [ayProveedores]: los accesos y su nota, con el aire de la lista. */
+.pl-accesos {
+  display: grid;
+  gap: var(--aybar-space-3);
+}
+
+/* ay-login-form es un elemento propio que envuelve su <main>: ocupa la columna. */
+.pl-ingreso__lado > ay-login-form {
+  display: block;
+  inline-size: 100%;
+}
+
+/* ── Páginas con sesión ────────────────────────────────────────────────── */
+
+/* El host de app-marco: la página entera. */
+.pl-pagina {
+  /* Lo que queda fijo arriba al desplazar: la Navbar y, en escritorio, el aviso de sesión
+     demo. Sus altos los mide el Marco; aquí se suman para lo que se fije debajo y para el
+     salto del SkipLink. */
+  --pl-fijo-alto: calc(var(--pl-navbar-alto, 0px) + var(--pl-aviso-alto, 0px));
+
+  display: block;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+/* El aviso de sesión demo queda fijo bajo la Navbar. El Banner ya es sticky, pero dentro de
+   este envoltorio (el que mide el Marco para --pl-aviso-alto) lo que se fija es el envoltorio.
+
+   Lo que la plantilla fija bajo la Navbar va por debajo de ella: el aviso en z-sticky − 1.
+   Cuando su bloque se acaba y sube, pasa por debajo de la Navbar, y la Navbar (z-sticky) y el SkipLink
+   (z-sticky + 1) se quedan en el nivel que les da el sistema de diseño. */
+.pl-pagina__aviso {
+  position: sticky;
+  z-index: calc(var(--aybar-z-sticky) - 1);
+  inset-block-start: var(--pl-navbar-alto, 0px);
+}
+
+/* En escritorio, el aviso entero; la línea corta y «Más» son del celular (abajo). */
+.pl-aviso__corto,
+.pl-pagina__aviso .ay-banner__action {
+  display: none;
+}
+
+/* «Más» es una acción de texto del Banner: hereda su color, su letra y su anillo de foco. */
+.pl-aviso__mas {
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* El menú de la cuenta: el Avatar sm (24px) ocupa el hueco del icono del Icon Button. */
+.pl-usuario .ay-iconbtn {
+  --button-glyph: var(--aybar-space-6);
+}
+
+/* El Header de la página abre main#contenido, destino del SkipLink; el contenido va debajo. */
+.pl-contenido {
+  padding-block: 0 var(--aybar-space-16);
+}
+
+.pl-cabecera {
+  margin-block-end: var(--aybar-space-8);
+}
+
+.pl-contenido:focus {
+  outline: none;
+}
+
+.pl-lista {
+  display: grid;
+  gap: var(--aybar-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 767.98px) {
+  /* Solo la Navbar queda fija: el aviso de sesión demo pasa a una línea con «Más» y se va
+     con la página al desplazar. */
+  .pl-pagina {
+    --pl-fijo-alto: var(--pl-navbar-alto, 0px);
+  }
+
+  /* relative y no static: sigue siendo un contexto de apilamiento, así el Banner, que es
+     sticky en z-sticky, no se pinta encima de la Navbar al pasar por debajo de ella */
+  .pl-pagina__aviso {
+    position: relative;
+    inset-block-start: auto;
+  }
+
+  .pl-pagina__aviso .ay-banner__message {
+    flex: 1 1 0;
+  }
+
+  .pl-pagina__aviso .ay-banner__action {
+    display: block;
+  }
+
+  .pl-aviso__corto {
+    display: inline;
+  }
+
+  .pl-pagina__aviso:not([data-abierto]) .pl-aviso__completo,
+  .pl-pagina__aviso[data-abierto] .pl-aviso__corto {
+    display: none;
+  }
+
+  /* 24 × 24 como mínimo: el objetivo táctil de WCAG 2.5.8. */
+  .pl-aviso__mas {
+    min-block-size: var(--aybar-space-6);
+    min-inline-size: var(--aybar-space-6);
+  }
+
+  .pl-heroe {
+    padding-block: var(--aybar-space-12) var(--aybar-space-10);
+  }
+}
+
+/* En puntero grueso, las acciones llegan al objetivo táctil mínimo. */
+@media (pointer: coarse) {
+  .pl-accion:not(.pl-accion--lg) {
+    min-block-size: max(var(--aybar-control-height-md), var(--aybar-touch-min));
+  }
+}
+
+/* Movimiento reducido: sin traslaciones; los cambios de color siguen. */
+@media (prefers-reduced-motion: reduce) {
+  .pl-accion,
+  .pl-accion:hover,
+  .pl-accion:active,
+  .pl-intro__tarjeta,
+  .pl-intro__tarjeta:hover {
+    transform: none;
+  }
+}
+
+/* ── Consola Aybar Atiende (Marco de página y contenedores de escena 3D/2D) ── */
+
+.pl-atc-marco {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  background: var(--aybar-color-bg-canvas);
+  color: var(--aybar-color-fg-default);
+}
+
+.pl-atc-marco .ay-navbar__inner {
+  max-inline-size: none;
+  column-gap: var(--aybar-space-4);
+}
+
+.pl-atc-marco .ay-navbar__search {
+  flex: 1 1 calc(var(--aybar-space-24) * 2.5);
+  max-inline-size: calc(var(--aybar-space-24) * 4.5);
+}
+
+.pl-atc-marco .ay-navbar__actions {
+  gap: var(--aybar-space-2);
+}
+
+/* En filas flex (.ay-row, .ay-navbar__actions, .ay-toolbar), los controles en línea
+   conservan su ancho natural (fit-content) y el buscador crece para llenar el espacio. */
+.pl-atc-marco .ay-segmented:not(.ay-segmented--fill) {
+  min-inline-size: 0;
+  flex-shrink: 0;
+}
+
+.pl-atc-marco .ay-row > .ay-search {
+  flex: 1 1 calc(var(--aybar-space-16) * 3);
+  max-inline-size: none;
+}
+
+.pl-atc-marco .ay-row > .ay-selectwrap {
+  inline-size: auto;
+}
+
+.pl-atc-marco .ay-banner__action .ay-btn {
+  color: var(--button-fg);
+}
+
+.pl-atc-cuerpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+/* ── Paleta verdosa / petróleo de http://localhost:5180 (prototipo-OGc517Pn.css) ── */
+:root:not([data-theme='dark']) {
+  --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-100) 85%, var(--aybar-color-neutral-100));
+  --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-200) 85%, var(--aybar-color-neutral-200));
+  --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-300) 85%, var(--aybar-color-neutral-300));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-900) 70%, var(--aybar-color-neutral-1000));
+    --aybar-color-bg-surface: color-mix(in oklab, var(--aybar-color-primary-800) 60%, var(--aybar-color-neutral-850));
+    --aybar-color-bg-surface-raised: color-mix(in oklab, var(--aybar-color-primary-700) 55%, var(--aybar-color-neutral-800));
+    --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-900) 50%, var(--aybar-color-neutral-1000));
+    --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-600) 50%, var(--aybar-color-neutral-700));
+  }
+}
+
+:root[data-theme='dark'] {
+  --aybar-color-bg-canvas: color-mix(in oklab, var(--aybar-color-primary-900) 70%, var(--aybar-color-neutral-1000));
+  --aybar-color-bg-surface: color-mix(in oklab, var(--aybar-color-primary-800) 60%, var(--aybar-color-neutral-850));
+  --aybar-color-bg-surface-raised: color-mix(in oklab, var(--aybar-color-primary-700) 55%, var(--aybar-color-neutral-800));
+  --aybar-color-bg-surface-sunken: color-mix(in oklab, var(--aybar-color-primary-900) 50%, var(--aybar-color-neutral-1000));
+  --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-600) 50%, var(--aybar-color-neutral-700));
+}
+
+:root[data-theme='light'] .pl-atc-marco .ay-sidebar {
+  --aybar-color-bg-surface: var(--aybar-color-primary-800);
+  --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
+  --aybar-color-fg-default: var(--aybar-color-primary-50);
+  --aybar-color-fg-muted: var(--aybar-color-primary-200);
+  --aybar-color-fg-subtle: var(--aybar-color-primary-300);
+  --aybar-color-fg-link: var(--aybar-color-secondary-300);
+  --aybar-color-border-subtle: var(--aybar-color-primary-700);
+  --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
+  --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
+  --aybar-color-border-focus: var(--aybar-color-secondary-400);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .pl-atc-marco .ay-sidebar {
+    --aybar-color-bg-surface: var(--aybar-color-primary-800);
+    --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
+    --aybar-color-fg-default: var(--aybar-color-primary-50);
+    --aybar-color-fg-muted: var(--aybar-color-primary-200);
+    --aybar-color-fg-subtle: var(--aybar-color-primary-300);
+    --aybar-color-fg-link: var(--aybar-color-secondary-300);
+    --aybar-color-border-subtle: var(--aybar-color-primary-700);
+    --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
+    --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
+    --aybar-color-border-focus: var(--aybar-color-secondary-400);
+  }
+}
+
+.pl-atc-lateral {
+  position: sticky;
+  inset-block-start: var(--pl-atc-navbar-alto, 0px);
+  align-self: start;
+  block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
+  min-inline-size: 0;
+}
+
+.pl-atc-lateral .ay-sidebar {
+  box-sizing: border-box;
+  block-size: 100%;
+}
+
+.pl-atc-marco .ay-sidepanel:not([data-compacto]) {
+  position: sticky;
+  inset-block-start: var(--pl-atc-navbar-alto, 0px);
+  align-self: start;
+  box-sizing: border-box;
+  block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
+  box-shadow: var(--aybar-shadow-lg);
+}
+
+.pl-atc-principal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-5);
+  padding: 0 clamp(var(--aybar-space-4), 3vw, var(--aybar-space-8)) var(--aybar-space-16);
+  min-inline-size: 0;
+  scroll-margin-block-start: var(--pl-atc-navbar-alto, 0px);
+}
+
+.pl-atc-principal:focus {
+  outline: none;
+}
+
+.pl-atc-marco .ay-pageheader {
+  background: transparent;
+}
+
+.pl-atc-marco .ay-pageheader > :not(.ay-pageheader__tabs) {
+  padding-inline: 0;
+}
+
+.pl-atc-marco .ay-pageheader__actions {
+  align-items: center;
+}
+
+.pl-atc-ficha-flotante {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  inline-size: min(calc(var(--aybar-space-4) * 28.5), calc(100% - var(--aybar-space-8)));
+  block-size: 100%;
+  max-block-size: 100%;
+  overflow-y: auto;
+  transform: translateX(104%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform var(--aybar-motion-duration-slow) var(--aybar-motion-easing-standard),
+    opacity var(--aybar-motion-duration-normal) var(--aybar-motion-easing-standard),
+    visibility var(--aybar-motion-duration-slow) var(--aybar-motion-easing-standard);
+}
+
+.pl-atc-ficha-flotante--abierta {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.pl-atc-ficha-flotante > ay-card {
+  display: flex;
+  flex: 1 1 auto;
+  min-block-size: 100%;
+}
+
+.pl-atc-ficha-flotante > ay-card > .ay-card {
+  flex: 1 1 auto;
+  min-block-size: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+  border-block-start: 0;
+  border-block-end: 0;
+  border-inline-end: 0;
+  box-shadow: var(--aybar-shadow-xl);
+}
+
+.pl-atc-ficha-flotante .ay-card__heading {
+  padding-inline-end: var(--aybar-space-8);
+}
+
+.pl-atc-ficha-flotante__cerrar {
+  position: absolute;
+  inset-block-start: var(--aybar-space-3);
+  inset-inline-end: var(--aybar-space-3);
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-7);
+  block-size: var(--aybar-space-7);
+  padding: 0;
+  border-radius: var(--aybar-radius-md);
+  border: var(--aybar-border-width-thin) solid transparent;
+  background: transparent;
+  color: var(--aybar-color-fg-muted);
+  font-family: inherit;
+  font-size: var(--aybar-font-size-sm);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pl-atc-ficha-flotante__cerrar:hover {
+  background: var(--aybar-color-bg-surface-sunken);
+  border-color: var(--aybar-color-border-subtle);
+  color: var(--aybar-color-fg-default);
+}
+
+.pl-atc-ficha-flotante__cerrar:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.pl-atc-ficha-flotante--izq {
+  inset-inline-start: var(--aybar-space-4);
+  inset-inline-end: auto;
+  inline-size: auto;
+  max-inline-size: calc(100% - var(--aybar-space-8));
+}
+
+.atc-vivo-stage-area {
+  position: relative;
+  overflow: hidden;
+  min-block-size: calc(var(--aybar-space-4) * 38);
+}
+
+.atc-astra-canvas,
+.atc-three-host {
+  display: block;
+  inline-size: 100%;
+  block-size: calc(var(--aybar-space-4) * 46);
+}
+
+.atc-vivo-escena-full {
+  block-size: calc(var(--aybar-space-4) * 38);
+}
+
+.atc-astra-canvas[hidden],
+.atc-three-host[hidden] {
+  display: none !important;
+}
+
+/* ── Usuario en la barra superior y Herramientas flotantes (esquina inferior izquierda) ── */
+
+.pt-usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+}
+
+.pt-usuario__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-1) var(--aybar-space-2);
+  border-radius: var(--aybar-radius-lg);
+  border: var(--aybar-border-width-thin) solid transparent;
+  background: transparent;
+  color: var(--aybar-color-fg-default);
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pt-usuario__btn:hover {
+  background: var(--aybar-color-bg-surface-sunken);
+  border-color: var(--aybar-color-border-subtle);
+}
+
+.pt-usuario__av {
+  inline-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-8) + var(--aybar-space-px) * 2);
+  border-radius: var(--aybar-radius-full);
+  display: grid;
+  place-items: center;
+  font-weight: var(--aybar-font-weight-bold);
+  font-size: var(--aybar-font-size-xs);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  background: color-mix(in srgb, var(--aybar-color-primary-500) 28%, var(--aybar-color-bg-surface-sunken));
+  color: var(--aybar-color-fg-default);
+  box-shadow: inset 0 0 0 var(--aybar-border-width-thin) var(--aybar-color-border-subtle);
+}
+
+.pt-usuario__txt {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--aybar-font-leading-tight);
+  text-align: start;
+}
+
+.pt-usuario__txt b {
+  font-weight: var(--aybar-font-weight-semibold);
+}
+
+.pt-usuario__txt small {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+@media (max-width: 767.98px) {
+  .pt-usuario__txt {
+    display: none;
+  }
+}
+
+.pt-herr {
+  position: fixed;
+  inset-inline-start: var(--aybar-space-4);
+  inset-block-end: var(--aybar-space-4);
+  z-index: 60;
+}
+
+.pt-herr__fab {
+  inline-size: calc(var(--aybar-space-12) - var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-12) - var(--aybar-space-px) * 2);
+  border-radius: var(--aybar-radius-full);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: color-mix(in srgb, var(--aybar-color-bg-surface) 92%, transparent);
+  backdrop-filter: blur(var(--aybar-space-3));
+  -webkit-backdrop-filter: blur(var(--aybar-space-3));
+  color: var(--aybar-color-fg-default);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--aybar-shadow-lg);
+  transition:
+    transform var(--aybar-motion-duration-normal) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pt-herr__fab:hover,
+.pt-herr__fab[aria-expanded='true'] {
+  border-color: var(--aybar-color-secondary-400);
+  transform: rotate(45deg);
+}
+
+.pt-herr__fab svg {
+  inline-size: calc(var(--aybar-space-5) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-5) + var(--aybar-space-px) * 2);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pt-herr__fab:focus-visible,
+.pt-herr button:focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-secondary-400);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+.pt-herr__panel {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: auto;
+  inset-block-end: calc(var(--aybar-space-12) + var(--aybar-space-2) + var(--aybar-space-px) * 2);
+  inline-size: min(calc(var(--aybar-space-4) * 22.5), calc(100vw - var(--aybar-space-8)));
+  max-block-size: min(72vh, calc(var(--aybar-space-4) * 40));
+  overflow: auto;
+  border-radius: var(--aybar-radius-xl);
+  background: color-mix(in srgb, var(--aybar-color-bg-surface) 97%, transparent);
+  backdrop-filter: blur(var(--aybar-space-4));
+  -webkit-backdrop-filter: blur(var(--aybar-space-4));
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  box-shadow: var(--aybar-shadow-xl);
+  color: var(--aybar-color-fg-default);
+  transform-origin: bottom left;
+  animation: v3-arriba var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard);
+}
+
+@keyframes v3-arriba {
+  from {
+    opacity: 0;
+    transform: translateY(var(--aybar-space-3)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pt-herr__cab {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-4) var(--aybar-space-4) var(--aybar-space-2);
+}
+
+.pt-herr__cab h2 {
+  margin: 0;
+  font-size: var(--aybar-font-size-base);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+.pt-herr__cab small {
+  display: block;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+  margin-block-start: calc(var(--aybar-space-px) * 2);
+}
+
+.pt-herr__atras {
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: transparent;
+  color: var(--aybar-color-fg-default);
+  border-radius: var(--aybar-radius-md);
+  inline-size: calc(var(--aybar-space-8) - var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-8) - var(--aybar-space-px) * 2);
+  cursor: pointer;
+  font-size: var(--aybar-font-size-base);
+}
+
+.pt-herr__sec {
+  padding: var(--aybar-space-2) var(--aybar-space-4) var(--aybar-space-3);
+}
+
+.pt-herr__sec > b {
+  display: block;
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-bold);
+  letter-spacing: var(--aybar-font-tracking-wide);
+  text-transform: uppercase;
+  color: var(--aybar-color-fg-muted);
+  margin-block-end: var(--aybar-space-2);
+}
+
+.pt-herr__filas {
+  display: grid;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-1) var(--aybar-space-3) var(--aybar-space-4);
+}
+
+.pt-herr__fila {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--aybar-space-3);
+  align-items: center;
+  text-align: start;
+  padding: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-lg);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-default);
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
+}
+
+.pt-herr__fila:hover {
+  border-color: var(--aybar-color-secondary-400);
+}
+
+.pt-herr__fila svg {
+  inline-size: calc(var(--aybar-space-4) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-4) + var(--aybar-space-px) * 2);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pt-herr__fila b {
+  display: block;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.pt-herr__fila small {
+  display: block;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+.pt-herr__fila i {
+  font-style: normal;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-lg);
+}
+
+.pt-herr__cuenta {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: calc(var(--aybar-space-4) + var(--aybar-space-px) * 2);
+  block-size: calc(var(--aybar-space-4) + var(--aybar-space-px) * 2);
+  padding: 0 var(--aybar-space-1);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-secondary-400);
+  color: var(--aybar-color-fg-on-accent);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-bold);
+  margin-inline-start: var(--aybar-space-2);
+}
+
+.pt-herr__notas {
+  display: grid;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-1) var(--aybar-space-4) var(--aybar-space-4);
+}
+
+.pt-herr__nota {
+  padding: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface-sunken);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  font-size: var(--aybar-font-size-xs);
+  line-height: var(--aybar-font-leading-normal);
+}
+
+.pt-herr__vacio {
+  padding: var(--aybar-space-2) var(--aybar-space-4) var(--aybar-space-4);
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
+}
+
+/* Icono de Rayo en columna Rayo / Prioridad y alineación de Acciones */
+.pl-atc-rayo-celda {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  white-space: nowrap;
+}
+
+.pl-atc-rayo-icono {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--aybar-space-7);
+  block-size: var(--aybar-space-7);
+  padding: 0;
+  border-radius: var(--aybar-radius-full);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-surface-sunken);
+  color: var(--aybar-color-fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--aybar-duration-fast) var(--aybar-ease-standard),
+    border-color var(--aybar-duration-fast) var(--aybar-ease-standard),
+    color var(--aybar-duration-fast) var(--aybar-ease-standard),
+    transform var(--aybar-duration-fast) var(--aybar-ease-standard);
+}
+
+.pl-atc-rayo-icono svg {
+  inline-size: var(--aybar-space-4);
+  block-size: var(--aybar-space-4);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pl-atc-rayo-icono:hover {
+  border-color: var(--aybar-color-feedback-warning-border);
+  color: var(--aybar-color-secondary-400);
+}
+
+.pl-atc-rayo-icono--activo {
+  border-color: var(--aybar-color-feedback-warning-border);
+  background: color-mix(in oklab, var(--aybar-color-secondary-400) 20%, transparent);
+  color: var(--aybar-color-secondary-400);
+}
+
+.pl-atc-rayo-icono--activo svg {
+  fill: currentColor;
+}
+
+.pl-atc-acciones-celda {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--aybar-space-1);
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+/* ── Grillas específicas de Operación en Vivo y contenedores elásticos ── */
+
+.pl-atc-grid-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+.pl-atc-grid-estados {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+}
+
+.pl-atc-col-span-2 {
+  grid-column: span 2;
+  min-inline-size: 0;
+}
+
+.pl-atc-vivo-select {
+  flex: 1 1 calc(var(--aybar-space-4) * 11.5);
+  min-inline-size: calc(var(--aybar-space-4) * 10);
+  max-inline-size: 100%;
+}
+
+/* ── Blindaje responsivo transversal de vistas y componentes (.pl-atc-marco) ── */
+
+.pl-atc-marco,
+.pl-atc-cuerpo,
+.pl-atc-principal,
+.pl-atc-principal > *,
+.pl-atc-marco .ay-stack,
+.pl-atc-marco .ay-row,
+.pl-atc-marco .ay-grid,
+.pl-atc-marco .ay-card,
+.pl-atc-marco .ay-card__body,
+.pl-atc-marco .ay-card__header,
+.pl-atc-marco .ay-tabs,
+.pl-atc-marco .ay-tabs__panel {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.pl-atc-marco .ay-table-wrap {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pl-atc-marco .ay-toolbar {
+  flex-wrap: wrap;
+  min-inline-size: 0;
+  gap: var(--aybar-space-2);
+}
+
+.pl-atc-marco .ay-toolbar__filters,
+.pl-atc-marco .ay-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aybar-space-2);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.pl-atc-marco .ay-segmented:not(.ay-segmented--fill) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  flex-shrink: 1;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.pl-atc-marco .ay-pageheader__row {
+  min-inline-size: 0;
+}
+
+.pl-atc-marco .ay-pageheader__main {
+  flex: 1 1 calc(var(--aybar-space-4) * 18);
+  min-inline-size: 0;
+}
+
+.pl-atc-marco .ay-pageheader__actions {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  align-items: center;
+}
+
+.pl-atc-marco .ay-pageheader__actions .ay-selectwrap,
+.pl-atc-marco .ay-pageheader__actions select {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* En rejillas de 3 o 4 columnas, los pares clave-valor apilan etiqueta y dato para no truncar */
+.pl-atc-marco .ay-grid--4 .ay-card__pairs,
+.pl-atc-marco .ay-grid--3 .ay-card__pairs {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.pl-atc-marco .ay-card__pairs :is(dt, dd) {
+  overflow-wrap: anywhere;
+  white-space: normal;
+  min-inline-size: 0;
+}
+
+/* Escalón 1: <= 1280px (portátiles compactos / vista dividida con sidebar abierto) */
+@media (max-width: 1279.98px) {
+  .pl-atc-grid-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pl-atc-grid-estados {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .pl-atc-marco .ay-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Las vistas maestro-detalle con tablas pasan a 1 columna para no comprimir las columnas de tabla */
+  .pl-atc-marco .ay-grid--2:has(.ay-table-wrap),
+  .pl-atc-marco .ay-grid--3:has(.ay-table-wrap),
+  .pl-atc-marco .ay-grid--3:has(.pl-atc-col-span-2) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pl-atc-col-span-2 {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Escalón 2: <= 1024px (tablets y pantallas medianas: el sidebar pasa al Drawer móvil) */
+@media (max-width: 1023.98px) {
+  .pl-atc-cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pl-atc-lateral {
+    display: none;
+  }
+
+  .pl-atc-marco .ay-navbar__menu {
+    display: inline-flex;
+    order: -1;
+  }
+
+  .pl-atc-marco .ay-grid--2,
+  .pl-atc-marco .ay-grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Los campos cortos dentro de formularios mantienen 2 columnas en tablet */
+  .pl-atc-marco form .ay-grid--2,
+  .pl-atc-marco form .ay-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .atc-astra-canvas,
+  .atc-three-host {
+    block-size: calc(var(--aybar-space-4) * 32);
+  }
+
+  .atc-vivo-stage-area,
+  .atc-vivo-escena-full {
+    min-block-size: calc(var(--aybar-space-4) * 30);
+  }
+}
+
+/* Escalón 3: <= 768px (tablets verticales y móviles grandes) */
+@media (max-width: 767.98px) {
+  .pl-atc-principal {
+    padding: 0 var(--aybar-space-4) var(--aybar-space-16);
+    gap: var(--aybar-space-4);
+  }
+
+  .pl-atc-grid-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pl-atc-grid-estados {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pl-atc-marco .ay-grid,
+  .pl-atc-marco .ay-grid--2,
+  .pl-atc-marco .ay-grid--3,
+  .pl-atc-marco .ay-grid--4,
+  .pl-atc-marco form .ay-grid--2,
+  .pl-atc-marco form .ay-grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pl-atc-marco .ay-card__pairs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pl-atc-marco .ay-pageheader {
+    padding-block: var(--aybar-space-5) var(--aybar-space-4);
+  }
+
+  .pl-atc-marco .ay-pageheader__title {
+    font-size: var(--aybar-font-size-2xl);
+  }
+
+  .pl-atc-marco .ay-pageheader__actions {
+    inline-size: 100%;
+  }
+
+  /* En pantallas <= 768px la ficha flotante del Grafo 360 / Planta 3D se apila debajo del lienzo */
+  .pl-atc-ficha-flotante {
+    display: none;
+  }
+
+  .pl-atc-ficha-flotante--abierta {
+    position: relative;
+    inset: auto;
+    display: flex;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    block-size: auto;
+    max-block-size: none;
+    margin-block-start: var(--aybar-space-3);
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .pl-atc-ficha-flotante > ay-card > .ay-card {
+    border-radius: var(--aybar-radius-lg);
+    border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  }
+
+  .atc-astra-canvas,
+  .atc-three-host {
+    block-size: calc(var(--aybar-space-4) * 24);
+  }
+
+  .atc-vivo-stage-area,
+  .atc-vivo-escena-full {
+    min-block-size: calc(var(--aybar-space-4) * 23);
+  }
+}
+
+/* Escalón 4: <= 640px (móviles estándar de 360px a 640px) */
+@media (max-width: 639.98px) {
+  .pl-atc-grid-kpis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pl-atc-marco .ay-navbar__inner {
+    column-gap: var(--aybar-space-2);
+    padding-block: var(--aybar-space-2);
+  }
+
+  .pl-atc-marco .ay-navbar__search {
+    order: 3;
+    flex: 1 1 100%;
+    max-inline-size: 100%;
+    margin-block-start: var(--aybar-space-1);
+  }
+
+  .pl-atc-vivo-select {
+    flex: 1 1 100%;
+    min-inline-size: 0;
+  }
+
+  .pl-atc-acciones-celda {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+
+

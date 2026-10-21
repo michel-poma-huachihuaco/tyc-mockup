@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Hook pre-push del marco Aybar (3.1 y 3.4):
+#   - corta el push directo a una rama protegida (el merge entra por PR),
+#     salvo la creacion de la rama por defecto (RAMA_INICIAL, main) en un
+#     remoto que aun no la tiene: el primer push de un repositorio nuevo;
+#   - valida la forma del nombre de la rama que se publica.
+#
+# La proteccion real es la del servidor (3.4): este guardian corta antes,
+# en local, y explica el porque en vez de dejar que el servidor diga "403".
+set -euo pipefail
+
+AQUI="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$AQUI/../guardianes.conf"
+RAIZ_REPO="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+[ -f "$RAIZ_REPO/.aybar-guardianes.conf" ] && . "$RAIZ_REPO/.aybar-guardianes.conf"
+
+fallo=0
+# stdin: <local ref> <local sha> <remote ref> <remote sha> por linea.
+# Un <remote sha> de solo ceros: el remoto no tiene esa rama (se crea).
+# Un <local sha> de solo ceros: se borra la rama remota.
+while read -r _ref_local sha_local ref_remoto sha_remoto; do
+  [ -z "${ref_remoto:-}" ] && continue
+  rama="${ref_remoto#refs/heads/}"
+  [ "$rama" = "$ref_remoto" ] && continue   # tags y otros refs: no es asunto de este hook
+
+  if [ -n "${RAMA_INICIAL:-}" ] && [ "$rama" = "$RAMA_INICIAL" ] \
+     && printf '%s' "${sha_remoto:-}" | grep -Eq '^0+$' \
+     && ! printf '%s' "${sha_local:-}" | grep -Eq '^0+$'; then
+    echo "[ok] '${rama}' no existe en el remoto: se deja crear (primer push del repositorio). Desde ahora entra por PR." >&2
+    continue
+  fi
+
+  for protegida in $RAMAS_PROTEGIDAS; do
+    case "$rama" in
+      $protegida)
+        cat >&2 <<FIN
+[x] Push directo a '${rama}' cortado: es una rama protegida (3.4).
+    Nadie hace merge directo a una rama protegida. Todo pasa por PR,
+    review y CI (principio 2 del marco). Publica una rama de trabajo:
+      git switch -c feature/<ID>-<slug> && git push -u origin HEAD
+FIN
+        fallo=1
+        continue 2 ;;
+    esac
+  done
+
+  "$AQUI/../validar-nombre-rama.sh" "$rama" || fallo=1
+done
+
+exit "$fallo"

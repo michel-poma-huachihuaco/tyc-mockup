@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.aybarsac</groupId>
+    <artifactId>aybar-atc</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>aybar-atc-infrastructure</artifactId>
+  <name>aybar-atc :: infrastructure</name>
+  <dependencies>
+    <!-- aybar-starter-config: obligatorio. Perfiles, variables AYBAR_*,
+         secretos opcionales (aybar.secretos.proveedor: aws, azure o entorno,
+         segun el ADR del servicio), defaults de Actuator, startup report. -->
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-config</artifactId>
+    </dependency>
+
+    <!-- aybar-starter-logging: obligatorio. Logs JSON con correlationId,
+         filtro PII (deniega Authorization/JWT en el log), rotacion diaria. -->
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-logging</artifactId>
+    </dependency>
+
+    <!-- spring-boot-starter-actuator: obligatorio. /actuator/health y las
+         sondas liveness/readiness que consulta el orquestador. Sin el,
+         management.endpoints del application.yml queda inerte y el
+         healthcheck del contenedor falla sin explicar por que. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- aybar-starter-security: opt-in. Resource server OAuth2 contra el
+         emisor OIDC que decida el ADR del servicio, valida JWT, expone
+         AybarUserContext, activa @PreAuthorize sin declararlo. Necesita
+         AYBAR_ISSUER_URI fuera del perfil local (en local arranca sin emisor). -->
+    <dependency>
+      <groupId>com.aybarsac.sdk</groupId>
+      <artifactId>aybar-starter-security</artifactId>
+    </dependency>
+
+  </dependencies>
+</project>
