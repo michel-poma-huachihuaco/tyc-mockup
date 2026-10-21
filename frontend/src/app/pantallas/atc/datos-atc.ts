@@ -8,13 +8,23 @@ export type VistaAtc =
   | 'c360'
   | 'vivo'
   | 'bandeja'
+  | 'tudia'
   | 'nuevo'
   | 'detalle'
+  | 'morosidad'
+  | 'ingreso'
+  | 'buses'
   | 'libro'
-  | 'sgd'
   | 'garantias'
-  | 'evento'
-  | 'torre';
+  | 'sgd'
+  | 'reasignar'
+  | 'alertas'
+  | 'cierre'
+  | 'politicas'
+  | 'configuracion'
+  | 'urbemind'
+  | 'torre'
+  | 'evento';
 
 export interface EmpresaAybar {
   readonly id: string;
@@ -866,6 +876,35 @@ export const CLIENTES_360: readonly Cliente360[] = [
       tick: [['AIN-000491 · Solicitud de reprogramación', 'Abierto · Cobranza']],
       libro: [['Sin asientos en Libro', '—']],
       expo: [['Riesgo contractual medio', 'S/ 3,540.00 en mora · Caso MOR-2026-0024']],
+    },
+  },
+  {
+    k: 'vs',
+    iniciales: 'VS',
+    nombre: 'Valeria Soto Ríos',
+    doc: 'DNI 74819203',
+    dni: '74819203',
+    telefono: '+51 961 402 118',
+    proyecto: 'Villa Sol · Etapa III (En evaluación)',
+    lotes: [],
+    contratoPrincipal: '',
+    estadoEmocional: 'Interesada en información de preventa y requisitos de separación; aún sin lote ni contrato adjudicado.',
+    sintesisIa:
+      'Cliente registrada en SIGDA sin lote adjudicado ni contrato vigente aún. Las secciones inmobiliarias, financieras y de consultas rápidas en línea permanecen sin disponibilidad hasta la adjudicación de lote y firma de contrato.',
+    guiaRecomendada: 'Brindar orientación comercial o registrar ticket de consulta general en Bandeja ATC.',
+    datos: {
+      kyc: [
+        ['DNI 74819203', 'Verificado en RENIEC / SIGDA'],
+        ['Condición actual', 'Titular registrada sin lote ni contrato adjudicado aún'],
+      ],
+      cont: [
+        ['valeria.soto@ejemplo.test', 'Correo verificado'],
+        ['+51 961 402 118', 'Celular principal · Click-to-Call disponible'],
+      ],
+      correos: [['«Consulta sobre requisitos de preventa Villa Sol III»', 'Recibido 19-oct-2026']],
+      llam: [['Llamada entrante informativa (2 min 10 s)', '19-oct-2026 · Grabación CTI #9945']],
+      tick: [['AIN-000495 · Consulta de requisitos preventa', 'Abierto · Atención al Cliente']],
+      libro: [['Sin asientos en Libro', '—']],
     },
   },
 ];
@@ -1733,6 +1772,74 @@ export function crearTicketsDemo(): TicketAtc[] {
       60,
       'Emisión de constancia de cancelación de cuota 24 y estado de cuenta anual',
       { contract: 'VS-2024-0412', firstResp: haceHoras(58), resolvedAt: haceHoras(10) },
+    ),
+    crearTicketInicial(
+      'AIN-000495',
+      'AIN',
+      'Lotes urbanos',
+      'Mi Portal',
+      'Valeria Quispe Rojas',
+      '44819203',
+      'Villa Sol · Etapa II · Mz. C Lt. 14',
+      'CTA',
+      'MEDIUM',
+      'OPEN',
+      'ATC',
+      'C. Rojas',
+      8,
+      'Consulta de acreditación de transferencia interbancaria CCI de cuota #16',
+      { contract: 'VS-2025-0507', firstResp: haceHoras(6.5) },
+    ),
+    crearTicketInicial(
+      'ADS-000219',
+      'ADS',
+      'Lotes urbanos',
+      'WhatsApp',
+      'Roberto Huamán Chávez',
+      '41209844',
+      'Mirador del Sur · Mz. A Lt. 05',
+      'PED',
+      'MEDIUM',
+      'IN_PROGRESS',
+      'ADMINISTRACION',
+      'Elena C.',
+      19,
+      'Solicitud de actualización de estado civil y copropietario en adenda',
+      { contract: 'MS-2025-0210', firstResp: haceHoras(17) },
+    ),
+    crearTicketInicial(
+      'APV-000104',
+      'APV',
+      'Vivienda',
+      'Teléfono',
+      'Gladys Ccori Mamani',
+      '43918274',
+      'Residencial Brisas · Torre A 204',
+      'GAR',
+      'HIGH',
+      'IN_PROGRESS',
+      'POSTVENTA',
+      'L. Ccahuana',
+      11,
+      'Revisión de presión de agua en terma y grifería de cocina bajo garantía de instalaciones',
+      { contract: 'RB-2024-0318', firstResp: haceHoras(9.5), eje: 2 },
+    ),
+    crearTicketInicial(
+      'AUR-000328',
+      'AUR',
+      'Lotes urbanos',
+      'EntregaFest',
+      'Miguel Ángel Salazar',
+      '45019283',
+      'Praderas de Lurín · Mz. E Lt. 12',
+      'VIS',
+      'LOW',
+      'RESOLVED',
+      'ATC',
+      'C. Rojas',
+      36,
+      'Confirmación de asistencia familiar y validación de titularidad para EntregaFest',
+      { contract: 'VS-2025-0507', firstResp: haceHoras(35), resolvedAt: haceHoras(12) },
     ),
   ];
 }

@@ -64,10 +64,30 @@ export function bucle(reducido: boolean, frame0: (ahora: number) => void): () =>
   };
 }
 
-/** Convierte un token CSS `--aybar-color-*` (hex o rgb) en una tupla RGB `[r, g, b]`. */
+/** Convierte un token CSS `--aybar-color-*` en una tupla RGB `[r, g, b]`, idéntico a `R(e)` de `propuesta-po`. */
 export function leerTokenRgb(tokenSinPrefijo: string, respaldo: RGB = [128, 128, 128]): RGB {
   if (typeof document === 'undefined') return respaldo;
   const nombre = tokenSinPrefijo.startsWith('--') ? tokenSinPrefijo : `--aybar-color-${tokenSinPrefijo}`;
+  if (document.body) {
+    const sonda = document.createElement('i');
+    sonda.style.color = `var(${nombre})`;
+    document.body.appendChild(sonda);
+    const computado = getComputedStyle(sonda).color;
+    sonda.remove();
+    if (computado) {
+      const c = document.createElement('canvas');
+      c.width = 1;
+      c.height = 1;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      if (ctx) {
+        ctx.fillStyle = '#000';
+        ctx.fillStyle = computado;
+        ctx.fillRect(0, 0, 1, 1);
+        const data = ctx.getImageData(0, 0, 1, 1).data;
+        return [data[0] ?? respaldo[0] ?? 0, data[1] ?? respaldo[1] ?? 0, data[2] ?? respaldo[2] ?? 0];
+      }
+    }
+  }
   const raw = getComputedStyle(document.documentElement).getPropertyValue(nombre).trim();
   if (!raw) return respaldo;
   if (raw.startsWith('#')) {

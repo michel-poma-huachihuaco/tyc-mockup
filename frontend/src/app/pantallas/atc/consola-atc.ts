@@ -14,28 +14,27 @@ import { Router } from '@angular/router';
 import {
   AyAlert,
   AyAppearancePanel,
-  AyAvatar,
   AyBadge,
-  AyBreadcrumb,
   AyButton,
   AyCard,
   AyCardBody,
   AyCardHeader,
   AyCardPairs,
   AyCelda,
+  AyCheckbox,
   AyCommandPalette,
   AyDivider,
   AyDrawer,
   AyDropdownMenu,
   AyEmptyState,
+  AyFormField,
   AyHeading,
-  AyIconButton,
   AyModal,
   AyNavbar,
-  AyPageHeader,
   AyRow,
   AySearchInput,
   AySegmentedControl,
+  AySelect,
   AySidePanel,
   AySidebar,
   AySkipLink,
@@ -44,11 +43,10 @@ import {
   AyTableToolbar,
   AyTabs,
   AyText,
-  AyToggleButton,
-  type AyBreadcrumbNivel,
   type AyColumna,
   type AyGrupoComandos,
   type AyMenuItem,
+  type AyOpcionSelect,
   type AySegmentoOpcion,
   type AySidebarGrupo,
   type AyTabsElemento,
@@ -61,6 +59,7 @@ import {
   CATALOGO_60_HUS,
   CONTRATOS_ATC,
   EMPRESAS_AYBAR,
+  FUENTES_360,
   crearAsientosLibroDemo,
   crearAsistentesDemo,
   crearBusesDemo,
@@ -68,6 +67,8 @@ import {
   crearCasosSgdDemo,
   crearGarantiasDemo,
   crearTicketsDemo,
+  fmtFechaHora,
+  sumarHorasHabiles,
   type AsientoLibro,
   type ContratoInmobiliarioAtc,
   type CuotaCronogramaContratoAtc,
@@ -80,26 +81,20 @@ import { VistaC360Component, type DestinoRedireccionNodo } from './vista-c360';
 import { VistaEspecializadaComponent } from './vista-especializada';
 import { VistaOperacionComponent } from './vista-operacion';
 import { VistaVivoComponent } from './vista-vivo';
+import { AsistenteBotAtcComponent } from './asistente-bot-atc';
+import {
+  EstadoPrototipoAtcService,
+  ROLES_PROTOTIPO_ATC,
+  type PerfilRolPrototipoAtc,
+  type RolPrototipoAtc,
+} from './estado-prototipo-atc';
 
 interface ItemMenuAtc {
   readonly id: VistaAtc;
-  readonly grupo: 'ESTRELLA' | 'OPERACION' | 'ESPECIALIZADA';
+  readonly grupo: 'ESTRELLA' | 'OPERACION' | 'SUPERVISION' | 'GESTION';
   readonly titulo: string;
   readonly subtitulo: string;
   readonly icono: string;
-}
-
-export interface PerspectivaUsuarioAtc {
-  readonly id: 'gestor' | 'supervisor' | 'legal' | 'cx' | 'postventa';
-  readonly usuario: string;
-  readonly clave: string;
-  readonly nombre: string;
-  readonly cargo: string;
-  readonly rol360: 'gestor' | 'supervisor' | 'legal' | 'cx';
-  readonly nodoInicial360: string;
-  readonly vistaPrincipal: VistaAtc;
-  readonly resumenPerspectiva: string;
-  readonly modulosClave: readonly VistaAtc[];
 }
 
 @Component({
@@ -108,28 +103,27 @@ export interface PerspectivaUsuarioAtc {
   imports: [
     AyAlert,
     AyAppearancePanel,
-    AyAvatar,
     AyBadge,
-    AyBreadcrumb,
     AyButton,
     AyCard,
     AyCardBody,
     AyCardHeader,
     AyCardPairs,
     AyCelda,
+    AyCheckbox,
     AyCommandPalette,
     AyDivider,
     AyDrawer,
     AyDropdownMenu,
     AyEmptyState,
+    AyFormField,
     AyHeading,
-    AyIconButton,
     AyModal,
     AyNavbar,
-    AyPageHeader,
     AyRow,
     AySearchInput,
     AySegmentedControl,
+    AySelect,
     AySidePanel,
     AySidebar,
     AySkipLink,
@@ -138,12 +132,12 @@ export interface PerspectivaUsuarioAtc {
     AyTableToolbar,
     AyTabs,
     AyText,
-    AyToggleButton,
     BotonTema,
     VistaC360Component,
     VistaVivoComponent,
     VistaOperacionComponent,
     VistaEspecializadaComponent,
+    AsistenteBotAtcComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pl-atc-marco' },
@@ -182,30 +176,24 @@ export interface PerspectivaUsuarioAtc {
       </div>
 
       <ng-container ayAcciones>
-        <ay-segmented-control
-          etiqueta="Ver como"
-          size="sm"
-          [opciones]="opcionesPerspectivas"
-          [valor]="perspectivaId()"
-          (valorChange)="alCambiarPerspectivaId($event)"
-        />
-        <ay-toggle-button
-          tamano="sm"
-          [presionado]="personalizarAbierto()"
-          (presionadoChange)="personalizarAbierto.set($event)"
-        >
-          Personalizar
-        </ay-toggle-button>
-        <app-boton-tema />
         <ay-dropdown-menu
           class="pl-usuario"
           colocacion="bottom-end"
           [items]="menuCuenta()"
           (elegido)="alElegirCuenta($event)"
         >
-          <ay-icon-button ayDisparador [etiqueta]="'Cuenta de ' + perspectivaActual().nombre">
-            <ay-avatar [nombre]="perspectivaActual().nombre" size="sm" estado="online" decorativo />
-          </ay-icon-button>
+          <button
+            ayDisparador
+            type="button"
+            class="pt-usuario pt-usuario__btn"
+            [attr.aria-label]="'Cuenta de ' + perspectivaActual().nombre"
+          >
+            <span class="pt-usuario__av" aria-hidden="true">{{ inicialesUsuario() }}</span>
+            <span class="pt-usuario__txt">
+              <b>{{ perspectivaActual().nombre }}</b>
+              <small>{{ perspectivaActual().cargo }}</small>
+            </span>
+          </button>
         </ay-dropdown-menu>
       </ng-container>
     </ay-navbar>
@@ -232,49 +220,14 @@ export interface PerspectivaUsuarioAtc {
 
       <main id="atc-contenido" class="pl-atc-principal" tabindex="-1">
         <div ayStack gap="6">
-          <ay-page-header
-            [titulo]="itemMenuActual().titulo"
-            [descripcion]="itemMenuActual().subtitulo"
-            size="md"
-          >
-            <ay-breadcrumb ayRuta etiqueta="Ruta del módulo" [items]="migasActuales()" />
-            <div ayEstado ayRow gap="2" [ajuste]="true">
-              <ay-badge tono="success" [punto]="true">En línea · 8 sistemas</ay-badge>
-              <ay-badge tono="info">{{ perspectivaActual().nombre }} ({{ perspectivaActual().cargo }})</ay-badge>
-              @if (empresaFiltro()) {
-                <ay-badge tono="warning">Filtro: {{ empresaFiltro() }}</ay-badge>
-              }
-            </div>
-            <div ayAcciones ayRow gap="2" [ajuste]="true">
-              <ay-toggle-button
-                tamano="sm"
-                [(presionado)]="mostrarTrazabilidadHu"
-              >
-                Trazabilidad HUs
-              </ay-toggle-button>
-              <ay-button
-                tamano="sm"
-                variante="secondary"
-                (click)="modalCatalogoHuAbierto.set(true)"
-              >
-                Catálogo 60 HUs
-              </ay-button>
-              <ay-button
-                tamano="sm"
-                variante="secondary"
-                (click)="abrirContrato(contratoSeleccionadoCodigo())"
-              >
-                Visor de Contratos ({{ contratoSeleccionadoCodigo() }})
-              </ay-button>
-            </div>
-          </ay-page-header>
-
           @switch (vistaActiva()) {
             @case ('c360') {
               <app-vista-c360
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 [rolExterno]="perspectivaActual().rol360"
                 [nodoFocoExterno]="perspectivaActual().nodoInicial360"
+                [fuentesCaidasExternas]="fuentesCaidas()"
+                (fuentesCaidasChange)="fuentesCaidas.set($event)"
                 (crearTicketDesde360)="alCrearDesde360($event)"
                 (verContrato)="abrirContrato($event)"
                 (redirigirModulo)="alRedirigirDesde360($event)"
@@ -300,6 +253,18 @@ export interface PerspectivaUsuarioAtc {
                 (irA360)="vistaActiva.set('c360')"
               />
             }
+            @case ('tudia') {
+              <app-vista-operacion
+                subvista="tudia"
+                [tickets]="ticketsVisibles()"
+                [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (verContrato)="abrirContrato($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+                (irA360)="vistaActiva.set('c360')"
+              />
+            }
             @case ('nuevo') {
               <app-vista-operacion
                 subvista="nuevo"
@@ -318,9 +283,10 @@ export interface PerspectivaUsuarioAtc {
                 (verContrato)="abrirContrato($event)"
               />
             }
-            @case ('libro') {
+            @case ('morosidad') {
               <app-vista-especializada
-                subvista="libro"
+                subvista="morosidad"
+                [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
@@ -329,11 +295,62 @@ export interface PerspectivaUsuarioAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('ingreso') {
+              <app-vista-especializada
+                subvista="ingreso"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('buses') {
+              <app-vista-especializada
+                subvista="buses"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('libro') {
+              <app-vista-especializada
+                subvista="libro"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
             @case ('sgd') {
               <app-vista-especializada
                 subvista="sgd"
+                [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
@@ -342,11 +359,14 @@ export interface PerspectivaUsuarioAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
             @case ('garantias') {
               <app-vista-especializada
                 subvista="garantias"
+                [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
@@ -355,11 +375,94 @@ export interface PerspectivaUsuarioAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('reasignar') {
+              <app-vista-especializada
+                subvista="reasignar"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('alertas') {
+              <app-vista-especializada
+                subvista="alertas"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('cierre') {
+              <app-vista-especializada
+                subvista="cierre"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('politicas') {
+              <app-vista-especializada
+                subvista="politicas"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
+              />
+            }
+            @case ('configuracion') {
+              <app-vista-especializada
+                subvista="configuracion"
+                [tickets]="ticketsVisibles()"
+                [asientosLibro]="asientosLibro()"
+                [casosSgd]="casosSgd()"
+                [casosMorosidad]="casosMorosidad()"
+                [garantias]="garantias()"
+                [asistentes]="asistentes()"
+                [buses]="buses()"
+                [mostrarHu]="mostrarTrazabilidadHu()"
+                (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
             @case ('evento') {
               <app-vista-especializada
                 subvista="evento"
+                [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
@@ -368,11 +471,14 @@ export interface PerspectivaUsuarioAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
             @case ('torre') {
               <app-vista-especializada
                 subvista="torre"
+                [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
@@ -381,6 +487,8 @@ export interface PerspectivaUsuarioAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (seleccionarTicket)="alSeleccionarTicket($event)"
+                (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
           }
@@ -388,22 +496,331 @@ export interface PerspectivaUsuarioAtc {
       </main>
 
       <ay-side-panel
-        id="atc-personalizar"
-        titulo="Personalizar apariencia"
+        id="atc-simulacion"
+        titulo="Simulación"
         lado="end"
         size="md"
+        redimensionable
+        [abierto]="simulacionAbierto()"
+        (abiertoChange)="simulacionAbierto.set($event)"
+      >
+        <div ayStack gap="4">
+          <p ayText="body" size="sm">
+            Mandos de prueba para recorrer el sistema como distintos usuarios y en distintos momentos.
+          </p>
+
+          @if (avisoSimulacion()) {
+            <ay-alert tono="info" size="sm" [titulo]="avisoSimulacion()!" />
+          }
+
+          <ay-card superficie="solid">
+            <ay-card-header titulo="Sesión" nivel="h3" [separador]="true" />
+            <ay-card-body padding="sm" gap="sm">
+              <ay-form-field etiqueta="Ver como">
+                <ay-select
+                  [opciones]="opcionesSelectPerspectivas"
+                  [valor]="perspectivaId()"
+                  (valorChange)="alCambiarPerspectivaId($event)"
+                />
+              </ay-form-field>
+              <span ayText="body" size="xs">Cambia de usuario y sus permisos.</span>
+              <ay-checkbox
+                [marcado]="filtrarSidebarPorRol()"
+                (marcadoChange)="filtrarSidebarPorRol.set($event)"
+              >
+                Filtrar menú lateral según permisos del rol activo
+              </ay-checkbox>
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card superficie="solid">
+            <ay-card-header titulo="Reloj simulado" nivel="h3" [separador]="true" />
+            <ay-card-body padding="sm" gap="sm">
+              <p ayText="body" size="sm">
+                Ahora: <strong>{{ relojSimuladoTexto() }}</strong>
+              </p>
+              <div ayRow gap="2" [ajuste]="true">
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  (click)="avanzarRelojSimulado(1, '1 hora hábil')"
+                >
+                  +1 hora hábil
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  (click)="avanzarRelojSimulado(9, '1 día hábil')"
+                >
+                  +1 día hábil
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  (click)="avanzarRelojSimulado(27, '3 días hábiles')"
+                >
+                  +3 días hábiles
+                </ay-button>
+              </div>
+              <span ayText="body" size="xs">
+                Al avanzar, corre el job de alertas como lo haría el programado.
+              </span>
+              <ay-button tamano="sm" variante="secondary" (click)="ejecutarJobAlertas()">
+                Ejecutar el job de alertas ahora
+              </ay-button>
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card superficie="solid">
+            <ay-card-header
+              titulo="Red y servicios · Estado de sistemas de origen"
+              [subtitulo]="(fuentesIntegracion.length - fuentesCaidas().length) + '/' + fuentesIntegracion.length + ' fuentes en línea'"
+              nivel="h3"
+              [separador]="true"
+            >
+              @if (fuentesCaidas().length > 0) {
+                <div ayAcciones>
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    (click)="fuentesCaidas.set([]); avisoSimulacion.set('Todas las fuentes de origen restauradas en línea')"
+                  >
+                    Todas en línea
+                  </ay-button>
+                </div>
+              }
+            </ay-card-header>
+            <ay-card-body padding="sm" gap="sm">
+              <ay-segmented-control
+                etiqueta="Latencia del servicio"
+                size="sm"
+                [opciones]="opcionesLatenciaSim"
+                [valor]="latenciaSimulada()"
+                (valorChange)="latenciaSimulada.set($event === 'lenta' ? 'lenta' : 'normal')"
+              />
+              <ay-checkbox
+                [marcado]="sinConexionSimulada()"
+                (marcadoChange)="sinConexionSimulada.set($event)"
+              >
+                Sin conexión (toda carga o guardado falla hasta reactivar)
+              </ay-checkbox>
+              <ay-divider espaciado="sm" />
+              <span ayText="label" size="xs">Estado de sistemas de origen (Consulta 360)</span>
+              @for (f of fuentesIntegracion; track f.id) {
+                <ay-checkbox
+                  [marcado]="fuentesCaidas().includes(f.id)"
+                  (marcadoChange)="alternarFuenteCaida(f.id, $event)"
+                >
+                  {{ f.nombre }} no disponible ({{ f.ms }} ms)
+                </ay-checkbox>
+              }
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card superficie="solid">
+            <ay-card-header titulo="Pruebas de reglas y escenarios" nivel="h3" [separador]="true" />
+            <ay-card-body padding="sm" gap="sm">
+              <ay-form-field etiqueta="Filtrar operación por razón social">
+                <ay-select
+                  [opciones]="opcionesSelectEmpresas"
+                  [valor]="empresaFiltro()"
+                  (valorChange)="empresaFiltro.set($event)"
+                />
+              </ay-form-field>
+              <div ayStack gap="2">
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  [bloque]="true"
+                  (click)="simularTicketEntranteMiPortal()"
+                >
+                  Simular un ticket entrante por Mi Portal
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  [bloque]="true"
+                  (click)="evaluarMorosidadSimulada()"
+                >
+                  Evaluar la morosidad (corrida diaria)
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  [bloque]="true"
+                  (click)="abrirContrato(contratoSeleccionadoCodigo())"
+                >
+                  Abrir Visor de Contratos ({{ contratoSeleccionadoCodigo() }})
+                </ay-button>
+              </div>
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card superficie="solid">
+            <ay-card-header titulo="Datos" nivel="h3" [separador]="true" />
+            <ay-card-body padding="sm" gap="sm">
+              <div ayRow gap="2" [ajuste]="true">
+                <ay-button tamano="sm" variante="secondary" (click)="vaciarConsolaDemo()">
+                  Vaciar la consola
+                </ay-button>
+                <ay-button tamano="sm" variante="secondary" (click)="restaurarConsolaDemo()">
+                  Restaurar los datos iniciales
+                </ay-button>
+              </div>
+            </ay-card-body>
+          </ay-card>
+        </div>
+      </ay-side-panel>
+
+      <ay-side-panel
+        id="atc-personalizar"
+        titulo="Apariencia"
+        lado="end"
+        size="sm"
         redimensionable
         [abierto]="personalizarAbierto()"
         (abiertoChange)="personalizarAbierto.set($event)"
       >
         <div ayStack gap="4">
           <p ayText="body" size="sm">
-            Cambia paleta, acento, densidad, radio y profundidad en tiempo real usando los tokens del sistema de diseño Aybar.
+            Prueba paletas y grises. Se recuerda en este navegador.
           </p>
-          <ay-appearance-panel titulo="Apariencia" [nivelTitulo]="3" mostrarPresets />
+          <ay-appearance-panel titulo="Ajustes de color" [nivelTitulo]="3" mostrarPresets />
         </div>
       </ay-side-panel>
     </div>
+
+    <!-- Herramientas flotantes en esquina inferior izquierda (Ver como, Tema, Apariencia, Simulación, Notas) -->
+    <div class="pt-herr">
+      @if (herramientasAbierto()) {
+        @if (vistaHerramientas() === 'notas') {
+          <div class="pt-herr__panel" role="region" aria-label="Notas de esta pantalla">
+            <div class="pt-herr__cab">
+              <button
+                type="button"
+                class="pt-herr__atras"
+                aria-label="Volver a las herramientas"
+                (click)="vistaHerramientas.set('menu')"
+              >
+                ‹
+              </button>
+              <div>
+                <h2>Notas de esta pantalla</h2>
+                <small>Supuestos, límites y pendientes para revisar</small>
+              </div>
+            </div>
+            <div class="pt-herr__sec">
+              <ay-checkbox
+                [marcado]="mostrarTrazabilidadHu()"
+                (marcadoChange)="mostrarTrazabilidadHu.set($event)"
+              >
+                Mostrar etiquetas de trazabilidad HU en pantalla
+              </ay-checkbox>
+            </div>
+            @if (notasPantallaActual().length) {
+              <div class="pt-herr__notas">
+                @for (nota of notasPantallaActual(); track nota) {
+                  <div class="pt-herr__nota">{{ nota }}</div>
+                }
+              </div>
+            } @else {
+              <p class="pt-herr__vacio">Esta pantalla no tiene notas.</p>
+            }
+          </div>
+        } @else {
+          <div class="pt-herr__panel" role="region" aria-label="Herramientas">
+            <div class="pt-herr__cab">
+              <div>
+                <h2>Herramientas</h2>
+                <small>Reloj: {{ relojSimuladoTexto() }}</small>
+              </div>
+            </div>
+
+            <div class="pt-herr__sec">
+              <ay-form-field etiqueta="Ver como">
+                <ay-select
+                  [opciones]="opcionesSelectPerspectivas"
+                  [valor]="perspectivaId()"
+                  (valorChange)="alCambiarPerspectivaId($event)"
+                />
+              </ay-form-field>
+              <small ayText="body" size="xs">Cambia de usuario y sus permisos.</small>
+            </div>
+
+            <div class="pt-herr__sec">
+              <b>Tema</b>
+              <app-boton-tema />
+            </div>
+
+            <div class="pt-herr__filas">
+              <button type="button" class="pt-herr__fila" (click)="abrirPanelApariencia()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <span>
+                  <b>Apariencia</b>
+                  <small>Paleta, grises, densidad y bordes</small>
+                </span>
+                <i aria-hidden="true">›</i>
+              </button>
+
+              <button type="button" class="pt-herr__fila" (click)="abrirPanelSimulacion()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+                <span>
+                  <b>Simulación</b>
+                  <small>Reloj, escenarios y fuentes caídas</small>
+                </span>
+                <i aria-hidden="true">›</i>
+              </button>
+
+              <button type="button" class="pt-herr__fila" (click)="vistaHerramientas.set('notas')">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                </svg>
+                <span>
+                  <b>
+                    Notas
+                    @if (notasPantallaActual().length) {
+                      <span class="pt-herr__cuenta">{{ notasPantallaActual().length }}</span>
+                    }
+                  </b>
+                  <small>Supuestos y pendientes de esta pantalla</small>
+                </span>
+                <i aria-hidden="true">›</i>
+              </button>
+            </div>
+          </div>
+        }
+      }
+
+      <button
+        type="button"
+        class="pt-herr__fab"
+        [attr.aria-expanded]="herramientasAbierto()"
+        aria-label="Herramientas"
+        title="Herramientas"
+        (click)="alternarHerramientas()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Robot Asistente de IA 3D flotante en esquina inferior derecha (HU-ATC-048) -->
+    <app-asistente-bot-atc
+      [vistaActiva]="vistaActiva()"
+      [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
+      [tickets]="tickets()"
+    />
 
     <!-- Navegación móvil en Drawer oficial -->
     <ay-drawer
@@ -754,103 +1171,45 @@ export class ConsolaAtcComponent {
   private readonly acceso = inject(Acceso);
   private readonly router = inject(Router);
   private readonly anfitrion: HTMLElement = inject(ElementRef).nativeElement;
+  readonly estadoProto = inject(EstadoPrototipoAtcService);
 
   readonly destinosSalto = [{ id: 'atc-contenido', etiqueta: 'Saltar al contenido principal' }];
   readonly navegacionMovilAbierta = signal(false);
   readonly lateralPlegado = signal(false);
   readonly personalizarAbierto = signal(false);
+  readonly simulacionAbierto = signal(false);
+  readonly herramientasAbierto = signal(false);
+  readonly vistaHerramientas = signal<'menu' | 'notas'>('menu');
   readonly paletaAbierta = signal(false);
   readonly consultaPaleta = signal('');
+
+  readonly horasAvanzadasSim = signal(0);
+  readonly latenciaSimulada = signal<'normal' | 'lenta'>('normal');
+  readonly sinConexionSimulada = signal(false);
+  readonly fuentesCaidas = signal<string[]>([]);
+  readonly avisoSimulacion = signal<string | null>(null);
+
+  readonly fuentesIntegracion = FUENTES_360;
+
+  readonly opcionesLatenciaSim: AySegmentoOpcion[] = [
+    { valor: 'normal', etiqueta: 'Normal' },
+    { valor: 'lenta', etiqueta: 'Lenta (2,6 s)' },
+  ];
 
   readonly empresas = EMPRESAS_AYBAR;
   readonly catalogoHus = CATALOGO_60_HUS;
   readonly contratos = CONTRATOS_ATC;
 
-  readonly perspectivasUsuarios: readonly PerspectivaUsuarioAtc[] = [
-    {
-      id: 'gestor',
-      usuario: 'gestor',
-      clave: 'demo-gestor',
-      nombre: 'Ana Torres',
-      cargo: 'Gestora de Tickets ATC',
-      rol360: 'gestor',
-      nodoInicial360: 'lote',
-      vistaPrincipal: 'bandeja',
-      resumenPerspectiva:
-        'Atención multicanal y Consulta 360 estándar (con restricción sobre Estado de Cuenta reservado y Exposición Judicial), telefonía CTI y registro de tickets.',
-      modulosClave: ['c360', 'bandeja', 'nuevo', 'detalle', 'libro', 'evento'],
-    },
-    {
-      id: 'supervisor',
-      usuario: 'supervisor',
-      clave: 'demo-supervisor',
-      nombre: 'Carlos Mendoza',
-      cargo: 'Supervisor ATC',
-      rol360: 'supervisor',
-      nodoInicial360: 'ecta',
-      vistaPrincipal: 'vivo',
-      resumenPerspectiva:
-        'Visibilidad total de los 16 nodos 360 (desbloquea Estado de Cuenta reservado), monitoreo de planta Operación en Vivo 3D, reasignación de colas y control de SLA.',
-      modulosClave: [
-        'c360',
-        'vivo',
-        'bandeja',
-        'nuevo',
-        'detalle',
-        'libro',
-        'sgd',
-        'garantias',
-        'evento',
-        'torre',
-      ],
-    },
-    {
-      id: 'legal',
-      usuario: 'legal',
-      clave: 'demo-legal',
-      nombre: 'Dra. Lucía Paredes',
-      cargo: 'Especialista Legal / SGD',
-      rol360: 'legal',
-      nodoInicial360: 'expo',
-      vistaPrincipal: 'sgd',
-      resumenPerspectiva:
-        'Desbloquea Exposición Regulatoria y Judicial en el Grafo 360, custodia documental 6/6, Comité SGD, resolución de contrato por morosidad y Libro INDECOPI.',
-      modulosClave: ['c360', 'sgd', 'libro', 'detalle', 'bandeja'],
-    },
-    {
-      id: 'cx',
-      usuario: 'cx',
-      clave: 'demo-cx',
-      nombre: 'Rodrigo Vargas',
-      cargo: 'Coordinador CX y Calidad',
-      rol360: 'cx',
-      nodoInicial360: 'tick',
-      vistaPrincipal: 'torre',
-      resumenPerspectiva:
-        'Visibilidad integral en Consulta 360 para análisis de causa raíz, Torre de Control CX, métricas CSAT/NPS/FCR y prevención de escalamientos.',
-      modulosClave: ['c360', 'vivo', 'torre', 'libro', 'bandeja'],
-    },
-    {
-      id: 'postventa',
-      usuario: 'postventa',
-      clave: 'demo-postventa',
-      nombre: 'Ing. Martín Salazar',
-      cargo: 'Mesa Postventa y Garantías',
-      rol360: 'supervisor',
-      nodoInicial360: 'gar',
-      vistaPrincipal: 'garantias',
-      resumenPerspectiva:
-        'Enfoque en Actas de Entrega y vigencia automática de Garantías por partida en el Grafo 360, inspecciones técnicas de campo y padrón EntregaFest.',
-      modulosClave: ['c360', 'garantias', 'evento', 'detalle', 'bandeja'],
-    },
-  ];
+  readonly perspectivasUsuarios: readonly PerfilRolPrototipoAtc[] = ROLES_PROTOTIPO_ATC;
 
-  readonly opcionesPerspectivas: AySegmentoOpcion[] = [
-    { valor: 'gestor', etiqueta: 'Gestor' },
-    { valor: 'supervisor', etiqueta: 'Supervisor' },
-    { valor: 'legal', etiqueta: 'Legal' },
-    { valor: 'cx', etiqueta: 'CX' },
-    { valor: 'postventa', etiqueta: 'Postventa' },
+  readonly opcionesSelectPerspectivas: AyOpcionSelect[] = this.perspectivasUsuarios.map((p) => ({
+    value: p.id,
+    label: `${p.cargo} · ${p.nombre}`,
+  }));
+
+  readonly opcionesSelectEmpresas: AyOpcionSelect[] = [
+    { value: '', label: 'Todas las empresas del grupo (11)' },
+    ...this.empresas.map((e) => ({ value: e.id, label: `${e.id} · ${e.nombre}` })),
   ];
 
   readonly opcionesEtapaHu: AySegmentoOpcion[] = [
@@ -883,14 +1242,103 @@ export class ConsolaAtcComponent {
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
-  readonly perspectivaId = signal<PerspectivaUsuarioAtc['id']>('gestor');
-  readonly filtrarSidebarPorRol = signal<boolean>(false);
+  readonly perspectivaId = computed<RolPrototipoAtc>(() => this.estadoProto.rolActivo());
+  readonly filtrarSidebarPorRol = signal<boolean>(true);
 
-  readonly perspectivaActual = computed<PerspectivaUsuarioAtc>(
-    () =>
-      this.perspectivasUsuarios.find((p) => p.id === this.perspectivaId()) ??
-      this.perspectivasUsuarios[0],
+  readonly perspectivaActual = computed<PerfilRolPrototipoAtc>(() =>
+    this.estadoProto.perfilActivo(),
   );
+
+  readonly inicialesUsuario = computed(() =>
+    this.perspectivaActual()
+      .nombre.split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p: string) => p[0] ?? '')
+      .join('')
+      .toUpperCase(),
+  );
+
+  readonly relojSimuladoFecha = computed(() =>
+    sumarHorasHabiles(AHORA_BASE, this.horasAvanzadasSim()),
+  );
+
+  readonly relojSimuladoTexto = computed(() => fmtFechaHora(this.relojSimuladoFecha()));
+
+  readonly notasPantallaActual = computed<readonly string[]>(() => {
+    const v = this.vistaActiva();
+    const especificas: Partial<Record<VistaAtc, readonly string[]>> = {
+      vivo: [
+        'Propuesta del PO (FT-ATC-18, 21 y 04): planta 3D interactiva con flujo real de tickets por áreas, HUD de estados y NPS.',
+        'Los tickets que ingresan pasan por la Bandeja Orquestadora y avanzan automáticamente hacia Atención Eje 1/2, Cobranza, Proyectos, Postventa, Libro o Legal.',
+      ],
+      c360: [
+        'Meta p95 ≤ 2 s en la consolidación del Grafo 360 desde los 8 sistemas integrados.',
+        'La visibilidad de Estado de Cuenta Reservado y Exposición Regulatoria/Judicial depende del rol activo («Ver como»).',
+      ],
+      bandeja: [
+        'Filtros combinables por columna (Empresa, Canal, Tipo, Prioridad, Área, Gestor, Estado y SLA) y prioridad Rayo auditable.',
+        'Cuando SIGDA no está disponible, permite alta en cola de conciliación para vincular luego el DNI.',
+      ],
+      tudia: [
+        'Panel personal "Tu Día" con indicadores de avance diario, línea de tiempo de acciones ejecutadas hoy, tickets en riesgo, avance del equipo y correos de asignación.',
+      ],
+      nuevo: [
+        'El cálculo de SLA en horas hábiles queda congelado al momento de la apertura según la versión vigente de la matriz en Políticas SLA.',
+        'El flujo configurado en Configuración determina el área inicial del ticket.',
+      ],
+      detalle: [
+        'Muestra la versión de Guía de solución publicada en Configuración y permite reportar falta de guía hacia Alertas de Configuración.',
+        'El historial de estados del ticket es inmutable y auditable.',
+      ],
+      morosidad: [
+        'La evaluación diaria de morosidad suspende automáticamente cartas de resolución si existe un reclamo o queja abierta sobre el contrato.',
+      ],
+      ingreso: [
+        'Control de acceso de promotores y asesores en garita de proyecto con validación de empresa autorizada.',
+      ],
+      buses: [
+        'Transporte EntregaFest y casos en evento con reserva de cupo por titular al día en cuotas.',
+      ],
+      libro: [
+        'Plazo legal INDECOPI de 15 días hábiles improrrogables; la razón social y el vencimiento del asiento no admiten edición.',
+      ],
+      sgd: [
+        'Mesa SGD Documental con validación de Paquete Documental Completo 6/6 antes de envío a Comité.',
+      ],
+      garantias: [
+        'Vigencia de garantías calculada desde la fecha del Acta de Entrega por partida (estructural 10 años, instalaciones 1 año, acabados 6 meses).',
+      ],
+      reasignar: [
+        'Reasignación individual y masiva por ausencia con bitácora de auditoría.',
+      ],
+      alertas: [
+        'Alertas preventivas de SLA y bitácora de ejecuciones del job programado.',
+      ],
+      cierre: [
+        'Encuestas CSAT/NPS post-cierre, alertas por baja satisfacción, informes semanales de causas raíz y auditoría de decisiones IA.',
+      ],
+      politicas: [
+        'Matriz parametrizable de Políticas SLA. Todo cambio aquí actualiza de inmediato el SLA congelado al registrar un Nuevo Ticket.',
+      ],
+      configuracion: [
+        'Flujos por tipo, Guías de solución versionadas y Alertas de configuración. Publicar una versión impacta en Nuevo Ticket y Detalle.',
+      ],
+      urbemind: [
+        'Integración CTI UrbeMind con webhook HMAC-SHA256 e idempotencia por callId.',
+      ],
+      evento: [
+        'Control de padrón EntregaFest por QR/DNI y reserva de cupos en buses con validación de titularidad y estado de pago.',
+      ],
+      torre: [
+        'NPS = % de respuestas 9–10 menos % de respuestas 0–6 a «¿Recomendarías…?». Desglose por tipo, área, gestor y resultado del cierre.',
+      ],
+    };
+    const husVista = this.catalogoHus
+      .filter((h) => h.vista === v)
+      .map((h) => `${h.id} (${h.feature}): ${h.titulo}`);
+    return [...(especificas[v] ?? []), ...husVista];
+  });
 
   readonly menuEstrella: readonly ItemMenuAtc[] = [
     {
@@ -914,66 +1362,133 @@ export class ConsolaAtcComponent {
     {
       id: 'bandeja',
       grupo: 'OPERACION',
-      titulo: 'Bandeja y Avance Diario',
-      subtitulo: 'Gestión de tickets, asignación por carga y telefonía CTI',
+      titulo: 'Bandeja de tickets',
+      subtitulo: 'Gestión centralizada de solicitudes con filtros por columna, prioridad Rayo y vencimiento SLA',
       icono:
         'M22 12h-6l-2 3h-4l-2-3H2 M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z',
     },
     {
+      id: 'tudia',
+      grupo: 'OPERACION',
+      titulo: 'Tu día',
+      subtitulo: 'Tu avance diario, acciones realizadas hoy, tickets en riesgo y avance de tu equipo',
+      icono: 'M12 8v4l3 3 M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0 -20',
+    },
+    {
       id: 'nuevo',
       grupo: 'OPERACION',
-      titulo: 'Nuevo Ticket Multicanal',
-      subtitulo: 'Registro y clasificación de atenciones con cálculo de SLA',
+      titulo: 'Nuevo ticket',
+      subtitulo: 'Registro y clasificación de atenciones con cálculo de SLA y flujo configurado',
       icono:
         'M12 8v8 M8 12h8 M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z',
     },
     {
       id: 'detalle',
       grupo: 'OPERACION',
-      titulo: 'Expediente de Ticket',
-      subtitulo: 'Seguimiento de interacciones, asistente IA y derivaciones',
+      titulo: 'Expediente de ticket',
+      subtitulo: 'Seguimiento de interacciones, guía de solución versionada y asistente IA',
       icono:
         'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8',
     },
-  ];
-
-  readonly menuEspecializada: readonly ItemMenuAtc[] = [
+    {
+      id: 'morosidad',
+      grupo: 'OPERACION',
+      titulo: 'Morosidad 3 meses',
+      subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
+      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
+    },
+    {
+      id: 'ingreso',
+      grupo: 'OPERACION',
+      titulo: 'Ingreso a proyectos',
+      subtitulo: 'Validación de acceso en garita de proyecto para promotores y asesores',
+      icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
+    },
+    {
+      id: 'buses',
+      grupo: 'OPERACION',
+      titulo: 'Buses del Entrega Fest',
+      subtitulo: 'Casos en evento presencial y reserva de cupo en transporte',
+      icono:
+        'M8 6v6 M15 6v6 M2 12h19.6 M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3 M7 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M16 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+    },
+    {
+      id: 'evento',
+      grupo: 'OPERACION',
+      titulo: 'EntregaFest en vivo',
+      subtitulo: 'Moderación presencial, 6 frases ancla y derivación inmediata a Estación 4 Legal',
+      icono:
+        'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    },
     {
       id: 'libro',
-      grupo: 'ESPECIALIZADA',
-      titulo: 'Libro de Reclamaciones',
+      grupo: 'OPERACION',
+      titulo: 'Libro de reclamaciones',
       subtitulo: 'Gestión de quejas, reclamos y plazos legales INDECOPI',
       icono:
         'M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
     },
     {
-      id: 'sgd',
-      grupo: 'ESPECIALIZADA',
-      titulo: 'Comité SGD y Morosidad',
-      subtitulo: 'Casos documentales críticos y resolución contractual',
-      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
-    },
-    {
       id: 'garantias',
-      grupo: 'ESPECIALIZADA',
-      titulo: 'Postventa y Directorio',
-      subtitulo: 'Atención de garantías, inspecciones y directorio operativo',
+      grupo: 'OPERACION',
+      titulo: 'Garantías postventa',
+      subtitulo: 'Reclamos de garantía con vigencia automática desde Acta de Entrega',
       icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
     },
     {
-      id: 'evento',
-      grupo: 'ESPECIALIZADA',
-      titulo: 'EntregaFest y Transporte',
-      subtitulo: 'Control de ingreso a proyectos y cupos en buses',
-      icono:
-        'M8 6v6 M15 6v6 M2 12h19.6 M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3 M7 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M16 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+      id: 'sgd',
+      grupo: 'OPERACION',
+      titulo: 'Mesa SGD',
+      subtitulo: 'Casos documentales con control de paquete 6/6 y Comité SGD',
+      icono: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6',
+    },
+  ];
+
+  readonly menuSupervision: readonly ItemMenuAtc[] = [
+    {
+      id: 'reasignar',
+      grupo: 'SUPERVISION',
+      titulo: 'Reasignar en bloque',
+      subtitulo: 'Reasignación individual y masiva por ausencia con bitácora',
+      icono: 'M16 3h5v5 M4 20L21 3 M21 16v5h-5 M15 15l6 6 M4 4l5 5',
+    },
+    {
+      id: 'alertas',
+      grupo: 'SUPERVISION',
+      titulo: 'Alertas SLA',
+      subtitulo: 'Alertas preventivas de SLA y ejecuciones del job programado',
+      icono: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
+    },
+    {
+      id: 'cierre',
+      grupo: 'SUPERVISION',
+      titulo: 'Cierre end-to-end',
+      subtitulo: 'Objetivo 72 h hábiles (Eje 1/2) y 120 h hábiles (Eje 3)',
+      icono: 'M12 8v4l3 3 M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0 -20',
     },
     {
       id: 'torre',
-      grupo: 'ESPECIALIZADA',
+      grupo: 'SUPERVISION',
       titulo: 'Torre de Control CX',
-      subtitulo: 'Indicadores de satisfacción, prevención legal y flujos',
+      subtitulo: 'Tablero, riesgo de denuncia, encuestas, informes y auditoría IA',
       icono: 'M18 20V10 M12 20V4 M6 20v-6',
+    },
+  ];
+
+  readonly menuGestion: readonly ItemMenuAtc[] = [
+    {
+      id: 'politicas',
+      grupo: 'GESTION',
+      titulo: 'Políticas SLA',
+      subtitulo: 'Matriz de SLA por empresa, línea, tipo, prioridad y canal',
+      icono: 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+    },
+    {
+      id: 'configuracion',
+      grupo: 'GESTION',
+      titulo: 'Configuración',
+      subtitulo: 'Flujos por tipo, guías de solución versionadas y alertas de configuración',
+      icono: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.65 1.65 0 0 0 .33 1.82',
     },
   ];
 
@@ -1004,28 +1519,93 @@ export class ConsolaAtcComponent {
   readonly asistentes = signal(crearAsistentesDemo());
   readonly buses = signal(crearBusesDemo());
 
-  readonly todosLosMenus = [...this.menuEstrella, ...this.menuOperacion, ...this.menuEspecializada];
+  readonly todosLosMenus: readonly ItemMenuAtc[] = [
+    ...this.menuEstrella,
+    ...this.menuOperacion,
+    ...this.menuSupervision,
+    ...this.menuGestion,
+  ];
+
+  readonly vistaMetaActual = computed<ItemMenuAtc>(
+    () => this.todosLosMenus.find((m) => m.id === this.vistaActiva()) ?? this.menuEstrella[0],
+  );
 
   readonly menusSidebarVisibles = computed<readonly ItemMenuAtc[]>(() => {
     if (!this.filtrarSidebarPorRol()) return this.todosLosMenus;
-    const permitidos = this.perspectivaActual().modulosClave;
-    return this.todosLosMenus.filter((m) => permitidos.includes(m.id));
+    const permitidos = this.estadoProto.vistasPermitidasParaRol(this.perspectivaId());
+    return this.todosLosMenus.filter(
+      (m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id),
+    );
   });
 
   readonly gruposSidebar = computed<AySidebarGrupo[]>(() => {
-    const visibles = this.menusSidebarVisibles();
+    const rol = this.perspectivaId();
     const activa = this.vistaActiva();
+
+    if (rol === 'CLIENTE') {
+      return [
+        {
+          etiqueta: 'Núcleo 360 y Planta',
+          plegable: true,
+          abiertoInicial: true,
+          elementos: this.menuEstrella.map((m) => ({
+            href: `#vista:${m.id}`,
+            etiqueta: m.titulo,
+            actual: activa === m.id,
+          })),
+        },
+        {
+          etiqueta: 'Mi Portal',
+          plegable: true,
+          abiertoInicial: true,
+          elementos: [
+            {
+              href: '#vista:buses',
+              etiqueta: 'Buses del Entrega Fest',
+              actual: activa === 'buses',
+            },
+            {
+              href: '#vista:nuevo',
+              etiqueta: 'Mis solicitudes y nueva solicitud',
+              actual: activa === 'nuevo',
+            },
+            {
+              href: '#vista:libro',
+              etiqueta: 'Libro de reclamaciones',
+              actual: activa === 'libro',
+            },
+          ],
+        },
+      ];
+    }
+
+    const visibles = this.menusSidebarVisibles();
+    const alertasAbiertas = this.estadoProto.alertasSla().length;
+    const alertasConfigPend = this.estadoProto.alertasAdmin().length;
+
     const insigniaDe = (id: VistaAtc): string | undefined => {
       if (id === 'bandeja') return String(this.ticketsVisibles().length);
-      if (id === 'libro') return String(this.asientosLibro().length);
-      if (id === 'sgd') return String(this.casosSgd().length + this.casosMorosidad().length);
-      if (id === 'garantias') return String(this.garantias().length);
+      if (id === 'tudia') return 'Hoy';
+      if (id === 'alertas' && alertasAbiertas > 0) return String(alertasAbiertas);
+      if (id === 'configuracion' && alertasConfigPend > 0) return String(alertasConfigPend);
+      if (id === 'libro') return String(this.estadoProto.asientosLibroDetalle().length);
+      if (id === 'sgd')
+        return String(
+          this.estadoProto.casosSgdDetalle().filter((s) => s.estado !== 'CERRADO').length,
+        );
+      if (id === 'garantias')
+        return String(
+          this.estadoProto
+            .reclamosGarantiaDetalle()
+            .filter((g) => g.estado !== 'RESOLVED').length,
+        );
       return undefined;
     };
     const definiciones: readonly { grupo: ItemMenuAtc['grupo']; etiqueta: string }[] = [
       { grupo: 'ESTRELLA', etiqueta: 'Núcleo 360 y Planta' },
-      { grupo: 'OPERACION', etiqueta: 'Operación Omnicanal' },
-      { grupo: 'ESPECIALIZADA', etiqueta: 'Mesas Especializadas' },
+      { grupo: 'OPERACION', etiqueta: 'Operación' },
+      { grupo: 'SUPERVISION', etiqueta: 'Supervisión' },
+      { grupo: 'GESTION', etiqueta: 'Gestión y configuración' },
     ];
     return definiciones
       .map((d) => ({
@@ -1044,21 +1624,6 @@ export class ConsolaAtcComponent {
       .filter((g) => g.elementos.length > 0);
   });
 
-  readonly itemMenuActual = computed(
-    () => this.todosLosMenus.find((m) => m.id === this.vistaActiva()) ?? this.menuEstrella[0],
-  );
-
-  readonly migasActuales = computed<AyBreadcrumbNivel[]>(() => {
-    const item = this.itemMenuActual();
-    const nombreGrupo =
-      item.grupo === 'ESTRELLA'
-        ? 'Núcleo 360 y Planta'
-        : item.grupo === 'OPERACION'
-          ? 'Operación Omnicanal'
-          : 'Mesas Especializadas';
-    return [{ label: 'Aybar Atiende' }, { label: nombreGrupo }, { label: item.titulo }];
-  });
-
   readonly menuCuenta = computed<AyMenuItem[]>(() => {
     const p = this.perspectivaActual();
     return [
@@ -1066,11 +1631,11 @@ export class ConsolaAtcComponent {
       { tipo: 'item', value: 'mesa', label: `Ir a ${this.tituloDeVista(p.vistaPrincipal)}` },
       { tipo: 'item', value: 'catalogo', label: 'Catálogo de 60 HUs' },
       { tipo: 'separator' },
-      { tipo: 'group', label: 'Perfil de acceso (visibilidad por rol)' },
+      { tipo: 'group', label: 'Ver como (11 roles de usuario)' },
       ...this.perspectivasUsuarios.map((rol) => ({
         tipo: 'item' as const,
         value: `rol:${rol.id}`,
-        label: `${rol.id === p.id ? '● ' : ''}${rol.cargo} (${rol.nombre})`,
+        label: `${rol.id === p.id ? '● ' : ''}${rol.cargo} · ${rol.nombre}`,
       })),
       { tipo: 'separator' },
       { tipo: 'item', value: 'salir', label: 'Cerrar sesión' },
@@ -1148,13 +1713,17 @@ export class ConsolaAtcComponent {
     effect(() => {
       const uid = this.acceso.sesion()?.usuarioId;
       if (!uid) return;
-      if (uid === 'admin') {
-        this.perspectivaId.set('supervisor');
-        return;
-      }
-      const match = this.perspectivasUsuarios.find((p) => p.usuario === uid);
-      if (match && match.id !== this.perspectivaId()) {
-        this.perspectivaId.set(match.id);
+      const mapaUidRol: Record<string, RolPrototipoAtc> = {
+        admin: 'SUPERVISOR',
+        supervisor: 'SUPERVISOR',
+        gestor: 'GESTOR',
+        legal: 'LEGAL_RECLAMOS',
+        cx: 'COORDINADOR_CX',
+        postventa: 'COLABORADOR',
+      };
+      const rol = mapaUidRol[uid];
+      if (rol && rol !== this.estadoProto.rolActivo()) {
+        this.estadoProto.rolActivo.set(rol);
       }
     });
 
@@ -1172,11 +1741,154 @@ export class ConsolaAtcComponent {
         if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
           ev.preventDefault();
           this.paletaAbierta.update((v) => !v);
+        } else if (ev.key === 'Escape' && this.herramientasAbierto()) {
+          this.cerrarHerramientas();
+        }
+      };
+      const onPointerDown = (ev: PointerEvent) => {
+        if (!this.herramientasAbierto()) return;
+        const cont = this.anfitrion.querySelector('.pt-herr');
+        if (cont && ev.target instanceof Node && !cont.contains(ev.target)) {
+          this.cerrarHerramientas();
         }
       };
       doc.addEventListener('keydown', onKey);
-      destruccion.onDestroy(() => doc.removeEventListener('keydown', onKey));
+      doc.addEventListener('pointerdown', onPointerDown);
+      destruccion.onDestroy(() => {
+        doc.removeEventListener('keydown', onKey);
+        doc.removeEventListener('pointerdown', onPointerDown);
+      });
     });
+  }
+
+  alternarHerramientas(): void {
+    const siguiente = !this.herramientasAbierto();
+    this.herramientasAbierto.set(siguiente);
+    if (!siguiente) {
+      this.vistaHerramientas.set('menu');
+    }
+  }
+
+  cerrarHerramientas(): void {
+    this.herramientasAbierto.set(false);
+    this.vistaHerramientas.set('menu');
+  }
+
+  abrirPanelApariencia(): void {
+    this.cerrarHerramientas();
+    this.simulacionAbierto.set(false);
+    this.personalizarAbierto.update((v) => !v);
+  }
+
+  abrirPanelSimulacion(): void {
+    this.cerrarHerramientas();
+    this.personalizarAbierto.set(false);
+    this.simulacionAbierto.update((v) => !v);
+  }
+
+  avanzarRelojSimulado(horas: number, etiqueta: string): void {
+    this.horasAvanzadasSim.update((h) => h + horas);
+    this.avisoSimulacion.set(
+      `Reloj +${etiqueta}. Job de alertas ejecutado: SLA y plazos legales verificados.`,
+    );
+  }
+
+  ejecutarJobAlertas(): void {
+    const ahora = this.relojSimuladoFecha().getTime();
+    const enRiesgo = this.tickets().filter(
+      (t) => t.state !== 'RESOLVED' && t.state !== 'CLOSED' && t.resDue.getTime() <= ahora + 4 * 3600000,
+    ).length;
+    this.avisoSimulacion.set(
+      `Job de alertas ejecutado: ${enRiesgo} tickets con alerta preventiva de SLA o plazo legal.`,
+    );
+  }
+
+  alternarFuenteCaida(id: string, caida: boolean): void {
+    this.fuentesCaidas.update((prev) =>
+      caida ? (prev.includes(id) ? prev : [...prev, id]) : prev.filter((x) => x !== id),
+    );
+  }
+
+  simularTicketEntranteMiPortal(): void {
+    const ahora = this.relojSimuladoFecha();
+    const correlativo = 510 + this.tickets().length;
+    const nuevo: TicketAtc = {
+      num: `AIN-${String(correlativo).padStart(6, '0')}`,
+      co: 'AIN',
+      empresa: this.empresas[0],
+      line: 'Inmobiliaria y Lotes',
+      ch: 'Mi Portal',
+      type: 'CTA',
+      prio: 'MEDIUM',
+      eje: 1,
+      state: 'OPEN',
+      area: 'ATENCION_AL_CLIENTE',
+      owner: 'Ana Torres',
+      cli: 'Valeria Quispe Rojas',
+      dni: '44819203',
+      proj: 'Valle Sagrado · Mz C Lt 14',
+      contract: 'VS-2025-0507',
+      summary: 'Solicitud de estado de cuenta ingresada desde Mi Portal',
+      emotion: 'Cliente solicita cronograma actualizado por canal digital.',
+      opened: ahora,
+      frDue: sumarHorasHabiles(ahora, 4),
+      resDue: sumarHorasHabiles(ahora, 24),
+      slaSrc: 'Matriz SLA v3 · CTA / MEDIA',
+      reopen: 0,
+      conflict: false,
+      rayo: false,
+      interactions: [
+        {
+          tipo: 'cli',
+          fecha: ahora,
+          canal: 'Mi Portal',
+          autor: 'Valeria Quispe Rojas',
+          texto: 'Solicito mi estado de cuenta actualizado con las cuotas pagadas.',
+        },
+      ],
+      log: [
+        {
+          fecha: ahora,
+          area: 'ATENCION_AL_CLIENTE',
+          responsable: 'Ana Torres',
+          motivo: 'Asignación automática por carga',
+          nota: 'Ingreso desde Mi Portal.',
+        },
+      ],
+      status: [{ fecha: ahora, estado: 'OPEN', autor: 'Mi Portal' }],
+    };
+    this.tickets.update((prev) => [nuevo, ...prev]);
+    this.ticketSeleccionadoNum.set(nuevo.num);
+    this.avisoSimulacion.set(`${nuevo.num} entró por Mi Portal y el flujo lo asignó por carga.`);
+  }
+
+  evaluarMorosidadSimulada(): void {
+    const total = this.casosMorosidad().length;
+    const enResolucion = this.casosMorosidad().filter((c) => c.estado === 'EN_RESOLUCION').length;
+    this.avisoSimulacion.set(
+      `Evaluación de morosidad: ${total} casos evaluados (${enResolucion} en evaluación de resolución).`,
+    );
+  }
+
+  vaciarConsolaDemo(): void {
+    this.tickets.set([]);
+    this.asientosLibro.set([]);
+    this.avisoSimulacion.set('Consola vacía: prueba los estados sin datos de cada bandeja.');
+  }
+
+  restaurarConsolaDemo(): void {
+    this.tickets.set(crearTicketsDemo());
+    this.asientosLibro.set(crearAsientosLibroDemo());
+    this.casosSgd.set(crearCasosSgdDemo());
+    this.casosMorosidad.set(crearCasosMorosidadDemo());
+    this.garantias.set(crearGarantiasDemo());
+    this.asistentes.set(crearAsistentesDemo());
+    this.buses.set(crearBusesDemo());
+    this.horasAvanzadasSim.set(0);
+    this.fuentesCaidas.set([]);
+    this.sinConexionSimulada.set(false);
+    this.empresaFiltro.set('');
+    this.avisoSimulacion.set('Datos iniciales restaurados.');
   }
 
   comoFirmante(fila: unknown): FirmanteContratoAtc {
@@ -1224,7 +1936,7 @@ export class ConsolaAtcComponent {
   alCambiarPerspectivaId(valor: string): void {
     const encontrada = this.perspectivasUsuarios.find((p) => p.id === valor);
     if (encontrada) {
-      this.cambiarPerspectivaUsuario(encontrada, false);
+      this.cambiarPerspectivaUsuario(encontrada, true);
     }
   }
 
@@ -1309,17 +2021,18 @@ export class ConsolaAtcComponent {
     this.vistaActiva.set(ev.destino);
   }
 
-  cambiarPerspectivaUsuario(p: PerspectivaUsuarioAtc, irASuMesa: boolean): void {
-    this.perspectivaId.set(p.id);
+  cambiarPerspectivaUsuario(p: PerfilRolPrototipoAtc, irASuMesa: boolean): void {
+    this.estadoProto.rolActivo.set(p.id);
     if (this.acceso.demo) {
       this.acceso.ingresar(p.usuario, p.clave).catch(() => undefined);
     }
-    if (irASuMesa) {
+    const permitidas = this.estadoProto.vistasPermitidasParaRol(p.id);
+    if (irASuMesa || (this.filtrarSidebarPorRol() && permitidas.length > 0 && !permitidas.includes(this.vistaActiva()))) {
       this.vistaActiva.set(p.vistaPrincipal);
     }
   }
 
-  irAMesaDePerspectiva(p: PerspectivaUsuarioAtc): void {
+  irAMesaDePerspectiva(p: PerfilRolPrototipoAtc): void {
     this.vistaActiva.set(p.vistaPrincipal);
   }
 
@@ -1344,9 +2057,10 @@ export class ConsolaAtcComponent {
   alCrearTicket(ev: { ticket: TicketAtc; crearAsientoLibro: boolean }): void {
     this.tickets.update((prev) => [ev.ticket, ...prev]);
     if (ev.crearAsientoLibro) {
+      const nro = String(Math.floor(50 + Math.random() * 50)).padStart(4, '0');
       this.asientosLibro.update((prev) => [
         {
-          n: String(Math.floor(50 + Math.random() * 50)).padStart(4, '0'),
+          n: nro,
           co: ev.ticket.co,
           est: 'Sede Digital / Mi Portal',
           ticket: ev.ticket.num,
@@ -1358,6 +2072,40 @@ export class ConsolaAtcComponent {
           resp: null,
           appeal: null,
           facts: ev.ticket.summary,
+        },
+        ...prev,
+      ]);
+      const venceOrig = sumarHorasHabiles(AHORA_BASE, 15 * 9);
+      this.estadoProto.asientosLibroDetalle.update((prev) => [
+        {
+          id: `lib-${Date.now()}`,
+          codigo: `LR-2026-${nro}`,
+          empresaId: ev.ticket.co,
+          establecimiento: 'Sede Digital / Mi Portal',
+          ticketNum: ev.ticket.num,
+          tipo: ev.ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
+          consumidor: ev.ticket.cli,
+          dni: ev.ticket.dni,
+          registrado: AHORA_BASE,
+          registradoPor: this.perspectivaActual().nombre,
+          venceOriginal: venceOrig,
+          venceProrrogado: null,
+          hechos: ev.ticket.summary,
+          pedido: 'Respuesta formal dentro del plazo legal INDECOPI.',
+          monto: null,
+          moneda: null,
+          prorroga: null,
+          respuesta: null,
+          apelaciones: [],
+          historialPlazo: [
+            {
+              id: `hp-${Date.now()}`,
+              fecha: AHORA_BASE,
+              evento: 'PLAZO_ORIGINAL',
+              detalle: 'Apertura de hoja de reclamación con plazo de 15 días hábiles.',
+              autor: this.perspectivaActual().nombre,
+            },
+          ],
         },
         ...prev,
       ]);

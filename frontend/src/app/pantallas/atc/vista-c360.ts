@@ -21,17 +21,22 @@ import {
   AyCardBody,
   AyCardHeader,
   AyCardPairs,
+  AyCelda,
   AyDivider,
+  AyEmptyState,
   AyFormField,
   AyGrid,
-  AyGridItem,
+  AyHeading,
+  AyPageHeader,
   AyRow,
   AySearchInput,
   AySegmentedControl,
   AySelect,
   AyStack,
+  AyTable,
   AyTag,
   AyText,
+  type AyColumna,
   type AyOpcionSelect,
   type AySegmentoOpcion,
   type ParCardPairs,
@@ -102,7 +107,7 @@ const REDIRECCION_NODOS_360: Readonly<Record<string, AccionRedireccionNodo360>> 
   cont: {
     etiqueta: 'Ver tickets del cliente',
     destino: 'bandeja',
-    moduloNombre: 'Bandeja y Avance Diario',
+    moduloNombre: 'Bandeja de Tickets',
   },
   lote: {
     etiqueta: 'Ver ficha técnica y contrato',
@@ -162,7 +167,7 @@ const REDIRECCION_NODOS_360: Readonly<Record<string, AccionRedireccionNodo360>> 
   tick: {
     etiqueta: 'Filtrar tickets en Bandeja',
     destino: 'bandeja',
-    moduloNombre: 'Bandeja y Avance Diario',
+    moduloNombre: 'Bandeja de Tickets',
   },
   libro: {
     etiqueta: 'Ir a Libro de Reclamaciones',
@@ -365,433 +370,399 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
     AyCardBody,
     AyCardHeader,
     AyCardPairs,
+    AyCelda,
     AyDivider,
+    AyEmptyState,
     AyFormField,
     AyGrid,
-    AyGridItem,
+    AyHeading,
+    AyPageHeader,
     AyRow,
     AySearchInput,
     AySegmentedControl,
     AySelect,
     AyStack,
+    AyTable,
     AyTag,
     AyText,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div ayStack gap="4">
-      <!-- =========================================================================
-           1. GRAFO 360 EN 3D Y 2D EN TIEMPO REAL + LATERAL DE INSPECCIÓN
-           ========================================================================= -->
-      <div ayGrid [columnas]="3" gap="md">
-        <!-- Columna izquierda: Buscador + Clientes + Lienzo Grande 3D / 2D + Ficha flotante desplegable + Leyenda -->
-        <div ayGridItem [span]="2">
-          <ay-card>
-            <ay-card-body>
-              <div ayStack gap="3">
-                <!-- Buscador unificado de cliente o documento por significado -->
-                <div #buscador360Host ayRow gap="2" [ajuste]="true" role="search">
-                  <ay-search-input
-                    etiqueta="Buscar cliente o documento (DNI, lote, teléfono, sección 360 o consulta en lenguaje natural)"
-                    size="sm"
-                    [retardo]="0"
-                    [valor]="busquedaTexto()"
-                    (valorChange)="alCambiarBusqueda($event)"
-                    (buscar)="ejecutarBusquedaSemantica($event)"
-                    placeholder="Ej. Elena, 45892104, M-14, adenda de cambio de lote, cuotas vencidas…"
-                  />
-                  <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
-                    Consultar
-                  </ay-button>
-                  <ay-segmented-control
-                    etiqueta="Modo de visualización 360"
-                    size="sm"
-                    [opciones]="opcionesModoVista"
-                    [valor]="modoRenderizado()"
-                    (valorChange)="cambiarModoRenderizado($event)"
-                  />
-                </div>
-
-                <!-- Clientes frecuentes + Consultas semánticas rápidas -->
-                <div ayRow gap="2" [ajuste]="true" aria-label="Clientes frecuentes y búsquedas por significado">
-                  <span ayText="label" size="xs">Clientes:</span>
-                  @for (c of clientes; track c.k) {
-                    <ay-button
-                      tamano="sm"
-                      [variante]="clienteKey() === c.k ? 'primary' : 'secondary'"
-                      (click)="seleccionarCliente(c.k)"
-                    >
-                      {{ c.nombre }}
-                    </ay-button>
-                  }
-                  <span ayText="label" size="xs">Búsqueda semántica:</span>
-                  @for (cs of consultasSemanticas; track cs.q) {
-                    <ay-button
-                      tamano="sm"
-                      variante="ghost"
-                      (click)="aplicarConsultaSemantica(cs.q, cs.nodo, cs.explicacion)"
-                    >
-                      «{{ cs.q }}»
-                    </ay-button>
-                  }
-                </div>
-
-                <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante desplegable del nodo/fuente seleccionado) -->
-                <div class="pt-escena-wrap">
-                  <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
-                  <div
-                    #poGrafoHost
-                    class="pt-escena-grafo"
-                    [hidden]="modoRenderizado() !== 'po3d'"
-                  >
-                    <canvas
-                      #poGrafoCanvas
-                      role="img"
-                      [attr.aria-label]="'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodos.length + ' datos.'"
-                      (click)="alClickPoGrafo($event)"
-                      (mousemove)="alMoverMousePoGrafo($event)"
-                      (mouseleave)="alSalirMousePoGrafo()"
-                    ></canvas>
-                  </div>
-
-                  <!-- Escena 2D Radial (alternativa) -->
-                  <canvas
-                    #astraCanvas
-                    class="atc-astra-canvas"
-                    [hidden]="modoRenderizado() !== '2d'"
-                    (mousemove)="alMoverMouseCanvas($event)"
-                    (mouseleave)="alSalirMouseCanvas()"
-                    (click)="alClickCanvas()"
-                  ></canvas>
-
-                  <!-- Ficha flotante desplegable del nodo o sistema seleccionado con componentes del SDK -->
-                  @if (fichaAbierta()) {
-                    @if (fuenteInspeccionada(); as src) {
-                      <div
-                        class="pl-atc-ficha-flotante"
-                        role="dialog"
-                        aria-modal="false"
-                        [attr.aria-label]="'Sistema de origen ' + src.nombre"
-                      >
-                        <ay-card>
-                          <ay-card-header
-                            [titulo]="'Sistema: ' + src.nombre"
-                            [subtitulo]="src.detalle + ' · ' + trazabilidadFuente(src.id).hu"
-                            nivel="h3"
-                          >
-                            <div ayAcciones ayRow gap="2" [ajuste]="true">
-                              <ay-badge
-                                size="sm"
-                                [tono]="fuentesCaidas().includes(src.id) ? 'danger' : 'success'"
-                              >
-                                {{ fuentesCaidas().includes(src.id) ? 'Sin respuesta' : 'En línea' }}
-                              </ay-badge>
-                              <ay-badge size="sm" tono="info">Latencia {{ src.ms }} ms</ay-badge>
-                              <ay-button
-                                tamano="sm"
-                                variante="ghost"
-                                (click)="fichaDesplegada.set(!fichaDesplegada())"
-                              >
-                                {{ fichaDesplegada() ? 'Contraer' : 'Desplegar' }}
-                              </ay-button>
-                              <ay-button
-                                tamano="sm"
-                                variante="ghost"
-                                aria-label="Cerrar ficha"
-                                (click)="fichaAbierta.set(false)"
-                              >
-                                Cerrar
-                              </ay-button>
-                            </div>
-                          </ay-card-header>
-
-                          @if (fichaDesplegada()) {
-                            <ay-card-body>
-                              <div ayStack gap="3">
-                                <ay-card-pairs [pares]="paresFuente(src)" />
-                                <div ayStack gap="1">
-                                  <span ayText="label" size="xs">Secciones alimentadas por {{ src.nombre }}</span>
-                                  <div ayRow gap="2" [ajuste]="true">
-                                    @for (nd of nodosDeFuente(src.id); track nd.id) {
-                                      <ay-button
-                                        tamano="sm"
-                                        [variante]="nodoSeleccionadoId() === nd.id ? 'primary' : 'secondary'"
-                                        (click)="seleccionarNodo(nd.id)"
-                                      >
-                                        {{ nd.nombre }}
-                                      </ay-button>
-                                    }
-                                  </div>
-                                </div>
-                                <ay-divider espaciado="sm" />
-                                <div ayRow gap="2" [ajuste]="true">
-                                  <ay-button
-                                    tamano="sm"
-                                    [variante]="fuentesCaidas().includes(src.id) ? 'primary' : 'danger'"
-                                    (click)="alternarFallaFuente(src.id)"
-                                  >
-                                    {{
-                                      fuentesCaidas().includes(src.id)
-                                        ? 'Restaurar fuente en línea'
-                                        : 'Probar desconexión'
-                                    }}
-                                  </ay-button>
-                                  <ay-button
-                                    tamano="sm"
-                                    variante="ghost"
-                                    (click)="fuenteInspeccionadaId.set(null)"
-                                  >
-                                    Ver nodo actual
-                                  </ay-button>
-                                </div>
-                              </div>
-                            </ay-card-body>
-                          }
-                        </ay-card>
-                      </div>
-                    } @else {
-                      <div
-                        class="pl-atc-ficha-flotante"
-                        role="dialog"
-                        aria-modal="false"
-                        [attr.aria-label]="'Nodo 360 ' + nodoActual().nombre"
-                      >
-                        <ay-card>
-                          <ay-card-header
-                            [titulo]="nodoActual().nombre"
-                            [subtitulo]="trazabilidadNodo(nodoActual().id).hu + ' · ' + clienteActual().nombre"
-                            nivel="h3"
-                          >
-                            <div ayAcciones ayRow gap="2" [ajuste]="true">
-                              <ay-badge size="sm" [tono]="estadoNodo(nodoActual()).tono">
-                                {{ estadoNodo(nodoActual()).etiqueta }}
-                              </ay-badge>
-                              <ay-badge size="sm" tono="info">
-                                Origen: {{ nombresFuentesNodoActual() }}
-                              </ay-badge>
-                              <ay-button
-                                tamano="sm"
-                                variante="ghost"
-                                (click)="fichaDesplegada.set(!fichaDesplegada())"
-                              >
-                                {{ fichaDesplegada() ? 'Contraer' : 'Desplegar' }}
-                              </ay-button>
-                              <ay-button
-                                tamano="sm"
-                                variante="ghost"
-                                aria-label="Cerrar ficha"
-                                (click)="fichaAbierta.set(false)"
-                              >
-                                Cerrar
-                              </ay-button>
-                            </div>
-                          </ay-card-header>
-
-                          @if (fichaDesplegada()) {
-                            <ay-card-body>
-                              <div ayStack gap="3">
-                                @if (estadoNodo(nodoActual()).codigo === 'locked') {
-                                  <ay-alert tono="warning" titulo="Acceso restringido por perfil">
-                                    Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a este dato reservado.
-                                    Cambia de perfil a Supervisor o Legal en el encabezado superior para visualizarlo.
-                                  </ay-alert>
-                                } @else if (estadoNodo(nodoActual()).codigo === 'down') {
-                                  <ay-alert tono="danger" titulo="Fuente no disponible temporalmente">
-                                    {{ nombresFuentesCaidasNodoActual() }} no responde en este instante. Las demás
-                                    secciones siguen activas.
-                                  </ay-alert>
-                                } @else {
-                                  <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
-
-                                  @if (nodoActual().semantico && hitsSemanticos().length > 0) {
-                                    <ay-card variante="default">
-                                      <ay-card-header titulo="Coincidencias semánticas" nivel="h4" />
-                                      <ay-card-body>
-                                        <div ayStack gap="2">
-                                          @for (h of hitsSemanticos(); track h.titulo) {
-                                            <div ayRow gap="2" [ajuste]="true">
-                                              <ay-badge size="sm" tono="info">{{ h.relevancia }}%</ay-badge>
-                                              <strong ayText="title" size="xs">{{ h.titulo }}</strong>
-                                              <span ayText="subtitle" size="xs">«{{ h.fragmento }}»</span>
-                                            </div>
-                                          }
-                                        </div>
-                                      </ay-card-body>
-                                    </ay-card>
-                                  }
-                                }
-
-                                <ay-divider espaciado="sm" />
-                                <ay-card-pairs [pares]="paresTrazabilidadNodo(nodoActual().id)" />
-
-                                <div ayRow gap="2" [ajuste]="true">
-                                  <ay-button
-                                    tamano="sm"
-                                    variante="primary"
-                                    (click)="ejecutarRedireccionNodo(nodoActual().id)"
-                                  >
-                                    {{ obtenerRedireccionNodo(nodoActual().id).etiqueta }} →
-                                  </ay-button>
-                                  @if (obtenerRedireccionNodo(nodoActual().id).destino !== 'contrato') {
-                                    <ay-button
-                                      tamano="sm"
-                                      variante="secondary"
-                                      (click)="verContrato.emit(clienteActual().contratoPrincipal)"
-                                    >
-                                      Contrato {{ clienteActual().contratoPrincipal }}
-                                    </ay-button>
-                                  }
-                                  <ay-button
-                                    tamano="sm"
-                                    variante="secondary"
-                                    (click)="abrirNuevoTicketCliente(clienteActual())"
-                                  >
-                                    + Crear ticket
-                                  </ay-button>
-                                </div>
-                              </div>
-                            </ay-card-body>
-                          }
-                        </ay-card>
-                      </div>
-                    }
-                  }
-                </div>
-
-                <!-- Barra inferior de leyenda y telemetría -->
-                <div ayRow gap="2" [ajuste]="true" justificar="between">
-                  <div ayRow gap="2" [ajuste]="true">
-                    <ay-tag variante="outline" colorPunto="var(--aybar-color-secondary-400)">Cliente</ay-tag>
-                    <ay-tag variante="outline" colorPunto="var(--aybar-color-primary-500)">
-                      Sistema de origen ({{ fuentes.length - fuentesCaidas().length }}/{{ fuentes.length }})
-                    </ay-tag>
-                    <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-link)">
-                      Dato del cliente ({{ nodosEncendidosCount() }}/{{ nodos.length }})
-                    </ay-tag>
-                    <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
-                      Restringido / sin conexión
-                    </ay-tag>
-                  </div>
-                  <div ayRow gap="2" [ajuste]="true">
-                    <span ayText="label" size="xs" role="status" aria-live="polite">
-                      {{ estadoConsultaTexto() }}
-                    </span>
-                    <ay-badge size="sm" tono="info">Consulta en línea (&lt; 2 s)</ay-badge>
-                  </div>
-                </div>
-              </div>
-            </ay-card-body>
-          </ay-card>
-        </div>
-
-        <!-- Columna derecha: Resumen cliente + Perfil de visualización + Estado de fuentes + Selector rápido de nodos -->
-        <aside ayGridItem [span]="1" ayStack gap="3" aria-label="Cliente, controles y navegación rápida">
-          <!-- 1. Resumen compacto del cliente en el maestro -->
-          <ay-card>
-            <ay-card-header
-              [titulo]="clienteActual().nombre"
-              [subtitulo]="clienteActual().doc + ' · ' + clienteActual().proyecto + ' · Contrato ' + clienteActual().contratoPrincipal"
-              nivel="h3"
+    <div ayStack gap="6">
+      <ay-page-header
+        [titulo]="clienteSeleccionado() ? 'Consulta 360 · ' + clienteActual().nombre : 'Consulta 360'"
+        [descripcion]="
+          clienteSeleccionado()
+            ? clienteActual().doc + ' · ' + clienteActual().telefono + ' · ' + correoCliente(clienteActual())
+            : 'Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas.'
+        "
+      >
+        <ay-badge ayEstado size="sm" [tono]="fuentesCaidas().length > 0 ? 'warning' : 'success'">
+          {{ (8 - fuentesCaidas().length) + '/8 fuentes en línea' }}
+        </ay-badge>
+        <ng-container ayAcciones>
+          @if (clienteSeleccionado()) {
+            <ay-button
+              tamano="sm"
+              variante="secondary"
+              (click)="volverABusquedaClientes()"
             >
-              <ay-badge ayAcciones size="sm" tono="success">Maestro SIGDA</ay-badge>
-            </ay-card-header>
-            <ay-card-body>
-              <div ayStack gap="3">
-                <div ayRow gap="2" [ajuste]="true">
-                  <ay-badge size="sm" tono="neutral">Lotes {{ clienteActual().lotes.length }}</ay-badge>
-                  <ay-badge size="sm" tono="neutral">Cuotas: {{ resumenDato('cuotas') }}</ay-badge>
-                  <ay-badge size="sm" tono="neutral">Exposición: {{ resumenDato('expo') }}</ay-badge>
-                </div>
-                <div ayRow gap="2" [ajuste]="true">
-                  <ay-button
-                    tamano="sm"
-                    variante="primary"
-                    (click)="verContrato.emit(clienteActual().contratoPrincipal)"
-                  >
-                    Ver contrato {{ clienteActual().contratoPrincipal }}
-                  </ay-button>
-                  <ay-button
-                    tamano="sm"
-                    variante="secondary"
-                    (click)="ejecutarRedireccionNodo('tick')"
-                  >
-                    Tickets en Bandeja
-                  </ay-button>
-                </div>
-              </div>
-            </ay-card-body>
-          </ay-card>
+              ← Limpiar búsqueda
+            </ay-button>
+            <ay-button
+              tamano="sm"
+              variante="primary"
+              (click)="abrirNuevoTicketCliente(clienteActual())"
+            >
+              + Crear ticket al cliente
+            </ay-button>
+          }
+          <ay-segmented-control
+            etiqueta="Modo de visualización 360"
+            size="sm"
+            [opciones]="opcionesModoVista"
+            [valor]="modoRenderizado()"
+            (valorChange)="cambiarModoRenderizado($event)"
+          />
+        </ng-container>
+      </ay-page-header>
 
-          <!-- 2. Estado de conexión de sistemas de origen -->
-          <ay-card>
-            <ay-card-header
-              titulo="Estado de sistemas de origen"
-              subtitulo="Monitoreo de disponibilidad y continuidad por fuente"
-              nivel="h3"
-            />
-            <ay-card-body>
-              <div ayRow gap="2" [ajuste]="true">
-                <ay-button
-                  tamano="sm"
-                  [variante]="fuentesCaidas().length === 0 ? 'primary' : 'secondary'"
-                  (click)="restaurarTodasLasFuentes()"
+      <!-- =========================================================================
+           1. BUSCADOR + GRAFO 360 EN 3D Y 2D (APAGADO HASTA BUSCAR UN CLIENTE)
+           ========================================================================= -->
+      <ay-card>
+        <ay-card-body>
+          <div ayStack gap="3">
+            <!-- Barra superior: Buscador de cliente / documental -->
+            <div #buscador360Host ayRow gap="2" [ajuste]="true" role="search">
+              <ay-search-input
+                [etiqueta]="
+                  clienteSeleccionado()
+                    ? 'Buscar otro cliente (DNI, nombre, lote, contrato) o consultar documentos/secciones 360'
+                    : 'Buscar cliente (DNI, nombre, código, lote, teléfono o contrato)'
+                "
+                size="sm"
+                [retardo]="0"
+                [valor]="busquedaTexto()"
+                (valorChange)="alCambiarBusqueda($event)"
+                (buscar)="ejecutarBusquedaSemantica($event)"
+                placeholder="Ej. 72282555, Huamaní, Paredes, Mamani, Quispe, Soto (sin lote/contrato) o VS-2025-0507…"
+              />
+              <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
+                {{ clienteSeleccionado() ? 'Consultar' : 'Buscar cliente' }}
+              </ay-button>
+            </div>
+
+            @if (!clienteSeleccionado() && busquedaTexto().trim().length >= 2) {
+              @if (fuentesCaidas().includes('sigda')) {
+                <ay-alert
+                  tono="danger"
+                  titulo="SIGDA/TAXON no respondió (503)"
                 >
-                  Todas en línea
-                </ay-button>
-                @for (s of fuentes; track s.id) {
-                  <ay-button
-                    tamano="sm"
-                    [variante]="fuentesCaidas().includes(s.id) ? 'primary' : 'secondary'"
-                    (click)="alternarFallaFuente(s.id)"
+                  La búsqueda del maestro de clientes no está disponible en este momento. Puedes continuar atendiendo
+                  registrando al cliente como <strong>Interesado en cola de conciliación</strong>; el sistema lo vinculará
+                  automáticamente cuando SIGDA/TAXON vuelva en línea.
+                  <div ayAcciones ayRow gap="2" [ajuste]="true">
+                    <ay-button tamano="sm" variante="secondary" (click)="crearTicketContingencia()">
+                      Registrar como interesado
+                    </ay-button>
+                  </div>
+                </ay-alert>
+              } @else {
+                <ay-table
+                  leyenda="Coincidencias en el maestro SIGDA/TAXON"
+                  [columnas]="columnasBusquedaClientes"
+                  [filas]="clientesCoincidentesIdle()"
+                  [rayada]="true"
+                >
+                  <ng-template ayCelda="nombre" let-fila>
+                    @let c = comoCliente360(fila);
+                    <div ayStack gap="1">
+                      <strong>{{ c.nombre }}</strong>
+                      <span ayText="body" size="xs">{{ c.telefono }} · {{ correoCliente(c) }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="doc" let-fila>
+                    @let c = comoCliente360(fila);
+                    <span ayText="mono" size="xs">{{ c.doc }}</span>
+                  </ng-template>
+                  <ng-template ayCelda="lote" let-fila>
+                    @let c = comoCliente360(fila);
+                    @if (c.lotes.length > 0) {
+                      <span>{{ c.proyecto }} · Lote {{ c.lotes.join(', ') }}</span>
+                    } @else {
+                      <span ayText="subtitle" size="xs">{{ c.proyecto }} · Sin lote aún</span>
+                    }
+                  </ng-template>
+                  <ng-template ayCelda="contrato" let-fila>
+                    @let c = comoCliente360(fila);
+                    @if (c.contratoPrincipal) {
+                      <ay-badge size="sm" tono="neutral">{{ c.contratoPrincipal }}</ay-badge>
+                    } @else {
+                      <ay-badge size="sm" tono="warning">Sin contrato aún</ay-badge>
+                    }
+                  </ng-template>
+                  <ng-template ayCelda="accion" let-fila>
+                    @let c = comoCliente360(fila);
+                    <ay-button
+                      tamano="sm"
+                      variante="primary"
+                      (click)="entrarAFichaCliente(c.k)"
+                    >
+                      Activar Grafo 360 →
+                    </ay-button>
+                  </ng-template>
+                  <ay-empty-state
+                    ayVacio
+                    variante="no-results"
+                    size="compact"
+                    titulo="No se encontró al cliente"
+                    descripcion="Revisa el dato buscado. Puedes registrarlo como interesado para no detener la atención."
                   >
-                    {{ s.nombre }}
-                  </ay-button>
+                    <ay-button
+                      ayAccion
+                      tamano="sm"
+                      variante="secondary"
+                      (click)="crearTicketContingencia()"
+                    >
+                      Registrar como interesado
+                    </ay-button>
+                  </ay-empty-state>
+                </ay-table>
+              }
+            }
+
+            <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante cuando el cliente está activo) -->
+            <div class="pt-escena-wrap">
+              <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
+              <div
+                #poGrafoHost
+                class="pt-escena-grafo"
+                [hidden]="modoRenderizado() !== 'po3d'"
+              >
+                <canvas
+                  #poGrafoCanvas
+                  role="img"
+                  [attr.aria-label]="
+                    clienteSeleccionado()
+                      ? 'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodos.length + ' datos.'
+                      : 'Red de consulta 360 en espera de búsqueda de cliente.'
+                  "
+                  (click)="alClickPoGrafo($event)"
+                  (mousemove)="alMoverMousePoGrafo($event)"
+                  (mouseleave)="alSalirMousePoGrafo()"
+                ></canvas>
+              </div>
+
+              <!-- Escena 2D Radial (alternativa) -->
+              <canvas
+                #astraCanvas
+                class="atc-astra-canvas"
+                [hidden]="modoRenderizado() !== '2d'"
+                (mousemove)="alMoverMouseCanvas($event)"
+                (mouseleave)="alSalirMouseCanvas()"
+                (click)="alClickCanvas()"
+              ></canvas>
+
+              <!-- Ficha lateral desplegable tipo drawer del nodo o sistema seleccionado (nace desde el borde derecho hacia la izquierda y se contrae al cerrar) -->
+              @if (clienteSeleccionado()) {
+                  @if (fuenteInspeccionada(); as src) {
+                    <div
+                      class="pl-atc-ficha-flotante"
+                      [class.pl-atc-ficha-flotante--abierta]="fichaAbierta()"
+                      [attr.aria-hidden]="!fichaAbierta()"
+                      role="dialog"
+                      aria-modal="false"
+                      [attr.aria-label]="'Sistema de origen ' + src.nombre"
+                    >
+                      <button
+                        type="button"
+                        class="pl-atc-ficha-flotante__cerrar"
+                        aria-label="Cerrar ficha"
+                        (click)="cerrarFichaFlotante()"
+                      >
+                        ✕
+                      </button>
+                      <ay-card>
+                        <ay-card-header
+                          [titulo]="'Sistema: ' + src.nombre"
+                          [subtitulo]="src.detalle + ' · ' + trazabilidadFuente(src.id).hu"
+                          nivel="h3"
+                        >
+                          <div ayAcciones ayRow gap="2" [ajuste]="true">
+                            <ay-badge
+                              size="sm"
+                              [tono]="fuentesCaidas().includes(src.id) ? 'danger' : 'success'"
+                            >
+                              {{ fuentesCaidas().includes(src.id) ? 'Sin respuesta' : 'En línea' }}
+                            </ay-badge>
+                            <ay-badge size="sm" tono="info">Latencia {{ src.ms }} ms</ay-badge>
+                          </div>
+                        </ay-card-header>
+
+                        <ay-card-body>
+                          <div ayStack gap="3">
+                            <ay-card-pairs [pares]="paresFuente(src)" />
+                            <div ayStack gap="1">
+                              <span ayText="label" size="xs">Secciones alimentadas por {{ src.nombre }}</span>
+                              <div ayRow gap="2" [ajuste]="true">
+                                @for (nd of nodosDeFuente(src.id); track nd.id) {
+                                  <ay-button
+                                    tamano="sm"
+                                    [variante]="nodoSeleccionadoId() === nd.id ? 'primary' : 'secondary'"
+                                    (click)="seleccionarNodo(nd.id)"
+                                  >
+                                    {{ nd.nombre }}
+                                  </ay-button>
+                                }
+                              </div>
+                            </div>
+                            <ay-divider espaciado="sm" />
+                            <div ayRow gap="2" [ajuste]="true">
+                              <ay-button
+                                tamano="sm"
+                                [variante]="fuentesCaidas().includes(src.id) ? 'primary' : 'danger'"
+                                (click)="alternarFallaFuente(src.id)"
+                              >
+                                {{
+                                  fuentesCaidas().includes(src.id)
+                                    ? 'Restaurar fuente en línea'
+                                    : 'Probar desconexión'
+                                }}
+                              </ay-button>
+                            </div>
+                          </div>
+                        </ay-card-body>
+                      </ay-card>
+                    </div>
+                  } @else {
+                    <div
+                      class="pl-atc-ficha-flotante"
+                      [class.pl-atc-ficha-flotante--abierta]="fichaAbierta()"
+                      [attr.aria-hidden]="!fichaAbierta()"
+                      role="dialog"
+                      aria-modal="false"
+                      [attr.aria-label]="'Nodo 360 ' + nodoActual().nombre"
+                    >
+                      <button
+                        type="button"
+                        class="pl-atc-ficha-flotante__cerrar"
+                        aria-label="Cerrar ficha"
+                        (click)="cerrarFichaFlotante()"
+                      >
+                        ✕
+                      </button>
+                      <ay-card>
+                        <ay-card-header
+                          [titulo]="nodoActual().nombre"
+                          [subtitulo]="trazabilidadNodo(nodoActual().id).hu + ' · ' + clienteActual().nombre"
+                          nivel="h3"
+                        >
+                          <div ayAcciones ayRow gap="2" [ajuste]="true">
+                            <ay-badge size="sm" [tono]="estadoNodo(nodoActual()).tono">
+                              {{ estadoNodo(nodoActual()).etiqueta }}
+                            </ay-badge>
+                            <ay-badge size="sm" tono="info">
+                              Origen: {{ nombresFuentesNodoActual() }}
+                            </ay-badge>
+                          </div>
+                        </ay-card-header>
+
+                        <ay-card-body>
+                          <div ayStack gap="3">
+                            @if (estadoNodo(nodoActual()).codigo === 'locked') {
+                              <ay-alert tono="warning" titulo="Acceso restringido por perfil">
+                                Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a este dato reservado.
+                                Cambia de perfil a Supervisor o Legal en «Herramientas → Ver como» para visualizarlo.
+                              </ay-alert>
+                            } @else if (estadoNodo(nodoActual()).codigo === 'down') {
+                              <ay-alert tono="danger" titulo="Fuente no disponible temporalmente">
+                                {{ nombresFuentesCaidasNodoActual() || 'Esta sección' }} no está disponible en este instante. Las demás
+                                secciones siguen activas.
+                              </ay-alert>
+                            } @else {
+                              <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
+
+                              @if (nodoActual().semantico && hitsSemanticos().length > 0) {
+                                <ay-card variante="default">
+                                  <ay-card-header titulo="Coincidencias semánticas" nivel="h4" />
+                                  <ay-card-body>
+                                    <div ayStack gap="2">
+                                      @for (h of hitsSemanticos(); track h.titulo) {
+                                        <div ayRow gap="2" [ajuste]="true">
+                                          <ay-badge size="sm" tono="info">{{ h.relevancia }}%</ay-badge>
+                                          <strong ayText="title" size="xs">{{ h.titulo }}</strong>
+                                          <span ayText="subtitle" size="xs">«{{ h.fragmento }}»</span>
+                                        </div>
+                                      }
+                                    </div>
+                                  </ay-card-body>
+                                </ay-card>
+                              }
+                            }
+
+                            <ay-divider espaciado="sm" />
+                            <ay-card-pairs [pares]="paresTrazabilidadNodo(nodoActual().id)" />
+
+                            <div ayRow gap="2" [ajuste]="true">
+                              <ay-button
+                                tamano="sm"
+                                variante="primary"
+                                (click)="ejecutarRedireccionNodo(nodoActual().id)"
+                              >
+                                {{ obtenerRedireccionNodo(nodoActual().id).etiqueta }} →
+                              </ay-button>
+                              @if (obtenerRedireccionNodo(nodoActual().id).destino !== 'contrato' && clienteActual().contratoPrincipal) {
+                                <ay-button
+                                  tamano="sm"
+                                  variante="secondary"
+                                  (click)="verContrato.emit(clienteActual().contratoPrincipal)"
+                                >
+                                  Contrato {{ clienteActual().contratoPrincipal }}
+                                </ay-button>
+                              }
+                              <ay-button
+                                tamano="sm"
+                                variante="secondary"
+                                (click)="abrirNuevoTicketCliente(clienteActual())"
+                              >
+                                + Crear ticket
+                              </ay-button>
+                            </div>
+                          </div>
+                        </ay-card-body>
+                      </ay-card>
+                    </div>
+                  }
                 }
               </div>
-            </ay-card-body>
-          </ay-card>
 
-          <!-- 4. Navegación rápida de nodos del Grafo 360 -->
-          <ay-card>
-            <ay-card-header
-              titulo="Nodos del Grafo 360 y Redirección"
-              subtitulo="Haz clic en un nodo para inspeccionarlo o redirigir a su módulo operativo"
-              nivel="h3"
-            />
-            <ay-card-body>
-              <div ayStack gap="3">
+              <!-- Barra inferior de leyenda y telemetría -->
+              <div ayRow gap="2" [ajuste]="true" justificar="between">
                 <div ayRow gap="2" [ajuste]="true">
-                  @for (nd of nodos; track nd.id) {
-                    <ay-button
-                      tamano="sm"
-                      [variante]="nodoSeleccionadoId() === nd.id && !fuenteInspeccionadaId() ? 'primary' : 'secondary'"
-                      (click)="seleccionarNodo(nd.id)"
-                    >
-                      {{ nd.nombre }}
-                    </ay-button>
-                  }
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-secondary-400)">Cliente</ay-tag>
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-primary-500)">
+                    Sistema de origen ({{ clienteSeleccionado() ? fuentes.length - fuentesCaidas().length : 0 }}/{{ fuentes.length }})
+                  </ay-tag>
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-link)">
+                    Dato del cliente ({{ clienteSeleccionado() ? nodosEncendidosCount() : 0 }}/{{ nodos.length }})
+                  </ay-tag>
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
+                    Restringido / sin conexión
+                  </ay-tag>
                 </div>
                 <div ayRow gap="2" [ajuste]="true">
-                  <ay-button
-                    tamano="sm"
-                    variante="secondary"
-                    (click)="ejecutarRedireccionNodo(nodoActual().id)"
-                  >
-                    {{ obtenerRedireccionNodo(nodoActual().id).etiqueta }} →
-                  </ay-button>
-                  <ay-button
-                    tamano="sm"
-                    variante="ghost"
-                    (click)="fichaAbierta.set(!fichaAbierta()); fichaDesplegada.set(true)"
-                  >
-                    {{ fichaAbierta() ? 'Ocultar ficha' : 'Mostrar ficha' }}
-                  </ay-button>
+                  <span ayText="label" size="xs" role="status" aria-live="polite">
+                    {{ clienteSeleccionado() ? estadoConsultaTexto() : 'En espera de búsqueda · Grafo 360 apagado' }}
+                  </span>
+                  <ay-badge size="sm" [tono]="clienteSeleccionado() ? 'info' : 'neutral'">
+                    {{ clienteSeleccionado() ? 'Consulta en línea (< 2 s)' : 'Sin cliente activo' }}
+                  </ay-badge>
                 </div>
               </div>
-            </ay-card-body>
-          </ay-card>
-        </aside>
-      </div>
+            </div>
+          </ay-card-body>
+        </ay-card>
 
       <!-- Alertas de contingencia / disponibilidad de fuentes / búsqueda semántica -->
       @if (modoNoEncontrado()) {
@@ -807,13 +778,14 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
               Registrar ticket como Interesado
             </ay-button>
             <ay-button tamano="sm" variante="ghost" (click)="modoNoEncontrado.set(false)">
-              Volver a ficha 360
+              Cerrar aviso
             </ay-button>
           </div>
         </ay-alert>
       }
 
-      @if (fuentesCaidas().length > 0) {
+      @if (clienteSeleccionado()) {
+        @if (fuentesCaidas().length > 0) {
         <ay-alert
           tono="warning"
           [titulo]="'Continuidad operativa activa — ' + fuentesCaidas().length + ' sistema(s) externo(s) sin respuesta'"
@@ -847,8 +819,16 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                       <ay-badge size="sm" tono="info">{{ cli.doc }}</ay-badge>
                       <ay-badge size="sm" tono="neutral">{{ cli.telefono }}</ay-badge>
                       <ay-badge size="sm" tono="neutral">{{ correoCliente(cli) }}</ay-badge>
-                      <ay-badge size="sm" tono="neutral">{{ cli.proyecto }} · Lote {{ cli.lotes.join(', ') }}</ay-badge>
-                      <ay-badge size="sm" tono="info">Contrato {{ cli.contratoPrincipal }}</ay-badge>
+                      @if (cli.lotes.length > 0) {
+                        <ay-badge size="sm" tono="neutral">{{ cli.proyecto }} · Lote {{ cli.lotes.join(', ') }}</ay-badge>
+                      } @else {
+                        <ay-badge size="sm" tono="warning">{{ cli.proyecto }} · Sin lotes aún</ay-badge>
+                      }
+                      @if (cli.contratoPrincipal) {
+                        <ay-badge size="sm" tono="info">Contrato {{ cli.contratoPrincipal }}</ay-badge>
+                      } @else {
+                        <ay-badge size="sm" tono="warning">Sin contrato aún</ay-badge>
+                      }
                     </div>
                     <p ayText="body" size="sm">
                       <strong>Contexto de atención:</strong> {{ cli.estadoEmocional }}
@@ -880,9 +860,11 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     </ay-card-body>
                   </ay-card>
 
-                  <ay-button tamano="sm" variante="primary" (click)="verContrato.emit(cli.contratoPrincipal)">
-                    Ver contrato {{ cli.contratoPrincipal }}
-                  </ay-button>
+                  @if (cli.contratoPrincipal) {
+                    <ay-button tamano="sm" variante="primary" (click)="verContrato.emit(cli.contratoPrincipal)">
+                      Ver contrato {{ cli.contratoPrincipal }}
+                    </ay-button>
+                  }
                   <ay-button tamano="sm" variante="secondary" (click)="abrirNuevoTicketCliente(cli)">
                     + Crear ticket
                   </ay-button>
@@ -914,67 +896,91 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
         </div>
       </div>
 
-      <!-- Tarjeta «Consultas rápidas» al motor de consultas en línea -->
-      <ay-card>
-        <ay-card-header
-          titulo="Consultas rápidas en línea"
-          subtitulo="Respuestas instantáneas del motor de consultas por lote y contrato."
-          nivel="h3"
-        >
-          <div ayAcciones ayRow gap="2" [ajuste]="true">
-            <ay-button tamano="sm" variante="primary" (click)="ejecutarConsultaMotor()">
-              Consultar ahora
-            </ay-button>
-            <ay-button tamano="sm" variante="secondary" (click)="verContrato.emit(clienteActual().contratoPrincipal)">
-              Abrir contrato {{ clienteActual().contratoPrincipal }}
-            </ay-button>
-          </div>
-        </ay-card-header>
-        <ay-card-body>
-          <div ayStack gap="3">
-            <div ayGrid [columnas]="2" gap="md">
-              <ay-form-field etiqueta="Tipo de consulta">
-                <ay-select
-                  size="sm"
-                  [opciones]="opcionesConsultasMotor"
-                  [valor]="consultaMotorId()"
-                  (valorChange)="consultaMotorId.set($event)"
-                />
-              </ay-form-field>
-              <ay-form-field etiqueta="Lote del cliente">
-                <ay-select
-                  size="sm"
-                  [opciones]="opcionesLotesCliente()"
-                  [valor]="loteMotorSeleccionado()"
-                  (valorChange)="loteMotorSeleccionado.set($event)"
-                />
-              </ay-form-field>
-            </div>
-
-            @if (respuestaMotor()) {
-              <ay-alert
-                [tono]="fuentesCaidas().includes('jose') ? 'danger' : 'success'"
-                [titulo]="nombreConsultaMotorActual()"
-              >
-                {{ respuestaMotor() }}
-              </ay-alert>
-            }
-
+      <!-- Tarjeta «Consultas rápidas» al motor de consultas en línea (título fuera del componente) -->
+      <div ayStack gap="2">
+        <div ayRow gap="2" justificar="between" [ajuste]="true">
+          <div ayStack gap="1">
+            <ay-heading [nivel]="2" size="sm">Consultas rápidas en línea</ay-heading>
             <span ayText="subtitle" size="xs">
-              Consulta ejecutada en tiempo real contra los sistemas financieros e inmobiliarios con registro de auditoría.
+              Respuestas instantáneas del motor de consultas por lote y contrato.
             </span>
           </div>
-        </ay-card-body>
-      </ay-card>
+          @if (consultasRapidasDisponibles()) {
+            <div ayRow gap="2" [ajuste]="true">
+              <ay-button tamano="sm" variante="primary" (click)="ejecutarConsultaMotor()">
+                Consultar ahora
+              </ay-button>
+              <ay-button tamano="sm" variante="secondary" (click)="verContrato.emit(clienteActual().contratoPrincipal)">
+                Abrir contrato {{ clienteActual().contratoPrincipal }}
+              </ay-button>
+            </div>
+          } @else {
+            <ay-badge size="sm" tono="danger">No disponible</ay-badge>
+          }
+        </div>
+        <ay-card>
+          <ay-card-body>
+          @if (consultasRapidasDisponibles()) {
+            <div ayStack gap="3">
+              <div ayGrid [columnas]="2" gap="md">
+                <ay-form-field etiqueta="Tipo de consulta">
+                  <ay-select
+                    size="sm"
+                    [opciones]="opcionesConsultasMotor"
+                    [valor]="consultaMotorId()"
+                    (valorChange)="consultaMotorId.set($event)"
+                  />
+                </ay-form-field>
+                <ay-form-field etiqueta="Lote del cliente">
+                  <ay-select
+                    size="sm"
+                    [opciones]="opcionesLotesCliente()"
+                    [valor]="loteMotorSeleccionado()"
+                    (valorChange)="loteMotorSeleccionado.set($event)"
+                  />
+                </ay-form-field>
+              </div>
 
-      <!-- Malla completa de los 16 nodos de datos del cliente con su sistema de origen y redirección -->
-      <ay-card>
-        <ay-card-header
-          [titulo]="nodos.length + ' secciones de datos en línea de ' + clienteActual().nombre + ' (con redirección directa por nodo)'"
-          subtitulo="Haz clic en cualquier tarjeta para enfocarla en el Grafo 3D o usa el botón de redirección para ir a su módulo operativo"
-          nivel="h3"
-        />
-        <ay-card-body>
+              @if (respuestaMotor()) {
+                <ay-alert
+                  [tono]="fuentesCaidas().includes('jose') ? 'danger' : 'success'"
+                  [titulo]="nombreConsultaMotorActual()"
+                >
+                  {{ respuestaMotor() }}
+                </ay-alert>
+              }
+
+              <span ayText="subtitle" size="xs">
+                Consulta ejecutada en tiempo real contra los sistemas financieros e inmobiliarios con registro de auditoría.
+              </span>
+            </div>
+          } @else {
+            <span ayText="subtitle" size="xs">
+              No hay disponibilidad actualmente.
+            </span>
+          }
+          </ay-card-body>
+        </ay-card>
+      </div>
+
+      <!-- Malla completa de los 16 nodos de datos del cliente con su sistema de origen y redirección (título fuera del componente) -->
+      <div ayStack gap="2">
+        <div ayRow gap="2" justificar="between" [ajuste]="true">
+          <div ayStack gap="1">
+            <ay-heading [nivel]="2" size="sm">
+              {{ nodos.length + ' secciones de datos en línea de ' + clienteActual().nombre + ' (con redirección directa por nodo)' }}
+            </ay-heading>
+            <span ayText="subtitle" size="xs">
+              Haz clic en cualquier tarjeta para enfocarla en el Grafo 3D o usa el botón de redirección para ir a su módulo operativo
+            </span>
+          </div>
+          <div ayRow gap="2" [ajuste]="true">
+            <ay-badge size="sm" tono="neutral">{{ estadoConsultaTexto() }}</ay-badge>
+            <ay-badge size="sm" tono="info">Tiempo de respuesta &lt; 2 s</ay-badge>
+          </div>
+        </div>
+        <ay-card>
+          <ay-card-body>
           <div ayGrid [columnas]="4" gap="md">
             @for (n of nodos; track n.id) {
               <ay-card
@@ -1027,8 +1033,10 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
               </ay-card>
             }
           </div>
-        </ay-card-body>
-      </ay-card>
+          </ay-card-body>
+        </ay-card>
+      </div>
+      }
     </div>
   `,
 })
@@ -1036,6 +1044,8 @@ export class VistaC360Component {
   readonly mostrarHu = input<boolean>(false);
   readonly rolExterno = input<'gestor' | 'supervisor' | 'legal' | 'cx'>('gestor');
   readonly nodoFocoExterno = input<string>('lote');
+  readonly fuentesCaidasExternas = input<readonly string[]>([]);
+  readonly fuentesCaidasChange = output<string[]>();
   readonly crearTicketDesde360 = output<{ cliente: string; dni: string; proyecto: string; contingencia: boolean }>();
   readonly verContrato = output<string>();
   readonly redirigirModulo = output<{
@@ -1058,6 +1068,32 @@ export class VistaC360Component {
   readonly consultasSemanticas = CONSULTAS_SEMANTICAS;
   readonly consultasMotor = CONSULTAS_MOTOR_RAPIDAS;
 
+  readonly clienteSeleccionado = signal<boolean>(false);
+  readonly busquedaClienteIdle = signal<string>('');
+
+  readonly columnasBusquedaClientes: readonly AyColumna[] = [
+    { clave: 'nombre', cabecera: 'Titular / Razón social', ancho: '28%' },
+    { clave: 'doc', cabecera: 'Documento', ancho: '16%' },
+    { clave: 'lote', cabecera: 'Proyecto y lote(s)', ancho: '28%' },
+    { clave: 'contrato', cabecera: 'Contrato / Contacto', ancho: '16%' },
+    { clave: 'accion', cabecera: 'Acción', ancho: '12%', alineacion: 'end' },
+  ];
+
+  readonly clientesCoincidentesIdle = computed<readonly Cliente360[]>(() => {
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (!q) return this.clientes;
+    return this.clientes.filter(
+      (c) =>
+        c.nombre.toLowerCase().includes(q) ||
+        c.dni.toLowerCase().includes(q) ||
+        c.doc.toLowerCase().includes(q) ||
+        c.telefono.toLowerCase().includes(q) ||
+        c.proyecto.toLowerCase().includes(q) ||
+        c.contratoPrincipal.toLowerCase().includes(q) ||
+        c.lotes.some((l) => l.toLowerCase().includes(q)),
+    );
+  });
+
   readonly rolesOpciones: readonly { rol: 'gestor' | 'supervisor' | 'legal' | 'cx'; etiqueta: string }[] = [
     { rol: 'gestor', etiqueta: 'Gestor de tickets' },
     { rol: 'supervisor', etiqueta: 'Supervisor ATC' },
@@ -1079,10 +1115,10 @@ export class VistaC360Component {
 
   readonly clienteKey = signal<string>('eh');
   readonly rolActivo = signal<'gestor' | 'supervisor' | 'legal' | 'cx'>('gestor');
-  readonly nodoSeleccionadoId = signal<string>('lote');
+  readonly nodoSeleccionadoId = signal<string>('');
+  readonly nodoDrawerId = signal<string>('kyc');
   readonly fuenteInspeccionadaId = signal<string | null>(null);
-  readonly fichaAbierta = signal<boolean>(true);
-  readonly fichaDesplegada = signal<boolean>(true);
+  readonly fichaAbierta = signal<boolean>(false);
   readonly fuentesCaidas = signal<readonly string[]>([]);
   readonly busquedaTexto = signal<string>('');
   readonly consultaSemanticaActiva = signal<string>('');
@@ -1102,7 +1138,8 @@ export class VistaC360Component {
 
   // Referencias mutables compartidas con montarGrafo (three/grafo360.ts)
   private readonly vistaGrafoRef: Ref<VistaGrafo | null> = { current: null };
-  private readonly selGrafoRef: Ref<string> = { current: 'lote' };
+  private readonly selGrafoRef: Ref<string> = { current: '' };
+  private readonly abiertaGrafoRef: Ref<boolean> = { current: false };
   private readonly semGrafoRef: Ref<{ hits: unknown[] } | null> = { current: null };
   private readonly hoverGrafoRef: Ref<string | null> = { current: null };
   private readonly litGrafoRef: Ref<Set<string>> = { current: new Set<string>() };
@@ -1116,13 +1153,31 @@ export class VistaC360Component {
   private rafId: number | null = null;
   private hitTargets: NodoCanvasPos[] = [];
   private hoverTarget: NodoCanvasPos | null = null;
+  private desp2dX = 0;
 
   readonly clienteActual = computed<Cliente360>(
     () => this.clientes.find((c) => c.k === this.clienteKey()) ?? this.clientes[0],
   );
 
+  readonly tieneLotesYContrato = computed<boolean>(() => {
+    const cli = this.clienteActual();
+    const tieneLotes = cli.lotes.length > 0 && Boolean(cli.datos['lote']?.length);
+    const tieneContrato = Boolean(cli.contratoPrincipal) && Boolean(cli.datos['contrato']?.length);
+    return tieneLotes && tieneContrato && !this.modoNoEncontrado();
+  });
+
+  readonly consultasRapidasDisponibles = computed<boolean>(() => {
+    const caidas = this.fuentesCaidas();
+    if (caidas.includes('jose') || caidas.includes('contr')) {
+      return false;
+    }
+    return this.tieneLotesYContrato();
+  });
+
   readonly nodoActual = computed<NodoDato360>(
-    () => this.nodos.find((n) => n.id === this.nodoSeleccionadoId()) ?? this.nodos[0],
+    () =>
+      this.nodos.find((n) => n.id === (this.nodoSeleccionadoId() || this.nodoDrawerId())) ??
+      this.nodos[0],
   );
 
   readonly fuenteInspeccionada = computed<Fuente360 | null>(() => {
@@ -1145,31 +1200,45 @@ export class VistaC360Component {
   constructor() {
     effect(() => {
       const rExt = this.rolExterno();
-      const nExt = this.nodoFocoExterno();
       this.rolActivo.set(rExt);
-      if (nExt && this.nodos.some((n) => n.id === nExt)) {
-        this.fuenteInspeccionadaId.set(null);
-        this.nodoSeleccionadoId.set(nExt);
-        this.selGrafoRef.current = nExt;
-        this.fichaAbierta.set(true);
-        this.fichaDesplegada.set(true);
-      }
     });
 
     effect(() => {
-      const sel = this.nodoSeleccionadoId();
-      const hits = this.hitsSemanticos();
+      const fExt = this.fuentesCaidasExternas();
+      this.fuentesCaidas.set(fExt);
+    });
 
-      this.selGrafoRef.current = sel;
+    effect(() => {
+      const sel = this.fuenteInspeccionadaId() ?? this.nodoSeleccionadoId();
+      const hits = this.hitsSemanticos();
+      const abierta = this.fichaAbierta();
+
+      this.selGrafoRef.current = abierta ? sel : '';
+      this.abiertaGrafoRef.current = abierta;
       this.semGrafoRef.current = hits.length > 0 ? { hits: [...hits] } : null;
     });
 
-    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol o fuentes caídas
+    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol, fuentes caídas o estado activo
     effect(() => {
       const cli = this.clienteActual();
       const caidas = this.fuentesCaidas();
       const rol = this.rolActivo();
-      this.dispararOleadaPulsosGrafo(cli, caidas, rol);
+      const activo = this.clienteSeleccionado();
+      this.dispararOleadaPulsosGrafo(cli, caidas, rol, activo);
+    });
+
+    // Montar / desmontar el Grafo 3D cuando el canvas aparece al seleccionar un cliente o se oculta al volver a la búsqueda idle
+    effect(() => {
+      const host = this.poGrafoHostRef()?.nativeElement;
+      const canvas = this.poGrafoCanvasRef()?.nativeElement;
+      if (host && canvas) {
+        if (!this.desmontarPoGrafo) {
+          this.inicializarPoGrafo3D();
+        }
+      } else if (this.desmontarPoGrafo) {
+        this.desmontarPoGrafo();
+        this.desmontarPoGrafo = null;
+      }
     });
 
     afterNextRender(() => {
@@ -1219,6 +1288,7 @@ export class VistaC360Component {
       reducido,
       vista: this.vistaGrafoRef,
       sel: this.selGrafoRef,
+      abierta: this.abiertaGrafoRef,
       sem: this.semGrafoRef,
       hover: this.hoverGrafoRef,
       lit: this.litGrafoRef,
@@ -1226,9 +1296,11 @@ export class VistaC360Component {
       t0: this.t0GrafoRef,
       pos: this.posGrafoRef,
       alClickNodo: (id) => {
+        if (!this.clienteSeleccionado()) return;
         this.seleccionarNodo(id);
       },
       alClickFuente: (id) => {
+        if (!this.clienteSeleccionado()) return;
         this.inspeccionarFuente360(id);
       },
     });
@@ -1238,9 +1310,11 @@ export class VistaC360Component {
     cli: Cliente360,
     caidas: readonly string[],
     rol: 'gestor' | 'supervisor' | 'legal' | 'cx',
+    activo = this.clienteSeleccionado(),
   ): void {
     const rolPermiso = rol === 'cx' ? 'supervisor' : rol;
     const vista: VistaGrafo = {
+      apagado: !activo,
       cliente: { nombre: cli.nombre },
       fuentes: this.fuentes.map((s) => ({
         id: s.id,
@@ -1250,7 +1324,8 @@ export class VistaC360Component {
       })),
       nodos: this.nodos.map((n) => {
         const restringido = Boolean(n.restringidoPara?.includes(rolPermiso));
-        const caido = n.fuentes.some((fid) => caidas.includes(fid));
+        const sinDatosNodo = !cli.datos[n.id]?.length;
+        const caido = n.fuentes.some((fid) => caidas.includes(fid)) || sinDatosNodo;
         return {
           id: n.id,
           n: n.nombre,
@@ -1263,6 +1338,14 @@ export class VistaC360Component {
 
     this.vistaGrafoRef.current = vista;
     this.litGrafoRef.current = new Set<string>();
+    if (!activo) {
+      this.pulsosGrafoRef.current = [];
+      if (this.timerConsulta !== null) clearTimeout(this.timerConsulta);
+      this.nodosEncendidosCount.set(0);
+      this.estadoConsultaTexto.set('En espera de búsqueda · Grafo 360 apagado');
+      return;
+    }
+
     const latenciaDe = (fid: string): number =>
       caidas.includes(fid) ? 1200 : this.fuentes.find((f) => f.id === fid)?.ms ?? 220;
 
@@ -1312,6 +1395,7 @@ export class VistaC360Component {
   }
 
   alClickPoGrafo(ev: MouseEvent): void {
+    if (!this.clienteSeleccionado()) return;
     const canvas = this.poGrafoCanvasRef()?.nativeElement;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -1401,22 +1485,39 @@ export class VistaC360Component {
   }
 
   seleccionarNodo(nodoId: string): void {
+    if (
+      this.fichaAbierta() &&
+      this.nodoSeleccionadoId() === nodoId &&
+      !this.fuenteInspeccionadaId()
+    ) {
+      this.cerrarFichaFlotante();
+      return;
+    }
     this.fuenteInspeccionadaId.set(null);
+    this.nodoDrawerId.set(nodoId);
     this.nodoSeleccionadoId.set(nodoId);
     this.selGrafoRef.current = nodoId;
+    this.abiertaGrafoRef.current = true;
     this.fichaAbierta.set(true);
-    this.fichaDesplegada.set(true);
   }
 
   inspeccionarFuente360(fuenteId: string): void {
-    this.fuenteInspeccionadaId.set(fuenteId);
-    const primerNodo = this.nodos.find((n) => n.fuentes.includes(fuenteId));
-    if (primerNodo) {
-      this.nodoSeleccionadoId.set(primerNodo.id);
-      this.selGrafoRef.current = primerNodo.id;
+    if (this.fichaAbierta() && this.fuenteInspeccionadaId() === fuenteId) {
+      this.cerrarFichaFlotante();
+      return;
     }
+    this.fuenteInspeccionadaId.set(fuenteId);
+    this.nodoSeleccionadoId.set('');
+    this.selGrafoRef.current = fuenteId;
+    this.abiertaGrafoRef.current = true;
     this.fichaAbierta.set(true);
-    this.fichaDesplegada.set(true);
+  }
+
+  cerrarFichaFlotante(): void {
+    this.fichaAbierta.set(false);
+    this.abiertaGrafoRef.current = false;
+    this.nodoSeleccionadoId.set('');
+    this.selGrafoRef.current = '';
   }
 
   nodosDeFuente(fuenteId: string): readonly NodoDato360[] {
@@ -1450,7 +1551,7 @@ export class VistaC360Component {
       REDIRECCION_NODOS_360[nodoId] ?? {
         etiqueta: 'Ir a Bandeja del Cliente',
         destino: 'bandeja',
-        moduloNombre: 'Bandeja y Avance Diario',
+        moduloNombre: 'Bandeja de Tickets',
       }
     );
   }
@@ -1471,10 +1572,45 @@ export class VistaC360Component {
     });
   }
 
+  comoCliente360(fila: unknown): Cliente360 {
+    return fila as Cliente360;
+  }
+
+  ejecutarBusquedaIdle(termino?: string): void {
+    const q = (termino ?? this.busquedaClienteIdle()).trim();
+    this.busquedaClienteIdle.set(q);
+    if (!q) return;
+    if (q.includes('99999999') || q.toLowerCase().includes('no existe')) {
+      this.activarContingenciaNoEncontrado();
+      return;
+    }
+    const coincidencias = this.clientesCoincidentesIdle();
+    if (coincidencias.length === 1) {
+      this.entrarAFichaCliente(coincidencias[0].k);
+    }
+  }
+
+  entrarAFichaCliente(k: string): void {
+    this.seleccionarCliente(k);
+    this.clienteSeleccionado.set(true);
+    this.cerrarFichaFlotante();
+  }
+
+  volverABusquedaClientes(): void {
+    this.clienteSeleccionado.set(false);
+    this.cerrarFichaFlotante();
+    this.busquedaTexto.set('');
+    this.busquedaClienteIdle.set('');
+    this.modoNoEncontrado.set(false);
+    this.explicacionSemantica.set('');
+    this.hitsSemanticos.set([]);
+  }
+
   seleccionarCliente(k: string): void {
     if (!k) return;
     this.modoNoEncontrado.set(false);
     this.clienteKey.set(k);
+    this.cerrarFichaFlotante();
     const cli = this.clientes.find((c) => c.k === k);
     if (cli?.lotes[0]) {
       this.loteMotorSeleccionado.set(cli.lotes[0]);
@@ -1494,19 +1630,26 @@ export class VistaC360Component {
 
   restaurarTodasLasFuentes(): void {
     this.fuentesCaidas.set([]);
+    this.fuentesCaidasChange.emit([]);
   }
 
   reintentarFuentesDeNodo(n: NodoDato360): void {
-    this.fuentesCaidas.update((actual) => actual.filter((fid) => !n.fuentes.includes(fid)));
+    const nuevo = this.fuentesCaidas().filter((fid) => !n.fuentes.includes(fid));
+    this.fuentesCaidas.set(nuevo);
+    this.fuentesCaidasChange.emit([...nuevo]);
   }
 
   alCambiarBusqueda(valor: string): void {
     this.busquedaTexto.set(valor);
+    this.busquedaClienteIdle.set(valor);
     const v = valor.trim().toLowerCase();
     if (!v) {
       this.explicacionSemantica.set('');
       this.consultaSemanticaActiva.set('');
       this.hitsSemanticos.set([]);
+      return;
+    }
+    if (!this.clienteSeleccionado()) {
       return;
     }
     const encontrado = this.clientes.find(
@@ -1515,6 +1658,7 @@ export class VistaC360Component {
         c.doc.toLowerCase().includes(v) ||
         c.nombre.toLowerCase().includes(v) ||
         c.telefono.toLowerCase().includes(v) ||
+        c.contratoPrincipal.toLowerCase().includes(v) ||
         c.lotes.some((l) => l.toLowerCase().includes(v)),
     );
     if (encontrado && encontrado.k !== this.clienteKey()) {
@@ -1533,11 +1677,29 @@ export class VistaC360Component {
   ejecutarBusquedaSemantica(terminoExplicito?: string): void {
     const raw = (terminoExplicito ?? this.leerInputDomBusqueda() ?? this.busquedaTexto()).trim();
     this.busquedaTexto.set(raw);
+    this.busquedaClienteIdle.set(raw);
     const q = raw.toLowerCase();
 
+    if (!this.clienteSeleccionado()) {
+      if (!q) {
+        this.entrarAFichaCliente(this.clienteKey());
+        return;
+      }
+      if (q.includes('99999999') || q.includes('no existe')) {
+        this.activarContingenciaNoEncontrado();
+        return;
+      }
+      const coincidencias = this.clientesCoincidentesIdle();
+      if (coincidencias.length > 0) {
+        this.entrarAFichaCliente(coincidencias[0].k);
+      } else {
+        this.activarContingenciaNoEncontrado();
+      }
+      return;
+    }
+
     if (!q) {
-      this.fichaAbierta.set(true);
-      this.fichaDesplegada.set(true);
+      this.cerrarFichaFlotante();
       this.dispararOleadaPulsosGrafo(this.clienteActual(), this.fuentesCaidas(), this.rolActivo());
       return;
     }
@@ -1553,6 +1715,7 @@ export class VistaC360Component {
         c.doc.toLowerCase().includes(q) ||
         c.nombre.toLowerCase().includes(q) ||
         c.telefono.toLowerCase().includes(q) ||
+        c.contratoPrincipal.toLowerCase().includes(q) ||
         c.lotes.some((l) => l.toLowerCase().includes(q)),
     );
     if (cliMatch && cliMatch.k !== this.clienteKey()) {
@@ -1592,8 +1755,7 @@ export class VistaC360Component {
     if (cliMatch) {
       this.hitsSemanticos.set([]);
       this.explicacionSemantica.set('');
-      const coincideLote = cliMatch.lotes.some((l) => l.toLowerCase().includes(q));
-      this.seleccionarNodo(coincideLote ? 'lote' : 'kyc');
+      this.cerrarFichaFlotante();
       this.dispararOleadaPulsosGrafo(cliMatch, this.fuentesCaidas(), this.rolActivo());
       return;
     }
@@ -1685,9 +1847,12 @@ export class VistaC360Component {
   }
 
   alternarFallaFuente(fuenteId: string): void {
-    this.fuentesCaidas.update((actual) =>
-      actual.includes(fuenteId) ? actual.filter((id) => id !== fuenteId) : [...actual, fuenteId],
-    );
+    const actual = this.fuentesCaidas();
+    const nuevo = actual.includes(fuenteId)
+      ? actual.filter((id) => id !== fuenteId)
+      : [...actual, fuenteId];
+    this.fuentesCaidas.set(nuevo);
+    this.fuentesCaidasChange.emit([...nuevo]);
   }
 
   nombreFuente(id: string): string {
@@ -1726,7 +1891,8 @@ export class VistaC360Component {
     if (n.restringidoPara?.includes(rolPermiso)) {
       return { codigo: 'locked', tono: 'warning', etiqueta: 'Restringido' };
     }
-    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid))) {
+    const sinDatosNodo = !this.clienteActual().datos[n.id]?.length;
+    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid)) || sinDatosNodo) {
       return { codigo: 'down', tono: 'danger', etiqueta: 'No disponible' };
     }
     return { codigo: 'ok', tono: 'success', etiqueta: 'En línea' };
@@ -1780,6 +1946,7 @@ export class VistaC360Component {
   }
 
   alClickCanvas(): void {
+    if (!this.clienteSeleccionado()) return;
     const h = this.hoverTarget;
     if (!h) return;
     if (h.kind === 'node' && h.n) {
@@ -1805,7 +1972,7 @@ export class VistaC360Component {
     const canvas = this.canvasRef()?.nativeElement;
     if (!canvas) return;
     const W = canvas.clientWidth;
-    const H = canvas.clientHeight || 560;
+    const H = canvas.clientHeight || 736;
     if (!W) return;
     const dpr = window.devicePixelRatio || 1;
     if (canvas.width !== Math.floor(W * dpr) || canvas.height !== Math.floor(H * dpr)) {
@@ -1825,20 +1992,26 @@ export class VistaC360Component {
     const ambar = readColor('--aybar-color-warning-500') || '#B88100';
     const rojo = readColor('--aybar-color-danger-500') || '#D63D4A';
     const blanco = readColor('--aybar-color-neutral-0') || '#FFFFFF';
+    const activoCliente = this.clienteSeleccionado();
 
     ctx.fillStyle = tealOscuro;
     ctx.fillRect(0, 0, W, H);
 
-    const cx = W * 0.5;
+    const target2dX =
+      activoCliente && this.fichaAbierta() ? -Math.min(456, W * 0.42) * 0.45 : 0;
+    this.desp2dX += (target2dX - this.desp2dX) * 0.1;
+
+    const cx = W * 0.5 + this.desp2dX;
     const cy = H * 0.51;
     const m = Math.min(W, H);
-    const rSrc = m * 0.24;
-    const rNode = m * 0.41;
+    const rSrc = m * 0.22;
+    const rNode = m * 0.38;
 
     [rSrc * 0.52, rSrc, rNode].forEach((r, idx) => {
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = idx === 1 ? 'rgba(255, 167, 38, 0.20)' : 'rgba(255, 255, 255, 0.08)';
+      ctx.strokeStyle =
+        idx === 1 && activoCliente ? 'rgba(255, 167, 38, 0.20)' : 'rgba(255, 255, 255, 0.08)';
       ctx.setLineDash(idx === 2 ? [3, 6] : []);
       ctx.lineWidth = 1;
       ctx.stroke();
@@ -1869,8 +2042,8 @@ export class VistaC360Component {
       };
     });
 
-    const foco = this.hoverTarget;
-    const selId = this.nodoSeleccionadoId();
+    const foco = activoCliente ? this.hoverTarget : null;
+    const selId = activoCliente ? this.nodoSeleccionadoId() : '';
     const caidas = this.fuentesCaidas();
     const t = ts * 0.001;
 
@@ -1895,26 +2068,29 @@ export class VistaC360Component {
         if (!sp) return;
         const sDown = caidas.includes(sid);
         const activo =
-          selId === n.id ||
-          (foco?.kind === 'node' && foco.n?.id === n.id) ||
-          (foco?.kind === 'src' && foco.s?.id === sid);
+          activoCliente &&
+          (selId === n.id ||
+            (foco?.kind === 'node' && foco.n?.id === n.id) ||
+            (foco?.kind === 'src' && foco.s?.id === sid));
         const cpx = (sp.x + np.x) * 0.5 + (cx - (sp.x + np.x) * 0.5) * 0.18;
         const cpy = (sp.y + np.y) * 0.5 + (cy - (sp.y + np.y) * 0.5) * 0.18;
 
         ctx.beginPath();
         ctx.moveTo(sp.x, sp.y);
         ctx.quadraticCurveTo(cpx, cpy, np.x, np.y);
-        ctx.strokeStyle = sDown
-          ? 'rgba(214, 61, 74, 0.42)'
-          : activo
-            ? 'rgba(255, 167, 38, 0.90)'
-            : st === 'locked'
-              ? 'rgba(184, 129, 0, 0.32)'
-              : 'rgba(255, 255, 255, 0.18)';
+        ctx.strokeStyle = !activoCliente
+          ? 'rgba(255, 255, 255, 0.10)'
+          : sDown
+            ? 'rgba(214, 61, 74, 0.42)'
+            : activo
+              ? 'rgba(255, 167, 38, 0.90)'
+              : st === 'locked'
+                ? 'rgba(184, 129, 0, 0.32)'
+                : 'rgba(255, 255, 255, 0.18)';
         ctx.lineWidth = activo ? 2.2 : 1.1;
         ctx.stroke();
 
-        if (!sDown && st === 'ok') {
+        if (activoCliente && !sDown && st === 'ok') {
           const u = (t * 0.42 + idx * 0.07 + j * 0.19) % 1;
           const [px, py] = bezierPt(sp.x, sp.y, cpx, cpy, np.x, np.y, u);
           ctx.beginPath();
@@ -1928,19 +2104,21 @@ export class VistaC360Component {
     this.fuentes.forEach((s, idx) => {
       const sp = posFuentes[s.id];
       const down = caidas.includes(s.id);
-      const activo = foco?.kind === 'src' && foco.s?.id === s.id;
+      const activo = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(sp.x, sp.y);
-      ctx.strokeStyle = down
-        ? 'rgba(214, 61, 74, 0.48)'
-        : activo
-          ? 'rgba(255, 167, 38, 0.85)'
-          : 'rgba(255, 255, 255, 0.22)';
+      ctx.strokeStyle = !activoCliente
+        ? 'rgba(255, 255, 255, 0.12)'
+        : down
+          ? 'rgba(214, 61, 74, 0.48)'
+          : activo
+            ? 'rgba(255, 167, 38, 0.85)'
+            : 'rgba(255, 255, 255, 0.22)';
       ctx.lineWidth = activo ? 2 : 1.15;
       ctx.stroke();
 
-      if (!down) {
+      if (activoCliente && !down) {
         const u = (t * 0.55 + idx * 0.13) % 1;
         const px = cx + (sp.x - cx) * u;
         const py = cy + (sp.y - cy) * u;
@@ -1955,36 +2133,46 @@ export class VistaC360Component {
 
     this.fuentes.forEach((s) => {
       const p = posFuentes[s.id];
-      this.hitTargets.push(p);
+      if (activoCliente) this.hitTargets.push(p);
       const down = caidas.includes(s.id);
-      const isHover = foco?.kind === 'src' && foco.s?.id === s.id;
+      const isHover = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r + (isHover ? 3 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = down ? 'rgba(214, 61, 74, 0.28)' : 'rgba(255, 167, 38, 0.20)';
+      ctx.fillStyle = !activoCliente
+        ? 'rgba(255, 255, 255, 0.08)'
+        : down
+          ? 'rgba(214, 61, 74, 0.28)'
+          : 'rgba(255, 167, 38, 0.20)';
       ctx.fill();
       ctx.lineWidth = isHover ? 2.4 : 1.6;
-      ctx.strokeStyle = down ? rojo : naranja;
+      ctx.strokeStyle = !activoCliente ? 'rgba(255, 255, 255, 0.24)' : down ? rojo : naranja;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = down ? rojo : naranja;
+      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.35)' : down ? rojo : naranja;
       ctx.fill();
 
       ctx.font = '600 10px Inter, system-ui, sans-serif';
-      ctx.fillStyle = blanco;
+      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.55)' : blanco;
       ctx.textAlign = 'center';
       ctx.fillText(s.nombre, p.x, p.y + p.r + 13);
     });
 
     this.nodos.forEach((n) => {
       const p = posNodos[n.id];
-      this.hitTargets.push(p);
+      if (activoCliente) this.hitTargets.push(p);
       const st = this.estadoNodo(n).codigo;
-      const isSel = selId === n.id;
-      const isHover = foco?.kind === 'node' && foco.n?.id === n.id;
-      const col = st === 'ok' ? verde : st === 'locked' ? ambar : rojo;
+      const isSel = activoCliente && selId === n.id;
+      const isHover = activoCliente && foco?.kind === 'node' && foco.n?.id === n.id;
+      const col = !activoCliente
+        ? 'rgba(255, 255, 255, 0.25)'
+        : st === 'ok'
+          ? verde
+          : st === 'locked'
+            ? ambar
+            : rojo;
 
       if (isSel || isHover) {
         ctx.beginPath();
@@ -2010,37 +2198,42 @@ export class VistaC360Component {
       const lx = p.x + Math.cos(ang) * (p.r + 10);
       const ly = p.y + Math.sin(ang) * (p.r + 10);
       ctx.font = `${isSel ? '700' : '600'} 10.5px Inter, system-ui, sans-serif`;
-      ctx.fillStyle = st === 'locked' ? 'rgba(255, 255, 255, 0.60)' : blanco;
+      ctx.fillStyle =
+        !activoCliente || st === 'locked' ? 'rgba(255, 255, 255, 0.55)' : blanco;
       ctx.textAlign = Math.cos(ang) > 0.22 ? 'left' : Math.cos(ang) < -0.22 ? 'right' : 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(n.nombre, lx, ly);
     });
 
     const cli = this.clienteActual();
-    const pulso = 34 + Math.sin(t * 2.6) * 2.5;
-    ctx.beginPath();
-    ctx.arc(cx, cy, pulso + 8, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 167, 38, 0.16)';
-    ctx.fill();
+    if (activoCliente) {
+      const pulso = 34 + Math.sin(t * 2.6) * 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, pulso + 8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 167, 38, 0.16)';
+      ctx.fill();
+    }
 
     ctx.beginPath();
     ctx.arc(cx, cy, 32, 0, Math.PI * 2);
     ctx.fillStyle = tealBase;
     ctx.fill();
     ctx.lineWidth = 3;
-    ctx.strokeStyle = naranja;
+    ctx.strokeStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.25)';
     ctx.stroke();
 
-    ctx.fillStyle = blanco;
+    ctx.fillStyle = activoCliente ? blanco : 'rgba(255, 255, 255, 0.65)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '700 15px Inter, system-ui, sans-serif';
-    ctx.fillText(cli.iniciales, cx, cy - 4);
+    ctx.fillText(activoCliente ? cli.iniciales : '360', cx, cy - 4);
     ctx.font = '600 9.5px Inter, system-ui, sans-serif';
-    ctx.fillStyle = naranja;
-    ctx.fillText(cli.lotes.join(' · '), cx, cy + 12);
+    ctx.fillStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.50)';
+    ctx.fillText(activoCliente ? cli.lotes.join(' · ') || 'Sin lote' : 'En espera', cx, cy + 12);
 
-    this.hitTargets.push({ kind: 'cli', x: cx, y: cy, r: 32 });
+    if (activoCliente) {
+      this.hitTargets.push({ kind: 'cli', x: cx, y: cy, r: 32 });
+    }
     ctx.restore();
   }
 }

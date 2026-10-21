@@ -21,7 +21,8 @@ import {
   AyCircularProgress,
   AyDivider,
   AyDrawer,
-  AyGrid,
+  AyHeading,
+  AyPageHeader,
   AyProgressBar,
   AyRating,
   AyRow,
@@ -37,13 +38,14 @@ import {
   type AyTimelineEvento,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
+import { subscribeAppearance } from '@aybarcorp/tokens/apariencia';
 import {
   PUERTAS_CANAL,
   SALAS_OFICINA,
   TIPOS_SIMULACION,
   type SalaOficina,
 } from './datos-atc';
-import { leerTokenRgb, type RGB } from './three/comun';
+import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
 interface TicketVivo {
@@ -99,21 +101,21 @@ const LIDERES_SALA: Readonly<Record<string, string>> = {
   proy: 'Arq. Claudia Mendoza (Responsable Proyecto)',
 };
 
-const COLOR_ZONA_RGB: Readonly<Record<string, RGB>> = {
-  eje1: [43, 138, 156],
-  cob: [245, 158, 11],
-  libro: [236, 72, 153],
-  legal: [139, 92, 246],
-  post: [16, 185, 129],
-  proy: [6, 182, 212],
+const TOKEN_ZONA: Readonly<Record<string, string>> = {
+  eje1: 'primary-400',
+  cob: 'primary-700',
+  libro: 'secondary-500',
+  legal: 'feedback-danger-border',
+  post: 'feedback-success-border',
+  proy: 'secondary-700',
 };
 
-const COLOR_CANAL_RGB: Readonly<Record<string, RGB>> = {
-  tel: [56, 189, 248],
-  wa: [34, 197, 94],
-  mail: [129, 140, 248],
-  portal: [245, 158, 11],
-  form: [236, 72, 212],
+const TOKEN_CANAL: Readonly<Record<string, string>> = {
+  tel: 'primary-600',
+  wa: 'feedback-success-border',
+  mail: 'primary-500',
+  portal: 'primary-700',
+  form: 'secondary-600',
 };
 
 interface MetaEstacionVivo {
@@ -311,7 +313,8 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AyCircularProgress,
     AyDivider,
     AyDrawer,
-    AyGrid,
+    AyHeading,
+    AyPageHeader,
     AyProgressBar,
     AyRating,
     AyRow,
@@ -325,218 +328,254 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div ayStack gap="4" aria-label="Panel unificado de Operación en Vivo">
-      <!-- 1. Parte superior: Controles operativos + KPIs + Distribución por estado -->
-      <ay-card>
-        <ay-card-header
-          titulo="Operación en Vivo 3D · Robot Orquestador · 5 Canales de Entrada · 6 Salas de Atención"
-          subtitulo="Monitoreo en tiempo real del flujo de tickets, despacho automático por menor carga y SLA"
-          nivel="h3"
+    <div ayStack gap="6" aria-label="Panel unificado de Operación en Vivo">
+      <ay-page-header
+        titulo="Operación en Vivo"
+        descripcion="Los tickets entran por cada canal, la bandeja orquestadora los ordena y los asigna por carga, y cada área los atiende. Toca un ticket para seguirlo."
+      >
+        <ay-button
+          ayAcciones
+          tamano="sm"
+          variante="primary"
+          (click)="inyectarTicketCustomizado()"
         >
-          <div ayAcciones ayRow gap="2" [ajuste]="true">
-            <ay-select
-              size="sm"
-              [opciones]="opcionesSalasSelect"
-              [valor]="areaFiltro()"
-              (valorChange)="areaFiltro.set($event)"
-            />
-            <ay-button
-              tamano="sm"
-              [variante]="cajonLateralAbierto() ? 'primary' : 'secondary'"
-              (click)="cajonLateralAbierto.set(!cajonLateralAbierto())"
-            >
-              {{
-                cajonLateralAbierto()
-                  ? 'Cerrar cajón de bandejas'
-                  : 'Bandejas operativas (' + ticketsFiltradosBandeja().length + ')'
-              }}
-            </ay-button>
-          </div>
-        </ay-card-header>
-        <ay-card-body>
-          <div ayStack gap="3">
-            <!-- Controles de simulación de planta -->
-            <div ayRow gap="2" [ajuste]="true">
-              <ay-button tamano="sm" variante="primary" (click)="alternarPausa()">
-                {{ enEjecucion() ? 'Pausar planta' : 'Reanudar planta' }}
-              </ay-button>
-              <ay-segmented-control
-                etiqueta="Velocidad de planta"
-                size="sm"
-                [opciones]="opcionesVelocidad"
-                [valor]="velocidadStr()"
-                (valorChange)="cambiarVelocidad($event)"
-              />
-              <ay-button tamano="sm" variante="secondary" (click)="inyectarTicket({ rayo: false })">
-                + Ticket entrante
-              </ay-button>
-              <ay-button tamano="sm" variante="secondary" (click)="inyectarTicket({ rayo: true })">
-                Ticket con Prioridad Rayo
-              </ay-button>
-              <ay-button tamano="sm" variante="danger" (click)="forzarVencimientoSla()">
-                Escalar a Comité SGD
-              </ay-button>
-              <ay-button tamano="sm" variante="ghost" (click)="simularPicoMasivo()">
-                Pico +5 multicanal
-              </ay-button>
-            </div>
+          + Ticket
+        </ay-button>
+        <ay-button
+          ayAcciones
+          tamano="sm"
+          [variante]="cajonLateralAbierto() ? 'primary' : 'secondary'"
+          (click)="cajonLateralAbierto.set(!cajonLateralAbierto())"
+        >
+          {{
+            cajonLateralAbierto()
+              ? 'Cerrar bandejas'
+              : 'Bandejas (' + ticketsFiltradosBandeja().length + ')'
+          }}
+        </ay-button>
+      </ay-page-header>
 
-            <!-- 5 KPIs principales con componentes del SDK -->
-            <div ayGrid [columnas]="5" gap="sm">
-              <ay-card variante="default">
-                <ay-card-body padding="sm">
-                  <div ayStack gap="2">
-                    <ay-statistic
-                      etiqueta="Tickets activos"
-                      [valor]="activosEnCursoCount()"
-                      size="sm"
-                    />
-                    <ay-badge size="sm" [tono]="enRiesgoCount() > 0 ? 'warning' : 'success'">
-                      {{ enRiesgoCount() > 0 ? enRiesgoCount() + ' en riesgo' : 'Sin riesgos' }}
-                    </ay-badge>
-                  </div>
-                </ay-card-body>
-              </ay-card>
+      <!-- 1. 5 KPIs en vivo -->
+      <div ayStack gap="3">
+        <!-- 5 KPIs principales con componentes del SDK -->
+        <div class="pl-atc-grid-kpis">
+          <ay-card variante="default">
+            <ay-card-body padding="sm">
+              <div ayStack gap="2">
+                <ay-statistic
+                  etiqueta="Tickets activos"
+                  [valor]="activosEnCursoCount()"
+                  size="sm"
+                />
+                <ay-badge size="sm" [tono]="enRiesgoCount() > 0 ? 'warning' : 'success'">
+                  {{ enRiesgoCount() > 0 ? enRiesgoCount() + ' en riesgo' : 'Sin riesgos' }}
+                </ay-badge>
+              </div>
+            </ay-card-body>
+          </ay-card>
 
-              <ay-card variante="default">
-                <ay-card-body padding="sm">
-                  <div ayRow gap="3">
-                    <ay-circular-progress
-                      etiqueta="Resueltos en SLA"
-                      [valor]="pctCumplimientoSla()"
-                      size="md"
-                      [tono]="pctCumplimientoSla() >= 90 ? 'success' : 'warning'"
-                    />
-                    <div ayStack gap="1">
-                      <ay-statistic
-                        etiqueta="Resueltos en SLA"
-                        [valor]="pctCumplimientoSla()"
-                        unidad="%"
-                        size="sm"
-                      />
-                      <span ayText="subtitle" size="xs">
-                        {{ cerradosEnSlaHoy() }} de {{ cerradosHoy() }} (Meta 90%)
-                      </span>
-                    </div>
-                  </div>
-                </ay-card-body>
-              </ay-card>
-
-              <ay-card variante="default">
-                <ay-card-body padding="sm">
-                  <div ayStack gap="2">
-                    <ay-statistic
-                      etiqueta="CSAT del día"
-                      [valor]="csatPromedio().toFixed(1)"
-                      unidad="/ 5"
-                      size="sm"
-                    />
-                    <ay-rating
-                      etiqueta="Satisfacción CSAT"
-                      [valor]="csatPromedio()"
-                      [mediosPuntos]="true"
-                      [recuento]="csatRespuestas()"
-                      [soloLectura]="true"
-                      size="sm"
-                    />
-                  </div>
-                </ay-card-body>
-              </ay-card>
-
-              <ay-card variante="default">
-                <ay-card-body padding="sm">
-                  <div ayStack gap="2">
-                    <div ayRow gap="2" justificar="between">
-                      <ay-statistic
-                        [etiqueta]="'Nivel ' + nivelEquipo() + ' del equipo'"
-                        [valor]="xpEquipo()"
-                        [unidad]="'/ ' + metaXpNivel + ' XP'"
-                        size="sm"
-                      />
-                      <ay-badge size="sm" tono="info">Racha {{ rachaSla() }}</ay-badge>
-                    </div>
-                    <ay-progress-bar
-                      etiqueta="Experiencia del equipo"
-                      [etiquetaOculta]="true"
-                      [valor]="pctXpEquipo()"
-                      [detalle]="'Faltan ' + (metaXpNivel - xpEquipo()) + ' XP'"
-                      size="sm"
-                      tono="brand"
-                    />
-                  </div>
-                </ay-card-body>
-              </ay-card>
-
-              <ay-card variante="default">
-                <ay-card-body padding="sm">
-                  <div ayStack gap="2">
-                    <ay-statistic
-                      etiqueta="NPS del turno"
-                      [valor]="(npsPreliminarValor() > 0 ? '+' : '') + npsPreliminarValor()"
-                      size="sm"
-                    />
-                    <ay-badge size="sm" [tono]="npsPreliminarValor() >= 30 ? 'success' : 'warning'">
-                      Encuestas n={{ csatRespuestas() }}
-                    </ay-badge>
-                  </div>
-                </ay-card-body>
-              </ay-card>
-            </div>
-
-            <!-- Distribución en tiempo real por los 7 estados (RF-SVC-004) -->
-            <ay-card variante="default">
-              <ay-card-header
-                titulo="Tickets por estado (RF-SVC-004)"
-                subtitulo="Distribución en tiempo real: Abierto, En curso, Espera cliente, Escalado, Reabierto, Resuelto y Cerrado"
-                nivel="h4"
-              >
-                <ay-badge ayAcciones size="sm" tono="neutral">{{ totalEstadosCount() }} en total</ay-badge>
-              </ay-card-header>
-              <ay-card-body padding="sm">
-                <div ayGrid [columnas]="7" gap="sm">
-                  @for (est of estadosResumen(); track est.id) {
-                    <ay-card variante="default">
-                      <ay-card-body padding="sm">
-                        <div ayStack gap="1">
-                          <div ayRow gap="2" justificar="between">
-                            <span ayText="label" size="xs">{{ est.n }}</span>
-                            <ay-badge size="sm" [tono]="est.tono">{{ est.v }}</ay-badge>
-                          </div>
-                          <ay-progress-bar
-                            [etiqueta]="est.n"
-                            [etiquetaOculta]="true"
-                            [valor]="est.pct"
-                            [tono]="est.tonoBarra"
-                            size="sm"
-                          />
-                        </div>
-                      </ay-card-body>
-                    </ay-card>
-                  }
+          <ay-card variante="default">
+            <ay-card-body padding="sm">
+              <div ayRow gap="3">
+                <ay-circular-progress
+                  etiqueta="Resueltos en SLA"
+                  [valor]="pctCumplimientoSla()"
+                  size="md"
+                  [tono]="pctCumplimientoSla() >= 90 ? 'success' : 'warning'"
+                />
+                <div ayStack gap="1">
+                  <ay-statistic
+                    etiqueta="Resueltos en SLA"
+                    [valor]="pctCumplimientoSla()"
+                    unidad="%"
+                    size="sm"
+                  />
+                  <span ayText="subtitle" size="xs">
+                    {{ cerradosEnSlaHoy() }} de {{ cerradosHoy() }} (Meta 90%)
+                  </span>
                 </div>
-              </ay-card-body>
-            </ay-card>
-          </div>
-        </ay-card-body>
-      </ay-card>
+              </div>
+            </ay-card-body>
+          </ay-card>
 
-      <!-- 2. Cuerpo del escenario 3D -->
-      <ay-card>
-        <ay-card-header
-          titulo="Planta de Atención en Vivo · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal"
-          subtitulo="Haz clic en cualquier tarjeta 3D, canal o sala para inspeccionar su detalle en tiempo real o abre el cajón de bandejas."
-          nivel="h3"
-        >
-          <div ayAcciones ayRow gap="2" [ajuste]="true">
+          <ay-card variante="default">
+            <ay-card-body padding="sm">
+              <div ayStack gap="2">
+                <ay-statistic
+                  etiqueta="CSAT del día"
+                  [valor]="csatPromedio().toFixed(1)"
+                  unidad="/ 5"
+                  size="sm"
+                />
+                <ay-rating
+                  etiqueta="Satisfacción CSAT"
+                  [valor]="csatPromedio()"
+                  [mediosPuntos]="true"
+                  [recuento]="csatRespuestas()"
+                  [soloLectura]="true"
+                  size="sm"
+                />
+              </div>
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card variante="default">
+            <ay-card-body padding="sm">
+              <div ayStack gap="2">
+                <div ayRow gap="2" justificar="between">
+                  <ay-statistic
+                    [etiqueta]="'Nivel ' + nivelEquipo() + ' del equipo'"
+                    [valor]="xpEquipo()"
+                    [unidad]="'/ ' + metaXpNivel + ' XP'"
+                    size="sm"
+                  />
+                  <ay-badge size="sm" tono="info">Racha {{ rachaSla() }}</ay-badge>
+                </div>
+                <ay-progress-bar
+                  etiqueta="Experiencia del equipo"
+                  [etiquetaOculta]="true"
+                  [valor]="pctXpEquipo()"
+                  [detalle]="'Faltan ' + (metaXpNivel - xpEquipo()) + ' XP'"
+                  size="sm"
+                  tono="brand"
+                />
+              </div>
+            </ay-card-body>
+          </ay-card>
+
+          <ay-card variante="default">
+            <ay-card-body padding="sm">
+              <div ayStack gap="2">
+                <ay-statistic
+                  etiqueta="NPS del turno"
+                  [valor]="(npsPreliminarValor() > 0 ? '+' : '') + npsPreliminarValor()"
+                  size="sm"
+                />
+                <ay-badge size="sm" [tono]="npsPreliminarValor() >= 30 ? 'success' : 'warning'">
+                  Encuestas n={{ csatRespuestas() }}
+                </ay-badge>
+              </div>
+            </ay-card-body>
+          </ay-card>
+        </div>
+      </div>
+
+      <!-- 2. Distribución en tiempo real por los 7 estados (título fuera del componente) -->
+      <div ayStack gap="2">
+        <div ayRow gap="2" justificar="between" [ajuste]="true">
+          <div ayStack gap="1">
+            <ay-heading [nivel]="2" size="sm">Tickets por estado (RF-SVC-004)</ay-heading>
+            <span ayText="subtitle" size="xs">
+              Distribución en tiempo real: Abierto, En curso, Espera cliente, Escalado, Reabierto, Resuelto y Cerrado
+            </span>
+          </div>
+          <ay-badge size="sm" tono="neutral">{{ totalEstadosCount() }} en total</ay-badge>
+        </div>
+        <ay-card variante="default">
+          <ay-card-body padding="sm">
+            <div class="pl-atc-grid-estados">
+              @for (est of estadosResumen(); track est.id) {
+                <ay-card variante="default">
+                  <ay-card-body padding="sm">
+                    <div ayStack gap="1">
+                      <div ayRow gap="2" justificar="between">
+                        <span ayText="label" size="xs">{{ est.n }}</span>
+                        <ay-badge size="sm" [tono]="est.tono">{{ est.v }}</ay-badge>
+                      </div>
+                      <ay-progress-bar
+                        [etiqueta]="est.n"
+                        [etiquetaOculta]="true"
+                        [valor]="est.pct"
+                        [tono]="est.tonoBarra"
+                        size="sm"
+                      />
+                    </div>
+                  </ay-card-body>
+                </ay-card>
+              }
+            </div>
+          </ay-card-body>
+        </ay-card>
+      </div>
+
+      <!-- 3. Cuerpo del escenario 3D (título fuera del componente) -->
+      <div ayStack gap="2">
+        <div ayRow gap="2" justificar="between" [ajuste]="true">
+          <div ayStack gap="1">
+            <ay-heading [nivel]="2" size="sm">
+              Planta de Atención en Vivo · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
+            </ay-heading>
+            <span ayText="subtitle" size="xs">
+              Haz clic en cualquier tarjeta 3D, canal o sala para inspeccionar su detalle en tiempo real o abre el cajón de bandejas.
+            </span>
+          </div>
+          <div ayRow gap="2" [ajuste]="true">
             <ay-badge size="sm" tono="success">{{ cerradosHoy() }} resueltos hoy</ay-badge>
             <ay-badge size="sm" tono="warning">{{ conRayoCount() }} con Rayo</ay-badge>
             <ay-badge size="sm" [tono]="escaladosCount() > 0 ? 'danger' : 'neutral'">
               {{ escaladosCount() }} en Comité SGD
             </ay-badge>
           </div>
-        </ay-card-header>
-        <ay-card-body>
+        </div>
+        <ay-card>
+          <ay-card-body>
           <div ayStack gap="3">
+            <!-- Barra de Simulación y Customización de Entradas -->
+            <div ayRow gap="3" justificar="between" alinear="center" [ajuste]="true">
+              <div ayRow gap="2" alinear="center" [ajuste]="true">
+                <ay-button tamano="sm" variante="secondary" (click)="alternarPausa()">
+                  {{ enEjecucion() ? 'Pausa' : 'Reanudar' }}
+                </ay-button>
+                <ay-segmented-control
+                  etiqueta="Velocidad de planta"
+                  size="sm"
+                  [opciones]="opcionesVelocidad"
+                  [valor]="velocidadStr()"
+                  (valorChange)="cambiarVelocidad($event)"
+                />
+              </div>
+
+              <div ayRow gap="2" alinear="center" [ajuste]="true">
+                <div class="pl-atc-vivo-select">
+                  <ay-select
+                    size="sm"
+                    [opciones]="opcionesCanalesSelect"
+                    [valor]="canalEntradaCustom()"
+                    (valorChange)="canalEntradaCustom.set($event)"
+                  />
+                </div>
+                <div class="pl-atc-vivo-select">
+                  <ay-select
+                    size="sm"
+                    [opciones]="opcionesSalasSelect"
+                    [valor]="areaFiltro()"
+                    (valorChange)="areaFiltro.set($event)"
+                  />
+                </div>
+                <ay-button
+                  tamano="sm"
+                  [variante]="rayoEntradaCustom() ? 'primary' : 'secondary'"
+                  (click)="rayoEntradaCustom.set(!rayoEntradaCustom())"
+                >
+                  ⚡ {{ rayoEntradaCustom() ? 'Con Rayo' : 'Rayo' }}
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="primary"
+                  (click)="inyectarTicketCustomizado()"
+                >
+                  + Ticket
+                </ay-button>
+                <ay-button
+                  tamano="sm"
+                  variante="ghost"
+                  (click)="simularPicoMasivo()"
+                >
+                  Pico +5
+                </ay-button>
+              </div>
+            </div>
+
             <!-- Lienzo 3D + Ficha flotante del ticket -->
             <div #stageHost class="atc-vivo-stage-area">
               <canvas #threeCanvas style="display: block; width: 100%; cursor: pointer;"></canvas>
@@ -544,7 +583,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
               <!-- Ficha flotante del ticket seleccionado dentro de la escena 3D (lado izquierdo) -->
               @if (ticketSeleccionado(); as tk) {
                 <div
-                  class="pl-atc-ficha-flotante pl-atc-ficha-flotante--izq"
+                  class="pl-atc-ficha-flotante pl-atc-ficha-flotante--abierta pl-atc-ficha-flotante--izq"
                   role="dialog"
                   aria-modal="false"
                   aria-label="Ficha del ticket en escena 3D"
@@ -592,8 +631,13 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                         <ay-divider espaciado="sm" />
                         <div ayRow gap="2" [ajuste]="true">
                           <ay-button tamano="sm" variante="secondary" (click)="alternarRayoTicket(tk.id)">
-                            {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
+                            ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
                           </ay-button>
+                          @if (!tk.esc) {
+                            <ay-button tamano="sm" variante="danger" (click)="escalarTicketAComite(tk.id)">
+                              Escalar a Comité SGD
+                            </ay-button>
+                          }
                           <ay-button tamano="sm" variante="primary" (click)="resolverTicketInmediato(tk.id)">
                             Resolver a Mi Portal
                           </ay-button>
@@ -630,8 +674,9 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
               </ay-tag>
             </div>
           </div>
-        </ay-card-body>
-      </ay-card>
+          </ay-card-body>
+        </ay-card>
+      </div>
 
       <!-- 3. Cajón lateral de bandejas operativas con <ay-drawer> del SDK -->
       <ay-drawer
@@ -696,13 +741,24 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                             <span ayText="subtitle" size="xs">
                               {{ nombreTipoSim(tk.type) }} · {{ nombreSala(tk.area) }} ({{ etiquetaEtapa(tk.etapa) }})
                             </span>
-                            <ay-button
-                              tamano="sm"
-                              variante="ghost"
-                              (click)="$event.stopPropagation(); alternarRayoTicket(tk.id)"
-                            >
-                              {{ tk.rayo ? 'Quitar Rayo' : 'Rayo' }}
-                            </ay-button>
+                            <div ayRow gap="1" [ajuste]="true">
+                              <ay-button
+                                tamano="sm"
+                                variante="ghost"
+                                (click)="$event.stopPropagation(); alternarRayoTicket(tk.id)"
+                              >
+                                ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Rayo' }}
+                              </ay-button>
+                              @if (!tk.esc) {
+                                <ay-button
+                                  tamano="sm"
+                                  variante="danger"
+                                  (click)="$event.stopPropagation(); escalarTicketAComite(tk.id)"
+                                >
+                                  Comité SGD
+                                </ay-button>
+                              }
+                            </div>
                           </div>
                         </div>
                       </ay-card-body>
@@ -830,12 +886,19 @@ export class VistaVivoComponent {
     ...SALAS_OFICINA.map((s) => ({ value: s.k, label: s.nombre })),
   ];
 
+  readonly opcionesCanalesSelect: AyOpcionSelect[] = [
+    { value: '', label: 'Todos los canales (5)' },
+    ...PUERTAS_CANAL.map((p) => ({ value: p.k, label: `${p.nombre} (${p.ic})` })),
+  ];
+
   readonly enEjecucion = signal<boolean>(true);
   readonly velocidad = signal<number>(1);
   readonly velocidadStr = computed(() => String(this.velocidad()));
   readonly cajonLateralAbierto = signal<boolean>(false);
   readonly vistaCajon = signal<'todo' | 'bandeja' | 'estacion' | 'correos'>('todo');
   readonly areaFiltro = signal<string>('');
+  readonly canalEntradaCustom = signal<string>('');
+  readonly rayoEntradaCustom = signal<boolean>(false);
   readonly estacionSeleccionadaKey = signal<string>('etapa:bandeja');
   readonly ticketSeleccionadoId = signal<string | null>(null);
 
@@ -960,7 +1023,16 @@ export class VistaVivoComponent {
       }, 220);
     });
 
+    const desuscribirTema = subscribeAppearance(() => {
+      if (this.desmontarVivo) {
+        this.desmontarVivo();
+        this.desmontarVivo = null;
+        this.inicializarEscena3D();
+      }
+    });
+
     this.destroyRef.onDestroy(() => {
+      desuscribirTema();
       if (this.tickInterval !== null) clearInterval(this.tickInterval);
       this.desmontarVivo?.();
     });
@@ -972,31 +1044,31 @@ export class VistaVivoComponent {
     if (!host || !canvas) return;
 
     const cols: Cols = {
-      teal: leerTokenRgb('primary-500', [43, 138, 156]),
-      teal2: leerTokenRgb('primary-400', [56, 189, 248]),
-      orange: leerTokenRgb('secondary-400', [246, 164, 44]),
-      ok: leerTokenRgb('success-500', [46, 139, 87]),
-      warn: leerTokenRgb('warning-500', [227, 155, 28]),
-      bad: leerTokenRgb('danger-500', [192, 69, 58]),
-      line: [45, 64, 72],
-      muted: [157, 180, 186],
-      texto: [232, 240, 242],
-      superficie: [27, 42, 49],
-      suelo: [20, 32, 38],
-      lienzo: [15, 26, 31],
+      teal: leerTokenRgb('primary-700', [2, 66, 78]),
+      teal2: leerTokenRgb('primary-500', [70, 134, 150]),
+      orange: leerTokenRgb('secondary-400', [255, 167, 38]),
+      ok: leerTokenRgb('feedback-success-border', [29, 139, 68]),
+      warn: leerTokenRgb('feedback-warning-border', [184, 129, 0]),
+      bad: leerTokenRgb('feedback-danger-border', [225, 90, 78]),
+      line: leerTokenRgb('border-subtle', [212, 212, 212]),
+      muted: leerTokenRgb('fg-muted', [74, 74, 74]),
+      texto: leerTokenRgb('fg-default', [29, 29, 29]),
+      superficie: leerTokenRgb('bg-surface', [255, 255, 255]),
+      suelo: leerTokenRgb('bg-surface-sunken', [232, 232, 232]),
+      lienzo: leerTokenRgb('bg-canvas', [246, 246, 246]),
     };
 
     const est: Estatico = {
       zonas: this.salas.map((s) => ({
         k: s.k,
         n: s.nombre,
-        color: COLOR_ZONA_RGB[s.k] ?? cols.teal2,
+        color: leerTokenRgb(TOKEN_ZONA[s.k] ?? 'primary-500', cols.teal2),
       })),
       compuertas: this.puertas.map((p) => ({
         k: p.k,
         n: p.nombre,
         sigla: p.ic,
-        color: COLOR_CANAL_RGB[p.k] ?? cols.teal2,
+        color: leerTokenRgb(TOKEN_CANAL[p.k] ?? 'primary-500', cols.teal2),
       })),
     };
 
@@ -1263,9 +1335,50 @@ export class VistaVivoComponent {
     }
   }
 
+  inyectarTicketCustomizado(): void {
+    const canal = this.canalEntradaCustom();
+    const sala = this.areaFiltro();
+    const rayo = this.rayoEntradaCustom();
+    const tipoMatch = sala
+      ? Object.keys(TIPOS_SIMULACION).find((k) => TIPOS_SIMULACION[k]?.area === sala)
+      : undefined;
+    this.inyectarTicket({
+      gate: canal !== 'auto' ? canal : undefined,
+      type: tipoMatch,
+      rayo,
+    });
+  }
+
   simularPicoMasivo(): void {
     for (let i = 0; i < 5; i++) {
       this.inyectarTicket({ rayo: i === 0, silencioso: i < 4 });
+    }
+  }
+
+  escalarTicketAComite(ticketId: string): void {
+    const hora = new Date().toTimeString().slice(0, 8);
+    let escalo = false;
+    this.ticketsActivos.update((lista) =>
+      lista.map((t) => {
+        if (t.id !== ticketId || t.esc) return t;
+        escalo = true;
+        return {
+          ...t,
+          age: Math.max(t.age, t.slaMax + 5),
+          esc: true,
+          stateRf004: 'ESCALATED',
+          hitos: [
+            `${hora} · SLA vencido: Correo CC al líder y escalado a Sala de Comité SGD`,
+            ...t.hitos,
+          ].slice(0, 5),
+        };
+      }),
+    );
+    if (escalo) {
+      this.escaladosCount.update((n) => Math.min(6, n + 1));
+      this.rachaSla.set(0);
+      this.ticketSeleccionadoId.set(ticketId);
+      this.sincronizarHudDom();
     }
   }
 

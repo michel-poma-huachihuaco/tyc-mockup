@@ -1,7 +1,7 @@
 import { InjectionToken, isDevMode, makeEnvironmentProviders, provideAppInitializer, signal } from '@angular/core';
 import type { EnvironmentProviders, Signal } from '@angular/core';
-import { crearAutenticacion, crearAutenticacionDemo } from '@aybarcorp/auth';
-import type { UsuarioDemo } from '@aybarcorp/auth';
+import { crearAutenticacion, crearAutenticacionDemo, entornoNavegador } from '@aybarcorp/auth';
+import type { EntornoNavegador, UsuarioDemo } from '@aybarcorp/auth';
 import { environment } from '../../environments/environment';
 
 const { autenticacion: config, demo } = environment.aybar;
@@ -25,15 +25,37 @@ function usuariosDemo(valor: UsuarioDemo | UsuarioDemo[] | null | undefined): Us
 const usuarios = isDevMode() ? usuariosDemo(demo) : [];
 
 /**
+ * Adaptador de entorno para `crearAutenticacionDemo` en desarrollo (`isDevMode()`),
+ * que permite compartir el servidor local (`ng serve`) por túnel (DevTunnels, ngrok,
+ * Cloudflare Tunnel o IP de red local) manteniendo la navegación en el origen actual.
+ */
+function entornoDemoDesarrollo(): EntornoNavegador {
+  const base = entornoNavegador();
+  return {
+    ...base,
+    url: () => {
+      const actual = new URL(base.url());
+      actual.hostname = 'localhost';
+      return actual.toString();
+    },
+    redirigir: (destino: string) => {
+      const u = new URL(destino, window.location.origin);
+      base.redirigir(`${window.location.origin}${u.pathname}${u.search}${u.hash}`);
+    },
+  };
+}
+
+/**
  * La autenticación simulada del modo demo, o `null` con el emisor real.
  *
  * Solo existe en desarrollo (`isDevMode()`) y con usuarios en
  * environment.development.ts: la pantalla de login es el Login Form de la propia
  * aplicación, que llama a `ingresar(usuario, clave)` en la ruta `rutaLogin`. La sesión no
- * tiene token —un backend protegido responde 401— y se niega a abrirse fuera de
- * localhost. En el build de producción environment.ts trae `demo: null` y esto es `null`.
+ * tiene token —un backend protegido responde 401—. En el build de producción
+ * environment.ts trae `demo: null` y esto es `null`.
  */
-export const autenticacionDemo = usuarios.length > 0 ? crearAutenticacionDemo({ usuarios }) : null;
+export const autenticacionDemo =
+  usuarios.length > 0 ? crearAutenticacionDemo({ usuarios, entorno: entornoDemoDesarrollo() }) : null;
 
 /**
  * La autenticación de la aplicación: OIDC Authorization Code con PKCE contra el emisor de

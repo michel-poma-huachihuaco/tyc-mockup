@@ -19,6 +19,7 @@ export interface NodoDatoGrafo {
 }
 
 export interface VistaGrafo {
+  apagado?: boolean;
   cliente: { nombre: string };
   fuentes: FuenteGrafo[];
   nodos: NodoDatoGrafo[];
@@ -42,6 +43,7 @@ export interface OptsGrafo {
   reducido: boolean;
   vista: Ref<VistaGrafo | null>;
   sel: Ref<string>;
+  abierta?: Ref<boolean>;
   sem: Ref<{ hits: unknown[] } | null>;
   hover: Ref<string | null>;
   lit: Ref<Set<string>>;
@@ -107,21 +109,14 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const etiquetas = capaEtiquetas(host);
   const escena = new THREE.Scene();
   const cam = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  cam.position.set(0, -4.2, 17);
+  cam.position.set(0, -3.2, 20.5);
   cam.lookAt(0, 0, 0);
   const ctl = new OrbitControls(cam, canvas);
   ctl.enableZoom = false;
   ctl.enablePan = false;
+  ctl.enableRotate = false;
   ctl.enableDamping = true;
-  ctl.minPolarAngle = Math.PI * 0.28;
-  ctl.maxPolarAngle = Math.PI * 0.72;
-  ctl.minAzimuthAngle = -0.95;
-  ctl.maxAzimuthAngle = 0.95;
-  ctl.autoRotate = !o.reducido;
-  ctl.autoRotateSpeed = 0.75;
-  ctl.addEventListener('start', () => {
-    ctl.autoRotate = false;
-  });
+  ctl.autoRotate = false;
 
   const R1 = 3.35;
   const R2 = 6.45;
@@ -268,7 +263,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
         new THREE.MeshBasicMaterial({
           color: color(c),
           transparent: true,
-          opacity: tipo === 'fuente' ? 0.28 : 0.24,
+          opacity: tipo === 'fuente' ? 0.12 : 0.11,
           depthWrite: false,
         }),
       );
@@ -415,12 +410,12 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const w = host.clientWidth;
     if (!w) return;
     ultimoAncho = w;
-    const h = Math.max(540, Math.min(720, Math.round(w * 0.74)));
+    const h = Math.max(680, Math.min(860, Math.round(w * 0.78)));
     canvas.style.height = `${h}px`;
     r.setSize(w, h, false);
     etiquetas.setSize(w, h);
     cam.aspect = w / h;
-    cam.position.setLength(w < 560 ? 30 : w < 800 ? 22 : 17);
+    cam.position.setLength(w < 560 ? 32 : w < 800 ? 25 : 20.5);
     cam.updateProjectionMatrix();
   };
   const ro = new ResizeObserver(ajustar);
@@ -430,6 +425,26 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const raycaster = new THREE.Raycaster();
   const punteroNdc = new THREE.Vector2();
   let downPos: { x: number; y: number } | null = null;
+  let targetRotX = 0;
+  let targetRotY = 0;
+  let rotActualX = 0;
+  let rotActualY = 0;
+  let despActualX = 0;
+
+  const onHostPointerMove = (ev: PointerEvent): void => {
+    if (o.reducido) return;
+    const rect = host.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const nx = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = ((ev.clientY - rect.top) / rect.height) * 2 - 1;
+    // Rotación leve al pasar el mouse (~4.5° en Y y ~3° en X)
+    targetRotY = Math.max(-1, Math.min(1, nx)) * 0.08;
+    targetRotX = Math.max(-1, Math.min(1, ny)) * 0.052;
+  };
+  const onHostPointerLeave = (): void => {
+    targetRotX = 0;
+    targetRotY = 0;
+  };
 
   const onPointerDown = (ev: PointerEvent): void => {
     downPos = { x: ev.clientX, y: ev.clientY };
@@ -461,6 +476,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
       }
     }
   };
+  host.addEventListener('pointermove', onHostPointerMove);
+  host.addEventListener('pointerleave', onHostPointerLeave);
   canvas.addEventListener('pointerdown', onPointerDown);
   canvas.addEventListener('pointerup', onPointerUp);
 
@@ -474,6 +491,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const v = o.vista.current;
     if (!v) return;
     const f =
+      (v.apagado ? 'OFF' : 'ON') +
+      '|' +
       v.cliente.nombre +
       '|' +
       v.fuentes.map((s) => s.id).join() +
@@ -483,23 +502,38 @@ export function montarGrafo(o: OptsGrafo): () => void {
       firma = f;
       construir(v);
     }
+    const esApagado = Boolean(v.apagado);
     const caida = (id: string): boolean | undefined => v.fuentes.find((s) => s.id === id)?.caida;
     const el = ahora - o.t0.current;
     const lit = o.lit.current;
 
-    // Animar anillos orbitales y polvo estelar ASTRA
-    if (!o.reducido) {
+    // Suavizar la rotación leve guiada por el cursor del mouse y el desplazamiento lateral al abrir/cerrar la card
+    rotActualX += (targetRotX - rotActualX) * 0.08;
+    rotActualY += (targetRotY - rotActualY) * 0.08;
+    escena.rotation.x = rotActualX;
+    escena.rotation.y = rotActualY;
+
+    const anchoDrawerPx = Math.min(456, wHost * 0.42);
+    const fracDesp = (anchoDrawerPx * 0.45) / Math.max(1, wHost);
+    const semianchoMundo =
+      Math.tan((cam.fov * Math.PI) / 360) * cam.position.length() * cam.aspect;
+    const targetDespX = !esApagado && o.abierta?.current ? -semianchoMundo * fracDesp * 2 : 0;
+    despActualX += (targetDespX - despActualX) * (o.reducido ? 1 : 0.09);
+    escena.position.x = despActualX;
+
+    // Animar anillos orbitales y polvo estelar ASTRA de forma suave
+    if (!o.reducido && !esApagado) {
       const seg = ahora * 0.001;
-      anilloCore1.rotation.z = seg * 0.65;
-      anilloCore1.rotation.x = 0.45 + Math.sin(seg * 0.8) * 0.15;
-      anilloCore2.rotation.z = -seg * 0.52;
-      anilloCore2.rotation.y = 0.35 + Math.cos(seg * 0.7) * 0.15;
-      anilloFuentes.rotation.z = seg * 0.14;
-      anilloNodos.rotation.z = -seg * 0.09;
-      anilloExterior.rotation.z = seg * 0.06;
-      nubeEstrellas.rotation.z = seg * 0.04;
-      centro.corona.rotation.y = seg * 0.45;
-      centro.corona.rotation.x = seg * 0.3;
+      anilloCore1.rotation.z = seg * 0.28;
+      anilloCore1.rotation.x = 0.45 + Math.sin(seg * 0.5) * 0.08;
+      anilloCore2.rotation.z = -seg * 0.22;
+      anilloCore2.rotation.y = 0.35 + Math.cos(seg * 0.45) * 0.08;
+      anilloFuentes.rotation.z = seg * 0.05;
+      anilloNodos.rotation.z = -seg * 0.035;
+      anilloExterior.rotation.z = seg * 0.025;
+      nubeEstrellas.rotation.z = seg * 0.018;
+      centro.corona.rotation.y = seg * 0.22;
+      centro.corona.rotation.x = seg * 0.15;
     }
 
     if (pulsosRef !== o.pulsos.current) {
@@ -525,9 +559,9 @@ export function montarGrafo(o: OptsGrafo): () => void {
     }
     pulsosRef.forEach((p, i) => {
       const tInicial = (el - p.t0) / p.dur;
-      if (tInicial > 1 && p.dst && !caida(p.src)) lit.add(p.dst);
+      if (!esApagado && tInicial > 1 && p.dst && !caida(p.src)) lit.add(p.dst);
       const m = esferas[i]!;
-      if (o.reducido || caida(p.src)) {
+      if (o.reducido || esApagado || caida(p.src)) {
         m.visible = false;
         return;
       }
@@ -547,6 +581,11 @@ export function montarGrafo(o: OptsGrafo): () => void {
     });
 
     for (const a of aristas) {
+      if (esApagado) {
+        a.mat.color.copy(color(T.borde));
+        a.mat.opacity = 0.18;
+        continue;
+      }
       const hl = Boolean(
         (a.dato && (o.sel.current === a.dato || o.hover.current === a.dato)) ||
           (a.fuente && (o.sel.current === a.fuente || o.hover.current === a.fuente)),
@@ -558,26 +597,50 @@ export function montarGrafo(o: OptsGrafo): () => void {
 
     for (const s of v.fuentes) {
       const n = nodos.get(s.id)!;
-      const selSrc = o.sel.current === s.id || o.hover.current === s.id;
+      const haloMat = n.halo.material as THREE.MeshBasicMaterial;
+      if (esApagado) {
+        (n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(T.apagado));
+        haloMat.color.copy(color(T.apagado));
+        n.halo.visible = false;
+        n.mesh.scale.setScalar(0.92);
+        n.txt.style.color = css(T.mudo);
+        n.txt.style.fontWeight = '600';
+        n.el.style.borderColor = 'rgba(255,255,255,0.12)';
+        if (n.sub) {
+          n.sub.style.color = css(T.mudo);
+          if (n.sub.textContent !== 'en espera') n.sub.textContent = 'en espera';
+        }
+        continue;
+      }
+      const esSelSrc = o.sel.current === s.id;
+      const esHoverSrc = o.hover.current === s.id;
+      const selSrc = esSelSrc || esHoverSrc;
       const col = s.caida ? T.bad : selSrc ? T.naranja : n.colorBase;
       (n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(col));
-      (n.halo.material as THREE.MeshBasicMaterial).color.copy(color(col));
+      haloMat.color.copy(color(col));
       n.halo.visible = true;
-      const respira = o.reducido ? 0 : Math.sin(ahora * 0.0032 + n.fase) * 0.1;
-      n.mesh.scale.setScalar(1 + (selSrc ? 0.34 : 0) + respira * 0.3);
-      n.halo.scale.setScalar(1.1 + (selSrc ? 0.35 : 0) + respira);
+      const respira = o.reducido ? 0 : Math.sin(ahora * 0.0032 + n.fase) * 0.08;
+      // Aura discreta por defecto y grande cuando la fuente está seleccionada
+      haloMat.opacity = esSelSrc ? 0.36 : esHoverSrc ? 0.2 : 0.11;
+      n.mesh.scale.setScalar(
+        1 + (esSelSrc ? 0.38 : esHoverSrc ? 0.14 : 0) + respira * (esSelSrc ? 0.3 : 0.15),
+      );
+      n.halo.scale.setScalar(
+        esSelSrc ? 1.38 + respira : esHoverSrc ? 0.8 + respira * 0.35 : 0.62 + respira * 0.2,
+      );
       if (!o.reducido) {
-        const dz = Math.sin(ahora * 0.002 + n.fase) * 0.14;
+        const dz = Math.sin(ahora * 0.002 + n.fase) * 0.12;
         n.mesh.position.z = n.baseZ + dz;
         n.halo.position.z = n.baseZ + dz;
       }
       n.txt.style.color = '#FFFFFF';
-      n.txt.style.fontWeight = selSrc ? '800' : '700';
+      n.txt.style.fontWeight = esSelSrc ? '800' : '700';
       n.el.style.borderColor = s.caida
         ? css(T.bad)
         : selSrc
           ? css(T.naranja)
           : `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.45)`;
+      n.el.style.boxShadow = esSelSrc ? '0 0 14px rgba(255,167,38,0.45)' : 'none';
       if (n.sub) {
         n.sub.style.color = css(s.caida ? T.bad : n.colorBase);
         const t = s.caida ? 'no disponible' : s.d;
@@ -587,10 +650,24 @@ export function montarGrafo(o: OptsGrafo): () => void {
 
     for (const d of v.nodos) {
       const n = nodos.get(d.id)!;
+      const haloMat = n.halo.material as THREE.MeshBasicMaterial;
+      if (esApagado) {
+        (n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(T.apagado));
+        haloMat.color.copy(color(T.apagado));
+        n.halo.visible = false;
+        n.mesh.scale.setScalar(0.9);
+        n.txt.style.color = css(T.mudo);
+        n.txt.style.fontWeight = '600';
+        n.el.style.borderColor = 'rgba(255,255,255,0.10)';
+        n.el.style.boxShadow = 'none';
+        continue;
+      }
       const restringido = d.estado === 'restringido';
       const caido = d.estado === 'caido';
       const on = lit.has(d.id) && d.estado === 'ok';
-      const sel = o.sel.current === d.id || o.hover.current === d.id;
+      const esSel = o.sel.current === d.id;
+      const esHover = o.hover.current === d.id;
+      const sel = esSel || esHover;
       const sem = Boolean(o.sem.current?.hits.length && d.sem);
       const col = caido
         ? T.bad
@@ -602,13 +679,22 @@ export function montarGrafo(o: OptsGrafo): () => void {
               ? n.colorBase
               : T.apagado;
       (n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(col));
-      (n.halo.material as THREE.MeshBasicMaterial).color.copy(color(col));
+      haloMat.color.copy(color(col));
       n.halo.visible = on || sel || restringido || caido;
-      const respira = o.reducido ? 0 : Math.sin(ahora * 0.0036 + n.fase) * 0.1;
-      n.mesh.scale.setScalar(1 + (sel ? 0.5 : 0) + (sem ? 0.28 : 0) + respira * 0.25);
-      n.halo.scale.setScalar(1.08 + (sel ? 0.4 : 0) + respira);
+      const respira = o.reducido ? 0 : Math.sin(ahora * 0.0036 + n.fase) * 0.08;
+      // Aura pequeña en reposo y grande únicamente cuando el nodo está seleccionado
+      haloMat.opacity = esSel ? 0.38 : esHover ? 0.2 : 0.1;
+      n.mesh.scale.setScalar(
+        1 +
+          (esSel ? 0.52 : esHover ? 0.16 : 0) +
+          (sem ? 0.22 : 0) +
+          respira * (esSel ? 0.28 : 0.14),
+      );
+      n.halo.scale.setScalar(
+        esSel ? 1.44 + respira : esHover ? 0.8 + respira * 0.35 : 0.6 + respira * 0.18,
+      );
       if (!o.reducido) {
-        const dz = Math.sin(ahora * 0.0022 + n.fase) * 0.16;
+        const dz = Math.sin(ahora * 0.0022 + n.fase) * 0.13;
         n.mesh.position.z = n.baseZ + dz;
         n.halo.position.z = n.baseZ + dz;
       }
@@ -619,7 +705,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
           : on || sel
             ? '#FFFFFF'
             : css(T.mudo);
-      n.txt.style.fontWeight = sel ? '800' : '700';
+      n.txt.style.fontWeight = esSel ? '800' : '700';
       n.el.style.borderColor = sel
         ? css(T.naranja)
         : caido
@@ -629,16 +715,27 @@ export function montarGrafo(o: OptsGrafo): () => void {
             : on
               ? `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.42)`
               : 'rgba(255,255,255,0.12)';
-      n.el.style.boxShadow = sel ? '0 0 14px rgba(255,167,38,0.45)' : 'none';
+      n.el.style.boxShadow = esSel ? '0 0 14px rgba(255,167,38,0.45)' : 'none';
     }
 
-    ini.textContent = v.cliente.nombre
-      .split(' ')
-      .slice(0, 2)
-      .map((p) => p[0])
-      .join('');
-    etNom.textContent = v.cliente.nombre;
-    centro.halo.scale.setScalar(1 + (o.reducido ? 0 : Math.sin(ahora / 340) * 0.12));
+    if (esApagado) {
+      (centro.mesh.material as THREE.MeshBasicMaterial).color.copy(color(T.apagado));
+      centro.halo.visible = false;
+      ini.style.color = css(T.mudo);
+      ini.textContent = '360';
+      etNom.textContent = 'Sin cliente seleccionado';
+    } else {
+      (centro.mesh.material as THREE.MeshBasicMaterial).color.copy(color(T.naranja));
+      centro.halo.visible = true;
+      ini.style.color = css(T.centroTexto);
+      ini.textContent = v.cliente.nombre
+        .split(' ')
+        .slice(0, 2)
+        .map((p) => p[0])
+        .join('');
+      etNom.textContent = v.cliente.nombre;
+      centro.halo.scale.setScalar(0.88 + (o.reducido ? 0 : Math.sin(ahora / 340) * 0.08));
+    }
 
     ctl.update();
     r.render(escena, cam);
@@ -648,13 +745,13 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const h = canvas.clientHeight;
     if (w && h) {
       const pos: Record<string, { x: number; y: number; r: number }> = {};
-      const pr = (p: THREE.Vector3, rad: number): { x: number; y: number; r: number } => {
-        tmp.copy(p).project(cam);
+      const pr = (obj: THREE.Object3D, rad: number): { x: number; y: number; r: number } => {
+        obj.getWorldPosition(tmp).project(cam);
         return { x: ((tmp.x + 1) / 2) * w, y: ((1 - tmp.y) / 2) * h, r: rad };
       };
-      pos['c'] = pr(new THREE.Vector3(), 26);
+      pos['c'] = pr(centro.mesh, 26);
       nodos.forEach((n, id) => {
-        pos[id] = pr(n.pos, n.r > 0.35 ? 14 : 10);
+        pos[id] = pr(n.mesh, n.r > 0.35 ? 14 : 10);
       });
       o.pos.current = pos;
     }
@@ -663,6 +760,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
 
   return () => {
     parar();
+    host.removeEventListener('pointermove', onHostPointerMove);
+    host.removeEventListener('pointerleave', onHostPointerLeave);
     canvas.removeEventListener('pointerdown', onPointerDown);
     canvas.removeEventListener('pointerup', onPointerUp);
     ro.disconnect();
