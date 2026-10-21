@@ -40,6 +40,17 @@ export interface PerfilRolPrototipoAtc {
   readonly resumenPerspectiva: string;
 }
 
+export interface FraseAnclaEvento {
+  readonly id: string;
+  /** Situación en la que se usa la frase («Legal»). */
+  readonly categoria: string;
+  readonly tono: 'info' | 'warning' | 'danger' | 'success' | 'neutral';
+  /** Lo que ocurre si se aplica (deriva a la Estación 4 Legal). */
+  readonly alerta?: string;
+  readonly momento: string;
+  readonly frase: string;
+}
+
 export interface PasoFlujoConfig {
   nombre: string;
   responsable: string;
@@ -583,6 +594,8 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
 @Injectable({ providedIn: 'root' })
 export class EstadoPrototipoAtcService {
   readonly rolActivo = signal<RolPrototipoAtc>('GESTOR');
+  /** Razón social que filtra toda la operación (panel de Simulación). Cada tabla afectada la muestra como chip. */
+  readonly empresaFiltro = signal<string>('');
 
   readonly perfilActivo = computed<PerfilRolPrototipoAtc>(
     () => ROLES_PROTOTIPO_ATC.find((r) => r.id === this.rolActivo()) ?? ROLES_PROTOTIPO_ATC[0],
@@ -1325,39 +1338,52 @@ export class EstadoPrototipoAtcService {
   ]);
 
   /* ── 6. EntregaFest en vivo y Buses del Entrega Fest ── */
-  readonly frasesAnclaEvento: readonly { id: string; momento: string; frase: string }[] = [
+  readonly frasesAnclaEvento: readonly FraseAnclaEvento[] = [
     {
       id: 'fa-1',
+      categoria: 'Escucha',
+      tono: 'info',
       momento: '1. Recepción y escucha activa',
       frase:
         '«Bienvenido a EntregaFest. Tomo nota exacta de su solicitud para darle seguimiento con código verificable hoy mismo.»',
     },
     {
       id: 'fa-2',
+      categoria: 'Contención',
+      tono: 'warning',
       momento: '2. Contención sin debate en fila',
       frase:
         '«Comprendo su malestar; mi función en esta mesa es asegurar que su caso quede registrado con prioridad y pase al especialista indicado.»',
     },
     {
       id: 'fa-3',
+      categoria: 'Legal',
+      tono: 'danger',
+      alerta: 'Deriva a la Estación 4 Legal',
       momento: '3. Ante imputación penal o amenaza pública',
       frase:
         '«Para brindarle todas las garantías legales y revisar su expediente al detalle, lo acompaño de inmediato a la Estación 4 con nuestro apoderado legal.»',
     },
     {
       id: 'fa-4',
+      categoria: 'Cronograma',
+      tono: 'info',
       momento: '4. Consulta de cronograma o letra en tránsito',
       frase:
         '«Dejamos registrado su comprobante con hora de recepción para que Cobranza emita la constancia conciliada en Mi Portal.»',
     },
     {
       id: 'fa-5',
+      categoria: 'Acta de entrega',
+      tono: 'neutral',
       momento: '5. Observación en acta de entrega',
       frase:
         '«Cada observación queda asentada en el Acta de Entrega con fecha de inspección técnica garantizada por Postventa.»',
     },
     {
       id: 'fa-6',
+      categoria: 'Cierre',
+      tono: 'success',
       momento: '6. Cierre con número de seguimiento',
       frase:
         '«Este es su número de ticket oficial; puede consultar cada avance desde su celular en Mi Portal.»',

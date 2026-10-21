@@ -1,0 +1,57 @@
+/* Protocolo de contención: línea de tiempo de frases ancla. Solo tokens --aybar-*. */
+:host { display: block; }
+
+.pc { display: grid; gap: var(--aybar-space-6); margin: 0; padding: 0; list-style: none; }
+
+.pc__paso {
+  --pc-c: var(--aybar-color-border-strong);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--aybar-space-8) minmax(0, 1fr);
+  gap: var(--aybar-space-3);
+}
+.pc__paso[data-tono='info'] { --pc-c: var(--aybar-color-feedback-info-border); }
+.pc__paso[data-tono='warning'] { --pc-c: var(--aybar-color-feedback-warning-border); }
+.pc__paso[data-tono='danger'] { --pc-c: var(--aybar-color-feedback-danger-border); }
+.pc__paso[data-tono='success'] { --pc-c: var(--aybar-color-feedback-success-border); }
+
+/* Nodo con anillo del color de la situación; el riel baja hasta el nodo siguiente. */
+.pc__nodo {
+  display: grid;
+  place-items: center;
+  inline-size: var(--aybar-space-8);
+  aspect-ratio: 1;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-brand);
+  color: var(--aybar-color-fg-on-brand);
+  font-weight: var(--aybar-font-weight-bold);
+  box-shadow: 0 0 0 2px var(--pc-c);
+}
+.pc__paso:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset: var(--aybar-space-8) auto calc(var(--aybar-space-6) * -1) calc(var(--aybar-space-4) - 1px);
+  inline-size: 2px;
+  background: var(--aybar-color-border-strong);
+}
+
+.pc__cuerpo { display: grid; gap: var(--aybar-space-2); min-inline-size: 0; }
+.pc__cab { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); min-block-size: var(--aybar-space-8); }
+.pc__momento { margin: 0; color: var(--aybar-color-fg-default); font-size: var(--aybar-font-size-sm); font-weight: var(--aybar-font-weight-semibold); }
+
+/* La frase, como cita: barra del color de la situación. */
+.pc__frase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--aybar-space-2) var(--aybar-space-4);
+  margin: 0;
+  padding: var(--aybar-space-3) var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-inline-start: 4px solid var(--pc-c);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-raised);
+}
+.pc__frase p { flex: 1 1 16rem; margin: 0; color: var(--aybar-color-fg-default); font-size: var(--aybar-font-size-sm); font-style: italic; line-height: var(--aybar-font-leading-relaxed); }
+.pc__paso[data-tono='danger'] .pc__frase { background: var(--aybar-color-feedback-danger-bg); border-color: var(--aybar-color-feedback-danger-border); }

@@ -644,7 +644,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                           <ay-button tamano="sm" variante="ghost" (click)="reasignarMenorCarga(tk.id)">
                             Reasignar gestor
                           </ay-button>
-                          <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit('AIN-000482')">
+                          <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
                             Ver expediente
                           </ay-button>
                         </div>

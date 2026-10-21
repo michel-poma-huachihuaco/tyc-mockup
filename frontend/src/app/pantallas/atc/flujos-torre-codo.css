@@ -1,0 +1,58 @@
+/*
+ * Torre CX: estaciones por fila (--ft-n) y codo de retorno del último paso de cada fila al primero de la
+ * siguiente. Cabe una estación de 14rem más su enlace de 3rem por columna; con la cabecera a la izquierda
+ * (≥60rem) la pista pierde 19rem. Los umbrales de container query no admiten var().
+ */
+.ft__paso::before,
+.ft__paso::after {
+  content: var(--ft-fin, none);
+  position: absolute;
+}
+
+/* Tramo horizontal: del centro del último paso al centro del primero de la fila, bajando media separación. */
+.ft__paso::after {
+  inset: 100% 50% auto auto;
+  inline-size: calc((var(--ft-n) - 1) * (100% + var(--ft-gap)));
+  block-size: calc(var(--aybar-space-8) / 2);
+  border-inline-end: 2px solid var(--aybar-color-border-strong);
+  border-block-end: 2px solid var(--aybar-color-border-strong);
+}
+
+/* Bajada con flecha sobre el primer paso de la fila siguiente. */
+.ft__paso::before {
+  content: var(--ft-fin-flecha, none);
+  inset: calc(100% + var(--aybar-space-8) / 2 - 2px) auto auto calc(50% - 0.5rem - (var(--ft-n) - 1) * (100% + var(--ft-gap)));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  inline-size: 1rem;
+  block-size: calc(var(--aybar-space-8) / 2 + 2px);
+  background: linear-gradient(var(--aybar-color-border-strong), var(--aybar-color-border-strong)) center top / 2px 100% no-repeat;
+  color: var(--aybar-color-border-strong);
+  font-size: 0.625rem;
+  line-height: 0.6;
+}
+
+@container ft-flujo ((36rem <= inline-size < 50rem) or (60rem <= inline-size < 67rem)) {
+  .ft__pista { --ft-n: 2; }
+  .ft__paso:nth-child(2n):not(:last-child) { --ft-fin: ''; --ft-fin-flecha: '▼'; }
+  .ft__paso:nth-child(2n) .ft__enlace { display: none; }
+}
+
+@container ft-flujo ((50rem <= inline-size < 60rem) or (67rem <= inline-size < 84rem)) {
+  .ft__pista { --ft-n: 3; }
+  .ft__paso:nth-child(3n):not(:last-child) { --ft-fin: ''; --ft-fin-flecha: '▼'; }
+  .ft__paso:nth-child(3n) .ft__enlace { display: none; }
+}
+
+@container ft-flujo (84rem <= inline-size < 101rem) {
+  .ft__pista { --ft-n: 4; }
+  .ft__paso:nth-child(4n):not(:last-child) { --ft-fin: ''; --ft-fin-flecha: '▼'; }
+  .ft__paso:nth-child(4n) .ft__enlace { display: none; }
+}
+
+@container ft-flujo (inline-size >= 101rem) {
+  .ft__pista { --ft-n: 5; }
+  .ft__paso:nth-child(5n):not(:last-child) { --ft-fin: ''; --ft-fin-flecha: '▼'; }
+  .ft__paso:nth-child(5n) .ft__enlace { display: none; }
+}

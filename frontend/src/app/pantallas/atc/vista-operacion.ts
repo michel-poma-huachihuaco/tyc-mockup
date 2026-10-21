@@ -7,6 +7,7 @@ import {
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import {
   AyAlert,
@@ -20,7 +21,6 @@ import {
   AyCheckbox,
   AyDivider,
   AyEmptyState,
-  AyFilterControl,
   AyForm,
   AyFormField,
   AyFormGroup,
@@ -34,22 +34,15 @@ import {
   AyPagination,
   AyProgressBar,
   AyRow,
-  AySearchInput,
-  AySegmentedControl,
   AySelect,
   AyStack,
   AyStatistic,
   AyTable,
-  AyTableToolbar,
   AyTextarea,
   AyText,
   AyTimeline,
-  AyToggleButton,
   type AyColumna,
-  type AyFilterOpcion,
-  type AyFilterValor,
   type AyOpcionSelect,
-  type AySegmentoOpcion,
   type AyTimelineEvento,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
@@ -74,11 +67,16 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
+import { BarraFiltrosComponent } from './barra-filtros';
+import { VacioFiltrosComponent } from './vacio-filtros';
+import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 @Component({
   selector: 'app-vista-operacion',
   standalone: true,
   imports: [
+    BarraFiltrosComponent,
+    VacioFiltrosComponent,
     AyAlert,
     AyBadge,
     AyButton,
@@ -90,7 +88,6 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
     AyCheckbox,
     AyDivider,
     AyEmptyState,
-    AyFilterControl,
     AyForm,
     AyFormField,
     AyFormGroup,
@@ -104,17 +101,13 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
     AyPagination,
     AyProgressBar,
     AyRow,
-    AySearchInput,
-    AySegmentedControl,
     AySelect,
     AyStack,
     AyStatistic,
     AyTable,
-    AyTableToolbar,
     AyTextarea,
     AyText,
     AyTimeline,
-    AyToggleButton,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -170,101 +163,7 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
         <div ayStack gap="2">
           <ay-card variante="elevated" superficie="solid">
             <ay-card-body padding="sm" gap="md">
-              <ay-table-toolbar
-                [recuento]="ticketsFiltrados().length"
-                etiquetaElemento="tickets"
-              >
-                <ay-search-input
-                  ayBusqueda
-                  etiqueta="Buscar ticket, cliente o lote"
-                  placeholder="N.º ticket, cliente, DNI, proyecto o canal…"
-                  size="sm"
-                  [valor]="busquedaGeneral()"
-                  (valorChange)="busquedaGeneral.set($event)"
-                />
-                <ng-container ayFiltros>
-                  <ay-filter-control
-                    etiqueta="Empresa"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlEmpresa()"
-                    [valor]="filtroEmpresa() || undefined"
-                    (valorChange)="alFiltrarEmpresa($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Canal"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlCanal()"
-                    [valor]="filtroCanal() || undefined"
-                    (valorChange)="alFiltrarCanal($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Tipo"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlTipo()"
-                    [valor]="filtroTipo() || undefined"
-                    (valorChange)="alFiltrarTipo($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Prioridad"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlPrioridad()"
-                    [valor]="filtroPrioridad() || undefined"
-                    (valorChange)="alFiltrarPrioridad($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Área"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlArea()"
-                    [valor]="filtroArea() || undefined"
-                    (valorChange)="alFiltrarArea($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Gestor"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlGestor()"
-                    [valor]="filtroGestor() || undefined"
-                    (valorChange)="alFiltrarGestor($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="Estado"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlEstado"
-                    [valor]="filtroEstado() || undefined"
-                    (valorChange)="alFiltrarEstado($event)"
-                  />
-                  <ay-filter-control
-                    etiqueta="SLA"
-                    tipo="single"
-                    size="sm"
-                    [opciones]="opcionesFiltroControlSla"
-                    [valor]="filtroColSla() || undefined"
-                    (valorChange)="alFiltrarSla($event)"
-                  />
-                  <ay-toggle-button
-                    tamano="sm"
-                    [(presionado)]="soloConRayo"
-                  >
-                    Solo prioridad Rayo
-                  </ay-toggle-button>
-                </ng-container>
-                @if (hayFiltrosActivos()) {
-                  <ay-button
-                    ayAcciones
-                    tamano="sm"
-                    variante="ghost"
-                    (click)="limpiarFiltrosTabla()"
-                  >
-                    Limpiar filtros
-                  </ay-button>
-                }
-              </ay-table-toolbar>
+              <app-barra-filtros [filtros]="filtrosBandeja" [conFiltroEmpresa]="true" />
 
               <ay-table
                 leyenda="Bandeja de tickets de atención multicanal"
@@ -383,19 +282,7 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
                     }
                   </div>
                 </ng-template>
-                <ay-empty-state
-                  ayVacio
-                  variante="no-results"
-                  size="compact"
-                  titulo="Sin tickets que coincidan"
-                  descripcion="Ajusta o limpia los filtros activos para ver toda la bandeja."
-                >
-                  <div ayAcciones>
-                    <ay-button tamano="sm" variante="secondary" (click)="limpiarFiltrosTabla()">
-                      Limpiar filtros
-                    </ay-button>
-                  </div>
-                </ay-empty-state>
+                <app-vacio-filtros ayVacio [filtros]="filtrosBandeja" elemento="ticket" />
               </ay-table>
 
               <ay-pagination
@@ -568,23 +455,17 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
                 Registro cronológico de aperturas, primeras respuestas en SLA, derivaciones 6/6, llamadas CTI y resoluciones ejecutadas hoy.
               </span>
             </div>
-            <ay-segmented-control
-              etiqueta="Filtrar acciones de hoy"
-              size="sm"
-              [opciones]="opcionesFiltroAccionesHoy"
-              [valor]="filtroCategoriaAccionHoy()"
-              (valorChange)="filtroCategoriaAccionHoy.set($event)"
-            />
           </div>
 
           <div ayGrid [columnas]="3" gap="md">
             <div class="pl-atc-col-span-2">
               <ay-card variante="elevated" superficie="solid">
-                <ay-card-body padding="sm">
+                <ay-card-body padding="sm" gap="sm">
+                  <app-barra-filtros [filtros]="filtrosAccionesHoy" />
                   <ay-table
                     leyenda="Acciones y avances realizados hoy por el usuario"
                     [columnas]="columnasAccionesHoy"
-                    [filas]="accionesHoyFiltradas()"
+                    [filas]="filtrosAccionesHoy.filtradas()"
                     [rayada]="true"
                   >
                     <ng-template ayCelda="hora" let-fila>
@@ -619,6 +500,7 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
                         Abrir ticket
                       </ay-button>
                     </ng-template>
+                    <app-vacio-filtros ayVacio [filtros]="filtrosAccionesHoy" elemento="registro" />
                   </ay-table>
                 </ay-card-body>
               </ay-card>
@@ -884,9 +766,9 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
             <div class="pl-atc-col-span-2">
               <ay-card variante="elevated" superficie="solid">
                 <ay-card-body padding="md" gap="md">
-                  <ay-form (enviar)="guardarNuevoTicket()">
+                  <ay-form class="pl-atc-form-ancho" (enviar)="guardarNuevoTicket()">
                     <div ayStack gap="4">
-                      <div ayGrid [anchoMinimo]="'15rem'" gap="md">
+                      <div ayGrid [anchoMinimo]="'15rem'" gap="md" class="pl-atc-fila-campos">
                         <ay-form-field etiqueta="Empresa (razón social y RUC)" obligatorio>
                           <ay-select
                             [opciones]="opcionesEmpresasForm"
@@ -970,7 +852,7 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
                         </ay-form-field>
                       }
 
-                      <div ayGrid [columnas]="2" gap="md">
+                      <div ayGrid [columnas]="2" gap="md" class="pl-atc-fila-campos">
                         <ay-form-field etiqueta="Resumen (una línea que se entienda en la bandeja)" obligatorio>
                           <ay-textarea
                             [filas]="3"
@@ -1065,6 +947,9 @@ import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
             [titulo]="t.num + ' · ' + (estadoEs[t.state] ?? t.state)"
             [descripcion]="t.summary"
           >
+            <ay-button ayAcciones tamano="sm" variante="ghost" (click)="volver.emit()">
+              ← Volver a {{ volverA() }}
+            </ay-button>
             @if (t.rayo) {
               <ay-badge ayEstado size="sm" tono="warning">PRIORIDAD RAYO</ay-badge>
             }
@@ -1412,6 +1297,8 @@ export class VistaOperacionComponent {
   readonly mostrarHu = input<boolean>(false);
   readonly filtroClienteExterno = input<string>('');
 
+  readonly volverA = input<string>('Bandeja de tickets');
+  readonly volver = output<void>();
   readonly seleccionarTicket = output<string>();
   readonly irANuevo = output<void>();
   readonly irA360 = output<void>();
@@ -1439,67 +1326,6 @@ export class VistaOperacionComponent {
     { clave: 'acciones', cabecera: 'Acciones', alineacion: 'end', ancho: '16.5rem' },
   ];
 
-  readonly opcionesFiltroControlEmpresa = computed<AyFilterOpcion[]>(() =>
-    EMPRESAS_AYBAR.map((e) => ({
-      valor: e.id,
-      etiqueta: `${e.id} · ${e.nombre}`,
-      recuento: this.tickets().filter((t) => t.co === e.id).length,
-    })),
-  );
-
-  readonly opcionesFiltroControlCanal = computed<AyFilterOpcion[]>(() =>
-    CANALES_ATC.map((c) => ({
-      valor: c,
-      etiqueta: c,
-      recuento: this.tickets().filter((t) => t.ch === c).length,
-    })),
-  );
-
-  readonly opcionesFiltroControlTipo = computed<AyFilterOpcion[]>(() =>
-    TIPOS_TICKET.map((tp) => ({
-      valor: tp.id,
-      etiqueta: `${tp.id} · ${tp.nombre}`,
-      recuento: this.tickets().filter((t) => t.type === tp.id).length,
-    })),
-  );
-
-  readonly opcionesFiltroControlPrioridad = computed<AyFilterOpcion[]>(() =>
-    PRIORIDADES_TICKET.map((p) => ({
-      valor: p.id,
-      etiqueta: p.nombre,
-      recuento: this.tickets().filter((t) => t.prio === p.id).length,
-    })),
-  );
-
-  readonly opcionesFiltroControlArea = computed<AyFilterOpcion[]>(() =>
-    AREAS_ATC.map((a) => ({
-      valor: a,
-      etiqueta: a,
-      recuento: this.tickets().filter((t) => t.area === a).length,
-    })),
-  );
-
-  readonly opcionesFiltroControlGestor = computed<AyFilterOpcion[]>(() => {
-    const gestores = Array.from(
-      new Set(this.tickets().map((t) => t.owner ?? 'SIN_ASIGNAR')),
-    );
-    return gestores.map((g) => ({
-      valor: g,
-      etiqueta: g === 'SIN_ASIGNAR' ? 'Sin asignar (Cola)' : g,
-      recuento: this.tickets().filter((t) => (t.owner ?? 'SIN_ASIGNAR') === g).length,
-    }));
-  });
-
-  readonly opcionesFiltroControlEstado: readonly AyFilterOpcion[] = ESTADOS_TICKET.map((st) => ({
-    valor: st,
-    etiqueta: ESTADO_ES[st] ?? st,
-  }));
-
-  readonly opcionesFiltroControlSla: readonly AyFilterOpcion[] = [
-    { valor: 'success', etiqueta: 'En plazo / Cumplido' },
-    { valor: 'warning', etiqueta: 'Por vencer (Alerta)' },
-    { valor: 'danger', etiqueta: 'Vencido / Crítico' },
-  ];
 
   readonly opcionesCeseOrigen: AyOpcionSelect[] = [
     { value: 'C. Rojas', label: 'C. Rojas (ATC)' },
@@ -1553,25 +1379,7 @@ export class VistaOperacionComponent {
     label: m,
   }));
 
-  readonly busquedaGeneral = signal<string>('');
-  readonly filtroEmpresa = signal<string>('');
-  readonly filtroCanal = signal<string>('');
-  readonly filtroTipo = signal<string>('');
-  readonly filtroPrioridad = signal<string>('');
-  readonly filtroArea = signal<string>('');
-  readonly filtroGestor = signal<string>('');
-  readonly filtroEstado = signal<string>('');
-  readonly soloConRayo = signal<boolean>(false);
-  readonly filtroColSla = signal<string>('');
 
-  readonly filtroCategoriaAccionHoy = signal<string>('TODAS');
-  readonly opcionesFiltroAccionesHoy: AySegmentoOpcion[] = [
-    { valor: 'TODAS', etiqueta: 'Todas las acciones' },
-    { valor: 'RESPUESTA_SLA', etiqueta: '1.ª Respuesta SLA' },
-    { valor: 'RESOLUCION', etiqueta: 'Resoluciones' },
-    { valor: 'DERIVACION', etiqueta: 'Derivaciones 6/6' },
-    { valor: 'LLAMADA_CTI', etiqueta: 'Llamadas CTI' },
-  ];
 
   readonly columnasAccionesHoy: readonly AyColumna[] = [
     { clave: 'hora', cabecera: 'Hora', ancho: '6rem' },
@@ -1658,11 +1466,29 @@ export class VistaOperacionComponent {
     },
   ]);
 
-  readonly accionesHoyFiltradas = computed(() => {
-    const cat = this.filtroCategoriaAccionHoy();
-    if (cat === 'TODAS') return this.accionesHoy();
-    return this.accionesHoy().filter((a) => a.categoria === cat);
-  });
+  readonly filtrosAccionesHoy = crearFiltrosTabla(
+    this.accionesHoy,
+    {
+      clave: 'acciones-hoy',
+      etiquetaElemento: 'acciones',
+      filtros: [
+        {
+          id: 'categoria',
+          etiqueta: 'Filtrar acciones de hoy',
+          tipo: 'segmento',
+          etiquetaTodas: 'Todas las acciones',
+          valorDe: (a) => a.categoria,
+          opciones: [
+            { valor: 'RESPUESTA_SLA', etiqueta: '1.ª Respuesta SLA' },
+            { valor: 'RESOLUCION', etiqueta: 'Resoluciones' },
+            { valor: 'DERIVACION', etiqueta: 'Derivaciones 6/6' },
+            { valor: 'LLAMADA_CTI', etiqueta: 'Llamadas CTI' },
+          ],
+        },
+      ],
+    },
+    inject(EstadoFiltrosTablas),
+  );
 
   readonly hitosTuDia: AyTimelineEvento[] = [
     {
@@ -1841,8 +1667,13 @@ export class VistaOperacionComponent {
     effect(() => {
       const cliExt = this.filtroClienteExterno();
       if (cliExt !== undefined && cliExt.trim()) {
-        this.busquedaGeneral.set(cliExt);
+        this.filtrosBandeja.setBusqueda(cliExt);
       }
+    });
+    // Cualquier cambio de búsqueda o filtro vuelve a la primera página.
+    effect(() => {
+      this.filtrosBandeja.huella();
+      untracked(() => this.paginaBandeja.set(1));
     });
     effect(() => {
       const maxPag = this.totalPaginasBandeja();
@@ -1920,65 +1751,7 @@ export class VistaOperacionComponent {
     };
   }
 
-  alFiltrarEmpresa(valor: AyFilterValor | undefined): void {
-    this.filtroEmpresa.set(typeof valor === 'string' ? valor : '');
-  }
 
-  alFiltrarCanal(valor: AyFilterValor | undefined): void {
-    this.filtroCanal.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarTipo(valor: AyFilterValor | undefined): void {
-    this.filtroTipo.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarPrioridad(valor: AyFilterValor | undefined): void {
-    this.filtroPrioridad.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarArea(valor: AyFilterValor | undefined): void {
-    this.filtroArea.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarGestor(valor: AyFilterValor | undefined): void {
-    this.filtroGestor.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarEstado(valor: AyFilterValor | undefined): void {
-    this.filtroEstado.set(typeof valor === 'string' ? valor : '');
-  }
-
-  alFiltrarSla(valor: AyFilterValor | undefined): void {
-    this.filtroColSla.set(typeof valor === 'string' ? valor : '');
-  }
-
-  readonly hayFiltrosActivos = computed(() =>
-    Boolean(
-      this.busquedaGeneral().trim() ||
-      this.filtroEmpresa() ||
-      this.filtroCanal() ||
-      this.filtroTipo() ||
-      this.filtroPrioridad() ||
-      this.filtroArea() ||
-      this.filtroGestor() ||
-      this.filtroEstado() ||
-      this.soloConRayo() ||
-      this.filtroColSla(),
-    ),
-  );
-
-  limpiarFiltrosTabla(): void {
-    this.busquedaGeneral.set('');
-    this.filtroEmpresa.set('');
-    this.filtroCanal.set('');
-    this.filtroTipo.set('');
-    this.filtroPrioridad.set('');
-    this.filtroArea.set('');
-    this.filtroGestor.set('');
-    this.filtroEstado.set('');
-    this.soloConRayo.set(false);
-    this.filtroColSla.set('');
-  }
 
   readonly ticketsConRayo = computed(() => this.tickets().filter((t) => t.rayo).length);
 
@@ -2000,48 +1773,100 @@ export class VistaOperacionComponent {
     return lista.slice(inicio, inicio + tam);
   });
 
-  readonly ticketsFiltrados = computed(() => {
-    const q = this.busquedaGeneral().trim().toLowerCase();
-    const fSla = this.filtroColSla();
+  readonly filtrosBandeja = crearFiltrosTabla(
+    this.tickets,
+    {
+      clave: 'bandeja-tickets',
+      etiquetaElemento: 'tickets',
+      etiquetaBusqueda: 'Buscar ticket, cliente o lote',
+      placeholderBusqueda: 'N.º ticket, cliente, DNI, proyecto o canal…',
+      textoDe: (t) =>
+        [
+          t.num,
+          t.empresa.nombre,
+          t.cli,
+          t.dni,
+          t.proj,
+          t.ch,
+          this.nombreTipo(t.type),
+          t.area,
+          t.owner ?? 'Sin asignar (Cola)',
+        ].join(' '),
+      filtros: [
+        {
+          id: 'estado',
+          etiqueta: 'Estado',
+          tipo: 'multi',
+          valorDe: (t) => t.state,
+          opciones: ESTADOS_TICKET.map((st) => ({ valor: st, etiqueta: ESTADO_ES[st] ?? st })),
+        },
+        {
+          id: 'prioridad',
+          etiqueta: 'Prioridad',
+          tipo: 'multi',
+          valorDe: (t) => t.prio,
+          opciones: PRIORIDADES_TICKET.map((p) => ({ valor: p.id, etiqueta: p.nombre })),
+        },
+        {
+          id: 'sla',
+          etiqueta: 'SLA',
+          tipo: 'multi',
+          valorDe: (t) => evaluarSlaTicket(t).tono,
+          opciones: [
+            { valor: 'success', etiqueta: 'En plazo / Cumplido' },
+            { valor: 'warning', etiqueta: 'Por vencer (Alerta)' },
+            { valor: 'danger', etiqueta: 'Vencido / Crítico' },
+          ],
+        },
+        { id: 'rayo', etiqueta: 'Solo prioridad Rayo', tipo: 'boolean', valorDe: (t) => t.rayo },
+        {
+          id: 'gestor',
+          etiqueta: 'Gestor',
+          tipo: 'multi',
+          conBusqueda: true,
+          valorDe: (t) => t.owner ?? 'SIN_ASIGNAR',
+          etiquetaDe: (g) => (g === 'SIN_ASIGNAR' ? 'Sin asignar (Cola)' : g),
+        },
+        {
+          id: 'area',
+          etiqueta: 'Área',
+          tipo: 'multi',
+          valorDe: (t) => t.area,
+          opciones: AREAS_ATC.map((a) => ({ valor: a, etiqueta: a })),
+        },
+        {
+          id: 'tipo',
+          etiqueta: 'Tipo',
+          tipo: 'multi',
+          valorDe: (t) => t.type,
+          opciones: TIPOS_TICKET.map((tp) => ({ valor: tp.id, etiqueta: `${tp.id} · ${tp.nombre}` })),
+        },
+        {
+          id: 'canal',
+          etiqueta: 'Canal',
+          tipo: 'multi',
+          valorDe: (t) => t.ch,
+          opciones: CANALES_ATC.map((c) => ({ valor: c, etiqueta: c })),
+        },
+        {
+          id: 'empresa',
+          etiqueta: 'Empresa',
+          tipo: 'multi',
+          conBusqueda: true,
+          valorDe: (t) => t.co,
+          opciones: EMPRESAS_AYBAR.map((e) => ({ valor: e.id, etiqueta: `${e.id} · ${e.nombre}` })),
+        },
+      ],
+    },
+    inject(EstadoFiltrosTablas),
+  );
 
-    const lista = this.tickets().filter((t) => {
-      if (this.filtroEmpresa() && t.co !== this.filtroEmpresa()) return false;
-      if (this.filtroCanal() && t.ch !== this.filtroCanal()) return false;
-      if (this.filtroTipo() && t.type !== this.filtroTipo()) return false;
-      if (this.filtroPrioridad() && t.prio !== this.filtroPrioridad()) return false;
-      if (this.filtroArea() && t.area !== this.filtroArea()) return false;
-      if (this.filtroGestor() && (t.owner ?? 'SIN_ASIGNAR') !== this.filtroGestor()) return false;
-      if (this.filtroEstado() && t.state !== this.filtroEstado()) return false;
-      if (this.soloConRayo() && !t.rayo) return false;
-
-      if (q) {
-        const tipoNom = this.nombreTipo(t.type).toLowerCase();
-        const ownerTxt = (t.owner ?? 'Sin asignar (Cola)').toLowerCase();
-        const coincide =
-          t.num.toLowerCase().includes(q) ||
-          t.empresa.nombre.toLowerCase().includes(q) ||
-          t.cli.toLowerCase().includes(q) ||
-          t.dni.toLowerCase().includes(q) ||
-          t.proj.toLowerCase().includes(q) ||
-          t.ch.toLowerCase().includes(q) ||
-          tipoNom.includes(q) ||
-          t.area.toLowerCase().includes(q) ||
-          ownerTxt.includes(q);
-        if (!coincide) return false;
-      }
-
-      if (fSla) {
-        const slaInfo = evaluarSlaTicket(t);
-        if (slaInfo.tono !== fSla) return false;
-      }
-
-      return true;
-    });
-    return [...lista].sort((a, b) => {
+  readonly ticketsFiltrados = computed(() =>
+    [...this.filtrosBandeja.filtradas()].sort((a, b) => {
       if (a.rayo !== b.rayo) return a.rayo ? -1 : 1;
       return a.resDue.getTime() - b.resDue.getTime();
-    });
-  });
+    }),
+  );
 
   readonly ticketActual = computed<TicketAtc | undefined>(() => {
     const num = this.ticketSeleccionadoNum();

@@ -40,7 +40,6 @@ import {
   AySkipLink,
   AyStack,
   AyTable,
-  AyTableToolbar,
   AyTabs,
   AyText,
   type AyColumna,
@@ -88,6 +87,9 @@ import {
   type PerfilRolPrototipoAtc,
   type RolPrototipoAtc,
 } from './estado-prototipo-atc';
+import { BarraFiltrosComponent } from './barra-filtros';
+import { VacioFiltrosComponent } from './vacio-filtros';
+import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 interface ItemMenuAtc {
   readonly id: VistaAtc;
@@ -95,12 +97,16 @@ interface ItemMenuAtc {
   readonly titulo: string;
   readonly subtitulo: string;
   readonly icono: string;
+  /** Vista que existe pero no se lista en el sidebar ni en la paleta (se abre desde otra vista). */
+  readonly oculto?: boolean;
 }
 
 @Component({
   selector: 'app-consola-atc',
   standalone: true,
   imports: [
+    BarraFiltrosComponent,
+    VacioFiltrosComponent,
     AyAlert,
     AyAppearancePanel,
     AyBadge,
@@ -129,7 +135,6 @@ interface ItemMenuAtc {
     AySkipLink,
     AyStack,
     AyTable,
-    AyTableToolbar,
     AyTabs,
     AyText,
     BotonTema,
@@ -220,6 +225,15 @@ interface ItemMenuAtc {
 
       <main id="atc-contenido" class="pl-atc-principal" tabindex="-1">
         <div ayStack gap="6">
+          @if (avisoNavegacion()) {
+            <ay-alert
+              tono="info"
+              size="sm"
+              [titulo]="avisoNavegacion()!"
+              [descartable]="true"
+              (cerrar)="avisoNavegacion.set(null)"
+            />
+          }
           @switch (vistaActiva()) {
             @case ('c360') {
               <app-vista-c360
@@ -280,6 +294,8 @@ interface ItemMenuAtc {
                 [tickets]="ticketsVisibles()"
                 [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
+                [volverA]="tituloDeVista(vistaOrigen())"
+                (volver)="volverDelDetalle()"
                 (verContrato)="abrirContrato($event)"
               />
             }
@@ -1102,30 +1118,12 @@ interface ItemMenuAtc {
       titulo="Catálogo Funcional del Sistema (60 Historias de Usuario)"
     >
       <div ayStack gap="4">
-        <ay-table-toolbar [recuento]="husFiltradas().length" etiquetaElemento="historias">
-          <ay-search-input
-            ayBusqueda
-            etiqueta="Filtrar historias"
-            size="sm"
-            placeholder="Filtrar por código HU, feature o pantalla…"
-            [valor]="filtroHu()"
-            (valorChange)="filtroHu.set($event)"
-          />
-          <ng-container ayFiltros>
-            <ay-segmented-control
-              etiqueta="Filtrar por etapa"
-              size="sm"
-              [opciones]="opcionesEtapaHu"
-              [valor]="filtroEtapa()"
-              (valorChange)="alCambiarFiltroEtapa($event)"
-            />
-          </ng-container>
-        </ay-table-toolbar>
+        <app-barra-filtros [filtros]="filtrosHu" />
 
         <ay-table
           leyenda="Catálogo de 60 Historias de Usuario"
           [columnas]="columnasCatalogoHu"
-          [filas]="husFiltradas()"
+          [filas]="filtrosHu.filtradas()"
           [cabeceraFija]="true"
           [rayada]="true"
         >
@@ -1155,13 +1153,7 @@ interface ItemMenuAtc {
               Ir a vista →
             </ay-button>
           </ng-template>
-          <ay-empty-state
-            ayVacio
-            variante="no-results"
-            size="compact"
-            titulo="Sin historias coincidentes"
-            descripcion="Prueba con otro término o cambia el filtro de etapa."
-          />
+          <app-vacio-filtros ayVacio [filtros]="filtrosHu" elemento="historia" />
         </ay-table>
       </div>
     </ay-modal>
@@ -1212,11 +1204,6 @@ export class ConsolaAtcComponent {
     ...this.empresas.map((e) => ({ value: e.id, label: `${e.id} · ${e.nombre}` })),
   ];
 
-  readonly opcionesEtapaHu: AySegmentoOpcion[] = [
-    { valor: 'TODAS', etiqueta: 'Todas (60)' },
-    { valor: 'Etapa 1', etiqueta: 'Fase 1' },
-    { valor: 'Etapa 2', etiqueta: 'Fase 2' },
-  ];
 
   readonly columnasFirmantes: readonly AyColumna[] = [
     { clave: 'rol', cabecera: 'Rol Contractual' },
@@ -1385,6 +1372,7 @@ export class ConsolaAtcComponent {
     {
       id: 'detalle',
       grupo: 'OPERACION',
+      oculto: true,
       titulo: 'Expediente de ticket',
       subtitulo: 'Seguimiento de interacciones, guía de solución versionada y asistente IA',
       icono:
@@ -1493,12 +1481,13 @@ export class ConsolaAtcComponent {
   ];
 
   readonly vistaActiva = signal<VistaAtc>('c360');
+  /** Vista desde la que se abrió el ticket en curso: a ella vuelve «Volver» y es la que se resalta en el sidebar. */
+  readonly vistaOrigen = signal<VistaAtc>('bandeja');
+  readonly avisoNavegacion = signal<string | null>(null);
   readonly mostrarTrazabilidadHu = signal<boolean>(false);
-  readonly empresaFiltro = signal<string>('');
+  readonly empresaFiltro = this.estadoProto.empresaFiltro;
   readonly filtroBandejaCliente = signal<string>('');
   readonly modalCatalogoHuAbierto = signal<boolean>(false);
-  readonly filtroHu = signal<string>('');
-  readonly filtroEtapa = signal<'TODAS' | 'Etapa 1' | 'Etapa 2'>('TODAS');
 
   readonly modalContratoAbierto = signal<boolean>(false);
   readonly contratoSeleccionadoCodigo = signal<string>('VS-2025-0507');
@@ -1531,16 +1520,17 @@ export class ConsolaAtcComponent {
   );
 
   readonly menusSidebarVisibles = computed<readonly ItemMenuAtc[]>(() => {
-    if (!this.filtrarSidebarPorRol()) return this.todosLosMenus;
+    const listables = this.todosLosMenus.filter((m) => !m.oculto);
+    if (!this.filtrarSidebarPorRol()) return listables;
     const permitidos = this.estadoProto.vistasPermitidasParaRol(this.perspectivaId());
-    return this.todosLosMenus.filter(
-      (m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id),
-    );
+    return listables.filter((m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id));
   });
 
   readonly gruposSidebar = computed<AySidebarGrupo[]>(() => {
     const rol = this.perspectivaId();
     const activa = this.vistaActiva();
+    // Dentro de un ticket se resalta la vista desde la que se abrió.
+    const resaltada = activa === 'detalle' ? this.vistaOrigen() : activa;
 
     if (rol === 'CLIENTE') {
       return [
@@ -1617,7 +1607,7 @@ export class ConsolaAtcComponent {
           .map((m) => ({
             href: `#vista:${m.id}`,
             etiqueta: m.titulo,
-            actual: activa === m.id,
+            actual: resaltada === m.id,
             insignia: insigniaDe(m.id),
           })),
       }))
@@ -1645,13 +1635,14 @@ export class ConsolaAtcComponent {
   readonly gruposComandos = computed<AyGrupoComandos[]>(() => {
     const q = this.consultaPaleta().trim().toLowerCase();
     const modulos = this.todosLosMenus
+      .filter((m) => !m.oculto)
       .filter((m) => !q || m.titulo.toLowerCase().includes(q) || m.subtitulo.toLowerCase().includes(q))
       .map((m) => ({
         id: `mod:${m.id}`,
         titulo: m.titulo,
         contexto: m.subtitulo,
         alSeleccionar: () => {
-          this.vistaActiva.set(m.id);
+          this.irAVista(m.id);
           this.paletaAbierta.set(false);
         },
       }));
@@ -1675,7 +1666,7 @@ export class ConsolaAtcComponent {
         contexto: `${h.feature} · ${h.pantalla}`,
         alSeleccionar: () => {
           this.paletaAbierta.set(false);
-          this.vistaActiva.set(h.vista);
+          this.irAVista(h.vista);
         },
       }));
     return [
@@ -1691,21 +1682,30 @@ export class ConsolaAtcComponent {
     return this.tickets().filter((t) => t.co === co);
   });
 
-  readonly husFiltradas = computed(() => {
-    const q = this.filtroHu().trim().toLowerCase();
-    const etapa = this.filtroEtapa();
-    return this.catalogoHus.filter((h) => {
-      if (etapa !== 'TODAS' && (h.etapa ?? 'Etapa 1') !== etapa) return false;
-      if (!q) return true;
-      return (
-        h.id.toLowerCase().includes(q) ||
-        h.titulo.toLowerCase().includes(q) ||
-        h.feature.toLowerCase().includes(q) ||
-        h.pantalla.toLowerCase().includes(q) ||
-        (h.etapaNota ?? '').toLowerCase().includes(q)
-      );
-    });
-  });
+  readonly filtrosHu = crearFiltrosTabla<HuReferencia>(
+    computed(() => this.catalogoHus),
+    {
+      clave: 'catalogo-hu',
+      etiquetaElemento: 'historias',
+      etiquetaBusqueda: 'Filtrar historias',
+      placeholderBusqueda: 'Filtrar por código HU, feature o pantalla…',
+      textoDe: (h) => [h.id, h.titulo, h.feature, h.pantalla, h.etapaNota ?? ''].join(' '),
+      filtros: [
+        {
+          id: 'etapa',
+          etiqueta: 'Etapa',
+          tipo: 'segmento',
+          etiquetaTodas: 'Todas',
+          valorDe: (h) => h.etapa ?? 'Etapa 1',
+          opciones: [
+            { valor: 'Etapa 1', etiqueta: 'Fase 1' },
+            { valor: 'Etapa 2', etiqueta: 'Fase 2' },
+          ],
+        },
+      ],
+    },
+    inject(EstadoFiltrosTablas),
+  );
 
   constructor() {
     const destruccion = inject(DestroyRef);
@@ -1940,12 +1940,6 @@ export class ConsolaAtcComponent {
     }
   }
 
-  alCambiarFiltroEtapa(valor: string): void {
-    if (valor === 'TODAS' || valor === 'Etapa 1' || valor === 'Etapa 2') {
-      this.filtroEtapa.set(valor);
-    }
-  }
-
   alInterceptarEnlaceSidebar(ev: MouseEvent): void {
     const enlace = ev.target instanceof Element ? ev.target.closest('a[href]') : null;
     if (!(enlace instanceof HTMLAnchorElement)) return;
@@ -1959,7 +1953,7 @@ export class ConsolaAtcComponent {
   irAVistaDesdeHref(href: string): void {
     const id = href.replace('#vista:', '') as VistaAtc;
     if (this.todosLosMenus.some((m) => m.id === id)) {
-      this.vistaActiva.set(id);
+      this.irAVista(id);
     }
   }
 
@@ -2013,12 +2007,14 @@ export class ConsolaAtcComponent {
         (t) => t.contract === ev.contrato || t.cli.toLowerCase().includes(primerNombre),
       );
       if (tk) {
-        this.ticketSeleccionadoNum.set(tk.num);
+        this.abrirTicket(tk.num);
+      } else {
+        this.avisoNavegacion.set(`No hay tickets de ${ev.clienteNombre}. Revisa la Bandeja de tickets.`);
+        this.vistaActiva.set('bandeja');
       }
-      this.vistaActiva.set('detalle');
       return;
     }
-    this.vistaActiva.set(ev.destino);
+    this.irAVista(ev.destino);
   }
 
   cambiarPerspectivaUsuario(p: PerfilRolPrototipoAtc, irASuMesa: boolean): void {
@@ -2046,8 +2042,35 @@ export class ConsolaAtcComponent {
   }
 
   alSeleccionarTicket(num: string): void {
+    this.abrirTicket(num);
+  }
+
+  /** El expediente solo se abre desde un ticket concreto; sin él se vuelve a la Bandeja. */
+  irAVista(vista: VistaAtc): void {
+    if (vista === 'detalle') {
+      this.avisoNavegacion.set('Abre un ticket desde la Bandeja de tickets (botón «Ver ticket») para ver su expediente.');
+      this.vistaActiva.set('bandeja');
+      return;
+    }
+    this.avisoNavegacion.set(null);
+    this.vistaActiva.set(vista);
+  }
+
+  abrirTicket(num: string, origen?: VistaAtc): void {
+    if (!this.tickets().some((t) => t.num === num)) {
+      this.avisoNavegacion.set(`El ticket ${num} no existe en la Bandeja de tickets.`);
+      this.vistaActiva.set('bandeja');
+      return;
+    }
+    const actual = this.vistaActiva();
+    this.vistaOrigen.set(origen ?? (actual === 'detalle' ? this.vistaOrigen() : actual));
     this.ticketSeleccionadoNum.set(num);
+    this.avisoNavegacion.set(null);
     this.vistaActiva.set('detalle');
+  }
+
+  volverDelDetalle(): void {
+    this.vistaActiva.set(this.vistaOrigen());
   }
 
   alCrearDesde360(_ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean }): void {
@@ -2110,12 +2133,11 @@ export class ConsolaAtcComponent {
         ...prev,
       ]);
     }
-    this.ticketSeleccionadoNum.set(ev.ticket.num);
-    this.vistaActiva.set('detalle');
+    this.abrirTicket(ev.ticket.num, 'bandeja');
   }
 
   irAVistaDeHu(vista: VistaAtc): void {
     this.modalCatalogoHuAbierto.set(false);
-    this.vistaActiva.set(vista);
+    this.irAVista(vista);
   }
 }

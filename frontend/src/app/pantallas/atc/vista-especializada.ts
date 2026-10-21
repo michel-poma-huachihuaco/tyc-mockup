@@ -34,11 +34,9 @@ import {
   AyStack,
   AyStatistic,
   AyTable,
-  AyTableToolbar,
   AyTabs,
   AyTextarea,
   AyText,
-  AyToggleButton,
   type AyColumna,
   type AyOpcionSelect,
   type AyTabsElemento,
@@ -80,6 +78,15 @@ import {
   type ReclamoGarantiaDetalle,
   type ReservaBusFestItem,
 } from './estado-prototipo-atc';
+import { IngresosHoyComponent } from './ingresos-hoy';
+import { ProtocoloFrasesComponent } from './protocolo-frases';
+import { BarraFiltrosComponent } from './barra-filtros';
+import { VacioFiltrosComponent } from './vacio-filtros';
+import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
+import { CeldaTicketComponent } from './celda-ticket';
+import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
+import { FlujosTorreComponent } from './flujos-torre';
+import { PasosFlujoComponent } from './pasos-flujo';
 
 export type SubvistaEspecializadaAtc =
   | 'morosidad'
@@ -101,6 +108,10 @@ export type SubvistaEspecializadaAtc =
   selector: 'app-vista-especializada',
   standalone: true,
   imports: [
+    IngresosHoyComponent,
+    ProtocoloFrasesComponent,
+    BarraFiltrosComponent,
+    VacioFiltrosComponent,
     AyAlert,
     AyBadge,
     AyButton,
@@ -127,11 +138,13 @@ export type SubvistaEspecializadaAtc =
     AyStack,
     AyStatistic,
     AyTable,
-    AyTableToolbar,
     AyTabs,
     AyTextarea,
     AyText,
-    AyToggleButton,
+    CeldaTicketComponent,
+    EditorPasosFlujoComponent,
+    FlujosTorreComponent,
+    PasosFlujoComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -209,9 +222,7 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="pasos" let-fila>
                     @let f = comoFlujo(fila);
-                    <span ayText="body" size="xs">
-                      {{ resumenPasosFlujo(f) }}
-                    </span>
+                    <app-pasos-flujo [pasos]="f.pasos" />
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let f = comoFlujo(fila);
@@ -326,6 +337,7 @@ export type SubvistaEspecializadaAtc =
           [abierto]="flujoEditando() !== null"
           (abiertoChange)="!$event && flujoEditando.set(null)"
           [titulo]="flujoEditando() ? 'Flujo · ' + flujoEditando()!.nombreTipo : 'Flujo'"
+          size="lg"
         >
           @if (flujoEditando(); as fl) {
             <ay-form (enviar)="guardarFlujoConfig()">
@@ -333,54 +345,16 @@ export type SubvistaEspecializadaAtc =
                 <p ayText="body" size="xs">
                   Publicará la versión v{{ fl.versionActual + 1 }}. Los tickets que ya están abiertos conservan su versión; los nuevos en «Nuevo ticket» se asignarán a esta área y responsable.
                 </p>
-                <ay-form-field etiqueta="Área que recibe el ticket" obligatorio>
-                  <ay-select
-                    [opciones]="opcionesAreasSelect"
-                    [valor]="editFlujoArea()"
-                    (valorChange)="editFlujoArea.set($event)"
-                  />
-                </ay-form-field>
-                @for (p of editFlujoPasos(); track $index; let idx = $index) {
-                  <ay-card superficie="solid">
-                    <ay-card-body padding="sm" gap="sm">
-                      <div ayRow gap="2" justificar="between">
-                        <strong ayText="label" size="xs">Paso {{ idx + 1 }}</strong>
-                        @if (editFlujoPasos().length > 1) {
-                          <ay-button tamano="sm" variante="ghost" (click)="quitarPasoFlujo(idx)">
-                            Quitar paso
-                          </ay-button>
-                        }
-                      </div>
-                      <div ayGrid [columnas]="3" gap="sm">
-                        <ay-form-field etiqueta="Nombre del paso" obligatorio>
-                          <ay-input
-                            size="sm"
-                            [valor]="p.nombre"
-                            (valorChange)="actualizarPasoFlujo(idx, 'nombre', $event)"
-                          />
-                        </ay-form-field>
-                        <ay-form-field etiqueta="Responsable" obligatorio>
-                          <ay-select
-                            [opciones]="opcionesResponsablesSelect"
-                            [valor]="p.responsable"
-                            (valorChange)="actualizarPasoFlujo(idx, 'responsable', $event)"
-                          />
-                        </ay-form-field>
-                        <ay-form-field etiqueta="SLA del paso (h hábiles)" obligatorio>
-                          <ay-input
-                            tipo="number"
-                            size="sm"
-                            [valor]="'' + p.horas"
-                            (valorChange)="actualizarPasoFlujo(idx, 'horas', $event)"
-                          />
-                        </ay-form-field>
-                      </div>
-                    </ay-card-body>
-                  </ay-card>
-                }
-                <ay-button tamano="sm" variante="secondary" (click)="agregarPasoFlujo()">
-                  + Agregar paso
-                </ay-button>
+                <app-editor-pasos-flujo
+                  [pasos]="editFlujoPasos()"
+                  [area]="editFlujoArea()"
+                  [opcionesAreas]="opcionesAreasSelect"
+                  [opcionesResponsables]="opcionesResponsablesSelect"
+                  (areaChange)="editFlujoArea.set($event)"
+                  (pasoChange)="cambiarPasoFlujo($event)"
+                  (agregar)="agregarPasoFlujo()"
+                  (quitar)="quitarPasoFlujo($event)"
+                />
                 <div ayRow gap="2" justificar="end">
                   <ay-button variante="ghost" (click)="flujoEditando.set(null)">Cancelar</ay-button>
                   <ay-button tipo="submit" variante="primary">
@@ -580,8 +554,8 @@ export type SubvistaEspecializadaAtc =
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header titulo="Configurar reasignación" nivel="h2" [separador]="true" />
               <ay-card-body padding="md" gap="md">
-                <ay-form (enviar)="ejecutarReasignacionEnBloque()">
-                  <div ayStack gap="3">
+                <ay-form class="pl-atc-form-ancho" (enviar)="ejecutarReasignacionEnBloque()">
+                  <div ayStack gap="4" class="pl-atc-fila-campos">
                     <ay-form-field etiqueta="Colaborador que deja los tickets" obligatorio>
                       <ay-select
                         [opciones]="opcionesOrigenReasignar()"
@@ -844,31 +818,17 @@ export type SubvistaEspecializadaAtc =
 
         <ay-card variante="elevated" superficie="solid">
           <ay-card-body padding="sm" gap="sm">
-            <ay-table-toolbar [recuento]="filasCierreE2EFiltradas().length" etiquetaElemento="tickets">
-              <ng-container ayFiltros>
-                <ay-toggle-button tamano="sm" [(presionado)]="cierreSoloUrgentes">
-                  Por vencer o fuera de plazo
-                </ay-toggle-button>
-                <ay-toggle-button tamano="sm" [(presionado)]="cierreSoloEje3">
-                  Escalados a Eje 3
-                </ay-toggle-button>
-              </ng-container>
-            </ay-table-toolbar>
+            <app-barra-filtros [filtros]="filtrosCierre" [conFiltroEmpresa]="true" />
 
             <ay-table
               leyenda="Seguimiento del cierre end-to-end"
               [columnas]="columnasCierreE2E"
-              [filas]="filasCierreE2EFiltradas()"
+              [filas]="filtrosCierre.filtradas()"
               [rayada]="true"
             >
               <ng-template ayCelda="ticket" let-fila>
                 @let r = comoFilaCierre(fila);
-                <div ayStack gap="1">
-                  <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(r.ticket.num)">
-                    {{ r.ticket.num }}
-                  </ay-button>
-                  <span ayText="body" size="xs">{{ r.ticket.summary }}</span>
-                </div>
+                <app-celda-ticket [ticket]="r.ticket" (abrir)="seleccionarTicket.emit($event)" />
               </ng-template>
               <ng-template ayCelda="eje" let-fila>
                 @let r = comoFilaCierre(fila);
@@ -891,6 +851,7 @@ export type SubvistaEspecializadaAtc =
                   {{ r.etiqueta }}
                 </ay-badge>
               </ng-template>
+              <app-vacio-filtros ayVacio [filtros]="filtrosCierre" elemento="ticket" />
             </ay-table>
           </ay-card-body>
         </ay-card>
@@ -1237,7 +1198,7 @@ export type SubvistaEspecializadaAtc =
                 [separador]="true"
               />
               <ay-card-body padding="md" gap="md">
-                <ay-form (enviar)="registrarIngresoProyecto()">
+                <ay-form class="pl-atc-form-ancho" (enviar)="registrarIngresoProyecto()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="1. Nombre completo" obligatorio>
                       <ay-input
@@ -1246,7 +1207,7 @@ export type SubvistaEspecializadaAtc =
                         placeholder="Nombre y apellidos"
                       />
                     </ay-form-field>
-                    <div ayGrid [columnas]="2" gap="sm">
+                    <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="2. DNI (8 dígitos)" obligatorio>
                         <ay-input
                           [valor]="nuevoAsistenteDni()"
@@ -1262,7 +1223,7 @@ export type SubvistaEspecializadaAtc =
                         />
                       </ay-form-field>
                     </div>
-                    <div ayGrid [columnas]="2" gap="sm">
+                    <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="4. Motivo de la visita" obligatorio>
                         <ay-select
                           [opciones]="opcionesMotivoVisita"
@@ -1301,7 +1262,7 @@ export type SubvistaEspecializadaAtc =
                 [separador]="true"
               />
               <ay-card-body padding="md">
-                <ay-card-pairs [pares]="paresAsistentes()" />
+                <app-ingresos-hoy [asistentes]="asistentes()" />
               </ay-card-body>
             </ay-card>
           </div>
@@ -1911,14 +1872,7 @@ export type SubvistaEspecializadaAtc =
               [separador]="true"
             />
             <ay-card-body padding="sm">
-              <ay-card-pairs
-                [pares]="
-                  estadoProto.frasesAnclaEvento.map(f => ({
-                    clave: f.momento,
-                    valor: f.frase
-                  }))
-                "
-              />
+              <app-protocolo-frases [frases]="estadoProto.frasesAnclaEvento" />
             </ay-card-body>
           </ay-card>
         </div>
@@ -1995,8 +1949,8 @@ export type SubvistaEspecializadaAtc =
               nivel="h2"
               [separador]="true"
             />
-            <ay-card-body padding="sm">
-              <ay-card-pairs [pares]="paresFlujosDinamicosTorre()" />
+            <ay-card-body padding="md">
+              <app-flujos-torre [flujos]="estadoProto.flujosPorTipo()" />
             </ay-card-body>
           </ay-card>
         }
@@ -2393,8 +2347,6 @@ export class VistaEspecializadaComponent {
   );
 
   /* ── Estado de Cierre E2E ── */
-  readonly cierreSoloUrgentes = signal<boolean>(false);
-  readonly cierreSoloEje3 = signal<boolean>(false);
 
   readonly filasCierreE2E = computed(() =>
     this.tickets().map((t) => {
@@ -2424,12 +2376,42 @@ export class VistaEspecializadaComponent {
     }),
   );
 
-  readonly filasCierreE2EFiltradas = computed(() =>
-    this.filasCierreE2E().filter((r) => {
-      if (this.cierreSoloUrgentes() && r.tono !== 'warning' && r.tono !== 'danger') return false;
-      if (this.cierreSoloEje3() && r.ticket.eje !== 3) return false;
-      return true;
-    }),
+  readonly filtrosCierre = crearFiltrosTabla(
+    this.filasCierreE2E,
+    {
+      clave: 'cierre-e2e',
+      etiquetaElemento: 'tickets',
+      etiquetaBusqueda: 'Buscar ticket, cliente o gestor',
+      placeholderBusqueda: 'N.º ticket, resumen, cliente, área o gestor…',
+      textoDe: (r) =>
+        [r.ticket.num, r.ticket.summary, r.ticket.cli, r.ticket.area, r.ticket.owner ?? '', r.ticket.type].join(' '),
+      filtros: [
+        {
+          id: 'situacion',
+          etiqueta: 'Situación',
+          tipo: 'multi',
+          valorDe: (r) => r.etiqueta,
+          opciones: [
+            { valor: 'En plazo', etiqueta: 'En plazo' },
+            { valor: 'Por vencer (≥ 80 %)', etiqueta: 'Por vencer (≥ 80 %)' },
+            { valor: 'Fuera de plazo', etiqueta: 'Fuera de plazo' },
+            { valor: 'Cerrado en plazo', etiqueta: 'Cerrado en plazo' },
+          ],
+        },
+        {
+          id: 'eje',
+          etiqueta: 'Eje',
+          tipo: 'multi',
+          valorDe: (r) => `Eje ${r.ticket.eje}`,
+          opciones: [
+            { valor: 'Eje 1', etiqueta: 'Eje 1 (72 h)' },
+            { valor: 'Eje 2', etiqueta: 'Eje 2 (72 h)' },
+            { valor: 'Eje 3', etiqueta: 'Eje 3 (90 h)' },
+          ],
+        },
+      ],
+    },
+    inject(EstadoFiltrosTablas),
   );
 
   /* ── Estado de UrbeMind ── */
@@ -2532,13 +2514,6 @@ export class VistaEspecializadaComponent {
     );
   });
 
-  readonly paresAsistentes = computed<ParCardPairs[]>(() =>
-    this.asistentes().map((a) => ({
-      clave: `${a.hora} · ${a.nombre} (DNI ${a.dni})`,
-      valor: `${a.proyecto} · Lote ${a.lote} (+${a.acompanantes} acomp.)`,
-    })),
-  );
-
   readonly paresImpactoLegal = computed<ParCardPairs[]>(() => {
     const cap = this.capitalControversia();
     return [
@@ -2552,13 +2527,6 @@ export class VistaEspecializadaComponent {
       },
     ];
   });
-
-  readonly paresFlujosDinamicosTorre = computed<ParCardPairs[]>(() =>
-    this.estadoProto.flujosPorTipo().map((f) => ({
-      clave: `${f.nombreTipo} (${f.tipo}) · v${f.versionActual} · Área: ${f.area}`,
-      valor: this.resumenPasosFlujo(f),
-    })),
-  );
 
   /* ── Helpers de cast para шаблоны ── */
   comoFlujo(f: unknown): FlujoTipoConfig {
@@ -2657,6 +2625,10 @@ export class VistaEspecializadaComponent {
             },
       ),
     );
+  }
+
+  cambiarPasoFlujo(c: CambioPaso): void {
+    this.actualizarPasoFlujo(c.idx, c.campo, c.valor);
   }
 
   agregarPasoFlujo(): void {

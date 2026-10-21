@@ -1,0 +1,34 @@
+/* Celda «Ticket y resumen». Solo tokens --aybar-*. */
+:host { display: block; }
+
+.ct { display: grid; gap: var(--aybar-space-1); justify-items: start; padding-block: var(--aybar-space-1); }
+.ct__cab { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); }
+
+.ct__num {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--aybar-color-fg-link);
+  cursor: pointer;
+}
+.ct__num:hover { text-decoration: underline; }
+.ct__num:focus-visible { outline: 2px solid var(--aybar-color-border-focus); outline-offset: 2px; border-radius: var(--aybar-radius-sm); }
+
+/* Dos líneas reservadas: todas las filas miden lo mismo. */
+.ct__resumen {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-block-size: 2lh;
+  margin: 0;
+  color: var(--aybar-color-fg-default);
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-regular);
+}
+
+.ct__meta { margin: 0; color: var(--aybar-color-fg-muted); font-size: var(--aybar-font-size-xs); }

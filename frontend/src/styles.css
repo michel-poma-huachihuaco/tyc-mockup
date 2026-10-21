@@ -1894,3 +1894,37 @@ body {
 
 
 
+
+/* Modal de edición de un flujo (size="lg"): el formulario ocupa todo el cuerpo, sin el tope de lectura de .ay-form. */
+.ay-modal--lg .ay-form {
+  max-inline-size: none;
+}
+
+/* Filas de campos en rejilla (Ingreso a proyecto): .ay-form-field + .ay-form-field del framework suma un margen superior que
+   baja al segundo campo, y una etiqueta de dos líneas empuja su control. Sin margen, y el control pegado al fondo de la fila. */
+.pl-atc-fila-campos.pl-atc-fila-campos > ay-form-field {
+  margin-block-start: 0;
+}
+
+.pl-atc-fila-campos > ay-form-field > .ay-field {
+  block-size: 100%;
+  grid-template-rows: auto 1fr auto;
+}
+
+.pl-atc-fila-campos .ay-input,
+.pl-atc-fila-campos .ay-selectwrap,
+.pl-atc-fila-campos .ay-textarea {
+  align-self: end;
+}
+
+/* Formularios que ocupan todo el cuerpo de su tarjeta, sin el tope de lectura de .ay-form (Nuevo ticket). */
+.pl-atc-form-ancho .ay-form {
+  max-inline-size: none;
+}
+
+/* Toolbar de tabla (.ay-toolbar): el framework la deja con el borde inferior abierto y sin esquinas abajo porque espera
+   verla pegada a la tabla. Aquí va separada por el hueco de su contenedor, así que se cierra: caja completa. */
+.ay-toolbar {
+  border-block-end: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+}

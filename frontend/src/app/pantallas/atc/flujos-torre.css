@@ -1,0 +1,149 @@
+/* Torre CX: sala por área, un flujo por fila. Container query (sin var()): 36rem pista en fila, 60rem cabecera a la izquierda. */
+:host { display: block; }
+
+.ft, .ft__sala, .ft__pistas, .ft__flujo, .ft__cab { display: grid; }
+.ft { gap: var(--aybar-space-4); }
+
+.ft__sala, .ft__cab { gap: var(--aybar-space-3); }
+.ft__sala {
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-xl);
+  background: var(--aybar-color-bg-surface-sunken);
+}
+
+.ft__sala-cab, .ft__flujo-cab, .ft__resp { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); }
+
+.ft__sala-nombre {
+  margin: 0;
+  font-size: var(--aybar-font-size-sm);
+  color: var(--aybar-color-fg-muted);
+}
+
+.ft__pistas { container: ft-flujo / inline-size; gap: var(--aybar-space-3); }
+
+.ft__flujo {
+  --ft-gap: var(--aybar-space-8);
+  gap: var(--aybar-space-4);
+  align-items: center;
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-lg);
+  background: var(--aybar-color-bg-surface);
+}
+
+.ft__flujo-nombre {
+  margin: 0 auto 0 0;
+  font-size: var(--aybar-font-size-base);
+  font-weight: var(--aybar-font-weight-semibold);
+  color: var(--aybar-color-fg-default);
+}
+
+/* ≥36rem: --ft-n estaciones por fila (ver flujos-torre-codo.css), las mismas en todos los flujos. */
+.ft__pista {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ft-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ft__paso { position: relative; display: grid; }
+
+.ft__estacion {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-3) var(--aybar-space-10);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-raised);
+}
+
+.ft__num {
+  position: absolute;
+  inset: var(--aybar-space-3) auto auto var(--aybar-space-3);
+  display: grid;
+  place-items: center;
+  inline-size: var(--aybar-space-5);
+  aspect-ratio: 1;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-brand);
+  color: var(--aybar-color-fg-on-brand);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-bold);
+}
+
+/* 2 líneas reservadas: mismo alto. */
+.ft__estacion-nombre {
+  margin: 0;
+  min-block-size: 2lh;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: var(--aybar-font-size-sm);
+  font-weight: var(--aybar-font-weight-medium);
+  color: var(--aybar-color-fg-default);
+}
+
+.ft__resp-nombre { margin-inline-end: auto; font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
+
+/* Enlace en el hueco entre estaciones: línea, punto y «Relevo» si cambia de manos. */
+.ft__enlace {
+  position: absolute;
+  inset: 100% 0 auto;
+  block-size: var(--ft-gap);
+  display: grid;
+  place-items: center;
+}
+
+.ft__enlace::before, .ft__enlace::after { content: ''; position: absolute; }
+
+.ft__enlace::before { inset-block: 0; inline-size: 2px; background: var(--aybar-color-border-strong); }
+.ft__enlace--relevo::before { background: var(--aybar-color-primary-500); }
+
+.ft__enlace::after {
+  inset-block-start: 0;
+  inline-size: var(--aybar-space-2);
+  aspect-ratio: 1;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-primary-500);
+  opacity: 0;
+}
+
+.ft__enlace-texto {
+  position: relative;
+  z-index: 1;
+  padding: 0 var(--aybar-space-2);
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-surface);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--aybar-color-fg-link);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ft__enlace::after {
+    opacity: 1;
+    animation: ft-bajar calc(var(--aybar-motion-duration-slow) * 6) var(--aybar-motion-easing-standard) infinite;
+  }
+}
+
+@keyframes ft-bajar { to { inset-block-start: calc(100% - var(--aybar-space-2)); } }
+@keyframes ft-avanzar { to { inset-inline-start: calc(100% - var(--aybar-space-2)); } }
+
+@container ft-flujo (min-inline-size: 36rem) {
+  .ft__flujo { --ft-gap: var(--aybar-space-12); }
+  .ft__pista { grid-template-columns: repeat(var(--ft-n, 2), minmax(0, 1fr)); row-gap: var(--aybar-space-8); }
+  .ft__enlace { inset: 0 auto 0 100%; inline-size: var(--ft-gap); block-size: auto; }
+  .ft__enlace::before { inset: auto 0; inline-size: auto; block-size: 2px; }
+  .ft__enlace::after { inset: auto auto auto 0; animation-name: ft-avanzar; }
+}
+
+@container ft-flujo (min-inline-size: 60rem) {
+  .ft__flujo { grid-template-columns: calc(var(--aybar-space-16) * 4) minmax(0, 1fr); }
+}

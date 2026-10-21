@@ -1,0 +1,69 @@
+/* Editor de pasos: riel vertical con un nodo por paso. Container query (sin var()): 34rem. Solo tokens --aybar-*. */
+:host { display: block; }
+
+.ep { container: ep / inline-size; display: grid; gap: var(--aybar-space-4); }
+.ep__resumen, .ep__campos { display: grid; gap: var(--aybar-space-3); align-items: end; }
+.ep__nombre { grid-column: 1 / -1; }
+.ep__agregar { justify-self: start; }
+
+.ep__lista { display: grid; gap: var(--aybar-space-8); margin: 0; padding: 0; list-style: none; }
+.ep__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--aybar-space-8) minmax(0, 1fr);
+  gap: var(--aybar-space-3);
+}
+
+.ep__tarjeta {
+  display: grid;
+  gap: var(--aybar-space-3);
+  overflow: hidden;
+  padding: var(--aybar-space-4);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-md);
+  background: var(--aybar-color-bg-surface-raised);
+  box-shadow: var(--aybar-shadow-sm);
+}
+.ep__cab {
+  display: flex;
+  align-items: center;
+  gap: var(--aybar-space-2);
+  min-block-size: var(--aybar-space-8);
+  margin: calc(var(--aybar-space-4) * -1) calc(var(--aybar-space-4) * -1) 0;
+  padding: 0 var(--aybar-space-4);
+  background: var(--aybar-color-bg-brand-subtle);
+}
+.ep__resp { margin-inline-end: auto; font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
+
+/* Nodo y riel. */
+.ep__nodo {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  inline-size: var(--aybar-space-8);
+  aspect-ratio: 1;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-bg-brand);
+  color: var(--aybar-color-fg-on-brand);
+  font-weight: var(--aybar-font-weight-bold);
+  box-shadow: 0 0 0 2px var(--aybar-color-fg-link);
+}
+.ep__item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset: var(--aybar-space-8) auto calc(var(--aybar-space-8) * -1) calc(var(--aybar-space-4) - 1px);
+  inline-size: 2px;
+  background: var(--aybar-color-border-strong);
+}
+.ep__relevo {
+  position: absolute;
+  inset: calc(100% + var(--aybar-space-3)) auto auto var(--aybar-space-10);
+  font-size: var(--aybar-font-size-2xs);
+  font-weight: var(--aybar-font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--aybar-color-fg-link);
+}
+
+@container ep (min-inline-size: 34rem) {
+  .ep__resumen, .ep__campos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
