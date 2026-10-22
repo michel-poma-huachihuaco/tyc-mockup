@@ -33,7 +33,7 @@ y `ui:`), generadas desde los PDF del PO:
 
 - 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (uno por funcionalidad), ya publicados en Nexora y pendientes de aprobación;
 - desde el 21-oct, también análisis, roadmap, 14 ADR, arquitectura, datos, backlog de tareas (318 tareas, 243 h) y los gates G0 a G4 del
-  ticket provisional AYB-0001, llevados a la v1.3 desde la última versión de Nexora. Estos todavía no se subieron;
+  ticket provisional AYB-0001, llevados a la v1.3 desde la última versión de Nexora y publicados el 21-oct;
 - de los 4 desarrolladores: cada documento dice a quién le toca según el PLT-01;
 - solo la Etapa 1: no nombra NEXUS, DAEDALUS ni UrbeMind;
 - textos del PO tal cual: el «Como / quiero / para», los criterios de aceptación, las reglas, las horas y las fechas no se

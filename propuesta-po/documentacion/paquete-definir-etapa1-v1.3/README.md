@@ -24,8 +24,8 @@ Las correcciones que se le proponen al Excel del PO están en [`../correcciones-
 «Como / quiero / para», criterios de aceptación, reglas, horas, fechas, dependencias y riesgos. Solo se omitieron las frases que remiten
 a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por: (pendiente)».
 
-**Estado.** Todo está en borrador y nada está aprobado. Épicas, funcionalidades, historias y DoR están en Nexora desde el 20-oct, con las
-mismas huellas. Las demás carpetas de este repositorio son versiones nuevas que todavía **no se subieron**: ver `PLAN-NEXORA.md`.
+**Estado.** Todo está en borrador y nada está aprobado. Todo el paquete está en Nexora con las mismas huellas: épicas, funcionalidades,
+historias y DoR desde el 20-oct, y el resto desde el 21-oct. Ver `PLAN-NEXORA.md`.
 
 **Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`, 21-oct): **0 errores y 0 advertencias**.
 Son 155 documentos y 318 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. Ninguna funcionalidad está lista para construir,

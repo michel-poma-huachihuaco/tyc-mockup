@@ -394,4 +394,5 @@ Hecho el 20-oct. Supuestos que quedan para revisar:
 - **Paquete completo.** Por encargo del PO a Brayan, se llevaron a la v1.3 las demás carpetas del paquete: análisis, roadmap, ADR,
   arquitectura, datos, backlog de tareas y gates. Valida con 0 errores y 0 advertencias. No se decidió nada que no esté en los
   documentos del PO: lo abierto está en `analisis/decisiones.md` (stack, `PARTY` frente a ADR-03, D-12, Excel, ítems y aprobaciones).
-  Todavía no se subió a Nexora (ver `PLAN-NEXORA.md`).
+  Publicado en Nexora el 21-oct con la luz verde de Brayan: 43 versiones nuevas y 6 documentos nuevos. Nexora tiene ahora los 174
+  archivos iguales a esta carpeta, todo pendiente de aprobación (ver `PLAN-NEXORA.md`).

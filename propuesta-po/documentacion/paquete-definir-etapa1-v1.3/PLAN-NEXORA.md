@@ -26,22 +26,27 @@ exactamente este paquete, con las mismas huellas sha256.
 | Dev 3 (Michel) | 0 | 14 | 13 |
 | Dev 4 (Daniel) | 0 | 15 | 16 |
 
-## Pendiente de subir: el resto del paquete en la v1.3 (21-oct)
+## Publicado el 21-oct: el resto del paquete en la v1.3
 
-El 21-oct se llevaron a la v1.3, en este repositorio, las demás carpetas del paquete, partiendo de la última versión de Nexora.
-**Todavía no se subieron**: esperan la luz verde de Brayan y avisar a sus autores (Jesús y Daniel), porque las versiones nuevas
-quedarían a nombre de Brayan.
+El 21-oct se llevaron a la v1.3 las demás carpetas del paquete, partiendo de la última versión de Nexora, y Brayan las publicó con su
+luz verde, por encargo del PO. Antes se hizo el `dry_run` y se comprobó que nadie había subido versiones nuevas desde la descarga.
 
-| Carpeta | En Nexora hoy | Al subir |
+| Carpeta | Antes en Nexora | Publicado |
 |---|---|---|
-| `adr/` | 14, de Jesús | 14 versiones nuevas: referencias a la v1.3 y conflictos con el PO anotados, sin cambiar decisiones |
-| `arquitectura/` | 10, de Jesús | 5 versiones nuevas (OpenAPI con esquemas, contexto, diagrama, seguridad y trazabilidad); 5 iguales |
-| `datos/` | 7, de Jesús | 6 versiones nuevas (5 bitácoras, estados, listas y transiciones del PO y el Excel); 1 igual |
-| `analisis/` y `roadmap/` | 8, de Jesús y Daniel | 8 versiones nuevas en la v1.3 |
+| `analisis/` | 4, de Jesús y Daniel (v1.2) | 4 versiones nuevas |
+| `roadmap/` | 4, de Jesús | 4 versiones nuevas |
+| `adr/` | 14, de Jesús | 14 versiones nuevas, sin cambiar decisiones (conflictos con el PO anotados) |
+| `arquitectura/` | 10, de Jesús | 5 versiones nuevas; 5 iguales |
+| `datos/` | 7, de Jesús | 6 versiones nuevas; 1 igual |
 | `backlog/tareas/` | 10, de Daniel (v1.2) | 10 versiones nuevas y 1 nueva (EP-ATC-06) |
-| `gates/AYB-0001/` | 4 en `gates/` sin carpeta de ticket (v1.2) | 5 nuevos en `gates/AYB-0001/` (G2 es nuevo). Retirar los 4 viejos lo decide el PO o el admin |
+| `gates/AYB-0001/` | — | 5 nuevos (G0 a G4, con el G2 nuevo) |
+| **Total** | | **43 versiones nuevas y 6 documentos nuevos** |
 
-En total son unas 49 versiones o documentos. Antes de publicar se hace el `dry_run` para confirmar el plan del servidor.
+**Verificación:** una nueva prueba con los 174 archivos del paquete (155 documentos, 11 archivos de tareas y 5 gates más el resto) da
+**174 «sin cambios»**: Nexora tiene exactamente lo que tiene esta carpeta. Todo queda pendiente de aprobación. En la auditoría de
+Nexora, las versiones nuevas de documentos de Jesús y Daniel quedan a nombre de Brayan.
+
+Siguen en Nexora los 4 gates v1.2 en `gates/` (sin carpeta de ticket) y el duplicado de la HU-001: los retira el PO o el admin.
 
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
