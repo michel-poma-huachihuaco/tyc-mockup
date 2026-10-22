@@ -76,7 +76,7 @@ export interface TicketAtc {
   proj: string;
   type: string;
   prio: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-  state: 'OPEN' | 'IN_PROGRESS' | 'PENDING_CUSTOMER' | 'ESCALATED' | 'RESOLVED' | 'CLOSED' | 'REOPENED';
+  state: 'OPEN' | 'IN_PROGRESS' | 'PENDING_CUSTOMER' | 'ESCALATED' | 'IN_COMMITTEE' | 'RESOLVED' | 'CLOSED' | 'REOPENED';
   area: string;
   owner: string | null;
   opened: Date;
@@ -438,13 +438,14 @@ export const PRIORIDADES_TICKET: readonly PrioridadInfo[] = [
 ];
 
 export const AREAS_ATC = ['ATC', 'COBRANZA', 'LEGAL', 'POSTVENTA', 'TI', 'ADMINISTRACION'] as const;
-export const ESTADOS_TICKET = ['OPEN', 'IN_PROGRESS', 'PENDING_CUSTOMER', 'ESCALATED', 'RESOLVED', 'CLOSED'] as const;
+export const ESTADOS_TICKET = ['OPEN', 'IN_PROGRESS', 'PENDING_CUSTOMER', 'ESCALATED', 'IN_COMMITTEE', 'RESOLVED', 'CLOSED'] as const;
 
 export const ESTADO_ES: Readonly<Record<string, string>> = {
   OPEN: 'Abierto',
   IN_PROGRESS: 'En atención',
   PENDING_CUSTOMER: 'Espera cliente',
   ESCALATED: 'Escalado',
+  IN_COMMITTEE: 'Elevado a comité',
   RESOLVED: 'Resuelto',
   CLOSED: 'Cerrado',
   REOPENED: 'Reabierto',
@@ -1732,7 +1733,7 @@ export function crearTicketsDemo(): TicketAtc[] {
       'Los Álamos de Carabayllo · Mz. B Lt. 11',
       'REC',
       'HIGH',
-      'ESCALATED',
+      'IN_COMMITTEE',
       'LEGAL',
       'Dra. P. Vílchez',
       24 * 12,

@@ -46,6 +46,7 @@ import {
   AHORA_BASE,
   AREAS_ATC,
   EMPRESAS_AYBAR,
+  PRIORIDADES_TICKET,
   TIPOS_TICKET,
   diasHabilesEntre,
   fmtFecha,
@@ -59,6 +60,18 @@ import {
   type ReclamoGarantia,
   type TicketAtc,
 } from './datos-atc';
+import {
+  ALERTA_SLA_ES,
+  APELACION_INSTANCIA_ES,
+  AREA_ES,
+  ASIENTO_TIPO_ES,
+  CIERRE_SGD_ES,
+  CRITICIDAD_ES,
+  EVENTO_URBEMIND_ES,
+  GARANTIA_ESTADO_ES,
+  etiqueta,
+  opcionesDe,
+} from './etiquetas-es';
 import {
   EstadoPrototipoAtcService,
   type AlertaAdminConfig,
@@ -87,6 +100,7 @@ import { CeldaTicketComponent } from './celda-ticket';
 import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
 import { FlujosTorreComponent } from './flujos-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
+import { evaluarContextoMorosidad } from './contexto-morosidad';
 
 export type SubvistaEspecializadaAtc =
   | 'morosidad'
@@ -214,7 +228,7 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="area" let-fila>
                     @let f = comoFlujo(fila);
-                    <ay-badge size="sm" tono="neutral">{{ f.area }}</ay-badge>
+                    <ay-badge size="sm" tono="neutral">{{ areaEs(f.area) }}</ay-badge>
                   </ng-template>
                   <ng-template ayCelda="version" let-fila>
                     @let f = comoFlujo(fila);
@@ -309,7 +323,6 @@ export type SubvistaEspecializadaAtc =
                     @let a = comoAlertaAdmin(fila);
                     <div ayStack gap="1">
                       <strong>{{ a.etiqueta }}</strong>
-                      <code ayText="mono" size="xs">{{ a.codigo }}</code>
                     </div>
                   </ng-template>
                   <ng-template ayCelda="tipo" let-fila>
@@ -379,21 +392,21 @@ export type SubvistaEspecializadaAtc =
                   Publicará la versión v{{ (gu.versionActual ?? 0) + 1 }}. Los gestores verán esta versión de inmediato al abrir un ticket de «{{ gu.nombreTipo }}».
                 </p>
                 <ay-form-field etiqueta="Pasos (uno por línea)" obligatorio>
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-pasos-txt"
                     [filas]="4"
                     [valor]="editGuiaPasosTxt()"
                     (valorChange)="editGuiaPasosTxt.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Plantillas de respuesta (una por línea; puedes usar {resumen})">
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-plantillas-txt"
                     [filas]="3"
                     [valor]="editGuiaPlantillasTxt()"
                     (valorChange)="editGuiaPlantillasTxt.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Criterios de cierre (uno por línea)" obligatorio>
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-criterios-txt"
                     [filas]="3"
                     [valor]="editGuiaCriteriosTxt()"
                     (valorChange)="editGuiaCriteriosTxt.set($event)"
@@ -463,7 +476,7 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="tipo" let-fila>
                   @let p = comoPolitica(fila);
-                  <span>{{ p.tipo ?? 'Todos' }} · {{ p.prioridad ?? 'Todas' }}</span>
+                  <span>{{ p.tipo ?? 'Todos' }} · {{ p.prioridad ? nombrePrioridad(p.prioridad) : 'Todas' }}</span>
                 </ng-template>
                 <ng-template ayCelda="respuesta" let-fila>
                   @let p = comoPolitica(fila);
@@ -500,14 +513,14 @@ export type SubvistaEspecializadaAtc =
                   Publicará la versión v{{ pol.version + 1 }}. Los tickets nuevos en «Nuevo ticket» congelarán estos nuevos plazos.
                 </p>
                 <ay-form-field etiqueta="1.ª respuesta (horas hábiles)" obligatorio>
-                  <ay-input
+                  <ay-input nombre="edit-pol-respuesta-h"
                     tipo="number"
                     [valor]="editPolRespuestaH()"
                     (valorChange)="editPolRespuestaH.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Resolución (horas hábiles)" obligatorio>
-                  <ay-input
+                  <ay-input nombre="edit-pol-resolucion-h"
                     tipo="number"
                     [valor]="editPolResolucionH()"
                     (valorChange)="editPolResolucionH.set($event)"
@@ -557,28 +570,28 @@ export type SubvistaEspecializadaAtc =
                 <ay-form class="pl-atc-form-ancho" (enviar)="ejecutarReasignacionEnBloque()">
                   <div ayStack gap="4" class="pl-atc-fila-campos">
                     <ay-form-field etiqueta="Colaborador que deja los tickets" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-de"
                         [opciones]="opcionesOrigenReasignar()"
                         [valor]="reasignarDe()"
                         (valorChange)="reasignarDe.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Motivo" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-motivo"
                         [opciones]="opcionesMotivoReasignar"
                         [valor]="reasignarMotivo()"
                         (valorChange)="reasignarMotivo.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="A quién pasan (menor carga en el área)" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-a"
                         [opciones]="opcionesDestinoReasignar"
                         [valor]="reasignarA()"
                         (valorChange)="reasignarA.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Nota de auditoría (opcional)">
-                      <ay-textarea
+                      <ay-textarea nombre="reasignar-nota"
                         [filas]="2"
                         [valor]="reasignarNota()"
                         (valorChange)="reasignarNota.set($event)"
@@ -712,7 +725,6 @@ export type SubvistaEspecializadaAtc =
                 @let a = comoAlertaSla(fila);
                 <div ayStack gap="1">
                   <strong>{{ nombreAlertaSla(a.tipo) }}</strong>
-                  <code ayText="mono" size="xs">{{ a.tipo }}</code>
                 </div>
               </ng-template>
               <ng-template ayCelda="ciclo" let-fila>
@@ -891,14 +903,14 @@ export type SubvistaEspecializadaAtc =
                 <ay-form (enviar)="ejecutarSimulacionUrbeMind()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="Operación API" obligatorio>
-                      <ay-select
+                      <ay-select nombre="um-operacion"
                         [opciones]="opcionesOperacionUrbeMind"
                         [valor]="umOperacion()"
                         (valorChange)="umOperacion.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Alcance del token OAuth2" obligatorio>
-                      <ay-select
+                      <ay-select nombre="um-alcance"
                         [opciones]="opcionesAlcanceUrbeMind"
                         [valor]="umAlcance()"
                         (valorChange)="umAlcance.set($event)"
@@ -967,7 +979,7 @@ export type SubvistaEspecializadaAtc =
               >
                 <ng-template ayCelda="tipo" let-fila>
                   @let e = comoEventoUm(fila);
-                  <code ayText="mono" size="xs">{{ e.tipo }}</code>
+                  <code ayText="mono" size="xs">{{ etiqueta(eventoUmEs, e.tipo) }}</code>
                 </ng-template>
                 <ng-template ayCelda="ticket" let-fila>
                   @let e = comoEventoUm(fila);
@@ -997,12 +1009,19 @@ export type SubvistaEspecializadaAtc =
       <div ayStack gap="6">
         <ay-page-header
           titulo="Resolución por morosidad"
-          descripcion="Casos que abre la evaluación diaria con 3 cuotas vencidas e impagas, con su alerta al cliente y su carta al responsable del proyecto."
+          descripcion="Contexto de mora para el asesor responsable del ticket: cuotas vencidas, alerta al cliente y carta al responsable del proyecto. Solo consulta."
         >
           <ay-badge ayEstado size="sm" tono="danger">
             {{ estadoProto.casosResolucionMora().length }} casos de resolución
           </ay-badge>
         </ay-page-header>
+
+        <ay-alert tono="warning" size="sm" titulo="Regla pendiente de validación contractual">
+          La condición de posible disolución contractual se evalúa como «más de tres cuotas» (más de 3 cuotas
+          vencidas) y está pendiente de validación por negocio. Esta vista solo informa: no disuelve contratos
+          ni toma decisiones contractuales. El flujo de negociación entre el cliente e Iver es una dependencia
+          pendiente.
+        </ay-alert>
 
         <div ayGrid [columnas]="4" gap="sm">
           <ay-card superficie="solid">
@@ -1132,6 +1151,27 @@ export type SubvistaEspecializadaAtc =
                   El cliente tiene un reclamo abierto en el Libro: no se envían alertas de corte ni cartas hasta responderlo.
                 </ay-alert>
               }
+              @let ctx = contextoMora(mc);
+              <ay-card superficie="solid">
+                <ay-card-header
+                  titulo="Contexto de mora del ticket (regla pendiente de validación)"
+                  nivel="h3"
+                  [separador]="true"
+                />
+                <ay-card-body padding="sm">
+                  <ay-card-pairs
+                    [pares]="[
+                      { clave: 'Ticket', valor: mc.ticketNum },
+                      { clave: 'Cliente · contrato', valor: mc.clienteNombre + ' · ' + mc.contrato },
+                      { clave: 'Cuotas vencidas', valor: '' + ctx.cuotasVencidas },
+                      { clave: 'Deuda vencida', valor: 'S/ ' + mc.deuda },
+                      { clave: 'Condición «más de tres cuotas»', valor: ctx.superaCondicion ? 'Cumple (indicativo)' : 'No cumple (indicativo)' },
+                      { clave: 'Lectura', valor: ctx.lectura },
+                      { clave: 'Etapa de negociación cliente-Iver', valor: ctx.etapaNegociacion }
+                    ]"
+                  />
+                </ay-card-body>
+              </ay-card>
               <div ayGrid [columnas]="2" gap="md">
                 <ay-card superficie="solid">
                   <ay-card-header titulo="Constancias de envío de alerta al cliente" nivel="h3" [separador]="true" />
@@ -1201,7 +1241,7 @@ export type SubvistaEspecializadaAtc =
                 <ay-form class="pl-atc-form-ancho" (enviar)="registrarIngresoProyecto()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="1. Nombre completo" obligatorio>
-                      <ay-input
+                      <ay-input nombre="nuevo-asistente-nombre"
                         [valor]="nuevoAsistenteNombre()"
                         (valorChange)="nuevoAsistenteNombre.set($event)"
                         placeholder="Nombre y apellidos"
@@ -1209,14 +1249,14 @@ export type SubvistaEspecializadaAtc =
                     </ay-form-field>
                     <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="2. DNI (8 dígitos)" obligatorio>
-                        <ay-input
+                        <ay-input nombre="nuevo-asistente-dni"
                           [valor]="nuevoAsistenteDni()"
                           (valorChange)="nuevoAsistenteDni.set($event)"
                           placeholder="Ej. 72282555"
                         />
                       </ay-form-field>
                       <ay-form-field etiqueta="3. Teléfono de contacto" obligatorio>
-                        <ay-input
+                        <ay-input nombre="nuevo-asistente-telefono"
                           [valor]="nuevoAsistenteTelefono()"
                           (valorChange)="nuevoAsistenteTelefono.set($event)"
                           placeholder="+51 987 654 321"
@@ -1225,14 +1265,14 @@ export type SubvistaEspecializadaAtc =
                     </div>
                     <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="4. Motivo de la visita" obligatorio>
-                        <ay-select
+                        <ay-select nombre="nuevo-asistente-motivo"
                           [opciones]="opcionesMotivoVisita"
                           [valor]="nuevoAsistenteMotivo()"
                           (valorChange)="nuevoAsistenteMotivo.set($event)"
                         />
                       </ay-form-field>
                       <ay-form-field etiqueta="5. Proyecto o área que visita" obligatorio>
-                        <ay-select
+                        <ay-select nombre="nuevo-asistente-proyecto"
                           [opciones]="opcionesProyectoVisita"
                           [valor]="nuevoAsistenteProyecto()"
                           (valorChange)="nuevoAsistenteProyecto.set($event)"
@@ -1240,7 +1280,7 @@ export type SubvistaEspecializadaAtc =
                       </ay-form-field>
                     </div>
                     <ay-form-field etiqueta="6. Lote / Unidad o referencia">
-                      <ay-input
+                      <ay-input nombre="nuevo-asistente-lote"
                         [valor]="nuevoAsistenteLote()"
                         (valorChange)="nuevoAsistenteLote.set($event)"
                         placeholder="Ej. Mz. C Lt. 07"
@@ -1319,7 +1359,7 @@ export type SubvistaEspecializadaAtc =
                   @let b = comoAsiento(fila);
                   <div ayStack gap="1">
                     <ay-badge size="sm" [tono]="b.kind === 'RECLAMO' ? 'warning' : 'neutral'">
-                      {{ b.kind }}
+                      {{ etiqueta(asientoTipoEs, b.kind) }}
                     </ay-badge>
                     <span ayText="body" size="xs">{{ b.amount ?? 'Sin monto' }}</span>
                   </div>
@@ -1365,7 +1405,7 @@ export type SubvistaEspecializadaAtc =
                       <ay-badge size="sm" tono="success">Respondido {{ fmtDia(b.resp) }}</ay-badge>
                       @if (b.appeal) {
                         <span ayText="body" size="xs">
-                          Apelación {{ b.appeal.to }}: <strong>{{ b.appeal.caseNo }}</strong> ({{ b.appeal.st }})
+                          Apelación {{ etiqueta(apelacionEs, b.appeal.to) }}: <strong>{{ b.appeal.caseNo }}</strong> ({{ b.appeal.st }})
                         </span>
                       } @else if (estadoProto.puedeGestionarLibro()) {
                         <ay-button tamano="sm" variante="ghost" (click)="registrarApelacionIndecopi(b)">
@@ -1492,7 +1532,7 @@ export type SubvistaEspecializadaAtc =
                 <ng-template ayCelda="estado" let-fila>
                   @let s = comoSgd(fila);
                   @if (s.closeState) {
-                    <ay-badge size="sm" tono="success">{{ s.closeState }} · GLI</ay-badge>
+                    <ay-badge size="sm" tono="success">{{ etiqueta(cierreSgdEs, s.closeState) }} · GLI</ay-badge>
                   } @else {
                     <ay-button
                       tamano="sm"
@@ -1629,7 +1669,7 @@ export type SubvistaEspecializadaAtc =
                           : 'warning'
                     "
                   >
-                    {{ g.state }}
+                    {{ etiqueta(garantiaEs, g.state) }}
                   </ay-badge>
                   @if (g.state === 'UNDER_REVIEW' && estadoProto.puedeOperarGarantias()) {
                     <ay-button tamano="sm" variante="primary" (click)="g.state = 'APPROVED'">
@@ -1709,7 +1749,7 @@ export type SubvistaEspecializadaAtc =
                   <ng-template ayCelda="criticidad" let-fila>
                     @let c = comoCasoEvento(fila);
                     <ay-badge size="sm" [tono]="c.criticidad === 'CRITICA' ? 'danger' : 'warning'">
-                      {{ c.criticidad }}
+                      {{ etiqueta(criticidadEs, c.criticidad) }}
                     </ay-badge>
                   </ng-template>
                   <ng-template ayCelda="situacion" let-fila>
@@ -1727,7 +1767,7 @@ export type SubvistaEspecializadaAtc =
                 <ay-divider espaciado="sm" />
 
                 <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de imputación penal)">
-                  <ay-textarea
+                  <ay-textarea nombre="texto-evento"
                     [filas]="2"
                     [valor]="textoEvento()"
                     (valorChange)="textoEvento.set($event)"
@@ -1793,21 +1833,21 @@ export type SubvistaEspecializadaAtc =
               <ay-form (enviar)="confirmarReservaBusCliente()">
                 <div ayGrid [columnas]="3" gap="sm">
                   <ay-form-field etiqueta="Bus y horario" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-id"
                       [opciones]="opcionesBusesSelect()"
                       [valor]="formBusId()"
                       (valorChange)="formBusId.set($event)"
                     />
                   </ay-form-field>
                   <ay-form-field etiqueta="Punto de embarque" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-punto"
                       [opciones]="opcionesPuntosEmbarque"
                       [valor]="formBusPunto()"
                       (valorChange)="formBusPunto.set($event)"
                     />
                   </ay-form-field>
                   <ay-form-field etiqueta="Acompañantes (0 a 3)" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-acompanantes"
                       [opciones]="opcionesAcompanantesBus"
                       [valor]="formBusAcompanantes()"
                       (valorChange)="formBusAcompanantes.set($event)"
@@ -1962,7 +2002,7 @@ export type SubvistaEspecializadaAtc =
               />
               <ay-card-body padding="md" gap="md">
                 <ay-form-field etiqueta="Capital reclamado en controversia (S/)">
-                  <ay-input
+                  <ay-input nombre="capital-controversia-str"
                     tipo="number"
                     size="sm"
                     [valor]="capitalControversiaStr()"
@@ -2013,7 +2053,7 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="gestor" let-fila>
                   @let e = comoEncuesta(fila);
-                  <span>{{ e.gestor }} ({{ e.area }})</span>
+                  <span>{{ e.gestor }} ({{ areaEs(e.area) }})</span>
                 </ng-template>
                 <ng-template ayCelda="metricas" let-fila>
                   @let e = comoEncuesta(fila);
@@ -2301,10 +2341,26 @@ export class VistaEspecializadaComponent {
   readonly editGuiaPlantillasTxt = signal<string>('');
   readonly editGuiaCriteriosTxt = signal<string>('');
 
-  readonly opcionesAreasSelect: AyOpcionSelect[] = AREAS_ATC.map((a) => ({ value: a, label: a }));
+  readonly etiqueta = etiqueta;
+  readonly eventoUmEs = EVENTO_URBEMIND_ES;
+  readonly asientoTipoEs = ASIENTO_TIPO_ES;
+  readonly apelacionEs = APELACION_INSTANCIA_ES;
+  readonly cierreSgdEs = CIERRE_SGD_ES;
+  readonly garantiaEs = GARANTIA_ESTADO_ES;
+  readonly criticidadEs = CRITICIDAD_ES;
+
+  areaEs(a: string): string {
+    return etiqueta(AREA_ES, a);
+  }
+
+  nombrePrioridad(id: string): string {
+    return PRIORIDADES_TICKET.find((p) => p.id === id)?.nombre ?? id;
+  }
+
+  readonly opcionesAreasSelect: AyOpcionSelect[] = opcionesDe(AREAS_ATC, AREA_ES);
   readonly opcionesResponsablesSelect: AyOpcionSelect[] = this.estadoProto.colaboradores.map((c) => ({
     value: c.nombre,
-    label: `${c.nombre} (${c.area})`,
+    label: `${c.nombre} (${etiqueta(AREA_ES, c.area)})`,
   }));
 
   /* ── Estado de edición de Políticas SLA ── */
@@ -2648,7 +2704,7 @@ export class VistaEspecializadaComponent {
     );
     this.flujoEditando.set(null);
     this.avisoOperacion.set(
-      `Flujo de «${nuevo.nombreTipo}» actualizado a v${nuevo.versionActual} (Área: ${nuevo.area}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
+      `Flujo de «${nuevo.nombreTipo}» actualizado a v${nuevo.versionActual} (Área: ${etiqueta(AREA_ES, nuevo.area)}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
     );
   }
 
@@ -2739,13 +2795,7 @@ export class VistaEspecializadaComponent {
   }
 
   nombreAlertaSla(tipo: AlertaSlaItem['tipo']): string {
-    const mapa: Record<AlertaSlaItem['tipo'], string> = {
-      FIRST_RESPONSE_AT_RISK: '1.ª respuesta por vencer (≤ 25 %)',
-      FIRST_RESPONSE_BREACHED: '1.ª respuesta vencida',
-      RESOLUTION_AT_RISK: 'Resolución por vencer (≤ 25 %)',
-      RESOLUTION_BREACHED: 'Resolución vencida',
-    };
-    return mapa[tipo];
+    return etiqueta(ALERTA_SLA_ES, tipo);
   }
 
   correrJobSlaAhora(): void {
@@ -2792,6 +2842,10 @@ export class VistaEspecializadaComponent {
   }
 
   /* ── Acciones de Morosidad ── */
+  contextoMora(mc: CasoResolucionMoraDetalle) {
+    return evaluarContextoMorosidad(mc.cuotasImpagas);
+  }
+
   contarMorosidadEstado(est: CasoResolucionMoraDetalle['estado']): number {
     return this.estadoProto.casosResolucionMora().filter((c) => c.estado === est).length;
   }

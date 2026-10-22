@@ -44,7 +44,9 @@ import {
   SALAS_OFICINA,
   TIPOS_SIMULACION,
   type SalaOficina,
+  type TicketAtc,
 } from './datos-atc';
+import { MonitorVivoComponent } from './monitor-vivo';
 import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
@@ -101,21 +103,30 @@ const LIDERES_SALA: Readonly<Record<string, string>> = {
   proy: 'Arq. Claudia Mendoza (Responsable Proyecto)',
 };
 
-const TOKEN_ZONA: Readonly<Record<string, string>> = {
-  eje1: 'primary-400',
-  cob: 'primary-700',
-  libro: 'secondary-500',
-  legal: 'feedback-danger-border',
-  post: 'feedback-success-border',
-  proy: 'secondary-700',
+// Tokens por tema, elegidos para llegar a >= 3:1 contra el suelo de la planta (claro: tonos 600-700;
+// oscuro: tonos 300-500). Legal usa grafito (neutral) para no compartir el rojo de "riesgo/vencido".
+const TOKEN_ZONA: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, string>>>> = {
+  claro: {
+    eje1: 'primary-600',
+    cob: 'primary-700',
+    libro: 'secondary-700',
+    legal: 'neutral-700',
+    post: 'success-700',
+    proy: 'secondary-800',
+  },
+  oscuro: {
+    eje1: 'primary-500',
+    cob: 'primary-300',
+    libro: 'secondary-400',
+    legal: 'neutral-300',
+    post: 'success-300',
+    proy: 'secondary-300',
+  },
 };
 
-const TOKEN_CANAL: Readonly<Record<string, string>> = {
-  tel: 'primary-600',
-  wa: 'feedback-success-border',
-  mail: 'primary-500',
-  portal: 'primary-700',
-  form: 'secondary-600',
+const TOKEN_CANAL: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, string>>>> = {
+  claro: { tel: 'primary-600', wa: 'success-700', mail: 'primary-500', portal: 'primary-700', form: 'secondary-700' },
+  oscuro: { tel: 'primary-400', wa: 'success-300', mail: 'primary-300', portal: 'primary-500', form: 'secondary-300' },
 };
 
 interface MetaEstacionVivo {
@@ -325,8 +336,22 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AyTag,
     AyText,
     AyTimeline,
+    MonitorVivoComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    .vivo-salas-movil { display: none; margin: 0; padding: 0; list-style: none; gap: var(--aybar-space-2); }
+    .vivo-salas-movil__fila { inline-size: 100%; display: grid; gap: var(--aybar-space-1); text-align: start; font: inherit; color: var(--aybar-color-fg-default); background: var(--aybar-color-bg-surface); border: 1px solid var(--aybar-color-border-default); border-radius: var(--aybar-radius-lg); padding: var(--aybar-space-2) var(--aybar-space-3); cursor: pointer; }
+    .vivo-salas-movil__fila[aria-pressed='true'] { border-color: var(--aybar-color-border-accent); }
+    .vivo-salas-movil__fila:focus-visible { outline: 2px solid var(--aybar-color-border-focus); outline-offset: 2px; }
+    .vivo-salas-movil__nombre { font-weight: var(--aybar-font-weight-semibold); }
+    .vivo-salas-movil__cifras { font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-muted); font-variant-numeric: tabular-nums; }
+    .vivo-salas-movil__riesgo { margin-inline-start: var(--aybar-space-2); color: var(--aybar-color-feedback-warning-fg, var(--aybar-color-fg-default)); }
+    @media (max-width: 599.98px) {
+      .vivo-salas-movil { display: grid; }
+      .pl-atc-vivo-select { flex: 1 1 calc(50% - var(--aybar-space-2)); min-inline-size: 0; }
+    }
+  `,
   template: `
     <div ayStack gap="6" aria-label="Panel unificado de Operación en Vivo">
       <ay-page-header
@@ -341,6 +366,9 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
         >
           + Ticket
         </ay-button>
+        <ay-button ayAcciones tamano="sm" variante="secondary" (click)="monitorAbierto.set(true)">
+          Monitor
+        </ay-button>
         <ay-button
           ayAcciones
           tamano="sm"
@@ -354,6 +382,10 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
           }}
         </ay-button>
       </ay-page-header>
+
+      @if (monitorAbierto()) {
+        <app-monitor-vivo [tickets]="tickets()" (cerrar)="monitorAbierto.set(false)" />
+      }
 
       <!-- 1. 5 KPIs en vivo -->
       <div ayStack gap="3">
@@ -538,6 +570,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
               <div ayRow gap="2" alinear="center" [ajuste]="true">
                 <div class="pl-atc-vivo-select">
                   <ay-select
+                    nombre="canal-entrada"
                     size="sm"
                     [opciones]="opcionesCanalesSelect"
                     [valor]="canalEntradaCustom()"
@@ -546,6 +579,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                 </div>
                 <div class="pl-atc-vivo-select">
                   <ay-select
+                    nombre="sala-filtro"
                     size="sm"
                     [opciones]="opcionesSalasSelect"
                     [valor]="areaFiltro()"
@@ -575,6 +609,28 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                 </ay-button>
               </div>
             </div>
+
+            <!-- Móvil (<600 px): lista accesible de salas, en lugar de las etiquetas 3D -->
+            <ul class="vivo-salas-movil" aria-label="Salas y tickets en cola">
+              @for (r of resumenSalas(); track r.k) {
+                <li>
+                  <button
+                    type="button"
+                    class="vivo-salas-movil__fila"
+                    [attr.aria-pressed]="areaFiltro() === r.k"
+                    (click)="inspeccionarSala3D(r.k)"
+                  >
+                    <span class="vivo-salas-movil__nombre">{{ r.nombre }}</span>
+                    <span class="vivo-salas-movil__cifras">
+                      {{ r.cola }} en cola · {{ r.atencion }} en atención
+                      @if (r.riesgo) {
+                        <strong class="vivo-salas-movil__riesgo">▲ SLA en riesgo</strong>
+                      }
+                    </span>
+                  </button>
+                </li>
+              }
+            </ul>
 
             <!-- Lienzo 3D + Ficha flotante del ticket -->
             <div #stageHost class="atc-vivo-stage-area">
@@ -658,13 +714,13 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
             <!-- Leyenda de escena 3D con componentes del SDK -->
             <div ayRow gap="2" [ajuste]="true">
               <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-success-border)">
-                LED verde: En plazo SLA
+                LED verde (esfera): En plazo SLA
               </ay-tag>
               <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-warning-border)">
-                LED ámbar pulsante: SLA en riesgo (&lt;25%)
+                LED ámbar pulsante (rombo): SLA en riesgo (&lt;25%)
               </ay-tag>
               <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
-                LED rojo / Comité SGD: SLA vencido
+                LED rojo (cubo) / Comité SGD: SLA vencido
               </ay-tag>
               <ay-tag variante="outline" colorPunto="var(--aybar-color-secondary-400)">
                 Relámpago 3D giratorio: Prioridad Rayo
@@ -857,6 +913,8 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
 })
 export class VistaVivoComponent {
   readonly mostrarHu = input<boolean>(false);
+  /** Tickets de la consola para el Monitor (OPE-01); sin ellos usa los de demostración. */
+  readonly tickets = input<readonly TicketAtc[] | null>(null);
   readonly seleccionarTicket = output<string>();
   readonly irABandeja = output<void>();
 
@@ -895,6 +953,7 @@ export class VistaVivoComponent {
   readonly velocidad = signal<number>(1);
   readonly velocidadStr = computed(() => String(this.velocidad()));
   readonly cajonLateralAbierto = signal<boolean>(false);
+  readonly monitorAbierto = signal<boolean>(false);
   readonly vistaCajon = signal<'todo' | 'bandeja' | 'estacion' | 'correos'>('todo');
   readonly areaFiltro = signal<string>('');
   readonly canalEntradaCustom = signal<string>('');
@@ -913,6 +972,19 @@ export class VistaVivoComponent {
   readonly csatRespuestas = signal<number>(29);
 
   readonly ticketsActivos = signal<TicketVivo[]>([]);
+  /** Contadores por sala (los mismos que alimentan la planta) para la lista móvil. */
+  readonly resumenSalas = computed(() =>
+    this.salas.map((s) => {
+      const enSala = this.ticketsActivos().filter((t) => t.area === s.k && t.etapa !== 'salida');
+      return {
+        k: s.k,
+        nombre: s.nombre,
+        cola: enSala.filter((t) => t.etapa === 'cola' || t.etapa === 'bandeja').length,
+        atencion: enSala.filter((t) => t.etapa === 'atencion').length,
+        riesgo: enSala.some((t) => this.nivelSlaTicket(t) !== 'ok'),
+      };
+    }),
+  );
   readonly correosEnviados = signal<CorreoAsignacionLog[]>([
     {
       id: 'MAIL-01',
@@ -1043,13 +1115,19 @@ export class VistaVivoComponent {
     const canvas = this.threeCanvasRef()?.nativeElement;
     if (!host || !canvas) return;
 
+    const sueloRgb = leerTokenRgb('bg-surface-sunken', [232, 232, 232]);
+    const tema = 0.2126 * sueloRgb[0]! + 0.7152 * sueloRgb[1]! + 0.0722 * sueloRgb[2]! < 110 ? 'oscuro' : 'claro';
+    // Rellenos de estado: tono 600 sobre suelo claro, 500 sobre oscuro.
+    const estado = (n: string, resp: [number, number, number]) =>
+      leerTokenRgb(tema === 'claro' ? `${n}-600` : `${n}-500`, resp);
     const cols: Cols = {
       teal: leerTokenRgb('primary-700', [2, 66, 78]),
       teal2: leerTokenRgb('primary-500', [70, 134, 150]),
       orange: leerTokenRgb('secondary-400', [255, 167, 38]),
-      ok: leerTokenRgb('feedback-success-border', [29, 139, 68]),
-      warn: leerTokenRgb('feedback-warning-border', [184, 129, 0]),
-      bad: leerTokenRgb('feedback-danger-border', [225, 90, 78]),
+      ok: estado('success', [29, 139, 68]),
+      warn: estado('warning', [157, 106, 0]),
+      bad: estado('danger', [193, 69, 58]),
+      sobreAcento: leerTokenRgb('fg-on-accent', [0, 34, 42]),
       line: leerTokenRgb('border-subtle', [212, 212, 212]),
       muted: leerTokenRgb('fg-muted', [74, 74, 74]),
       texto: leerTokenRgb('fg-default', [29, 29, 29]),
@@ -1062,13 +1140,13 @@ export class VistaVivoComponent {
       zonas: this.salas.map((s) => ({
         k: s.k,
         n: s.nombre,
-        color: leerTokenRgb(TOKEN_ZONA[s.k] ?? 'primary-500', cols.teal2),
+        color: leerTokenRgb(TOKEN_ZONA[tema][s.k] ?? 'primary-500', cols.teal2),
       })),
       compuertas: this.puertas.map((p) => ({
         k: p.k,
         n: p.nombre,
         sigla: p.ic,
-        color: leerTokenRgb(TOKEN_CANAL[p.k] ?? 'primary-500', cols.teal2),
+        color: leerTokenRgb(TOKEN_CANAL[tema][p.k] ?? 'primary-500', cols.teal2),
       })),
     };
 

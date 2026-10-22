@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,6 +8,7 @@ import {
   afterNextRender,
   computed,
   effect,
+  untracked,
   inject,
   signal,
 } from '@angular/core';
@@ -16,6 +18,7 @@ import {
   AyAppearancePanel,
   AyBadge,
   AyButton,
+  AyToggleButton,
   AyCard,
   AyCardBody,
   AyCardHeader,
@@ -88,6 +91,7 @@ import {
 } from './estado-prototipo-atc';
 import { BarraFiltrosComponent } from './barra-filtros';
 import { VacioFiltrosComponent } from './vacio-filtros';
+import { alternarFavorito, guardarFavoritos, leerFavoritos } from './favoritos-atc';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 interface ItemMenuAtc {
@@ -104,12 +108,14 @@ interface ItemMenuAtc {
   selector: 'app-consola-atc',
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     BarraFiltrosComponent,
     VacioFiltrosComponent,
     AyAlert,
     AyAppearancePanel,
     AyBadge,
     AyButton,
+    AyToggleButton,
     AyCard,
     AyCardBody,
     AyCardHeader,
@@ -192,12 +198,139 @@ interface ItemMenuAtc {
 
     <div class="pl-atc-cuerpo">
       <div class="pl-atc-lateral" (click)="alInterceptarEnlaceSidebar($event)">
+        <ng-template #herramientas>
+        <!-- Herramientas (pie del sidebar) (Ver como, Tema, Apariencia, Simulación, Notas) -->
+        <div class="pt-herr">
+          @if (herramientasAbierto()) {
+            @if (vistaHerramientas() === 'notas') {
+              <div class="pt-herr__panel" role="region" aria-label="Notas de esta pantalla">
+                <div class="pt-herr__cab">
+                  <button
+                    type="button"
+                    class="pt-herr__atras"
+                    aria-label="Volver a las herramientas"
+                    (click)="vistaHerramientas.set('menu')"
+                  >
+                    ‹
+                  </button>
+                  <div>
+                    <h2>Notas de esta pantalla</h2>
+                    <small>Supuestos, límites y pendientes para revisar</small>
+                  </div>
+                </div>
+                <div class="pt-herr__sec">
+                  <ay-checkbox
+                    [marcado]="mostrarTrazabilidadHu()"
+                    (marcadoChange)="mostrarTrazabilidadHu.set($event)"
+                  >
+                    Mostrar etiquetas de trazabilidad HU en pantalla
+                  </ay-checkbox>
+                </div>
+                @if (notasPantallaActual().length) {
+                  <div class="pt-herr__notas">
+                    @for (nota of notasPantallaActual(); track nota) {
+                      <div class="pt-herr__nota">{{ nota }}</div>
+                    }
+                  </div>
+                } @else {
+                  <p class="pt-herr__vacio">Esta pantalla no tiene notas.</p>
+                }
+              </div>
+            } @else {
+              <div class="pt-herr__panel" role="region" aria-label="Herramientas">
+                <div class="pt-herr__cab">
+                  <div>
+                    <h2>Herramientas</h2>
+                    <small>Reloj: {{ relojSimuladoTexto() }}</small>
+                  </div>
+                </div>
+
+                <div class="pt-herr__sec">
+                  <ay-form-field etiqueta="Ver como">
+                    <ay-select
+                      [opciones]="opcionesSelectPerspectivas"
+                      [valor]="perspectivaId()"
+                      (valorChange)="alCambiarPerspectivaId($event)"
+                    />
+                  </ay-form-field>
+                  <small ayText="body" size="xs">Cambia de usuario y sus permisos.</small>
+                </div>
+
+                <div class="pt-herr__sec">
+                  <b>Tema</b>
+                  <app-boton-tema />
+                </div>
+
+                <div class="pt-herr__filas">
+                  <button type="button" class="pt-herr__fila" (click)="abrirPanelApariencia()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <span>
+                      <b>Apariencia</b>
+                      <small>Paleta, grises, densidad y bordes</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+
+                  <button type="button" class="pt-herr__fila" (click)="abrirPanelSimulacion()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l3 2" />
+                    </svg>
+                    <span>
+                      <b>Simulación</b>
+                      <small>Reloj, escenarios y fuentes caídas</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+
+                  <button type="button" class="pt-herr__fila" (click)="vistaHerramientas.set('notas')">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                    </svg>
+                    <span>
+                      <b>
+                        Notas
+                        @if (notasPantallaActual().length) {
+                          <span class="pt-herr__cuenta">{{ notasPantallaActual().length }}</span>
+                        }
+                      </b>
+                      <small>Supuestos y pendientes de esta pantalla</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+                </div>
+              </div>
+            }
+          }
+
+          <button
+            type="button"
+            class="pt-herr__fab"
+            [attr.aria-expanded]="herramientasAbierto()"
+            aria-label="Herramientas"
+            title="Herramientas"
+            (click)="alternarHerramientas()"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+              />
+            </svg>
+          </button>
+        </div>
+        </ng-template>
         <ay-sidebar
           etiqueta="Módulos de Aybar Atiende"
           [grupos]="gruposSidebar()"
           [(colapsada)]="lateralPlegado"
         >
           <div ayPie ayStack gap="2">
+            <ng-container *ngTemplateOutlet="herramientas" />
             <ay-button
               tamano="sm"
               variante="ghost"
@@ -212,6 +345,17 @@ interface ItemMenuAtc {
 
       <main id="atc-contenido" class="pl-atc-principal" tabindex="-1">
         <div ayStack gap="6">
+          <div class="pl-favoritos">
+            <ay-toggle-button
+              tamano="sm"
+              [presionado]="actualEsFavorito()"
+              [disabled]="!opcionActual()"
+              (presionadoChange)="alternarFavoritoActual()"
+            >
+              <span aria-hidden="true">{{ actualEsFavorito() ? '♥' : '♡' }}</span>
+              Favorito
+            </ay-toggle-button>
+          </div>
           @if (avisoNavegacion()) {
             <ay-alert
               tono="info"
@@ -237,6 +381,7 @@ interface ItemMenuAtc {
             @case ('vivo') {
               <app-vista-vivo
                 [mostrarHu]="mostrarTrazabilidadHu()"
+                [tickets]="ticketsVisibles()"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irABandeja)="vistaActiva.set('bandeja')"
               />
@@ -272,6 +417,7 @@ interface ItemMenuAtc {
                 [tickets]="ticketsVisibles()"
                 [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
+                [contexto]="contextoNuevoTicket()"
                 (ticketCreado)="alCrearTicket($event)"
               />
             }
@@ -693,131 +839,6 @@ interface ItemMenuAtc {
       </ay-side-panel>
     </div>
 
-    <!-- Herramientas flotantes en esquina inferior izquierda (Ver como, Tema, Apariencia, Simulación, Notas) -->
-    <div class="pt-herr">
-      @if (herramientasAbierto()) {
-        @if (vistaHerramientas() === 'notas') {
-          <div class="pt-herr__panel" role="region" aria-label="Notas de esta pantalla">
-            <div class="pt-herr__cab">
-              <button
-                type="button"
-                class="pt-herr__atras"
-                aria-label="Volver a las herramientas"
-                (click)="vistaHerramientas.set('menu')"
-              >
-                ‹
-              </button>
-              <div>
-                <h2>Notas de esta pantalla</h2>
-                <small>Supuestos, límites y pendientes para revisar</small>
-              </div>
-            </div>
-            <div class="pt-herr__sec">
-              <ay-checkbox
-                [marcado]="mostrarTrazabilidadHu()"
-                (marcadoChange)="mostrarTrazabilidadHu.set($event)"
-              >
-                Mostrar etiquetas de trazabilidad HU en pantalla
-              </ay-checkbox>
-            </div>
-            @if (notasPantallaActual().length) {
-              <div class="pt-herr__notas">
-                @for (nota of notasPantallaActual(); track nota) {
-                  <div class="pt-herr__nota">{{ nota }}</div>
-                }
-              </div>
-            } @else {
-              <p class="pt-herr__vacio">Esta pantalla no tiene notas.</p>
-            }
-          </div>
-        } @else {
-          <div class="pt-herr__panel" role="region" aria-label="Herramientas">
-            <div class="pt-herr__cab">
-              <div>
-                <h2>Herramientas</h2>
-                <small>Reloj: {{ relojSimuladoTexto() }}</small>
-              </div>
-            </div>
-
-            <div class="pt-herr__sec">
-              <ay-form-field etiqueta="Ver como">
-                <ay-select
-                  [opciones]="opcionesSelectPerspectivas"
-                  [valor]="perspectivaId()"
-                  (valorChange)="alCambiarPerspectivaId($event)"
-                />
-              </ay-form-field>
-              <small ayText="body" size="xs">Cambia de usuario y sus permisos.</small>
-            </div>
-
-            <div class="pt-herr__sec">
-              <b>Tema</b>
-              <app-boton-tema />
-            </div>
-
-            <div class="pt-herr__filas">
-              <button type="button" class="pt-herr__fila" (click)="abrirPanelApariencia()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <span>
-                  <b>Apariencia</b>
-                  <small>Paleta, grises, densidad y bordes</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-
-              <button type="button" class="pt-herr__fila" (click)="abrirPanelSimulacion()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 2" />
-                </svg>
-                <span>
-                  <b>Simulación</b>
-                  <small>Reloj, escenarios y fuentes caídas</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-
-              <button type="button" class="pt-herr__fila" (click)="vistaHerramientas.set('notas')">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-                </svg>
-                <span>
-                  <b>
-                    Notas
-                    @if (notasPantallaActual().length) {
-                      <span class="pt-herr__cuenta">{{ notasPantallaActual().length }}</span>
-                    }
-                  </b>
-                  <small>Supuestos y pendientes de esta pantalla</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-            </div>
-          </div>
-        }
-      }
-
-      <button
-        type="button"
-        class="pt-herr__fab"
-        [attr.aria-expanded]="herramientasAbierto()"
-        aria-label="Herramientas"
-        title="Herramientas"
-        (click)="alternarHerramientas()"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="3" />
-          <path
-            d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
-          />
-        </svg>
-      </button>
-    </div>
-
     <!-- Robot Asistente de IA 3D flotante en esquina inferior derecha (HU-ATC-048) -->
     <app-asistente-bot-atc
       [vistaActiva]="vistaActiva()"
@@ -835,20 +856,24 @@ interface ItemMenuAtc {
     >
       <div ayStack gap="3">
         @for (grupo of gruposSidebar(); track grupo.etiqueta) {
-          <ay-heading [nivel]="3" size="sm">{{ grupo.etiqueta }}</ay-heading>
+          <ay-heading class="pl-nav-movil__grupo" [nivel]="3" size="sm">{{ grupo.etiqueta }}</ay-heading>
           <div ayStack gap="1">
             @for (el of grupo.elementos; track el.href) {
               <ay-button
                 tamano="sm"
                 [variante]="el.actual ? 'primary' : 'ghost'"
                 [bloque]="true"
+                class="pl-nav-movil__item"
+                [attr.data-href]="el.href"
                 (click)="irAVistaDesdeHref(el.href); navegacionMovilAbierta.set(false)"
               >
+                <span class="ay-sidebar__icon" aria-hidden="true"></span>
                 {{ el.etiqueta }}
               </ay-button>
             }
           </div>
         }
+        <ng-container *ngTemplateOutlet="herramientas" />
       </div>
     </ay-drawer>
 
@@ -1469,6 +1494,8 @@ export class ConsolaAtcComponent {
   ];
 
   readonly vistaActiva = signal<VistaAtc>('c360');
+  /** Cliente y lote con los que la Vista 360 abrió «Nueva gestión» (GRA-02). */
+  readonly contextoNuevoTicket = signal<{ cliente: string; dni: string; proyecto: string; lote?: string } | null>(null);
   /** Vista desde la que se abrió el ticket en curso: a ella vuelve «Volver» y es la que se resalta en el sidebar. */
   readonly vistaOrigen = signal<VistaAtc>('bandeja');
   readonly avisoNavegacion = signal<string | null>(null);
@@ -1514,7 +1541,20 @@ export class ConsolaAtcComponent {
     return listables.filter((m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id));
   });
 
+  /** FAV-01: el grupo «Favoritos» aparece arriba del menú en cuanto la persona marca uno. */
   readonly gruposSidebar = computed<AySidebarGrupo[]>(() => {
+    const favoritos = this.favoritosDisponibles();
+    if (favoritos.length === 0) return this.gruposMenu();
+    const grupo: AySidebarGrupo = {
+      etiqueta: 'Favoritos',
+      plegable: true,
+      abiertoInicial: true,
+      elementos: favoritos.map((o) => ({ href: o.href, icono: o.id, etiqueta: o.titulo, actual: o.actual })),
+    };
+    return [grupo, ...this.gruposMenu()];
+  });
+
+  private readonly gruposMenu = computed<AySidebarGrupo[]>(() => {
     const rol = this.perspectivaId();
     const activa = this.vistaActiva();
     // Dentro de un ticket se resalta la vista desde la que se abrió.
@@ -1606,6 +1646,38 @@ export class ConsolaAtcComponent {
       }))
       .filter((g) => g.elementos.length > 0);
   });
+
+  /** FAV-01: opciones del menú del rol activo (para no mostrar favoritos que el rol no ve). */
+  private readonly opcionesMenu = computed(() =>
+    this.gruposMenu().flatMap((g) =>
+      g.elementos.map((el) => ({ id: el.href.replace('#vista:', ''), href: el.href, titulo: el.etiqueta, actual: !!el.actual })),
+    ),
+  );
+  readonly opcionActual = computed(() => this.opcionesMenu().find((o) => o.actual));
+  /** Favoritos por persona del rol activo; la memoria evita releer el almacén en cada cálculo. */
+  private readonly favoritosPorPersona = signal<Record<string, string[]>>({});
+  private readonly favoritosIds = computed(() => {
+    const persona = this.perspectivaActual().personaId;
+    return this.favoritosPorPersona()[persona] ?? leerFavoritos(persona);
+  });
+  /** Los favoritos que el rol activo puede ver, el más reciente primero. */
+  readonly favoritosDisponibles = computed(() => {
+    const opciones = this.opcionesMenu();
+    return [...this.favoritosIds()].reverse().flatMap((id) => opciones.filter((o) => o.id === id));
+  });
+  readonly actualEsFavorito = computed(() => {
+    const o = this.opcionActual();
+    return !!o && this.favoritosIds().includes(o.id);
+  });
+
+  alternarFavoritoActual(): void {
+    const o = this.opcionActual();
+    if (!o) return;
+    const persona = this.perspectivaActual().personaId;
+    const ids = alternarFavorito(this.favoritosIds(), o.id);
+    this.favoritosPorPersona.update((m) => ({ ...m, [persona]: ids }));
+    guardarFavoritos(persona, ids);
+  }
 
   readonly menuCuenta = computed<AyMenuItem[]>(() => {
     const p = this.perspectivaActual();
@@ -1703,6 +1775,10 @@ export class ConsolaAtcComponent {
   constructor() {
     const destruccion = inject(DestroyRef);
     const doc = inject(DOCUMENT);
+    // El contexto de «Nueva gestión» vale para una sola apertura del formulario.
+    effect(() => {
+      if (this.vistaActiva() !== 'nuevo') untracked(() => this.contextoNuevoTicket.set(null));
+    });
     effect(() => {
       const uid = this.acceso.sesion()?.usuarioId;
       if (!uid) return;
@@ -1740,8 +1816,7 @@ export class ConsolaAtcComponent {
       };
       const onPointerDown = (ev: PointerEvent) => {
         if (!this.herramientasAbierto()) return;
-        const cont = this.anfitrion.querySelector('.pt-herr');
-        if (cont && ev.target instanceof Node && !cont.contains(ev.target)) {
+        if (ev.target instanceof Element && !ev.target.closest('.pt-herr')) {
           this.cerrarHerramientas();
         }
       };
@@ -2069,7 +2144,8 @@ export class ConsolaAtcComponent {
     this.vistaActiva.set(this.vistaOrigen());
   }
 
-  alCrearDesde360(_ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean }): void {
+  alCrearDesde360(ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean; lote?: string }): void {
+    this.contextoNuevoTicket.set(ev);
     this.vistaActiva.set('nuevo');
   }
 

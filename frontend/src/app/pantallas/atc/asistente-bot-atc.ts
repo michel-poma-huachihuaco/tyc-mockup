@@ -71,6 +71,7 @@ const NOMBRES_ESTADO: Record<string, string> = {
   IN_PROGRESS: 'En atención',
   PENDING_CUSTOMER: 'Pendiente del cliente',
   ESCALATED: 'Escalado',
+  IN_COMMITTEE: 'Elevado a comité',
   RESOLVED: 'Resuelto',
   CLOSED: 'Cerrado',
   REOPENED: 'Reabierto',
@@ -484,7 +485,16 @@ export class AsistenteBotAtcComponent {
       this.doc.addEventListener('focusin', onFocusIn);
       this.doc.addEventListener('keydown', onKeyDown);
       window.addEventListener('pt:asistente', onAsistente);
+      // El globo no debe tapar contenido: se va con cualquier scroll o interacción fuera de él.
+      const ocultarGlobo = (ev: Event) => {
+        if (ev.target instanceof Element && ev.target.closest('.pt-bot__globo')) return;
+        if (this.mostrarGlobo()) this.mostrarGlobo.set(false);
+      };
+      this.doc.addEventListener('scroll', ocultarGlobo, true);
+      this.doc.addEventListener('pointerdown', ocultarGlobo, true);
       destroyRef.onDestroy(() => {
+        this.doc.removeEventListener('scroll', ocultarGlobo, true);
+        this.doc.removeEventListener('pointerdown', ocultarGlobo, true);
         this.doc.removeEventListener('focusin', onFocusIn);
         this.doc.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('pt:asistente', onAsistente);
@@ -500,7 +510,7 @@ export class AsistenteBotAtcComponent {
         return;
       }
       const t1 = window.setTimeout(() => this.mostrarGlobo.set(true), 1400);
-      const t2 = window.setTimeout(() => this.mostrarGlobo.set(false), 9000);
+      const t2 = window.setTimeout(() => this.mostrarGlobo.set(false), 7000);
       onCleanup(() => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);

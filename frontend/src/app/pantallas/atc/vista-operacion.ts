@@ -67,6 +67,7 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
+import { AREA_ES, MOTIVO_ES, etiqueta, opcionesDe, traducirCodigos } from './etiquetas-es';
 import { BarraFiltrosComponent } from './barra-filtros';
 import { VacioFiltrosComponent } from './vacio-filtros';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
@@ -160,6 +161,11 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </ay-alert>
         }
 
+        <ay-alert tono="info" size="sm" titulo="Distribución a áreas">
+          Fuente única de tickets, consultable por área, estado y tipo, incluidos Queja/Reclamo (Libro) y Garantía postventa.
+          Reglas de distribución por área distintas de la asignación manual o por menor carga: definición pendiente.
+        </ay-alert>
+
         <div ayStack gap="2">
           <ay-card variante="elevated" superficie="solid">
             <ay-card-body padding="sm" gap="md">
@@ -231,7 +237,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 <ng-template ayCelda="area" let-fila>
                   @let t = comoTicket(fila);
                   <div ayStack gap="1">
-                    <strong>{{ t.area }}</strong>
+                    <strong>{{ areaEs(t.area) }}</strong>
                     <span ayText="body" size="xs">{{ t.owner ?? 'Sin asignar (Cola)' }}</span>
                   </div>
                 </ng-template>
@@ -241,7 +247,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                     <ay-badge
                       size="sm"
                       [tono]="
-                        t.state === 'ESCALATED'
+                        t.state === 'ESCALATED' || t.state === 'IN_COMMITTEE'
                           ? 'danger'
                           : t.state === 'RESOLVED'
                             ? 'success'
@@ -310,21 +316,21 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 y dejando registro inmutable en la bitácora de asignación.
               </p>
               <ay-form-field etiqueta="Colaborador que cesa o rota" obligatorio>
-                <ay-select
+                <ay-select nombre="cese-origen"
                   [opciones]="opcionesCeseOrigen"
                   [valor]="ceseOrigen()"
                   (valorChange)="ceseOrigen.set($event)"
                 />
               </ay-form-field>
               <ay-form-field etiqueta="Nuevo responsable receptor (menor carga activa)" obligatorio>
-                <ay-select
+                <ay-select nombre="cese-destino"
                   [opciones]="opcionesCeseDestino"
                   [valor]="ceseDestino()"
                   (valorChange)="ceseDestino.set($event)"
                 />
               </ay-form-field>
               <ay-form-field etiqueta="Motivo tipificado de auditoría" obligatorio>
-                <ay-select
+                <ay-select nombre="cese-motivo"
                   [opciones]="opcionesCeseMotivo"
                   [valor]="ceseMotivo()"
                   (valorChange)="ceseMotivo.set($event)"
@@ -599,13 +605,13 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 <ng-template ayCelda="area" let-fila>
                   @let t = comoTicket(fila);
                   <div ayStack gap="1">
-                    <strong>{{ t.area }}</strong>
+                    <strong>{{ areaEs(t.area) }}</strong>
                     <span ayText="body" size="xs">{{ t.owner ?? 'Sin asignar' }}</span>
                   </div>
                 </ng-template>
                 <ng-template ayCelda="state" let-fila>
                   @let t = comoTicket(fila);
-                  <ay-badge size="sm" [tono]="t.state === 'ESCALATED' ? 'danger' : 'info'">
+                  <ay-badge size="sm" [tono]="t.state === 'ESCALATED' || t.state === 'IN_COMMITTEE' ? 'danger' : 'info'">
                     {{ estadoEs[t.state] ?? t.state }}
                   </ay-badge>
                 </ng-template>
@@ -652,7 +658,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                     @let g = comoAvanceGestor(fila);
                     <div ayStack gap="1">
                       <strong>{{ g.gestor }}</strong>
-                      <span ayText="body" size="xs">{{ g.area }}</span>
+                      <span ayText="body" size="xs">{{ areaEs(g.area) }}</span>
                     </div>
                   </ng-template>
                   <ng-template ayCelda="atendidos" let-fila>
@@ -745,7 +751,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             {{ previewPoliticaSla().politica.id }} · v{{ previewPoliticaSla().politica.version }}
           </ay-badge>
           <ay-badge ayEstado size="sm" tono="neutral">
-            Flujo {{ previewFlujoConfig().tipo }} · v{{ previewFlujoConfig().versionActual }} ({{ previewFlujoConfig().area }})
+            Flujo {{ previewFlujoConfig().tipo }} · v{{ previewFlujoConfig().versionActual }} ({{ areaEs(previewFlujoConfig().area) }})
           </ay-badge>
         </ay-page-header>
 
@@ -770,48 +776,48 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                     <div ayStack gap="4">
                       <div ayGrid [anchoMinimo]="'15rem'" gap="md" class="pl-atc-fila-campos">
                         <ay-form-field etiqueta="Empresa (razón social y RUC)" obligatorio>
-                          <ay-select
+                          <ay-select nombre="form-empresa"
                             [opciones]="opcionesEmpresasForm"
                             [valor]="formEmpresa()"
                             (valorChange)="formEmpresa.set($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Línea de negocio" obligatorio>
-                          <ay-select
+                          <ay-select nombre="form-linea"
                             [opciones]="opcionesLineasForm"
                             [valor]="formLinea()"
                             (valorChange)="formLinea.set($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Canal de entrada" obligatorio>
-                          <ay-select
+                          <ay-select nombre="form-canal"
                             [opciones]="opcionesCanalesForm"
                             [valor]="formCanal()"
                             (valorChange)="formCanal.set($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Tipo de ticket" obligatorio>
-                          <ay-select
+                          <ay-select nombre="form-tipo"
                             [opciones]="opcionesTiposForm"
                             [valor]="formTipo()"
                             (valorChange)="formTipo.set($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Prioridad" obligatorio>
-                          <ay-select
+                          <ay-select nombre="form-prioridad"
                             [opciones]="opcionesPrioridadForm"
                             [valor]="formPrioridad()"
                             (valorChange)="cambiarPrioridadForm($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Cliente o Interesado (SIGDA / TAXON)" obligatorio>
-                          <ay-input [valor]="formCliente()" (valorChange)="formCliente.set($event)" />
+                          <ay-input nombre="form-cliente" [valor]="formCliente()" (valorChange)="formCliente.set($event)" />
                         </ay-form-field>
                         <ay-form-field etiqueta="Documento (DNI / CE)" obligatorio>
-                          <ay-input [valor]="formDni()" (valorChange)="formDni.set($event)" />
+                          <ay-input nombre="form-dni" [valor]="formDni()" (valorChange)="formDni.set($event)" />
                         </ay-form-field>
                         <ay-form-field etiqueta="Proyecto y Lote / Unidad" obligatorio>
-                          <ay-input [valor]="formProyecto()" (valorChange)="formProyecto.set($event)" />
+                          <ay-input nombre="form-proyecto" [valor]="formProyecto()" (valorChange)="formProyecto.set($event)" />
                         </ay-form-field>
                       </div>
 
@@ -844,7 +850,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         <ay-form-field
                           etiqueta="Contrato de mantenimiento de ciudad (opcional si deriva en cobro)"
                         >
-                          <ay-input
+                          <ay-input nombre="form-contrato-ciudad"
                             [valor]="formContratoCiudad()"
                             (valorChange)="formContratoCiudad.set($event)"
                             placeholder="Ej. CITY_SERVICE_FEE-2026-0113"
@@ -854,7 +860,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
                       <div ayGrid [columnas]="2" gap="md" class="pl-atc-fila-campos">
                         <ay-form-field etiqueta="Resumen (una línea que se entienda en la bandeja)" obligatorio>
-                          <ay-textarea
+                          <ay-textarea nombre="form-resumen"
                             [filas]="3"
                             [valor]="formResumen()"
                             (valorChange)="formResumen.set($event)"
@@ -869,7 +875,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                           "
                           obligatorio
                         >
-                          <ay-textarea
+                          <ay-textarea nombre="form-emocion"
                             [filas]="3"
                             [invalido]="emocionInvalida()"
                             [valor]="formEmocion()"
@@ -962,6 +968,11 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalDerivarAbierto.set(true)">
               Derivar / Paquete Legal 6/6
             </ay-button>
+            @if (t.state === 'ESCALATED') {
+              <ay-button ayAcciones tamano="sm" variante="secondary" (click)="elevarAComite(t)">
+                Elevar a comité
+              </ay-button>
+            }
             @if (t.state !== 'RESOLVED' && t.state !== 'CLOSED') {
               <ay-button
                 ayAcciones
@@ -1038,7 +1049,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                             </div>
                           </ay-card-header>
                           <ay-card-body padding="sm">
-                            <p ayText="body" size="sm">{{ it.texto }}</p>
+                            <p ayText="body" size="sm">{{ traducir(it.texto) }}</p>
                           </ay-card-body>
                         </ay-card>
                       }
@@ -1057,7 +1068,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         </ay-checkbox>
                       </div>
                       <ay-form-field etiqueta="Respuesta o nota de seguimiento">
-                        <ay-textarea
+                        <ay-textarea nombre="texto-respuesta"
                           [filas]="3"
                           [valor]="textoRespuesta()"
                           (valorChange)="textoRespuesta.set($event)"
@@ -1159,6 +1170,27 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               </div>
 
               <div ayStack gap="2">
+                <ay-card superficie="solid">
+                  <ay-card-header
+                    titulo="Recorrido del workflow"
+                    [subtitulo]="'Actividades y responsable del flujo v' + flujoDeTicket(t.type).versionActual + ' (' + flujoDeTicket(t.type).area + ')'"
+                    nivel="h2"
+                    [separador]="true"
+                  />
+                  <ay-card-body padding="md" gap="sm">
+                    <ay-list etiqueta="Recorrido del workflow" [ordenada]="false" [separadores]="true" [elementos]="recorridoFlujo(t)">
+                      <ng-template #elemento let-paso>
+                        <ay-list-item [titulo]="paso" />
+                      </ng-template>
+                    </ay-list>
+                    <span ayText="body" size="xs">
+                      Avance por actividad (actividad actual y completadas): definición pendiente, el modelo del prototipo no lo registra.
+                    </span>
+                  </ay-card-body>
+                </ay-card>
+              </div>
+
+              <div ayStack gap="2">
                 <div ayStack gap="1">
                   <ay-heading [nivel]="2" size="sm">Bitácora inmutable de asignaciones</ay-heading>
                   <span ayText="subtitle" size="xs">Trazabilidad cronológica con AyTimeline</span>
@@ -1184,14 +1216,14 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             <ay-form (enviar)="confirmarDerivacion(t)">
               <div ayStack gap="3">
                 <ay-form-field etiqueta="Área destino" obligatorio>
-                  <ay-select
+                  <ay-select nombre="derivar-area"
                     [opciones]="opcionesAreasForm"
                     [valor]="derivarArea()"
                     (valorChange)="derivarArea.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Motivo de derivación" obligatorio>
-                  <ay-select
+                  <ay-select nombre="derivar-motivo"
                     [opciones]="opcionesMotivosForm"
                     [valor]="derivarMotivo()"
                     (valorChange)="derivarMotivo.set($event)"
@@ -1216,7 +1248,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 }
 
                 <ay-form-field etiqueta="Nota de derivación" obligatorio>
-                  <ay-textarea
+                  <ay-textarea nombre="derivar-nota"
                     [filas]="2"
                     [valor]="derivarNota()"
                     (valorChange)="derivarNota.set($event)"
@@ -1257,21 +1289,21 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               y dejando registro inmutable en la bitácora de asignación.
             </p>
             <ay-form-field etiqueta="Colaborador que cesa o rota" obligatorio>
-              <ay-select
+              <ay-select nombre="cese-origen-2"
                 [opciones]="opcionesCeseOrigen"
                 [valor]="ceseOrigen()"
                 (valorChange)="ceseOrigen.set($event)"
               />
             </ay-form-field>
             <ay-form-field etiqueta="Nuevo responsable receptor (menor carga activa)" obligatorio>
-              <ay-select
+              <ay-select nombre="cese-destino-2"
                 [opciones]="opcionesCeseDestino"
                 [valor]="ceseDestino()"
                 (valorChange)="ceseDestino.set($event)"
               />
             </ay-form-field>
             <ay-form-field etiqueta="Motivo tipificado de auditoría" obligatorio>
-              <ay-select
+              <ay-select nombre="cese-motivo-2"
                 [opciones]="opcionesCeseMotivo"
                 [valor]="ceseMotivo()"
                 (valorChange)="ceseMotivo.set($event)"
@@ -1295,6 +1327,8 @@ export class VistaOperacionComponent {
   readonly tickets = input.required<TicketAtc[]>();
   readonly ticketSeleccionadoNum = input.required<string>();
   readonly mostrarHu = input<boolean>(false);
+  /** GRA-02: cliente y lote desde los que la Vista 360 abrió «Nueva gestión»; precargan el formulario. */
+  readonly contexto = input<{ cliente: string; dni: string; proyecto: string; lote?: string } | null>(null);
   readonly filtroClienteExterno = input<string>('');
 
   readonly volverA = input<string>('Bandeja de tickets');
@@ -1313,6 +1347,10 @@ export class VistaOperacionComponent {
   readonly areas = AREAS_ATC;
   readonly estados = ESTADOS_TICKET;
   readonly estadoEs = ESTADO_ES;
+  readonly traducir = traducirCodigos;
+  areaEs(a: string): string {
+    return etiqueta(AREA_ES, a);
+  }
   readonly motivos = MOTIVOS_DERIVACION;
 
   readonly columnasBandeja: readonly AyColumna[] = [
@@ -1339,9 +1377,9 @@ export class VistaOperacionComponent {
   ];
 
   readonly opcionesCeseMotivo: AyOpcionSelect[] = [
-    { value: 'REASSIGNMENT_CESE', label: 'REASSIGNMENT_CESE' },
-    { value: 'REASSIGNMENT_ROTACION', label: 'REASSIGNMENT_ROTACION' },
-    { value: 'REASSIGNMENT_CARGA', label: 'REASSIGNMENT_CARGA' },
+    { value: 'REASSIGNMENT_CESE', label: MOTIVO_ES['REASSIGNMENT_CESE'] },
+    { value: 'REASSIGNMENT_ROTACION', label: MOTIVO_ES['REASSIGNMENT_ROTACION'] },
+    { value: 'REASSIGNMENT_CARGA', label: MOTIVO_ES['REASSIGNMENT_CARGA'] },
   ];
 
   readonly opcionesEmpresasForm: AyOpcionSelect[] = EMPRESAS_AYBAR.map((e) => ({
@@ -1369,15 +1407,9 @@ export class VistaOperacionComponent {
     label: `${p.nombre} (${p.id})`,
   }));
 
-  readonly opcionesAreasForm: AyOpcionSelect[] = AREAS_ATC.map((a) => ({
-    value: a,
-    label: a,
-  }));
+  readonly opcionesAreasForm: AyOpcionSelect[] = opcionesDe(AREAS_ATC, AREA_ES);
 
-  readonly opcionesMotivosForm: AyOpcionSelect[] = MOTIVOS_DERIVACION.map((m) => ({
-    value: m,
-    label: m,
-  }));
+  readonly opcionesMotivosForm: AyOpcionSelect[] = opcionesDe(MOTIVOS_DERIVACION, MOTIVO_ES);
 
 
 
@@ -1665,6 +1697,14 @@ export class VistaOperacionComponent {
 
   constructor() {
     effect(() => {
+      const ctx = this.contexto();
+      if (!ctx) return;
+      this.formCliente.set(ctx.cliente);
+      // El DNI se muestra enmascarado, como el resto del formulario.
+      this.formDni.set(ctx.dni.length > 4 ? `${ctx.dni.slice(0, 4)}••••` : ctx.dni);
+      this.formProyecto.set(ctx.lote ? `${ctx.proyecto} · ${ctx.lote}` : ctx.proyecto);
+    });
+    effect(() => {
       const cliExt = this.filtroClienteExterno();
       if (cliExt !== undefined && cliExt.trim()) {
         this.filtrosBandeja.setBusqueda(cliExt);
@@ -1832,7 +1872,7 @@ export class VistaOperacionComponent {
           etiqueta: 'Área',
           tipo: 'multi',
           valorDe: (t) => t.area,
-          opciones: AREAS_ATC.map((a) => ({ valor: a, etiqueta: a })),
+          opciones: AREAS_ATC.map((a) => ({ valor: a, etiqueta: etiqueta(AREA_ES, a) })),
         },
         {
           id: 'tipo',
@@ -1945,22 +1985,45 @@ export class VistaOperacionComponent {
 
   paresDetalleTicket(t: TicketAtc): ParCardPairs[] {
     return [
+      { clave: 'N.º de ticket', valor: `${t.num} · ${this.nombreTipo(t.type)}` },
       { clave: 'Razón Social', valor: `${t.empresa.nombre} (RUC ${t.empresa.ruc})` },
       { clave: 'Cliente / Proyecto', valor: `${t.cli} (${t.dni}) · ${t.proj}` },
+      { clave: 'Canal de entrada', valor: t.ch },
+      { clave: 'Área / sala', valor: t.area },
+      { clave: 'Responsable', valor: t.owner ?? 'Sin asignar (Cola)' },
+      {
+        clave: 'Estado',
+        valor: ESTADO_ES[t.state] ?? t.state,
+      },
+      {
+        clave: 'Prioridad',
+        valor: this.nombrePrioridad(t.prio) + (t.rayo ? ' · Rayo (marca visual: no escala por sí sola)' : ''),
+      },
       { clave: 'Política SLA aplicada', valor: t.slaSrc },
       {
+        clave: 'SLA (1.ª respuesta / resolución)',
+        valor: `Vence 1.ª resp: ${this.fmtHora(t.frDue)} · Vence resolución: ${this.fmtHora(t.resDue)}`,
+      },
+      {
         clave: 'Hitos de atención',
-        valor: `Apertura: ${this.fmtHora(t.opened)} · 1.ª resp: ${this.fmtHora(t.firstResp)} · Vence: ${this.fmtHora(t.resDue)}`,
+        valor: `Apertura: ${this.fmtHora(t.opened)} · 1.ª resp: ${this.fmtHora(t.firstResp)}`,
       },
     ];
+  }
+
+  /** Recorrido del flujo configurado para el tipo, con responsable y horas por actividad. */
+  recorridoFlujo(t: TicketAtc): string[] {
+    return this.flujoDeTicket(t.type).pasos.map(
+      (p, i) => `${i + 1}. ${p.nombre} · ${p.responsable} · ${p.horas} h`,
+    );
   }
 
   hitosBitacoraTicket(t: TicketAtc): AyTimelineEvento[] {
     return t.log.map((lg, idx) => ({
       id: `${t.num}-log-${idx}`,
-      titulo: `${lg.motivo} — ${lg.nota}`,
+      titulo: `${etiqueta(MOTIVO_ES, lg.motivo)} — ${traducirCodigos(lg.nota)}`,
       fecha: lg.fecha,
-      autor: `${lg.area} · ${lg.responsable ?? 'Cola'}`,
+      autor: `${etiqueta(AREA_ES, lg.area)} · ${lg.responsable ?? 'Cola'}`,
       tono: lg.area === 'LEGAL' ? 'danger' : 'accent',
     }));
   }
@@ -2185,6 +2248,13 @@ export class VistaOperacionComponent {
       fecha: AHORA_BASE,
       texto: 'Ticket resuelto · Encuesta CSAT/CES enviada automáticamente a Mi Portal.',
     });
+  }
+
+  /** Escalado → comité, como la cadena sin saltos de docs/datos/estados.md (EN_ESCALAMIENTO → EN_COMITE). */
+  elevarAComite(t: TicketAtc): void {
+    t.state = 'IN_COMMITTEE';
+    t.status.push({ fecha: AHORA_BASE, estado: 'IN_COMMITTEE', autor: this.estadoProto.perfilActivo().nombre });
+    t.interactions.push({ tipo: 'sys', fecha: AHORA_BASE, texto: 'Ticket elevado a comité.' });
   }
 
   reabrirTicket(t: TicketAtc): void {

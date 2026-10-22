@@ -41,24 +41,49 @@ import {
   type AySegmentoOpcion,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
-import { readColor, subscribeAppearance } from '@aybarcorp/tokens/apariencia';
+import { subscribeAppearance } from '@aybarcorp/tokens/apariencia';
 import {
   CLIENTES_360,
   CONSULTAS_SEMANTICAS,
   FUENTES_360,
   NODOS_360,
+  crearTicketsDemo,
+  fmtFecha,
   type Cliente360,
   type Fuente360,
   type NodoDato360,
 } from './datos-atc';
-import { leerTokenRgb, type RGB } from './three/comun';
+import { css } from './three/comun';
+import { crearPaleta, type PaletaGrafo } from './three/paleta';
 import { inyectarEstilos } from './three/estilos';
 import {
+  ETIQUETA_TIPO_MOVIMIENTO,
+  MAX_MOVIMIENTOS_360,
+  ultimosMovimientos,
+  type TipoMovimiento360,
+} from './datos-movimientos';
+import { CATALOGO_GRAFO_360 } from './config-grafo-360';
+import { buscarCandidatos, type Candidato } from './busqueda-fonetica';
+import {
+  CONTEXTO_VACIO,
+  ID_CLIENTE_GRAFO,
+  contextoDe,
+  idRelacion,
+  type Contexto360,
+} from './relaciones-360';
+import {
   montarGrafo,
+  type ContextoGrafo,
   type PulsoGrafo,
   type Ref,
   type VistaGrafo,
 } from './three/grafo360';
+
+/** La consola precarga «Nuevo ticket» con el cliente y lote de `crearTicketDesde360` (GRA-02). */
+const PRECARGA_NUEVA_GESTION_INTEGRADA = true;
+
+/** Tickets del demo (cruce por DNI para las áreas vinculadas; sin los tickets nuevos de la sesión). */
+const TICKETS_DEMO_360 = crearTicketsDemo();
 
 interface NodoCanvasPos {
   readonly kind: 'cli' | 'src' | 'node';
@@ -387,6 +412,63 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
     AyText,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: [
+    `
+      .c360-cuerpo {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 19rem;
+        gap: var(--aybar-space-4);
+        align-items: start;
+      }
+      @media (max-width: 1100px) {
+        .c360-cuerpo {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .c360-movs {
+        display: flex;
+        flex-direction: column;
+        gap: var(--aybar-space-3);
+        padding: var(--aybar-space-3);
+        border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+        border-radius: var(--aybar-radius-lg);
+      }
+      .c360-movs__lista {
+        display: flex;
+        flex-direction: column;
+        gap: var(--aybar-space-2);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .c360-mov {
+        display: flex;
+        flex-direction: column;
+        gap: var(--aybar-space-1);
+        inline-size: 100%;
+        padding: var(--aybar-space-2) var(--aybar-space-3);
+        text-align: start;
+        font: inherit;
+        color: var(--aybar-color-fg-default);
+        background: transparent;
+        border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+        border-radius: var(--aybar-radius-lg);
+        cursor: pointer;
+      }
+      .c360-mov:hover,
+      .c360-mov:focus-visible {
+        border-color: var(--aybar-color-secondary-400);
+      }
+      .c360-mov__fila {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--aybar-space-2);
+        font-size: var(--aybar-font-size-xs);
+        color: var(--aybar-color-fg-muted);
+      }
+    `,
+  ],
   template: `
     <div ayStack gap="6">
       <ay-page-header
@@ -532,7 +614,8 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
               }
             }
 
-            <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante cuando el cliente está activo) -->
+            <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante) junto al panel de últimos movimientos -->
+            <div class="c360-cuerpo">
             <div class="pt-escena-wrap">
               <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
               <div
@@ -670,6 +753,9 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
 
                         <ay-card-body>
                           <div ayStack gap="3">
+                            @if (avisoAcceso()) {
+                              <ay-alert tono="info" titulo="Acceso no disponible">{{ avisoAcceso() }}</ay-alert>
+                            }
                             @if (estadoNodo(nodoActual()).codigo === 'locked') {
                               <ay-alert tono="warning" titulo="Acceso restringido por perfil">
                                 Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a este dato reservado.
@@ -680,8 +766,20 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                                 {{ nombresFuentesCaidasNodoActual() || 'Esta sección' }} no está disponible en este instante. Las demás
                                 secciones siguen activas.
                               </ay-alert>
+                            } @else if (estadoNodo(nodoActual()).codigo === 'empty') {
+                              <ay-alert tono="info" titulo="Disponible, sin registros">
+                                La fuente responde pero {{ clienteActual().nombre }} no tiene registros en «{{ nodoActual().nombre }}».
+                                El acceso sigue disponible para iniciar una nueva gestión.
+                              </ay-alert>
                             } @else {
-                              <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
+                              @if (nodoActual().id === 'lote') {
+                                <ay-card-pairs [pares]="paresLoteCliente()" />
+                              }
+                              @if (nodoActual().id === 'saldo') {
+                                <ay-card-pairs [pares]="paresSaldo()" />
+                              } @else {
+                                <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
+                              }
 
                               @if (nodoActual().semantico && hitsSemanticos().length > 0) {
                                 <ay-card variante="default">
@@ -703,11 +801,13 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
 
                             <ay-divider espaciado="sm" />
                             <ay-card-pairs [pares]="paresTrazabilidadNodo(nodoActual().id)" />
+                            <ay-card-pairs [pares]="paresContexto()" />
 
                             <div ayRow gap="2" [ajuste]="true">
                               <ay-button
                                 tamano="sm"
                                 variante="primary"
+                                [disabled]="estadoNodo(nodoActual()).codigo === 'locked'"
                                 (click)="ejecutarRedireccionNodo(nodoActual().id)"
                               >
                                 {{ obtenerRedireccionNodo(nodoActual().id).etiqueta }} →
@@ -724,11 +824,21 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                               <ay-button
                                 tamano="sm"
                                 variante="secondary"
-                                (click)="abrirNuevoTicketCliente(clienteActual())"
+                                [disabled]="estadoNodo(nodoActual()).codigo === 'locked'"
+                                (click)="abrirNuevoTicketCliente(clienteActual(), nodoActual().id)"
                               >
-                                + Crear ticket
+                                {{ nodoActual().id === 'libro' ? '+ Nuevo reclamo' : '+ Nueva gestión' }}
                               </ay-button>
                             </div>
+                            <span ayText="subtitle" size="xs">
+                              Nueva gestión abre «Nuevo ticket» con cliente {{ clienteActual().nombre }}
+                              @if (loteContexto()) {
+                                y lote {{ loteContexto() }}
+                              }
+                              @if (!precargaIntegrada) {
+                                · precarga del formulario pendiente de integración en la consola.
+                              }
+                            </span>
                           </div>
                         </ay-card-body>
                       </ay-card>
@@ -736,6 +846,54 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   }
                 }
               </div>
+
+              <!-- V360-01: últimos movimientos del cliente seleccionado -->
+              <aside class="c360-movs" aria-labelledby="c360-movs-titulo">
+                <div ayRow gap="2" [ajuste]="true" justificar="between">
+                  <ay-heading id="c360-movs-titulo" [nivel]="3" size="sm">Últimos movimientos</ay-heading>
+                </div>
+                @if (!clienteSeleccionado()) {
+                  <span ayText="subtitle" size="xs">Selecciona un cliente para ver sus últimos movimientos.</span>
+                } @else if (movimientos().length === 0) {
+                  <ay-empty-state
+                    variante="first-use"
+                    size="compact"
+                    titulo="Sin movimientos"
+                    descripcion="Este cliente aún no registra pagos, cuotas, reclamos ni otras operaciones."
+                  />
+                } @else {
+                  <span ayText="subtitle" size="xs">
+                    {{ movimientos().length }} de {{ maxMovimientos }} · del más reciente al más antiguo
+                  </span>
+                  <ol class="c360-movs__lista">
+                    @for (m of movimientos(); track m.id) {
+                      <li>
+                        <button
+                          type="button"
+                          class="c360-mov"
+                          [attr.aria-label]="etiquetaTipoMovimiento(m.tipo) + ': ' + m.titulo + (m.estado ? ', ' + m.estado : '') + ', ' + fechaMovimiento(m.fecha) + '. Resaltar en el grafo'"
+                          (click)="seleccionarNodo(m.nodoId)"
+                        >
+                          <span class="c360-mov__fila">
+                            <ay-tag variante="outline">{{ etiquetaTipoMovimiento(m.tipo) }}</ay-tag>
+                            @if (m.estado) {
+                              <ay-badge size="sm" [tono]="m.tono">{{ m.estado }}</ay-badge>
+                            }
+                          </span>
+                          <strong ayText="title" size="xs">{{ m.titulo }}</strong>
+                          <span class="c360-mov__fila">{{ fechaMovimiento(m.fecha) }}</span>
+                        </button>
+                      </li>
+                    }
+                  </ol>
+                  @if (movimientos().length < maxMovimientos) {
+                    <span ayText="subtitle" size="xs">
+                      Solo hay {{ movimientos().length }} movimiento(s) registrado(s) para este cliente.
+                    </span>
+                  }
+                }
+              </aside>
+            </div>
 
               <!-- Barra inferior de leyenda y telemetría -->
               <div ayRow gap="2" [ajuste]="true" justificar="between">
@@ -747,8 +905,14 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-link)">
                     Dato del cliente ({{ clienteSeleccionado() ? nodosEncendidosCount() : 0 }}/{{ nodos.length }})
                   </ay-tag>
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-muted)">
+                    ○ Disponible sin registros (punteado)
+                  </ay-tag>
+                  <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-warning-border)">
+                    ▲ Restringido (borde discontinuo)
+                  </ay-tag>
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
-                    Restringido / sin conexión
+                    ✕ Sin conexión
                   </ay-tag>
                 </div>
                 <div ayRow gap="2" [ajuste]="true">
@@ -1001,6 +1165,17 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   <div ayStack gap="2">
                     @if (estadoNodo(n).codigo === 'ok') {
                       <ay-card-pairs [pares]="paresNodo(n.id)" />
+                    } @else if (estadoNodo(n).codigo === 'empty') {
+                      <div ayRow gap="2" [ajuste]="true" justificar="between">
+                        <span ayText="subtitle" size="xs">Disponible, sin registros para este cliente.</span>
+                        <ay-button
+                          tamano="sm"
+                          variante="secondary"
+                          (click)="$event.stopPropagation(); abrirNuevoTicketCliente(clienteActual(), n.id)"
+                        >
+                          Nueva gestión
+                        </ay-button>
+                      </div>
                     } @else if (estadoNodo(n).codigo === 'locked') {
                       <p ayText="subtitle" size="xs">
                         Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a «{{ n.nombre.toLowerCase() }}». Solicítalo a tu supervisor ATC si lo requieres.
@@ -1046,7 +1221,15 @@ export class VistaC360Component {
   readonly nodoFocoExterno = input<string>('lote');
   readonly fuentesCaidasExternas = input<readonly string[]>([]);
   readonly fuentesCaidasChange = output<string[]>();
-  readonly crearTicketDesde360 = output<{ cliente: string; dni: string; proyecto: string; contingencia: boolean }>();
+  readonly crearTicketDesde360 = output<{
+    cliente: string;
+    dni: string;
+    proyecto: string;
+    contingencia: boolean;
+    lote?: string;
+    contrato?: string;
+    nodoId?: string;
+  }>();
   readonly verContrato = output<string>();
   readonly redirigirModulo = output<{
     destino: DestinoRedireccionNodo;
@@ -1068,6 +1251,10 @@ export class VistaC360Component {
   readonly consultasSemanticas = CONSULTAS_SEMANTICAS;
   readonly consultasMotor = CONSULTAS_MOTOR_RAPIDAS;
 
+  readonly maxMovimientos = MAX_MOVIMIENTOS_360;
+  readonly precargaIntegrada = PRECARGA_NUEVA_GESTION_INTEGRADA;
+  readonly avisoAcceso = signal<string>('');
+
   readonly clienteSeleccionado = signal<boolean>(false);
   readonly busquedaClienteIdle = signal<string>('');
 
@@ -1079,19 +1266,24 @@ export class VistaC360Component {
     { clave: 'accion', cabecera: 'Acción', ancho: '12%', alineacion: 'end' },
   ];
 
+  /** BUS-01: exactas (nombre, DNI, documento, teléfono, proyecto, contrato, lote) y después fonéticas por nombre. */
+  private candidatosCliente(termino: string): Candidato<Cliente360>[] {
+    return buscarCandidatos(this.clientes, termino, {
+      nombre: (c) => c.nombre,
+      exactos: (c) => [c.nombre, c.dni, c.doc, c.telefono, c.proyecto, c.contratoPrincipal, ...c.lotes],
+    });
+  }
+
+  /** El único candidato inequívoco: una sola exacta, o sin exactas una sola fonética. Nunca elige entre empatados. */
+  private clienteInequivoco(cands: readonly Candidato<Cliente360>[]): Cliente360 | null {
+    const exactas = cands.filter((c) => c.motivo === 'exacta');
+    if (exactas.length === 1) return exactas[0].item;
+    return exactas.length === 0 && cands.length === 1 ? cands[0].item : null;
+  }
+
   readonly clientesCoincidentesIdle = computed<readonly Cliente360[]>(() => {
-    const q = this.busquedaTexto().trim().toLowerCase();
-    if (!q) return this.clientes;
-    return this.clientes.filter(
-      (c) =>
-        c.nombre.toLowerCase().includes(q) ||
-        c.dni.toLowerCase().includes(q) ||
-        c.doc.toLowerCase().includes(q) ||
-        c.telefono.toLowerCase().includes(q) ||
-        c.proyecto.toLowerCase().includes(q) ||
-        c.contratoPrincipal.toLowerCase().includes(q) ||
-        c.lotes.some((l) => l.toLowerCase().includes(q)),
-    );
+    const q = this.busquedaTexto().trim();
+    return q ? this.candidatosCliente(q).map((c) => c.item) : this.clientes;
   });
 
   readonly rolesOpciones: readonly { rol: 'gestor' | 'supervisor' | 'legal' | 'cx'; etiqueta: string }[] = [
@@ -1146,6 +1338,9 @@ export class VistaC360Component {
   private readonly pulsosGrafoRef: Ref<PulsoGrafo[]> = { current: [] };
   private readonly t0GrafoRef: Ref<number> = { current: 0 };
   private readonly posGrafoRef: Ref<Record<string, { x: number; y: number; r: number }>> = { current: {} };
+  private readonly contextoGrafoRef: Ref<ContextoGrafo> = {
+    current: { ids: new Set<string>(), rels: new Set<string>(), texto: '' },
+  };
 
   private desmontarPoGrafo: (() => void) | null = null;
   private timerLlamada: ReturnType<typeof setInterval> | null = null;
@@ -1172,6 +1367,45 @@ export class VistaC360Component {
       return false;
     }
     return this.tieneLotesYContrato();
+  });
+
+  /** V360-01: se recalcula al cambiar de cliente, no conserva nada del anterior. */
+  readonly movimientos = computed(() =>
+    this.clienteSeleccionado() ? ultimosMovimientos(this.clienteActual()) : [],
+  );
+
+  readonly loteContexto = computed<string>(() => {
+    const cli = this.clienteActual();
+    const l = this.loteMotorSeleccionado();
+    return cli.lotes.includes(l) ? l : (cli.lotes[0] ?? '');
+  });
+
+  /** GRA-03: elementos relacionados con la selección actual (vacío si no hay ficha abierta). */
+  readonly contextoSel = computed<Contexto360>(() => {
+    if (!this.clienteSeleccionado() || !this.fichaAbierta()) return CONTEXTO_VACIO;
+    const sel = this.fuenteInspeccionadaId() ?? this.nodoSeleccionadoId();
+    const tickets = TICKETS_DEMO_360.filter((t) => t.dni === this.clienteActual().dni);
+    return contextoDe(sel, {
+      fuentes: this.fuentes,
+      nodos: this.nodos,
+      procesoDe: (id) => REDIRECCION_NODOS_360[id]?.moduloNombre,
+      areasDe: (id) =>
+        id === 'tick'
+          ? tickets.map((t) => t.area)
+          : id === 'libro'
+            ? tickets.filter((t) => t.type === 'REC' || t.type === 'QUE').map((t) => t.area)
+            : [],
+      catalogoAreas: CATALOGO_GRAFO_360.areas,
+    });
+  });
+
+  readonly contextoGrafo = computed<ContextoGrafo>(() => {
+    const c = this.contextoSel();
+    const partes = [
+      c.areas.length ? `Áreas: ${c.areas.join(' · ')}` : '',
+      c.procesos.length ? `Proceso: ${c.procesos.join(' · ')}` : '',
+    ].filter(Boolean);
+    return { ids: c.ids, rels: new Set(c.relaciones.map((r) => r.id)), texto: partes.join('  |  ') };
   });
 
   readonly nodoActual = computed<NodoDato360>(
@@ -1215,6 +1449,7 @@ export class VistaC360Component {
 
       this.selGrafoRef.current = abierta ? sel : '';
       this.abiertaGrafoRef.current = abierta;
+      this.contextoGrafoRef.current = this.contextoGrafo();
       this.semGrafoRef.current = hits.length > 0 ? { hits: [...hits] } : null;
     });
 
@@ -1248,6 +1483,7 @@ export class VistaC360Component {
     });
 
     const desuscribirTema = subscribeAppearance(() => {
+      this.paletaGrafo = null;
       if (this.desmontarPoGrafo) {
         this.desmontarPoGrafo();
         this.desmontarPoGrafo = null;
@@ -1263,19 +1499,12 @@ export class VistaC360Component {
     });
   }
 
+  private paletaGrafo: PaletaGrafo | null = null;
+
   private inicializarPoGrafo3D(): void {
     const host = this.poGrafoHostRef()?.nativeElement;
     const canvas = this.poGrafoCanvasRef()?.nativeElement;
     if (!host || !canvas) return;
-
-    const cache = new Map<string, RGB>();
-    const colorToken = (token: string): RGB => {
-      const prev = cache.get(token);
-      if (prev) return prev;
-      const rgb = leerTokenRgb(token);
-      cache.set(token, rgb);
-      return rgb;
-    };
 
     const reducido =
       typeof window !== 'undefined' &&
@@ -1284,13 +1513,13 @@ export class VistaC360Component {
     this.desmontarPoGrafo = montarGrafo({
       canvas,
       host,
-      color: colorToken,
       reducido,
       vista: this.vistaGrafoRef,
       sel: this.selGrafoRef,
       abierta: this.abiertaGrafoRef,
       sem: this.semGrafoRef,
       hover: this.hoverGrafoRef,
+      contexto: this.contextoGrafoRef,
       lit: this.litGrafoRef,
       pulsos: this.pulsosGrafoRef,
       t0: this.t0GrafoRef,
@@ -1325,11 +1554,12 @@ export class VistaC360Component {
       nodos: this.nodos.map((n) => {
         const restringido = Boolean(n.restringidoPara?.includes(rolPermiso));
         const sinDatosNodo = !cli.datos[n.id]?.length;
-        const caido = n.fuentes.some((fid) => caidas.includes(fid)) || sinDatosNodo;
+        const caido = n.fuentes.some((fid) => caidas.includes(fid));
         return {
           id: n.id,
           n: n.nombre,
-          estado: restringido ? 'restringido' : caido ? 'caido' : 'ok',
+          // GRA-01: fuente caída = no disponible; fuente en línea sin registros = disponible sin registros
+          estado: restringido ? 'restringido' : caido ? 'caido' : sinDatosNodo ? 'vacio' : 'ok',
           sem: n.semantico,
           fuentes: n.fuentes,
         };
@@ -1493,6 +1723,7 @@ export class VistaC360Component {
       this.cerrarFichaFlotante();
       return;
     }
+    this.avisoAcceso.set('');
     this.fuenteInspeccionadaId.set(null);
     this.nodoDrawerId.set(nodoId);
     this.nodoSeleccionadoId.set(nodoId);
@@ -1506,6 +1737,7 @@ export class VistaC360Component {
       this.cerrarFichaFlotante();
       return;
     }
+    this.avisoAcceso.set('');
     this.fuenteInspeccionadaId.set(fuenteId);
     this.nodoSeleccionadoId.set('');
     this.selGrafoRef.current = fuenteId;
@@ -1514,6 +1746,7 @@ export class VistaC360Component {
   }
 
   cerrarFichaFlotante(): void {
+    this.avisoAcceso.set('');
     this.fichaAbierta.set(false);
     this.abiertaGrafoRef.current = false;
     this.nodoSeleccionadoId.set('');
@@ -1560,6 +1793,10 @@ export class VistaC360Component {
     const cli = this.clienteActual();
     const acc = this.obtenerRedireccionNodo(nodoId);
     if (acc.destino === 'contrato') {
+      if (!cli.contratoPrincipal) {
+        this.avisoAcceso.set(`${cli.nombre} aún no tiene contrato: no hay contrato que abrir. Puedes iniciar una nueva gestión.`);
+        return;
+      }
       this.verContrato.emit(cli.contratoPrincipal);
       return;
     }
@@ -1584,9 +1821,9 @@ export class VistaC360Component {
       this.activarContingenciaNoEncontrado();
       return;
     }
-    const coincidencias = this.clientesCoincidentesIdle();
-    if (coincidencias.length === 1) {
-      this.entrarAFichaCliente(coincidencias[0].k);
+    const unico = this.clienteInequivoco(this.candidatosCliente(q));
+    if (unico) {
+      this.entrarAFichaCliente(unico.k);
     }
   }
 
@@ -1689,12 +1926,14 @@ export class VistaC360Component {
         this.activarContingenciaNoEncontrado();
         return;
       }
-      const coincidencias = this.clientesCoincidentesIdle();
-      if (coincidencias.length > 0) {
-        this.entrarAFichaCliente(coincidencias[0].k);
-      } else {
+      const cands = this.candidatosCliente(raw);
+      const unico = this.clienteInequivoco(cands);
+      if (unico) {
+        this.entrarAFichaCliente(unico.k);
+      } else if (cands.length === 0) {
         this.activarContingenciaNoEncontrado();
       }
+      // Varios candidatos: queda la tabla para que el asesor elija (sin autoselección).
       return;
     }
 
@@ -1709,15 +1948,7 @@ export class VistaC360Component {
       return;
     }
 
-    const cliMatch = this.clientes.find(
-      (c) =>
-        c.dni.toLowerCase().includes(q) ||
-        c.doc.toLowerCase().includes(q) ||
-        c.nombre.toLowerCase().includes(q) ||
-        c.telefono.toLowerCase().includes(q) ||
-        c.contratoPrincipal.toLowerCase().includes(q) ||
-        c.lotes.some((l) => l.toLowerCase().includes(q)),
-    );
+    const cliMatch = this.clienteInequivoco(this.candidatosCliente(raw));
     if (cliMatch && cliMatch.k !== this.clienteKey()) {
       this.seleccionarCliente(cliMatch.k);
     }
@@ -1819,13 +2050,26 @@ export class VistaC360Component {
     });
   }
 
-  abrirNuevoTicketCliente(cli: Cliente360): void {
+  /** GRA-02: nueva gestión por el flujo existente de tickets/reclamos, con el contexto cliente/lote/nodo. */
+  abrirNuevoTicketCliente(cli: Cliente360, nodoId?: string): void {
+    const lote = cli.lotes.includes(this.loteContexto()) ? this.loteContexto() : (cli.lotes[0] ?? '');
     this.crearTicketDesde360.emit({
       cliente: cli.nombre,
       dni: cli.dni,
-      proyecto: `${cli.proyecto} · Lote ${cli.lotes[0] ?? ''}`,
+      proyecto: lote ? `${cli.proyecto} · Lote ${lote}` : cli.proyecto,
       contingencia: false,
+      lote,
+      contrato: cli.contratoPrincipal,
+      nodoId,
     });
+  }
+
+  etiquetaTipoMovimiento(t: TipoMovimiento360): string {
+    return ETIQUETA_TIPO_MOVIMIENTO[t];
+  }
+
+  fechaMovimiento(d: Date): string {
+    return fmtFecha(d);
   }
 
   iniciarLlamadaCti(): void {
@@ -1883,17 +2127,19 @@ export class VistaC360Component {
   }
 
   estadoNodo(n: NodoDato360): {
-    codigo: 'ok' | 'locked' | 'down';
-    tono: 'success' | 'warning' | 'danger';
+    codigo: 'ok' | 'locked' | 'down' | 'empty';
+    tono: 'success' | 'warning' | 'danger' | 'neutral';
     etiqueta: string;
   } {
     const rolPermiso = this.rolActivo() === 'cx' ? 'supervisor' : this.rolActivo();
     if (n.restringidoPara?.includes(rolPermiso)) {
       return { codigo: 'locked', tono: 'warning', etiqueta: 'Restringido' };
     }
-    const sinDatosNodo = !this.clienteActual().datos[n.id]?.length;
-    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid)) || sinDatosNodo) {
+    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid))) {
       return { codigo: 'down', tono: 'danger', etiqueta: 'No disponible' };
+    }
+    if (!this.clienteActual().datos[n.id]?.length) {
+      return { codigo: 'empty', tono: 'neutral', etiqueta: 'Sin registros' };
     }
     return { codigo: 'ok', tono: 'success', etiqueta: 'En línea' };
   }
@@ -1913,6 +2159,47 @@ export class VistaC360Component {
 
   paresNodo(nodoId: string): ParCardPairs[] {
     return this.filasNodo(nodoId).map(([clave, valor]) => ({ clave, valor }));
+  }
+
+  /** GRA-02: saldo e interés moratorio solo con lo que trae el dato del nodo «saldo» (no el estado de cuenta, restringido). */
+  paresSaldo(): ParCardPairs[] {
+    const filas = this.filasNodo('saldo');
+    const saldo = filas.find(([k]) => /saldo/i.test(k));
+    const mora = filas.find(([k, v]) => /morator/i.test(`${k} ${v}`));
+    const sinDato = 'No informado por la fuente';
+    return [
+      { clave: saldo?.[0] ?? 'Saldo', valor: saldo?.[1] ?? sinDato },
+      { clave: mora?.[0] ?? 'Interés moratorio', valor: mora?.[1] ?? sinDato },
+      ...filas.filter((f) => f !== saldo && f !== mora).map(([clave, valor]) => ({ clave, valor })),
+    ];
+  }
+
+  paresLoteCliente(): ParCardPairs[] {
+    const cli = this.clienteActual();
+    return [
+      { clave: 'Cliente', valor: `${cli.nombre} · ${cli.doc}` },
+      { clave: 'Proyecto', valor: cli.proyecto },
+      { clave: 'Lote(s)', valor: cli.lotes.join(', ') || 'Sin lote aún' },
+      { clave: 'Contrato', valor: cli.contratoPrincipal || 'Sin contrato aún' },
+    ];
+  }
+
+  private nombreElementoGrafo(id: string): string {
+    if (id === ID_CLIENTE_GRAFO) return 'Cliente';
+    return this.fuentes.find((f) => f.id === id)?.nombre ?? this.nodos.find((n) => n.id === id)?.nombre ?? id;
+  }
+
+  /** GRA-03: áreas, procesos y relaciones (id · tipo) del elemento seleccionado. */
+  paresContexto(): ParCardPairs[] {
+    const c = this.contextoSel();
+    return [
+      { clave: 'Áreas vinculadas', valor: c.areas.join(', ') || 'Sin áreas vinculadas en los datos' },
+      { clave: 'Proceso / módulo', valor: c.procesos.join(', ') || 'Sin proceso definido' },
+      ...c.relaciones.map((r) => ({
+        clave: r.id,
+        valor: `${r.tipo} · ${this.nombreElementoGrafo(r.de)} → ${this.nombreElementoGrafo(r.a)}`,
+      })),
+    ];
   }
 
   paresTrazabilidadNodo(nodoId: string): ParCardPairs[] {
@@ -1985,13 +2272,16 @@ export class VistaC360Component {
     ctx.save();
     ctx.scale(dpr, dpr);
 
-    const tealOscuro = readColor('--aybar-color-primary-900') || '#012B33';
-    const tealBase = readColor('--aybar-color-primary-700') || '#02424E';
-    const naranja = readColor('--aybar-color-secondary-400') || '#FFA726';
-    const verde = readColor('--aybar-color-success-500') || '#36A558';
-    const ambar = readColor('--aybar-color-warning-500') || '#B88100';
-    const rojo = readColor('--aybar-color-danger-500') || '#D63D4A';
-    const blanco = readColor('--aybar-color-neutral-0') || '#FFFFFF';
+    // Canvas siempre oscuro (también en tema claro): colores «sobre oscuro» de three/paleta.ts.
+    const P = (this.paletaGrafo ??= crearPaleta());
+    const tealOscuro = css(P.fondo);
+    const tealBase = css(P.base);
+    const naranja = css(P.acento);
+    const verde = css(P.ok);
+    const ambar = css(P.warn);
+    const rojo = css(P.bad);
+    const blanco = css(P.texto);
+    const mudo = css(P.mudo);
     const activoCliente = this.clienteSeleccionado();
 
     ctx.fillStyle = tealOscuro;
@@ -2011,7 +2301,7 @@ export class VistaC360Component {
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.strokeStyle =
-        idx === 1 && activoCliente ? 'rgba(255, 167, 38, 0.20)' : 'rgba(255, 255, 255, 0.08)';
+        idx === 1 && activoCliente ? css(P.acento, 0.20) : css(P.texto, 0.08);
       ctx.setLineDash(idx === 2 ? [3, 6] : []);
       ctx.lineWidth = 1;
       ctx.stroke();
@@ -2044,6 +2334,9 @@ export class VistaC360Component {
 
     const foco = activoCliente ? this.hoverTarget : null;
     const selId = activoCliente ? this.nodoSeleccionadoId() : '';
+    const ctxG = activoCliente ? this.contextoGrafo() : null;
+    const hayCtx = Boolean(ctxG && ctxG.ids.size > 0);
+    const enCtx = (id: string): boolean => !hayCtx || Boolean(ctxG?.ids.has(id));
     const caidas = this.fuentesCaidas();
     const t = ts * 0.001;
 
@@ -2069,7 +2362,8 @@ export class VistaC360Component {
         const sDown = caidas.includes(sid);
         const activo =
           activoCliente &&
-          (selId === n.id ||
+          (Boolean(ctxG?.rels.has(idRelacion(sid, n.id))) ||
+            selId === n.id ||
             (foco?.kind === 'node' && foco.n?.id === n.id) ||
             (foco?.kind === 'src' && foco.s?.id === sid));
         const cpx = (sp.x + np.x) * 0.5 + (cx - (sp.x + np.x) * 0.5) * 0.18;
@@ -2079,14 +2373,14 @@ export class VistaC360Component {
         ctx.moveTo(sp.x, sp.y);
         ctx.quadraticCurveTo(cpx, cpy, np.x, np.y);
         ctx.strokeStyle = !activoCliente
-          ? 'rgba(255, 255, 255, 0.10)'
+          ? css(P.texto, 0.10)
           : sDown
-            ? 'rgba(214, 61, 74, 0.42)'
+            ? css(P.bad, 0.57)
             : activo
-              ? 'rgba(255, 167, 38, 0.90)'
+              ? css(P.acento, 0.90)
               : st === 'locked'
-                ? 'rgba(184, 129, 0, 0.32)'
-                : 'rgba(255, 255, 255, 0.18)';
+                ? css(P.warn, 0.55)
+                : css(P.texto, 0.18);
         ctx.lineWidth = activo ? 2.2 : 1.1;
         ctx.stroke();
 
@@ -2095,7 +2389,7 @@ export class VistaC360Component {
           const [px, py] = bezierPt(sp.x, sp.y, cpx, cpy, np.x, np.y, u);
           ctx.beginPath();
           ctx.arc(px, py, activo ? 3.2 : 2.1, 0, Math.PI * 2);
-          ctx.fillStyle = activo ? naranja : 'rgba(255, 255, 255, 0.78)';
+          ctx.fillStyle = activo ? naranja : css(P.texto, 0.78);
           ctx.fill();
         }
       });
@@ -2104,17 +2398,20 @@ export class VistaC360Component {
     this.fuentes.forEach((s, idx) => {
       const sp = posFuentes[s.id];
       const down = caidas.includes(s.id);
-      const activo = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
+      const activo =
+        activoCliente &&
+        (Boolean(ctxG?.rels.has(idRelacion(ID_CLIENTE_GRAFO, s.id))) ||
+          (foco?.kind === 'src' && foco.s?.id === s.id));
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(sp.x, sp.y);
       ctx.strokeStyle = !activoCliente
-        ? 'rgba(255, 255, 255, 0.12)'
+        ? css(P.texto, 0.12)
         : down
-          ? 'rgba(214, 61, 74, 0.48)'
+          ? css(P.bad, 0.63)
           : activo
-            ? 'rgba(255, 167, 38, 0.85)'
-            : 'rgba(255, 255, 255, 0.22)';
+            ? css(P.acento, 0.85)
+            : css(P.texto, 0.22);
       ctx.lineWidth = activo ? 2 : 1.15;
       ctx.stroke();
 
@@ -2136,28 +2433,30 @@ export class VistaC360Component {
       if (activoCliente) this.hitTargets.push(p);
       const down = caidas.includes(s.id);
       const isHover = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
+      ctx.globalAlpha = enCtx(s.id) ? 1 : 0.35;
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r + (isHover ? 3 : 0), 0, Math.PI * 2);
       ctx.fillStyle = !activoCliente
-        ? 'rgba(255, 255, 255, 0.08)'
+        ? css(P.texto, 0.08)
         : down
-          ? 'rgba(214, 61, 74, 0.28)'
-          : 'rgba(255, 167, 38, 0.20)';
+          ? css(P.bad, 0.43000000000000005)
+          : css(P.acento, 0.20);
       ctx.fill();
       ctx.lineWidth = isHover ? 2.4 : 1.6;
-      ctx.strokeStyle = !activoCliente ? 'rgba(255, 255, 255, 0.24)' : down ? rojo : naranja;
+      ctx.strokeStyle = !activoCliente ? css(P.texto, 0.24) : down ? rojo : naranja;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.35)' : down ? rojo : naranja;
+      ctx.fillStyle = !activoCliente ? css(P.texto, 0.35) : down ? rojo : naranja;
       ctx.fill();
 
       ctx.font = '600 10px Inter, system-ui, sans-serif';
-      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.55)' : blanco;
+      ctx.fillStyle = !activoCliente ? mudo : blanco;
       ctx.textAlign = 'center';
-      ctx.fillText(s.nombre, p.x, p.y + p.r + 13);
+      ctx.fillText(activoCliente && down ? `✕ ${s.nombre}` : s.nombre, p.x, p.y + p.r + 13);
+      ctx.globalAlpha = 1;
     });
 
     this.nodos.forEach((n) => {
@@ -2166,43 +2465,68 @@ export class VistaC360Component {
       const st = this.estadoNodo(n).codigo;
       const isSel = activoCliente && selId === n.id;
       const isHover = activoCliente && foco?.kind === 'node' && foco.n?.id === n.id;
+      ctx.globalAlpha = enCtx(n.id) ? 1 : 0.35;
       const col = !activoCliente
-        ? 'rgba(255, 255, 255, 0.25)'
+        ? css(P.texto, 0.25)
         : st === 'ok'
           ? verde
           : st === 'locked'
             ? ambar
-            : rojo;
+            : st === 'empty'
+              ? mudo
+              : rojo;
 
-      if (isSel || isHover) {
+      if (isSel || isHover || (hayCtx && ctxG?.ids.has(n.id))) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r + 6, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 167, 38, 0.24)';
+        ctx.fillStyle = css(P.acento, 0.24);
         ctx.fill();
       }
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = isSel ? tealBase : 'rgba(2, 66, 78, 0.92)';
+      ctx.fillStyle = isSel ? tealBase : css(P.base, 0.92);
       ctx.fill();
-      ctx.lineWidth = isSel || isHover ? 2.5 : 1.6;
+      ctx.lineWidth = isSel || isHover ? 2.5 : 2;
       ctx.strokeStyle = isSel ? naranja : col;
+      // Segundo canal (no solo color): discontinuo = restringido, punteado = sin registros, aspa = sin conexión.
+      if (activoCliente) ctx.setLineDash(st === 'locked' ? [5, 3] : st === 'empty' ? [1.5, 3] : []);
       ctx.stroke();
+      ctx.setLineDash([]);
 
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = col;
-      ctx.fill();
+      if (activoCliente && st === 'down') {
+        ctx.beginPath();
+        ctx.moveTo(p.x - 3.5, p.y - 3.5);
+        ctx.lineTo(p.x + 3.5, p.y + 3.5);
+        ctx.moveTo(p.x + 3.5, p.y - 3.5);
+        ctx.lineTo(p.x - 3.5, p.y + 3.5);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = col;
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        if (activoCliente && st === 'empty') {
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = col;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = col;
+          ctx.fill();
+        }
+      }
 
       const ang = Math.atan2(p.y - cy, p.x - cx);
       const lx = p.x + Math.cos(ang) * (p.r + 10);
       const ly = p.y + Math.sin(ang) * (p.r + 10);
       ctx.font = `${isSel ? '700' : '600'} 10.5px Inter, system-ui, sans-serif`;
       ctx.fillStyle =
-        !activoCliente || st === 'locked' ? 'rgba(255, 255, 255, 0.55)' : blanco;
+        !activoCliente || st === 'locked' ? mudo : blanco;
       ctx.textAlign = Math.cos(ang) > 0.22 ? 'left' : Math.cos(ang) < -0.22 ? 'right' : 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(n.nombre, lx, ly);
+      const sufijo = !activoCliente ? '' : st === 'empty' ? ' · ○ sin registros' : st === 'down' ? ' · ✕ no disponible' : st === 'locked' ? ' · ▲ restringido' : '';
+      ctx.fillText(n.nombre + sufijo, lx, ly);
+      ctx.globalAlpha = 1;
     });
 
     const cli = this.clienteActual();
@@ -2210,7 +2534,7 @@ export class VistaC360Component {
       const pulso = 34 + Math.sin(t * 2.6) * 2.5;
       ctx.beginPath();
       ctx.arc(cx, cy, pulso + 8, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 167, 38, 0.16)';
+      ctx.fillStyle = css(P.acento, 0.16);
       ctx.fill();
     }
 
@@ -2219,16 +2543,16 @@ export class VistaC360Component {
     ctx.fillStyle = tealBase;
     ctx.fill();
     ctx.lineWidth = 3;
-    ctx.strokeStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.25)';
+    ctx.strokeStyle = activoCliente ? naranja : css(P.texto, 0.25);
     ctx.stroke();
 
-    ctx.fillStyle = activoCliente ? blanco : 'rgba(255, 255, 255, 0.65)';
+    ctx.fillStyle = activoCliente ? blanco : mudo;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '700 15px Inter, system-ui, sans-serif';
     ctx.fillText(activoCliente ? cli.iniciales : '360', cx, cy - 4);
     ctx.font = '600 9.5px Inter, system-ui, sans-serif';
-    ctx.fillStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.50)';
+    ctx.fillStyle = activoCliente ? naranja : mudo;
     ctx.fillText(activoCliente ? cli.lotes.join(' · ') || 'Sin lote' : 'En espera', cx, cy + 12);
 
     if (activoCliente) {

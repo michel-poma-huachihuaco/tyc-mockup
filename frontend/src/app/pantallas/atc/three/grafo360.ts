@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { bucle, capaEtiquetas, color, css, type RGB } from './comun';
+import { crearPaleta } from './paleta';
+import { ID_CLIENTE_GRAFO, idRelacion } from '../relaciones-360';
 
 export interface FuenteGrafo {
   id: string;
@@ -13,7 +15,8 @@ export interface FuenteGrafo {
 export interface NodoDatoGrafo {
   id: string;
   n: string;
-  estado: 'ok' | 'restringido' | 'caido';
+  /** `vacio`: la fuente responde pero el cliente no tiene registros (acceso disponible, distinto de `caido`). */
+  estado: 'ok' | 'restringido' | 'caido' | 'vacio';
   sem?: boolean;
   fuentes: readonly string[];
 }
@@ -36,16 +39,23 @@ export interface PulsoGrafo {
 
 export type Ref<T> = { current: T };
 
+/** Elementos relacionados con la selección (GRA-03): ids de nodos, ids de relaciones y texto de áreas/procesos. */
+export interface ContextoGrafo {
+  ids: ReadonlySet<string>;
+  rels: ReadonlySet<string>;
+  texto: string;
+}
+
 export interface OptsGrafo {
   canvas: HTMLCanvasElement;
   host: HTMLElement;
-  color: (token: string) => RGB;
   reducido: boolean;
   vista: Ref<VistaGrafo | null>;
   sel: Ref<string>;
   abierta?: Ref<boolean>;
   sem: Ref<{ hits: unknown[] } | null>;
   hover: Ref<string | null>;
+  contexto?: Ref<ContextoGrafo>;
   lit: Ref<Set<string>>;
   pulsos: Ref<PulsoGrafo[]>;
   t0: Ref<number>;
@@ -68,42 +78,25 @@ interface NodoEsc {
   txt: HTMLElement;
 }
 
-const COLORES_FUENTES_ASTRA: Readonly<Record<string, RGB>> = {
-  sigda: [0, 229, 255],
-  contr: [0, 230, 118],
-  cob: [255, 196, 0],
-  jose: [255, 167, 38],
-  repo: [38, 222, 160],
-  mail: [179, 136, 255],
-  cti: [244, 114, 182],
-  atc: [129, 140, 248],
-};
-
-const COLORES_NODOS_ASTRA: readonly RGB[] = [
-  [52, 211, 153],
-  [56, 189, 248],
-  [251, 191, 36],
-  [167, 139, 250],
-  [45, 212, 191],
-  [244, 114, 182],
-];
-
 export function montarGrafo(o: OptsGrafo): () => void {
   const { canvas, host } = o;
+  const P = crearPaleta();
   const T = {
-    bad: [255, 82, 82] as RGB,
-    warn: [245, 158, 11] as RGB,
-    naranja: [255, 167, 38] as RGB,
-    cyan: [0, 229, 255] as RGB,
-    esmeralda: [0, 230, 118] as RGB,
-    violeta: [179, 136, 255] as RGB,
-    borde: [56, 132, 152] as RGB,
-    src: o.color('primary-400'),
-    texto: [248, 252, 255] as RGB,
-    mudo: [165, 208, 220] as RGB,
-    apagado: [24, 78, 92] as RGB,
-    centroTexto: [1, 27, 35] as RGB,
+    bad: P.bad,
+    warn: P.warn,
+    ok: P.ok,
+    naranja: P.acento,
+    cyan: P.cyan,
+    esmeralda: P.esmeralda,
+    violeta: P.violeta,
+    borde: P.borde,
+    texto: P.texto,
+    mudo: P.mudo,
+    apagado: P.apagado,
+    centroTexto: P.centroTexto,
   };
+  const fondoEt = css(P.fondo, 0.92);
+  const txtEt = css(P.texto);
   const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   r.setPixelRatio(Math.min(2, devicePixelRatio || 1));
   const etiquetas = capaEtiquetas(host);
@@ -186,6 +179,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const aristas: {
     linea: THREE.Line;
     mat: THREE.LineBasicMaterial;
+    id: string;
+    tipo: 'consulta' | 'alimenta';
     a: string;
     b: string;
     colorBase: RGB;
@@ -229,14 +224,18 @@ export function montarGrafo(o: OptsGrafo): () => void {
   const objCentro = new CSS2DObject(etCentro);
   objCentro.position.set(0, 0, 0.92);
   const etNom = document.createElement('div');
-  etNom.style.cssText =
-    'pointer-events:none;font:700 11.5px Montserrat,system-ui,sans-serif;white-space:nowrap;color:#FFFFFF;padding:2px 8px;border-radius:999px;background:rgba(1,27,35,0.82);border:1px solid rgba(255,167,38,0.45)';
+  etNom.style.cssText = `pointer-events:none;font:700 calc(11.5px * var(--esc,1)) Montserrat,system-ui,sans-serif;width:max-content;max-width:calc(260px * var(--esc,1));text-align:center;color:${txtEt};padding:2px 8px;border-radius:12px;background:${fondoEt};border:1px solid ${css(T.naranja, 0.6)}`;
   const objNom = new CSS2DObject(etNom);
   objNom.position.set(0, -1.48, 0);
-  escena.add(centro.mesh, centro.halo, centro.corona, objCentro, objNom);
+  const etCtx = document.createElement('div');
+  etCtx.style.cssText = `pointer-events:none;display:none;font:600 calc(10px * var(--esc,1)) Montserrat,system-ui,sans-serif;width:max-content;max-width:calc(260px * var(--esc,1));text-align:center;color:${txtEt};padding:2px 8px;border-radius:8px;background:${fondoEt};border:1px solid ${css(T.naranja, 0.8)}`;
+  etCtx.setAttribute('data-contexto-grafo', '');
+  const objCtx = new CSS2DObject(etCtx);
+  objCtx.position.set(0, -2.1, 0);
+  escena.add(centro.mesh, centro.halo, centro.corona, objCentro, objNom, objCtx);
 
   const colorFuente = (id: string, idx: number): RGB =>
-    COLORES_FUENTES_ASTRA[id] ?? COLORES_NODOS_ASTRA[idx % COLORES_NODOS_ASTRA.length]!;
+    P.fuentes[id] ?? P.nodos[idx % P.nodos.length]!;
 
   const construir = (v: VistaGrafo): void => {
     nodos.forEach((n) => n.et.element.remove());
@@ -272,8 +271,9 @@ export function montarGrafo(o: OptsGrafo): () => void {
       halo.position.copy(p);
       halo.visible = true;
       const el = document.createElement('div');
-      el.style.cssText =
-        'pointer-events:auto;cursor:pointer;text-align:center;line-height:1.2;white-space:nowrap;padding:3px 7px;border-radius:8px;user-select:none;background:rgba(1,26,34,0.80);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(4px);transition:border-color .15s,transform .15s';
+      el.style.cssText = `pointer-events:auto;cursor:pointer;text-align:center;line-height:1.2;width:max-content;max-width:calc(150px * var(--esc,1));padding:3px 7px;border-radius:8px;user-select:none;background:${fondoEt};border:1px solid ${css(P.texto, 0.25)};transition:border-color .15s,transform .15s`;
+      el.dataset['nodoId'] = id;
+      el.dataset['nodoTipo'] = tipo;
       el.title =
         tipo === 'dato'
           ? `Clic para inspeccionar nodo «${texto}»`
@@ -293,14 +293,15 @@ export function montarGrafo(o: OptsGrafo): () => void {
         }
       });
       const b = document.createElement('b');
-      b.style.cssText = 'display:block;font:700 11px Montserrat,system-ui,sans-serif;color:#F8FCFF';
+      b.style.cssText = `display:block;font:700 calc(11px * var(--esc,1)) Montserrat,system-ui,sans-serif;color:${txtEt}`;
       b.textContent = texto;
       el.append(b);
       let s: HTMLElement | undefined;
-      if (sub != null) {
+      if (sub != null || tipo === 'dato') {
         s = document.createElement('small');
-        s.style.cssText = 'display:block;font:600 9.5px Montserrat,system-ui,sans-serif';
-        s.textContent = sub;
+        s.style.cssText = 'display:block;font:600 calc(10px * var(--esc,1)) Montserrat,system-ui,sans-serif';
+        s.textContent = sub ?? '';
+        if (!sub) s.style.display = 'none';
         el.append(s);
       }
       const et = new CSS2DObject(el);
@@ -346,8 +347,8 @@ export function montarGrafo(o: OptsGrafo): () => void {
       const lado = cx > 0.3 ? 'der' : cx < -0.3 ? 'izq' : Math.sin(a) > 0 ? 'arriba' : 'abajo';
       const srcPrincipal = d.fuentes[0] ?? '';
       const cNodo =
-        COLORES_FUENTES_ASTRA[srcPrincipal] ??
-        COLORES_NODOS_ASTRA[i % COLORES_NODOS_ASTRA.length]!;
+        P.fuentes[srcPrincipal] ??
+        P.nodos[i % P.nodos.length]!;
       nuevo(
         d.id,
         'dato',
@@ -360,7 +361,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
         lado,
       );
     });
-    const posDe = (id: string): THREE.Vector3 => (id === 'c' ? new THREE.Vector3() : nodos.get(id)!.pos);
+    const posDe = (id: string): THREE.Vector3 => (id === ID_CLIENTE_GRAFO ? new THREE.Vector3() : nodos.get(id)!.pos);
     const arista = (
       a: string,
       b: string,
@@ -380,11 +381,13 @@ export function montarGrafo(o: OptsGrafo): () => void {
       });
       const linea = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curva.getPoints(28)), mat);
       grupo.add(linea);
-      aristas.push({ linea, mat, a, b, colorBase: colorLinea, ...extra });
+      const tipoRel = a === ID_CLIENTE_GRAFO ? 'consulta' : 'alimenta';
+      linea.userData = { id: idRelacion(a, b), tipo: tipoRel };
+      aristas.push({ linea, mat, id: idRelacion(a, b), tipo: tipoRel, a, b, colorBase: colorLinea, ...extra });
     };
     v.fuentes.forEach((s, i) => arista('c', s.id, colorFuente(s.id, i), { fuente: s.id }));
     v.nodos.forEach((d, i) => {
-      const col = nodos.get(d.id)?.colorBase ?? COLORES_NODOS_ASTRA[i % COLORES_NODOS_ASTRA.length]!;
+      const col = nodos.get(d.id)?.colorBase ?? P.nodos[i % P.nodos.length]!;
       d.fuentes.forEach((s) => arista(s, d.id, col, { fuente: s, dato: d.id }));
     });
   };
@@ -414,6 +417,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
     canvas.style.height = `${h}px`;
     r.setSize(w, h, false);
     etiquetas.setSize(w, h);
+    etiquetas.domElement.style.setProperty('--esc', String(w < 480 ? 0.85 : w < 800 ? 0.92 : 1));
     cam.aspect = w / h;
     cam.position.setLength(w < 560 ? 32 : w < 800 ? 25 : 20.5);
     cam.updateProjectionMatrix();
@@ -482,6 +486,56 @@ export function montarGrafo(o: OptsGrafo): () => void {
   canvas.addEventListener('pointerup', onPointerUp);
 
   const tmp = new THREE.Vector3();
+
+  // D4: cada etiqueta se ajusta a los bordes del contenedor y, si dos se pisan, la de menor
+  // prioridad se desplaza en vertical o, si no hay hueco, se atenúa. `translate` es independiente
+  // del `transform` que escribe CSS2DRenderer. Coste: ~25 rectángulos, O(n²) ≈ 300 pruebas por cuadro.
+  const medidas = new WeakMap<HTMLElement, { w: number; h: number; t: number }>();
+  const ajustarEtiquetas = (ahora: number, W: number, H: number): void => {
+    const M = 4;
+    const items: { obj: CSS2DObject; el: HTMLElement; prio: number }[] = [];
+    items.push({ obj: objNom, el: etNom, prio: 100 });
+    if (etCtx.style.display !== 'none') items.push({ obj: objCtx, el: etCtx, prio: 90 });
+    nodos.forEach((n, id) => {
+      const marcado = o.sel.current === id || o.hover.current === id;
+      items.push({ obj: n.et, el: n.el, prio: marcado ? 95 : n.mesh.userData['tipo'] === 'fuente' ? 60 : 50 });
+    });
+    items.sort((a, b) => b.prio - a.prio);
+    const puestos: { l: number; t: number; r: number; b: number }[] = [];
+    for (const it of items) {
+      let m = medidas.get(it.el);
+      if (!m || ahora - m.t > 500) {
+        m = { w: it.el.offsetWidth, h: it.el.offsetHeight, t: ahora };
+        medidas.set(it.el, m);
+      }
+      it.obj.getWorldPosition(tmp).project(cam);
+      const px = ((tmp.x + 1) / 2) * W;
+      const py = ((1 - tmp.y) / 2) * H;
+      const l0 = px - it.obj.center.x * m.w;
+      const t0 = py - it.obj.center.y * m.h;
+      const fijar = (l: number, t: number): { l: number; t: number } => ({
+        l: Math.max(M, Math.min(W - M - m.w, l)),
+        t: Math.max(M, Math.min(H - M - m.h, t)),
+      });
+      const choca = (l: number, t: number): boolean =>
+        puestos.some((p) => l < p.r && l + m.w > p.l && t < p.b && t + m.h > p.t);
+      let pos = fijar(l0, t0);
+      let libre = !choca(pos.l, pos.t);
+      for (let k = 1; !libre && k <= 3; k++) {
+        for (const sg of [1, -1]) {
+          const c = fijar(l0, t0 + sg * k * (m.h + 2));
+          if (!choca(c.l, c.t)) {
+            pos = c;
+            libre = true;
+            break;
+          }
+        }
+      }
+      it.el.style.translate = `${Math.round(pos.l - l0)}px ${Math.round(pos.t - t0)}px`;
+      if (!libre) it.el.style.opacity = String(Math.min(Number(it.el.style.opacity || 1), 0.3));
+      puestos.push({ l: pos.l, t: pos.t, r: pos.l + m.w, b: pos.t + m.h });
+    }
+  };
   const frame = (ahora: number): void => {
     const wHost = host.clientWidth;
     if (!wHost) return;
@@ -506,6 +560,9 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const caida = (id: string): boolean | undefined => v.fuentes.find((s) => s.id === id)?.caida;
     const el = ahora - o.t0.current;
     const lit = o.lit.current;
+    const ctxG = o.contexto?.current;
+    const hayCtx = !esApagado && Boolean(ctxG && ctxG.ids.size > 0);
+    const rel = (id: string): boolean => !hayCtx || Boolean(ctxG?.ids.has(id));
 
     // Suavizar la rotación leve guiada por el cursor del mouse y el desplazamiento lateral al abrir/cerrar la card
     rotActualX += (targetRotX - rotActualX) * 0.08;
@@ -591,8 +648,9 @@ export function montarGrafo(o: OptsGrafo): () => void {
           (a.fuente && (o.sel.current === a.fuente || o.hover.current === a.fuente)),
       );
       const esCaida = Boolean(caida(a.fuente ?? ''));
-      a.mat.color.copy(color(esCaida ? T.bad : hl ? T.naranja : a.colorBase));
-      a.mat.opacity = esCaida ? 0.45 : hl ? 0.96 : a.dato ? 0.36 : 0.58;
+      const enCtx = hayCtx && Boolean(ctxG?.rels.has(a.id));
+      a.mat.color.copy(color(esCaida ? T.bad : hl || enCtx ? T.naranja : a.colorBase));
+      a.mat.opacity = esCaida ? 0.45 : hl || enCtx ? 0.96 : hayCtx ? 0.1 : a.dato ? 0.36 : 0.58;
     }
 
     for (const s of v.fuentes) {
@@ -605,7 +663,9 @@ export function montarGrafo(o: OptsGrafo): () => void {
         n.mesh.scale.setScalar(0.92);
         n.txt.style.color = css(T.mudo);
         n.txt.style.fontWeight = '600';
-        n.el.style.borderColor = 'rgba(255,255,255,0.12)';
+        n.el.style.borderColor = css(T.borde, 0.6);
+        n.el.style.borderStyle = 'solid';
+        n.el.style.opacity = '1';
         if (n.sub) {
           n.sub.style.color = css(T.mudo);
           if (n.sub.textContent !== 'en espera') n.sub.textContent = 'en espera';
@@ -633,17 +693,20 @@ export function montarGrafo(o: OptsGrafo): () => void {
         n.mesh.position.z = n.baseZ + dz;
         n.halo.position.z = n.baseZ + dz;
       }
-      n.txt.style.color = '#FFFFFF';
+      n.el.style.opacity = rel(s.id) ? '1' : '0.35';
+      n.el.style.borderStyle = 'solid';
+      n.el.style.borderWidth = s.caida ? '2px' : '1px';
+      n.txt.style.color = txtEt;
       n.txt.style.fontWeight = esSelSrc ? '800' : '700';
       n.el.style.borderColor = s.caida
         ? css(T.bad)
         : selSrc
           ? css(T.naranja)
-          : `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.45)`;
-      n.el.style.boxShadow = esSelSrc ? '0 0 14px rgba(255,167,38,0.45)' : 'none';
+          : css(n.colorBase, 0.55);
+      n.el.style.boxShadow = esSelSrc ? `0 0 14px ${css(T.naranja, 0.45)}` : 'none';
       if (n.sub) {
         n.sub.style.color = css(s.caida ? T.bad : n.colorBase);
-        const t = s.caida ? 'no disponible' : s.d;
+        const t = s.caida ? '✕ no disponible' : s.d;
         if (n.sub.textContent !== t) n.sub.textContent = t;
       }
     }
@@ -658,12 +721,17 @@ export function montarGrafo(o: OptsGrafo): () => void {
         n.mesh.scale.setScalar(0.9);
         n.txt.style.color = css(T.mudo);
         n.txt.style.fontWeight = '600';
-        n.el.style.borderColor = 'rgba(255,255,255,0.10)';
+        n.el.style.borderColor = css(T.borde, 0.6);
+        n.el.style.borderStyle = 'solid';
         n.el.style.boxShadow = 'none';
+        n.el.style.opacity = '1';
+        if (n.sub) n.sub.style.display = 'none';
         continue;
       }
       const restringido = d.estado === 'restringido';
       const caido = d.estado === 'caido';
+      const vacio = d.estado === 'vacio';
+      const enCtx = hayCtx && rel(d.id);
       const on = lit.has(d.id) && d.estado === 'ok';
       const esSel = o.sel.current === d.id;
       const esHover = o.hover.current === d.id;
@@ -677,10 +745,20 @@ export function montarGrafo(o: OptsGrafo): () => void {
             ? T.naranja
             : on
               ? n.colorBase
-              : T.apagado;
+              : vacio
+                ? T.mudo
+                : T.apagado;
       (n.mesh.material as THREE.MeshBasicMaterial).color.copy(color(col));
       haloMat.color.copy(color(col));
-      n.halo.visible = on || sel || restringido || caido;
+      n.halo.visible = on || sel || restringido || caido || enCtx;
+      n.el.style.opacity = rel(d.id) ? '1' : '0.35';
+      if (n.sub) {
+        // El color no es el único medio: el estado también va escrito en la etiqueta del nodo.
+        const t = caido ? '✕ no disponible' : restringido ? '▲ restringido' : vacio ? '○ sin registros' : '';
+        if (n.sub.textContent !== t) n.sub.textContent = t;
+        n.sub.style.display = t ? 'block' : 'none';
+        n.sub.style.color = css(caido ? T.bad : restringido ? T.warn : T.mudo);
+      }
       const respira = o.reducido ? 0 : Math.sin(ahora * 0.0036 + n.fase) * 0.08;
       // Aura pequeña en reposo y grande únicamente cuando el nodo está seleccionado
       haloMat.opacity = esSel ? 0.38 : esHover ? 0.2 : 0.1;
@@ -702,21 +780,30 @@ export function montarGrafo(o: OptsGrafo): () => void {
         ? css(T.bad)
         : restringido
           ? css(T.warn)
-          : on || sel
-            ? '#FFFFFF'
+          : on || sel || enCtx
+            ? txtEt
             : css(T.mudo);
       n.txt.style.fontWeight = esSel ? '800' : '700';
-      n.el.style.borderColor = sel
+      // Segundo canal (no solo color): borde sólido grueso = caído, discontinuo = restringido, punteado = sin registros.
+      n.el.style.borderStyle = restringido ? 'dashed' : vacio ? 'dotted' : 'solid';
+      n.el.style.borderWidth = caido || restringido || vacio ? '2px' : '1px';
+      n.el.style.borderColor = sel || enCtx
         ? css(T.naranja)
         : caido
           ? css(T.bad)
           : restringido
             ? css(T.warn)
             : on
-              ? `rgba(${n.colorBase[0]},${n.colorBase[1]},${n.colorBase[2]},0.42)`
-              : 'rgba(255,255,255,0.12)';
-      n.el.style.boxShadow = esSel ? '0 0 14px rgba(255,167,38,0.45)' : 'none';
+              ? css(n.colorBase, 0.55)
+              : vacio
+                ? css(T.mudo, 0.6)
+                : css(T.borde, 0.6);
+      n.el.style.boxShadow = esSel ? `0 0 14px ${css(T.naranja, 0.45)}` : 'none';
     }
+
+    const textoCtx = hayCtx ? (ctxG?.texto ?? '') : '';
+    if (etCtx.textContent !== textoCtx) etCtx.textContent = textoCtx;
+    etCtx.style.display = textoCtx ? 'block' : 'none';
 
     if (esApagado) {
       (centro.mesh.material as THREE.MeshBasicMaterial).color.copy(color(T.apagado));
@@ -744,6 +831,7 @@ export function montarGrafo(o: OptsGrafo): () => void {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     if (w && h) {
+      ajustarEtiquetas(ahora, w, h);
       const pos: Record<string, { x: number; y: number; r: number }> = {};
       const pr = (obj: THREE.Object3D, rad: number): { x: number; y: number; r: number } => {
         obj.getWorldPosition(tmp).project(cam);

@@ -89,11 +89,6 @@ const CSS = `
   color: var(--aybar-color-fg-on-accent);
 }
 
-.v3-entradas button:focus-visible {
-  outline: var(--aybar-focus-ring-width) solid var(--v3-acc);
-  outline-offset: var(--aybar-focus-ring-offset);
-}
-
 /* ---------------------------------------------------------------- asistente flotante 3D (pt-bot) */
 .pt-bot {
   --v3-ok: var(--aybar-color-feedback-success-border);
@@ -106,6 +101,7 @@ const CSS = `
   --v3-sk: var(--aybar-color-bg-surface-sunken);
   --v3-ln: var(--aybar-color-border-subtle);
   --v3-pri: var(--aybar-color-primary-500);
+  --pt-bot-fab: calc(var(--aybar-space-12) + var(--aybar-space-2));
   position: fixed;
   inset-inline-end: var(--aybar-space-5);
   inset-block-end: var(--aybar-space-5);
@@ -149,8 +145,8 @@ const CSS = `
 .pt-bot__fab {
   position: relative;
   display: block;
-  inline-size: var(--aybar-space-20, 5rem);
-  block-size: var(--aybar-space-20, 5rem);
+  inline-size: var(--pt-bot-fab);
+  block-size: var(--pt-bot-fab);
   padding: 0;
   border-radius: var(--aybar-radius-full);
   border: var(--aybar-border-width-thin) solid var(--v3-ln);
@@ -174,7 +170,7 @@ const CSS = `
 
 .pt-bot__globo {
   position: absolute;
-  inset-inline-end: calc(var(--aybar-space-20, 5rem) + var(--aybar-space-3));
+  inset-inline-end: calc(var(--pt-bot-fab) + var(--aybar-space-3));
   inset-block-end: var(--aybar-space-5);
   inline-size: max-content;
   max-inline-size: 14rem;
@@ -194,9 +190,9 @@ const CSS = `
 .pt-bot__panel {
   position: absolute;
   inset-inline-end: 0;
-  inset-block-end: calc(var(--aybar-space-20, 5rem) + var(--aybar-space-3));
+  inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-3));
   inline-size: min(25.5rem, calc(100vw - var(--aybar-space-8)));
-  block-size: min(38.5rem, calc(100vh - 9.5rem));
+  block-size: min(38.5rem, calc(100dvh - 9.5rem));
   display: flex;
   flex-direction: column;
   border-radius: var(--aybar-radius-lg);
@@ -482,21 +478,24 @@ const CSS = `
     inset-block-end: var(--aybar-space-3);
   }
 
-  .pt-bot__fab {
-    inline-size: var(--aybar-space-16, 4rem);
-    block-size: var(--aybar-space-16, 4rem);
-  }
-
   .pt-bot__globo {
-    inset-inline-end: calc(var(--aybar-space-16, 4rem) + var(--aybar-space-2));
+    inset-inline-end: calc(var(--pt-bot-fab) + var(--aybar-space-2));
     inset-block-end: var(--aybar-space-3);
     max-inline-size: 11rem;
   }
 
   .pt-bot__panel {
-    inset-block-end: calc(var(--aybar-space-16, 4rem) + var(--aybar-space-2));
+    inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-2));
     inline-size: calc(100vw - var(--aybar-space-6));
-    block-size: min(32rem, calc(100vh - 7.5rem));
+    block-size: min(32rem, calc(100dvh - 7.5rem));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-bot *,
+  .pt-bot *::before,
+  .pt-bot *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 `;

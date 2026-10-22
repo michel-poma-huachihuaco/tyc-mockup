@@ -1,0 +1,22 @@
+/* Vista Monitor: pantalla ampliada para TV/proyector. Solo tokens --aybar-*. */
+:host { position: fixed; inset: 0; z-index: 1000; display: block; overflow: auto; background: var(--aybar-color-bg-canvas); color: var(--aybar-color-fg-default); padding: var(--aybar-space-8); }
+.mv { display: grid; grid-template-rows: auto auto 1fr; gap: var(--aybar-space-8); min-block-size: calc(100vh - 2 * var(--aybar-space-8)); }
+.mv__cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--aybar-space-4); }
+.mv__tit { margin: 0; font-size: var(--aybar-font-size-4xl); font-weight: var(--aybar-font-weight-semibold); }
+.mv__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-4); font-size: var(--aybar-font-size-xl); color: var(--aybar-color-fg-muted); }
+.mv__estado { padding: var(--aybar-space-2) var(--aybar-space-4); border: 2px solid var(--aybar-color-border-strong); border-radius: var(--aybar-radius-lg); color: var(--aybar-color-fg-default); font-weight: var(--aybar-font-weight-semibold); }
+.mv__estado--viejo { border-style: dashed; background: var(--aybar-color-bg-surface-sunken); }
+.mv__btn { font: inherit; font-size: var(--aybar-font-size-lg); padding: var(--aybar-space-2) var(--aybar-space-5); border: 1px solid var(--aybar-color-border-strong); border-radius: var(--aybar-radius-lg); background: var(--aybar-color-bg-surface); color: var(--aybar-color-fg-default); cursor: pointer; }
+.mv__btn:focus-visible { outline: 3px solid var(--aybar-color-border-focus); outline-offset: 2px; }
+.mv__kpis { display: grid; grid-auto-rows: auto; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--aybar-space-6); }
+.mv__kpi { display: grid; grid-template-rows: subgrid; grid-row: span 3; align-content: start; row-gap: var(--aybar-space-2); }
+.mv__kpi, .mv__panel { background: var(--aybar-color-bg-surface); border: 1px solid var(--aybar-color-border-default); border-radius: var(--aybar-radius-xl); padding: var(--aybar-space-6); }
+.mv__etq { margin: 0; font-size: var(--aybar-font-size-xl); color: var(--aybar-color-fg-muted); }
+.mv__val { display: flex; align-items: baseline; gap: var(--aybar-space-2); margin: 0; font-size: var(--aybar-font-size-4xl); line-height: 1; font-weight: var(--aybar-font-weight-semibold); font-variant-numeric: tabular-nums; }
+.mv__val small { font-size: var(--aybar-font-size-xl); color: var(--aybar-color-fg-muted); font-weight: normal; }
+.mv__pend { margin: 0; font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-subtle); }
+.mv__cols { display: grid; align-items: stretch; align-content: stretch; grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr)); gap: var(--aybar-space-6); }
+.mv__h { margin: 0 0 var(--aybar-space-4); font-size: var(--aybar-font-size-2xl); }
+.mv__lista { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--aybar-space-4); font-size: var(--aybar-font-size-2xl); align-content: start; }
+.mv__lista li { display: flex; justify-content: space-between; gap: var(--aybar-space-4); border-bottom: 1px solid var(--aybar-color-border-subtle); padding-bottom: var(--aybar-space-2); font-variant-numeric: tabular-nums; }
+/* Sin animaciones: el monitor solo cambia números; nada que reducir con prefers-reduced-motion. */

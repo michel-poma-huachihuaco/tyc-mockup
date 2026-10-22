@@ -6,7 +6,8 @@
 .pf__nombre { margin: 0; color: var(--aybar-color-fg-default); font-weight: var(--aybar-font-weight-medium); }
 .pf__resp { color: var(--aybar-color-fg-muted); }
 
-/* Chevrones proporcionales a las horas. */
+/* Chevrones proporcionales a las horas. Cada color es un par de tokens con contraste verificado en ambos temas
+   (fg-on-brand sobre bg-brand; feedback-*-bg sobre feedback-*-fg): el relleno sólido se distingue del fondo de la tabla. */
 .pf--cre { display: grid; grid-template-columns: var(--pf-cols); gap: var(--aybar-space-1); }
 .pf--cre .pf__item { display: grid; align-content: start; gap: var(--aybar-space-1); }
 .pf__barra {
@@ -20,7 +21,7 @@
   font-weight: var(--aybar-font-weight-semibold);
   clip-path: polygon(0 0, calc(100% - var(--aybar-space-3)) 0, 100% 50%, calc(100% - var(--aybar-space-3)) 100%, 0 100%, var(--aybar-space-3) 50%);
 }
-.pf__barra[data-r='1'] { --pf-bg: var(--aybar-color-feedback-info-bg); --pf-fg: var(--aybar-color-feedback-info-fg); }
-.pf__barra[data-r='2'] { --pf-bg: var(--aybar-color-feedback-success-bg); --pf-fg: var(--aybar-color-feedback-success-fg); }
+.pf__barra[data-r='1'] { --pf-bg: var(--aybar-color-feedback-info-fg); --pf-fg: var(--aybar-color-feedback-info-bg); }
+.pf__barra[data-r='2'] { --pf-bg: var(--aybar-color-feedback-success-fg); --pf-fg: var(--aybar-color-feedback-success-bg); }
 .pf--cre .pf__nombre, .pf--cre .pf__resp { padding-inline: var(--aybar-space-3); }
 .pf--cre .pf__nombre { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; min-block-size: 3lh; }

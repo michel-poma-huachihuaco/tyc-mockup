@@ -69,6 +69,8 @@ export interface Cols {
   superficie: RGB;
   suelo: RGB;
   lienzo: RGB;
+  /** Texto sobre un relleno de acento (token fg-on-accent). */
+  sobreAcento: RGB;
 }
 
 export interface OptsVivo {
@@ -171,6 +173,12 @@ export function montarVivo(o: OptsVivo): () => void {
   const { canvas, host, cols: C, est } = o;
   const RM = o.reducido;
   inyectarEstilos();
+  // Al remontar (cambio de tema) el canvas conserva el contexto GL del renderer anterior, con
+  // UNPACK_FLIP_Y activo: el renderer nuevo sube sus texturas 3D vacías y el navegador avisa
+  // "texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed". Se restablece antes de crearlo.
+  const glPrevio = canvas.getContext('webgl2') as WebGL2RenderingContext | null;
+  glPrevio?.pixelStorei(glPrevio.UNPACK_FLIP_Y_WEBGL, false);
+  glPrevio?.pixelStorei(glPrevio.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   r.setPixelRatio(Math.min(2, devicePixelRatio || 1));
   r.shadowMap.enabled = true;
@@ -178,6 +186,13 @@ export function montarVivo(o: OptsVivo): () => void {
   r.toneMapping = THREE.ACESFilmicToneMapping;
   r.toneMappingExposure = 1.35;
   const etiquetas = capaEtiquetas(host);
+  // Bajo 600 px las etiquetas 3D se amontonan: se ocultan y la vista muestra una lista de salas.
+  const movil = matchMedia('(max-width: 599.98px)');
+  const ocultarEtiquetas = (): void => {
+    etiquetas.domElement.style.display = movil.matches ? 'none' : '';
+  };
+  ocultarEtiquetas();
+  movil.addEventListener('change', ocultarEtiquetas);
   const escena = new THREE.Scene();
   const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, -80, 80);
   const kit = new Kit({ ...C });
@@ -337,6 +352,9 @@ export function montarVivo(o: OptsVivo): () => void {
         const c = riesgo ? C.bad : acento;
         punto.style.background = css(c);
         punto.style.boxShadow = `0 0 0 3px ${css(c, 0.25)}`;
+        // Segundo canal además del color: el punto de una zona en riesgo pasa a rombo.
+        punto.style.borderRadius = riesgo ? '2px' : '50%';
+        punto.style.transform = riesgo ? 'rotate(45deg) scale(1.1)' : '';
       },
     };
     signos.push(api);
@@ -922,6 +940,12 @@ export function montarVivo(o: OptsVivo): () => void {
     vencido: new THREE.MeshBasicMaterial({ color: color(C.bad) }),
   };
 
+  // Forma del LED por SLA (segundo canal, además del color): esfera, rombo y cubo grande.
+  const ledGeos = {
+    ok: kit.esf(0.028),
+    riesgo: new THREE.OctahedronGeometry(0.04),
+    vencido: new THREE.BoxGeometry(0.06, 0.06, 0.06),
+  };
   const ent = new Map<string, Ent>();
   const slots = new Map<string, (string | null)[]>();
   const tomar = (clave: string, id: string): number => {
@@ -954,7 +978,7 @@ export function montarVivo(o: OptsVivo): () => void {
   seleccion.rotation.x = Math.PI / 2;
   escena.add(seleccion);
   const etSel = document.createElement('div');
-  etSel.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:999px;font:700 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${css(C.orange)};color:${css(C.lienzo)};box-shadow:0 4px 12px rgba(0,0,0,.35)`;
+  etSel.style.cssText = `pointer-events:none;padding:3px 9px;border-radius:999px;font:700 11px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${css(C.orange)};color:${css(C.sobreAcento)};box-shadow:0 4px 12px rgba(0,0,0,.35)`;
   const objSel = new CSS2DObject(etSel);
   objSel.visible = false;
 
@@ -1063,7 +1087,9 @@ export function montarVivo(o: OptsVivo): () => void {
     if (RM) e.pos.copy(destino);
   };
 
-  // Hub: pantalla de colas
+  // Hub: pantalla de colas. Fondo oscuro fijo en ambos temas: el texto no depende del tema.
+  const HUB_TEXTO: RGB = [246, 246, 246];
+  const HUB_TENUE: RGB = [186, 200, 206];
   const barras = new Map<string, number>();
   let ultimoHub = 0;
   const dibujarHub = (s: Snap, ahora: number): void => {
@@ -1073,18 +1099,18 @@ export function montarVivo(o: OptsVivo): () => void {
     const W = lienzoHub.width;
     const Hh = lienzoHub.height;
     const g = x.createLinearGradient(0, 0, 0, Hh);
-    g.addColorStop(0, css(mezcla(C.teal, C.suelo, 0.75)));
-    g.addColorStop(1, css(mezcla(C.suelo, [0, 0, 0], 0.5)));
+    g.addColorStop(0, css(mezcla(C.teal, [0, 0, 0], 0.25)));
+    g.addColorStop(1, css(mezcla(C.teal, [0, 0, 0], 0.7)));
     x.fillStyle = g;
     x.fillRect(0, 0, W, Hh);
     x.fillStyle = css(C.orange);
     x.font = '700 26px Montserrat, system-ui, sans-serif';
     x.textAlign = 'left';
     x.fillText('BANDEJA', 24, 44);
-    x.fillStyle = css(C.texto);
+    x.fillStyle = css(HUB_TEXTO);
     x.font = '800 66px Montserrat, system-ui, sans-serif';
     x.fillText(String(s.bandeja), 24, 112);
-    x.fillStyle = css(C.muted);
+    x.fillStyle = css(HUB_TENUE);
     x.font = '500 18px Montserrat, system-ui, sans-serif';
     x.fillText('en espera · rayo > SLA > prioridad', 24, 140);
     const n = s.zonas.length;
@@ -1101,11 +1127,11 @@ export function montarVivo(o: OptsVivo): () => void {
       x.fillRect(bx, by - 100, bw - 12, 100);
       x.fillStyle = css(z.riesgo ? C.bad : (colorZona.get(z.k) ?? C.teal2));
       x.fillRect(bx, by - hh, bw - 12, hh);
-      x.fillStyle = css(C.texto);
+      x.fillStyle = css(HUB_TEXTO);
       x.font = '700 17px Montserrat, system-ui, sans-serif';
       x.textAlign = 'center';
       x.fillText(String(z.cola), bx + (bw - 12) / 2, by - hh - 6);
-      x.fillStyle = css(C.muted);
+      x.fillStyle = css(HUB_TENUE);
       x.font = '600 13px Montserrat, system-ui, sans-serif';
       x.fillText((nombreZona.get(z.k) ?? z.k).split(' ')[0]!.slice(0, 7), bx + (bw - 12) / 2, Hh - 22);
     });
@@ -1382,9 +1408,11 @@ export function montarVivo(o: OptsVivo): () => void {
         RM ? 0 : Math.sin(t * 1.4 + e.fase) * 0.05,
       );
       e.led.material = ledMats[e.sla as keyof typeof ledMats];
+      e.led.geometry = ledGeos[e.sla as keyof typeof ledGeos];
       const urg = e.sla === 'vencido' ? 1 : e.sla === 'riesgo' ? 0.5 : 0;
       const hm = e.halo.material as THREE.SpriteMaterial;
       hm.color.copy(color(colores[e.sla as keyof typeof colores]));
+      e.halo.scale.setScalar(e.sla === 'vencido' ? 1.25 : 0.9);
       hm.opacity = urg
         ? (0.35 + 0.35 * (RM ? 1 : Math.sin(t * (3 + urg * 6) + e.fase) * 0.5 + 0.5)) *
           (urg > 0.7 ? 1 : 0.7)
@@ -1497,6 +1525,7 @@ export function montarVivo(o: OptsVivo): () => void {
     pechoBandeja.dispose();
     selector.remove();
     r.dispose();
+    movil.removeEventListener('change', ocultarEtiquetas);
     etiquetas.domElement.remove();
   };
 }

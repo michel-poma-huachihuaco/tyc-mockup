@@ -37,6 +37,34 @@
   color-scheme: light dark;
 }
 
+/* El scroll es el de la página: la franja de la barra no cambia el ancho entre vistas. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Foco visible único (especificidad 0: los componentes ay-* conservan el suyo). */
+:where(a[href], button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
+  outline-offset: var(--aybar-focus-ring-offset);
+}
+
+/* ID de ticket u otro código mono: nunca en dos líneas. */
+.atc-id-mono {
+  font-family: var(--aybar-family-mono);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   margin: 0;
   background: var(--aybar-color-bg-canvas);
@@ -1089,32 +1117,27 @@ body {
   --aybar-color-border-subtle: color-mix(in oklab, var(--aybar-color-primary-600) 50%, var(--aybar-color-neutral-700));
 }
 
-:root[data-theme='light'] .pl-atc-marco .ay-sidebar {
+/* Sidebar oscuro en ambos temas, con el acento mandarina en el ítem activo (fg-link secondary-300 sobre
+   primary-800: contraste > 7:1). */
+.pl-atc-marco .ay-sidebar {
   --aybar-color-bg-surface: var(--aybar-color-primary-800);
   --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
   --aybar-color-fg-default: var(--aybar-color-primary-50);
   --aybar-color-fg-muted: var(--aybar-color-primary-200);
   --aybar-color-fg-subtle: var(--aybar-color-primary-300);
-  --aybar-color-fg-link: var(--aybar-color-secondary-300);
   --aybar-color-border-subtle: var(--aybar-color-primary-700);
   --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
   --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
   --aybar-color-border-focus: var(--aybar-color-secondary-400);
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) .pl-atc-marco .ay-sidebar {
-    --aybar-color-bg-surface: var(--aybar-color-primary-800);
-    --aybar-color-bg-surface-sunken: var(--aybar-color-primary-900);
-    --aybar-color-fg-default: var(--aybar-color-primary-50);
-    --aybar-color-fg-muted: var(--aybar-color-primary-200);
-    --aybar-color-fg-subtle: var(--aybar-color-primary-300);
-    --aybar-color-fg-link: var(--aybar-color-secondary-300);
-    --aybar-color-border-subtle: var(--aybar-color-primary-700);
-    --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
-    --aybar-color-action-primary-bg: var(--aybar-color-secondary-400);
-    --aybar-color-border-focus: var(--aybar-color-secondary-400);
-  }
+/* Mandarina solo en el ítem activo (secondary-300 sobre primary-800: contraste > 7:1); el pie usa el texto normal. */
+.pl-atc-marco .ay-sidebar__item[aria-current='page'] {
+  --aybar-color-fg-link: var(--aybar-color-secondary-300);
+}
+
+.pl-atc-marco .ay-sidebar__footer :is(.ay-btn, .ay-sidebar__collapse) {
+  color: var(--aybar-color-fg-default);
 }
 
 .pl-atc-lateral {
@@ -1144,7 +1167,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--aybar-space-5);
-  padding: 0 clamp(var(--aybar-space-4), 3vw, var(--aybar-space-8)) var(--aybar-space-16);
+  /* abajo: reserva del FAB del asistente (56px) + su margen, para que nunca tape contenido */
+  padding: 0 clamp(var(--aybar-space-4), 3vw, var(--aybar-space-8))
+    calc(var(--aybar-space-12) + var(--aybar-space-2) + var(--aybar-space-5) + var(--aybar-space-4));
   min-inline-size: 0;
   scroll-margin-block-start: var(--pl-atc-navbar-alto, 0px);
 }
@@ -1182,7 +1207,7 @@ body {
   pointer-events: none;
   transition:
     transform var(--aybar-motion-duration-slow) var(--aybar-motion-easing-standard),
-    opacity var(--aybar-motion-duration-normal) var(--aybar-motion-easing-standard),
+    opacity var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
     visibility var(--aybar-motion-duration-slow) var(--aybar-motion-easing-standard);
 }
 
@@ -1221,8 +1246,8 @@ body {
   z-index: 2;
   display: inline-grid;
   place-items: center;
-  inline-size: var(--aybar-space-7);
-  block-size: var(--aybar-space-7);
+  inline-size: var(--aybar-space-8);
+  block-size: var(--aybar-space-8);
   padding: 0;
   border-radius: var(--aybar-radius-md);
   border: var(--aybar-border-width-thin) solid transparent;
@@ -1242,11 +1267,6 @@ body {
   background: var(--aybar-color-bg-surface-sunken);
   border-color: var(--aybar-color-border-subtle);
   color: var(--aybar-color-fg-default);
-}
-
-.pl-atc-ficha-flotante__cerrar:focus-visible {
-  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-border-focus);
-  outline-offset: var(--aybar-focus-ring-offset);
 }
 
 .pl-atc-ficha-flotante--izq {
@@ -1346,9 +1366,7 @@ body {
 }
 
 .pt-herr {
-  position: fixed;
-  inset-inline-start: var(--aybar-space-4);
-  inset-block-end: var(--aybar-space-4);
+  position: relative;
   z-index: 60;
 }
 
@@ -1366,7 +1384,7 @@ body {
   cursor: pointer;
   box-shadow: var(--aybar-shadow-lg);
   transition:
-    transform var(--aybar-motion-duration-normal) var(--aybar-motion-easing-standard),
+    transform var(--aybar-motion-duration-base) var(--aybar-motion-easing-standard),
     border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
 }
 
@@ -1386,19 +1404,13 @@ body {
   stroke-linejoin: round;
 }
 
-.pt-herr__fab:focus-visible,
-.pt-herr button:focus-visible {
-  outline: var(--aybar-focus-ring-width) solid var(--aybar-color-secondary-400);
-  outline-offset: var(--aybar-focus-ring-offset);
-}
-
 .pt-herr__panel {
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block-start: auto;
-  inset-block-end: calc(var(--aybar-space-12) + var(--aybar-space-2) + var(--aybar-space-px) * 2);
+  /* fixed: escapa del scroll del sidebar y se abre sobre el pie */
+  position: fixed;
+  inset-inline-start: var(--aybar-space-4);
+  inset-block-end: var(--aybar-space-20);
   inline-size: min(calc(var(--aybar-space-4) * 22.5), calc(100vw - var(--aybar-space-8)));
-  max-block-size: min(72vh, calc(var(--aybar-space-4) * 40));
+  max-block-size: min(72dvh, calc(var(--aybar-space-4) * 40));
   overflow: auto;
   border-radius: var(--aybar-radius-xl);
   background: color-mix(in srgb, var(--aybar-color-bg-surface) 97%, transparent);
@@ -1568,8 +1580,8 @@ body {
 .pl-atc-rayo-icono {
   display: inline-grid;
   place-items: center;
-  inline-size: var(--aybar-space-7);
-  block-size: var(--aybar-space-7);
+  inline-size: var(--aybar-space-8);
+  block-size: var(--aybar-space-8);
   padding: 0;
   border-radius: var(--aybar-radius-full);
   border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
@@ -1577,10 +1589,10 @@ body {
   color: var(--aybar-color-fg-muted);
   cursor: pointer;
   transition:
-    background-color var(--aybar-duration-fast) var(--aybar-ease-standard),
-    border-color var(--aybar-duration-fast) var(--aybar-ease-standard),
-    color var(--aybar-duration-fast) var(--aybar-ease-standard),
-    transform var(--aybar-duration-fast) var(--aybar-ease-standard);
+    background-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    border-color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard),
+    transform var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
 }
 
 .pl-atc-rayo-icono svg {
@@ -1949,21 +1961,90 @@ body {
   mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
 }
 
-.ay-sidebar__item[href='#vista:c360'] .ay-sidebar__icon { --pl-i: 0; }
-.ay-sidebar__item[href='#vista:vivo'] .ay-sidebar__icon { --pl-i: 1; }
-.ay-sidebar__item[href='#vista:bandeja'] .ay-sidebar__icon { --pl-i: 2; }
-.ay-sidebar__item[href='#vista:tudia'] .ay-sidebar__icon { --pl-i: 3; }
-.ay-sidebar__item[href='#vista:nuevo'] .ay-sidebar__icon { --pl-i: 4; }
-.ay-sidebar__item[href='#vista:evento'] .ay-sidebar__icon { --pl-i: 5; }
-.ay-sidebar__item[href='#vista:ingreso'] .ay-sidebar__icon { --pl-i: 6; }
-.ay-sidebar__item[href='#vista:morosidad'] .ay-sidebar__icon { --pl-i: 7; }
-.ay-sidebar__item[href='#vista:buses'] .ay-sidebar__icon { --pl-i: 8; }
-.ay-sidebar__item[href='#vista:libro'] .ay-sidebar__icon { --pl-i: 9; }
-.ay-sidebar__item[href='#vista:garantias'] .ay-sidebar__icon { --pl-i: 10; }
-.ay-sidebar__item[href='#vista:sgd'] .ay-sidebar__icon { --pl-i: 11; }
-.ay-sidebar__item[href='#vista:reasignar'] .ay-sidebar__icon { --pl-i: 12; }
-.ay-sidebar__item[href='#vista:alertas'] .ay-sidebar__icon { --pl-i: 13; }
-.ay-sidebar__item[href='#vista:cierre'] .ay-sidebar__icon { --pl-i: 14; }
-.ay-sidebar__item[href='#vista:torre'] .ay-sidebar__icon { --pl-i: 15; }
-.ay-sidebar__item[href='#vista:politicas'] .ay-sidebar__icon { --pl-i: 16; }
-.ay-sidebar__item[href='#vista:configuracion'] .ay-sidebar__icon { --pl-i: 17; }
+.ay-sidebar__item[href='#vista:c360'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:c360'] .ay-sidebar__icon { --pl-i: 0; }
+.ay-sidebar__item[href='#vista:vivo'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:vivo'] .ay-sidebar__icon { --pl-i: 1; }
+.ay-sidebar__item[href='#vista:bandeja'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:bandeja'] .ay-sidebar__icon { --pl-i: 2; }
+.ay-sidebar__item[href='#vista:tudia'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:tudia'] .ay-sidebar__icon { --pl-i: 3; }
+.ay-sidebar__item[href='#vista:nuevo'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:nuevo'] .ay-sidebar__icon { --pl-i: 4; }
+.ay-sidebar__item[href='#vista:evento'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:evento'] .ay-sidebar__icon { --pl-i: 5; }
+.ay-sidebar__item[href='#vista:ingreso'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:ingreso'] .ay-sidebar__icon { --pl-i: 6; }
+.ay-sidebar__item[href='#vista:morosidad'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:morosidad'] .ay-sidebar__icon { --pl-i: 7; }
+.ay-sidebar__item[href='#vista:buses'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:buses'] .ay-sidebar__icon { --pl-i: 8; }
+.ay-sidebar__item[href='#vista:libro'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:libro'] .ay-sidebar__icon { --pl-i: 9; }
+.ay-sidebar__item[href='#vista:garantias'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:garantias'] .ay-sidebar__icon { --pl-i: 10; }
+.ay-sidebar__item[href='#vista:sgd'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:sgd'] .ay-sidebar__icon { --pl-i: 11; }
+.ay-sidebar__item[href='#vista:reasignar'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:reasignar'] .ay-sidebar__icon { --pl-i: 12; }
+.ay-sidebar__item[href='#vista:alertas'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:alertas'] .ay-sidebar__icon { --pl-i: 13; }
+.ay-sidebar__item[href='#vista:cierre'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:cierre'] .ay-sidebar__icon { --pl-i: 14; }
+.ay-sidebar__item[href='#vista:torre'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:torre'] .ay-sidebar__icon { --pl-i: 15; }
+.ay-sidebar__item[href='#vista:politicas'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:politicas'] .ay-sidebar__icon { --pl-i: 16; }
+.ay-sidebar__item[href='#vista:configuracion'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:configuracion'] .ay-sidebar__icon { --pl-i: 17; }
+
+/* Títulos de grupo alineados al inicio, en una línea, en el sidebar y en el drawer móvil */
+.pl-atc-marco .ay-sidebar__grouptoggle,
+.pl-nav-movil__grupo {
+  text-align: start;
+}
+
+.pl-nav-movil__grupo,
+.pl-nav-movil__grupo > * {
+  display: block;
+  inline-size: 100%;
+  white-space: nowrap;
+  text-align: start;
+}
+
+/* Drawer móvil: ítems alineados al inicio, con el icono del sidebar */
+.pl-nav-movil__item .ay-btn {
+  justify-content: flex-start;
+}
+
+.pl-nav-movil__item .ay-btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aybar-space-3);
+  text-align: start;
+}
+
+/* FAV-01 · botón para marcar la vista abierta como favorita (la lista vive en el sidebar) */
+.pl-favoritos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2, 0.5rem);
+}
+
+/* Tablas anchas de la consola: el contenedor de ay-table ya desplaza en horizontal y marca el desborde
+   con sombras laterales; la última columna (acciones) queda fija a la derecha. */
+.pl-atc-marco .ay-table__scroll .ay-table :is(thead th, tbody td):last-child {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 1;
+}
+
+.pl-atc-marco .ay-table__scroll .ay-table tbody td:last-child {
+  background-color: var(--aybar-color-bg-surface);
+  box-shadow: calc(-1 * var(--aybar-space-px)) 0 0 var(--aybar-color-border-subtle);
+}
+
+.pl-atc-marco .ay-table--striped tbody tr:nth-child(even) > td:last-child {
+  background-color: var(--aybar-color-bg-canvas);
+}

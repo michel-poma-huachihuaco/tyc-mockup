@@ -32,7 +32,7 @@ export interface CambioPaso {
     <div class="ep">
       <div class="ep__resumen">
         <ay-form-field etiqueta="Área que recibe el ticket" obligatorio>
-          <ay-select size="sm" [opciones]="opcionesAreas()" [valor]="area()" (valorChange)="areaChange.emit($event)" />
+          <ay-select nombre="area-flujo" size="sm" [opciones]="opcionesAreas()" [valor]="area()" (valorChange)="areaChange.emit($event)" />
         </ay-form-field>
         <ay-progress-bar
           size="sm"
@@ -60,10 +60,11 @@ export interface CambioPaso {
               </header>
               <div class="ep__campos">
                 <ay-form-field class="ep__nombre" etiqueta="Nombre del paso" obligatorio>
-                  <ay-input size="sm" [valor]="p.nombre" (valorChange)="cambiar(i, 'nombre', $event)" />
+                  <ay-input [nombre]="'paso-nombre-' + i" size="sm" [valor]="p.nombre" (valorChange)="cambiar(i, 'nombre', $event)" />
                 </ay-form-field>
                 <ay-form-field etiqueta="Responsable" obligatorio>
                   <ay-select
+                    [nombre]="'paso-responsable-' + i"
                     size="sm"
                     [opciones]="opcionesResponsables()"
                     [valor]="p.responsable"
@@ -72,6 +73,7 @@ export interface CambioPaso {
                 </ay-form-field>
                 <ay-form-field etiqueta="SLA (h hábiles)" obligatorio>
                   <ay-input
+                    [nombre]="'paso-horas-' + i"
                     tipo="number"
                     size="sm"
                     [valor]="'' + p.horas"

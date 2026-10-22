@@ -76,6 +76,10 @@ function estadoLinea(c: CtxBot, corto = false): string {
       return corto
         ? 'lo derivamos a un equipo especializado'
         : `hemos derivado ${t} a un equipo especializado para que lo revise con prioridad.`;
+    case 'IN_COMMITTEE':
+      return corto
+        ? 'lo está revisando el comité'
+        : `${t} está en revisión del comité, que evaluará tu caso con prioridad.`;
     case 'RESOLVED':
       return corto
         ? 'ya lo resolvimos; confírmanos que todo está bien'
