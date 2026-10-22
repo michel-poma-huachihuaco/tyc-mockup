@@ -1,56 +1,72 @@
 ---
 id: "ADR-005"
 tipo: "adr"
-titulo: "ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY"
+titulo: "ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
-relacionados: [ADR-001, ADR-012, ADR-013, ADR-014]
+version: "0.2"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-22"
+relacionados: [ADR-001, ADR-008, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
 
-# ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY
+# ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Fecha: 2026-10-19
-- Compatibilidad con M0 (Arquitectura de Directorio): **por confirmar** (M0 no está en el repositorio; la declara el TL o se solicita dispensa al Data Chief o al Directorio)
-- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3
+- Ticket: AYB-0001 · Fecha: 2026-10-22
+- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pide a Enrique Albán (Data Chief); M0 no está en el repositorio.
+- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL. Cierra P-006.
 
-> Las opciones evaluadas son una propuesta de redacción a partir del motivo del PLT-05 y de las skills del SDK: el arquitecto las confirma o corrige antes de pedir la aprobación del TL.
+> Las frecuencias, los reintentos y la alerta de la sección «Decisión» son **propuesta del equipo** (el Líder Técnico pidió que el ADR los fije). Los confirman el Líder Técnico y, para los plazos de negocio, el PO.
 
 ## Contexto
 
-Los plazos de SLA y el plazo legal del Libro de Reclamaciones corren en días hábiles y feriados (calendario `MAE_TIME` / `MAE_HOLIDAY`). Deben alertar una sola vez por incumplimiento (HU-010) y vigilar los reclamos huérfanos (HU-015) sin que nadie consulte. El SDK solo trae utilidades de fechas y zonas horarias (`AybarDates`, `Timezone`): no trae calendario de días hábiles.
+Los plazos de SLA y el plazo legal del Libro de Reclamaciones corren en días hábiles y feriados (calendario `MAE_TIME` / `MAE_HOLIDAY`). Deben alertar una sola vez por incumplimiento (HU-010) y vigilar los reclamos huérfanos (HU-015) sin que nadie consulte. El SDK solo trae utilidades de fechas y zonas horarias (`AybarDates`, `Timezone`): no trae calendario de días hábiles ni ShedLock.
 
 ## Opciones evaluadas
 
 | Opción | Por qué no | Qué la haría reconsiderar |
 |---|---|---|
 | Calcular el vencimiento solo al consultar | No alerta sin que alguien mire; una sola alerta por incumplimiento no se puede garantizar. | — |
-| Programador externo al servicio | Añade una pieza más que operar en 10 días; sin ventaja con un solo despliegue. | Que se extraiga el módulo `sla` a un servicio propio. |
+| Programador externo al servicio | Añade una pieza más que operar; sin ventaja con un solo despliegue. DT-08 fija la ejecución dentro del servicio. | Que se extraiga el módulo `sla` a un servicio propio. |
+| `@Scheduled` sin candado | Con varias réplicas, dos instancias correrían el mismo job. | — |
 
 ## Decisión
 
-Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempotentes** dentro del monolito, sobre el calendario de días hábiles y feriados por geografía. Repetir un job no duplica alertas ni asientos. El mecanismo de programación y el **control de ejecución única con varias réplicas** (para que dos instancias no corran el mismo job) quedan **por definir**.
+Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempotentes** dentro del servicio, con **ShedLock sobre PostgreSQL** para que corra una sola réplica (DT-08).
 
-## Consecuencias
+1. **Mecanismo:** `@Scheduled` con `@SchedulerLock` y proveedor JDBC sobre la base única; `usingDbTime()` para no depender del reloj de cada réplica. Cada job fija `lockAtMostFor` (propuesta: 2 veces su duración esperada) y `lockAtLeastFor`. Dependencia nueva (no está en el SDK ni en el BOM) y tabla `shedlock` a registrar con Gobierno de Datos (P-031).
+2. **Idempotencia:** ShedLock evita la ejecución simultánea, no la repetición tras una caída. Cada job es idempotente por la clave del hecho (ticket + ciclo + tipo de incumplimiento): repetirlo no duplica alertas ni asientos.
+3. **Calendario:** días hábiles y feriados por geografía desde `MAE_TIME` y `MAE_HOLIDAY` de la base única (DEP-04 define su carga). Cálculo de plazos siempre en días hábiles, nunca en horas corridas.
+4. **Fuente de lectura:** **los jobs del SLA y del plazo legal leen PostgreSQL, no el almacén de lectura** (que puede ir hasta 5 s atrás, ADR-012).
+5. **Reintento:** si un job falla, la siguiente ejecución lo recoge, porque es idempotente. Dentro de una ejecución, cada llamada a un externo reintenta 3 veces con espera creciente (Resilience4j, ADR-004); si sigue fallando, el ítem queda «pendiente de sincronizar» y se reintenta en la siguiente ejecución.
+6. **Alerta ante fallo:** cada job registra en el log (con `correlationId`) su inicio, fin y cantidad procesada, y publica una métrica con la hora de su último éxito. Una regla de Azure Monitor avisa al equipo de ATC y a TI si un job no tuvo éxito en 2 veces su frecuencia, o si termina en error. Destinatarios de la alerta: por definir (P-025).
+7. **Eventos, no jobs:** lo que se dispara por un cambio (correo al asignar, alerta de cancelación al cliente, aviso de estado en Mi Portal) va por el outbox (ADR-013), no por un job.
 
-- Obliga a:
-  - Construir la lógica de días hábiles sobre `MAE_TIME` y `MAE_HOLIDAY`: el v7 ya trae las tablas (fragmento REFERENCE); DEP-04 define su carga.
-  - Idempotencia por clave del hecho (ticket + ciclo + tipo de incumplimiento).
-  - Publicar `sla.breached` por el outbox (ADR-013).
-- Impide:
-  - Cálculos de plazo en horas corridas.
-- Cuesta: Horas de desarrollo sin estimar.
+**Frecuencias propuestas** (la unidad de plazo siempre son días hábiles; la frecuencia es cada cuánto el job mira):
+
+| Job | Historias | Frecuencia propuesta | Base de la frecuencia |
+|---|---|---|---|
+| Vigilancia de SLA y escalamiento | HU-010, HU-023 | cada 5 min | Alertar sin demora apreciable; el SLA de primera respuesta se mide en horas |
+| Plazo legal (alerta a 3 días hábiles de vencer sin prórroga) | HU-015, HU-013 | cada hora | Plazo en días hábiles |
+| Control diario de reclamos huérfanos | HU-015 | diario, al cierre de la jornada | HU-015 lo define «al cierre del día» |
+| Casos con cargo previo sin activar (más de 2 días hábiles) | HU-021 | diario | Plazo en días hábiles |
+| Handoff sin confirmar (1 día hábil) | HU-027 | cada hora | Plazo de 1 día hábil |
+| Riesgo de incumplimiento en Eje 2 (72 horas hábiles sin cierre) | HU-029 | cada hora | Plazo en horas hábiles |
+| Informes diario y quincenal | HU-031 | diario al cierre de jornada y quincenal | Lo define la historia |
+| Auditoría de registros paralelos del dato de cliente | HU-032 | corte quincenal | Lo define la historia |
+| Reintento de la vinculación del cliente cuando SIGDA/TAXON vuelve | HU-051 | cada 5 min mientras haya pendientes | Continuar la atención sin demora |
+| Evaluación de 3 cuotas vencidas e impagas | HU-056 | diario | Según Cobranza (DEP-08) |
+| Control de la carta de alerta sin acción | HU-058 | diario | Plazo definido por el PO (pregunta abierta) |
+| Cierre automático del ticket resuelto sin respuesta | HU-066 | diario | Días hábiles configurables |
 
 ## Controles programados, plazos y reintentos que piden las historias
 
-Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU-015, otras 15 piden un job, un control o un reintento. Todos cuentan en días hábiles (`MAE_TIME`, `MAE_HOLIDAY`) y deben ser idempotentes. **Es una lista de lo que piden las historias**: el arquitecto decide cuáles son jobs, cuáles son eventos del outbox y cuáles son del orquestador.
+Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU-015, otras 15 piden un job, un control o un reintento. Todos cuentan en días hábiles (`MAE_TIME`, `MAE_HOLIDAY`) y deben ser idempotentes. El arquitecto decide cuáles son jobs, cuáles son eventos del outbox y cuáles son del orquestador.
 
-| Historia | Qué pide | Mecanismo propuesto |
+| Historia | Qué pide | Mecanismo |
 |---|---|---|
 | HU-010 | Una sola alerta por ticket, ciclo y tipo (`FIRST_RESPONSE_OVERDUE`); no alerta un ticket resuelto antes de vencer | Job de SLA |
 | HU-015 | Reclamo a 3 días hábiles de vencer sin prórroga: `LEGAL_EXTENSION_WINDOW_CLOSING`; al cierre del día, ticket activo con `RequiresComplaintBook` sin asiento: excepción `ORPHAN_REFERENCE`; evalúa el plazo prorrogado, no el original | Job de plazo legal + control diario |
@@ -63,16 +79,37 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | HU-040 | Si la herramienta de Legal no responde: cola con reintento y «pendiente de sincronizar» | Adaptador con reintento (ADR-004) |
 | HU-046 | Balanceo por carga al entrar un ticket; excluye rayo, Eje 3 e interacción en curso; sin gestor disponible: cola del área y alerta al supervisor | Orquestador (ADR-008) |
 | HU-051 | Reintento automático de la vinculación del cliente cuando SIGDA/TAXON vuelve | Job de reintento |
-| HU-055 | Correo al asignar en 1 min o menos con copia al líder; un solo correo de resumen por gestor en una reasignación masiva | Evento `ticket.assigned` |
+| HU-055 | Correo al asignar en 1 min o menos con copia al líder; un solo correo de resumen por gestor en una reasignación masiva | Evento `ticket.assigned` (outbox) |
 | HU-056 | Evaluación diaria: contrato con 3 cuotas vencidas e impagas según Cobranza (DEP-08) | Job diario |
 | HU-057 | Alerta de cancelación al cliente en el mismo momento de crear el ticket; reintento por WhatsApp y Mi Portal si el correo rebota | Evento desde el outbox (ADR-013) |
 | HU-058 | Carta de alerta al responsable del proyecto con copia al supervisor; sin acción en el plazo definido, escalamiento | Evento + control programado |
-| HU-065 | Aviso por correo y WhatsApp al cliente en cada cambio de estado de su ticket | Evento `ticket.status_changed` |
+| HU-065 | Aviso por correo y WhatsApp al cliente en cada cambio de estado de su ticket | Evento `ticket.status_changed` (outbox) |
 | HU-066 | Cierre automático del ticket resuelto sin respuesta del cliente a los días hábiles configurados, con aviso | Job de cierre |
+
+## Consecuencias
+
+- Obliga a:
+  - Construir la lógica de días hábiles sobre `MAE_TIME` y `MAE_HOLIDAY`: el v7 ya trae las tablas (fragmento REFERENCE); DEP-04 define su carga.
+  - Declarar la dependencia de ShedLock y crear su tabla (P-031).
+  - Idempotencia por clave del hecho (ticket + ciclo + tipo de incumplimiento).
+  - Publicar `sla.breached` por el outbox (ADR-013).
+  - La regla de Azure Monitor para jobs sin éxito y la lista de destinatarios (P-025).
+- Impide:
+  - Cálculos de plazo en horas corridas.
+  - Que un job lea el almacén de lectura para decidir un plazo legal.
+- Cuesta: horas de desarrollo **por estimar por el equipo (P-025)**, junto con el resto de lo que el SDK no trae (ADR-012); costo cloud sin impacto propio.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- Entidades `SVC_SLA_BREACH_ALERT` y `MAE_SLA_POLICY` (SERVICE) y maestros `MAE_TIME` y `MAE_HOLIDAY` (REFERENCE, fuente única de días hábiles en el v7); dueño de dato por asignar.
+- Entidades `SVC_SLA_BREACH_ALERT` y `MAE_SLA_POLICY` (SERVICE) y maestros `MAE_TIME` y `MAE_HOLIDAY` (REFERENCE, fuente única de días hábiles en el v7); dueño de dato por asignar. Tabla nueva `shedlock` (P-031).
 - Regla de calidad (F10): una sola alerta por ticket, tipo de incumplimiento y ciclo (HU-010): `UNIQUE (TicketID, BreachTypeID, ReopenCycleNumber)` según el Excel (RN-SVC-008). La alerta es una bitácora firmada (RNF-AUD-004, ADR-002).
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: título completo del ADR-05 del PO y clave única de la alerta del Excel (RN-SVC-008). — Revisado por: (pendiente) · Aprueba: TL
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Borrador con el mecanismo «por definir» |
+| 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-05 y clave única de la alerta (RN-SVC-008) |
+| 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-08: ShedLock, idempotencia, fuente de lectura, reintento, alerta ante fallo y frecuencias por job (propuesta) |
+
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL

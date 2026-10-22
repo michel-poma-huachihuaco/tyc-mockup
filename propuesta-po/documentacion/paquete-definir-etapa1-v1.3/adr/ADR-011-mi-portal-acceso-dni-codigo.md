@@ -1,61 +1,76 @@
 ---
 id: "ADR-011"
 tipo: "adr"
-titulo: "ADR-011: Mi Portal: acceso del cliente con DNI + código de un solo uso al contacto registrado en SIGDA/TAXON"
+titulo: "ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
-relacionados: [ADR-001, ADR-012, ADR-013, ADR-014]
+version: "0.2"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-22"
+relacionados: [ADR-001, ADR-009, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
 
-# ADR-011: Mi Portal: acceso del cliente con DNI + código de un solo uso al contacto registrado en SIGDA/TAXON
+# ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Fecha: 2026-10-19
-- Compatibilidad con M0 (Arquitectura de Directorio): **por confirmar** (M0 no está en el repositorio; la declara el TL o se solicita dispensa al Data Chief o al Directorio)
-- Origen: convierte a la plantilla del marco el ADR-11 del PLT-05 v1.3
-- **Actualizado el 20-oct-2026 con el mockup de la Etapa 1** (rama `feature/AYB-0001-propuesta-po-v1-3` de `tyc-mockup`): Mi Portal ya está en el prototipo (HU-064, 065 y 066). Lo que el PLT-04 deja abierto lo propone el equipo y lo confirma el PO.
+- Ticket: AYB-0001 · Fecha: 2026-10-22
+- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pide a Enrique Albán (Data Chief); M0 no está en el repositorio.
+- Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.3. **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
+- Cambia lo que fija el PO: HU-064 CA-01 y el requisito de seguridad de FT-ATC-24 (código de 6 dígitos, vence a los 5 minutos, 3 intentos, al correo o al celular). **El PO acepta el cambio o reescribe el criterio según lo que cumpla Control de acceso** (P-027).
 
-> Las opciones evaluadas son una propuesta de redacción a partir del motivo del PLT-05 y de las skills del SDK: el arquitecto las confirma o corrige antes de pedir la aprobación del TL.
+> Las referencias a PJ-05 (D-33, D-47, D-63; ADR-014, ADR-018; R29) son las del correo del Líder Técnico del 22-oct. Quien redacta este ADR no ve ese apartado en Nexora y no las verificó.
 
 ## Contexto
 
-Motivo: HU-064 a 066 y Ley 29733. El cliente consulta y responde sus tickets; solo ve lo suyo (RN-SVC-044). El contacto registrado vive en SIGDA/TAXON (DEP-01).
+Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets; solo ve lo suyo. Control de acceso (PJ-05) ya resuelve el login de clientes: cuenta `CUSTOMER`, búsqueda por DNI con correo coincidente, verificación del contacto y niveles de autenticación. Un login propio en ATC duplicaría ese servicio y obligaría a custodiar credenciales y códigos de clientes (Ley 29733).
 
 ## Opciones evaluadas
 
 | Opción | Por qué no | Qué la haría reconsiderar |
 |---|---|---|
-| Usuario y contraseña propios del cliente | La plataforma tendría que custodiar credenciales de clientes. | Que exista un proveedor de identidad de clientes. |
+| DNI y código de un solo uso propio de ATC, con tabla `PORTAL_SESSION` (v0.1 y ADR-11 del PO) | Duplica el login de clientes de Control de acceso; ATC tendría que enviar códigos y custodiar sesiones (DT-04). Además necesitaba un canal de envío que no figuraba en las dependencias. | — |
+| Usuario y contraseña propios del cliente | La plataforma custodiaría credenciales de clientes. | — |
 | SSO corporativo | Los clientes no son colaboradores. | — |
 
 ## Decisión
 
-El acceso a Mi Portal es con **DNI y un código de un solo uso** enviado al contacto registrado en SIGDA/TAXON, que abre una sesión limitada a lo del cliente (en el v7, candidata `IDN_USER_SESSION`: por confirmar).
+**Mi Portal hace login contra el emisor de Control de acceso** (`@aybarcorp/auth`, Authorization Code con PKCE). ATC solo valida el JWT (ADR-009, ADR-014). **ATC no abre sesiones, no emite códigos y no verifica identidades** (DT-04).
 
-Lo que ya fija el PO (PLT-03 v1.3, FT-24, requisito no funcional de seguridad; PLT-04 v1.3, HU-064 a 066): código de 6 dígitos que vence a los 5 minutos y admite 3 intentos, enviado al correo o al celular; adjuntos de hasta 10 MB (uno más grande o de un formato no admitido se rechaza); el ticket de otro cliente no se muestra y el intento queda en la bitácora; el cliente confirma o rechaza la solución (el rechazo reabre el ticket) y, si no responde, el ticket se cierra solo a los días hábiles configurados; cuando el cliente responde, el SLA se reanuda.
+1. **Filtro por cliente:** ATC filtra todo ticket por el `PartyID` del token. El ticket de otro cliente no se muestra y el intento queda en la bitácora (HU-065 CA-04).
+2. **Niveles de autenticación:** si una acción pide un nivel más fuerte, lo exige Control de acceso con API Management (D-33 de PJ-05, según el Líder Técnico); ATC no lo implementa.
+3. **Interesado sin cliente:** si la persona no existe en `PARTY`, se crea su `PARTY` como no verificada (R29 de PJ-05, según el Líder Técnico). **Quién la escribe** (una API de Control de acceso, o ATC en otro fragmento) sigue abierto (P-014, P-031).
+4. **Lo que sigue fijando el PO** (PLT-04 v1.3, HU-064 a 066): adjuntos de hasta 10 MB y rechazo del que sea más grande o de un formato no admitido (HU-064 CA-05); el cliente confirma o rechaza la solución, y el rechazo reabre el ticket; si no responde, el ticket se cierra solo a los días hábiles configurados; cuando el cliente responde, el SLA se reanuda; las notas internas y el nombre del gestor no se muestran al cliente (HU-005 CA-03, HU-065 CA-03).
+5. **Reglas citadas:** RN-SVC-044 (visibilidad del ticket para el cliente) **no está en el Excel (3)**: viene del PLT-03/04 v1.3 y está por registrar (P-022). Este ADR cita el criterio que la origina (HU-064 CA-02 y HU-065 CA-03).
+6. **Propuestas del equipo en el mockup, que confirma el PO:** adjuntos JPG, PNG o PDF, máximo 3; 5 días hábiles de espera antes del cierre automático.
 
-Propuesta del equipo en el mockup (la confirma el PO): enviar el código al correo **y** al celular; adjuntos JPG, PNG o PDF, máximo 3; esperar 5 días hábiles antes del cierre automático.
+**Se retira del contrato:** del OpenAPI, las operaciones `solicitarCodigo` (`/api/v1/portal/codigos`) y `abrirSesion` (`/api/v1/portal/sesiones`) y los esquemas `SolicitudCodigo`, `CodigoEnviado`, `AperturaSesion` y `Sesion`; del diccionario, `PORTAL_SESSION`.
 
 ## Consecuencias
 
 - Obliga a:
-  - Un canal para enviar el código (correo o mensaje): **no figura en las dependencias del PLT-01**; proveedor y responsable por definir. El mockup lo simula mostrando el código en pantalla.
-  - Un límite de intentos y expiración del código.
-  - Resolver cómo se emite el token de la sesión del cliente frente al emisor OIDC que valida el SDK (ADR-014).
-  - Filtrar toda consulta por el cliente de la sesión.
+  - Que Control de acceso entregue el login de clientes en DEV (P-026) y registre los clientes OAuth de Mi Portal y de la API.
+  - Que el PO decida qué pasa con el código de 6 dígitos, 5 minutos y 3 intentos: si Control de acceso lo cumple, se mantiene; si no, se reescribe HU-064 CA-01 (P-027).
+  - Que la pregunta «¿con qué dato inicia sesión el cliente?» (FT-24, Q-064-2) se responda con lo que fije Control de acceso: DNI con correo coincidente (DT-04).
+  - Filtrar toda consulta por el `PartyID` del token, en la escritura y en la lectura.
 - Impide:
   - Mostrar al cliente datos de otros clientes o notas internas.
-- Cuesta: Costo del envío de códigos: por estimar.
+  - Que ATC guarde credenciales, códigos o sesiones de clientes.
+- Cuesta: sin costo de envío de códigos para ATC (lo asume Control de acceso). Las horas de integrar `@aybarcorp/auth` entran en P-025.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- `PORTAL_SESSION` (v1.3) no existe en el v7; candidatas por confirmar: `IDN_USER_SESSION` (sesión de autenticación, DAC) y `PARTY_CONTACT_VERIFICATION_TOKEN` (OTP o enlace de verificación de teléfono o correo).
-- Tipos y subtipos que ve el cliente: consulta de cuenta, pedido simple, visita técnica, garantía postventa, reclamo y queja (estos dos van al Libro). Los subtipos no tienen tabla en el v7, y el canal «Mi Portal» no figura en la descripción de `MAE_CHANNEL`.
-- PII: DNI y contacto; el código no se guarda en claro.
+- ATC no crea tablas de sesión ni de código. Se retira `PORTAL_SESSION` y las candidatas `IDN_USER_SESSION` y `PARTY_CONTACT_VERIFICATION_TOKEN`: son del área (C-11).
+- Tipos y subtipos que ve el cliente: consulta de cuenta, pedido simple, visita técnica, garantía postventa, reclamo y queja (estos dos van al Libro). Los subtipos no tienen tabla en el v7 y el canal «Mi Portal» no figura en la descripción de `MAE_CHANNEL` (P-016, P-017).
+- PII: el DNI y el contacto los trata Control de acceso; ATC solo conoce el `PartyID`.
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: título completo del ADR-11 del PO; el código de 6 dígitos, 5 minutos y 3 intentos y las reglas de la HU-064 a 066 se atribuyen al PO. — Revisado por: (pendiente) · Aprueba: TL
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Borrador: DNI y código de un solo uso propios |
+| 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Reglas HU-064 a 066 y mockup de Mi Portal |
+| 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Reescrito con DT-04: login de clientes de Control de acceso, sin sesiones ni códigos propios. El nombre del archivo conserva «dni-codigo» para publicarse como versión nueva |
+
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
