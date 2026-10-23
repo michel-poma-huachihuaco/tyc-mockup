@@ -41,49 +41,26 @@ import {
   type AySegmentoOpcion,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
-import { subscribeAppearance } from '@aybarcorp/tokens/apariencia';
+import { readColor, subscribeAppearance } from '@aybarcorp/tokens/apariencia';
 import {
   CLIENTES_360,
   CONSULTAS_SEMANTICAS,
   FUENTES_360,
   NODOS_360,
-  crearTicketsDemo,
-  fmtFecha,
   type Cliente360,
   type Fuente360,
   type NodoDato360,
 } from './datos-atc';
-import { css } from './three/comun';
-import { crearPaleta, type PaletaGrafo } from './three/paleta';
+import { leerTokenRgb, type RGB } from './three/comun';
 import { inyectarEstilos } from './three/estilos';
-import {
-  ETIQUETA_TIPO_MOVIMIENTO,
-  MAX_MOVIMIENTOS_360,
-  ultimosMovimientos,
-  type TipoMovimiento360,
-} from './datos-movimientos';
-import { CATALOGO_GRAFO_360 } from './config-grafo-360';
-import { buscarCandidatos, type Candidato } from './busqueda-fonetica';
-import {
-  CONTEXTO_VACIO,
-  ID_CLIENTE_GRAFO,
-  contextoDe,
-  idRelacion,
-  type Contexto360,
-} from './relaciones-360';
+import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import {
   montarGrafo,
-  type ContextoGrafo,
   type PulsoGrafo,
   type Ref,
+  type SateliteNodoGrafo,
   type VistaGrafo,
 } from './three/grafo360';
-
-/** La consola precarga «Nuevo ticket» con el cliente y lote de `crearTicketDesde360` (GRA-02). */
-const PRECARGA_NUEVA_GESTION_INTEGRADA = true;
-
-/** Tickets del demo (cruce por DNI para las áreas vinculadas; sin los tickets nuevos de la sesión). */
-const TICKETS_DEMO_360 = crearTicketsDemo();
 
 interface NodoCanvasPos {
   readonly kind: 'cli' | 'src' | 'node';
@@ -93,6 +70,496 @@ interface NodoCanvasPos {
   readonly s?: Fuente360;
   readonly n?: NodoDato360;
 }
+
+export interface MovimientoRecienteCliente360 {
+  readonly id: string;
+  readonly area: string;
+  readonly titulo: string;
+  readonly detalle: string;
+  readonly fecha: string;
+  readonly nodoId: string;
+  readonly tono: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+}
+
+const ZONA_FIJA_NODO_360: Readonly<Record<string, string>> = {
+  kyc: 'Comercial · Identidad',
+  cont: 'Comercial · Contacto',
+  lote: 'Activos · Unidades',
+  contrato: 'Legal · Contratos',
+  acta: 'Postventa · Entrega',
+  gar: 'Postventa · Garantías',
+  crono: 'Cobranza · Cronograma',
+  cuotas: 'Cobranza · Letras',
+  saldo: 'Finanzas · Liquidación',
+  ecta: 'Finanzas · Estado Cta.',
+  docs: 'Documental · GLI/S3',
+  correos: 'Canales · Correo',
+  llam: 'Canales · Central CTI',
+  tick: 'Atención · Tickets ATC',
+  libro: 'Regulatorio · Libro',
+  expo: 'Legal · Riesgo SGD',
+};
+
+const VOLUMEN_NODOS_CLIENTE_360: Readonly<Record<string, Readonly<Record<string, number>>>> = {
+  eh: {
+    kyc: 3,
+    cont: 4,
+    lote: 2,
+    contrato: 4,
+    acta: 2,
+    gar: 2,
+    crono: 60,
+    cuotas: 13,
+    saldo: 13,
+    ecta: 84,
+    docs: 9,
+    correos: 14,
+    llam: 4,
+    tick: 2,
+    libro: 0,
+    expo: 0,
+  },
+  jr: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 5,
+    acta: 0,
+    gar: 0,
+    crono: 48,
+    cuotas: 22,
+    saldo: 19,
+    ecta: 100,
+    docs: 11,
+    correos: 8,
+    llam: 6,
+    tick: 3,
+    libro: 1,
+    expo: 1,
+  },
+  lp: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 4,
+    crono: 36,
+    cuotas: 8,
+    saldo: 8,
+    ecta: 52,
+    docs: 7,
+    correos: 5,
+    llam: 0,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+  mq: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 0,
+    crono: 48,
+    cuotas: 18,
+    saldo: 18,
+    ecta: 76,
+    docs: 6,
+    correos: 4,
+    llam: 3,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+  rh: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 5,
+    crono: 24,
+    cuotas: 24,
+    saldo: 1,
+    ecta: 38,
+    docs: 8,
+    correos: 4,
+    llam: 2,
+    tick: 1,
+    libro: 0,
+    expo: 1,
+  },
+  hq: {
+    kyc: 2,
+    cont: 2,
+    lote: 1,
+    contrato: 4,
+    acta: 0,
+    gar: 0,
+    crono: 60,
+    cuotas: 16,
+    saldo: 16,
+    ecta: 68,
+    docs: 5,
+    correos: 6,
+    llam: 3,
+    tick: 1,
+    libro: 0,
+    expo: 1,
+  },
+  vs: {
+    kyc: 2,
+    cont: 2,
+    lote: 0,
+    contrato: 0,
+    acta: 0,
+    gar: 0,
+    crono: 0,
+    cuotas: 0,
+    saldo: 0,
+    ecta: 0,
+    docs: 0,
+    correos: 1,
+    llam: 1,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+};
+
+const MOVIMIENTOS_CLIENTE_360: Readonly<Record<string, readonly MovimientoRecienteCliente360[]>> = {
+  eh: [
+    {
+      id: 'eh-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000486 · Cupo bus EntregaFest',
+      detalle: 'En atención por Administración · Lote C-07',
+      fecha: '19 oct · 09:40',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'eh-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante (3 min 12 s)',
+      detalle: 'Consulta de logística EntregaFest · Audio #9921',
+      fecha: '09 oct · 16:15',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'eh-3',
+      area: 'Correo',
+      titulo: 'Hilo «Fecha de entrega de mi lote C-07»',
+      detalle: '2 mensajes · Cronograma de entrega confirmado',
+      fecha: '06 oct · 11:20',
+      nodoId: 'correos',
+      tono: 'neutral',
+    },
+    {
+      id: 'eh-4',
+      area: 'Cobranza',
+      titulo: 'Pago Cuota 13/60 · S/ 1,180.00',
+      detalle: 'Conciliado BCP Op. #774120 · 0 días de mora',
+      fecha: '29 sep · 14:05',
+      nodoId: 'cuotas',
+      tono: 'success',
+    },
+    {
+      id: 'eh-5',
+      area: 'Contratos',
+      titulo: 'Adenda N.º 01 cambio a Lote C-07',
+      detalle: 'Firmada digitalmente · Custodia GLI #99102',
+      fecha: '18 jun · 10:30',
+      nodoId: 'contrato',
+      tono: 'success',
+    },
+  ],
+  jr: [
+    {
+      id: 'jr-1',
+      area: 'Correo Legal',
+      titulo: 'Alerta paralela de cancelación de servicios',
+      detalle: 'Notificación enviada con constancia por 3 meses impagos',
+      fecha: '14 oct · 17:10',
+      nodoId: 'correos',
+      tono: 'danger',
+    },
+    {
+      id: 'jr-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante crítica (7 min 40 s)',
+      detalle: 'Cliente mencionó carta notarial · Grabación #9840',
+      fecha: '13 oct · 11:48',
+      nodoId: 'llam',
+      tono: 'warning',
+    },
+    {
+      id: 'jr-3',
+      area: 'Libro INDECOPI',
+      titulo: 'Hoja de Reclamación ALT-2026-0042',
+      detalle: 'Reclamo por demora de minuta · Vence 03-nov (15 d háb.)',
+      fecha: '12 oct · 15:22',
+      nodoId: 'libro',
+      tono: 'danger',
+    },
+    {
+      id: 'jr-4',
+      area: 'Comité SGD',
+      titulo: 'Ticket ALT-001204 escalado a Legal (Eje 3)',
+      detalle: 'Exposición S/ 3,180.00 · Suspende resolución contractual',
+      fecha: '12 oct · 16:05',
+      nodoId: 'expo',
+      tono: 'warning',
+    },
+    {
+      id: 'jr-5',
+      area: 'Cobranza',
+      titulo: '3.ª Letra vencida acumulada (Cuota 22/48)',
+      detalle: 'Mora exigible S/ 2,940.00 · Caso MOR-2026-0019',
+      fecha: '15 sep · 00:00',
+      nodoId: 'cuotas',
+      tono: 'danger',
+    },
+  ],
+  lp: [
+    {
+      id: 'lp-1',
+      area: 'Postventa',
+      titulo: 'Inspección técnica GAR-0092 programada',
+      detalle: 'Visita de Ing. Pedro L. a Lote C-21 por fisura en muro',
+      fecha: '18 oct · 10:15',
+      nodoId: 'gar',
+      tono: 'info',
+    },
+    {
+      id: 'lp-2',
+      area: 'Tickets ATC',
+      titulo: 'Ticket APV-000412 · Garantía postventa',
+      detalle: 'En atención · Evidencia fotográfica adjunta en GLI',
+      fecha: '16 oct · 14:30',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'lp-3',
+      area: 'Repositorio GLI',
+      titulo: 'Carga de fotos de fisura en muro.jpg',
+      detalle: 'Subidas desde Mi Portal · Indexadas por IA',
+      fecha: '16 oct · 14:28',
+      nodoId: 'docs',
+      tono: 'neutral',
+    },
+    {
+      id: 'lp-4',
+      area: 'Cobranza',
+      titulo: 'Pago Cuota 8/36 · S/ 1,560.00',
+      detalle: 'Débito automático Interbank conciliado al día',
+      fecha: '05 oct · 08:00',
+      nodoId: 'cuotas',
+      tono: 'success',
+    },
+    {
+      id: 'lp-5',
+      area: 'Activos',
+      titulo: 'Firma de Acta de Entrega Lote C-21',
+      detalle: 'Inicia cobertura estructural de 120 meses',
+      fecha: '20 sep · 12:00',
+      nodoId: 'acta',
+      tono: 'success',
+    },
+  ],
+  mq: [
+    {
+      id: 'mq-1',
+      area: 'Cobranza · Rayo',
+      titulo: 'Ticket AIN-000482 con prioridad Rayo',
+      detalle: 'Validación urgente de voucher BCP #88231 (R. Salazar)',
+      fecha: '18 oct · 16:40',
+      nodoId: 'tick',
+      tono: 'warning',
+    },
+    {
+      id: 'mq-2',
+      area: 'Central CTI',
+      titulo: 'Llamada de seguimiento (4 min 05 s)',
+      detalle: 'Solicita constancia de no adeudo para firmar adenda',
+      fecha: '18 oct · 16:20',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'mq-3',
+      area: 'Correo',
+      titulo: 'Recibido «Envío comprobante de pago septiembre»',
+      detalle: 'Adjunta Voucher_BCP_88231.jpg por S/ 1,250.00',
+      fecha: '18 oct · 15:55',
+      nodoId: 'correos',
+      tono: 'info',
+    },
+    {
+      id: 'mq-4',
+      area: 'Cobranza',
+      titulo: 'Abono en tránsito Cuota 18/48 · S/ 1,250.00',
+      detalle: 'Agente BCP #4102 en conciliación bancaria',
+      fecha: '28 sep · 17:12',
+      nodoId: 'cuotas',
+      tono: 'warning',
+    },
+    {
+      id: 'mq-5',
+      area: 'Contratos',
+      titulo: 'Solicitud de Adenda de reprogramación',
+      detalle: 'Contrato VS-2024-0412 · Lote C-14 Villa Sol II',
+      fecha: '25 sep · 10:00',
+      nodoId: 'contrato',
+      tono: 'neutral',
+    },
+  ],
+  rh: [
+    {
+      id: 'rh-1',
+      area: 'Postventa',
+      titulo: 'Programación de cuadrilla GAR-0091',
+      detalle: 'Sellado epóxico en baño principal Dpto. B-402',
+      fecha: '18 oct · 12:30',
+      nodoId: 'gar',
+      tono: 'info',
+    },
+    {
+      id: 'rh-2',
+      area: 'Central CTI',
+      titulo: 'Llamada saliente Postventa (2 min 50 s)',
+      detalle: 'Confirmación de fecha con L. Ccahuana',
+      fecha: '18 oct · 12:10',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'rh-3',
+      area: 'Tickets ATC',
+      titulo: 'Ticket APV-000089 · Garantía impermeabilización',
+      detalle: 'Dentro de cobertura vigente de 12 meses',
+      fecha: '15 oct · 09:20',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'rh-4',
+      area: 'Repositorio GLI',
+      titulo: 'Informe Preliminar GAR-0091.pdf',
+      detalle: 'Evaluación técnica indexada en expediente digital',
+      fecha: '16 oct · 18:00',
+      nodoId: 'docs',
+      tono: 'neutral',
+    },
+    {
+      id: 'rh-5',
+      area: 'Cobranza',
+      titulo: 'Liquidación total de crédito hipotecario',
+      detalle: 'S/ 268,000.00 cancelados · Saldo S/ 0.00',
+      fecha: '14 nov 2025',
+      nodoId: 'ecta',
+      tono: 'success',
+    },
+  ],
+  hq: [
+    {
+      id: 'hq-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000491 · Solicitud de fraccionamiento',
+      detalle: 'Pide reprogramar 3 letras vencidas del Lote E-19',
+      fecha: '18 oct · 11:05',
+      nodoId: 'tick',
+      tono: 'warning',
+    },
+    {
+      id: 'hq-2',
+      area: 'Repositorio GLI',
+      titulo: 'Liquidación de mora MOR-2026-0024.pdf',
+      detalle: 'Emitida por Cobranza · S/ 3,540.00 exigibles',
+      fecha: '17 oct · 16:40',
+      nodoId: 'docs',
+      tono: 'danger',
+    },
+    {
+      id: 'hq-3',
+      area: 'Central CTI',
+      titulo: 'Llamada saliente Cobranza (5 min 18 s)',
+      detalle: 'Negociación de compromiso de pago · Audio #9892',
+      fecha: '15 oct · 10:12',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'hq-4',
+      area: 'Correo',
+      titulo: 'Recordatorio de vencimiento de 3.ª letra',
+      detalle: 'Notificación preventiva enviada al titular',
+      fecha: '05 oct · 09:00',
+      nodoId: 'correos',
+      tono: 'warning',
+    },
+    {
+      id: 'hq-5',
+      area: 'Cobranza',
+      titulo: 'Detección de 3 cuotas impagas (Letras 14–16)',
+      detalle: 'Caso MOR-2026-0024 en Mesa de Morosidad',
+      fecha: '30 sep · 23:59',
+      nodoId: 'cuotas',
+      tono: 'danger',
+    },
+  ],
+  vs: [
+    {
+      id: 'vs-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000495 · Consulta preventa Villa Sol III',
+      detalle: 'Interesada en requisitos de separación de lote',
+      fecha: '19 oct · 10:05',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'vs-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante informativa (2 min 10 s)',
+      detalle: 'Orientación comercial · Grabación CTI #9945',
+      fecha: '19 oct · 09:58',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'vs-3',
+      area: 'Correo',
+      titulo: 'Recibido «Consulta sobre requisitos Villa Sol III»',
+      detalle: 'Solicita brochure y simulador de financiamiento',
+      fecha: '19 oct · 09:42',
+      nodoId: 'correos',
+      tono: 'neutral',
+    },
+    {
+      id: 'vs-4',
+      area: 'SIGDA / KYC',
+      titulo: 'Alta de titular en maestro SIGDA/TAXON',
+      detalle: 'DNI 74819203 verificado sin lote adjudicado aún',
+      fecha: '19 oct · 09:40',
+      nodoId: 'kyc',
+      tono: 'success',
+    },
+    {
+      id: 'vs-5',
+      area: 'Contacto',
+      titulo: 'Verificación de WhatsApp y correo titular',
+      detalle: '+51 961 402 118 habilitado para Click-to-Call',
+      fecha: '19 oct · 09:40',
+      nodoId: 'cont',
+      tono: 'success',
+    },
+  ],
+};
 
 interface ConsultaMotorRapida {
   readonly id: string;
@@ -408,67 +875,11 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
     AySelect,
     AyStack,
     AyTable,
+    FiltroColumnasTablaDirective,
     AyTag,
     AyText,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [
-    `
-      .c360-cuerpo {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 19rem;
-        gap: var(--aybar-space-4);
-        align-items: start;
-      }
-      @media (max-width: 1100px) {
-        .c360-cuerpo {
-          grid-template-columns: minmax(0, 1fr);
-        }
-      }
-      .c360-movs {
-        display: flex;
-        flex-direction: column;
-        gap: var(--aybar-space-3);
-        padding: var(--aybar-space-3);
-        border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
-        border-radius: var(--aybar-radius-lg);
-      }
-      .c360-movs__lista {
-        display: flex;
-        flex-direction: column;
-        gap: var(--aybar-space-2);
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      .c360-mov {
-        display: flex;
-        flex-direction: column;
-        gap: var(--aybar-space-1);
-        inline-size: 100%;
-        padding: var(--aybar-space-2) var(--aybar-space-3);
-        text-align: start;
-        font: inherit;
-        color: var(--aybar-color-fg-default);
-        background: transparent;
-        border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
-        border-radius: var(--aybar-radius-lg);
-        cursor: pointer;
-      }
-      .c360-mov:hover,
-      .c360-mov:focus-visible {
-        border-color: var(--aybar-color-secondary-400);
-      }
-      .c360-mov__fila {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--aybar-space-2);
-        font-size: var(--aybar-font-size-xs);
-        color: var(--aybar-color-fg-muted);
-      }
-    `,
-  ],
   template: `
     <div ayStack gap="6">
       <ay-page-header
@@ -479,9 +890,6 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
             : 'Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas.'
         "
       >
-        <ay-badge ayEstado size="sm" [tono]="fuentesCaidas().length > 0 ? 'warning' : 'success'">
-          {{ (8 - fuentesCaidas().length) + '/8 fuentes en línea' }}
-        </ay-badge>
         <ng-container ayAcciones>
           @if (clienteSeleccionado()) {
             <ay-button
@@ -515,24 +923,63 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
       <ay-card>
         <ay-card-body>
           <div ayStack gap="3">
-            <!-- Barra superior: Buscador de cliente / documental -->
+            <!-- Barra superior: Buscador de cliente (con aproximación fonética) / documental + Controles de Zonas Fijas -->
             <div #buscador360Host ayRow gap="2" [ajuste]="true" role="search">
               <ay-search-input
                 [etiqueta]="
                   clienteSeleccionado()
-                    ? 'Buscar otro cliente (DNI, nombre, lote, contrato) o consultar documentos/secciones 360'
-                    : 'Buscar cliente (DNI, nombre, código, lote, teléfono o contrato)'
+                    ? 'Buscar otro cliente (DNI, nombre, sonido fonético, lote) o consultar documentos/secciones 360'
+                    : 'Buscar cliente (DNI, nombre, aproximación fonética: Wamani, Parades, Kispe, Marya…)'
                 "
                 size="sm"
                 [retardo]="0"
                 [valor]="busquedaTexto()"
                 (valorChange)="alCambiarBusqueda($event)"
                 (buscar)="ejecutarBusquedaSemantica($event)"
-                placeholder="Ej. 72282555, Huamaní, Paredes, Mamani, Quispe, Soto (sin lote/contrato) o VS-2025-0507…"
+                placeholder="Ej. 72282555, Wamani (≈Huamaní), Parades (≈Paredes), Kispe (≈Quispe), Soto o VS-2025-0507…"
               />
               <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
                 {{ clienteSeleccionado() ? 'Consultar' : 'Buscar cliente' }}
               </ay-button>
+              <ay-button
+                tamano="sm"
+                [variante]="ocultarNodosVacios() ? 'primary' : 'secondary'"
+                (click)="alternarOcultarNodosVacios()"
+              >
+                {{
+                  ocultarNodosVacios()
+                    ? 'Zonas fijas · Solo con datos (' + nodosConDatosRealesCount() + '/' + nodos.length + ')'
+                    : 'Mostrar los 16 nodos (incl. vacíos)'
+                }}
+              </ay-button>
+            </div>
+
+            <!-- Barra rápida de demostración: Clientes de prueba + Búsqueda fonética + Reglas de tamaño y zona -->
+            <div ayRow gap="2" [ajuste]="true" justificar="between">
+              <div ayRow gap="2" [ajuste]="true">
+                <span ayText="label" size="xs">Clientes 360:</span>
+                @for (cliDemo of clientes; track cliDemo.k) {
+                  <ay-button
+                    tamano="sm"
+                    [variante]="clienteSeleccionado() && clienteKey() === cliDemo.k ? 'primary' : 'ghost'"
+                    (click)="entrarAFichaCliente(cliDemo.k)"
+                  >
+                    {{ cliDemo.nombre }} ({{ contarNodosConDatosDe(cliDemo) }}/{{ nodos.length }})
+                  </ay-button>
+                }
+              </div>
+              <div ayRow gap="2" [ajuste]="true">
+                <ay-badge size="sm" [tono]="hayCoincidenciaFoneticaActiva() ? 'info' : 'neutral'">
+                  {{
+                    hayCoincidenciaFoneticaActiva()
+                      ? '≈ Coincidencia fonética por sonido activa'
+                      : '≈ Fonética ES habilitada (B/V, C/S/Z, H/G/W, Q/K, Y/LL)'
+                  }}
+                </ay-badge>
+                <ay-badge size="sm" tono="neutral">
+                  Tamaño proporcional: 1 a 100 registros
+                </ay-badge>
+              </div>
             </div>
 
             @if (!clienteSeleccionado() && busquedaTexto().trim().length >= 2) {
@@ -552,7 +999,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                 </ay-alert>
               } @else {
                 <ay-table
-                  leyenda="Coincidencias en el maestro SIGDA/TAXON"
+                  leyenda="Coincidencias en el maestro SIGDA/TAXON (exacta + aproximación fonética)"
                   [columnas]="columnasBusquedaClientes"
                   [filas]="clientesCoincidentesIdle()"
                   [rayada]="true"
@@ -560,7 +1007,12 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   <ng-template ayCelda="nombre" let-fila>
                     @let c = comoCliente360(fila);
                     <div ayStack gap="1">
-                      <strong>{{ c.nombre }}</strong>
+                      <div ayRow gap="2" [ajuste]="true">
+                        <strong>{{ c.nombre }}</strong>
+                        @if (esCoincidenciaFonetica(c)) {
+                          <ay-badge size="sm" tono="info">≈ Fonética</ay-badge>
+                        }
+                      </div>
                       <span ayText="body" size="xs">{{ c.telefono }} · {{ correoCliente(c) }}</span>
                     </div>
                   </ng-template>
@@ -568,7 +1020,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     @let c = comoCliente360(fila);
                     <span ayText="mono" size="xs">{{ c.doc }}</span>
                   </ng-template>
-                  <ng-template ayCelda="lote" let-fila>
+                  <ng-template ayCelda="proyecto" let-fila>
                     @let c = comoCliente360(fila);
                     @if (c.lotes.length > 0) {
                       <span>{{ c.proyecto }} · Lote {{ c.lotes.join(', ') }}</span>
@@ -576,7 +1028,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                       <span ayText="subtitle" size="xs">{{ c.proyecto }} · Sin lote aún</span>
                     }
                   </ng-template>
-                  <ng-template ayCelda="contrato" let-fila>
+                  <ng-template ayCelda="contratoPrincipal" let-fila>
                     @let c = comoCliente360(fila);
                     @if (c.contratoPrincipal) {
                       <ay-badge size="sm" tono="neutral">{{ c.contratoPrincipal }}</ay-badge>
@@ -586,13 +1038,15 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let c = comoCliente360(fila);
-                    <ay-button
-                      tamano="sm"
-                      variante="primary"
-                      (click)="entrarAFichaCliente(c.k)"
-                    >
-                      Activar Grafo 360 →
-                    </ay-button>
+                    <div class="pl-atc-acciones-celda">
+                      <ay-button
+                        tamano="sm"
+                        variante="secondary"
+                        (click)="entrarAFichaCliente(c.k)"
+                      >
+                        Activar Grafo 360 →
+                      </ay-button>
+                    </div>
                   </ng-template>
                   <ay-empty-state
                     ayVacio
@@ -614,41 +1068,45 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
               }
             }
 
-            <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante) junto al panel de últimos movimientos -->
-            <div class="c360-cuerpo">
-            <div class="pt-escena-wrap">
-              <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
-              <div
-                #poGrafoHost
-                class="pt-escena-grafo"
-                [hidden]="modoRenderizado() !== 'po3d'"
-              >
+            <!-- Tablero principal: Escena 3D/2D con Zonas Fijas + Panel lateral «Últimos 5 movimientos recientes» -->
+            <div
+              class="pt-c360-tablero"
+              [class.pt-c360-tablero--con-movs]="clienteSeleccionado()"
+            >
+              <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante cuando el cliente está activo) -->
+              <div class="pt-escena-wrap">
+                <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
+                <div
+                  #poGrafoHost
+                  class="pt-escena-grafo"
+                  [hidden]="modoRenderizado() !== 'po3d'"
+                >
+                  <canvas
+                    #poGrafoCanvas
+                    role="img"
+                    [attr.aria-label]="
+                      clienteSeleccionado()
+                        ? 'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodosConDatosRealesCount() + ' áreas activas con información.'
+                        : 'Red de consulta 360 en espera de búsqueda de cliente.'
+                    "
+                    (click)="alClickPoGrafo($event)"
+                    (mousemove)="alMoverMousePoGrafo($event)"
+                    (mouseleave)="alSalirMousePoGrafo()"
+                  ></canvas>
+                </div>
+
+                <!-- Escena 2D Radial (alternativa ligera) -->
                 <canvas
-                  #poGrafoCanvas
-                  role="img"
-                  [attr.aria-label]="
-                    clienteSeleccionado()
-                      ? 'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodos.length + ' datos.'
-                      : 'Red de consulta 360 en espera de búsqueda de cliente.'
-                  "
-                  (click)="alClickPoGrafo($event)"
-                  (mousemove)="alMoverMousePoGrafo($event)"
-                  (mouseleave)="alSalirMousePoGrafo()"
+                  #astraCanvas
+                  class="atc-astra-canvas"
+                  [hidden]="modoRenderizado() !== '2d'"
+                  (mousemove)="alMoverMouseCanvas($event)"
+                  (mouseleave)="alSalirMouseCanvas()"
+                  (click)="alClickCanvas()"
                 ></canvas>
-              </div>
 
-              <!-- Escena 2D Radial (alternativa) -->
-              <canvas
-                #astraCanvas
-                class="atc-astra-canvas"
-                [hidden]="modoRenderizado() !== '2d'"
-                (mousemove)="alMoverMouseCanvas($event)"
-                (mouseleave)="alSalirMouseCanvas()"
-                (click)="alClickCanvas()"
-              ></canvas>
-
-              <!-- Ficha lateral desplegable tipo drawer del nodo o sistema seleccionado (nace desde el borde derecho hacia la izquierda y se contrae al cerrar) -->
-              @if (clienteSeleccionado()) {
+                <!-- Ficha lateral desplegable tipo drawer del nodo o sistema seleccionado (nace desde el borde derecho hacia la izquierda y se contrae al cerrar) -->
+                @if (clienteSeleccionado()) {
                   @if (fuenteInspeccionada(); as src) {
                     <div
                       class="pl-atc-ficha-flotante"
@@ -695,7 +1153,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                                     [variante]="nodoSeleccionadoId() === nd.id ? 'primary' : 'secondary'"
                                     (click)="seleccionarNodo(nd.id)"
                                   >
-                                    {{ nd.nombre }}
+                                    {{ nd.nombre }} ({{ cantidadRegistrosNodo(clienteActual(), nd.id) }})
                                   </ay-button>
                                 }
                               </div>
@@ -737,11 +1195,14 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                       </button>
                       <ay-card>
                         <ay-card-header
-                          [titulo]="nodoActual().nombre"
+                          [titulo]="nodoActual().nombre + ' · ' + zonaFijaNodo(nodoActual().id)"
                           [subtitulo]="trazabilidadNodo(nodoActual().id).hu + ' · ' + clienteActual().nombre"
                           nivel="h3"
                         >
                           <div ayAcciones ayRow gap="2" [ajuste]="true">
+                            <ay-badge size="sm" tono="neutral">
+                              {{ cantidadRegistrosNodo(clienteActual(), nodoActual().id) }} reg.
+                            </ay-badge>
                             <ay-badge size="sm" [tono]="estadoNodo(nodoActual()).tono">
                               {{ estadoNodo(nodoActual()).etiqueta }}
                             </ay-badge>
@@ -753,33 +1214,21 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
 
                         <ay-card-body>
                           <div ayStack gap="3">
-                            @if (avisoAcceso()) {
-                              <ay-alert tono="info" titulo="Acceso no disponible">{{ avisoAcceso() }}</ay-alert>
-                            }
                             @if (estadoNodo(nodoActual()).codigo === 'locked') {
                               <ay-alert tono="warning" titulo="Acceso restringido por perfil">
                                 Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a este dato reservado.
                                 Cambia de perfil a Supervisor o Legal en «Herramientas → Ver como» para visualizarlo.
                               </ay-alert>
                             } @else if (estadoNodo(nodoActual()).codigo === 'down') {
-                              <ay-alert tono="danger" titulo="Fuente no disponible temporalmente">
-                                {{ nombresFuentesCaidasNodoActual() || 'Esta sección' }} no está disponible en este instante. Las demás
-                                secciones siguen activas.
-                              </ay-alert>
-                            } @else if (estadoNodo(nodoActual()).codigo === 'empty') {
-                              <ay-alert tono="info" titulo="Disponible, sin registros">
-                                La fuente responde pero {{ clienteActual().nombre }} no tiene registros en «{{ nodoActual().nombre }}».
-                                El acceso sigue disponible para iniciar una nueva gestión.
+                              <ay-alert tono="danger" titulo="Sin registros o fuente no disponible">
+                                {{
+                                  cantidadRegistrosNodo(clienteActual(), nodoActual().id) === 0
+                                    ? 'El cliente no registra movimientos ni operaciones en esta área empresarial.'
+                                    : (nombresFuentesCaidasNodoActual() || 'Esta sección') + ' no está disponible en este instante.'
+                                }}
                               </ay-alert>
                             } @else {
-                              @if (nodoActual().id === 'lote') {
-                                <ay-card-pairs [pares]="paresLoteCliente()" />
-                              }
-                              @if (nodoActual().id === 'saldo') {
-                                <ay-card-pairs [pares]="paresSaldo()" />
-                              } @else {
-                                <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
-                              }
+                              <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
 
                               @if (nodoActual().semantico && hitsSemanticos().length > 0) {
                                 <ay-card variante="default">
@@ -801,13 +1250,11 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
 
                             <ay-divider espaciado="sm" />
                             <ay-card-pairs [pares]="paresTrazabilidadNodo(nodoActual().id)" />
-                            <ay-card-pairs [pares]="paresContexto()" />
 
                             <div ayRow gap="2" [ajuste]="true">
                               <ay-button
                                 tamano="sm"
                                 variante="primary"
-                                [disabled]="estadoNodo(nodoActual()).codigo === 'locked'"
                                 (click)="ejecutarRedireccionNodo(nodoActual().id)"
                               >
                                 {{ obtenerRedireccionNodo(nodoActual().id).etiqueta }} →
@@ -824,21 +1271,11 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                               <ay-button
                                 tamano="sm"
                                 variante="secondary"
-                                [disabled]="estadoNodo(nodoActual()).codigo === 'locked'"
-                                (click)="abrirNuevoTicketCliente(clienteActual(), nodoActual().id)"
+                                (click)="abrirNuevoTicketCliente(clienteActual())"
                               >
-                                {{ nodoActual().id === 'libro' ? '+ Nuevo reclamo' : '+ Nueva gestión' }}
+                                + Crear ticket
                               </ay-button>
                             </div>
-                            <span ayText="subtitle" size="xs">
-                              Nueva gestión abre «Nuevo ticket» con cliente {{ clienteActual().nombre }}
-                              @if (loteContexto()) {
-                                y lote {{ loteContexto() }}
-                              }
-                              @if (!precargaIntegrada) {
-                                · precarga del formulario pendiente de integración en la consola.
-                              }
-                            </span>
                           </div>
                         </ay-card-body>
                       </ay-card>
@@ -847,52 +1284,50 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                 }
               </div>
 
-              <!-- V360-01: últimos movimientos del cliente seleccionado -->
-              <aside class="c360-movs" aria-labelledby="c360-movs-titulo">
-                <div ayRow gap="2" [ajuste]="true" justificar="between">
-                  <ay-heading id="c360-movs-titulo" [nivel]="3" size="sm">Últimos movimientos</ay-heading>
-                </div>
-                @if (!clienteSeleccionado()) {
-                  <span ayText="subtitle" size="xs">Selecciona un cliente para ver sus últimos movimientos.</span>
-                } @else if (movimientos().length === 0) {
-                  <ay-empty-state
-                    variante="first-use"
-                    size="compact"
-                    titulo="Sin movimientos"
-                    descripcion="Este cliente aún no registra pagos, cuotas, reclamos ni otras operaciones."
-                  />
-                } @else {
-                  <span ayText="subtitle" size="xs">
-                    {{ movimientos().length }} de {{ maxMovimientos }} · del más reciente al más antiguo
-                  </span>
-                  <ol class="c360-movs__lista">
-                    @for (m of movimientos(); track m.id) {
-                      <li>
-                        <button
-                          type="button"
-                          class="c360-mov"
-                          [attr.aria-label]="etiquetaTipoMovimiento(m.tipo) + ': ' + m.titulo + (m.estado ? ', ' + m.estado : '') + ', ' + fechaMovimiento(m.fecha) + '. Resaltar en el grafo'"
-                          (click)="seleccionarNodo(m.nodoId)"
-                        >
-                          <span class="c360-mov__fila">
-                            <ay-tag variante="outline">{{ etiquetaTipoMovimiento(m.tipo) }}</ay-tag>
-                            @if (m.estado) {
-                              <ay-badge size="sm" [tono]="m.tono">{{ m.estado }}</ay-badge>
-                            }
+              <!-- Panel lateral fijo: Últimos 5 movimientos recientes del cliente (Cobranzas, Reclamos, Pagos, Llamadas, Contratos) -->
+              @if (clienteSeleccionado()) {
+                <aside class="pt-c360-movs" aria-label="Últimos 5 movimientos recientes del cliente">
+                  <div ayRow gap="2" justificar="between" [ajuste]="true">
+                    <div ayStack gap="1">
+                      <strong ayText="title" size="sm">Últimos 5 movimientos</strong>
+                      <span ayText="subtitle" size="xs">
+                        Cuotas, pagos, reclamos, llamadas y contratos de {{ clienteActual().nombre }}
+                      </span>
+                    </div>
+                    <ay-badge size="sm" tono="info">En vivo</ay-badge>
+                  </div>
+
+                  <ay-divider espaciado="sm" />
+
+                  <div ayStack gap="2">
+                    @for (mov of ultimosMovimientosCliente(); track mov.id) {
+                      <button
+                        type="button"
+                        class="pt-c360-movs__item"
+                        [class.pt-c360-movs__item--activo]="nodoSeleccionadoId() === mov.nodoId"
+                        (click)="seleccionarNodo(mov.nodoId)"
+                      >
+                        <div ayRow gap="2" justificar="between" [ajuste]="true">
+                          <ay-badge size="sm" [tono]="mov.tono">{{ mov.area }}</ay-badge>
+                          <span ayText="mono" size="xs">{{ mov.fecha }}</span>
+                        </div>
+                        <strong ayText="title" size="xs">{{ mov.titulo }}</strong>
+                        <span ayText="subtitle" size="xs">{{ mov.detalle }}</span>
+                        <div ayRow gap="2" justificar="between" [ajuste]="true">
+                          <span ayText="label" size="xs">Zona: {{ zonaFijaNodo(mov.nodoId) }}</span>
+                          <span
+                            ayText="label"
+                            size="xs"
+                            (click)="$event.stopPropagation(); ejecutarRedireccionNodo(mov.nodoId)"
+                          >
+                            Abrir módulo →
                           </span>
-                          <strong ayText="title" size="xs">{{ m.titulo }}</strong>
-                          <span class="c360-mov__fila">{{ fechaMovimiento(m.fecha) }}</span>
-                        </button>
-                      </li>
+                        </div>
+                      </button>
                     }
-                  </ol>
-                  @if (movimientos().length < maxMovimientos) {
-                    <span ayText="subtitle" size="xs">
-                      Solo hay {{ movimientos().length }} movimiento(s) registrado(s) para este cliente.
-                    </span>
-                  }
-                }
-              </aside>
+                  </div>
+                </aside>
+              }
             </div>
 
               <!-- Barra inferior de leyenda y telemetría -->
@@ -903,16 +1338,10 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     Sistema de origen ({{ clienteSeleccionado() ? fuentes.length - fuentesCaidas().length : 0 }}/{{ fuentes.length }})
                   </ay-tag>
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-link)">
-                    Dato del cliente ({{ clienteSeleccionado() ? nodosEncendidosCount() : 0 }}/{{ nodos.length }})
-                  </ay-tag>
-                  <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-muted)">
-                    ○ Disponible sin registros (punteado)
-                  </ay-tag>
-                  <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-warning-border)">
-                    ▲ Restringido (borde discontinuo)
+                    Áreas con datos ({{ clienteSeleccionado() ? nodosConDatosRealesCount() : 0 }}/{{ nodos.length }} en zonas fijas)
                   </ay-tag>
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
-                    ✕ Sin conexión
+                    Restringido / sin conexión
                   </ay-tag>
                 </div>
                 <div ayRow gap="2" [ajuste]="true">
@@ -1165,17 +1594,6 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   <div ayStack gap="2">
                     @if (estadoNodo(n).codigo === 'ok') {
                       <ay-card-pairs [pares]="paresNodo(n.id)" />
-                    } @else if (estadoNodo(n).codigo === 'empty') {
-                      <div ayRow gap="2" [ajuste]="true" justificar="between">
-                        <span ayText="subtitle" size="xs">Disponible, sin registros para este cliente.</span>
-                        <ay-button
-                          tamano="sm"
-                          variante="secondary"
-                          (click)="$event.stopPropagation(); abrirNuevoTicketCliente(clienteActual(), n.id)"
-                        >
-                          Nueva gestión
-                        </ay-button>
-                      </div>
                     } @else if (estadoNodo(n).codigo === 'locked') {
                       <p ayText="subtitle" size="xs">
                         Tu perfil ({{ etiquetaRolActivo() }}) no tiene acceso a «{{ n.nombre.toLowerCase() }}». Solicítalo a tu supervisor ATC si lo requieres.
@@ -1221,15 +1639,7 @@ export class VistaC360Component {
   readonly nodoFocoExterno = input<string>('lote');
   readonly fuentesCaidasExternas = input<readonly string[]>([]);
   readonly fuentesCaidasChange = output<string[]>();
-  readonly crearTicketDesde360 = output<{
-    cliente: string;
-    dni: string;
-    proyecto: string;
-    contingencia: boolean;
-    lote?: string;
-    contrato?: string;
-    nodoId?: string;
-  }>();
+  readonly crearTicketDesde360 = output<{ cliente: string; dni: string; proyecto: string; contingencia: boolean }>();
   readonly verContrato = output<string>();
   readonly redirigirModulo = output<{
     destino: DestinoRedireccionNodo;
@@ -1251,39 +1661,33 @@ export class VistaC360Component {
   readonly consultasSemanticas = CONSULTAS_SEMANTICAS;
   readonly consultasMotor = CONSULTAS_MOTOR_RAPIDAS;
 
-  readonly maxMovimientos = MAX_MOVIMIENTOS_360;
-  readonly precargaIntegrada = PRECARGA_NUEVA_GESTION_INTEGRADA;
-  readonly avisoAcceso = signal<string>('');
-
   readonly clienteSeleccionado = signal<boolean>(false);
   readonly busquedaClienteIdle = signal<string>('');
 
   readonly columnasBusquedaClientes: readonly AyColumna[] = [
-    { clave: 'nombre', cabecera: 'Titular / Razón social', ancho: '28%' },
-    { clave: 'doc', cabecera: 'Documento', ancho: '16%' },
-    { clave: 'lote', cabecera: 'Proyecto y lote(s)', ancho: '28%' },
-    { clave: 'contrato', cabecera: 'Contrato / Contacto', ancho: '16%' },
+    { clave: 'nombre', cabecera: 'Titular / Razón social', ancho: '28%', ordenable: true },
+    { clave: 'doc', cabecera: 'Documento', ancho: '16%', ordenable: true },
+    { clave: 'proyecto', cabecera: 'Proyecto y lote(s)', ancho: '28%', ordenable: true },
+    { clave: 'contratoPrincipal', cabecera: 'Contrato / Contacto', ancho: '16%', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', ancho: '12%', alineacion: 'end' },
   ];
 
-  /** BUS-01: exactas (nombre, DNI, documento, teléfono, proyecto, contrato, lote) y después fonéticas por nombre. */
-  private candidatosCliente(termino: string): Candidato<Cliente360>[] {
-    return buscarCandidatos(this.clientes, termino, {
-      nombre: (c) => c.nombre,
-      exactos: (c) => [c.nombre, c.dni, c.doc, c.telefono, c.proyecto, c.contratoPrincipal, ...c.lotes],
-    });
-  }
-
-  /** El único candidato inequívoco: una sola exacta, o sin exactas una sola fonética. Nunca elige entre empatados. */
-  private clienteInequivoco(cands: readonly Candidato<Cliente360>[]): Cliente360 | null {
-    const exactas = cands.filter((c) => c.motivo === 'exacta');
-    if (exactas.length === 1) return exactas[0].item;
-    return exactas.length === 0 && cands.length === 1 ? cands[0].item : null;
-  }
+  readonly ocultarNodosVacios = signal<boolean>(true);
 
   readonly clientesCoincidentesIdle = computed<readonly Cliente360[]>(() => {
-    const q = this.busquedaTexto().trim();
-    return q ? this.candidatosCliente(q).map((c) => c.item) : this.clientes;
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (!q) return this.clientes;
+    return this.clientes.filter(
+      (c) => this.coincideExactaCliente(c, q) || this.coincideFoneticaCliente(c, q),
+    );
+  });
+
+  readonly hayCoincidenciaFoneticaActiva = computed<boolean>(() => {
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (q.length < 2) return false;
+    return this.clientes.some(
+      (c) => !this.coincideExactaCliente(c, q) && this.coincideFoneticaCliente(c, q),
+    );
   });
 
   readonly rolesOpciones: readonly { rol: 'gestor' | 'supervisor' | 'legal' | 'cx'; etiqueta: string }[] = [
@@ -1338,9 +1742,6 @@ export class VistaC360Component {
   private readonly pulsosGrafoRef: Ref<PulsoGrafo[]> = { current: [] };
   private readonly t0GrafoRef: Ref<number> = { current: 0 };
   private readonly posGrafoRef: Ref<Record<string, { x: number; y: number; r: number }>> = { current: {} };
-  private readonly contextoGrafoRef: Ref<ContextoGrafo> = {
-    current: { ids: new Set<string>(), rels: new Set<string>(), texto: '' },
-  };
 
   private desmontarPoGrafo: (() => void) | null = null;
   private timerLlamada: ReturnType<typeof setInterval> | null = null;
@@ -1352,6 +1753,14 @@ export class VistaC360Component {
 
   readonly clienteActual = computed<Cliente360>(
     () => this.clientes.find((c) => c.k === this.clienteKey()) ?? this.clientes[0],
+  );
+
+  readonly nodosConDatosRealesCount = computed<number>(() =>
+    this.contarNodosConDatosDe(this.clienteActual()),
+  );
+
+  readonly ultimosMovimientosCliente = computed<readonly MovimientoRecienteCliente360[]>(
+    () => MOVIMIENTOS_CLIENTE_360[this.clienteActual().k] ?? MOVIMIENTOS_CLIENTE_360['eh'],
   );
 
   readonly tieneLotesYContrato = computed<boolean>(() => {
@@ -1367,45 +1776,6 @@ export class VistaC360Component {
       return false;
     }
     return this.tieneLotesYContrato();
-  });
-
-  /** V360-01: se recalcula al cambiar de cliente, no conserva nada del anterior. */
-  readonly movimientos = computed(() =>
-    this.clienteSeleccionado() ? ultimosMovimientos(this.clienteActual()) : [],
-  );
-
-  readonly loteContexto = computed<string>(() => {
-    const cli = this.clienteActual();
-    const l = this.loteMotorSeleccionado();
-    return cli.lotes.includes(l) ? l : (cli.lotes[0] ?? '');
-  });
-
-  /** GRA-03: elementos relacionados con la selección actual (vacío si no hay ficha abierta). */
-  readonly contextoSel = computed<Contexto360>(() => {
-    if (!this.clienteSeleccionado() || !this.fichaAbierta()) return CONTEXTO_VACIO;
-    const sel = this.fuenteInspeccionadaId() ?? this.nodoSeleccionadoId();
-    const tickets = TICKETS_DEMO_360.filter((t) => t.dni === this.clienteActual().dni);
-    return contextoDe(sel, {
-      fuentes: this.fuentes,
-      nodos: this.nodos,
-      procesoDe: (id) => REDIRECCION_NODOS_360[id]?.moduloNombre,
-      areasDe: (id) =>
-        id === 'tick'
-          ? tickets.map((t) => t.area)
-          : id === 'libro'
-            ? tickets.filter((t) => t.type === 'REC' || t.type === 'QUE').map((t) => t.area)
-            : [],
-      catalogoAreas: CATALOGO_GRAFO_360.areas,
-    });
-  });
-
-  readonly contextoGrafo = computed<ContextoGrafo>(() => {
-    const c = this.contextoSel();
-    const partes = [
-      c.areas.length ? `Áreas: ${c.areas.join(' · ')}` : '',
-      c.procesos.length ? `Proceso: ${c.procesos.join(' · ')}` : '',
-    ].filter(Boolean);
-    return { ids: c.ids, rels: new Set(c.relaciones.map((r) => r.id)), texto: partes.join('  |  ') };
   });
 
   readonly nodoActual = computed<NodoDato360>(
@@ -1449,16 +1819,17 @@ export class VistaC360Component {
 
       this.selGrafoRef.current = abierta ? sel : '';
       this.abiertaGrafoRef.current = abierta;
-      this.contextoGrafoRef.current = this.contextoGrafo();
       this.semGrafoRef.current = hits.length > 0 ? { hits: [...hits] } : null;
     });
 
-    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol, fuentes caídas o estado activo
+    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol, fuentes caídas, filtro de nodos vacíos o estado activo
     effect(() => {
       const cli = this.clienteActual();
       const caidas = this.fuentesCaidas();
       const rol = this.rolActivo();
       const activo = this.clienteSeleccionado();
+      const ocultarVacios = this.ocultarNodosVacios();
+      void ocultarVacios;
       this.dispararOleadaPulsosGrafo(cli, caidas, rol, activo);
     });
 
@@ -1483,7 +1854,6 @@ export class VistaC360Component {
     });
 
     const desuscribirTema = subscribeAppearance(() => {
-      this.paletaGrafo = null;
       if (this.desmontarPoGrafo) {
         this.desmontarPoGrafo();
         this.desmontarPoGrafo = null;
@@ -1499,12 +1869,138 @@ export class VistaC360Component {
     });
   }
 
-  private paletaGrafo: PaletaGrafo | null = null;
+  alternarOcultarNodosVacios(): void {
+    this.ocultarNodosVacios.update((v) => !v);
+  }
+
+  zonaFijaNodo(nodoId: string): string {
+    return ZONA_FIJA_NODO_360[nodoId] ?? 'Área corporativa';
+  }
+
+  cantidadRegistrosNodo(cli: Cliente360, nodoId: string): number {
+    const mapa = VOLUMEN_NODOS_CLIENTE_360[cli.k];
+    if (mapa && typeof mapa[nodoId] === 'number') {
+      return mapa[nodoId];
+    }
+    const filas = cli.datos[nodoId];
+    if (!filas || filas.length === 0) return 0;
+    const primero = `${filas[0][0]} ${filas[0][1]}`.toLowerCase();
+    if (
+      primero.includes('sin asientos') ||
+      primero.includes('sin reclamos') ||
+      primero.includes('sin acta') ||
+      primero.includes('no aplica') ||
+      primero.includes('sin llamadas') ||
+      primero.includes('sin riesgo')
+    ) {
+      return 0;
+    }
+    return filas.length;
+  }
+
+  contarNodosConDatosDe(cli: Cliente360): number {
+    return this.nodos.filter((n) => this.cantidadRegistrosNodo(cli, n.id) > 0).length;
+  }
+
+  satelitesDeNodo(cli: Cliente360, nodoId: string): readonly SateliteNodoGrafo[] {
+    const cant = this.cantidadRegistrosNodo(cli, nodoId);
+    if (cant === 0) return [];
+    const filas = cli.datos[nodoId] ?? [];
+    return filas.slice(0, 4).map(([clave, valor], idx) => ({
+      id: `${nodoId}-sat-${idx}`,
+      titulo: clave.length > 26 ? `${clave.slice(0, 24)}…` : clave,
+      detalle: valor.length > 30 ? `${valor.slice(0, 28)}…` : valor,
+    }));
+  }
+
+  private codigoFoneticoEs(texto: string): string {
+    return texto
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/hu([aei])/g, 'w$1')
+      .replace(/gu([aei])/g, 'w$1')
+      .replace(/qu([ei])/g, 'k$1')
+      .replace(/c([ei])/g, 's$1')
+      .replace(/cc/g, 'k')
+      .replace(/ch/g, 'x')
+      .replace(/ll/g, 'y')
+      .replace(/v/g, 'b')
+      .replace(/z/g, 's')
+      .replace(/c/g, 'k')
+      .replace(/q/g, 'k')
+      .replace(/h/g, '')
+      .replace(/i/g, 'y')
+      .replace(/(.)\1+/g, '$1')
+      .replace(/[^a-z0-9\s]/g, '');
+  }
+
+  private distanciaLevenshteinCorta(a: string, b: string): number {
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > 2) return 99;
+    const dp: number[][] = Array.from({ length: a.length + 1 }, (_, i) =>
+      Array.from({ length: b.length + 1 }, (__, j) => (i === 0 ? j : j === 0 ? i : 0)),
+    );
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        const costo = a[i - 1] === b[j - 1] ? 0 : 1;
+        dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + costo);
+      }
+    }
+    return dp[a.length][b.length];
+  }
+
+  private coincideExactaCliente(c: Cliente360, q: string): boolean {
+    const qNorm = q.toLowerCase();
+    return (
+      c.nombre.toLowerCase().includes(qNorm) ||
+      c.dni.toLowerCase().includes(qNorm) ||
+      c.doc.toLowerCase().includes(qNorm) ||
+      c.telefono.toLowerCase().includes(qNorm) ||
+      c.proyecto.toLowerCase().includes(qNorm) ||
+      c.contratoPrincipal.toLowerCase().includes(qNorm) ||
+      c.lotes.some((l) => l.toLowerCase().includes(qNorm))
+    );
+  }
+
+  private coincideFoneticaCliente(c: Cliente360, q: string): boolean {
+    const tokensQ = this.codigoFoneticoEs(q)
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
+    if (tokensQ.length === 0) return false;
+    const tokensNombre = this.codigoFoneticoEs(c.nombre)
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
+
+    return tokensQ.every((tq) =>
+      tokensNombre.some(
+        (tn) =>
+          tn.includes(tq) ||
+          tq.includes(tn) ||
+          (tq.length >= 4 && tn.length >= 4 && this.distanciaLevenshteinCorta(tq, tn) <= 1),
+      ),
+    );
+  }
+
+  esCoincidenciaFonetica(c: Cliente360): boolean {
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (q.length < 2) return false;
+    return !this.coincideExactaCliente(c, q) && this.coincideFoneticaCliente(c, q);
+  }
 
   private inicializarPoGrafo3D(): void {
     const host = this.poGrafoHostRef()?.nativeElement;
     const canvas = this.poGrafoCanvasRef()?.nativeElement;
     if (!host || !canvas) return;
+
+    const cache = new Map<string, RGB>();
+    const colorToken = (token: string): RGB => {
+      const prev = cache.get(token);
+      if (prev) return prev;
+      const rgb = leerTokenRgb(token);
+      cache.set(token, rgb);
+      return rgb;
+    };
 
     const reducido =
       typeof window !== 'undefined' &&
@@ -1513,13 +2009,13 @@ export class VistaC360Component {
     this.desmontarPoGrafo = montarGrafo({
       canvas,
       host,
+      color: colorToken,
       reducido,
       vista: this.vistaGrafoRef,
       sel: this.selGrafoRef,
       abierta: this.abiertaGrafoRef,
       sem: this.semGrafoRef,
       hover: this.hoverGrafoRef,
-      contexto: this.contextoGrafoRef,
       lit: this.litGrafoRef,
       pulsos: this.pulsosGrafoRef,
       t0: this.t0GrafoRef,
@@ -1542,6 +2038,8 @@ export class VistaC360Component {
     activo = this.clienteSeleccionado(),
   ): void {
     const rolPermiso = rol === 'cx' ? 'supervisor' : rol;
+    const ocultarVacios = this.ocultarNodosVacios();
+    const totalSlots = this.nodos.length;
     const vista: VistaGrafo = {
       apagado: !activo,
       cliente: { nombre: cli.nombre },
@@ -1551,17 +2049,23 @@ export class VistaC360Component {
         d: s.detalle,
         caida: caidas.includes(s.id),
       })),
-      nodos: this.nodos.map((n) => {
+      nodos: this.nodos.map((n, slotIndex) => {
         const restringido = Boolean(n.restringidoPara?.includes(rolPermiso));
-        const sinDatosNodo = !cli.datos[n.id]?.length;
-        const caido = n.fuentes.some((fid) => caidas.includes(fid));
+        const cant = this.cantidadRegistrosNodo(cli, n.id);
+        const sinDatosNodo = cant === 0;
+        const caido = n.fuentes.some((fid) => caidas.includes(fid)) || sinDatosNodo;
         return {
           id: n.id,
           n: n.nombre,
-          // GRA-01: fuente caída = no disponible; fuente en línea sin registros = disponible sin registros
-          estado: restringido ? 'restringido' : caido ? 'caido' : sinDatosNodo ? 'vacio' : 'ok',
+          estado: restringido ? 'restringido' : caido ? 'caido' : 'ok',
           sem: n.semantico,
           fuentes: n.fuentes,
+          slotIndex,
+          totalSlots,
+          cantidad: cant,
+          zona: this.zonaFijaNodo(n.id),
+          ocultarVacio: ocultarVacios && sinDatosNodo,
+          satelites: this.satelitesDeNodo(cli, n.id),
         };
       }),
     };
@@ -1589,19 +2093,21 @@ export class VistaC360Component {
         src: s.id,
       });
     });
-    vista.nodos.forEach((d) => {
-      d.fuentes.forEach((sid) => {
-        const ms = latenciaDe(sid);
-        nuevosPulsos.push({
-          a: sid,
-          b: d.id,
-          t0: ms * 0.55,
-          dur: ms * 0.45 + 120,
-          src: sid,
-          dst: d.id,
+    vista.nodos
+      .filter((d) => !d.ocultarVacio)
+      .forEach((d) => {
+        d.fuentes.forEach((sid) => {
+          const ms = latenciaDe(sid);
+          nuevosPulsos.push({
+            a: sid,
+            b: d.id,
+            t0: ms * 0.55,
+            dur: ms * 0.45 + 120,
+            src: sid,
+            dst: d.id,
+          });
         });
       });
-    });
 
     this.pulsosGrafoRef.current = nuevosPulsos;
     this.t0GrafoRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
@@ -1609,7 +2115,8 @@ export class VistaC360Component {
     const maxMs =
       Math.max(...vista.nodos.map((d) => Math.min(...d.fuentes.map(latenciaDe)))) + 120;
     const numCaidas = caidas.length;
-    const resumenFinal = `respuesta en ${(maxMs / 1000).toFixed(2)} s · ${
+    const activosConDatos = vista.nodos.filter((n) => (n.cantidad ?? 0) > 0).length;
+    const resumenFinal = `respuesta en ${(maxMs / 1000).toFixed(2)} s · ${activosConDatos}/${totalSlots} zonas con datos · ${
       numCaidas > 0
         ? `${numCaidas} ${numCaidas === 1 ? 'fuente no disponible' : 'fuentes no disponibles'}`
         : `${vista.fuentes.length} fuentes en línea`
@@ -1619,7 +2126,7 @@ export class VistaC360Component {
     if (this.timerConsulta !== null) clearTimeout(this.timerConsulta);
     this.timerConsulta = setTimeout(() => {
       this.estadoConsultaTexto.set(resumenFinal);
-      const disponibles = vista.nodos.filter((n) => n.estado === 'ok').length;
+      const disponibles = vista.nodos.filter((n) => n.estado === 'ok' && !n.ocultarVacio).length;
       this.nodosEncendidosCount.set(disponibles);
     }, maxMs + 140);
   }
@@ -1723,7 +2230,6 @@ export class VistaC360Component {
       this.cerrarFichaFlotante();
       return;
     }
-    this.avisoAcceso.set('');
     this.fuenteInspeccionadaId.set(null);
     this.nodoDrawerId.set(nodoId);
     this.nodoSeleccionadoId.set(nodoId);
@@ -1737,7 +2243,6 @@ export class VistaC360Component {
       this.cerrarFichaFlotante();
       return;
     }
-    this.avisoAcceso.set('');
     this.fuenteInspeccionadaId.set(fuenteId);
     this.nodoSeleccionadoId.set('');
     this.selGrafoRef.current = fuenteId;
@@ -1746,7 +2251,6 @@ export class VistaC360Component {
   }
 
   cerrarFichaFlotante(): void {
-    this.avisoAcceso.set('');
     this.fichaAbierta.set(false);
     this.abiertaGrafoRef.current = false;
     this.nodoSeleccionadoId.set('');
@@ -1793,10 +2297,6 @@ export class VistaC360Component {
     const cli = this.clienteActual();
     const acc = this.obtenerRedireccionNodo(nodoId);
     if (acc.destino === 'contrato') {
-      if (!cli.contratoPrincipal) {
-        this.avisoAcceso.set(`${cli.nombre} aún no tiene contrato: no hay contrato que abrir. Puedes iniciar una nueva gestión.`);
-        return;
-      }
       this.verContrato.emit(cli.contratoPrincipal);
       return;
     }
@@ -1821,9 +2321,9 @@ export class VistaC360Component {
       this.activarContingenciaNoEncontrado();
       return;
     }
-    const unico = this.clienteInequivoco(this.candidatosCliente(q));
-    if (unico) {
-      this.entrarAFichaCliente(unico.k);
+    const coincidencias = this.clientesCoincidentesIdle();
+    if (coincidencias.length === 1) {
+      this.entrarAFichaCliente(coincidencias[0].k);
     }
   }
 
@@ -1890,13 +2390,7 @@ export class VistaC360Component {
       return;
     }
     const encontrado = this.clientes.find(
-      (c) =>
-        c.dni.toLowerCase().includes(v) ||
-        c.doc.toLowerCase().includes(v) ||
-        c.nombre.toLowerCase().includes(v) ||
-        c.telefono.toLowerCase().includes(v) ||
-        c.contratoPrincipal.toLowerCase().includes(v) ||
-        c.lotes.some((l) => l.toLowerCase().includes(v)),
+      (c) => this.coincideExactaCliente(c, v) || this.coincideFoneticaCliente(c, v),
     );
     if (encontrado && encontrado.k !== this.clienteKey()) {
       this.modoNoEncontrado.set(false);
@@ -1926,14 +2420,12 @@ export class VistaC360Component {
         this.activarContingenciaNoEncontrado();
         return;
       }
-      const cands = this.candidatosCliente(raw);
-      const unico = this.clienteInequivoco(cands);
-      if (unico) {
-        this.entrarAFichaCliente(unico.k);
-      } else if (cands.length === 0) {
+      const coincidencias = this.clientesCoincidentesIdle();
+      if (coincidencias.length > 0) {
+        this.entrarAFichaCliente(coincidencias[0].k);
+      } else {
         this.activarContingenciaNoEncontrado();
       }
-      // Varios candidatos: queda la tabla para que el asesor elija (sin autoselección).
       return;
     }
 
@@ -1948,7 +2440,9 @@ export class VistaC360Component {
       return;
     }
 
-    const cliMatch = this.clienteInequivoco(this.candidatosCliente(raw));
+    const cliMatch = this.clientes.find(
+      (c) => this.coincideExactaCliente(c, q) || this.coincideFoneticaCliente(c, q),
+    );
     if (cliMatch && cliMatch.k !== this.clienteKey()) {
       this.seleccionarCliente(cliMatch.k);
     }
@@ -2050,26 +2544,13 @@ export class VistaC360Component {
     });
   }
 
-  /** GRA-02: nueva gestión por el flujo existente de tickets/reclamos, con el contexto cliente/lote/nodo. */
-  abrirNuevoTicketCliente(cli: Cliente360, nodoId?: string): void {
-    const lote = cli.lotes.includes(this.loteContexto()) ? this.loteContexto() : (cli.lotes[0] ?? '');
+  abrirNuevoTicketCliente(cli: Cliente360): void {
     this.crearTicketDesde360.emit({
       cliente: cli.nombre,
       dni: cli.dni,
-      proyecto: lote ? `${cli.proyecto} · Lote ${lote}` : cli.proyecto,
+      proyecto: `${cli.proyecto} · Lote ${cli.lotes[0] ?? ''}`,
       contingencia: false,
-      lote,
-      contrato: cli.contratoPrincipal,
-      nodoId,
     });
-  }
-
-  etiquetaTipoMovimiento(t: TipoMovimiento360): string {
-    return ETIQUETA_TIPO_MOVIMIENTO[t];
-  }
-
-  fechaMovimiento(d: Date): string {
-    return fmtFecha(d);
   }
 
   iniciarLlamadaCti(): void {
@@ -2127,21 +2608,22 @@ export class VistaC360Component {
   }
 
   estadoNodo(n: NodoDato360): {
-    codigo: 'ok' | 'locked' | 'down' | 'empty';
-    tono: 'success' | 'warning' | 'danger' | 'neutral';
+    codigo: 'ok' | 'locked' | 'down';
+    tono: 'success' | 'warning' | 'danger';
     etiqueta: string;
   } {
     const rolPermiso = this.rolActivo() === 'cx' ? 'supervisor' : this.rolActivo();
     if (n.restringidoPara?.includes(rolPermiso)) {
       return { codigo: 'locked', tono: 'warning', etiqueta: 'Restringido' };
     }
+    const cant = this.cantidadRegistrosNodo(this.clienteActual(), n.id);
+    if (cant === 0) {
+      return { codigo: 'down', tono: 'danger', etiqueta: 'Sin registros' };
+    }
     if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid))) {
       return { codigo: 'down', tono: 'danger', etiqueta: 'No disponible' };
     }
-    if (!this.clienteActual().datos[n.id]?.length) {
-      return { codigo: 'empty', tono: 'neutral', etiqueta: 'Sin registros' };
-    }
-    return { codigo: 'ok', tono: 'success', etiqueta: 'En línea' };
+    return { codigo: 'ok', tono: 'success', etiqueta: `En línea · ${cant}` };
   }
 
   filasNodo(nodoId: string): readonly (readonly [string, string])[] {
@@ -2161,50 +2643,10 @@ export class VistaC360Component {
     return this.filasNodo(nodoId).map(([clave, valor]) => ({ clave, valor }));
   }
 
-  /** GRA-02: saldo e interés moratorio solo con lo que trae el dato del nodo «saldo» (no el estado de cuenta, restringido). */
-  paresSaldo(): ParCardPairs[] {
-    const filas = this.filasNodo('saldo');
-    const saldo = filas.find(([k]) => /saldo/i.test(k));
-    const mora = filas.find(([k, v]) => /morator/i.test(`${k} ${v}`));
-    const sinDato = 'No informado por la fuente';
-    return [
-      { clave: saldo?.[0] ?? 'Saldo', valor: saldo?.[1] ?? sinDato },
-      { clave: mora?.[0] ?? 'Interés moratorio', valor: mora?.[1] ?? sinDato },
-      ...filas.filter((f) => f !== saldo && f !== mora).map(([clave, valor]) => ({ clave, valor })),
-    ];
-  }
-
-  paresLoteCliente(): ParCardPairs[] {
-    const cli = this.clienteActual();
-    return [
-      { clave: 'Cliente', valor: `${cli.nombre} · ${cli.doc}` },
-      { clave: 'Proyecto', valor: cli.proyecto },
-      { clave: 'Lote(s)', valor: cli.lotes.join(', ') || 'Sin lote aún' },
-      { clave: 'Contrato', valor: cli.contratoPrincipal || 'Sin contrato aún' },
-    ];
-  }
-
-  private nombreElementoGrafo(id: string): string {
-    if (id === ID_CLIENTE_GRAFO) return 'Cliente';
-    return this.fuentes.find((f) => f.id === id)?.nombre ?? this.nodos.find((n) => n.id === id)?.nombre ?? id;
-  }
-
-  /** GRA-03: áreas, procesos y relaciones (id · tipo) del elemento seleccionado. */
-  paresContexto(): ParCardPairs[] {
-    const c = this.contextoSel();
-    return [
-      { clave: 'Áreas vinculadas', valor: c.areas.join(', ') || 'Sin áreas vinculadas en los datos' },
-      { clave: 'Proceso / módulo', valor: c.procesos.join(', ') || 'Sin proceso definido' },
-      ...c.relaciones.map((r) => ({
-        clave: r.id,
-        valor: `${r.tipo} · ${this.nombreElementoGrafo(r.de)} → ${this.nombreElementoGrafo(r.a)}`,
-      })),
-    ];
-  }
-
   paresTrazabilidadNodo(nodoId: string): ParCardPairs[] {
     const traz = this.trazabilidadNodo(nodoId);
     return [
+      { clave: 'Zona fija en Grafo 360', valor: this.zonaFijaNodo(nodoId) },
       { clave: 'Sistema de origen', valor: traz.entidadDep },
       { clave: 'Criterio', valor: traz.rfRn },
       { clave: 'Consulta en línea', valor: traz.inputReal },
@@ -2272,17 +2714,16 @@ export class VistaC360Component {
     ctx.save();
     ctx.scale(dpr, dpr);
 
-    // Canvas siempre oscuro (también en tema claro): colores «sobre oscuro» de three/paleta.ts.
-    const P = (this.paletaGrafo ??= crearPaleta());
-    const tealOscuro = css(P.fondo);
-    const tealBase = css(P.base);
-    const naranja = css(P.acento);
-    const verde = css(P.ok);
-    const ambar = css(P.warn);
-    const rojo = css(P.bad);
-    const blanco = css(P.texto);
-    const mudo = css(P.mudo);
+    const tealOscuro = readColor('--aybar-color-primary-900') || '#012B33';
+    const tealBase = readColor('--aybar-color-primary-700') || '#02424E';
+    const naranja = readColor('--aybar-color-secondary-400') || '#FFA726';
+    const verde = readColor('--aybar-color-success-500') || '#36A558';
+    const ambar = readColor('--aybar-color-warning-500') || '#B88100';
+    const rojo = readColor('--aybar-color-danger-500') || '#D63D4A';
+    const blanco = readColor('--aybar-color-neutral-0') || '#FFFFFF';
     const activoCliente = this.clienteSeleccionado();
+    const cli = this.clienteActual();
+    const ocultarVacios = this.ocultarNodosVacios();
 
     ctx.fillStyle = tealOscuro;
     ctx.fillRect(0, 0, W, H);
@@ -2301,7 +2742,7 @@ export class VistaC360Component {
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.strokeStyle =
-        idx === 1 && activoCliente ? css(P.acento, 0.20) : css(P.texto, 0.08);
+        idx === 1 && activoCliente ? 'rgba(255, 167, 38, 0.20)' : 'rgba(255, 255, 255, 0.08)';
       ctx.setLineDash(idx === 2 ? [3, 6] : []);
       ctx.lineWidth = 1;
       ctx.stroke();
@@ -2323,20 +2764,20 @@ export class VistaC360Component {
     const posNodos: Record<string, NodoCanvasPos> = {};
     this.nodos.forEach((n, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / this.nodos.length;
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      const escala = cant <= 1 ? 0 : Math.min(1, Math.log10(cant) / 2);
+      const radioProp = cant > 0 ? 10.5 + escala * 11.5 : 8;
       posNodos[n.id] = {
         kind: 'node',
         n,
         x: cx + Math.cos(a) * rNode,
         y: cy + Math.sin(a) * rNode,
-        r: 13,
+        r: radioProp,
       };
     });
 
     const foco = activoCliente ? this.hoverTarget : null;
     const selId = activoCliente ? this.nodoSeleccionadoId() : '';
-    const ctxG = activoCliente ? this.contextoGrafo() : null;
-    const hayCtx = Boolean(ctxG && ctxG.ids.size > 0);
-    const enCtx = (id: string): boolean => !hayCtx || Boolean(ctxG?.ids.has(id));
     const caidas = this.fuentesCaidas();
     const t = ts * 0.001;
 
@@ -2354,6 +2795,10 @@ export class VistaC360Component {
     };
 
     this.nodos.forEach((n, idx) => {
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      if (activoCliente && ocultarVacios && cant === 0) {
+        return;
+      }
       const np = posNodos[n.id];
       const st = this.estadoNodo(n).codigo;
       n.fuentes.forEach((sid, j) => {
@@ -2362,8 +2807,7 @@ export class VistaC360Component {
         const sDown = caidas.includes(sid);
         const activo =
           activoCliente &&
-          (Boolean(ctxG?.rels.has(idRelacion(sid, n.id))) ||
-            selId === n.id ||
+          (selId === n.id ||
             (foco?.kind === 'node' && foco.n?.id === n.id) ||
             (foco?.kind === 'src' && foco.s?.id === sid));
         const cpx = (sp.x + np.x) * 0.5 + (cx - (sp.x + np.x) * 0.5) * 0.18;
@@ -2373,14 +2817,14 @@ export class VistaC360Component {
         ctx.moveTo(sp.x, sp.y);
         ctx.quadraticCurveTo(cpx, cpy, np.x, np.y);
         ctx.strokeStyle = !activoCliente
-          ? css(P.texto, 0.10)
+          ? 'rgba(255, 255, 255, 0.10)'
           : sDown
-            ? css(P.bad, 0.57)
+            ? 'rgba(214, 61, 74, 0.42)'
             : activo
-              ? css(P.acento, 0.90)
+              ? 'rgba(255, 167, 38, 0.90)'
               : st === 'locked'
-                ? css(P.warn, 0.55)
-                : css(P.texto, 0.18);
+                ? 'rgba(184, 129, 0, 0.32)'
+                : 'rgba(255, 255, 255, 0.18)';
         ctx.lineWidth = activo ? 2.2 : 1.1;
         ctx.stroke();
 
@@ -2389,7 +2833,7 @@ export class VistaC360Component {
           const [px, py] = bezierPt(sp.x, sp.y, cpx, cpy, np.x, np.y, u);
           ctx.beginPath();
           ctx.arc(px, py, activo ? 3.2 : 2.1, 0, Math.PI * 2);
-          ctx.fillStyle = activo ? naranja : css(P.texto, 0.78);
+          ctx.fillStyle = activo ? naranja : 'rgba(255, 255, 255, 0.78)';
           ctx.fill();
         }
       });
@@ -2398,20 +2842,17 @@ export class VistaC360Component {
     this.fuentes.forEach((s, idx) => {
       const sp = posFuentes[s.id];
       const down = caidas.includes(s.id);
-      const activo =
-        activoCliente &&
-        (Boolean(ctxG?.rels.has(idRelacion(ID_CLIENTE_GRAFO, s.id))) ||
-          (foco?.kind === 'src' && foco.s?.id === s.id));
+      const activo = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(sp.x, sp.y);
       ctx.strokeStyle = !activoCliente
-        ? css(P.texto, 0.12)
+        ? 'rgba(255, 255, 255, 0.12)'
         : down
-          ? css(P.bad, 0.63)
+          ? 'rgba(214, 61, 74, 0.48)'
           : activo
-            ? css(P.acento, 0.85)
-            : css(P.texto, 0.22);
+            ? 'rgba(255, 167, 38, 0.85)'
+            : 'rgba(255, 255, 255, 0.22)';
       ctx.lineWidth = activo ? 2 : 1.15;
       ctx.stroke();
 
@@ -2433,108 +2874,118 @@ export class VistaC360Component {
       if (activoCliente) this.hitTargets.push(p);
       const down = caidas.includes(s.id);
       const isHover = activoCliente && foco?.kind === 'src' && foco.s?.id === s.id;
-      ctx.globalAlpha = enCtx(s.id) ? 1 : 0.35;
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r + (isHover ? 3 : 0), 0, Math.PI * 2);
       ctx.fillStyle = !activoCliente
-        ? css(P.texto, 0.08)
+        ? 'rgba(255, 255, 255, 0.08)'
         : down
-          ? css(P.bad, 0.43000000000000005)
-          : css(P.acento, 0.20);
+          ? 'rgba(214, 61, 74, 0.28)'
+          : 'rgba(255, 167, 38, 0.20)';
       ctx.fill();
       ctx.lineWidth = isHover ? 2.4 : 1.6;
-      ctx.strokeStyle = !activoCliente ? css(P.texto, 0.24) : down ? rojo : naranja;
+      ctx.strokeStyle = !activoCliente ? 'rgba(255, 255, 255, 0.24)' : down ? rojo : naranja;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = !activoCliente ? css(P.texto, 0.35) : down ? rojo : naranja;
+      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.35)' : down ? rojo : naranja;
       ctx.fill();
 
       ctx.font = '600 10px Inter, system-ui, sans-serif';
-      ctx.fillStyle = !activoCliente ? mudo : blanco;
+      ctx.fillStyle = !activoCliente ? 'rgba(255, 255, 255, 0.55)' : blanco;
       ctx.textAlign = 'center';
-      ctx.fillText(activoCliente && down ? `✕ ${s.nombre}` : s.nombre, p.x, p.y + p.r + 13);
-      ctx.globalAlpha = 1;
+      ctx.fillText(s.nombre, p.x, p.y + p.r + 13);
     });
 
     this.nodos.forEach((n) => {
       const p = posNodos[n.id];
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      if (activoCliente && ocultarVacios && cant === 0) {
+        // Ancla sutil de zona fija vacía para que el usuario ubique siempre las 12 áreas
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        return;
+      }
+
       if (activoCliente) this.hitTargets.push(p);
       const st = this.estadoNodo(n).codigo;
       const isSel = activoCliente && selId === n.id;
       const isHover = activoCliente && foco?.kind === 'node' && foco.n?.id === n.id;
-      ctx.globalAlpha = enCtx(n.id) ? 1 : 0.35;
       const col = !activoCliente
-        ? css(P.texto, 0.25)
+        ? 'rgba(255, 255, 255, 0.25)'
         : st === 'ok'
           ? verde
           : st === 'locked'
             ? ambar
-            : st === 'empty'
-              ? mudo
-              : rojo;
+            : rojo;
 
-      if (isSel || isHover || (hayCtx && ctxG?.ids.has(n.id))) {
+      if (isSel || isHover) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r + 6, 0, Math.PI * 2);
-        ctx.fillStyle = css(P.acento, 0.24);
+        ctx.fillStyle = 'rgba(255, 167, 38, 0.24)';
         ctx.fill();
       }
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = isSel ? tealBase : css(P.base, 0.92);
+      ctx.fillStyle = isSel ? tealBase : 'rgba(2, 66, 78, 0.92)';
       ctx.fill();
-      ctx.lineWidth = isSel || isHover ? 2.5 : 2;
+      ctx.lineWidth = isSel || isHover ? 2.5 : 1.6;
       ctx.strokeStyle = isSel ? naranja : col;
-      // Segundo canal (no solo color): discontinuo = restringido, punteado = sin registros, aspa = sin conexión.
-      if (activoCliente) ctx.setLineDash(st === 'locked' ? [5, 3] : st === 'empty' ? [1.5, 3] : []);
       ctx.stroke();
-      ctx.setLineDash([]);
 
-      if (activoCliente && st === 'down') {
-        ctx.beginPath();
-        ctx.moveTo(p.x - 3.5, p.y - 3.5);
-        ctx.lineTo(p.x + 3.5, p.y + 3.5);
-        ctx.moveTo(p.x + 3.5, p.y - 3.5);
-        ctx.lineTo(p.x - 3.5, p.y + 3.5);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = col;
-        ctx.stroke();
-      } else {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-        if (activoCliente && st === 'empty') {
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = col;
-          ctx.stroke();
-        } else {
-          ctx.fillStyle = col;
-          ctx.fill();
-        }
-      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(3.5, p.r * 0.3), 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
 
       const ang = Math.atan2(p.y - cy, p.x - cx);
       const lx = p.x + Math.cos(ang) * (p.r + 10);
       const ly = p.y + Math.sin(ang) * (p.r + 10);
       ctx.font = `${isSel ? '700' : '600'} 10.5px Inter, system-ui, sans-serif`;
       ctx.fillStyle =
-        !activoCliente || st === 'locked' ? mudo : blanco;
+        !activoCliente || st === 'locked' ? 'rgba(255, 255, 255, 0.55)' : blanco;
       ctx.textAlign = Math.cos(ang) > 0.22 ? 'left' : Math.cos(ang) < -0.22 ? 'right' : 'center';
       ctx.textBaseline = 'middle';
-      const sufijo = !activoCliente ? '' : st === 'empty' ? ' · ○ sin registros' : st === 'down' ? ' · ✕ no disponible' : st === 'locked' ? ' · ▲ restringido' : '';
-      ctx.fillText(n.nombre + sufijo, lx, ly);
-      ctx.globalAlpha = 1;
+      ctx.fillText(activoCliente && cant > 0 ? `${n.nombre} (${cant})` : n.nombre, lx, ly);
+
+      // Si el nodo está seleccionado, amplificar sus elementos hijos (satélites de lote/tickets/cuotas)
+      if (isSel) {
+        const sats = this.satelitesDeNodo(cli, n.id);
+        sats.forEach((sat, sIdx) => {
+          const sa = ang - 0.55 + (sIdx * 1.1) / Math.max(1, sats.length - 1);
+          const sr = p.r + 28;
+          const sx = p.x + Math.cos(sa) * sr;
+          const sy = p.y + Math.sin(sa) * sr;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(sx, sy);
+          ctx.strokeStyle = 'rgba(255, 167, 38, 0.65)';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+          ctx.fillStyle = naranja;
+          ctx.fill();
+
+          ctx.font = '600 9.5px Inter, system-ui, sans-serif';
+          ctx.fillStyle = naranja;
+          ctx.textAlign = Math.cos(sa) >= 0 ? 'left' : 'right';
+          ctx.fillText(sat.titulo, sx + (Math.cos(sa) >= 0 ? 8 : -8), sy);
+        });
+      }
     });
 
-    const cli = this.clienteActual();
     if (activoCliente) {
       const pulso = 34 + Math.sin(t * 2.6) * 2.5;
       ctx.beginPath();
       ctx.arc(cx, cy, pulso + 8, 0, Math.PI * 2);
-      ctx.fillStyle = css(P.acento, 0.16);
+      ctx.fillStyle = 'rgba(255, 167, 38, 0.16)';
       ctx.fill();
     }
 
@@ -2543,16 +2994,16 @@ export class VistaC360Component {
     ctx.fillStyle = tealBase;
     ctx.fill();
     ctx.lineWidth = 3;
-    ctx.strokeStyle = activoCliente ? naranja : css(P.texto, 0.25);
+    ctx.strokeStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.25)';
     ctx.stroke();
 
-    ctx.fillStyle = activoCliente ? blanco : mudo;
+    ctx.fillStyle = activoCliente ? blanco : 'rgba(255, 255, 255, 0.65)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '700 15px Inter, system-ui, sans-serif';
     ctx.fillText(activoCliente ? cli.iniciales : '360', cx, cy - 4);
     ctx.font = '600 9.5px Inter, system-ui, sans-serif';
-    ctx.fillStyle = activoCliente ? naranja : mudo;
+    ctx.fillStyle = activoCliente ? naranja : 'rgba(255, 255, 255, 0.50)';
     ctx.fillText(activoCliente ? cli.lotes.join(' · ') || 'Sin lote' : 'En espera', cx, cy + 12);
 
     if (activoCliente) {

@@ -10,6 +10,54 @@ const CSS = `
   overflow: hidden;
 }
 
+.pt-c360-tablero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--aybar-space-3);
+  align-items: stretch;
+}
+
+.pt-c360-tablero--con-movs {
+  grid-template-columns: minmax(0, 1fr) 21.5rem;
+}
+
+.pt-c360-movs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-2);
+  padding: var(--aybar-space-3);
+  border-radius: var(--aybar-radius-lg);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-surface);
+  min-inline-size: 0;
+}
+
+.pt-c360-movs__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-1);
+  padding: var(--aybar-space-2) var(--aybar-space-3);
+  border-radius: var(--aybar-radius-md);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
+  background: var(--aybar-color-bg-surface-sunken);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.pt-c360-movs__item:hover,
+.pt-c360-movs__item--activo {
+  border-color: var(--aybar-color-secondary-400);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1180px) {
+  .pt-c360-tablero--con-movs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .pt-escena-grafo {
   position: relative;
   inline-size: 100%;

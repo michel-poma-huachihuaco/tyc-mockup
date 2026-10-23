@@ -1,7 +1,29 @@
 import * as THREE from 'three';
+import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { bucle, leerTokenRgb, type RGB } from './comun';
 import { Kit, mezcla } from './modelos';
 import { animarRobotBase, crearRobot } from './robots';
+
+let promesaGlbTigo: Promise<ArrayBuffer> | null = null;
+
+function cargarBufferTigo(): Promise<ArrayBuffer> {
+  if (!promesaGlbTigo) {
+    promesaGlbTigo = fetch('/media/tigo/modelos/tigo.glb').then((res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.arrayBuffer();
+    });
+  }
+  return promesaGlbTigo;
+}
+
+async function instanciarGltfTigo(): Promise<GLTF> {
+  await MeshoptDecoder.ready;
+  const buffer = await cargarBufferTigo();
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  return loader.parseAsync(buffer.slice(0), '/media/tigo/modelos/');
+}
 
 // Asistente de IA (mock): robot 3D flotante y motor de respuestas. Todo es de ejemplo: las respuestas salen de
 // plantillas que dependen del contexto del ticket (tipo, estado, SLA, cliente e historial), no de un modelo.
@@ -354,7 +376,7 @@ export function revisar(c: CtxBot | null, borrador: string): Revision {
 }
 
 export const SALUDO =
-  'Hola, soy tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.';
+  'Hola, soy Tigo, tu asistente de atención. Puedo redactar la respuesta al cliente, resumir el ticket, sugerir el siguiente paso o revisar tu borrador.';
 
 export function conversar(
   c: CtxBot | null,
@@ -439,8 +461,8 @@ export function montarBot(
   r.toneMappingExposure = 1.25;
   const escena = new THREE.Scene();
   const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 20);
-  escena.add(new THREE.HemisphereLight(0xfff4e6, 0x203a44, 1.9));
-  const luz = new THREE.DirectionalLight(0xffffff, 2.4);
+  escena.add(new THREE.HemisphereLight(0xfff4e6, 0x203a44, 2.1));
+  const luz = new THREE.DirectionalLight(0xffffff, 2.5);
   luz.position.set(1.5, 2.5, 3);
   escena.add(luz);
   const kit = new Kit(C);
@@ -453,6 +475,63 @@ export function montarBot(
   escena.add(bot.g);
   cam.position.set(0, 1.0, 3.05);
   cam.lookAt(0, 0.98, 0);
+
+  let cancelado = false;
+  let tigoGrupo: THREE.Group | null = null;
+  let tigoCabeza: THREE.Object3D | null = null;
+  let mixerTigo: THREE.AnimationMixer | null = null;
+  const accionesTigo: Partial<Record<'idle' | 'talking' | 'happy' | 'walk', THREE.AnimationAction>> = {};
+  let accionActiva: THREE.AnimationAction | null = null;
+
+  const activarClipTigo = (est: EstadoBot): void => {
+    if (!mixerTigo) return;
+    const deseada =
+      est === 'hablando'
+        ? (accionesTigo.talking ?? accionesTigo.idle)
+        : est === 'feliz'
+          ? (accionesTigo.happy ?? accionesTigo.talking ?? accionesTigo.idle)
+          : est === 'pensando'
+            ? (accionesTigo.walk ?? accionesTigo.idle)
+            : accionesTigo.idle;
+    if (!deseada || deseada === accionActiva) return;
+    deseada.reset().fadeIn(0.22).play();
+    if (accionActiva) accionActiva.fadeOut(0.22);
+    accionActiva = deseada;
+  };
+
+  instanciarGltfTigo()
+    .then((gltf) => {
+      if (cancelado) return;
+      escena.remove(bot.g);
+      const wrap = new THREE.Group();
+      wrap.add(gltf.scene);
+      escena.add(wrap);
+      tigoGrupo = wrap;
+      tigoCabeza = gltf.scene.getObjectByName('DEF-head') ?? null;
+
+      cam.position.set(0, 0.67, 1.46);
+      cam.lookAt(0, 0.65, 0);
+
+      mixerTigo = new THREE.AnimationMixer(gltf.scene);
+      const findClip = (name: string) => gltf.animations.find((a) => a.name === name);
+      const cIdle = findClip('Idle_Loop');
+      const cTalk = findClip('Idle_Talking_Loop');
+      const cJog = findClip('Jog_Fwd_Loop');
+      const cWalk = findClip('Walk_Loop');
+      if (cIdle) accionesTigo.idle = mixerTigo.clipAction(cIdle);
+      if (cTalk) accionesTigo.talking = mixerTigo.clipAction(cTalk);
+      if (cJog) accionesTigo.happy = mixerTigo.clipAction(cJog);
+      if (cWalk) accionesTigo.walk = mixerTigo.clipAction(cWalk);
+      activarClipTigo(estado);
+      if (o.reducido && mixerTigo) {
+        mixerTigo.update(0.1);
+      }
+      r.render(escena, cam);
+    })
+    .catch(() => {
+      /* Si falla la carga del GLB, se mantiene el robot 3D base como respaldo */
+    });
+
   const ajustar = (): void => {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
@@ -468,6 +547,8 @@ export function montarBot(
   let desde = 0;
   let miraX = 0;
   let miraY = 0;
+  const quatMirada = new THREE.Quaternion();
+  const eulerMirada = new THREE.Euler();
   const mover = (e: PointerEvent): void => {
     const b = canvas.getBoundingClientRect();
     miraX = Math.max(-1, Math.min(1, (e.clientX - (b.left + b.width / 2)) / 400));
@@ -476,35 +557,51 @@ export function montarBot(
   if (!o.reducido) addEventListener('pointermove', mover);
   const parar = bucle(o.reducido, (ahora) => {
     const t = ahora / 1000;
-    const dt = t - desde;
-    animarRobotBase(bot, t, o.reducido, estado === 'pensando' ? 3 : estado === 'hablando' ? 2 : 1);
-    if (!o.reducido) {
-      const pensando = estado === 'pensando';
-      const hablando = estado === 'hablando';
-      const feliz = estado === 'feliz';
-      bot.cabeza.rotation.y += ((pensando ? Math.sin(t * 3) * 0.35 : miraX * 0.5) - bot.cabeza.rotation.y) * 0.1;
-      bot.cabeza.rotation.x +=
-        (((pensando ? -0.2 : 0) + miraY * 0.25 + (hablando ? Math.sin(t * 12) * 0.05 : 0)) - bot.cabeza.rotation.x) *
-        0.1;
-      bot.g.position.y = Math.sin(t * 1.6) * 0.02 + (feliz ? Math.abs(Math.sin(t * 9)) * 0.06 : 0);
-      bot.ojos.forEach((e) => {
-        e.scale.y += ((feliz ? 0.35 : pensando ? 0.7 : e.scale.y > 0.95 ? 1 : e.scale.y) - e.scale.y) * 0.3;
-        e.scale.x = hablando ? 1 + Math.sin(t * 14) * 0.18 : 1;
-      });
-      bot.bd.p.rotation.z = -0.3 + (feliz ? Math.sin(t * 10) * 0.5 : 0);
+    const dt = desde > 0 ? Math.min(0.1, t - desde) : 0.016;
+    if (tigoGrupo && mixerTigo) {
+      if (!o.reducido) {
+        mixerTigo.update(dt);
+        const pensando = estado === 'pensando';
+        const yawObjetivo = pensando ? Math.sin(t * 2.6) * 0.28 : miraX * 0.38;
+        tigoGrupo.rotation.y += (yawObjetivo - tigoGrupo.rotation.y) * 0.12;
+        if (tigoCabeza) {
+          eulerMirada.set(miraY * 0.18 + (pensando ? -0.12 : 0), miraX * 0.22, 0, 'YXZ');
+          quatMirada.setFromEuler(eulerMirada);
+          tigoCabeza.quaternion.multiply(quatMirada);
+        }
+      }
+    } else {
+      animarRobotBase(bot, t, o.reducido, estado === 'pensando' ? 3 : estado === 'hablando' ? 2 : 1);
+      if (!o.reducido) {
+        const pensando = estado === 'pensando';
+        const hablando = estado === 'hablando';
+        const feliz = estado === 'feliz';
+        bot.cabeza.rotation.y += ((pensando ? Math.sin(t * 3) * 0.35 : miraX * 0.5) - bot.cabeza.rotation.y) * 0.1;
+        bot.cabeza.rotation.x +=
+          (((pensando ? -0.2 : 0) + miraY * 0.25 + (hablando ? Math.sin(t * 12) * 0.05 : 0)) - bot.cabeza.rotation.x) *
+          0.1;
+        bot.g.position.y = Math.sin(t * 1.6) * 0.02 + (feliz ? Math.abs(Math.sin(t * 9)) * 0.06 : 0);
+        bot.ojos.forEach((e) => {
+          e.scale.y += ((feliz ? 0.35 : pensando ? 0.7 : e.scale.y > 0.95 ? 1 : e.scale.y) - e.scale.y) * 0.3;
+          e.scale.x = hablando ? 1 + Math.sin(t * 14) * 0.18 : 1;
+        });
+        bot.bd.p.rotation.z = -0.3 + (feliz ? Math.sin(t * 10) * 0.5 : 0);
+      }
     }
-    void dt;
     desde = t;
     r.render(escena, cam);
   });
   return {
     setEstado: (e: EstadoBot) => {
       estado = e;
+      activarClipTigo(e);
     },
     dispose: () => {
+      cancelado = true;
       parar();
       ro.disconnect();
       removeEventListener('pointermove', mover);
+      mixerTigo?.stopAllAction();
       escena.traverse((x) => {
         const m = x as THREE.Mesh;
         if (m.isMesh) {

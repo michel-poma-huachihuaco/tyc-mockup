@@ -124,12 +124,12 @@ export class BotAvatarCanvasComponent {
                 <app-bot-avatar-canvas [estado]="estado()" />
               </div>
               <div>
-                <h2>Asistente</h2>
+                <h2>Tigo · Asistente IA</h2>
                 <small>
                   @if (ctx(); as c) {
                     Ticket {{ c.numero }} · {{ c.tipo }}
                   } @else {
-                    Sin ticket abierto
+                    Mascota asistente · Sin ticket abierto
                   }
                 </small>
               </div>
@@ -357,14 +357,15 @@ export class BotAvatarCanvasComponent {
 
         @if (mostrarGlobo() && !abierto() && ctx(); as c) {
           <button type="button" class="pt-bot__globo" (click)="abrirPanel()">
-            ¿Te ayudo con el ticket {{ c.numero }}?
+            Tigo: ¿Te ayudo con el ticket {{ c.numero }}?
           </button>
         }
 
         <button
           type="button"
           class="pt-bot__fab"
-          [attr.aria-label]="abierto() ? 'Cerrar el asistente' : 'Abrir el asistente de IA'"
+          title="Tigo · Asistente de IA"
+          [attr.aria-label]="abierto() ? 'Cerrar el asistente Tigo' : 'Abrir a Tigo, asistente de IA'"
           [attr.aria-expanded]="abierto()"
           (click)="alternarPanel()"
         >
@@ -400,6 +401,7 @@ export class AsistenteBotAtcComponent {
   });
 
   readonly ctx = computed<CtxBot | null>(() => {
+    if (this.vistaActiva() !== 'detalle') return null;
     const num = this.ticketSeleccionadoNum();
     if (!num) return null;
     const t = this.tickets().find((x) => x.num === num);
@@ -505,7 +507,7 @@ export class AsistenteBotAtcComponent {
       const c = this.ctx();
       const vista = this.vistaActiva();
       const estaAbierto = this.abierto();
-      if (!c || estaAbierto || (vista !== 'detalle' && vista !== 'bandeja' && vista !== 'vivo')) {
+      if (!c || estaAbierto || vista !== 'detalle') {
         this.mostrarGlobo.set(false);
         return;
       }

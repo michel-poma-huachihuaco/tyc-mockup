@@ -1,0 +1,65 @@
+{
+  "escala_px_por_m": 86.431,
+  "cuadro": {
+    "ancho": 92,
+    "alto": 148
+  },
+  "ancla_pies": {
+    "x": 46.0,
+    "y": 129,
+    "nota": "px dentro de cada cuadro: punto del suelo bajo Tigo; alinear con un punto de pasillos"
+  },
+  "tiras": {
+    "camina-ne": {
+      "png": "tigo-camina-ne.png",
+      "webp": "tigo-camina-ne.webp",
+      "cuadros": 8,
+      "fps": 10,
+      "accion_glb": "Walk_Loop",
+      "direccion": "ne",
+      "velocidad_sugerida_px_s": 95
+    },
+    "camina-nw": {
+      "png": "tigo-camina-nw.png",
+      "webp": "tigo-camina-nw.webp",
+      "cuadros": 8,
+      "fps": 10,
+      "accion_glb": "Walk_Loop",
+      "direccion": "nw",
+      "velocidad_sugerida_px_s": 95
+    },
+    "camina-se": {
+      "png": "tigo-camina-se.png",
+      "webp": "tigo-camina-se.webp",
+      "cuadros": 8,
+      "fps": 10,
+      "accion_glb": "Walk_Loop",
+      "direccion": "se",
+      "velocidad_sugerida_px_s": 95
+    },
+    "camina-sw": {
+      "png": "tigo-camina-sw.png",
+      "webp": "tigo-camina-sw.webp",
+      "cuadros": 8,
+      "fps": 10,
+      "accion_glb": "Walk_Loop",
+      "direccion": "sw",
+      "velocidad_sugerida_px_s": 95
+    },
+    "habla-sw": {
+      "png": "tigo-habla-sw.png",
+      "webp": "tigo-habla-sw.webp",
+      "cuadros": 6,
+      "fps": 6,
+      "accion_glb": "Idle_Talking_Loop",
+      "direccion": "sw",
+      "velocidad_sugerida_px_s": 0
+    }
+  },
+  "direcciones": {
+    "ne": "arriba-derecha (+Y del mundo)",
+    "nw": "arriba-izquierda (-X)",
+    "se": "abajo-derecha (+X)",
+    "sw": "abajo-izquierda (-Y)"
+  }
+}

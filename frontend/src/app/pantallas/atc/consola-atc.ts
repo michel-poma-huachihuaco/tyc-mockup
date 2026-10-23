@@ -11,6 +11,7 @@ import {
   untracked,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -90,6 +91,7 @@ import {
   type RolPrototipoAtc,
 } from './estado-prototipo-atc';
 import { BarraFiltrosComponent } from './barra-filtros';
+import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
 import { alternarFavorito, guardarFavoritos, leerFavoritos } from './favoritos-atc';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
@@ -110,6 +112,7 @@ interface ItemMenuAtc {
   imports: [
     NgTemplateOutlet,
     BarraFiltrosComponent,
+    FiltroColumnasTablaDirective,
     VacioFiltrosComponent,
     AyAlert,
     AyAppearancePanel,
@@ -329,14 +332,29 @@ interface ItemMenuAtc {
           [grupos]="gruposSidebar()"
           [(colapsada)]="lateralPlegado"
         >
-          <div ayPie ayStack gap="2">
+          <div ayPie class="pl-sidebar-pie">
             <ng-container *ngTemplateOutlet="herramientas" />
             <ay-button
               tamano="sm"
               variante="ghost"
               [bloque]="true"
+              title="Cerrar sesión"
               (click)="irAPantallaLogin()"
             >
+              <svg
+                ayIconoInicio
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
               Cerrar sesión
             </ay-button>
           </div>
@@ -344,18 +362,31 @@ interface ItemMenuAtc {
       </div>
 
       <main id="atc-contenido" class="pl-atc-principal" tabindex="-1">
-        <div ayStack gap="6">
-          <div class="pl-favoritos">
-            <ay-toggle-button
-              tamano="sm"
-              [presionado]="actualEsFavorito()"
-              [disabled]="!opcionActual()"
-              (presionadoChange)="alternarFavoritoActual()"
+        <div #favoritosHost class="pl-favoritos" [hidden]="!opcionActual()">
+          <ay-toggle-button
+            variante="icon"
+            tamano="lg"
+            [etiqueta]="actualEsFavorito() ? 'Quitar de favoritos' : 'Marcar como favorito'"
+            [presionado]="actualEsFavorito()"
+            [disabled]="!opcionActual()"
+            (presionadoChange)="alternarFavoritoActual()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              [attr.fill]="actualEsFavorito() ? 'currentColor' : 'none'"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
             >
-              <span aria-hidden="true">{{ actualEsFavorito() ? '♥' : '♡' }}</span>
-              Favorito
-            </ay-toggle-button>
-          </div>
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </ay-toggle-button>
+        </div>
+        <div ayStack gap="6">
           @if (avisoNavegacion()) {
             <ay-alert
               tono="info"
@@ -1136,6 +1167,7 @@ interface ItemMenuAtc {
           leyenda="Catálogo de 60 Historias de Usuario"
           [columnas]="columnasCatalogoHu"
           [filas]="filtrosHu.filtradas()"
+          [filtrosTabla]="filtrosHu"
           [cabeceraFija]="true"
           [rayada]="true"
         >
@@ -1161,9 +1193,16 @@ interface ItemMenuAtc {
           </ng-template>
           <ng-template ayCelda="accion" let-fila>
             @let hu = comoHu(fila);
-            <ay-button tamano="sm" variante="secondary" (click)="irAVistaDeHu(hu.vista)">
-              Ir a vista →
-            </ay-button>
+            <div class="pl-atc-acciones-celda">
+              <ay-button
+                tamano="sm"
+                variante="secondary"
+                [disabled]="!hu.vista"
+                (click)="irAVistaDeHu(hu.vista)"
+              >
+                Ir a vista →
+              </ay-button>
+            </div>
           </ng-template>
           <app-vacio-filtros ayVacio [filtros]="filtrosHu" elemento="historia" />
         </ay-table>
@@ -1175,6 +1214,7 @@ export class ConsolaAtcComponent {
   private readonly acceso = inject(Acceso);
   private readonly router = inject(Router);
   private readonly anfitrion: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly favoritosHostRef = viewChild<ElementRef<HTMLElement>>('favoritosHost');
   readonly estadoProto = inject(EstadoPrototipoAtcService);
 
   readonly destinosSalto = [{ id: 'atc-contenido', etiqueta: 'Saltar al contenido principal' }];
@@ -1218,26 +1258,26 @@ export class ConsolaAtcComponent {
 
 
   readonly columnasFirmantes: readonly AyColumna[] = [
-    { clave: 'rol', cabecera: 'Rol Contractual' },
-    { clave: 'nombre', cabecera: 'Nombre y Documento' },
-    { clave: 'fechaFirma', cabecera: 'Fecha y Hora de Firma' },
-    { clave: 'modalidad', cabecera: 'Modalidad de Certificación' },
-    { clave: 'hashCustodia', cabecera: 'Hash SHA-256 Custodia GLI' },
+    { clave: 'rol', cabecera: 'Rol Contractual', ordenable: true },
+    { clave: 'nombre', cabecera: 'Nombre y Documento', ordenable: true },
+    { clave: 'fechaFirma', cabecera: 'Fecha y Hora de Firma', ordenable: true },
+    { clave: 'modalidad', cabecera: 'Modalidad de Certificación', ordenable: true },
+    { clave: 'hashCustodia', cabecera: 'Hash SHA-256 Custodia GLI', ordenable: true },
   ];
 
   readonly columnasCronograma: readonly AyColumna[] = [
-    { clave: 'numero', cabecera: 'N.º Letra' },
-    { clave: 'vencimiento', cabecera: 'Vencimiento' },
-    { clave: 'monto', cabecera: 'Importe', alineacion: 'end' },
-    { clave: 'estado', cabecera: 'Estado' },
-    { clave: 'fechaPago', cabecera: 'Fecha de Pago' },
-    { clave: 'operacion', cabecera: 'Operación Conciliada' },
+    { clave: 'numero', cabecera: 'N.º Letra', ordenable: true },
+    { clave: 'vencimiento', cabecera: 'Vencimiento', ordenable: true },
+    { clave: 'monto', cabecera: 'Importe', alineacion: 'end', ordenable: true },
+    { clave: 'estado', cabecera: 'Estado', ordenable: true },
+    { clave: 'fechaPago', cabecera: 'Fecha de Pago', ordenable: true },
+    { clave: 'operacion', cabecera: 'Operación Conciliada', ordenable: true },
   ];
 
   readonly columnasCatalogoHu: readonly AyColumna[] = [
-    { clave: 'id', cabecera: 'Código y Feature', ancho: '13rem' },
-    { clave: 'titulo', cabecera: 'Historia de Usuario y Módulo' },
-    { clave: 'etapa', cabecera: 'Etapa', ancho: '7rem' },
+    { clave: 'id', cabecera: 'Código y Feature', ancho: '13rem', ordenable: true },
+    { clave: 'titulo', cabecera: 'Historia de Usuario y Módulo', ordenable: true },
+    { clave: 'etapa', cabecera: 'Etapa', ancho: '7rem', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
@@ -1541,17 +1581,30 @@ export class ConsolaAtcComponent {
     return listables.filter((m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id));
   });
 
-  /** FAV-01: el grupo «Favoritos» aparece arriba del menú en cuanto la persona marca uno. */
+  /** FAV-01: el grupo «Favoritos» aparece arriba del menú en cuanto la persona marca uno y retira esas vistas de su grupo original para evitar duplicación. */
   readonly gruposSidebar = computed<AySidebarGrupo[]>(() => {
     const favoritos = this.favoritosDisponibles();
     if (favoritos.length === 0) return this.gruposMenu();
+    const hrefsFavoritos = new Set(favoritos.map((o) => o.href));
     const grupo: AySidebarGrupo = {
       etiqueta: 'Favoritos',
       plegable: true,
       abiertoInicial: true,
-      elementos: favoritos.map((o) => ({ href: o.href, icono: o.id, etiqueta: o.titulo, actual: o.actual })),
+      elementos: favoritos.map((o) => ({
+        href: o.href,
+        icono: o.id,
+        etiqueta: o.titulo,
+        actual: o.actual,
+        insignia: o.insignia,
+      })),
     };
-    return [grupo, ...this.gruposMenu()];
+    const gruposSinDuplicados = this.gruposMenu()
+      .map((g) => ({
+        ...g,
+        elementos: g.elementos.filter((el) => !hrefsFavoritos.has(el.href)),
+      }))
+      .filter((g) => g.elementos.length > 0);
+    return [grupo, ...gruposSinDuplicados];
   });
 
   private readonly gruposMenu = computed<AySidebarGrupo[]>(() => {
@@ -1650,10 +1703,21 @@ export class ConsolaAtcComponent {
   /** FAV-01: opciones del menú del rol activo (para no mostrar favoritos que el rol no ve). */
   private readonly opcionesMenu = computed(() =>
     this.gruposMenu().flatMap((g) =>
-      g.elementos.map((el) => ({ id: el.href.replace('#vista:', ''), href: el.href, titulo: el.etiqueta, actual: !!el.actual })),
+      g.elementos.map((el) => ({
+        id: el.href.replace('#vista:', ''),
+        href: el.href,
+        titulo: el.etiqueta,
+        grupo: g.etiqueta,
+        actual: !!el.actual,
+        insignia: el.insignia,
+      })),
     ),
   );
-  readonly opcionActual = computed(() => this.opcionesMenu().find((o) => o.actual));
+  readonly opcionActual = computed(() => {
+    const activa = this.vistaActiva();
+    if (this.vistaMetaActual().oculto) return undefined;
+    return this.opcionesMenu().find((o) => o.id === activa);
+  });
   /** Favoritos por persona del rol activo; la memoria evita releer el almacén en cada cálculo. */
   private readonly favoritosPorPersona = signal<Record<string, string[]>>({});
   private readonly favoritosIds = computed(() => {
@@ -1796,6 +1860,24 @@ export class ConsolaAtcComponent {
       }
     });
 
+    const anclarFavoritoEnHeader = () => {
+      const favEl = this.favoritosHostRef()?.nativeElement;
+      if (!favEl) return;
+      for (const nodo of Array.from(this.anfitrion.querySelectorAll<HTMLElement>('.pl-favoritos'))) {
+        if (nodo !== favEl) nodo.remove();
+      }
+      const titulo = this.anfitrion.querySelector<HTMLElement>('#atc-contenido .ay-pageheader__title');
+      if (titulo && (favEl.parentElement !== titulo || titulo.firstChild !== favEl)) {
+        titulo.prepend(favEl);
+      }
+    };
+
+    effect(() => {
+      this.vistaActiva();
+      this.favoritosHostRef();
+      queueMicrotask(anclarFavoritoEnHeader);
+    });
+
     afterNextRender(() => {
       const barra = this.anfitrion.querySelector<HTMLElement>('.ay-navbar');
       if (barra) {
@@ -1806,6 +1888,10 @@ export class ConsolaAtcComponent {
         obs.observe(barra);
         destruccion.onDestroy(() => obs.disconnect());
       }
+      anclarFavoritoEnHeader();
+      const mo = new MutationObserver(anclarFavoritoEnHeader);
+      mo.observe(this.anfitrion, { childList: true, subtree: true });
+      destruccion.onDestroy(() => mo.disconnect());
       const onKey = (ev: KeyboardEvent) => {
         if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
           ev.preventDefault();
