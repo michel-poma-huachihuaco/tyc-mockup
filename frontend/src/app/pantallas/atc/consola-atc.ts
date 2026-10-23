@@ -83,6 +83,7 @@ import { VistaC360Component, type DestinoRedireccionNodo } from './vista-c360';
 import { VistaEspecializadaComponent } from './vista-especializada';
 import { VistaOperacionComponent } from './vista-operacion';
 import { VistaVivoComponent } from './vista-vivo';
+import { VistaFlujosAreaComponent } from './vista-flujos-area';
 import { AsistenteBotAtcComponent } from './asistente-bot-atc';
 import {
   EstadoPrototipoAtcService,
@@ -147,6 +148,7 @@ interface ItemMenuAtc {
     BotonTema,
     VistaC360Component,
     VistaVivoComponent,
+    VistaFlujosAreaComponent,
     VistaOperacionComponent,
     VistaEspecializadaComponent,
     AsistenteBotAtcComponent,
@@ -413,6 +415,7 @@ interface ItemMenuAtc {
               <app-vista-vivo
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 [tickets]="ticketsVisibles()"
+                [areaInicial]="areaVivo()"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irABandeja)="vistaActiva.set('bandeja')"
               />
@@ -669,7 +672,11 @@ interface ItemMenuAtc {
                 (verContrato)="abrirContrato($event)"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
+                (verAreaEnVivo)="abrirVivoEnArea($event)"
               />
+            }
+            @case ('flujos') {
+              <app-vista-flujos-area (irAConfiguracion)="vistaActiva.set('configuracion')" />
             }
           }
         </div>
@@ -1392,7 +1399,7 @@ export class ConsolaAtcComponent {
       id: 'vivo',
       grupo: 'ESTRELLA',
       titulo: 'Operación en Vivo',
-      subtitulo: 'Planta de atención en tiempo real, colas y niveles de servicio',
+      subtitulo: 'Estado de atención por responsable, planta en tiempo real y niveles de servicio',
       icono: 'M22 12h-4l-3 9L9 3l-3 9H2',
     },
   ];
@@ -1511,8 +1518,15 @@ export class ConsolaAtcComponent {
       id: 'torre',
       grupo: 'SUPERVISION',
       titulo: 'Torre de Control CX',
-      subtitulo: 'Tablero, riesgo de denuncia, encuestas, informes y auditoría IA',
+      subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
       icono: 'M18 20V10 M12 20V4 M6 20v-6',
+    },
+    {
+      id: 'flujos',
+      grupo: 'SUPERVISION',
+      titulo: 'Flujos por área',
+      subtitulo: 'Flujos activos por área resolutora, sincronizados con Configuración',
+      icono: 'M6 3v6 M6 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M18 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M6 15v3a3 3 0 0 0 3 3h6 M18 15v-3',
     },
   ];
 
@@ -1534,6 +1548,8 @@ export class ConsolaAtcComponent {
   ];
 
   readonly vistaActiva = signal<VistaAtc>('c360');
+  /** Área con la que la Torre abre Vivo; vacía si se entra por el menú. */
+  readonly areaVivo = signal<string>('');
   /** Cliente y lote con los que la Vista 360 abrió «Nueva gestión» (GRA-02). */
   readonly contextoNuevoTicket = signal<{ cliente: string; dni: string; proyecto: string; lote?: string } | null>(null);
   /** Vista desde la que se abrió el ticket en curso: a ella vuelve «Volver» y es la que se resalta en el sidebar. */
@@ -2104,9 +2120,15 @@ export class ConsolaAtcComponent {
     }
   }
 
+  abrirVivoEnArea(area: string): void {
+    this.areaVivo.set(area);
+    this.vistaActiva.set('vivo');
+  }
+
   irAVistaDesdeHref(href: string): void {
     const id = href.replace('#vista:', '') as VistaAtc;
     if (this.todosLosMenus.some((m) => m.id === id)) {
+      this.areaVivo.set('');
       this.irAVista(id);
     }
   }

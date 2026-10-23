@@ -99,7 +99,7 @@ import { VacioFiltrosComponent } from './vacio-filtros';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 import { CeldaTicketComponent } from './celda-ticket';
 import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
-import { FlujosTorreComponent } from './flujos-torre';
+import { TableroTorreComponent } from './graficos/tablero-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
 import { evaluarContextoMorosidad } from './contexto-morosidad';
 
@@ -159,7 +159,7 @@ export type SubvistaEspecializadaAtc =
     AyText,
     CeldaTicketComponent,
     EditorPasosFlujoComponent,
-    FlujosTorreComponent,
+    TableroTorreComponent,
     PasosFlujoComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -182,7 +182,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Configuración"
           descripcion="Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket."
-        >
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Secciones de configuración"
@@ -876,7 +877,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Integración UrbeMind"
           descripcion="Contrato bidireccional: UrbeMind consulta, registra e interactúa por API con alcance acotado, y recibe los eventos del ciclo de vida."
-        >
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Secciones de UrbeMind"
@@ -1315,7 +1317,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Libro de Reclamaciones"
           descripcion="Ley 29571, art. 24: respuesta en 15 días hábiles desde el registro, prorrogables una sola vez por 15 si se comunica antes del vencimiento."
-        >
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Secciones del Libro de Reclamaciones"
@@ -1461,7 +1464,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Mesa de Casos Sensibles SGD"
           descripcion="Cinco líneas de ingreso, Código Único por caso, SLA desde el cargo de activación, matriz objetiva de riesgo y cierre con custodia GLI."
-        >
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Vistas de la Mesa SGD"
@@ -1908,7 +1912,8 @@ export type SubvistaEspecializadaAtc =
       <div ayStack gap="6">
         <ay-page-header
           titulo="Torre de Control CX"
-          descripcion="Volumen, cumplimiento de SLA, prevención de denuncias (+8 % interés legal), encuestas post-atención, informes periódicos y auditoría de datos."
+          descripcion="Estado de atención de tickets por área (nivel macro) con gráficos, además de riesgo de denuncia (+8 % interés legal), encuestas post-atención, informes periódicos y auditoría de datos."
+          [conPestanas]="true"
         >
           <ay-tabs
             ayPestanas
@@ -1921,59 +1926,7 @@ export type SubvistaEspecializadaAtc =
         </ay-page-header>
 
         @if (tabTorre() === 'tablero') {
-          <div ayGrid [columnas]="4" gap="md">
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="SLA E2E ≤ 72 h (Eje 1/2)"
-                  valor="91.4%"
-                  periodo="Meta corporativa ≥ 90%"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Resueltos en 1.er contacto (FCR)"
-                  valor="68%"
-                  periodo="Sin reaperturas ni derivaciones"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Cumplimiento 1.ª respuesta"
-                  valor="94.2%"
-                  periodo="En horario hábil de Perú"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Cumplimiento resolución"
-                  valor="90.8%"
-                  periodo="Con políticas SLA versionadas"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-          </div>
-
-          <ay-card superficie="solid">
-            <ay-card-header
-              titulo="Flujos activos por área resolutora (sincronizados con Configuración)"
-              nivel="h2"
-              [separador]="true"
-            />
-            <ay-card-body padding="md">
-              <app-flujos-torre [flujos]="estadoProto.flujosPorTipo()" />
-            </ay-card-body>
-          </ay-card>
+          <app-tablero-torre [tickets]="tickets()" (verAreaEnVivo)="verAreaEnVivo.emit($event)" />
         }
 
         @if (tabTorre() === 'riesgo') {
@@ -2145,6 +2098,8 @@ export class VistaEspecializadaComponent {
 
   readonly verContrato = output<string>();
   readonly seleccionarTicket = output<string>();
+  /** Código de área (p. ej. 'LEGAL') que el Tablero de la Torre quiere ver en Vivo. */
+  readonly verAreaEnVivo = output<string>();
   readonly irANuevo = output<void>();
 
   readonly avisoOperacion = signal<string | null>(null);

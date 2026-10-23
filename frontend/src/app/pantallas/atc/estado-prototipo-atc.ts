@@ -1987,7 +1987,7 @@ export class EstadoPrototipoAtcService {
       vistas.push('configuracion');
     }
     if (['COORDINADOR_CX', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('torre');
+      vistas.push('torre', 'flujos');
     }
     if (['COORDINADOR_CX', 'MODERADOR_EVENTO', 'SUPERVISOR'].includes(rol)) {
       vistas.push('evento');

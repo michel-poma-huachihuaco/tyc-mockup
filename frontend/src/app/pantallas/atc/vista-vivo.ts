@@ -20,8 +20,6 @@ import {
   AyCardBody,
   AyCardHeader,
   AyCardPairs,
-  AyCelda,
-  AyCircularProgress,
   AyDivider,
   AyDrawer,
   AyHeading,
@@ -31,13 +29,10 @@ import {
   AySegmentedControl,
   AySelect,
   AyStack,
-  AyStatistic,
-  AyTable,
   AyTabs,
   AyTag,
   AyText,
   AyTimeline,
-  type AyColumna,
   type AyOpcionSelect,
   type AySegmentoOpcion,
   type AyTabsElemento,
@@ -50,7 +45,9 @@ import {
   SALAS_OFICINA,
   TIPOS_SIMULACION,
   type SalaOficina,
+  type TicketAtc,
 } from './datos-atc';
+import { TableroResponsablesComponent } from './tablero-responsables';
 import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
@@ -454,8 +451,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AyCardBody,
     AyCardHeader,
     AyCardPairs,
-    AyCelda,
-    AyCircularProgress,
     AyDivider,
     AyDrawer,
     AyHeading,
@@ -465,12 +460,11 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AySegmentedControl,
     AySelect,
     AyStack,
-    AyStatistic,
-    AyTable,
     AyTabs,
     AyTag,
     AyText,
     AyTimeline,
+    TableroResponsablesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -490,15 +484,11 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     <div #vivoRootHost ayStack gap="6" aria-label="Centro de Comando y Operación en Vivo">
       <ay-page-header
         [conPestanas]="true"
-        [titulo]="
-          vistaModo() === 'dashboard'
-            ? 'Operación en Vivo · Dashboard de KPIs (Global y por Área)'
-            : 'Sala de Comandos · Navegación de Tickets y Responsables'
-        "
+        titulo="Operación en Vivo · Trazabilidad por responsable"
         [descripcion]="
-          vistaModo() === 'dashboard'
-            ? 'Métricas operativas en tiempo real por estado, área y productividad del equipo.'
-            : 'Centro de comando tipo terminal: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
+          vistaModo() === 'responsables'
+            ? 'Status de atención de los tickets de cada responsable: carga, estados, SLA y último movimiento.'
+            : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
         "
       >
         <ay-button
@@ -548,273 +538,25 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
         />
       </ay-page-header>
 
+      @if (vistaModo() === 'responsables') {
+        <app-tablero-responsables
+          [tickets]="tickets()"
+          [(area)]="areaResponsables"
+          (seleccionarTicket)="seleccionarTicket.emit($event)"
+        />
+      }
+
       <!-- =========================================================================
-           VISTA 1: DASHBOARD DE KPI TOTAL Y POR ÁREA
+           PLANTA: 3D + SALA DE COMANDOS · PANEL DE ALTURA FIJA Y RESPONSIVO
            ========================================================================= -->
-      @if (vistaModo() === 'dashboard') {
+      @if (vistaModo() === 'comando') {
         <div ayStack gap="4">
-          <!-- 1.1 KPIs Globales de la Operación -->
-          <div class="pl-cmd-grid-kpis-top">
-            <ay-card variante="default">
-              <ay-card-body padding="sm">
-                <div ayStack gap="2">
-                  <ay-statistic
-                    etiqueta="Tickets activos en planta"
-                    [valor]="activosEnCursoCount()"
-                    size="sm"
-                  />
-                  <div ayRow gap="1" [ajuste]="true">
-                    <ay-badge size="sm" [tono]="enRiesgoCount() > 0 ? 'warning' : 'success'">
-                      {{ enRiesgoCount() > 0 ? enRiesgoCount() + ' en riesgo SLA' : 'Sin riesgo SLA' }}
-                    </ay-badge>
-                    <ay-badge size="sm" tono="neutral">{{ totalEnColaSinAsignar() }} en cola</ay-badge>
-                  </div>
-                </div>
-              </ay-card-body>
-            </ay-card>
-
-            <ay-card variante="default">
-              <ay-card-body padding="sm">
-                <div ayRow gap="3" alinear="center">
-                  <ay-circular-progress
-                    etiqueta="Resueltos en SLA"
-                    [valor]="pctCumplimientoSla()"
-                    size="md"
-                    [tono]="pctCumplimientoSla() >= 90 ? 'success' : 'warning'"
-                  />
-                  <div ayStack gap="1">
-                    <ay-statistic
-                      etiqueta="Cumplimiento SLA hoy"
-                      [valor]="pctCumplimientoSla()"
-                      unidad="%"
-                      size="sm"
-                    />
-                    <span ayText="subtitle" size="xs">
-                      {{ cerradosEnSlaHoy() }} de {{ cerradosHoy() }} en plazo (Meta 90%)
-                    </span>
-                  </div>
-                </div>
-              </ay-card-body>
-            </ay-card>
-
-            <ay-card variante="default">
-              <ay-card-body padding="sm">
-                <div ayStack gap="2">
-                  <ay-statistic
-                    etiqueta="Tiempo promedio global"
-                    [valor]="tiempoPromedioGlobalMin()"
-                    unidad="min"
-                    size="sm"
-                  />
-                  <ay-badge size="sm" [tono]="promedioGlobalEnVerde() ? 'success' : 'danger'">
-                    {{ promedioGlobalEnVerde() ? 'Dentro de meta (≤ 25m)' : 'Excede meta (> 25m)' }}
-                  </ay-badge>
-                </div>
-              </ay-card-body>
-            </ay-card>
-
-            <ay-card variante="default">
-              <ay-card-body padding="sm">
-                <div ayStack gap="2">
-                  <ay-statistic
-                    etiqueta="Cerrados en el turno"
-                    [valor]="cerradosHoy()"
-                    size="sm"
-                  />
-                  <div ayRow gap="1" [ajuste]="true">
-                    <ay-badge size="sm" tono="warning">{{ conRayoCount() }} con Rayo</ay-badge>
-                    <ay-badge size="sm" tono="neutral">CSAT {{ csatPromedio().toFixed(1) }} ★</ay-badge>
-                  </div>
-                </div>
-              </ay-card-body>
-            </ay-card>
-          </div>
-
-          <!-- 1.2 Distribución Total por los 7 Estados (RF-SVC-004) -->
-          <div ayStack gap="2">
-            <ay-heading [nivel]="2" size="sm">1. Balance Global de Tickets por Estado (RF-SVC-004)</ay-heading>
-            <ay-card variante="default">
-              <ay-card-body padding="sm">
-                <div class="pl-atc-grid-estados">
-                  @for (est of estadosResumen(); track est.id) {
-                    <ay-card variante="default">
-                      <ay-card-body padding="sm">
-                        <div ayStack gap="1">
-                          <div ayRow gap="2" justificar="between">
-                            <span ayText="label" size="xs">{{ est.n }}</span>
-                            <ay-badge size="sm" [tono]="est.tono">{{ est.v }}</ay-badge>
-                          </div>
-                          <ay-progress-bar
-                            [etiqueta]="est.n"
-                            [etiquetaOculta]="true"
-                            [valor]="est.pct"
-                            [tono]="est.tonoBarra"
-                            size="sm"
-                          />
-                        </div>
-                      </ay-card-body>
-                    </ay-card>
-                  }
-                </div>
-              </ay-card-body>
-            </ay-card>
-          </div>
-
-          <!-- 1.3 KPIs por Área Operativa (Tamaño constante y responsivo) -->
-          <div ayStack gap="2">
-            <div ayRow gap="2" justificar="between" alinear="center" [ajuste]="true">
-              <ay-heading [nivel]="2" size="sm">2. KPIs por Área Operativa</ay-heading>
-              <ay-button tamano="sm" variante="primary" (click)="irASalaComandos('')">
-                Abrir Sala de Comandos →
-              </ay-button>
-            </div>
-
-            <div class="pl-cmd-grid-areas-kpi">
-              @for (ar of semaforoAreasVivo(); track ar.id) {
-                <div
-                  class="pl-cmd-terminal pl-cmd-terminal--kpi"
-                  [class.pl-cmd-terminal--alerta]="!ar.enMetaVerde"
-                  [class.pl-cmd-terminal--foco]="modoTvActivo() && areaRotacionTvActual().id === ar.id"
-                >
-                  <div class="pl-cmd-terminal__cab">
-                    <div class="pl-cmd-terminal__titulo">
-                      <span
-                        class="pl-cmd-led"
-                        [class.pl-cmd-led--warn]="ar.enMetaVerde && ar.enCola >= 2"
-                        [class.pl-cmd-led--danger]="!ar.enMetaVerde"
-                      ></span>
-                      <span class="pl-cmd-terminal__cod">{{ ar.codigoTerminal }}</span>
-                      <span>{{ ar.nombre }}</span>
-                    </div>
-                    <ay-badge size="sm" [tono]="ar.enMetaVerde ? 'success' : 'danger'">
-                      {{ ar.enMetaVerde ? 'EN META' : 'FUERA DE META' }}
-                    </ay-badge>
-                  </div>
-
-                  <div class="pl-cmd-terminal__cuerpo">
-                    <div class="pl-cmd-metricas">
-                      <div class="pl-cmd-metrica">
-                        <small>En cola</small>
-                        <strong>{{ ar.enCola }}</strong>
-                      </div>
-                      <div class="pl-cmd-metrica">
-                        <small>En puesto</small>
-                        <strong>{{ ar.enEscritorio }}/{{ ar.puestos.length }}</strong>
-                      </div>
-                      <div class="pl-cmd-metrica">
-                        <small>Resueltos</small>
-                        <strong>{{ ar.resueltosHoy }}</strong>
-                      </div>
-                      <div class="pl-cmd-metrica">
-                        <small>Prom / Meta</small>
-                        <strong>{{ ar.tiempoPromedioMin }}m / {{ ar.metaSlaMin }}m</strong>
-                      </div>
-                    </div>
-
-                    <ay-progress-bar
-                      [etiqueta]="ar.nombre"
-                      [etiquetaOculta]="true"
-                      [valor]="pctTiempoSemaforo(ar.tiempoPromedioMin, ar.metaSlaMin)"
-                      [tono]="ar.enMetaVerde ? 'success' : 'danger'"
-                      size="sm"
-                    />
-
-                    <div class="pl-cmd-linea-trunc">
-                      <span class="pl-cmd-texto-trunc" ayText="subtitle" size="xs">{{ ar.lider }}</span>
-                      <ay-button
-                        tamano="sm"
-                        variante="ghost"
-                        (click)="irASalaComandos(ar.id)"
-                      >
-                        Ver en terminal →
-                      </ay-button>
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- 1.4 Tabla de Productividad por Responsable -->
-          <div ayStack gap="2">
-            <div ayRow gap="2" justificar="between" alinear="center" [ajuste]="true">
-              <ay-heading [nivel]="2" size="sm">3. Productividad por Responsable (Ordenado de menor a mayor atención)</ay-heading>
-              <ay-badge size="sm" tono="success">
-                {{ totalAtendidosPorEquipoHoy() }} tickets resueltos hoy
-              </ay-badge>
-            </div>
-
-            <ay-card variante="elevated" superficie="solid">
-              <ay-card-body padding="sm">
-                <ay-table
-                  leyenda="Productividad por responsable"
-                  [columnas]="columnasRendimientoAsesores"
-                  [filas]="rendimientoAsesoresOrdenadoMenor()"
-                  [rayada]="true"
-                >
-                  <ng-template ayCelda="nombre" let-fila>
-                    @let ag = comoAsesorVivo(fila);
-                    <div ayStack gap="1">
-                      <div ayRow gap="1" alinear="center" [ajuste]="true">
-                        <strong>{{ ag.nombre }}</strong>
-                        @if (ag.esMenorDelArea) {
-                          <ay-badge size="sm" tono="warning">Menor en área</ay-badge>
-                        }
-                      </div>
-                      <span ayText="subtitle" size="xs">{{ ag.rol }}</span>
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="area" let-fila>
-                    @let ag = comoAsesorVivo(fila);
-                    <ay-badge size="sm" tono="neutral">{{ ag.areaNombre }}</ay-badge>
-                  </ng-template>
-                  <ng-template ayCelda="ticketActual" let-fila>
-                    @let ag = comoAsesorVivo(fila);
-                    @if (ag.ticketActual; as tk) {
-                      <div ayRow gap="1" alinear="center" [ajuste]="true">
-                        <strong ayText="mono" size="xs">{{ tk.numero }}</strong>
-                        @if (tk.rayo) {
-                          <ay-badge size="sm" tono="warning">⚡ Rayo</ay-badge>
-                        }
-                        <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
-                          {{ pctSlaRestante(tk) }}% SLA
-                        </ay-badge>
-                        <span ayText="body" size="xs">· {{ tk.cli }} ({{ ag.pctAvanceTicket }}%)</span>
-                      </div>
-                    } @else {
-                      <span ayText="mono" size="xs">[DISPONIBLE]</span>
-                    }
-                  </ng-template>
-                  <ng-template ayCelda="atendidosHoy" let-fila>
-                    @let ag = comoAsesorVivo(fila);
-                    <div ayRow gap="2" alinear="center">
-                      <strong ayText="mono" size="sm">{{ ag.atendidosHoy }} tickets</strong>
-                      <span ayText="subtitle" size="xs">
-                        ({{
-                          ag.diferenciaContraPromedioArea < 0
-                            ? ag.diferenciaContraPromedioArea
-                            : '+' + ag.diferenciaContraPromedioArea
-                        }} vs área)
-                      </span>
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="tiempoPromedioMin" let-fila>
-                    @let ag = comoAsesorVivo(fila);
-                    <ay-badge size="sm" [tono]="ag.enMetaVerde ? 'success' : 'danger'">
-                      {{ ag.tiempoPromedioMin }} min / ≤ {{ ag.metaMin }}m
-                    </ay-badge>
-                  </ng-template>
-                </ay-table>
-              </ay-card-body>
-            </ay-card>
-          </div>
-
-          <!-- 1.5 Escenario 3D de Planta de Atención en Vivo (parte final del Dashboard) -->
+          <!-- 1. Planta de Atención en Vivo (3D) -->
           <div ayStack gap="2">
             <div ayRow gap="2" justificar="between" [ajuste]="true">
               <div ayStack gap="1">
                 <ay-heading [nivel]="2" size="sm">
-                  4. Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
+                  Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
                 </ay-heading>
                 <span ayText="subtitle" size="xs">
                   Haz clic en cualquier tarjeta 3D, canal o sala para inspeccionar su detalle en tiempo real o abre el cajón de bandejas.
@@ -1012,14 +754,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
               </ay-card-body>
             </ay-card>
           </div>
-        </div>
-      }
 
-      <!-- =========================================================================
-           VISTA 2: SALA DE COMANDOS · PANEL DE ALTURA FIJA Y RESPONSIVO
-           ========================================================================= -->
-      @if (vistaModo() === 'comando') {
-        <div ayStack gap="4">
           <!-- 2.1 Barra Superior de Control de Terminal -->
           <div class="pl-cmd-barra">
             <div ayRow gap="3" alinear="center" [ajuste]="true">
@@ -1344,7 +1079,9 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
 })
 export class VistaVivoComponent {
   readonly mostrarHu = input<boolean>(false);
-  readonly tickets = input<readonly unknown[]>([]);
+  readonly tickets = input<readonly TicketAtc[]>([]);
+  /** La Torre de Control envía aquí al hacer clic en un área: abre «Responsables» filtrado. */
+  readonly areaInicial = input<string>('');
   readonly seleccionarTicket = output<string>();
   readonly irABandeja = output<void>();
 
@@ -1357,23 +1094,16 @@ export class VistaVivoComponent {
   readonly salas = SALAS_OFICINA;
   readonly metaXpNivel = 150;
 
-  readonly vistaModo = signal<'dashboard' | 'comando'>('dashboard');
+  readonly vistaModo = signal<'responsables' | 'comando'>('responsables');
+  readonly areaResponsables = signal<string>('');
   readonly tabsOperacionVivo: AyTabsElemento[] = [
-    { value: 'dashboard', label: '1. Dashboard de KPIs (Total y por Área)' },
-    { value: 'comando', label: '2. Sala de Comandos (Flujo de Tickets y Responsables)' },
+    { value: 'responsables', label: 'Responsables' },
+    { value: 'comando', label: 'Planta' },
   ];
 
   readonly modoTvActivo = signal<boolean>(false);
   readonly indiceRotacionTv = signal<number>(0);
   readonly segundosRotacionTv = signal<number>(4);
-
-  readonly columnasRendimientoAsesores: readonly AyColumna[] = [
-    { clave: 'nombre', cabecera: 'Responsable / Rol', ancho: '24%', ordenable: true },
-    { clave: 'area', cabecera: 'Área operativa', ancho: '18%', ordenable: true },
-    { clave: 'ticketActual', cabecera: 'Ticket en atención actual', ancho: '28%' },
-    { clave: 'atendidosHoy', cabecera: 'Tickets trabajados hoy', ancho: '16%', ordenable: true },
-    { clave: 'tiempoPromedioMin', cabecera: 'Tiempo prom. / Meta', ancho: '14%', ordenable: true },
-  ];
 
   readonly opcionesVelocidad: AySegmentoOpcion[] = [
     { valor: '1', etiqueta: '1× Normal' },
@@ -1409,9 +1139,6 @@ export class VistaVivoComponent {
   readonly xpEquipo = signal<number>(115);
   readonly nivelEquipo = signal<number>(4);
   readonly rachaSla = signal<number>(11);
-  readonly csatPromedio = signal<number>(4.8);
-  readonly csatRespuestas = signal<number>(29);
-
   readonly ticketsActivos = signal<TicketVivo[]>([]);
   readonly puestosEstado = signal<Record<string, PuestoEstadoInterno[]>>({});
   readonly eventosTerminal = signal<EventoTerminalVivo[]>([]);
@@ -1459,10 +1186,6 @@ export class VistaVivoComponent {
 
   readonly conRayoCount = computed(() => this.ticketsActivos().filter((t) => t.rayo).length);
 
-  readonly activosEnCursoCount = computed(
-    () => this.ticketsActivos().filter((t) => t.etapa !== 'salida').length,
-  );
-
   readonly ticketsEnBandejaOrquestadora = computed(() =>
     this.ticketsActivos().filter((t) => t.etapa === 'bandeja'),
   );
@@ -1474,28 +1197,6 @@ export class VistaVivoComponent {
   readonly totalEnEscritorioActivo = computed(
     () => this.ticketsActivos().filter((t) => t.etapa === 'atencion').length,
   );
-
-  readonly enRiesgoCount = computed(
-    () =>
-      this.ticketsActivos().filter(
-        (t) => t.etapa !== 'salida' && (t.esc || (t.slaMax - t.age) / t.slaMax < 0.25),
-      ).length,
-  );
-
-  readonly pctCumplimientoSla = computed(() => {
-    const res = this.cerradosHoy();
-    const enSla = Math.min(res, this.cerradosEnSlaHoy());
-    return res > 0 ? Math.round((enSla / res) * 100) : 92;
-  });
-
-  readonly npsPreliminarValor = computed(() => {
-    const nCsat = this.csatRespuestas();
-    if (nCsat <= 0) return 46;
-    const prom = Math.round(nCsat * 0.72);
-    const pas = Math.round(nCsat * 0.18);
-    const det = Math.max(0, nCsat - prom - pas);
-    return Math.round(((prom - det) / nCsat) * 100);
-  });
 
   /** Calcula el estado vivo de todos los responsables y áreas, identificando quién trabaja menos tickets y el origen de cada cuello. */
   readonly semaforoAreasVivo = computed<readonly AreaSemaforoVivo[]>(() => {
@@ -1650,50 +1351,6 @@ export class VistaVivoComponent {
     return areas[idx] ?? areas[0]!;
   });
 
-  readonly tiempoPromedioGlobalMin = computed<number>(() => {
-    const areas = this.semaforoAreasVivo();
-    if (areas.length === 0) return 19;
-    const suma = areas.reduce((acc, a) => acc + a.tiempoPromedioMin, 0);
-    return Math.round(suma / areas.length);
-  });
-
-  readonly promedioGlobalEnVerde = computed<boolean>(() => this.tiempoPromedioGlobalMin() <= 25);
-
-  readonly rendimientoAsesoresVivo = computed<readonly PuestoTerminalVivo[]>(
-    () => this.semaforoAreasVivo().flatMap((a) => a.puestos),
-    {
-      equal: (a, b) =>
-        a.length === b.length &&
-        a.every(
-          (p, i) =>
-            p.id === b[i]?.id &&
-            p.atendidosHoy === b[i]?.atendidosHoy &&
-            p.tiempoPromedioMin === b[i]?.tiempoPromedioMin &&
-            p.enMetaVerde === b[i]?.enMetaVerde &&
-            p.ticketActual?.id === b[i]?.ticketActual?.id &&
-            p.ticketActual?.rayo === b[i]?.ticketActual?.rayo,
-        ),
-    },
-  );
-
-  readonly rendimientoAsesoresOrdenadoMenor = computed<readonly PuestoTerminalVivo[]>(() =>
-    [...this.rendimientoAsesoresVivo()].sort(
-      (a, b) => a.atendidosHoy - b.atendidosHoy || b.tiempoPromedioMin - a.tiempoPromedioMin,
-    ),
-  );
-
-  readonly responsableMenorGlobal = computed<PuestoTerminalVivo | null>(
-    () => this.rendimientoAsesoresOrdenadoMenor()[0] ?? null,
-  );
-
-  readonly topTresMenorAtencion = computed<readonly PuestoTerminalVivo[]>(() =>
-    this.rendimientoAsesoresOrdenadoMenor().slice(0, 3),
-  );
-
-  readonly totalAtendidosPorEquipoHoy = computed<number>(() =>
-    this.rendimientoAsesoresVivo().reduce((acc, a) => acc + a.atendidosHoy, 0),
-  );
-
   readonly ticketSeleccionado = computed<TicketVivo | null>(() => {
     const id = this.ticketSeleccionadoId();
     if (!id) return null;
@@ -1743,6 +1400,15 @@ export class VistaVivoComponent {
     if (primeroActivo) {
       this.ticketSeleccionadoId.set(primeroActivo.id);
     }
+
+    effect(() => {
+      const area = this.areaInicial();
+      if (!area) return;
+      untracked(() => {
+        this.areaResponsables.set(area);
+        this.vistaModo.set('responsables');
+      });
+    });
 
     effect((onCleanup) => {
       const host = this.stageHostRef()?.nativeElement;
@@ -1972,31 +1638,20 @@ export class VistaVivoComponent {
   }
 
   cambiarVistaModo(id: string): void {
-    if (id === 'dashboard' || id === 'comando') {
+    if (id === 'responsables' || id === 'comando') {
       this.vistaModo.set(id);
     }
-  }
-
-  irASalaComandos(areaId: string): void {
-    this.areaFiltro.set(areaId);
-    this.vistaModo.set('comando');
   }
 
   alternarModoTv(): void {
     const nuevo = !this.modoTvActivo();
     this.modoTvActivo.set(nuevo);
     this.segundosRotacionTv.set(4);
-    if (!nuevo) {
+    if (nuevo) {
+      this.vistaModo.set('comando');
+    } else {
       this.areaFiltro.set('');
     }
-  }
-
-  pctTiempoSemaforo(tiempoMin: number, metaMin: number): number {
-    return Math.min(100, Math.round((tiempoMin / Math.max(1, metaMin * 1.4)) * 100));
-  }
-
-  comoAsesorVivo(fila: unknown): PuestoTerminalVivo {
-    return fila as PuestoTerminalVivo;
   }
 
   inyectarTicketEnSala(areaKey: string, rayo: boolean): void {
@@ -2004,56 +1659,6 @@ export class VistaVivoComponent {
     const typeKey = entrada?.[0] ?? 'cons';
     this.inyectarTicket({ type: typeKey, rayo });
   }
-
-  readonly pctXpEquipo = computed<number>(() =>
-    Math.min(100, Math.round((this.xpEquipo() / this.metaXpNivel) * 100)),
-  );
-
-  readonly estadosResumen = computed<
-    readonly {
-      id: string;
-      n: string;
-      v: number;
-      pct: number;
-      tono: 'info' | 'warning' | 'danger' | 'success' | 'neutral';
-      tonoBarra: 'brand' | 'success' | 'danger';
-    }[]
-  >(() => {
-    const lista = this.ticketsActivos();
-    const enCurso = lista.filter((t) => t.etapa !== 'salida');
-    const abiertos = enCurso.filter((t) => t.stateRf004 === 'OPEN').length;
-    const enProgreso = enCurso.filter((t) => t.stateRf004 === 'IN_PROGRESS').length;
-    const esperaCli = enCurso.filter((t) => t.stateRf004 === 'PENDING_CUSTOMER').length;
-    const escalados = this.escaladosCount();
-    const reabiertos = this.reabiertosHoy();
-    const resueltosRecientes = lista.filter((t) => t.etapa === 'salida').length;
-    const res = this.cerradosHoy();
-
-    const crudos: readonly {
-      id: string;
-      n: string;
-      v: number;
-      tono: 'info' | 'warning' | 'danger' | 'success' | 'neutral';
-      tonoBarra: 'brand' | 'success' | 'danger';
-    }[] = [
-      { id: 'OPEN', n: 'Abierto', v: abiertos, tono: 'info', tonoBarra: 'brand' },
-      { id: 'IN_PROGRESS', n: 'En curso', v: enProgreso, tono: 'info', tonoBarra: 'brand' },
-      { id: 'PENDING_CUSTOMER', n: 'Espera cliente', v: esperaCli, tono: 'warning', tonoBarra: 'brand' },
-      { id: 'ESCALATED', n: 'Escalado', v: escalados, tono: 'danger', tonoBarra: 'danger' },
-      { id: 'REOPENED', n: 'Reabierto', v: reabiertos, tono: 'warning', tonoBarra: 'danger' },
-      { id: 'RESOLVED', n: 'Resuelto', v: resueltosRecientes, tono: 'success', tonoBarra: 'success' },
-      { id: 'CLOSED', n: 'Cerrado hoy', v: res, tono: 'success', tonoBarra: 'success' },
-    ];
-    const maxV = Math.max(1, ...crudos.map((e) => e.v));
-    return crudos.map((e) => ({
-      ...e,
-      pct: Math.round((e.v / maxV) * 100),
-    }));
-  });
-
-  readonly totalEstadosCount = computed<number>(() =>
-    this.estadosResumen().reduce((acc, e) => acc + e.v, 0),
-  );
 
   alternarPausa(): void {
     this.enEjecucion.update((v) => !v);
@@ -2331,7 +1936,6 @@ export class VistaVivoComponent {
     } else {
       this.rachaSla.set(0);
     }
-    this.csatRespuestas.update((n) => n + 1);
     const ganados = (enPlazo ? 10 : 3) + (tk.rayo ? 5 : 0);
     let nuevoXp = this.xpEquipo() + ganados;
     if (nuevoXp >= this.metaXpNivel) {

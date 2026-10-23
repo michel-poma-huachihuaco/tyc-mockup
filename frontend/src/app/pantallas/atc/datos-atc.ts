@@ -24,6 +24,7 @@ export type VistaAtc =
   | 'configuracion'
   | 'urbemind'
   | 'torre'
+  | 'flujos'
   | 'evento';
 
 export interface EmpresaAybar {
