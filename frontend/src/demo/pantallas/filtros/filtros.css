@@ -1,0 +1,85 @@
+/* /demo/filtros: la maqueta del tablero de tickets. Solo tokens --aybar-*. */
+
+.gl-tk__uso {
+  margin-block: var(--aybar-space-4) var(--aybar-space-6);
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-tk__plantilla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-tk__con-panel {
+  display: grid;
+  grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--aybar-space-6);
+}
+
+.gl-tk__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-4);
+  min-inline-size: 0;
+}
+
+.gl-tk__aplicados {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aybar-space-2);
+}
+
+.gl-tk__fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aybar-space-4);
+}
+
+.gl-tk__resumen {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+}
+
+.gl-tk__casillas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-2);
+}
+
+.gl-tk__catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--aybar-space-6);
+}
+
+.gl-tk__muestra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aybar-space-3);
+  padding: var(--aybar-space-4);
+  border: 1px solid var(--aybar-color-border-subtle);
+  border-radius: var(--aybar-radius-lg);
+}
+
+.gl-tk__muestra-titulo {
+  margin: 0;
+  font-size: var(--aybar-font-size-sm);
+}
+
+.gl-tk__muestra-uso {
+  margin: 0;
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-sm);
+}
+
+@media (max-width: 1023px) {
+  .gl-tk__con-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

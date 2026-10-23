@@ -41,6 +41,7 @@ test('cada ruta de la galería resuelve a su pantalla, con sus parámetros', () 
     ['/demo/3d', { id: '3d' }],
     ['/demo/redimensionado', { id: 'redimensionado' }],
     ['/demo/accesibilidad', { id: 'accesibilidad' }],
+    ['/demo/filtros', { id: 'filtros' }],
   ]
   for (const [ruta, pantalla] of casos) assert.deepEqual(resolverRuta(ruta), pantalla, ruta)
 })

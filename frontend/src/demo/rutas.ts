@@ -45,7 +45,7 @@ export const SECCIONES_ADMIN = [
 export type SeccionAdmin = (typeof SECCIONES_ADMIN)[number]['id']
 
 /** Las pantallas de una sola ruta, sin parámetros. */
-export const PANTALLAS_SIMPLES = ['personalizacion', 'profundidad', '3d', 'redimensionado', 'accesibilidad'] as const
+export const PANTALLAS_SIMPLES = ['personalizacion', 'profundidad', '3d', 'redimensionado', 'accesibilidad', 'filtros'] as const
 
 export type PantallaSimple = (typeof PANTALLAS_SIMPLES)[number]
 
@@ -166,7 +166,7 @@ export function esPantallaCompleta(pantalla: Pantalla): boolean {
   return esPublica(pantalla) || pantalla.id === 'vitrina-caso'
 }
 
-export type IdIcono = 'portada' | 'vitrina' | 'ingreso' | 'cuenta' | 'admin' | 'personalizacion' | 'profundidad' | '3d' | 'redimensionado' | 'accesibilidad'
+export type IdIcono = 'portada' | 'vitrina' | 'ingreso' | 'cuenta' | 'admin' | 'personalizacion' | 'profundidad' | '3d' | 'redimensionado' | 'accesibilidad' | 'filtros'
 
 export interface SeccionGaleria {
   readonly id: IdIcono
@@ -188,6 +188,7 @@ export const SECCIONES: readonly SeccionGaleria[] = [
   { id: 'ingreso', nombre: 'Ingreso', ruta: `${BASE}/ingreso`, grupo: 'Pantallas', descripcion: 'Once pantallas de acceso distintas, a pantalla completa.' },
   { id: 'cuenta', nombre: 'Mi cuenta', ruta: `${BASE}/cuenta`, grupo: 'Pantallas', descripcion: 'Perfil, preferencias, notificaciones, seguridad y sesiones.' },
   { id: 'admin', nombre: 'Administración', ruta: `${BASE}/admin`, grupo: 'Pantallas', descripcion: 'Usuarios, roles y auditoría, con datos sintéticos.', soloAdmin: true },
+  { id: 'filtros', nombre: 'Filtros de tickets', ruta: `${BASE}/filtros`, grupo: 'Pantallas', descripcion: 'Plantillas de un tablero de tickets con filtros: barra, panel lateral, vistas rápidas y catálogo de controles.' },
   { id: 'personalizacion', nombre: 'Personalización', ruta: `${BASE}/personalizacion`, grupo: 'Herramientas', descripcion: 'Paleta, acento, grises, radio, estilo y profundidad, con vista previa en claro y oscuro.' },
   { id: 'accesibilidad', nombre: 'Accesibilidad', ruta: `${BASE}/accesibilidad`, grupo: 'Herramientas', descripcion: 'Analiza cualquier ruta con axe-core y lista lo que falla.' },
 ]

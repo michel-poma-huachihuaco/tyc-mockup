@@ -45,6 +45,7 @@ const Profundidad = lazy(() => import('./pantallas/Profundidad'))
 const Visor3D = lazy(() => import('./tres-d/PantallaVisor'))
 const Redimensionado = lazy(() => import('./pantallas/redimensionado/Redimensionado'))
 const Accesibilidad = lazy(() => import('./pantallas/accesibilidad/Accesibilidad'))
+const FiltrosTickets = lazy(() => import('./pantallas/filtros/FiltrosTickets'))
 
 export default function Galeria({ sesion, alSalir, rutaIngreso }: PropsGaleria) {
   const ubicacion = useUbicacion()
@@ -141,6 +142,8 @@ function pantallaDe(pantalla: Pantalla): ReactNode {
       return <Redimensionado />
     case 'accesibilidad':
       return <Accesibilidad />
+    case 'filtros':
+      return <FiltrosTickets />
     case 'desconocida':
       return <Desconocida ruta={pantalla.ruta} />
     default:

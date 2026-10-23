@@ -66,6 +66,7 @@ const POR_SECCION: Record<IdIcono, ReactNode> = {
   admin: <Icon name="building" />,
   personalizacion: <IconoPaleta />,
   accesibilidad: <IconoAccesibilidad />,
+  filtros: <Icon name="filter" />,
 }
 
 /** El icono decorativo de una sección (el nombre lo da su enlace). */
