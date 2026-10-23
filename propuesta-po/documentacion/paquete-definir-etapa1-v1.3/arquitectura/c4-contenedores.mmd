@@ -1,44 +1,52 @@
 flowchart TB
   user([Gestor / supervisor / cliente])
-  emisor[["Emisor OIDC<br/>(ADR-014)"]]
+  ctrl[["Control de acceso (PJ-05)<br/>emisor de tokens y login · DEP-16"]]
   subgraph front["Presentación · Angular"]
     consola[Consola ATC]
     mp[Mi Portal]
     visor[Visor 3D]
     forms[Formularios PWA]
   end
-  gw[Pasarela de API + WAF]
-  subgraph app["Aybar Atiende · Java 21 · Spring Boot 3.5 · un despliegue · monolito modular"]
+  gw["Cloudflare + Azure API Management<br/>valida la audiencia aud"]
+  subgraph app["Aybar Atiende · Java 21 · Spring Boot 3.5 · un despliegue en Azure Container Apps · monolito modular"]
     direction TB
     m1[tickets]
     m2[sla]
-    m3[libro]
-    m4[casos_legales]
-    m5[postventa]
+    m3[complaintbook]
+    m4[legalcases]
+    m5[aftersales]
     m6[portal]
-    m7[calidad]
-    m8[bandeja]
-    m9[consulta360]
-    m10[morosidad]
-    m11[integraciones<br/>adaptador + simulador]
-    m12[identidad<br/>roles locales]
-    jobs[Jobs idempotentes<br/>SLA y plazo legal]
+    m7[quality]
+    m8[inbox]
+    m9[customer360]
+    m10[delinquency]
+    m11[integrations<br/>adaptador + simulador]
+    jobs["Jobs idempotentes con ShedLock<br/>SLA y plazo legal"]
     outb[Outbox]
-    proy[Proyector]
+    proy[Proyector<br/>único escritor del almacén de lectura]
+    ws["WebSocket /ws/visor<br/>filtra por área"]
   end
-  pg[(PostgreSQL<br/>se escribe<br/>una instancia, tablas del v7)]
-  mg[(Almacén de lectura<br/>API de MongoDB<br/>vistas de ATC)]
-  kf{{Bus de eventos<br/>protocolo Kafka}}
-  s3[(Almacenamiento de objetos<br/>Object Lock · evidencia)]
+  pg[("Azure Database for PostgreSQL<br/>se escribe · base única, tablas del v7")]
+  mg[("Azure Cosmos DB for MongoDB vCore<br/>almacén de lectura · vistas de ATC")]
+  kf{{"Azure Event Hubs<br/>protocolo Kafka"}}
+  blob[("Azure Blob Storage<br/>inmutabilidad · evidencia")]
+  kv[["Azure Key Vault<br/>secretos y llave HMAC"]]
+  mon[["Azure Monitor<br/>logs, trazas, métricas y alertas de jobs"]]
   ext[Sistemas externos]
+  user --> ctrl
   user --> front --> gw --> app
-  emisor -. JWT .-> gw
+  ctrl -. "JWT" .-> gw
+  app -. "client_credentials: líderes, gestores y catálogo" .-> ctrl
   app -- escribe --> pg
-  app -- evento en la misma transacción --> outb
+  app -- "evento en la misma transacción" --> outb
   outb --> kf
   kf --> proy
+  kf --> ws
   proy --> mg
   app -- lee --> mg
-  app --> s3
+  app --> blob
+  app -. secretos .-> kv
+  app -. logs .-> mon
   m11 <--> ext
-  kf -. WebSocket .-> visor
+  ws -- "WebSocket" --> visor
+%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con DT-01 a DT-08 del Líder Técnico: sin módulo identidad, emisor de Control de acceso, Azure, módulos en inglés y visor alimentado por el servicio (ADR-010). Ambientes: DEV, QA, PRE y producción (ADR-014). — Revisado por: (pendiente)

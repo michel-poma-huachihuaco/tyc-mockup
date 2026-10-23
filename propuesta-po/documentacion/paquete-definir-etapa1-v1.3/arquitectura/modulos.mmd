@@ -1,32 +1,33 @@
 flowchart LR
-  ident[identidad<br/>roles locales]
+  ctrl[["Control de acceso (PJ-05)<br/>token JWT y API"]]
   tickets[tickets]
   sla[sla]
-  libro[libro]
-  casos[casos_legales]
-  posv[postventa]
+  cbook[complaintbook]
+  lcases[legalcases]
+  aftersales[aftersales]
   portal[portal]
-  cal[calidad]
-  band[bandeja]
-  c360[consulta360]
-  moro[morosidad]
-  integ[integraciones]
+  quality[quality]
+  inbox[inbox]
+  c360[customer360]
+  delinq[delinquency]
+  integ[integrations]
   bus{{eventos}}
-  ident -. roles .-> tickets
+  ctrl -. "roles y permisos en el token" .-> tickets
   portal -- API --> tickets
-  libro -- API --> tickets
-  casos -- API --> tickets
-  posv -- API --> tickets
-  moro -- API --> tickets
-  band -- API --> tickets
+  cbook -- API --> tickets
+  lcases -- API --> tickets
+  aftersales -- API --> tickets
+  delinq -- API --> tickets
+  inbox -- API --> tickets
   tickets -- ticket.assigned · ticket.closed --> bus
   sla -- sla.breached --> bus
-  bus --> band
-  bus --> cal
+  bus --> inbox
+  bus --> quality
   bus --> portal
   c360 --> integ
-  moro --> integ
-  casos --> integ
-  posv --> integ
+  delinq --> integ
+  lcases --> integ
+  aftersales --> integ
   tickets --> integ
   integ --> ext[(Sistemas externos)]
+%% Generado por IA (Claude, 2026-10-22), versión base v1 de Nexora; actualizado con DT-03 y ADR-001: sin módulo identidad y módulos en inglés (propuesta). — Revisado por: (pendiente)

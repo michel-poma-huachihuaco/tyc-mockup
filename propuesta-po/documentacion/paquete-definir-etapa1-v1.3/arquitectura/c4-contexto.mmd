@@ -6,7 +6,7 @@ flowchart LR
     portal[Mi Portal<br/>cliente]
     ges[Gestores, supervisores<br/>y áreas]
   end
-  atc(["<b>Aybar Atiende</b><br/>plataforma ATC<br/>Java con Spring Boot · un despliegue"])
+  atc(["<b>Aybar Atiende</b><br/>plataforma ATC<br/>Java 21 con Spring Boot · un despliegue en Azure"])
   subgraph Ext["Sistemas externos (con simulador)"]
     sigda[SIGDA/TAXON<br/>DEP-01]
     con[Contratos y Activos<br/>DEP-07]
@@ -14,16 +14,19 @@ flowchart LR
     cti[Call center CTI<br/>DEP-11]
     leg[Herramienta de Legal<br/>DEP-12]
     jose[Motor de José<br/>DEP-13]
-    ia[Proveedor de IA<br/>DEP-14]
+    ia[Proveedor de IA<br/>DEP-14 · por evaluar]
     kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
   end
-  emisor[["Emisor OIDC de tokens<br/>(por decidir, ADR-014)"]]
+  ctrl[["Control de acceso (PJ-05)<br/>emisor de tokens, login de internos y clientes,<br/>roles y permisos · DEP-16"]]
   tel --> atc
   wa --> atc
   mail --> atc
+  portal -- "login de clientes" --> ctrl
+  ges -- "login de internos" --> ctrl
   portal --> atc
   ges --> atc
-  emisor -. JWT .-> atc
+  ctrl -. "JWT" .-> atc
+  atc -- "catálogo de roles (una vez) y consultas de líderes y gestores" --> ctrl
   atc <--> sigda
   atc <--> con
   atc <--> cob
@@ -32,4 +35,4 @@ flowchart LR
   atc <--> jose
   atc <--> ia
   atc --> kpi
-%% Generado por IA (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21): alcance de la Etapa 1. — Revisado por: (pendiente)
+%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con las decisiones DT-03, DT-04, DT-05 y DT-07 del Líder Técnico: el emisor y el login son de Control de acceso (PJ-05); ATC no administra identidad. — Revisado por: (pendiente)
