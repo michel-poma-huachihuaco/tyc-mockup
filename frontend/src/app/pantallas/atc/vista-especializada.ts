@@ -31,6 +31,7 @@ import {
   AyProgressBar,
   AyRow,
   AySelect,
+  AySegmentedControl,
   AyStack,
   AyStatistic,
   AyTable,
@@ -39,6 +40,7 @@ import {
   AyText,
   type AyColumna,
   type AyOpcionSelect,
+  type AySegmentoOpcion,
   type AyTabsElemento,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
@@ -100,6 +102,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 import { CeldaTicketComponent } from './celda-ticket';
 import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
 import { TableroTorreComponent } from './graficos/tablero-torre';
+import { FlujosTorreComponent } from './flujos-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
 import { evaluarContextoMorosidad } from './contexto-morosidad';
 
@@ -114,7 +117,7 @@ export type SubvistaEspecializadaAtc =
   | 'alertas'
   | 'cierre'
   | 'politicas'
-  | 'configuracion'
+  | 'workflow'
   | 'urbemind'
   | 'torre'
   | 'evento';
@@ -151,6 +154,7 @@ export type SubvistaEspecializadaAtc =
     AyProgressBar,
     AyRow,
     AySelect,
+    AySegmentedControl,
     AyStack,
     AyStatistic,
     AyTable,
@@ -161,6 +165,7 @@ export type SubvistaEspecializadaAtc =
     EditorPasosFlujoComponent,
     TableroTorreComponent,
     PasosFlujoComponent,
+    FlujosTorreComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -175,26 +180,29 @@ export type SubvistaEspecializadaAtc =
     }
 
     <!-- ====================================================================== -->
-    <!-- 1. CONFIGURACIÓN (ADMIN_FUNCIONAL): FLUJOS, GUÍAS Y ALERTAS            -->
+    <!-- 1. WORKFLOW (ADMIN_FUNCIONAL, SUPERVISOR; COORDINADOR_CX solo lectura): FLUJOS, GUÍAS Y ALERTAS -->
     <!-- ====================================================================== -->
-    @if (subvista() === 'configuracion') {
+    @if (subvista() === 'workflow') {
       <div ayStack gap="6">
         <ay-page-header
-          titulo="Configuración"
-          descripcion="Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket."
-        
-          [conPestanas]="true">
-          <ay-tabs
-            ayPestanas
-            etiqueta="Secciones de configuración"
-            variante="underline"
-            [items]="tabsConfiguracion()"
-            [valor]="tabConfig()"
-            (valorChange)="tabConfig.set($event)"
-          />
+          titulo="Workflow"
+          [descripcion]="puedeEditarWorkflow()
+            ? 'Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket.'
+            : 'Flujos de atención activos por área resolutora. Solo lectura: los cambios los publica el Administrador Funcional.'"
+          [conPestanas]="puedeEditarWorkflow()">
+          @if (puedeEditarWorkflow()) {
+            <ay-tabs
+              ayPestanas
+              etiqueta="Secciones de workflow"
+              variante="underline"
+              [items]="tabsWorkflow()"
+              [valor]="tabConfig()"
+              (valorChange)="tabConfig.set($event)"
+            />
+          }
         </ay-page-header>
 
-        @if (estadoProto.rolActivo() !== 'ADMIN_FUNCIONAL' && estadoProto.rolActivo() !== 'SUPERVISOR') {
+        @if (!puedeVerWorkflow()) {
           <ay-card superficie="solid">
             <ay-card-body padding="md">
               <ay-empty-state
@@ -205,10 +213,30 @@ export type SubvistaEspecializadaAtc =
           </ay-card>
         } @else {
           @if (tabConfig() === 'flujos') {
+            <ay-segmented-control
+              etiqueta="Vista de los flujos"
+              size="sm"
+              [opciones]="opcionesVistaFlujos"
+              [valor]="vistaFlujos()"
+              (valorChange)="elegirVistaFlujos($event)"
+            />
+          }
+
+          @if (tabConfig() === 'flujos' && vistaFlujos() === 'area') {
+            <app-flujos-torre
+              [flujos]="estadoProto.flujosPorTipo()"
+              [puedeEditar]="puedeEditarWorkflow()"
+              (editar)="abrirEditorFlujo($event)"
+            />
+          }
+
+          @if (tabConfig() === 'flujos' && vistaFlujos() === 'tabla') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Flujos por tipo de ticket"
-                subtitulo="Cada cambio publica una versión nueva (vN+1); los tickets abiertos conservan la suya."
+                [subtitulo]="puedeEditarWorkflow()
+                  ? 'Cada cambio publica una versión nueva (vN+1); los tickets abiertos conservan la suya.'
+                  : 'Solo lectura. Los tickets abiertos conservan la versión con la que se crearon.'"
                 nivel="h2"
                 [separador]="true"
               />
@@ -240,18 +268,20 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let f = comoFlujo(fila);
-                    <div class="pl-atc-acciones-celda">
-                      <ay-button tamano="sm" variante="secondary" (click)="abrirEditorFlujo(f)">
-                        Editar
-                      </ay-button>
-                    </div>
+                    @if (puedeEditarWorkflow()) {
+                      <div class="pl-atc-acciones-celda">
+                        <ay-button tamano="sm" variante="secondary" (click)="abrirEditorFlujo(f)">
+                          Editar
+                        </ay-button>
+                      </div>
+                    }
                   </ng-template>
                 </ay-table>
               </ay-card-body>
             </ay-card>
           }
 
-          @if (tabConfig() === 'guias') {
+          @if (puedeEditarWorkflow() && tabConfig() === 'guias') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Guías de solución"
@@ -304,7 +334,7 @@ export type SubvistaEspecializadaAtc =
             </ay-card>
           }
 
-          @if (tabConfig() === 'alertas') {
+          @if (puedeEditarWorkflow() && tabConfig() === 'alertas') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Alertas para el administrador"
@@ -2106,7 +2136,20 @@ export class VistaEspecializadaComponent {
 
   /* ── Pestañas de cada vista 5181 ── */
   readonly tabConfig = signal<string>('flujos');
-  readonly tabsConfiguracion = computed<AyTabsElemento[]>(() => [
+  /** Coordinador CX consulta los flujos; el resto de pestañas y la edición son del Admin Funcional y el Supervisor. */
+  readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.estadoProto.rolActivo()));
+  readonly puedeVerWorkflow = computed(() => this.puedeEditarWorkflow() || this.estadoProto.rolActivo() === 'COORDINADOR_CX');
+  private readonly vistaFlujosElegida = signal<'area' | 'tabla' | null>(null);
+  /** Quien edita abre en la tabla; quien solo consulta, en la vista por área. */
+  readonly vistaFlujos = computed(() => this.vistaFlujosElegida() ?? (this.puedeEditarWorkflow() ? 'tabla' : 'area'));
+  elegirVistaFlujos(v: string): void {
+    this.vistaFlujosElegida.set(v === 'tabla' ? 'tabla' : 'area');
+  }
+  readonly opcionesVistaFlujos: AySegmentoOpcion[] = [
+    { valor: 'area', etiqueta: 'Por área' },
+    { valor: 'tabla', etiqueta: 'Tabla' },
+  ];
+  readonly tabsWorkflow = computed<AyTabsElemento[]>(() => [
     { value: 'flujos', label: 'Flujos', contador: this.estadoProto.flujosPorTipo().length },
     { value: 'guias', label: 'Guías', contador: this.estadoProto.guiasPorTipo().length },
     { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
@@ -2145,7 +2188,7 @@ export class VistaEspecializadaComponent {
   readonly columnasFlujosConfig: readonly AyColumna[] = [
     { clave: 'nombreTipo', cabecera: 'Tipo de ticket', ancho: '14rem', ordenable: true },
     { clave: 'area', cabecera: 'Área receptora', ancho: '9rem', ordenable: true },
-    { clave: 'version', cabecera: 'Versión', ancho: '6rem', ordenable: true },
+    { clave: 'versionActual', cabecera: 'Versión', ancho: '6rem', ordenable: true },
     { clave: 'pasos', cabecera: 'Pasos y responsables' },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '7rem' },
   ];
@@ -2271,7 +2314,7 @@ export class VistaEspecializadaComponent {
     { clave: 'state', cabecera: 'Estado / Acciones Postventa', alineacion: 'end', ancho: '19rem' },
   ];
 
-  /* ── Estado de edición de Configuración (Flujos y Guías) ── */
+  /* ── Estado de edición de Workflow (Flujos y Guías) ── */
   readonly flujoEditando = signal<FlujoTipoConfig | null>(null);
   readonly editFlujoArea = signal<string>('ATC');
   readonly editFlujoPasos = signal<PasoFlujoConfig[]>([]);
@@ -2599,7 +2642,7 @@ export class VistaEspecializadaComponent {
     return f.pasos.map((p, i) => `${i + 1}. ${p.nombre} (${p.responsable}, ${p.horas} h)`).join(' → ');
   }
 
-  /* ── Acciones de Configuración (Flujos y Guías) ── */
+  /* ── Acciones de Workflow (Flujos y Guías) ── */
   abrirEditorFlujo(f: FlujoTipoConfig): void {
     this.flujoEditando.set(f);
     this.editFlujoArea.set(f.area);

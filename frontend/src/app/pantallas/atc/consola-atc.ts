@@ -83,7 +83,6 @@ import { VistaC360Component, type DestinoRedireccionNodo } from './vista-c360';
 import { VistaEspecializadaComponent } from './vista-especializada';
 import { VistaOperacionComponent } from './vista-operacion';
 import { VistaVivoComponent } from './vista-vivo';
-import { VistaFlujosAreaComponent } from './vista-flujos-area';
 import { AsistenteBotAtcComponent } from './asistente-bot-atc';
 import {
   EstadoPrototipoAtcService,
@@ -148,7 +147,6 @@ interface ItemMenuAtc {
     BotonTema,
     VistaC360Component,
     VistaVivoComponent,
-    VistaFlujosAreaComponent,
     VistaOperacionComponent,
     VistaEspecializadaComponent,
     AsistenteBotAtcComponent,
@@ -626,9 +624,9 @@ interface ItemMenuAtc {
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
-            @case ('configuracion') {
+            @case ('workflow') {
               <app-vista-especializada
-                subvista="configuracion"
+                subvista="workflow"
                 [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
@@ -674,9 +672,6 @@ interface ItemMenuAtc {
                 (irANuevo)="vistaActiva.set('nuevo')"
                 (verAreaEnVivo)="abrirVivoEnArea($event)"
               />
-            }
-            @case ('flujos') {
-              <app-vista-flujos-area (irAConfiguracion)="vistaActiva.set('configuracion')" />
             }
           }
         </div>
@@ -1331,10 +1326,10 @@ export class ConsolaAtcComponent {
       ],
       nuevo: [
         'El cálculo de SLA en horas hábiles queda congelado al momento de la apertura según la versión vigente de la matriz en Políticas SLA.',
-        'El flujo configurado en Configuración determina el área inicial del ticket.',
+        'El flujo configurado en Workflow determina el área inicial del ticket.',
       ],
       detalle: [
-        'Muestra la versión de Guía de solución publicada en Configuración y permite reportar falta de guía hacia Alertas de Configuración.',
+        'Muestra la versión de Guía de solución publicada en Workflow y permite reportar falta de guía hacia Alertas de Workflow.',
         'El historial de estados del ticket es inmutable y auditable.',
       ],
       morosidad: [
@@ -1367,8 +1362,8 @@ export class ConsolaAtcComponent {
       politicas: [
         'Matriz parametrizable de Políticas SLA. Todo cambio aquí actualiza de inmediato el SLA congelado al registrar un Nuevo Ticket.',
       ],
-      configuracion: [
-        'Flujos por tipo, Guías de solución versionadas y Alertas de configuración. Publicar una versión impacta en Nuevo Ticket y Detalle.',
+      workflow: [
+        'Workflow: Flujos por tipo (vista por área y tabla), Guías de solución versionadas y Alertas. Publicar una versión impacta en Nuevo Ticket y Detalle.',
       ],
       urbemind: [
         'Integración CTI UrbeMind con webhook HMAC-SHA256 e idempotencia por callId.',
@@ -1521,13 +1516,6 @@ export class ConsolaAtcComponent {
       subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
       icono: 'M18 20V10 M12 20V4 M6 20v-6',
     },
-    {
-      id: 'flujos',
-      grupo: 'SUPERVISION',
-      titulo: 'Flujos por área',
-      subtitulo: 'Flujos activos por área resolutora, sincronizados con Configuración',
-      icono: 'M6 3v6 M6 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M18 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M6 15v3a3 3 0 0 0 3 3h6 M18 15v-3',
-    },
   ];
 
   readonly menuGestion: readonly ItemMenuAtc[] = [
@@ -1539,11 +1527,11 @@ export class ConsolaAtcComponent {
       icono: 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
     },
     {
-      id: 'configuracion',
+      id: 'workflow',
       grupo: 'GESTION',
-      titulo: 'Configuración',
-      subtitulo: 'Flujos por tipo, guías de solución versionadas y alertas de configuración',
-      icono: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.65 1.65 0 0 0 .33 1.82',
+      titulo: 'Workflow',
+      subtitulo: 'Flujos por tipo y área resolutora, guías de solución versionadas y alertas',
+      icono: 'M6 3v6 M6 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M18 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M6 15v3a3 3 0 0 0 3 3h6 M18 15v-3',
     },
   ];
 
@@ -1678,7 +1666,7 @@ export class ConsolaAtcComponent {
       if (id === 'bandeja') return String(this.ticketsVisibles().length);
       if (id === 'tudia') return 'Hoy';
       if (id === 'alertas' && alertasAbiertas > 0) return String(alertasAbiertas);
-      if (id === 'configuracion' && alertasConfigPend > 0) return String(alertasConfigPend);
+      if (id === 'workflow' && alertasConfigPend > 0 && this.estadoProto.rolActivo() !== 'COORDINADOR_CX') return String(alertasConfigPend);
       if (id === 'libro') return String(this.estadoProto.asientosLibroDetalle().length);
       if (id === 'sgd')
         return String(

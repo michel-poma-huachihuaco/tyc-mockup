@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import type { PasoFlujoConfig } from './estado-prototipo-atc';
 
 /**
- * Pasos de un flujo para la columna «Pasos y responsables» de Configuración: una cadena de
+ * Pasos de un flujo para la columna «Pasos y responsables» de Workflow: una cadena de
  * chevrones con el ancho proporcional a las horas y un color por responsable.
  */
 @Component({

@@ -18,7 +18,7 @@ export interface CambioPaso {
 }
 
 /**
- * Editor de los pasos de un flujo (modal de Configuración): un riel vertical con un nodo por
+ * Editor de los pasos de un flujo (modal de Workflow): un riel vertical con un nodo por
  * paso y «Relevo» donde cambia de manos. El área, el responsable
  * y el SLA caen en las mismas columnas.
  */

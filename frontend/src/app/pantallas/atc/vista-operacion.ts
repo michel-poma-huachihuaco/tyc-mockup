@@ -924,7 +924,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               </ay-card>
             </div>
 
-            <!-- Lateral derecho: SLA que se congelará + Flujo de Configuración -->
+            <!-- Lateral derecho: SLA que se congelará + Flujo de Workflow -->
             <div ayStack gap="4">
               <ay-card superficie="solid">
                 <ay-card-header
@@ -937,7 +937,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                   <ay-card-pairs [pares]="paresPreviewSlaCongelado()" />
                   @if (previewPoliticaSla().origen === 'global') {
                     <ay-alert tono="warning" size="sm" titulo="Sin política específica para este tipo">
-                      «{{ nombreTipo(formTipo()) }}» no tiene política activa: se aplicará la genérica global y se registrará una alerta en Configuración.
+                      «{{ nombreTipo(formTipo()) }}» no tiene política activa: se aplicará la genérica global y se registrará una alerta en Workflow.
                     </ay-alert>
                   }
                   @if (esTipoLibro()) {
@@ -951,14 +951,14 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               <ay-card superficie="solid">
                 <ay-card-header
                   titulo="Flujo configurado que se aplicará"
-                  [subtitulo]="'Configuración › Flujos · v' + previewFlujoConfig().versionActual"
+                  [subtitulo]="'Workflow › Flujos · v' + previewFlujoConfig().versionActual"
                   nivel="h2"
                   [separador]="true"
                 />
                 <ay-card-body padding="sm" gap="sm">
                   <ay-card-pairs [pares]="paresPreviewFlujoConfig()" />
                   <span ayText="body" size="xs">
-                    Si el Administrador Funcional publica una nueva versión del flujo en Configuración, los nuevos tickets usarán esa versión automáticamente.
+                    Si el Administrador Funcional publica una nueva versión del flujo en Workflow, los nuevos tickets usarán esa versión automáticamente.
                   </span>
                 </ay-card-body>
               </ay-card>
@@ -1110,7 +1110,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               </div>
             </div>
 
-            <!-- Columna derecha: Guía de solución (conectada a Configuración), Asistente IA y Timeline -->
+            <!-- Columna derecha: Guía de solución (conectada a Workflow), Asistente IA y Timeline -->
             <div ayStack gap="4">
               <div ayStack gap="2">
                 <ay-card superficie="solid">
@@ -1132,7 +1132,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                     @if (guiaConfigDeTicket(t.type); as guiaCfg) {
                       @if (guiaCfg.versionActual !== null) {
                         <div ayStack gap="2">
-                          <strong ayText="label" size="xs">Pasos publicados en Configuración</strong>
+                          <strong ayText="label" size="xs">Pasos publicados en Workflow</strong>
                           <ay-list
                             etiqueta="Pasos recomendados"
                             [ordenada]="true"
@@ -1162,7 +1162,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         }
                       } @else {
                         <ay-alert tono="warning" size="sm" titulo="Sin guía publicada">
-                          Este tipo de ticket («{{ nombreTipo(t.type) }}») no tiene guía publicada. Ya se avisó al Administrador Funcional en Configuración › Alertas.
+                          Este tipo de ticket («{{ nombreTipo(t.type) }}») no tiene guía publicada. Ya se avisó al Administrador Funcional en Workflow › Alertas.
                         </ay-alert>
                       }
                     }

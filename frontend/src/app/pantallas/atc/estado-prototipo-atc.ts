@@ -543,9 +543,9 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     area: 'ADMINISTRACION',
     rol360: 'supervisor',
     nodoInicial360: 'contrato',
-    vistaPrincipal: 'configuracion',
+    vistaPrincipal: 'workflow',
     resumenPerspectiva:
-      'Gobierno de Configuración: versionado de Flujos de atención por tipo de ticket, publicación de Guías de solución e inspección de Alertas de configuración.',
+      'Gobierno del Workflow: versionado de Flujos de atención por tipo de ticket, publicación de Guías de solución e inspección de Alertas.',
   },
   {
     id: 'CONTROL_ACCESO',
@@ -660,7 +660,7 @@ export class EstadoPrototipoAtcService {
     },
   ];
 
-  /* ── 1. Configuración reactiva: Flujos, Guías y Alertas del Administrador ── */
+  /* ── 1. Workflow reactivo: Flujos, Guías y Alertas del Administrador ── */
   readonly flujosPorTipo = signal<FlujoTipoConfig[]>([
     {
       tipo: 'CTA',
@@ -1983,11 +1983,11 @@ export class EstadoPrototipoAtcService {
     if (rol === 'SUPERVISOR') {
       vistas.push('politicas');
     }
-    if (rol === 'ADMIN_FUNCIONAL' || rol === 'SUPERVISOR') {
-      vistas.push('configuracion');
+    if (['ADMIN_FUNCIONAL', 'SUPERVISOR', 'COORDINADOR_CX'].includes(rol)) {
+      vistas.push('workflow');
     }
     if (['COORDINADOR_CX', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('torre', 'flujos');
+      vistas.push('torre');
     }
     if (['COORDINADOR_CX', 'MODERADOR_EVENTO', 'SUPERVISOR'].includes(rol)) {
       vistas.push('evento');
@@ -1995,7 +1995,7 @@ export class EstadoPrototipoAtcService {
     return vistas;
   }
 
-  /* ── Métodos que conectan Configuración y Políticas SLA con el resto de vistas ── */
+  /* ── Métodos que conectan Workflow y Políticas SLA con el resto de vistas ── */
   obtenerFlujoActivo(tipo: string): FlujoTipoConfig {
     return (
       this.flujosPorTipo().find((f) => f.tipo === tipo) ?? {

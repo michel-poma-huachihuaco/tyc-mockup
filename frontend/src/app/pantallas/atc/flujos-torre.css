@@ -14,6 +14,8 @@
 
 .ft__sala-cab, .ft__flujo-cab, .ft__resp { display: flex; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); }
 
+.ft__editar { margin-inline-start: auto; }
+
 .ft__sala-nombre {
   margin: 0;
   font-size: var(--aybar-font-size-sm);

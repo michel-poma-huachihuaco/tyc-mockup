@@ -21,10 +21,9 @@ export type VistaAtc =
   | 'alertas'
   | 'cierre'
   | 'politicas'
-  | 'configuracion'
+  | 'workflow'
   | 'urbemind'
   | 'torre'
-  | 'flujos'
   | 'evento';
 
 export interface EmpresaAybar {
