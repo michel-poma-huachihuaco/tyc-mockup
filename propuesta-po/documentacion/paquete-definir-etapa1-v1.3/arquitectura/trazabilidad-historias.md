@@ -5,9 +5,9 @@ titulo: "Trazabilidad de las historias de Nexora al paquete G3"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
 version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-22"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, trazabilidad, g3]
 ---
@@ -27,7 +27,7 @@ Contraste del 20-oct-2026 entre las **62 historias publicadas en PJ-06** (carpet
 | Reglas de seguridad y de contenido, y tiempos de respuesta | `arquitectura/seguridad.md` |
 | Preguntas abiertas (58 en 25 historias y 23 de las funcionalidades) y decisiones D-008, P-018 y P-019 | `analisis/decisiones.md` |
 | Requisitos no funcionales con umbral (31) y estado de DoR de las 23 funcionalidades | esta página |
-| 61 operaciones de API (antes 28), con campos y errores de los criterios | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
+| 59 operaciones de API en el contrato v0.3 (antes 61 y 28), con campos y errores de los criterios | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
 
 Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecanismo si la historia no tiene API propia); «Datos» son tablas y columnas del v7 o la falta de ellas; «Falta» es lo que impide cerrar la historia en G3. Una historia con «Sin tabla en el v7» no tiene todavía dónde guardar sus datos: depende de que Gobierno de Datos decida su tabla (P-016).
 
@@ -40,13 +40,13 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 | HU-005 | Registrar interacciones visibles o internas con evidencia | 1.3 | 4 (2 del PO) | `registrarInteraccion` | `SVC_TICKET_INTERACTION`, `FirstRespondedDateTime` | seguridad.md (DLP); ADR-006 | Tipo de las columnas |
 | HU-006 | Conservar los hitos temporales probatorios | 1.3 | 2 | `obtenerTicket` | Hitos de `SVC_TICKET` (`FirstResolvedDateTime`, `ResolvedDateTime`, `ClosedDateTime`) | estados.md | Tipos de columna (los nombres están en el Excel, RF-SVC-006, y en el PLT-04 §6.5) |
 | HU-007 | Derivar un ticket a otra área con motivo tipificado | 1.3 | 3 (1 del PO) | `derivarTicket` | `SVC_TICKET_ASSIGNMENT_LOG` (`AssignedToPartyID`, motivo), `CurrentAreaID` | ADR-002 | Lista de motivos: el Excel (`SVC_ASSIGNMENT_REASON`) y el PLT-04 usan códigos distintos; la fija el PO |
-| HU-008 | Reasignar en bloque los tickets de un colaborador que cesa | 1.3 | 3 (1 del PO) | `reasignarEnBloque` | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CESE`) | ADR-009 (maestro local); HU-055 (un correo por gestor) | Quién es supervisor (DEP-02); código del motivo (el Excel usa `REASSIGNMENT_TERMINATION`, `REASSIGNMENT_RESIGNATION` y `REASSIGNMENT_ROTATION`) |
+| HU-008 | Reasignar en bloque los tickets de un colaborador que cesa | 1.3 | 3 (1 del PO) | `reasignarEnBloque` | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CESE`) | ADR-009 (el rol de supervisor viene en el token de Control de acceso); HU-055 (un correo por gestor) | Quién es supervisor (Control de acceso, DEP-16); código del motivo (el Excel usa `REASSIGNMENT_TERMINATION`, `REASSIGNMENT_RESIGNATION` y `REASSIGNMENT_ROTATION`) |
 | HU-009 | Ver mi casillero de tareas por área y responsable | 1.3 | 3 (1 del PO) | `listarCasillero` | `CurrentAreaID` + `CurrentOwnerPartyID` | ADR-012 (vista de lectura) | Definición de «en riesgo» |
 | HU-010 | Recibir una sola alerta por incumplimiento de SLA | 1.3 | 3 (1 del PO) | `consultarSla` | `SVC_SLA_BREACH_ALERT` (`FIRST_RESPONSE_OVERDUE`) | ADR-005 (job y lista de controles) | Tipo de `ReopenCycleNumber` (el Excel ya nombra la columna del ciclo, RN-SVC-008) |
 | HU-011 | Reabrir un ticket con un nuevo compromiso sin borrar el original | 1.3 | 2 | `reabrirTicket` | `ReopenedResolutionDueDateTime`, `ReopenCount` | estados.md | Tipos de columna (los nombres están en el Excel, RF-SVC-011 y RN-SVC-007) |
 | HU-012 | Registrar el asiento del Libro de Reclamaciones | 1.3 | 3 (1 del PO) | `registrarAsiento` | `SVC_COMPLAINT_BOOK_ENTRY` (correlativo por establecimiento, `CurrencyID`) | ADR-002 | Validación legal (DEP-05) |
 | HU-013 | Calcular el plazo legal y gestionar la prórroga única | 1.3 | 4 (2 del PO) | `prorrogarPlazo` | `SVC_COMPLAINT_BOOK_ENTRY` (`ExtensionCommunicationChannelID`, justificación, cargo, fechas) | ADR-005; estados.md | Historial del plazo sin tabla propia |
-| HU-014 | Registrar la respuesta formal con cargo | 1.3 | 3 (1 del PO) | `registrarRespuestaFormal` | `ResponderPartyID`, carta y cargo en `GOV_DOCUMENT_REPOSITORY` | ADR-006 (S3 con Object Lock) | Repositorio y firma (DEP-06) |
+| HU-014 | Registrar la respuesta formal con cargo | 1.3 | 3 (1 del PO) | `registrarRespuestaFormal` | `ResponderPartyID`, carta y cargo en `GOV_DOCUMENT_REPOSITORY` | ADR-006 (Azure Blob con inmutabilidad) | Repositorio y firma (DEP-06) |
 | HU-015 | Vigilar el plazo legal y detectar reclamos huérfanos | 1.3 | 3 (1 del PO) | Job de plazo legal (ADR-005) | `SVC_SLA_BREACH_ALERT` (`LEGAL_EXTENSION_WINDOW_CLOSING`), `GOV_INTEGRITY_EXCEPTION` (`ORPHAN_REFERENCE`), `RequiresComplaintBook` | ADR-005 (3 días hábiles, control diario, plazo prorrogado) | Ninguno de datos: los valores están en el Excel (`SVC_SLA_BREACH_TYPE`, RF-SVC-010; tipos de excepción, ENT-GOV-001) |
 | HU-016 | Dar seguimiento a apelaciones internas y ante INDECOPI | 1.3 | 3 (1 del PO) | `registrarApelacion`, `cambiarEstadoApelacion` | `SVC_COMPLAINT_APPEAL` (`IndecopiCaseNumber`) y su bitácora (`WITHDRAWN`) | estados.md | Código de la instancia interna (el Excel solo nombra `INDECOPI`); los 5 estados ya están en el Excel (`SVC_COMPLAINT_APPEAL_STATUS`) |
 | HU-019 | Disparar la encuesta al cerrar el ticket | 1.3 | 3 (1 del PO) | Evento `ticket.closed` → encuesta (DEP-10) | `SVY_SURVEY_RESPONSE` (`SubjectEntityName`) | ADR-013 (evento de cierre); linaje.md | Columnas de la encuesta (DEP-10) |
@@ -91,7 +91,7 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 | HU-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; carta desde plantilla (DEP-15) | Carta en `GOV_DOCUMENT_REPOSITORY` | ADR-013 | Maestro de responsables de proyecto (DEP-15) |
 | HU-059 | Registrar el ingreso de una persona al proyecto | 1.3 | 3 (1 del PO) | `registrarIngreso` | Formulario simple sin tabla (propuesta `SVC_SIMPLE_FORM_DEFINITION`) | ADR-001 | Funcionamiento sin conexión del celular |
 | HU-060 | Reservar un cupo en el bus del Entrega Fest | 1.3 | 3 (1 del PO) | `reservarBus`, `cancelarReserva` | `EVT_ATTENDEE` + `EVT_TRANSPORT` (candidatas) | ADR-001 | Aforo y alcance de «Buses entrega fest» |
-| HU-064 | Registrar y consultar mis tickets en Mi Portal | 1.3 | 5 (5 del PO) | `solicitarCodigo`, `abrirSesion`, `listarMisTickets`, `registrarMiTicket`, `listarTiposPortal` | `SVC_TICKET` (canal Mi Portal, subtipo); adjuntos en S3 | ADR-011; seguridad.md (10 MB) | Tipos y subtipos del piloto; canal del código |
+| HU-064 | Registrar y consultar mis tickets en Mi Portal | 1.3 | 5 (5 del PO) | `listarMisTickets`, `registrarMiTicket`, `listarTiposPortal` | `SVC_TICKET` (canal Mi Portal, subtipo); adjuntos en Azure Blob (ADR-006) | ADR-011; seguridad.md (10 MB) | Tipos y subtipos del piloto; el login es de Control de acceso (DT-04) |
 | HU-065 | Ver la trazabilidad de mi ticket | 1.3 | 4 (4 del PO) | `verTrazabilidad` | `SVC_TICKET_STATUS_LOG` (visibles), `SVC_TICKET_INTERACTION` (visible) | ADR-011; ADR-013 | Nombre del área o genérico (pregunta abierta) |
 | HU-066 | Responder, adjuntar y confirmar la solución de mi ticket | 1.3 | 4 (4 del PO) | `responderMiTicket`, `confirmarSolucion` | `SVC_TICKET_INTERACTION` (autor cliente), `REOPENED` | ADR-011; estados.md (cierre automático) | Días hábiles de espera |
 | HU-067 | Ver el proceso de atención en un visor 3D (operación en vivo) | 1.3 | 10 (10 del PO) | `estadoVisor` | Solo lectura: tickets, estados, asignaciones, alertas, áreas | ADR-010; ADR-012 (5 s) | Áreas de la sede del piloto |
@@ -130,7 +130,7 @@ Salen de la sección 3 de las 23 funcionalidades de Nexora (53 filas, 31 umbrale
 | RNF-AUD-005 | Constancia de alertas y cartas de resolución | alertas_con_constancia: 100 % | FT-22 | ADR-013 y ADR-006 (constancia de alertas) |
 | RNF-USA-004 | Formulario simple y móvil | tiempo_completar_formulario: ≤ 1 min; máximo 6 campos obligatorios | FT-23 | Formularios simples (HU-059, HU-060; G2) |
 | RNF (propio de la FT) | Mi Portal adaptable a celular: registrar un ticket en pocos pasos | Registro completo en ≤ 3 min desde un celular (prueba con 5 clientes) | FT-24 | ADR-011 (Mi Portal) y G2 |
-| RNF (propio de la FT) | Acceso del cliente con código de un solo uso | Código de 6 dígitos, vence en 5 min, máximo 3 intentos | FT-24 | ADR-011 (Mi Portal) y G2 |
+| RNF (propio de la FT) | Acceso del cliente con código de un solo uso | Código de 6 dígitos, vence en 5 min, máximo 3 intentos | FT-24 | ADR-011 (Mi Portal) y G2. Con DT-04 lo cumple Control de acceso o el PO reescribe el criterio (P-027) |
 | RNF (propio de la FT) | Actualización del visor en tiempo real | Desfase ≤ 5 s con 200 tickets activos y 30 FPS en un equipo estándar | FT-25 | ADR-010 (visor 3D) |
 | RNF (propio de la FT) | Vista 2D alternativa accesible | Misma información por área; WCAG 2.1 AA | FT-25 | ADR-010 (visor 3D) |
 
@@ -141,11 +141,11 @@ Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalú
 | Funcionalidad | Nombre | Resultado (PLT-05) | Condición | Decisión del DoR |
 |---|---|---|---|---|
 | FT-01 | Registro multicanal y tipificación | CON CONDICIONES | DEP-01 contrato + simulador | NO READY |
-| FT-02 | Ciclo de vida, interacciones e hitos | CON CONDICIONES | DEP-02 maestro local de roles | NO READY |
-| FT-03 | Derivación, reasignación y casillero | CON CONDICIONES | DEP-02 maestro local | NO READY |
+| FT-02 | Ciclo de vida, interacciones e hitos | CON CONDICIONES | DEP-16 Control de acceso (roles en el token; reemplaza a DEP-02) | NO READY |
+| FT-03 | Derivación, reasignación y casillero | CON CONDICIONES | DEP-16 Control de acceso (reemplaza a DEP-02) | NO READY |
 | FT-04 | Motor SLA y alertas | CON CONDICIONES | DEP-03 matriz provisional al 20-oct | NO READY |
 | FT-05 | Libro de Reclamaciones | CON CONDICIONES | DEP-05 textos al lun 26-oct | NO READY |
-| FT-06 | Apelaciones internas e INDECOPI | CON CONDICIONES | DEP-06 S3 | NO READY |
+| FT-06 | Apelaciones internas e INDECOPI | CON CONDICIONES | DEP-06 repositorio documental (Azure Blob, ADR-006) | NO READY |
 | FT-07 | Gate de derivación a Eje 3 y handoff | CON CONDICIONES | DEP-01 · DEP-08 | NO READY |
 | FT-08 | Mesa SGD: recepción, activación y riesgo | CON CONDICIONES | Plazos de línea SGD (DEP-03) | NO READY |
 | FT-09 | Escalamiento, vinculación y cierre tipificado | CON CONDICIONES | Umbrales de escalamiento | NO READY |
@@ -158,7 +158,7 @@ Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalú
 | FT-18 | Bandeja orquestadora y flujos por área | CON CONDICIONES | Push o pull · quién marca el rayo | NO READY |
 | FT-19 | Asistencia al gestor: guía e IA | CON CONDICIONES | DEP-14 proveedor de IA | NO READY |
 | FT-20 | Búsqueda y consulta 360 del cliente | CON CONDICIONES | DEP-01 · DEP-13 · «llamar la cuenta» | NO READY |
-| FT-21 | Productividad y notificaciones del gestor | CON CONDICIONES | DEP-02 líder de cada gestor | NO READY |
+| FT-21 | Productividad y notificaciones del gestor | CON CONDICIONES | DEP-16 líder de cada gestor (API de Control de acceso; reemplaza a DEP-02) | NO READY |
 | FT-22 | Resolución de contrato por morosidad | CON CONDICIONES | DEP-08 · DEP-15 · causal legal | NO READY |
 | FT-23 | Formularios simples: ingreso al proyecto y Entrega Fest | CON CONDICIONES | Alcance de «buses» · conectividad | NO READY |
 | FT-24 | Autogestión de tickets del cliente en Mi Portal | CON CONDICIONES | Acceso del cliente (ADR-11) · DEP-01 contacto · diseño de Mi Portal | NO READY |
@@ -170,3 +170,5 @@ Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalú
 - Todo sigue **pendiente de aprobación**: 0 aprobados en las carpetas `analisis`, `roadmap`, `epicas`, `features`, `historias`, `dor`, `adr`, `arquitectura`, `datos` y `gates`.
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: columnas y listas que ya da el Excel, conflictos abiertos señalados y sin referencias a versiones anteriores. — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04, DT-07 y ADR-001 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)

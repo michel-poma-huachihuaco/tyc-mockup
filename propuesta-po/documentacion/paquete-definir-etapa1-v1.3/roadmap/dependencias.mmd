@@ -1,7 +1,7 @@
 flowchart LR
   subgraph Deps["Dependencias del producto (PLT-01 v1.3)"]
     DEP01["DEP-01 · SIGDA/TAXON<br/>21-oct · Pendiente"]
-    DEP02["DEP-02 · Roles locales<br/>21-oct · Pendiente"]
+    DEP16["DEP-16 · Control de acceso<br/>21-oct · Pendiente"]
     DEP03["DEP-03 · Matriz SLA<br/>22-oct · Pendiente"]
     DEP04["DEP-04 · Calendario<br/>22-oct · En curso"]
     DEP05["DEP-05 · Validación legal<br/>26-oct · Pendiente"]
@@ -32,9 +32,9 @@ flowchart LR
   DEP01 --> EPATC04
   DEP01 --> EPATC06
   DEP01 --> EPATC10
-  DEP02 --> EPATC01
-  DEP02 --> EPATC02
-  DEP02 --> EPATC09
+  DEP16 --> EPATC01
+  DEP16 --> EPATC02
+  DEP16 --> EPATC09
   DEP03 --> EPATC02
   DEP03 --> EPATC04
   DEP04 --> EPATC02
@@ -67,7 +67,7 @@ flowchart LR
   classDef eval fill:#EEEEEE,stroke:#777,color:#333,stroke-dasharray:4 3
   classDef ep fill:#02424E,stroke:#012F38,color:#FFFFFF
   class DEP01 pend
-  class DEP02 pend
+  class DEP16 pend
   class DEP03 pend
   class DEP04 curso
   class DEP05 pend

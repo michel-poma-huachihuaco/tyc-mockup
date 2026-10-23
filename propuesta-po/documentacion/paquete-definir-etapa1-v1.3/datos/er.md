@@ -5,9 +5,9 @@ titulo: "Diagrama entidad-relación de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
 version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-22"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, er, g3]
 ---
@@ -180,7 +180,9 @@ erDiagram
 - `SVC_COMPLAINT_BOOK_ENTRY` es una extensión 1:1 de `SVC_TICKET`: su PK es `TicketID`, que a la vez es FK.
 - Las bitácoras (`*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`) tienen PK propia y una fila por cambio. El Excel del PO pide firmar 5 bitácoras append-only (RNF-AUD-004): las tres `*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG` y `SVC_SLA_BREACH_ALERT`; el v7 dice 4 firmadas en SERVICE: se concilia con Gobierno de Datos.
 - `SVC_COMPLAINT_APPEAL` es 1 a N por asiento: así lo dibuja el PLT-04 v1.3 (HU-016 §6.5) y lo permite el esquema de claves del v7.
-- **Conflicto abierto con el ADR-03 del PO: decide el líder técnico.** `SVC_TICKET.PartyID` se dibuja como clave foránea a `PARTY` del v7. El PO fija SIGDA/TAXON como única fuente del cliente, sin registros paralelos (RN-SVC-026, RNF-INT-007), y admite tickets de «Interesado» sin cliente vinculado (HU-051). Aquí no se decide si `PARTY` es la fuente viva ni si la clave es obligatoria (ver el diccionario, C-1).
-- El outbox (`INTG_OUTBOX_EVENT`, fragmento INTEGRATION-HUB) y la identidad (fragmento IDENTITY-ACCESS) viven fuera de SERVICE; no se redibujan aquí.
+- **`PARTY` es la fuente viva del cliente (DT-06, 22-oct).** `SVC_TICKET.PartyID` es clave foránea física a `PARTY` del v7: es una referencia, no una copia. El PO reescribe el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 (P-021, P-027). El ticket del «Interesado» (HU-051) se registra con una `PARTY` no verificada (R29 de PJ-05, según el Líder Técnico); quién la escribe sigue abierto (P-031). Ver el diccionario, C-1.
+- El outbox (`INTG_OUTBOX_EVENT` del fragmento INTEGRATION-HUB, o `SVC_OUTBOX_EVENT` propia si no sirve, ADR-013) y la identidad (Control de acceso; ATC no crea tablas de identidad, C-11) viven fuera de SERVICE; no se redibujan aquí.
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: 5 bitácoras firmadas (RNF-AUD-004), cardinalidad de la apelación del PLT-04 y conflicto abierto por la clave a PARTY. — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-02, DT-03, DT-04 y DT-06 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)

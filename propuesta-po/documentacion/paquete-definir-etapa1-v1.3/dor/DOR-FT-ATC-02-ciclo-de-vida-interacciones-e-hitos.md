@@ -20,7 +20,7 @@ tags: [dor, plt-05, g4]
 | **Fecha de revisión** | **Sprint / release destino** | **Resultado** |
 | 2026-10-20 (comité DoR · cierre de la etapa de diseño) | v1.0 · Etapa 1 · 03-nov-2026 · Dev 1 · jue 22-oct | READY / NO READY: lo decide quien aprueba el DoR |
 
-Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-02 maestro local de roles.
+Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-02 maestro local de roles (la reemplaza la DEP-16, Control de acceso; sección 2).
 
 ## 1 Checklist de G4
 
@@ -31,7 +31,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-02 maestro
 | 3 | Reglas de negocio explícitas | [ ] | FT-ATC-02 sección 4 (5 reglas) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 3 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-02 |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-16 (reemplaza a DEP-02) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
 | 9 | Estimada por el equipo | [ ] | PLT-04: 13 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
@@ -42,7 +42,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-02 maestro
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-02 | Maestro local de usuarios, roles, áreas y líderes de ATC (carga inicial de RR. HH.) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-09 | Gerencia ATC · RR. HH. | 21-oct-2026 | Pendiente |
+| DEP-16 (propuesta) | Control de acceso (PJ-05): emisor de tokens, roles y permisos de ATC, y API de líderes y gestores. Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por decisión del Líder Técnico (DT-03) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-09 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 (la de la DEP-02) | Pendiente (nueva: sin fecha comprometida) |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -71,6 +71,8 @@ Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 si
 | ADR-10 | Visor 3D en el navegador (canvas isométrico) alimentado por eventos en tiempo real (WebSocket), con vista 2D alternativa | HU-067 (prioridad 3) · sin plugins ni GPU dedicada | Técnico | Propuesta |
 | ADR-11 | Mi Portal: acceso del cliente con DNI + código de un solo uso al contacto registrado en SIGDA/TAXON | HU-064 a 066 · Ley 29733 | Funcional y técnico | Propuesta |
 
+**Nota del 22-oct-2026:** este registro es el del PO (PLT-05 §4.4). El Líder Técnico lo cambió en `analisis/decisiones.md` v0.3 y en la carpeta `adr/` (hoy 14 ADR): ADR-01 usa el stack del SDK (Java y Angular, no NestJS), ADR-06 usa Azure Blob con inmutabilidad (no S3), ADR-09 pasa a Control de acceso (no hay maestro local) y ADR-11 usa el login de Control de acceso (no hay código propio de un solo uso).
+
 ## 5 Riesgos
 
 | ID | Riesgo | Prob. | Impacto | Mitigación | Dueño | Estado |
@@ -81,10 +83,10 @@ Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 si
 
 Decision: NO READY
 
-Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-02 maestro local de roles). El marco solo admite READY o NO READY: lo decide quien aprueba el DoR.
+Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-02 maestro local de roles; la reemplaza la DEP-16). El marco solo admite READY o NO READY: lo decide quien aprueba el DoR.
 
 Condiciones pendientes (solo si NO READY):
-- [ ] DEP-02 maestro local de roles (PLT-05)
+- [ ] DEP-16 Control de acceso, que reemplaza a la DEP-02 maestro local de roles (PLT-05)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -97,3 +99,5 @@ Condiciones pendientes (solo si NO READY):
 El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `origin/main`, o aprobado en Nexora.
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04 y DT-07 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)

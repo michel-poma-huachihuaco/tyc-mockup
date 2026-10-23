@@ -5,9 +5,9 @@ titulo: "Linaje de datos de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
 version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-22"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, linaje, g3]
 ---
@@ -18,21 +18,21 @@ Revisión del 20-oct-2026: las tablas son las del v7 (SERVICE y las que referenc
 
 | Dato | Fuente | Destino | Transformación y regla | Sensibilidad |
 |---|---|---|---|---|
-| Cliente y KYC | PARTY y COMPANY del modelo corporativo (el ticket guarda `PartyID`, `CompanyID`); SIGDA/TAXON (DEP-01) hasta confirmar cuál es el origen vivo. La clave foránea a `PARTY` es un conflicto abierto con el ADR-03 del PO: decide el líder técnico | Pantalla (consulta 360) | Consulta en línea con caché corta; **no se persiste** (ADR-003). El dato sensible está cifrado en `PARTY_SENSITIVE_DATA` (DAC) | Personal; permisos del origen |
+| Cliente y KYC | PARTY y COMPANY del modelo corporativo (el ticket guarda `PartyID`, `CompanyID`); `PARTY` es la fuente viva (DT-06); su relación con SIGDA/TAXON (DEP-01) la define el PO (P-021) | Pantalla (consulta 360) | Consulta en línea con caché corta; **no se persiste** (ADR-003). El dato sensible está cifrado en `PARTY_SENSITIVE_DATA` (DAC) | Personal; permisos del origen |
 | Ticket e interacciones | Gestor / cliente (Mi Portal) | PostgreSQL: `SVC_TICKET`, `SVC_TICKET_INTERACTION` | Escritura transaccional con evento en el outbox (ADR-013; `INTG_OUTBOX_EVENT` del v7) | Alta en texto libre |
 | Vistas de bandeja, búsqueda y tableros | PostgreSQL → evento | Almacén de lectura (API de MongoDB) | Proyector; solo referencias en el evento (ADR-012) | Sin datos personales de más |
 | Estados, asignaciones y alertas | Módulos de tickets y de SLA (job) | `SVC_TICKET_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`, `SVC_SLA_BREACH_ALERT` | Una fila por cambio; las tres son bitácoras firmadas con `IntegrityHash` (RNF-AUD-004; ADR-002) | Referencias |
 | Libro de Reclamaciones y apelaciones | Módulo de libro | `SVC_COMPLAINT_BOOK_ENTRY`, `SVC_COMPLAINT_APPEAL` y sus bitácoras | Extensión 1:1 del ticket; plazos 15 + 15 días hábiles con `MAE_TIME` y `MAE_HOLIDAY`; las dos bitácoras de estado son firmadas (RNF-AUD-004) | Alta |
-| Evidencia y cartas | Módulo de libro / casos | Almacenamiento de objetos con Object Lock; catálogo `GOV_DOCUMENT_REPOSITORY` | La carta va en `CompanyResponseDocumentPath`, con espejo, versión y checksum en `GOV_DOCUMENT_REPOSITORY` (RF-SVC-014; RNF-CUM-007; ADR-006) | Alta |
-| Eventos de cierre y SLA | Outbox (`INTG_OUTBOX_EVENT`) | KPI Engine (DEP-10), notificaciones, visor 3D, Mi Portal | Bus de eventos; solo referencias | Referencias |
-| Auditoría técnica | Módulos | Publicador de auditoría del SDK (log, archivo o almacenamiento de objetos) | Lista blanca: solo referencias y tipos permitidos. Auditoría de fila: `CreatedDate`, `UpdatedDate`, `LastChangeLogFile` (diff en S3, RNF-AUD-004) | Sin datos personales |
+| Evidencia y cartas | Módulo de libro / casos | Azure Blob Storage con inmutabilidad (ADR-006, DT-07); catálogo `GOV_DOCUMENT_REPOSITORY` | La carta va en `CompanyResponseDocumentPath`, con espejo, versión y checksum en `GOV_DOCUMENT_REPOSITORY` (RF-SVC-014; RNF-CUM-007; ADR-006) | Alta |
+| Eventos de cierre y SLA | Outbox (`INTG_OUTBOX_EVENT` o `SVC_OUTBOX_EVENT`, ADR-013) | KPI Engine (DEP-10), notificaciones, visor 3D, Mi Portal | Bus de eventos; solo referencias | Referencias |
+| Auditoría técnica | Módulos | Publicador de auditoría del SDK (log, archivo o S3/MinIO; en Azure, log o archivo: no tiene destino Blob, ADR-014) | Lista blanca: solo referencias y tipos permitidos. Auditoría de fila: `CreatedDate`, `UpdatedDate`, `LastChangeLogFile` (diff en el almacén de evidencia, RNF-AUD-004) | Sin datos personales |
 | Documentos del cliente indexados | Repositorio documental y GLI (DEP-06) | Índice de búsqueda con permisos | Indexación por significado; **por definir** qué repositorios | Alta |
 
 Un dato que viaja por un evento lleva solo referencias (el SDK no admite texto libre en el payload; Ley 29733).
 
 ## Eventos y métricas de analítica que piden las historias
 
-Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analítica» (PLT-04). Son 54 eventos o métricas en 62 historias; 8 historias dicen «sin evento específico». Los nombres y la carga son los del PLT-04: **el payload solo puede llevar referencias** (sin texto libre ni datos personales), así que campos como `autor` o `motivo` viajan como identificadores. Cómo se publican (outbox, ADR-013) y quién los consume (KPI Engine, DEP-10) sigue por decidir.
+Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analítica» (PLT-04). Son 54 eventos o métricas en 62 historias; 8 historias dicen «sin evento específico». Los nombres y la carga son los del PLT-04: **el payload solo puede llevar referencias** (sin texto libre ni datos personales), así que campos como `autor` o `motivo` viajan como identificadores. Se publican por el outbox del servicio (ADR-013, DT-02); los consume el KPI Engine (DEP-10), que sigue sin fecha comprometida.
 
 | Historia | Evento o métrica (carga) |
 |---|---|
@@ -92,3 +92,5 @@ Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analít
 | HU-067 | `visor3d_abierto {areas, filtro}` |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: bitácoras firmadas según RNF-AUD-004, columnas de la carta del Excel y conflicto abierto por la clave a PARTY. — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-02, DT-03, DT-04 y DT-06 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)

@@ -4,10 +4,10 @@ tipo: "roadmap"
 titulo: "Roadmap de producto - Aybar Atiende (plataforma ATC)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-21"
+fecha: "2026-10-22"
 relacionados: [AYB-0001]
 tags: [roadmap, plt-01, dependencias]
 ---
@@ -105,6 +105,7 @@ Horizonte:
 ## 2 Dependencias
 
 Fuente: PLT-01 v1.3 §3, con 14 dependencias. La numeración salta la DEP-09, que no es de la Etapa 1.
+**Cambio del 22-oct-2026:** la DEP-02 (maestro local de RR. HH.) se retira y la DEP-16 (Control de acceso, PJ-05) ocupa su lugar, según el Líder Técnico (DT-03, ADR-009). La DEP-16 es propuesta hasta que el PO la acepte (P-026 de `decisiones.md`).
 «Fecha requerida» es el inicio de la primera historia que bloquea la dependencia. El contrato de
 interfaz y el simulador de cada una se cierran en la etapa de diseño (20-oct).
 
@@ -115,11 +116,11 @@ Pendiente o Por evaluar, y ese estado se conserva entre paréntesis.
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida | Estado |
 |---|---|---|---|---|---|---|
 | DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato) | Interna | EP-01, EP-04, EP-06, EP-10 | CDO / Equipo Datos | 2026-10-21 | Pendiente (PLT-01: Pendiente) |
-| DEP-02 | Maestro local de usuarios, roles, áreas y líderes de ATC (carga inicial de RR. HH.) | Interna | EP-01, EP-02, EP-09 | Gerencia ATC · RR. HH. | 2026-10-21 | Pendiente (PLT-01: Pendiente) |
+| DEP-16 (propuesta) | Control de acceso (PJ-05): emisor de tokens, login, roles y permisos de ATC, y API de líderes y gestores. Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por decisión del Líder Técnico (DT-03) | Interna | EP-01, EP-02, EP-09 (como la DEP-02); además el login de Mi Portal en EP-06 (DT-04) | Área de Roles y Permisos (Sony Montoya) | 2026-10-21 (la de la DEP-02) | Pendiente (nueva: no está en el PLT-01; sin fecha comprometida) |
 | DEP-03 | Decisión de negocio: matriz SLA por tipo y prioridad y plazos de línea de la Mesa SGD (RNF-REN-003) | Interna | EP-02, EP-04 | Gerencia ATC · Mesa SGD | 2026-10-22 | Pendiente (PLT-01: Pendiente) |
 | DEP-04 | Calendario MAE_TIME + MAE_HOLIDAY por geografía | Técnica | EP-02, EP-03 | Equipo Datos | 2026-10-22 | Pendiente (PLT-01: En curso) |
 | DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro | Legal | EP-03, EP-11 | Gerencia Legal | 2026-10-26 | Pendiente (PLT-01: Pendiente) |
-| DEP-06 | Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-01, EP-03, EP-04, EP-10 | Arquitectura / Legal | 2026-10-23 | Pendiente (PLT-01: En curso) |
+| DEP-06 | Repositorio documental (Azure Blob con inmutabilidad, ADR-006) + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-01, EP-03, EP-04, EP-10 | Arquitectura / Legal | 2026-10-23 | Pendiente (PLT-01: En curso) |
 | DEP-07 | Contratos y Activos: API de contrato, unidad, Acta de Entrega y cobertura | Interna | EP-05 | Equipo Contratos | 2026-10-29 | Pendiente (PLT-01: Pendiente) |
 | DEP-08 | Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h) | Interna | EP-04, EP-10, EP-11 | Cobranza | 2026-10-21 | Pendiente (PLT-01: Pendiente) |
 | DEP-10 | KPI Engine + SVY_SURVEY_RESPONSE (encuestas) | Interna | EP-07 | Equipo Datos / BI | 2026-10-29 | Pendiente (PLT-01: Pendiente) |
@@ -130,7 +131,7 @@ Pendiente o Por evaluar, y ese estado se conserva entre paréntesis.
 | DEP-15 | Maestro de responsables de proyecto y supervisores (fuente única) | Interna | EP-11 | Gerencia Comercial · Datos | 2026-10-29 | Pendiente (PLT-01: Pendiente) |
 
 Una dependencia sin fecha comprometida deja en NO READY (G4) lo que bloquea. Hoy, 21-oct, ya se
-necesitan DEP-01, DEP-02, DEP-08 y DEP-11. El análisis completo (matriz, olas, ruta crítica y
+necesitan DEP-01, DEP-16 (antes DEP-02), DEP-08 y DEP-11. El análisis completo (matriz, olas, ruta crítica y
 hallazgos) está en `analisis-dependencias.md`. El diagrama está en `dependencias.mmd`: las flechas
 continuas van de dependencia a épica y las punteadas son las dependencias lógicas entre épicas.
 
@@ -138,7 +139,7 @@ continuas van de dependencia a épica y las punteadas son las dependencias lógi
 flowchart LR
   subgraph Deps["Dependencias del producto (PLT-01 v1.3)"]
     DEP01["DEP-01 · SIGDA/TAXON<br/>21-oct · Pendiente"]
-    DEP02["DEP-02 · Roles locales<br/>21-oct · Pendiente"]
+    DEP16["DEP-16 · Control de acceso<br/>21-oct · Pendiente"]
     DEP03["DEP-03 · Matriz SLA<br/>22-oct · Pendiente"]
     DEP04["DEP-04 · Calendario<br/>22-oct · En curso"]
     DEP05["DEP-05 · Validación legal<br/>26-oct · Pendiente"]
@@ -169,9 +170,9 @@ flowchart LR
   DEP01 --> EPATC04
   DEP01 --> EPATC06
   DEP01 --> EPATC10
-  DEP02 --> EPATC01
-  DEP02 --> EPATC02
-  DEP02 --> EPATC09
+  DEP16 --> EPATC01
+  DEP16 --> EPATC02
+  DEP16 --> EPATC09
   DEP03 --> EPATC02
   DEP03 --> EPATC04
   DEP04 --> EPATC02
@@ -204,7 +205,7 @@ flowchart LR
   classDef eval fill:#EEEEEE,stroke:#777,color:#333,stroke-dasharray:4 3
   classDef ep fill:#02424E,stroke:#012F38,color:#FFFFFF
   class DEP01 pend
-  class DEP02 pend
+  class DEP16 pend
   class DEP03 pend
   class DEP04 curso
   class DEP05 pend
@@ -254,7 +255,7 @@ Supuestos (PLT-01 v1.3; los confirma el PO, autor del plan):
 - S-02: los 4 desarrolladores están dedicados al 100 % del 21-oct al 03-nov, con asistentes de IA.
 - S-03: el PO acepta historias a diario, a las 17:00.
 - S-04: las integraciones externas se construyen contra simuladores.
-- S-05: PostgreSQL Multi-AZ y S3 existen en la arquitectura vigente. Lo verifica el líder técnico; ver `decisiones.md` D-001 y D-003.
+- S-05: la plataforma es Azure (PostgreSQL con alta disponibilidad entre zonas y Blob Storage con inmutabilidad), según el Líder Técnico (ADR-014, DT-07). Lo confirma el líder técnico.
 
 Restricciones:
 - RES-01: la Etapa 1 tiene un plazo fijo de 10 días hábiles de desarrollo, del 21-oct al 03-nov-2026 (fuente: PLT-01).
@@ -268,7 +269,10 @@ Restricciones:
 |---|---|---|---|---|
 | v0.1 | 2026-10-19 | Jesús (Dev 2), con IA (Claude) | Versión inicial con el plan v1.3 (v1 y v2 en Nexora) | |
 | v0.2 | 2026-10-21 | Brayan (Dev 1), con IA (Claude) | Añade la dependencia lógica EP-09 → EP-06 del Gantt del PLT-01 (p. 4) y la tabla de dependencias entre épicas. Pone el PO (Eddie Huamaní), los nombres de los desarrolladores, la capacidad por persona, las iteraciones y los hitos del 16 y el 19-oct con su criterio. Quita los textos caducos: el «Excel no entregado», «en refinamiento hasta el 20-oct» y las fechas «hoy, 19-oct». Deja el roadmap solo con la Etapa 1 | |
+| v0.3 | 2026-10-22 | Jesús Chávez Elías, con IA (Claude) | Cambios de la revisión del Líder Técnico: la DEP-02 pasa a la DEP-16 (Control de acceso), la DEP-06 usa Azure Blob con inmutabilidad y el supuesto S-05 dice Azure. No cambia ninguna fecha, hora ni épica | |
 
 Aprueba: PO. Solo `estado: approved` en `origin/main` (o la aprobación en Nexora) es evidencia.
 
 Generado por IA: borrador completo. Versión base de Nexora (v2, de Jesús, 19-oct), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04 y DT-07 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
