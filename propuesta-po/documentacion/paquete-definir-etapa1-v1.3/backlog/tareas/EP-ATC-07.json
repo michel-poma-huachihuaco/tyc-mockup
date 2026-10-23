@@ -2,7 +2,7 @@
   "epica": "EP-ATC-07",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025 — Revisado por: (pendiente)",
   "titulo": "Calidad de atención y Torre de Control CX",
   "responsable": "Michel (Dev 3)",
   "horas": 16,
@@ -22,7 +22,7 @@
       "tareas": [
         {
           "id": "HU-ATC-019-T01",
-          "titulo": "Entidad SVY_SURVEY_RESPONSE y puerto en domain.port.out",
+          "titulo": "[quality] Entidad SVY_SURVEY_RESPONSE y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -33,7 +33,7 @@
         },
         {
           "id": "HU-ATC-019-T02",
-          "titulo": "Migracion Flyway V29__crear_tabla_survey_response.sql y listener de cierre de ticket que dispara la encuesta POST_TRANSACTION",
+          "titulo": "[quality] Migracion Flyway V29__crear_tabla_survey_response.sql y listener de cierre de ticket que dispara la encuesta POST_TRANSACTION",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -45,7 +45,7 @@
         },
         {
           "id": "HU-ATC-019-T03",
-          "titulo": "Caso de uso MedirCsatCesUseCase (KPI Engine DEP-10, contract-first con simulador ADR-004) y endpoint GET /api/v1/metricas/csat-ces (por tipo de ticket, area y gestor)",
+          "titulo": "[quality] Caso de uso MedirCsatCesUseCase (KPI Engine DEP-10, contract-first con simulador ADR-004) y endpoint GET /api/v1/metricas/csat-ces (por tipo de ticket, area y gestor); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -56,7 +56,7 @@
         },
         {
           "id": "HU-ATC-019-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-019 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[quality] Un test por cada criterio de aceptacion de HU-ATC-019 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -67,7 +67,7 @@
         },
         {
           "id": "HU-ATC-019-T05",
-          "titulo": "Vista de CSAT/CES por tipo, area y gestor (ui: true: pantalla y estados segun G2)",
+          "titulo": "[quality] Vista de CSAT/CES por tipo, area y gestor, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -91,7 +91,7 @@
       "tareas": [
         {
           "id": "HU-ATC-030-T01",
-          "titulo": "Value objects de metricas (tickets activos, NPS, tiempos, SLA, derivaciones en curso) en domain",
+          "titulo": "[quality] Value objects de metricas (tickets activos, NPS, tiempos, SLA, derivaciones en curso) en domain",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -102,7 +102,7 @@
         },
         {
           "id": "HU-ATC-030-T02",
-          "titulo": "Repositorio de lectura CQRS (Mongo) agregando SVC_TICKET, SVC_SLA_BREACH_ALERT y SVC_TICKET_ASSIGNMENT_LOG en tiempo real",
+          "titulo": "[quality] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector de DT-02, fuera de esta HU: P-025) agregando SVC_TICKET, SVC_SLA_BREACH_ALERT y SVC_TICKET_ASSIGNMENT_LOG en tiempo real",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -115,7 +115,7 @@
         },
         {
           "id": "HU-ATC-030-T03",
-          "titulo": "Caso de uso ObtenerMonitoreoTiempoRealUseCase",
+          "titulo": "[quality] Caso de uso ObtenerMonitoreoTiempoRealUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -126,7 +126,7 @@
         },
         {
           "id": "HU-ATC-030-T04",
-          "titulo": "Endpoint GET /api/v1/torre-control/tiempo-real",
+          "titulo": "[quality] Endpoint GET /api/v1/torre-control/tiempo-real; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -137,7 +137,7 @@
         },
         {
           "id": "HU-ATC-030-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-030 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[quality] Un test por cada criterio de aceptacion de HU-ATC-030 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -148,7 +148,7 @@
         },
         {
           "id": "HU-ATC-030-T06",
-          "titulo": "Dashboard de Torre de Control CX en tiempo real (ui: true: pantalla y estados segun G2)",
+          "titulo": "[quality] Dashboard de Torre de Control CX en tiempo real, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -172,7 +172,7 @@
       "tareas": [
         {
           "id": "HU-ATC-031-T01",
-          "titulo": "Caso de uso GenerarInformesUseCase (informe diario operativo e informe quincenal analitico con el KPI Engine DEP-10; incluye la adopcion de Mi Portal)",
+          "titulo": "[quality] Caso de uso GenerarInformesUseCase (informe diario operativo e informe quincenal analitico con el KPI Engine DEP-10; incluye la adopcion de Mi Portal)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -183,7 +183,7 @@
         },
         {
           "id": "HU-ATC-031-T02",
-          "titulo": "Endpoint GET /api/v1/torre-control/informes con generacion de reporte exportable",
+          "titulo": "[quality] Endpoint GET /api/v1/torre-control/informes con generacion de reporte exportable; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -194,7 +194,7 @@
         },
         {
           "id": "HU-ATC-031-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-031 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[quality] Un test por cada criterio de aceptacion de HU-ATC-031 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -205,7 +205,7 @@
         },
         {
           "id": "HU-ATC-031-T04",
-          "titulo": "Vista de informes diario y quincenal (ui: true: pantalla y estados segun G2)",
+          "titulo": "[quality] Vista de informes diario y quincenal, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -229,7 +229,7 @@
       "tareas": [
         {
           "id": "HU-ATC-032-T01",
-          "titulo": "Caso de uso AuditarRegistrosParalelosUseCase (detecta registros paralelos del dato de cliente fuera de SIGDA/TAXON, RN-SVC-026, DEP-01)",
+          "titulo": "[quality] Caso de uso AuditarRegistrosParalelosUseCase (detecta registros paralelos del dato de cliente fuera de SIGDA/TAXON, RN-SVC-026, DEP-01)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -240,7 +240,7 @@
         },
         {
           "id": "HU-ATC-032-T02",
-          "titulo": "Job batch quincenal idempotente (ADR-005) que invoca AuditarRegistrosParalelosUseCase",
+          "titulo": "[quality] Job batch quincenal idempotente (ADR-005; ShedLock, DT-08) que invoca AuditarRegistrosParalelosUseCase",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -251,7 +251,7 @@
         },
         {
           "id": "HU-ATC-032-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-032 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[quality] Un test por cada criterio de aceptacion de HU-ATC-032 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -263,7 +263,7 @@
         },
         {
           "id": "HU-ATC-032-T04",
-          "titulo": "Endpoint GET /api/v1/torre-control/auditoria-registros-paralelos segun el contrato OpenAPI",
+          "titulo": "[quality] Endpoint GET /api/v1/torre-control/auditoria-registros-paralelos segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -274,7 +274,7 @@
         },
         {
           "id": "HU-ATC-032-T05",
-          "titulo": "Vista de auditoria de registros paralelos en la Torre de Control (ui: true: pantalla y estados segun G2)",
+          "titulo": "[quality] Vista de auditoria de registros paralelos en la Torre de Control, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",

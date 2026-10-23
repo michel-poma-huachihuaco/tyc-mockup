@@ -2,7 +2,7 @@
   "epica": "EP-ATC-11",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025 — Revisado por: (pendiente)",
   "titulo": "Resolución por morosidad y formularios simples",
   "responsable": "Daniel (Dev 4)",
   "horas": 17,
@@ -22,7 +22,7 @@
       "tareas": [
         {
           "id": "HU-ATC-056-T01",
-          "titulo": "Servicio de dominio CausalResolucionContrato (3 meses o cuotas impagos, RN-SVC-037) y entidad SVC_CONTRACT_DEFAULT_ALERT (ENT-SVC-018) con su puerto en domain.port.out",
+          "titulo": "[delinquency] Servicio de dominio CausalResolucionContrato (3 meses o cuotas impagos, RN-SVC-037) y entidad SVC_CONTRACT_DEFAULT_ALERT (ENT-SVC-018) con su puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -33,7 +33,7 @@
         },
         {
           "id": "HU-ATC-056-T02",
-          "titulo": "Adaptador de consulta a Cobranza (estado de cuotas, DEP-08), contract-first con simulador (ADR-004)",
+          "titulo": "[integrations] Adaptador de consulta a Cobranza (estado de cuotas, DEP-08), contract-first con simulador (ADR-004)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -44,7 +44,7 @@
         },
         {
           "id": "HU-ATC-056-T03",
-          "titulo": "Caso de uso GenerarCasoResolucionContratoUseCase (automatico por cuotas o por reclamo con 3 meses de no pago): abre el caso con su flujo (SVC_WORKFLOW_DEFINITION) y lo deriva a Cobranza y Legal",
+          "titulo": "[delinquency] Caso de uso GenerarCasoResolucionContratoUseCase (automatico por cuotas o por reclamo con 3 meses de no pago): abre el caso con su flujo (SVC_WORKFLOW_DEFINITION) y lo deriva a Cobranza y Legal",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -58,7 +58,7 @@
         },
         {
           "id": "HU-ATC-056-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-056 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[delinquency] Un test por cada criterio de aceptacion de HU-ATC-056 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Daniel (Dev 4)",
@@ -70,7 +70,7 @@
         },
         {
           "id": "HU-ATC-056-T05",
-          "titulo": "Migracion Flyway V24__crear_tabla_contract_default_alert.sql",
+          "titulo": "[delinquency] Migracion Flyway V24__crear_tabla_contract_default_alert.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -81,7 +81,7 @@
         },
         {
           "id": "HU-ATC-056-T06",
-          "titulo": "Endpoint GET /api/v1/casos-resolucion segun el contrato OpenAPI",
+          "titulo": "[delinquency] Endpoint GET /api/v1/casos-resolucion segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -92,7 +92,7 @@
         },
         {
           "id": "HU-ATC-056-T07",
-          "titulo": "Vista de casos de resolucion por morosidad (ui: true: pantalla y estados segun G2)",
+          "titulo": "[delinquency] Vista de casos de resolucion por morosidad, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -116,7 +116,7 @@
       "tareas": [
         {
           "id": "HU-ATC-057-T01",
-          "titulo": "Adaptador de notificaciones multicanal (correo, WhatsApp, Mi Portal) con constancia de envio como SVC_TICKET_INTERACTION",
+          "titulo": "[integrations] Adaptador de notificaciones multicanal (correo, WhatsApp, Mi Portal) con constancia de envio como SVC_TICKET_INTERACTION",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -127,7 +127,7 @@
         },
         {
           "id": "HU-ATC-057-T02",
-          "titulo": "Caso de uso EnviarAlertaCancelacionUseCase, en paralelo al proceso de resolucion (deuda, plazo, consecuencias; RN-SVC-038, DLP RN-SVC-012)",
+          "titulo": "[delinquency] Caso de uso EnviarAlertaCancelacionUseCase, en paralelo al proceso de resolucion (deuda, plazo, consecuencias; RN-SVC-038, DLP RN-SVC-012)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -138,7 +138,7 @@
         },
         {
           "id": "HU-ATC-057-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-057 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[delinquency] Un test por cada criterio de aceptacion de HU-ATC-057 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Daniel (Dev 4)",
@@ -149,7 +149,7 @@
         },
         {
           "id": "HU-ATC-057-T04",
-          "titulo": "Plantilla de la alerta de cancelacion (deuda, plazo y consecuencias) segun G2 (ui: true)",
+          "titulo": "[delinquency] Plantilla de la alerta de cancelacion (deuda, plazo y consecuencias) segun G2 (ui: true)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -173,18 +173,19 @@
       "tareas": [
         {
           "id": "HU-ATC-058-T01",
-          "titulo": "Adaptador del maestro de responsables de proyecto y supervisores (DEP-15) y de envio de correo; la carta se archiva en GOV_DOCUMENT_REPOSITORY",
+          "titulo": "[integrations] Adaptador del maestro de responsables de proyecto y supervisores (DEP-15) y de envio de correo; si el supervisor es una jefatura interna, se pide al puerto GestoresPort de HU-ATC-008-T01 (simulador; la API real de Control de acceso con client_credentials no existe: pendiente P-035; P-036); la carta se archiva en GOV_DOCUMENT_REPOSITORY",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
           "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-056-T03"
+            "HU-ATC-056-T03",
+            "HU-ATC-008-T01"
           ]
         },
         {
           "id": "HU-ATC-058-T02",
-          "titulo": "Caso de uso GenerarCartaAlertaResponsableUseCase (cliente, deuda, estado del caso, fecha prevista de resolucion, copia al supervisor; RN-SVC-039)",
+          "titulo": "[delinquency] Caso de uso GenerarCartaAlertaResponsableUseCase (cliente, deuda, estado del caso, fecha prevista de resolucion, copia al supervisor; RN-SVC-039)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -195,7 +196,7 @@
         },
         {
           "id": "HU-ATC-058-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-058 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[delinquency] Un test por cada criterio de aceptacion de HU-ATC-058 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Daniel (Dev 4)",
@@ -206,7 +207,7 @@
         },
         {
           "id": "HU-ATC-058-T04",
-          "titulo": "Plantilla de la carta de alerta al responsable del proyecto con copia al supervisor segun G2 (ui: true)",
+          "titulo": "[delinquency] Plantilla de la carta de alerta al responsable del proyecto con copia al supervisor segun G2 (ui: true)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -230,7 +231,7 @@
       "tareas": [
         {
           "id": "HU-ATC-059-T01",
-          "titulo": "Entidad SVC_SIMPLE_FORM_DEFINITION (ENT-SVC-019: formulario de ingreso al proyecto, maximo 6 campos) y puerto en domain.port.out",
+          "titulo": "[tickets] Entidad SVC_SIMPLE_FORM_DEFINITION (ENT-SVC-019: formulario de ingreso al proyecto, maximo 6 campos) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -241,7 +242,7 @@
         },
         {
           "id": "HU-ATC-059-T02",
-          "titulo": "Migracion Flyway V30__crear_tabla_simple_form_definition.sql y endpoint POST /api/v1/formularios/ingreso-proyecto",
+          "titulo": "[tickets] Migracion Flyway V30__crear_tabla_simple_form_definition.sql y endpoint POST /api/v1/formularios/ingreso-proyecto; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -252,7 +253,7 @@
         },
         {
           "id": "HU-ATC-059-T03",
-          "titulo": "Caso de uso RegistrarIngresoProyectoUseCase: genera automaticamente un ticket asignado al responsable del proyecto (RN-SVC-041, empresa y linea obligatorias RN-SVC-005)",
+          "titulo": "[tickets] Caso de uso RegistrarIngresoProyectoUseCase: genera automaticamente un ticket asignado al responsable del proyecto (RN-SVC-041, empresa y linea obligatorias RN-SVC-005)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -264,7 +265,7 @@
         },
         {
           "id": "HU-ATC-059-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-059 (CA-01 a CA-03) con datos sinteticos; RNF-USA-004: <=1 min, maximo 6 campos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-059 (CA-01 a CA-03) con datos sinteticos; RNF-USA-004: <=1 min, maximo 6 campos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Daniel (Dev 4)",
@@ -275,7 +276,7 @@
         },
         {
           "id": "HU-ATC-059-T05",
-          "titulo": "Formulario simple y movil de ingreso de personas al proyecto (ui: true: pantalla y estados segun G2)",
+          "titulo": "[tickets] Formulario simple y movil de ingreso de personas al proyecto, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -299,7 +300,7 @@
       "tareas": [
         {
           "id": "HU-ATC-060-T01",
-          "titulo": "Entidad SVC_EVENT_BUS_BOOKING (ENT-SVC-020: aforo por bus y horario) y puerto en domain.port.out",
+          "titulo": "[tickets] Entidad SVC_EVENT_BUS_BOOKING (ENT-SVC-020: aforo por bus y horario) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -310,7 +311,7 @@
         },
         {
           "id": "HU-ATC-060-T02",
-          "titulo": "Migracion Flyway V35__crear_tabla_event_bus_booking.sql y endpoint POST /api/v1/formularios/entregafest-bus",
+          "titulo": "[tickets] Migracion Flyway V35__crear_tabla_event_bus_booking.sql y endpoint POST /api/v1/formularios/entregafest-bus; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -321,7 +322,7 @@
         },
         {
           "id": "HU-ATC-060-T03",
-          "titulo": "Caso de uso ReservarCupoBusUseCase: controla el aforo por bus y horario (RN-SVC-042), genera el ticket y confirma punto y hora de embarque (lista de espera si no hay cupo)",
+          "titulo": "[tickets] Caso de uso ReservarCupoBusUseCase: controla el aforo por bus y horario (RN-SVC-042), genera el ticket y confirma punto y hora de embarque (lista de espera si no hay cupo)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",
@@ -333,7 +334,7 @@
         },
         {
           "id": "HU-ATC-060-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-060 (CA-01 a CA-03) con datos sinteticos; incluye aforo lleno; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-060 (CA-01 a CA-03) con datos sinteticos; incluye aforo lleno; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Daniel (Dev 4)",
@@ -344,7 +345,7 @@
         },
         {
           "id": "HU-ATC-060-T05",
-          "titulo": "Formulario simple de solicitud de cupo con confirmacion de embarque (ui: true: pantalla y estados segun G2)",
+          "titulo": "[tickets] Formulario simple de solicitud de cupo con confirmacion de embarque, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Daniel (Dev 4)",

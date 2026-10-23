@@ -2,7 +2,7 @@
   "epica": "EP-ATC-05",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025 — Revisado por: (pendiente)",
   "titulo": "Postventa: reclamos de garantía",
   "responsable": "Brayan (Dev 1)",
   "horas": 12,
@@ -22,7 +22,7 @@
       "tareas": [
         {
           "id": "HU-ATC-033-T01",
-          "titulo": "Entidad CONTRACT_WARRANTY_CLAIM (tipo de defecto, vinculo al Acta de Entrega CONTRACT_UNIT_HANDOVER) y puerto en domain.port.out; el Acta se consulta a Contratos y Activos (DEP-07) con un adaptador contract-first con simulador (ADR-004), sin copia local",
+          "titulo": "[aftersales] Entidad CONTRACT_WARRANTY_CLAIM (tipo de defecto, vinculo al Acta de Entrega CONTRACT_UNIT_HANDOVER) y puerto en domain.port.out; el Acta se consulta a Contratos y Activos (DEP-07) con un adaptador contract-first con simulador (ADR-004), sin copia local",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -31,7 +31,7 @@
         },
         {
           "id": "HU-ATC-033-T02",
-          "titulo": "Migracion Flyway V25__crear_tabla_contract_warranty_claim.sql",
+          "titulo": "[aftersales] Migracion Flyway V25__crear_tabla_contract_warranty_claim.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -42,7 +42,7 @@
         },
         {
           "id": "HU-ATC-033-T03",
-          "titulo": "Caso de uso RegistrarReclamoGarantiaUseCase, vinculado obligatoriamente a la entrega de la unidad",
+          "titulo": "[aftersales] Caso de uso RegistrarReclamoGarantiaUseCase, vinculado obligatoriamente a la entrega de la unidad",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -53,7 +53,7 @@
         },
         {
           "id": "HU-ATC-033-T04",
-          "titulo": "Endpoint POST /api/v1/reclamos-garantia",
+          "titulo": "[aftersales] Endpoint POST /api/v1/reclamos-garantia; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -64,7 +64,7 @@
         },
         {
           "id": "HU-ATC-033-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-033 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[aftersales] Un test por cada criterio de aceptacion de HU-ATC-033 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Brayan (Dev 1)",
@@ -75,7 +75,7 @@
         },
         {
           "id": "HU-ATC-033-T06",
-          "titulo": "Pantalla de registro de reclamo de garantia tipificado (ui: true: pantalla y estados segun G2)",
+          "titulo": "[aftersales] Pantalla de registro de reclamo de garantia tipificado, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -99,7 +99,7 @@
       "tareas": [
         {
           "id": "HU-ATC-034-T01",
-          "titulo": "Migracion Flyway V26__crear_tabla_mae_warranty_coverage_period.sql y columna de estado de cobertura en CONTRACT_WARRANTY_CLAIM (MAE_WARRANTY_COVERAGE_PERIOD segun docs/datos; cobertura de DEP-07)",
+          "titulo": "[aftersales] Migracion Flyway V26__crear_tabla_mae_warranty_coverage_period.sql y columna de estado de cobertura en CONTRACT_WARRANTY_CLAIM (MAE_WARRANTY_COVERAGE_PERIOD segun docs/datos; cobertura de DEP-07)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -110,7 +110,7 @@
         },
         {
           "id": "HU-ATC-034-T02",
-          "titulo": "Caso de uso ValidarVigenciaGarantiaUseCase (rechaza automaticamente fuera de cobertura, contra fecha real de entrega)",
+          "titulo": "[aftersales] Caso de uso ValidarVigenciaGarantiaUseCase (rechaza automaticamente fuera de cobertura, contra fecha real de entrega)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -121,7 +121,7 @@
         },
         {
           "id": "HU-ATC-034-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-034 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[aftersales] Un test por cada criterio de aceptacion de HU-ATC-034 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Brayan (Dev 1)",
@@ -132,7 +132,7 @@
         },
         {
           "id": "HU-ATC-034-T04",
-          "titulo": "Chip de cobertura de la garantia en la pantalla de Garantias (ui: true: pantalla y estados segun G2)",
+          "titulo": "[aftersales] Chip de cobertura de la garantia en la pantalla de Garantias, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -156,7 +156,7 @@
       "tareas": [
         {
           "id": "HU-ATC-035-T01",
-          "titulo": "Modelo de la inspeccion tecnica (evidencia, resultado) asociado a CONTRACT_WARRANTY_CLAIM segun docs/datos/diccionario.md, y puerto en domain.port.out",
+          "titulo": "[aftersales] Modelo de la inspeccion tecnica (evidencia, resultado) asociado a CONTRACT_WARRANTY_CLAIM segun docs/datos/diccionario.md, y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -167,7 +167,7 @@
         },
         {
           "id": "HU-ATC-035-T02",
-          "titulo": "Migracion Flyway V31__agregar_inspeccion_tecnica_warranty_claim.sql",
+          "titulo": "[aftersales] Migracion Flyway V31__agregar_inspeccion_tecnica_warranty_claim.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -178,7 +178,7 @@
         },
         {
           "id": "HU-ATC-035-T03",
-          "titulo": "Caso de uso RegistrarInspeccionYResolverReclamoUseCase (aprobar/rechazar/resolver con trazabilidad) y endpoint POST /api/v1/reclamos-garantia/{id}/inspeccion",
+          "titulo": "[aftersales] Caso de uso RegistrarInspeccionYResolverReclamoUseCase (aprobar/rechazar/resolver con trazabilidad) y endpoint POST /api/v1/reclamos-garantia/{id}/inspeccion; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -189,7 +189,7 @@
         },
         {
           "id": "HU-ATC-035-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-035 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[aftersales] Un test por cada criterio de aceptacion de HU-ATC-035 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Brayan (Dev 1)",
@@ -200,7 +200,7 @@
         },
         {
           "id": "HU-ATC-035-T05",
-          "titulo": "Pantalla de inspeccion tecnica con evidencia documental (ui: true: pantalla y estados segun G2)",
+          "titulo": "[aftersales] Pantalla de inspeccion tecnica con evidencia documental, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -224,7 +224,7 @@
       "tareas": [
         {
           "id": "HU-ATC-036-T01",
-          "titulo": "Migracion Flyway V32__agregar_columna_escalated_to_legal_warranty_claim.sql",
+          "titulo": "[aftersales] Migracion Flyway V32__agregar_columna_escalated_to_legal_warranty_claim.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -235,7 +235,7 @@
         },
         {
           "id": "HU-ATC-036-T02",
-          "titulo": "Caso de uso EscalarGarantiaYReincorporarUseCase: escala a Eje 3 reutilizando el gate y el paquete de handoff de FT-ATC-07 (RN-SVC-021) y gestiona la reincorporacion contractual por adenda",
+          "titulo": "[aftersales] Caso de uso EscalarGarantiaYReincorporarUseCase: escala a Eje 3 reutilizando el gate y el paquete de handoff de FT-ATC-07 (RN-SVC-021) y gestiona la reincorporacion contractual por adenda",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -249,7 +249,7 @@
         },
         {
           "id": "HU-ATC-036-T03",
-          "titulo": "Endpoint POST /api/v1/reclamos-garantia/{id}/escalamiento",
+          "titulo": "[aftersales] Endpoint POST /api/v1/reclamos-garantia/{id}/escalamiento; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",
@@ -260,7 +260,7 @@
         },
         {
           "id": "HU-ATC-036-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-036 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[aftersales] Un test por cada criterio de aceptacion de HU-ATC-036 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Brayan (Dev 1)",
@@ -271,7 +271,7 @@
         },
         {
           "id": "HU-ATC-036-T05",
-          "titulo": "Pantalla de escalamiento y adenda contractual (ui: true: pantalla y estados segun G2)",
+          "titulo": "[aftersales] Pantalla de escalamiento y adenda contractual, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Brayan (Dev 1)",

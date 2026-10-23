@@ -2,7 +2,7 @@
   "epica": "EP-ATC-09",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04 — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025 — Revisado por: (pendiente)",
   "titulo": "Bandeja orquestadora y asistencia al gestor",
   "responsable": "Michel (Dev 3)",
   "horas": 44,
@@ -22,7 +22,7 @@
       "tareas": [
         {
           "id": "HU-ATC-043-T01",
-          "titulo": "Entidad SVC_WORKFLOW_DEFINITION (ENT-SVC-014: tipo, subtipo, area, version) con sus actividades y puerto en domain.port.out; motor de flujos configurable y versionado, el ticket congela su version (ADR-008)",
+          "titulo": "[inbox] Entidad SVC_WORKFLOW_DEFINITION (ENT-SVC-014: tipo, subtipo, area, version) con sus actividades y puerto en domain.port.out; motor de flujos configurable y versionado, el ticket congela su version (ADR-008)",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -31,7 +31,7 @@
         },
         {
           "id": "HU-ATC-043-T02",
-          "titulo": "Migracion Flyway V5__crear_tabla_workflow_definition.sql (actividades, estados, responsables, aprobaciones y SLA por actividad; clave unica tipo+subtipo+area, RN-SVC-045)",
+          "titulo": "[inbox] Migracion Flyway V5__crear_tabla_workflow_definition.sql (actividades, estados, responsables, aprobaciones y SLA por actividad; clave unica tipo+subtipo+area, RN-SVC-045)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -42,7 +42,7 @@
         },
         {
           "id": "HU-ATC-043-T03",
-          "titulo": "Caso de uso ConfigurarFlujoUseCase: publicacion sin despliegue (RNF-USA-002), SLA total = suma de actividades salvo politica menor (RN-SVC-001), flujo por defecto del area y bitacora de cada publicacion",
+          "titulo": "[inbox] Caso de uso ConfigurarFlujoUseCase: publicacion sin despliegue (RNF-USA-002), SLA total = suma de actividades salvo politica menor (RN-SVC-001), flujo por defecto del area y bitacora de cada publicacion",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -53,18 +53,18 @@
         },
         {
           "id": "HU-ATC-043-T04",
-          "titulo": "Endpoint POST /api/v1/flujos",
+          "titulo": "[inbox] Endpoint POST /api/v1/flujos con @PreAuthorize por el rol ATC_ADMIN_FUNCIONAL del token (CA-08: el intento sin rol responde 403 y queda en la bitacora; arquitectura/roles-y-permisos-atc.md, P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1.5,
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-043-T03"
           ]
         },
         {
           "id": "HU-ATC-043-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-043 (CA-01 a CA-08) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-043 (CA-01 a CA-08) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-08 con un token del emisor de pruebas sin rol de administrador funcional",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -75,7 +75,7 @@
         },
         {
           "id": "HU-ATC-043-T06",
-          "titulo": "Pantalla de configuracion de flujos para el administrador funcional (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Pantalla de configuracion de flujos para el administrador funcional, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -83,6 +83,15 @@
           "depende_de": [
             "HU-ATC-043-T04"
           ]
+        },
+        {
+          "id": "HU-ATC-043-T07",
+          "titulo": "[integrations] Registrar el catalogo de ATC en Control de acceso por el ADR-021 de PJ-05 (C-02): opciones ATC.* con POST /api/v1/catalogo/opciones-de-menu y luego roles, permisos e incompatibilidades con POST /api/v1/catalogo/roles, segun arquitectura/roles-y-permisos-atc.md, con el cliente CONFIDENTIAL de ATC y el rol de cliente CATALOG_REGISTRAR (client_credentials, aybar-starter-client, DT-10; como lo recibe en E1: pendiente P-039); antes consulta GET /api/v1/catalogo/registros y envia solo lo nuevo (el lote entra entero o se rechaza con 409); lo registrado nace inactivo hasta que el area de Roles y Permisos lo aprueba (DEP-16); ATC no guarda copia del catalogo; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel (Dev 3)",
+          "estimacion_horas": 0.5,
+          "depende_de": []
         }
       ]
     },
@@ -99,7 +108,7 @@
       "tareas": [
         {
           "id": "HU-ATC-044-T01",
-          "titulo": "Repositorio de lectura CQRS (Mongo) que combina SVC_TICKET, SVC_TICKET_ASSIGNMENT_LOG y SVC_WORKFLOW_DEFINITION, orden rayo > SLA mas proximo > prioridad (RN-SVC-031)",
+          "titulo": "[inbox] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector de DT-02, fuera de esta HU: P-025) que combina SVC_TICKET, SVC_TICKET_ASSIGNMENT_LOG y SVC_WORKFLOW_DEFINITION, orden rayo > SLA mas proximo > prioridad (RN-SVC-031)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -110,7 +119,7 @@
         },
         {
           "id": "HU-ATC-044-T02",
-          "titulo": "Caso de uso ObtenerBandejaUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerBandejaUseCase: filtra por la empresa activa o el rol global de ATC del token (C-08) y por el area del gestor; el supervisor de un area ve sus tickets por su rol del token (CA-03); que areas supervisa cada uno no esta en el token ni en Control de acceso: P-036",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -121,7 +130,7 @@
         },
         {
           "id": "HU-ATC-044-T03",
-          "titulo": "Endpoint GET /api/v1/tickets/bandeja",
+          "titulo": "[inbox] Endpoint GET /api/v1/tickets/bandeja; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -132,7 +141,7 @@
         },
         {
           "id": "HU-ATC-044-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-044 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-044 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-03 con tokens del emisor de pruebas (gestor y supervisor de otra area)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -143,7 +152,7 @@
         },
         {
           "id": "HU-ATC-044-T05",
-          "titulo": "Bandeja orquestadora unica con lo mas urgente primero (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Bandeja orquestadora unica con lo mas urgente primero, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -167,7 +176,7 @@
       "tareas": [
         {
           "id": "HU-ATC-045-T01",
-          "titulo": "Migracion Flyway V8__agregar_columna_rayo_ticket.sql y endpoint POST /api/v1/tickets/{id}/rayo",
+          "titulo": "[inbox] Migracion Flyway V8__agregar_columna_rayo_ticket.sql y endpoint POST /api/v1/tickets/{id}/rayo; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -178,7 +187,7 @@
         },
         {
           "id": "HU-ATC-045-T02",
-          "titulo": "Caso de uso MarcarRayoUseCase (solo supervisor o lider, con motivo, en bitacora; umbral 10% de la bandeja del area a validar, RN-SVC-031)",
+          "titulo": "[inbox] Caso de uso MarcarRayoUseCase: solo con el rol del token que el catalogo asigna al lider (ATC_SUPERVISOR en arquitectura/roles-y-permisos-atc.md; si el lider es una jefatura: P-036), con motivo, en bitacora; umbral 10% de la bandeja del area a validar, RN-SVC-031",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -190,7 +199,7 @@
         },
         {
           "id": "HU-ATC-045-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-045 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-045 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-02 con un token del emisor de pruebas sin rol de lider",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -201,7 +210,7 @@
         },
         {
           "id": "HU-ATC-045-T04",
-          "titulo": "Icono de rayo en la bandeja, solo visible/accionable para supervisor o lider (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Icono de rayo en la bandeja, visible y accionable solo con el rol que trae el token de la sesion (@aybarcorp/auth), en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -225,7 +234,7 @@
       "tareas": [
         {
           "id": "HU-ATC-046-T01",
-          "titulo": "Caso de uso ReasignarPorMenorCargaUseCase (gestor disponible del mismo area/habilidad con menor carga ponderada por prioridad, RN-SVC-033)",
+          "titulo": "[inbox] Caso de uso ReasignarPorMenorCargaUseCase (gestor disponible del mismo area/habilidad con menor carga ponderada por prioridad, RN-SVC-033)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -237,7 +246,7 @@
         },
         {
           "id": "HU-ATC-046-T02",
-          "titulo": "Job/trigger que detecta indisponibilidad o sobrecarga con la disponibilidad del maestro local (DEP-02, ADR-009) e invoca ReasignarPorMenorCargaUseCase",
+          "titulo": "[inbox] Job/trigger con ShedLock (DT-08) que detecta indisponibilidad o sobrecarga e invoca ReasignarPorMenorCargaUseCase; los gestores del area y su disponibilidad se piden al puerto GestoresPort de HU-ATC-008-T01 (simulador; la API real de Control de acceso con client_credentials no existe: pendiente P-035), sin maestro local (DT-03)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -249,7 +258,7 @@
         },
         {
           "id": "HU-ATC-046-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-046 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-046 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -260,7 +269,7 @@
         },
         {
           "id": "HU-ATC-046-T04",
-          "titulo": "Vista del supervisor en la bandeja con la carga por gestor y las reasignaciones por menor carga (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Vista del supervisor en la bandeja con la carga por gestor y las reasignaciones por menor carga, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -284,7 +293,7 @@
       "tareas": [
         {
           "id": "HU-ATC-067-T01",
-          "titulo": "Modelo de lectura de la operacion en vivo (areas de SVC_WORKFLOW_DEFINITION y MAE_AREA, cola, gestores ocupados, % en SLA) y puerto en domain.port.out",
+          "titulo": "[inbox] Modelo de lectura de la operacion en vivo (areas de SVC_WORKFLOW_DEFINITION y MAE_AREA, cola, gestores ocupados, % en SLA) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -295,7 +304,7 @@
         },
         {
           "id": "HU-ATC-067-T02",
-          "titulo": "Publicacion por WebSocket de los eventos ticket.created, ticket.assigned, ticket.status_changed y sla.breached hacia el visor (ADR-010), con modo simulacion de datos sinteticos (9 areas, 71 tickets, 3 gestores por area)",
+          "titulo": "[inbox] Publicacion por WebSocket de los eventos ticket.created, ticket.assigned, ticket.status_changed y sla.breached hacia el visor (ADR-010), con modo simulacion de datos sinteticos (9 areas, 71 tickets, 3 gestores por area); el canal WebSocket exige el token de Control de acceso y filtra por la empresa activa o el rol global y por las areas permitidas (C-08, CA-07)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -307,7 +316,7 @@
         },
         {
           "id": "HU-ATC-067-T03",
-          "titulo": "Caso de uso ObtenerOperacionEnVivoUseCase: escena por area, panel del area (en cola, ocupados, resueltos, % en SLA y carga por gestor con la reasignacion de HU-ATC-046) y filtro por razon social y permisos (RN-SVC-036)",
+          "titulo": "[inbox] Caso de uso ObtenerOperacionEnVivoUseCase: escena por area, panel del area (en cola, ocupados, resueltos, % en SLA y carga por gestor con la reasignacion de HU-ATC-046) y filtro por la empresa activa o el rol global del token (C-08) y los roles del catalogo (RN-SVC-036; P-034)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -319,7 +328,7 @@
         },
         {
           "id": "HU-ATC-067-T04",
-          "titulo": "Endpoint GET /api/v1/operacion-en-vivo (escena inicial y panel por area) segun el contrato OpenAPI",
+          "titulo": "[inbox] Endpoint GET /api/v1/operacion-en-vivo (escena inicial y panel por area) segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -330,7 +339,7 @@
         },
         {
           "id": "HU-ATC-067-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-067 (CA-01 a CA-10) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-067 (CA-01 a CA-10) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -342,7 +351,7 @@
         },
         {
           "id": "HU-ATC-067-T06",
-          "titulo": "Visor 3D en el navegador (canvas isometrico, ADR-010): escena de la sede, recorrido y color del SLA, panel del area, seguimiento del ticket, indicadores y registro de actividad; vista 2D alternativa accesible (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Visor 3D en el navegador (canvas isometrico, ADR-010): escena de la sede, recorrido y color del SLA, panel del area, seguimiento del ticket, indicadores y registro de actividad; vista 2D alternativa accesible, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -367,7 +376,7 @@
       "tareas": [
         {
           "id": "HU-ATC-047-T01",
-          "titulo": "Entidad SVC_KNOWLEDGE_ARTICLE (ENT-SVC-015: pasos, plantillas, documentos y criterios de cierre por MAE_TICKET_TYPE) y puerto en domain.port.out",
+          "titulo": "[inbox] Entidad SVC_KNOWLEDGE_ARTICLE (ENT-SVC-015: pasos, plantillas, documentos y criterios de cierre por MAE_TICKET_TYPE) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -376,7 +385,7 @@
         },
         {
           "id": "HU-ATC-047-T02",
-          "titulo": "Migracion Flyway V17__crear_tabla_knowledge_article.sql (mantenida por el administrador funcional)",
+          "titulo": "[inbox] Migracion Flyway V17__crear_tabla_knowledge_article.sql (mantenida por el administrador funcional)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -387,7 +396,7 @@
         },
         {
           "id": "HU-ATC-047-T03",
-          "titulo": "Caso de uso ObtenerGuiaSolucionUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerGuiaSolucionUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -398,7 +407,7 @@
         },
         {
           "id": "HU-ATC-047-T04",
-          "titulo": "Endpoint GET /api/v1/guias-solucion/{tipoTicket}",
+          "titulo": "[inbox] Endpoint GET /api/v1/guias-solucion/{tipoTicket}; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -409,7 +418,7 @@
         },
         {
           "id": "HU-ATC-047-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-047 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-047 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -420,7 +429,7 @@
         },
         {
           "id": "HU-ATC-047-T06",
-          "titulo": "Vista de guia de solucion dentro del ticket (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Vista de guia de solucion dentro del ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -444,7 +453,7 @@
       "tareas": [
         {
           "id": "HU-ATC-048-T01",
-          "titulo": "Entidad SVC_AI_SUGGESTION_LOG (ENT-SVC-016: sugerencia y decision del gestor) y puerto en domain.port.out; la IA se usa solo via el servicio de asistencia, con anonimizacion y registro (ADR-007, DEP-14)",
+          "titulo": "[inbox] Entidad SVC_AI_SUGGESTION_LOG (ENT-SVC-016: sugerencia y decision del gestor) y puerto en domain.port.out; la IA se usa solo via el servicio de asistencia, con anonimizacion y registro (ADR-007, DEP-14)",
           "capa": "domain",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -455,7 +464,7 @@
         },
         {
           "id": "HU-ATC-048-T02",
-          "titulo": "Migracion Flyway V18__crear_tabla_ai_suggestion_log.sql",
+          "titulo": "[inbox] Migracion Flyway V18__crear_tabla_ai_suggestion_log.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -466,7 +475,7 @@
         },
         {
           "id": "HU-ATC-048-T03",
-          "titulo": "Caso de uso SugerirRespuestaIaUseCase: sugiere respuesta, verifica criterios de cierre de la guia, senala tono o datos faltantes; el gestor acepta/edita/descarta (RN-SVC-032)",
+          "titulo": "[inbox] Caso de uso SugerirRespuestaIaUseCase: sugiere respuesta, verifica criterios de cierre de la guia, senala tono o datos faltantes; el gestor acepta/edita/descarta (RN-SVC-032)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -478,7 +487,7 @@
         },
         {
           "id": "HU-ATC-048-T04",
-          "titulo": "Endpoint POST /api/v1/tickets/{id}/sugerencia-ia",
+          "titulo": "[inbox] Endpoint POST /api/v1/tickets/{id}/sugerencia-ia; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -489,7 +498,7 @@
         },
         {
           "id": "HU-ATC-048-T05",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-048 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-048 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -500,7 +509,7 @@
         },
         {
           "id": "HU-ATC-048-T06",
-          "titulo": "Sugerencia de IA visible en el ticket, con aceptar/editar/descartar (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Sugerencia de IA visible en el ticket, con aceptar/editar/descartar, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -524,7 +533,7 @@
       "tareas": [
         {
           "id": "HU-ATC-054-T01",
-          "titulo": "Repositorio de lectura CQRS (Mongo) de productividad por gestor (atendidos, pendientes, SLA, tiempo medio y CSAT de SVY_SURVEY_RESPONSE), con el lider de cada gestor del maestro local (DEP-02)",
+          "titulo": "[inbox] Repositorio de lectura CQRS de productividad por gestor (atendidos, pendientes, SLA, tiempo medio y CSAT de SVY_SURVEY_RESPONSE); el lider de cada gestor se pide al puerto GestoresPort de HU-ATC-008-T01 (simulador; la API real de Control de acceso con client_credentials no existe: pendiente P-035; areas y jefaturas: P-036), sin copia en ATC (DT-03)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -536,7 +545,7 @@
         },
         {
           "id": "HU-ATC-054-T02",
-          "titulo": "Caso de uso ObtenerAvanceDiarioUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerAvanceDiarioUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -547,7 +556,7 @@
         },
         {
           "id": "HU-ATC-054-T03",
-          "titulo": "Endpoint GET /api/v1/gestores/{id}/avance-diario",
+          "titulo": "[inbox] Endpoint GET /api/v1/gestores/{id}/avance-diario; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -558,7 +567,7 @@
         },
         {
           "id": "HU-ATC-054-T04",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-054 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-054 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -569,7 +578,7 @@
         },
         {
           "id": "HU-ATC-054-T05",
-          "titulo": "Tablero de avance diario del gestor y su lider (ui: true: pantalla y estados segun G2)",
+          "titulo": "[inbox] Tablero de avance diario del gestor y su lider, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -593,7 +602,7 @@
       "tareas": [
         {
           "id": "HU-ATC-055-T01",
-          "titulo": "Adaptador de envio de correo (notificaciones) con copia al lider del gestor, tomado del maestro local de lideres (DEP-02, ADR-009)",
+          "titulo": "[integrations] Adaptador de envio de correo (notificaciones) con copia al lider del gestor, que se pide al puerto GestoresPort de HU-ATC-008-T01 (simulador; la API real de Control de acceso con client_credentials no existe: pendiente P-035; areas y jefaturas: P-036), sin maestro local de lideres (DT-03)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -604,7 +613,7 @@
         },
         {
           "id": "HU-ATC-055-T02",
-          "titulo": "Caso de uso EnviarAlertaAsignacionUseCase, disparado al asignar o reasignar un ticket (N.º, tipo, prioridad, vencimiento de SLA; RN-SVC-035, DLP RN-SVC-012)",
+          "titulo": "[inbox] Caso de uso EnviarAlertaAsignacionUseCase, disparado al asignar o reasignar un ticket (N.º, tipo, prioridad, vencimiento de SLA; RN-SVC-035, DLP RN-SVC-012)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",
@@ -616,7 +625,7 @@
         },
         {
           "id": "HU-ATC-055-T03",
-          "titulo": "Un test por cada criterio de aceptacion de HU-ATC-055 (CA-01 a CA-03) con datos sinteticos; RNF-REN-008: envio en <= 1 min en el 99%; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-055 (CA-01 a CA-03) con datos sinteticos; RNF-REN-008: envio en <= 1 min en el 99%; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
           "responsable": "Michel (Dev 3)",
@@ -627,7 +636,7 @@
         },
         {
           "id": "HU-ATC-055-T04",
-          "titulo": "Plantilla del correo de asignacion (N.º, tipo, prioridad y vencimiento de SLA, copia al lider) segun G2 (ui: true)",
+          "titulo": "[inbox] Plantilla del correo de asignacion (N.º, tipo, prioridad y vencimiento de SLA, copia al lider) segun G2 (ui: true)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",

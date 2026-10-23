@@ -10,7 +10,7 @@ Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 155 d
 | [`adr/`](adr/) | 14 ADR: ADR-001…011 son las ADR-01…11 del PO; 012 stack, 013 outbox y 014 plataforma las propone el equipo | Versión de Nexora (Jesús). No se cambia ninguna decisión: los conflictos con el PO quedan anotados |
 | [`arquitectura/`](arquitectura/) | OpenAPI (61 operaciones), C4, módulos, seguridad, operaciones y trazabilidad por historia | Versión de Nexora (Jesús), con los esquemas del OpenAPI completados desde el PO y el Excel |
 | [`datos/`](datos/) | Modelo entidad-relación, diccionario, estados, linaje y acta | Versión de Nexora (Jesús), con lo que el PO y el Excel ya definen |
-| [`backlog/tareas/`](backlog/tareas/) | 318 tareas en 11 archivos (uno por épica), 243 h | Versión de Nexora (Daniel), rehecha con la v1.3 |
+| [`backlog/tareas/`](backlog/tareas/) | 321 tareas en 11 archivos (uno por épica), 243 h | Versión de Nexora (Daniel), rehecha con la v1.3 |
 | [`gates/AYB-0001/`](gates/AYB-0001/) | G0, G1, G2, G3 y G4 en borrador | Versión de Nexora y de `main`, llevada a la v1.3. G2 es nuevo |
 
 **Qué no se decide aquí.** Las decisiones abiertas están en [`analisis/decisiones.md`](analisis/decisiones.md):
@@ -28,7 +28,7 @@ a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por:
 historias y DoR desde el 20-oct, y el resto desde el 21-oct. Ver `PLAN-NEXORA.md`.
 
 **Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`, 21-oct): **0 errores y 0 advertencias**.
-Son 155 documentos y 318 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. Ninguna funcionalidad está lista para construir,
+Son 155 documentos y 321 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. Ninguna funcionalidad está lista para construir,
 porque los DoR y los gates siguen sin aprobar.
 
 **Para leerlo** sin instalar nada, abre `explorador.html` en el navegador. Lo generó `aybar paquete explorador` del SDK.
