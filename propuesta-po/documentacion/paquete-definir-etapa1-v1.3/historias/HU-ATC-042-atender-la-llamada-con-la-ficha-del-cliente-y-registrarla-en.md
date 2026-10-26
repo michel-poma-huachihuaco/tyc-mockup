@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Atender la llamada con la ficha del cliente y registrarla en el ticket"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-17", "EP-ATC-10", "HU-ATC-053"]
+relacionados: ["FT-ATC-17", "EP-ATC-10", "HU-ATC-052"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -24,7 +24,7 @@ ui: true
 
 **Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
 
-**Depende de:** HU-ATC-053 (FT-ATC-20 es predecesora de FT-ATC-17 y esta es su última HU, PLT-02) · Dependencias externas: DEP-11 (plataforma del call center; PLT-03, PLT-04 y PLT-05)
+**Depende de:** HU-ATC-052 (FT-ATC-20 es predecesora de FT-ATC-17, PLT-02, y esta es su última HU en la Etapa 1) (HU-053 fuera de la Etapa 1: antes dependía de ella, la última HU de FT-ATC-20) · Dependencias externas: DEP-11 (plataforma del call center; PLT-03, PLT-04 y PLT-05)
 
 **La necesitan:** ninguna
 
@@ -87,3 +87,5 @@ Escenario: CA-03 · Número desconocido (agregado por el PO)
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Depende de HU-052 en lugar de HU-053, que sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8): FT-20 sigue siendo predecesora de FT-17 (PLT-02) y HU-052 es su última HU en la Etapa 1; `relacionados` y la tarea HU-ATC-042-T01 cambian igual. No cambia texto del PO. — Revisado por: (pendiente)

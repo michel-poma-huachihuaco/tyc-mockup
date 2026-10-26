@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Estados y transiciones del ticket"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -121,7 +121,7 @@ Contraste del 20-oct-2026 con las 62 historias de PJ-06. Lo que sigue sale de su
 | Morosidad | Ticket «Resolución de contrato»: se cierra «Regularizado» si el cliente paga antes; queda «suspendido por reclamo» mientras haya un reclamo abierto en el Libro (Q-056-3) | HU-056 CA-02, CA-03 |
 | Flujo | Cada publicación crea una versión; solo aplica a tickets nuevos; los abiertos conservan su flujo y SLA congelado; sin flujo publicado se usa el del área y se avisa al rol `ATC_ADMIN_FUNCIONAL` (aviso por rol, ED-03) | HU-043 CA-02, CA-07 |
 | Reserva de bus | Confirmada, en lista de espera o cancelada (la cancelación libera el cupo y lo pasa al primero de la lista) | HU-060 CA-01 a 03 |
-| EntregaFest | Caso derivado a la Estación 4: el moderador no puede reabrirlo | HU-038 CA-02 |
+| EntregaFest | Caso derivado a la Estación 4: el moderador no puede reabrirlo | HU-038 CA-02 · fuera de la Etapa 1 (P-025): se aplica cuando se retome |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: códigos de la lista `SVC_TICKET_STATUS`, transiciones del PLT-04 (HU-004 y HU-064 a 066, con la reapertura de HU-011 y HU-066), estados de la apelación, del asiento, del reclamo de garantía y de los casos sensibles con los 8 estados de cierre. — Revisado por: (pendiente)
 
@@ -132,7 +132,10 @@ Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jes
 | 0.1 | 2026-10-19 a 2026-10-21 | Jesús Chávez Elías y Brayan Hurtado, con IA | Estados y transiciones desde el v7 y la v1.3 del PO (versiones de Nexora hasta la v4) |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Frontmatter completo para el acta F4, de la que es evidencia: owner (Jesús Chávez Elías, autor de la versión base), aprobador (Líder Técnico, como el resto de `datos/`), versión, fecha, relacionados e historial. Los estados no cambian |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): salida de `ESCALATED` y validación de transiciones (ED-26); pausas en `SVC_TICKET_SLA_PAUSE` y cierre automático a los 5 días hábiles (ED-15); códigos del asiento, de la instancia de apelación y de los 8 cierres de casos sensibles, y plazos de la Mesa SGD (ED-26); retención de la evidencia del Libro (ED-13); interesado «sin cliente vinculado» (ED-05). Los estados del ticket no cambian |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): la regla de EntregaFest (HU-038) queda marcada «fuera de la Etapa 1» |
 
 Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-03, ED-05, ED-13, ED-15 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-014: Plataforma: Azure, emisor de tokens de Control de acceso y servicios gestionados"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,8 +15,8 @@ tags: [adr, arquitectura, g3]
 # ADR-014: Plataforma: Azure, emisor de tokens de Control de acceso y servicios gestionados
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: decisiones DT-01, DT-05, DT-07, DT-08 y DT-10 del Líder Técnico (Jose Jara, 22-oct-2026) y colisiones C-03, C-09 y C-12 de su revisión, registradas en `analisis/decisiones.md` v0.7, con las decisiones del equipo del 26-oct (ED-01, ED-03, ED-06, ED-07, ED-08, ED-12 y ED-24). Sustituye a la v0.1 (19-oct), que dejaba sin decidir la nube y el emisor y daba por inexistente a Control de acceso: el servicio está en construcción en `aybar-access-control` y su paquete (PJ-05) está aprobado en Nexora.
 - Cambia lo que da por hecho el PO: PLT-05 §4 y los requisitos RNF-CUM-007 y RNF-DIS-003 hablan de S3 con Object Lock y PostgreSQL Multi-AZ. Con Azure, su equivalente es Blob Storage con inmutabilidad y alta disponibilidad con redundancia de zona: es una diferencia listada en ED-19 de `analisis/decisiones.md` (P-027); los documentos del PO no se editan.
@@ -94,7 +94,7 @@ Además:
 - Impide:
   - Suponer otra nube o servicio gestionado sin ADR.
   - Usar un emisor distinto del de Control de acceso, o abrir sesiones propias.
-- Cuesta: **USD 2.592,53 al mes** en Brazil South, con los cuatro ambientes del PLT-05: DEV 229,16, QA 390,19, PRE (UAT) 390,19, producción 1.562,71 y Azure Container Registry 20,28. En East US 2, como comparación, USD 1.770,59 (`arquitectura/costo-cloud.md` v0.5, §1.1 y §1.2: API pública de precios de Azure del 26-oct-2026, USD por mes; supuestos de región, volumen y tamaño fijados en ED-12). El WebSocket y el job de migraciones no suman: usan el ingreso y el plan de consumo de Container Apps. En producción pesan Azure Cosmos DB for MongoDB (vCore) 844,44, Azure Database for PostgreSQL 378,37 y Azure Container Apps 197,70. Es una cota superior: no resta capas gratuitas y lo compartido con Control de acceso (base única, API Management y Cloudflare) se imputa entero a ATC, sin reparto (decisión del equipo, ED-12). Fuera de esos totales: correo, USD 0,63 al mes; proveedor de IA (Azure OpenAI, ED-17), USD 0,45 al mes; emisor y login, USD 0 para ATC (§1.4).
+- Cuesta: **USD 2.592,53 al mes** en Brazil South, con los cuatro ambientes del PLT-05: DEV 229,16, QA 390,19, PRE (UAT) 390,19, producción 1.562,71 y Azure Container Registry 20,28. En East US 2, como comparación, USD 1.770,59 (`arquitectura/costo-cloud.md` v0.5, §1.1 y §1.2: API pública de precios de Azure del 26-oct-2026, USD por mes; supuestos de región, volumen y tamaño fijados en ED-12). El WebSocket y el job de migraciones no suman: usan el ingreso y el plan de consumo de Container Apps. En producción pesan Azure Cosmos DB for MongoDB (vCore) 844,44, Azure Database for PostgreSQL 378,37 y Azure Container Apps 197,70. Es una cota superior: no resta capas gratuitas y lo compartido con Control de acceso (base única, API Management y Cloudflare) se imputa entero a ATC, sin reparto (decisión del equipo, ED-12). Fuera de esos totales: correo, USD 0,63 al mes; proveedor de IA (Azure OpenAI, ED-17), USD 0 en la Etapa 1, porque HU-ATC-048 y 053 están fuera (P-025), y USD 0,45 al mes en producción cuando entren; emisor y login, USD 0 para ATC (§1.4).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -112,5 +112,6 @@ Además:
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: ambientes como el PLT-05 §4.2 (QA para E2E y PRE para la UAT del 03-nov, que entra en la Etapa 1); costo base con PRE, USD 2.592,53; verificados en Microsoft Learn el WebSocket de API Management (no en consumo), el límite de Event Hubs Standard (10 por espacio de nombres) y los usuarios secundarios de Azure DocumentDB (permisos de clúster), con su efecto en el diseño; Key Vault con las cadenas nuevas; job de migraciones; aviso ⚠ con los 7 archivos de PJ-05 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): `AYBAR_JWT_AUDIENCE=aybar-atc` (ED-06); `PartyID` del cliente por `CuentaPersonaPort` (ED-01); gestores y líderes con la solución interina de ADR-009 (ED-03); DEV con Control de acceso cuando esté y el emisor de pruebas mientras tanto (DEP-16, R-11, ED-08); catálogo en los lotes del ADR-021 (ED-07); SASL con Event Hubs decidido (ED-24); reparto de lo compartido decidido (todo a ATC como cota superior, ED-12); costo de la IA (ED-17); diferencias con el PO en ED-19 |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el proveedor de IA queda decidido (ED-17) y sin consumo en la Etapa 1 (HU-ATC-048 y 053 fuera): USD 0 en la Etapa 1 y USD 0,45 al mes en producción cuando entren; los totales no cambian |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

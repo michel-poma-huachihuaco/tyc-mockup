@@ -4,7 +4,7 @@ tipo: feature
 titulo: "EntregaFest: contención en vivo"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -13,6 +13,8 @@ tags: [feature, plt-03, ui]
 ---
 
 # PLT-03 - FT-ATC-15 EntregaFest: contención en vivo
+
+**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Sus historias tienen sus tareas en `roadmap/alcance-diferido.md`; la dependencia FT-09 → FT-15 deja de aplicar en la Etapa 1.
 
 | ID | Nombre | Épica padre |
 |---|---|---|
@@ -80,3 +82,5 @@ Cada RF llega a una HU, y cada criterio de la HU a un TC de `docs/pruebas/test-p
 Una pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La funcionalidad entera (6 h) sale de la Etapa 1. No se cambia texto del PO. — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-001: Monolito modular por capacidad en Java con Spring Boot"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,8 +15,8 @@ tags: [adr, arquitectura, g3]
 # ADR-001: Monolito modular por capacidad en Java con Spring Boot
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-01 del PLT-05 v1.3, con las decisiones DT-01, DT-03 y DT-06 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.7. Cierra D-001 en lo que toca a este ADR.
 - Cambia lo que fija el PO: el ADR-01 del PO dice «Monolito modular por capacidad (NestJS) sobre la infraestructura vigente». Se conserva la forma (monolito modular) y cambia el lenguaje a Java con Spring Boot (DT-01). Es una diferencia con los documentos del PO listada en ED-19 de `analisis/decisiones.md` (P-027); el PLT-01 y el PLT-05 no se editan.
@@ -24,7 +24,7 @@ tags: [adr, arquitectura, g3]
 
 ## Contexto
 
-Aybar Atiende (plataforma ATC) se construye en 10 días hábiles (21-oct al 3-nov-2026) con 4 desarrolladores y 243 de 252 horas comprometidas (96 %; el Dev 4 al 98 %). Son 62 historias, 11 épicas y 14 dependencias, varias sin API comprometida. Hay exigencias de plazo legal en días hábiles, de la Ley 29733 y de evidencia que no se puede editar.
+Aybar Atiende (plataforma ATC) se construye en 10 días hábiles (21-oct al 3-nov-2026) con 4 desarrolladores y 243 de 252 horas comprometidas (96 %; el Dev 4 al 98 %). Son 62 historias, 11 épicas y 14 dependencias, varias sin API comprometida. Hay exigencias de plazo legal en días hábiles, de la Ley 29733 y de evidencia que no se puede editar. **Tras P-025** (decidida por el equipo, Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md` v0.8), la Etapa 1 tiene 57 historias y 10 épicas, con 227 h de historias más las 28 h técnicas de DT-02 (255 h sobre 252 h); HU-ATC-037, 038, 039, 048 y 053 (alcance flexible del PO, R-01; EP-ATC-08 completa) se retoman en una etapa posterior. La decisión de este ADR no cambia.
 
 El Líder Técnico fijó el stack del SDK Aybar 0.7.1 (Java 21 con Spring Boot, DT-01), que coincide con el repositorio `aybar-ATC` ya generado: una aplicación hexagonal de un solo servicio. También fijó que ATC consume la seguridad de Control de acceso y no la administra (DT-03), por lo que **no hay un módulo de identidad**.
 
@@ -102,5 +102,6 @@ La estructura interna sigue la plantilla hexagonal del servicio (`domain`, `appl
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: regla 5 de migraciones en la base única (tabla de historial `flyway_schema_history_atc`, línea base en la versión 0, roles `app_atc_migracion` y `app_atc_servicio` y job de migraciones aparte); P-014 cerrada con el registro de tablas §5; dueño de dato remitido al registro; costo con PRE (UAT) incluido, USD 2.592,53 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): la persona del token por `CuentaPersonaPort` (ED-01) y los gestores por `GestoresPort` con la actividad de ATC (ED-03); permiso `SELECT` por columna sobre `IDN_USER_ACCOUNT`; esquema y excepción de `baseline-version` decididos por el equipo (ED-11); dueño de migración de las tablas ajenas (ED-11); ArchUnit en la plantilla del SDK, sin horas fuera del plan; costo con los supuestos de ED-12; el cambio frente al PO es una diferencia listada en ED-19 |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): nota en el contexto con el alcance de la Etapa 1 (57 historias, 10 épicas, 227 h de historias y 28 h técnicas de DT-02); la decisión no cambia |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

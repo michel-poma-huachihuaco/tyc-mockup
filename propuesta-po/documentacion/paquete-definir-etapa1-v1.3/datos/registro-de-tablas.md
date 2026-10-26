@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Registro de tablas de ATC en la base única: qué crea, qué lee y qué escribe en otro dominio"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: [tech_lead, data_chief]
 fecha: "2026-10-26"
@@ -68,10 +68,12 @@ Las columnas que guardan a un colaborador (`CreatedByPartyID`, `CurrentOwnerPart
 
 El v7 no los trae. El equipo decidió crearlos como tablas o columnas del fragmento SERVICE, que migra ATC; van en el acta F4 (H-03), lista para la firma del Data Chief.
 
+**Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8).** HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1. Dos cambios de esta tabla solo los usan ellas y **no se crean en la Etapa 1**: `SVC_AI_SUGGESTION_LOG` (HU-048) y el caso sensible del evento (HU-037 a 039); siguen documentados como cambio al v7 y se crean cuando entren. La búsqueda vectorial de HU-053 tampoco se activa. Los demás cambios no cambian.
+
 | Cambio al v7 | Para qué | Historias o ADR | Decisión |
 |---|---|---|---|
 | `SVC_OUTBOX_EVENT` (propia, fragmento 10) y la lista `SVC_OUTBOX_EVENT_TYPE` | Outbox transaccional del servicio (DT-02). ADR-013 la elige porque `INTG_OUTBOX_EVENT` del v7 es para envíos a sistemas externos y no sirve como outbox de ATC; es el cambio al v7 que se presenta. Columnas en ADR-013 v0.4, punto 6, entre ellas `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo si el evento lo origina un job; sin FK: es una tabla técnica que se purga a los 7 días). Sin datos personales y sin `IntegrityHash`; se purga a los 7 días | ADR-013; ED-23 | Decidido (ED-23) |
-| `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) | Registro de cada sugerencia de IA y su decisión, sin datos personales | ADR-007; HU-048; ED-23 | Decidido (ED-23) |
+| `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) | Registro de cada sugerencia de IA y su decisión, sin datos personales | ADR-007; HU-048; ED-23 | Decidido (ED-23) · no se crea en la Etapa 1 (P-025); se crea cuando entre HU-048 |
 | `SVC_WORKFLOW_DEFINITION` (ENT-SVC-014) y `SVC_WORKFLOW_ACTIVITY`, con su versión | Flujo por tipo, subtipo y área, versionado; el ticket congela su versión (RN-SVC-045) | ADR-008; HU-043; ED-15 | Decidido (ED-23) |
 | `MAE_TICKET_SUBTYPE` | Subtipo del ticket | ADR-008; HU-043, HU-064; ED-15 | Decidido (ED-23) |
 | `SVC_TICKET_SLA_PAUSE` y la columna `AutoCloseBusinessDays` de `MAE_SLA_POLICY` (valor inicial 5) | Pausas del SLA (también la suspensión por reclamo) y días hábiles de espera antes del cierre automático | ADR-008; HU-066, HU-056; ED-15 | Decidido (ED-23) |
@@ -81,7 +83,7 @@ El v7 no los trae. El equipo decidió crearlos como tablas o columnas del fragme
 | `SVC_SIMPLE_FORM_DEFINITION` (ENT-SVC-019) y `SVC_EVENT_BUS_BOOKING` (ENT-SVC-020) | Formularios simples y reserva de bus. Las candidatas del v7, `EVT_ATTENDEE` y `EVT_TRANSPORT`, no se usan: su fragmento no tiene dueño en la Etapa 1 | HU-059, HU-060 | Decidido (ED-23) |
 | `SVC_CONTRACT_DEFAULT_ALERT` (ENT-SVC-018) | Caso de resolución por morosidad y constancia de alertas. La candidata del v7, `PAY_COLLECTION_ACTIVITY`, no se usa: es de un fragmento sin dueño en la Etapa 1 | HU-056 a HU-058 | Decidido (ED-23) |
 | Casos sensibles: `SENSITIVE_CASE`, `MAE_INTAKE_LINE`, `RISK_ASSESSMENT`, `ESCALATION_LOG`, `CASE_CLOSURE`, vínculo entre casos | Mesa SGD (esbozos «por modelar» del PLT-04 §6.5) | HU-020 a HU-025 | Decidido (ED-23) |
-| `HANDOFF_PACKAGE`, `EMOTIONAL_NOTE` y el caso sensible del evento | Handoff a Eje 3, nota de estado emocional y EntregaFest | HU-027, HU-028, HU-037 a HU-039 | Decidido (ED-23) |
+| `HANDOFF_PACKAGE`, `EMOTIONAL_NOTE` y el caso sensible del evento | Handoff a Eje 3, nota de estado emocional y EntregaFest | HU-027, HU-028, HU-037 a HU-039 | Decidido (ED-23) · el caso sensible del evento (`SENSITIVE_EVENT_CASE` y `EVENT` del diccionario) no se crea en la Etapa 1 (P-025); se crea cuando entren HU-037 a 039 |
 | `shedlock` | Tabla técnica de ShedLock para que un job corra en una sola réplica (DT-08) | ADR-005; ED-23 | Decidido (ED-23) |
 | `flyway_schema_history_atc` | Tabla técnica de historial de Flyway propia de ATC en la base única (sección 3.1) | ADR-001 v0.5, regla 5; `arquitectura/migracion-y-reversion.md` §1; ED-11 |
 | `SVC_TICKET_PROSPECT` | Datos mínimos del interesado sin `PARTY` (tipo y número de documento, nombre, teléfono y correo), 1:1 con el ticket «sin cliente vinculado»; dato personal; la fila se borra al vincular | HU-051; ADR-003; ED-05 | Decidido (ED-05) |
@@ -89,7 +91,7 @@ El v7 no los trae. El equipo decidió crearlos como tablas o columnas del fragme
 | `SVC_NOTIFICATION_LOG` | Constancia del correo de asignación (destinatario como `PartyID`, canal, fecha y estado de entrega), sin datos del cliente. `NEX_NOTIFICATION_LOG` no se usa: es de un fragmento sin dueño en la Etapa 1 | HU-055; ED-23 | Decidido (ED-23) |
 | Listas nuevas de SERVICE en `MAE_GENERIC_LIST_VALUE`: `SVC_COMPLAINT_STATUS`, `SVC_COMPLAINT_TYPE`, `SVC_COMPLAINT_APPEAL_LEVEL`, `SVC_SLA_TIME_BASIS`, `SVC_CASE_CLOSURE_STATUS`, `SVC_WARRANTY_DEFECT_TYPE`, `SVC_BUS_BOOKING_STATUS`, y los valores nuevos `REASSIGNMENT_WORKLOAD` y `CALL` | Códigos que el Excel no da (`datos/diccionario.md`, «Listas de valores») | ED-19; ED-26 | Decidido (ED-26) | Decidido (ED-23) |
 
-**No es cambio al v7: `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05).** El índice de búsqueda de HU-049 y HU-053 no es una tabla de la base única: es una **colección del almacén de lectura**, con identificadores y metadatos de permisos y sin datos personales, que escribe el proyector (ADR-003 y ADR-012 v0.4). La búsqueda por significado de HU-053 (alcance flexible, R-01) usa la búsqueda vectorial del mismo servicio con filtro previo por permisos, con los vectores de `text-embedding-3-small` (ADR-007 y ADR-012; ED-17).
+**No es cambio al v7: `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05).** El índice de búsqueda de HU-049 y HU-053 no es una tabla de la base única: es una **colección del almacén de lectura**, con identificadores y metadatos de permisos y sin datos personales, que escribe el proyector (ADR-003 y ADR-012 v0.4). La búsqueda por significado de HU-053 (alcance flexible, R-01; fuera de la Etapa 1 por P-025: se activa cuando entre) usa la búsqueda vectorial del mismo servicio con filtro previo por permisos, con los vectores de `text-embedding-3-small` (ADR-007 y ADR-012; ED-17).
 
 ### 3.1 Historial de Flyway en la base única
 
@@ -190,9 +192,12 @@ Riesgo: igual que en PJ-05 (su R-03), ATC carga con tablas de otros dominios has
 | 0.1 | 2026-10-26 | Brayan Hurtado, con IA | Versión inicial (C-11): tablas que crea ATC, cambios al v7, tablas que solo lee, filas que escribe en otro dominio, propuesta de dueño único de migración, `MAE_AREA` como cola (C-07) y lo que ATC no crea. Citas a la copia sellada de PJ-05 |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Dueño de dato propuesto como rol (Gerente de ATC), no como área ni módulo. Columna «Firmada» con las 9 tablas de ADR-002 (4 del v7 y 5 bitácoras). `SVC_COMPLAINT_BOOK_ENTRY` sin datos personales en columnas (la hoja va al almacén de evidencia, ADR-003 punto 6). `SVC_SEARCH_INDEX` sale de los cambios al v7: es una colección del almacén de lectura (ADR-012 v0.4). `SVC_OUTBOX_EVENT` con `UserAccountID` (ADR-013 v0.4). Tabla de historial de Flyway propia de ATC (`flyway_schema_history_atc`, línea base 0, roles `app_atc_migracion` y `app_atc_servicio`, job aparte; sección 3.1, ADR-001 v0.4) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): dueño de migración decidido (ED-11, §6), con script de datos sintéticos fuera de Flyway en local y DEV y FK diferida en QA, PRE y producción; lectura por columna de `IDN_USER_ACCOUNT` (ED-01, §4 y §8); `SVC_TICKET_PROSPECT` (ED-05), `SVC_TICKET_ACTIVITY` y `AutoCloseBusinessDays` (ED-15), `SVC_NOTIFICATION_LOG` y listas nuevas (ED-23, ED-26) en §3; sin las candidatas `EVT_*` y `NEX_NOTIFICATION_LOG`; `MAE_AREA` sin correspondencia en la Etapa 1 y sin la columna de área organizacional (ED-04, §7); recetas de ADR-002 (ED-16) |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_AI_SUGGESTION_LOG` (HU-048) y el caso sensible del evento (HU-037 a 039) siguen documentados como cambio al v7 y no se crean en la Etapa 1; la búsqueda vectorial de HU-053 se activa cuando entre |
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-07 y C-11; DT-03, DT-04 y DT-06), el diccionario de datos de ATC y el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgos 5, 16, 17, 18 y 31 de la técnica). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-04, ED-05, ED-11, ED-15, ED-16, ED-23 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); tablas que no se crean en la Etapa 1. — Revisado por: (pendiente)

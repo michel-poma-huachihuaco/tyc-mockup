@@ -16,7 +16,7 @@ tags: [adr, arquitectura, g3]
 
 - Estado: propuesto
 - Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.7, con las decisiones del equipo del 26-oct (ED-01, ED-05 y ED-26). **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
 - Cambia lo que fija el PO: HU-064 CA-01 y el requisito de seguridad de FT-ATC-24 (código de 6 dígitos, vence a los 5 minutos, 3 intentos, al correo o al celular). Es una diferencia listada en ED-19 de `analisis/decisiones.md` (P-027): el cliente entra con el login de Control de acceso (DT-04) y los documentos del PO no se editan.
@@ -86,4 +86,4 @@ Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets;
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): el `PartyID` y el tipo de cuenta del cliente salen del vínculo `IDN_USER_ACCOUNT` por `CuentaPersonaPort` (ED-01); Mi Portal acepta la cuenta o el rol `CUSTOMER` y rechaza `PROSPECT`; ya no hay historias bloqueadas por P-033; interesado «sin cliente vinculado» (ED-05); adjuntos, 5 días hábiles, prioridad Media y nombre del área como decisiones (ED-26); tipos y subtipos de Mi Portal sin Visita técnica (Q-064-1); HU-064 CA-01 como diferencia listada en ED-19; DEP-16 riesgo aceptado (ED-08) |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

@@ -4,7 +4,7 @@ tipo: brd
 titulo: "BRD - Aybar Atiende (plataforma de atención al cliente) · Etapa 1"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.5"
+version: "0.6"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -57,7 +57,7 @@ mar 03-nov es el día de UAT, demo final y Go/No-Go de la v1.0.
 | OBJ-03 | Eliminar el riesgo de doble registro del dato de cliente | Registros paralelos del dato de cliente fuera de SIGDA/TAXON | 0 | RNF-INT-007 · RN-SVC-026 |
 | OBJ-04 | Medir la experiencia del cliente de forma unificada | NPS-C = (JOU × 0,45) + (POS × 0,35) + (EVT × 0,20) | Línea base: la primera medición en la UAT (decisión del equipo, 26-oct); meta: mantenerla o mejorarla en el primer mes de operación, con la ponderación de RNF-USA-001 | RNF-USA-001 |
 | OBJ-05 | Sostener evidencia probatoria íntegra ante fiscalización | Documentos probatorios sin checksum | 0 | RNF-CUM-007 |
-| OBJ-06 | Resolver con ayuda de IA sin perder el control humano | Sugerencias de IA con datos personales · sugerencias registradas | 0 · 100 % | RNF-SEC-009 · RN-SVC-032 |
+| OBJ-06 | Resolver con ayuda de IA sin perder el control humano | Sugerencias de IA con datos personales · sugerencias registradas | 0 · 100 % | RNF-SEC-009 · RN-SVC-032. **Sin IA en la Etapa 1:** HU-048 y HU-053 salen por P-025 (`analisis/decisiones.md` v0.8); se mide cuando entren |
 
 Además, cada épica del PLT-02 v1.3 tiene una meta de negocio del PO. Estas metas sí vienen de las
 fuentes:
@@ -71,7 +71,7 @@ fuentes:
 | EP-ATC-05 | Resolver el 100 % de los reclamos de garantía con inspección documentada y rechazar automáticamente los que están fuera de cobertura, desde el pase a producción. |
 | EP-ATC-06 | Que el 30 % de los tickets nuevos se registre en Mi Portal y que bajen en 40 % las consultas de seguimiento por teléfono y WhatsApp en los 3 meses siguientes al pase. |
 | EP-ATC-07 | Disparar la encuesta en el 100 % de los tickets cerrados y emitir el informe diario de la Torre de Control desde el pase a producción. |
-| EP-ATC-08 | Registrar y derivar a la Estación 4 el 100 % de los casos sensibles de cada EntregaFest, con post-mortem en ≤ 3 días hábiles. |
+| EP-ATC-08 (fuera de la Etapa 1, P-025) | Registrar y derivar a la Estación 4 el 100 % de los casos sensibles de cada EntregaFest, con post-mortem en ≤ 3 días hábiles. |
 | EP-ATC-09 | Reducir a 0 los tickets sin responsable por más de 1 día hábil y mantener la diferencia de carga entre gestores del mismo área por debajo del 20 % durante el piloto. |
 | EP-ATC-10 | Ningún reclamo del piloto llega a denuncia y el 70 % de las consultas se resuelve en el primer contacto, en los 3 meses siguientes al pase a producción. |
 | EP-ATC-11 | El 100 % de los contratos con 3 meses impagos tiene caso, alerta al cliente y carta al proyecto en 24 h, y el 100 % de ingresos al proyecto queda registrado, desde el piloto. |
@@ -80,9 +80,17 @@ fuentes:
 
 ### Dentro (IN) — "Ahora"
 
-Entran las **62 historias de usuario de la Etapa 1**, todas con fecha. Se agrupan en **11 épicas** y
-**23 funcionalidades** (FT-ATC-01 a 10 y 13 a 25). Son 58 RF del Excel más 4 propuestos por el PO en la
-v1.3 (RF-SVC-064 a 067). Suman **243 h** de desarrollo sobre una capacidad de **252 h** (96 %).
+El plan del PO v1.3 trae **62 historias de usuario**, todas con fecha, en **11 épicas** y
+**23 funcionalidades** (FT-ATC-01 a 10 y 13 a 25): 58 RF del Excel más 4 propuestos por el PO en la
+v1.3 (RF-SVC-064 a 067), con **243 h** de desarrollo sobre una capacidad de **252 h** (96 %).
+
+**Etapa 1 tras P-025** (decidida por el equipo, Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md` v0.8): entran
+**57 historias** en **10 épicas** y **22 funcionalidades**, con **227 h** de historias (Dev 1 Brayan 55 h, Dev 2 Jesús 60 h,
+Dev 3 Michel 55 h y Dev 4 Daniel 57 h). Las 28 h nuevas de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012
+v0.6) entran como trabajo técnico de la fundación (`backlog/tareas/EP-ATC-01.json`, tareas DT02-T01 a DT02-T06): **255 h**
+sobre 252 h (64, 64, 64 y 63 h por persona). Para hacerles sitio salen de la Etapa 1 las 5 historias de alcance flexible
+del PO (R-01): HU-ATC-037, 038 y 039 (EP-ATC-08 y FT-ATC-15 completas), HU-ATC-048 y HU-ATC-053, 16 h; las 3 h que
+faltan las absorbe el equipo (riesgo aceptado). Las 5 siguen documentadas en el paquete y se retoman en una etapa posterior.
 
 | Épica | Nombre | MoSCoW | Funcionalidades | HU | Horas | Dev |
 |---|---|---|---|---|---|---|
@@ -93,11 +101,14 @@ v1.3 (RF-SVC-064 a 067). Suman **243 h** de desarrollo sobre una capacidad de **
 | EP-ATC-05 | Postventa: reclamos de garantía | Debería | FT-10 | 4 | 12 | Dev 1 (Brayan) |
 | EP-ATC-06 | Autogestión del cliente y trazabilidad (Mi Portal) | Debe | FT-24 | 3 | 9 | Dev 4 (Daniel) |
 | EP-ATC-07 | Calidad de atención y Torre de Control CX | Debería | FT-13, FT-14 | 4 | 16 | Dev 3 (Michel) |
-| EP-ATC-08 | EntregaFest: contención y derivación en vivo | Podría | FT-15 | 3 | 6 | Dev 1 (Brayan) |
-| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | FT-18, FT-25, FT-19, FT-21 | 9 | 44 | Dev 3 (Michel) |
-| EP-ATC-10 | Consulta 360 e integraciones operativas | Debe | FT-20, FT-17, FT-16 | 8 | 36 | Dev 4 (Daniel) |
+| EP-ATC-08 | EntregaFest: contención y derivación en vivo | Podría | FT-15 | 3 · **fuera de la Etapa 1 (P-025)** | 6 · 0 en la Etapa 1 | Dev 1 (Brayan) |
+| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | FT-18, FT-25, FT-19, FT-21 | 9 · 8 en la Etapa 1 (HU-048 fuera) | 44 · 39 en la Etapa 1 | Dev 3 (Michel) |
+| EP-ATC-10 | Consulta 360 e integraciones operativas | Debe | FT-20, FT-17, FT-16 | 8 · 7 en la Etapa 1 (HU-053 fuera) | 36 · 31 en la Etapa 1 | Dev 4 (Daniel) |
 | EP-ATC-11 | Resolución por morosidad y formularios simples | Debe | FT-22, FT-23 | 5 | 17 | Dev 4 (Daniel) |
-| **Total** | | | **23** | **62** | **243** | |
+| **Total del plan del PO** | | | **23** | **62** | **243** | |
+| **Total de la Etapa 1 (P-025)** | | | **22** | **57** | **227** | |
+| Fundación técnica de DT-02 (P-025; no es una HU del PO) | Outbox, publicador, proyector y bus | Debe | FT-01 (tareas sobre HU-ATC-001) | — | 28 | Brayan 9 · Jesús 4 · Michel 9 · Daniel 6 |
+| **Total de horas de la Etapa 1** | | | | | **255** | 64 · 64 · 64 · 63 |
 
 En resumen, la Etapa 1 cubre:
 
@@ -108,11 +119,11 @@ En resumen, la Etapa 1 cubre:
 - el gate legal obligatorio a Eje 3 y la Mesa de Casos sensibles;
 - los reclamos de garantía de postventa;
 - la encuesta post-atención y la Torre de Control CX;
-- la contención en vivo del EntregaFest;
 - la bandeja orquestadora con flujos por tipo, subtipo y área;
-- la asistencia de IA al gestor;
+- la guía de solución al gestor (la retroalimentación de IA, HU-048, sale de la Etapa 1 por P-025);
 - el visor del proceso 3D;
-- la consulta 360 del cliente y las integraciones operativas (call center, Legal y motor de consultas);
+- la consulta 360 del cliente y las integraciones operativas (call center, Legal y motor de consultas), sin la búsqueda por significado (HU-053, fuera por P-025);
+- la fundación técnica de CQRS de DT-02: outbox, publicador, proyector y bus (28 h, P-025).
 - la resolución de contrato por morosidad de 3 meses;
 - los formularios simples (ingreso al proyecto y buses del Entrega Fest);
 - la autogestión del cliente en Mi Portal.
@@ -128,13 +139,18 @@ desarrollador:
 2. HU-ATC-050, la consulta 360 en el ticket (Dev 4).
 3. HU-ATC-067, el visor del proceso 3D (Dev 3).
 
-### Flexible — primero que sale si el control de alcance (jue 29-oct) muestra atraso
+### Flexible — fuera de la Etapa 1 desde el 26-oct (P-025)
+
+El PO los definió como lo primero que sale si el control de alcance (jue 29-oct) muestra atraso:
 
 - RF-SVC-037 a 039 (HU-ATC-037 a 039): contención verbal en EntregaFest.
 - RF-SVC-048 (HU-ATC-048): retroalimentación de IA al gestor durante la atención.
 - RF-SVC-053 (HU-ATC-053): búsqueda inteligente en archivos y documentos del cliente.
 
-Recortarlos no afecta la v1.0 (PLT-01 v1.3, R-01).
+Recortarlos no afecta la v1.0 (PLT-01 v1.3, R-01). **El equipo los sacó de la Etapa 1 el 26-oct-2026** (P-025, decidida
+por el equipo, Brayan Hurtado; `analisis/decisiones.md` v0.8) para hacer sitio a las 28 h de DT-02: se retoman en una etapa
+posterior. Sus documentos siguen en el paquete con la nota «Alcance» y el desglose de sus tareas está sin cambios en
+`roadmap/alcance-diferido.md`.
 
 ### Fuera (OUT) — "Después"
 
@@ -142,8 +158,10 @@ Recortarlos no afecta la v1.0 (PLT-01 v1.3, R-01).
   ticket se registra a mano o por API contra un simulador (HU-ATC-001, fuera de alcance).
 - Los requisitos del Excel que la columna «etapa» deja fuera de la Etapa 1 (RN-SVC-043): **5 RF y
   2 RNF**. No tienen historia ni fecha en este plan.
+- Las 5 historias de alcance flexible (HU-ATC-037, 038, 039, 048 y 053; EP-ATC-08 y FT-ATC-15 completas), que salen
+  de la Etapa 1 por P-025 y se retoman en una etapa posterior.
 - Lo que cada épica declara fuera de alcance en su sección 3 (PLT-02 v1.3), y cualquier
-  funcionalidad que no esté en las 62 historias.
+  funcionalidad que no esté en las 57 historias de la Etapa 1.
 
 ## 4 Riesgos y supuestos
 
@@ -152,7 +170,7 @@ análisis completo en `docs/roadmap/analisis-dependencias.md`. Son los riesgos R
 v1.3, con dueño y mitigación, más el R-11 que suma el equipo (DEP-16, riesgo aceptado con mitigación), y las 14 dependencias vigentes: DEP-01, DEP-03 a DEP-08 y DEP-10 a DEP-16 (la numeración del PLT-01 salta
 la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los referencia. Los más urgentes son:
 
-- **R-01**: 243 h de 252 h (96 %), con Dev 4 al 98 %.
+- **R-01**: el plan del PO tenía 243 h de 252 h (96 %), con Dev 4 al 98 %. Mitigación aplicada el 26-oct (P-025): sale el alcance flexible (16 h) y entran las 28 h de DT-02; quedan 255 h sobre 252 h (64, 64, 64 y 63 h por persona) y las 3 h de más son riesgo aceptado por el equipo.
 - **R-02**: APIs externas sin fecha.
 - **R-03**: matriz SLA sin definir (mitigación del PO: matriz provisional parametrizable).
 - **R-11**: Control de acceso sin fecha en DEV (DEP-16); mitigado con el emisor de pruebas local, tokens de prueba y personas sintéticas (ED-08).
@@ -172,7 +190,7 @@ la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los
 - Rigen la Ley 29571, art. 24 (Libro de Reclamaciones), y la Ley 29733 (datos personales).
 - La IA solo sugiere, nunca decide (RN-SVC-032).
 
-**Decidido en `decisiones.md` v0.7** (Líder Técnico y equipo) que afecta a este BRD:
+**Decidido en `decisiones.md` v0.8** (Líder Técnico y equipo) que afecta a este BRD:
 
 - **DT-01**: el stack de la Etapa 1 lo decidió el Líder Técnico (Java y Angular del SDK). Las diferencias con el PLT-01 y el PLT-05 del PO están listadas en ED-19 (P-027).
 - **P-021** (cerrada por DT-06): el Líder Técnico fijó `PARTY` de la base única como fuente viva. Las diferencias con el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 del PO están en ED-19, y la relación de `PARTY` con SIGDA/TAXON la fija ED-05 (P-027).
@@ -180,8 +198,9 @@ la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los
 - **P-041**: el proceso de atención de prospectos queda fuera de la Etapa 1 (ED-09).
 - **P-022**: el Excel y los PDF quedan como los publicó el PO; las diferencias están en `correcciones-excel-v1.3.md` y en el registro (ED-18).
 - **P-024**: cada documento queda listo para la firma de su rol (ED-21).
+- **P-025** (horas): decidida por el equipo (Brayan Hurtado), 26-oct-2026, opción A. Las 28 h de DT-02 entran como fundación técnica y salen de la Etapa 1 las 5 historias de alcance flexible (16 h); las 3 h restantes son riesgo aceptado. Etapa 1: 57 historias, 227 h de historias más 28 h técnicas. El proveedor de IA (ED-17) queda decidido, sin consumo en la Etapa 1.
 
-**Sigue abierta solo P-025** (horas): lo nuevo que exige DT-02 son 28 h; con 9 h de holgura, la brecha es de 19 h. La cierra el coordinador.
+**No queda ninguna pendiente abierta en el registro**: lo que falta son firmas.
 
 ## 5 Aprobación
 
@@ -199,6 +218,7 @@ Solo cuenta como evidencia la aprobación registrada en Nexora o `estado: approv
 | 0.3 | 2026-10-22 | Jesús Chávez Elías, con IA | Cambios de la revisión del Líder Técnico: identidad y roles de Control de acceso (DEP-16 en lugar de DEP-02), plataforma Azure, y el estado de D-001, P-021 y P-025 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | La DEP-16 ya no es propuesta (C-12); P-021 cerrada por DT-06; alcance nuevo del proceso de prospectos (C-06, P-041) |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: objetivos adoptados (OBJ-04 con la línea base en la primera medición de la UAT); proceso de prospectos fuera de la Etapa 1 (ED-09); DEP-16 como riesgo R-11 con mitigación; la lista de puntos del registro pasa a decisiones y solo queda P-025 (28 h nuevas, brecha de 19 h; la cierra el coordinador) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 en 57 historias, 22 funcionalidades y 10 épicas, con 227 h de historias (55, 60, 55 y 57) más 28 h técnicas de DT-02 = 255 h; HU-ATC-037, 038, 039, 048 y 053 fuera (alcance flexible R-01), en «Flexible» y «Fuera»; R-01 con la mitigación aplicada; OBJ-06 sin IA en la Etapa 1; no queda ninguna pendiente abierta. Sin cambiar texto del PO |
 
 Generado por IA: contenido completo. Versión base de Nexora (v1, de Daniel, 15-oct, sobre el plan v1.2), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
 
@@ -207,3 +227,5 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06 y C-12; P-021). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude) a partir de P-025, decidida por el equipo el 26-oct (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 y horas. — Revisado por: (pendiente)

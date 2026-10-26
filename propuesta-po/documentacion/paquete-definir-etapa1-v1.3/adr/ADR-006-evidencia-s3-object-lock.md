@@ -16,7 +16,7 @@ tags: [adr, arquitectura, g3]
 
 - Estado: propuesto
 - Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-06 del PLT-05 v1.3, con la decisión DT-07 del Líder Técnico (Jose Jara, 22-oct-2026): Azure Blob Storage con inmutabilidad para la evidencia. Registrada en `analisis/decisiones.md` v0.7, con la retención que fija el equipo (P-007, ED-13).
 - Cambia lo que fija el PO: el ADR-06 del PO («Evidencia probatoria en S3 con Object Lock y checksum») y el Excel (RNF-CUM-007, RNF-AUD-004) piden S3. Es una diferencia listada en ED-19 de `analisis/decisiones.md` (P-027); los documentos del PO no se editan.
@@ -74,4 +74,4 @@ La evidencia probatoria vive en **Azure Blob Storage con inmutabilidad y checksu
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): retención de 2 años desde el registro con la cita del art. 12 del Reglamento del Libro de Reclamaciones (ED-13); política bloqueada en PRE y producción; sin espera de Legal para habilitar producción (G8 normal); `GOV_DOCUMENT_REPOSITORY` con ATC como custodio (ED-11); columnas del cargo de la prórroga y de la resolución de la apelación (ED-16); diferencia con el PO en ED-19; supuestos del costo en ED-12 |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Acta de Validación de Arquitectura de Datos (borrador para Gobierno de Datos)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [data_chief, tech_lead]
 fecha: "2026-10-26"
@@ -50,6 +50,8 @@ Modelo lógico y físico en la **base única del modelo v7, en Azure Database fo
 | H-13 | **Correspondencia `MAE_AREA` ↔ estructura organizacional (C-07).** `MAE_AREA` queda solo como cola de atención del ticket y no guarda líderes. La revisión del Líder Técnico pide documentar su correspondencia con `NEX_COMPANY_AREA`, pero esa tabla no existe en PJ-05: la crea su dueño de modelo (D-74) y `CompanyAreaID` va sin FK hasta entonces (D-193). **Resuelto por el equipo (ED-04, 26-oct):** en la Etapa 1 no hay correspondencia y `MAE_AREA` solo suma la posición en la sede; si `NEX_COMPANY_AREA` llega a existir, la correspondencia se presenta como cambio (`registro-de-tablas.md` §7) | Menor | No |
 | H-14 | **Historial de Flyway de ATC en la base única.** Control de acceso ya migra en la misma base; si ATC usara la tabla de historial por defecto, Flyway vería migraciones ajenas y fallaría al validar. ATC lleva su propia tabla, `flyway_schema_history_atc` (`aybar.data.flyway.baseline-table`), con `baseline-on-migrate` y la línea base en la versión 0 (`spring.flyway.baseline-version`, excepción a la regla del starter que confirma el Líder Técnico); las migraciones corren en un job aparte con el rol `app_atc_migracion`, dueño de las tablas de ATC, y la aplicación arranca sin Flyway con `app_atc_servicio` (ADR-001 v0.5, regla 5; registro §3.1; `arquitectura/migracion-y-reversion.md` §1). **Resuelto por el equipo (ED-11, 26-oct):** historial propio, línea base 0 y esquema de las tablas del v7 en la base única, sin depender del historial de otros servicios | Mayor | **Resuelto**; va con la firma |
 
+**Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8).** HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1. `SVC_AI_SUGGESTION_LOG` (HU-048, H-03) y el caso sensible del evento (`SENSITIVE_EVENT_CASE` y `EVENT`, HU-037 a 039) siguen en los cambios al v7 que se presentan con esta acta, pero **no se crean en la Etapa 1**: se crean cuando entren esas HU. La búsqueda vectorial de HU-053 tampoco se activa. Ningún hallazgo cambia de estado.
+
 ## 4 Reglas de calidad e integridad que entran a la batería de F10
 
 Se declaran aquí y se dan de alta al momento del release (`.agents/references/gobierno-datos.md`). Umbrales iniciales; se calibran con cuatro semanas de línea base antes de alertar en firme; los umbrales cero aplican a datos nuevos.
@@ -93,9 +95,12 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Outbox único: `SVC_OUTBOX_EVENT` (ADR-013 v0.3) en H-03, H-08, H-12 y Q-007. H-09 resuelto con ADR-002 y Q-003 sobre las 9 tablas firmadas. Dueño de dato como rol (Gerente de ATC). `SVC_COMPLAINT_BOOK_ENTRY` sin datos personales en columnas. H-14 nuevo (historial de Flyway propio de ATC, línea base 0 y roles `app_atc_migracion` y `app_atc_servicio`, como ADR-001 v0.4). El índice de búsqueda es una colección de lectura (ADR-012 v0.4). P-043 pasa a ser condición de la firma. Sigue sin firmar |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): H-04 resuelto con ED-16 (tipos y nulabilidad), H-10 con ED-14, ED-15 y ED-26, H-11 con ED-05 (interesado «sin cliente vinculado» y `SVC_TICKET_PROSPECT`), H-12 y H-14 con ED-11 (dueño de migración), H-13 con ED-04 (sin correspondencia de `MAE_AREA` en la Etapa 1); la firma ya no tiene la condición P-043; el acta queda lista para la firma del Data Chief |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): nota bajo los hallazgos; `SVC_AI_SUGGESTION_LOG` y el caso sensible del evento siguen como cambio al v7 y no se crean en la Etapa 1; ningún hallazgo cambia |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (§4, «Modelo de datos y acta F4»; DT-06 y C-11). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct: outbox, tablas firmadas, dueño de dato, historial de Flyway y P-043 como condición. El agente no firma. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-04, ED-05, ED-11, ED-13, ED-16, ED-19, ED-23 y ED-26 de `analisis/decisiones.md` v0.7). El agente no firma. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-15 EntregaFest: contención en vivo"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -13,6 +13,8 @@ tags: [dor, plt-05, g4]
 ---
 
 # PLT-05 - Definition of Ready (G4) - FT-ATC-15 EntregaFest: contención en vivo
+
+**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Este DoR no se evalúa para la Etapa 1.
 
 | Ítem evaluado | Product Owner | Líder técnico |
 |---|---|---|
@@ -34,7 +36,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Modelo de caso
 | 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: sin dependencias externas |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (`datos/` y `arquitectura/` del paquete, listos para la firma del Líder Técnico y del Data Chief) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
-| 9 | Estimada por el equipo | [ ] | PLT-04: 6 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y el cierre de horas lo hace el coordinador (P-025) |
+| 9 | Estimada por el equipo | [ ] | PLT-04: 6 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y las horas quedan cerradas por P-025 (decidida por el equipo el 26-oct-2026, `analisis/decisiones.md` v0.8): FT-ATC-15 queda fuera de la Etapa 1 (0 h en la Etapa 1) y sus tareas están en `docs/roadmap/alcance-diferido.md` |
 | 10 | Cabe en un sprint | [ ] | 6 h dentro de la ventana 30-oct-2026 → 2-nov-2026 (PLT-01) |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Línea «Revisado por» de cada documento: pendiente |
 
@@ -101,3 +103,5 @@ Generado por IA: transcripción al formato del paquete Definir desde los documen
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo de `analisis/decisiones.md` v0.7: el criterio 9 remite el cierre de horas al coordinador (P-025); ADR aplicables: las de `adr/` v0.5; regla del criterio 6 con riesgos mitigados; condiciones del PLT-05 anotadas con la decisión del equipo, sin borrar su texto. Modelado y arquitectura (secciones 3 y 4, criterio 7) citan los documentos de `datos/` y `arquitectura/` del paquete. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el criterio 9 ya no remite el cierre de horas al coordinador. Nota de alcance al inicio: FT-ATC-15 fuera de la Etapa 1. No se borra texto del PO. — Revisado por: (pendiente)

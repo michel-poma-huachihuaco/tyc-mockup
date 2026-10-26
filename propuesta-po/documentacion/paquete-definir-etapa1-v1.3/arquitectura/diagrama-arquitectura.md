@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Diagrama de arquitectura (C4: contexto, contenedores, módulos, ambientes y logs)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [arquitectura, c4, g3]
 
 # Diagrama de arquitectura · C4
 
-Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión 0.5 del 26-oct-2026: dibuja las decisiones DT-01 a DT-10 del Líder Técnico y las del equipo que tocan el diagrama (ED-01, ED-03, ED-06, ED-08, ED-17 y ED-24; `analisis/decisiones.md` v0.7) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
+Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión 0.6 del 26-oct-2026 (la 0.6 marca Azure OpenAI sin consumo en la Etapa 1, P-025): dibuja las decisiones DT-01 a DT-10 del Líder Técnico y las del equipo que tocan el diagrama (ED-01, ED-03, ED-06, ED-08, ED-17 y ED-24; `analisis/decisiones.md` v0.7) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
 
 | DT | Dónde se ve |
 |---|---|
@@ -51,7 +51,7 @@ flowchart LR
     cti[Call center CTI<br/>DEP-11]
     leg[Herramienta de Legal<br/>DEP-12]
     jose[Motor de José<br/>DEP-13]
-    ia[Azure OpenAI Service<br/>DEP-14 · ED-17]
+    ia["Azure OpenAI Service<br/>ED-17 · sin consumo en la Etapa 1 (P-025)"]
     kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
     proy[Proyectos<br/>DEP-15]
   end
@@ -74,7 +74,7 @@ flowchart LR
   atc <--> cti
   atc <--> leg
   atc <--> jose
-  atc <--> ia
+  atc -. "cuando entren HU-048 y HU-053" .-> ia
   atc --> kpi
   atc <--> proy
 ```
@@ -322,7 +322,10 @@ Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técni
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: contenedores con `/ws/visor` por Cloudflare al ingreso, sin API Management (el nivel de consumo no admite WebSocket, verificado en Microsoft Learn), JWT validado en el *handshake* y job de migraciones; contexto y ambientes con PRE para la UAT del 03-nov (PLT-05 §4.2); logs con el `AuthorizationEventPublisher`, los intentos denegados desde el caso de uso y el punto de control diario; reglas y pendientes al día |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7 en los diagramas: audiencia `aybar-atc` (ED-06), lectura del vínculo de `IDN_USER_ACCOUNT` (ED-01), `GestoresPort` con datos de ATC y consulta de líderes como evolución (ED-03), DEP-16 como riesgo aceptado (ED-08), Azure OpenAI (ED-17) y Event Hubs con SASL (ED-24). «Pendientes del diagrama» pasa a «Decisiones del equipo que muestra el diagrama» |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): en el contexto, Azure OpenAI Service queda «sin consumo en la Etapa 1» y su enlace, punteado, «cuando entren HU-048 y HU-053» (igual que `c4-contexto.mmd`) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): decisiones del equipo de `analisis/decisiones.md` v0.7 en los diagramas. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); Azure OpenAI sin consumo en la Etapa 1. — Revisado por: (pendiente)

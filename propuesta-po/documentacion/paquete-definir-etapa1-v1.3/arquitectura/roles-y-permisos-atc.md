@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Roles y permisos de ATC: catálogo que ATC entrega a Control de acceso"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -52,7 +52,7 @@ Resuelve las colisiones C-02 (no había catálogo de ATC) y C-08 (asignación gl
 | `ATC_ADMIN_FUNCIONAL` | Administrador funcional de flujos (HU-043) | Global | Líder Técnico (C-02) |
 | `ATC_CASES_DESK` | Gestor de la Mesa de Casos (SGD), HU-020 a 025 | Global | Decisión del equipo (ED-20) |
 | `ATC_CX` | Coordinador CX, HU-029 a 031, 039 y 041 | Global | Decisión del equipo (ED-20) |
-| `ATC_EVENT` | Moderador y personal de apoyo del Entrega Fest, HU-037 a 039 | Por empresa | Decisión del equipo (ED-20) |
+| `ATC_EVENT` | Moderador y personal de apoyo del Entrega Fest, HU-037 a 039 | Por empresa | Decisión del equipo (ED-20) · sin operaciones en la Etapa 1: HU-037 a 039 fuera por P-025; se entrega al área cuando se retomen |
 | `ATC_SITE_ACCESS` | Personal de control de acceso del proyecto, HU-059 | Por empresa | Decisión del equipo (ED-20) |
 | `CUSTOMER` | Cliente de Mi Portal (HU-064 a 066) y cliente convocado al Entrega Fest (HU-060) | No es un rol de ATC: lo siembra Control de acceso (D-30). ATC solo registra sus permisos sobre `ATC.PORTAL` (S-2, ED-01) | Control de acceso |
 
@@ -92,7 +92,7 @@ Las asignaciones las hace Control de acceso (`asignarRol` para un rol global y `
 | `ATC.TICKETS.REOPEN` | ACTION | `ATC.TICKETS` | Reabrir | `reabrirTicket` (editar) |
 | `ATC.TICKETS.REASSIGN_BULK` | ACTION | `ATC.TICKETS` | Reasignar en bloque | `reasignarEnBloque` (editar) |
 | `ATC.TICKETS.GUIDE` | ACTION | `ATC.TICKETS` | Guía de solución | `obtenerGuia` (ver) |
-| `ATC.TICKETS.AI_ASSIST` | ACTION | `ATC.TICKETS` | Asistencia de IA | `pedirSugerenciaIa` (crear), `decidirSugerenciaIa` (editar) |
+| `ATC.TICKETS.AI_ASSIST` | ACTION | `ATC.TICKETS` | Asistencia de IA | `pedirSugerenciaIa` (crear), `decidirSugerenciaIa` (editar) · sin operación en la Etapa 1 (HU-048 fuera, P-025) |
 | `ATC.TICKETS.LEGAL_GATE` | ACTION | `ATC.TICKETS` | Señal de conflicto y handoff a Eje 3 | `marcarConflicto` (crear), `retirarConflicto` (eliminar), `armarHandoff` (crear), `confirmarHandoff` (aprobar) |
 | `ATC.TICKETS.STATE_NOTE` | ACTION | `ATC.TICKETS` | Nota de estado emocional | `registrarNotaEstado` (crear) |
 | `ATC.INBOX` | SUBMENU | `ATC` | Bandeja | `listarBandeja` (ver) |
@@ -108,11 +108,11 @@ Las asignaciones las hace Control de acceso (`asignarRol` para un rol global y `
 | `ATC.CUSTOMER360.SEARCH` | SUBMENU | `ATC.CUSTOMER360` | Búsqueda de clientes | `buscarClientes` (ver) |
 | `ATC.CUSTOMER360.CALL` | ACTION | `ATC.CUSTOMER360` | Llamar al cliente | `llamarCliente` (crear) |
 | `ATC.CUSTOMER360.QUERY_ENGINE` | ACTION | `ATC.CUSTOMER360` | Consulta al motor de José | `consultarMotor` (ver) |
-| `ATC.CUSTOMER360.DOCUMENTS` | ACTION | `ATC.CUSTOMER360` | Búsqueda de documentos | `buscarDocumentos` (ver) |
+| `ATC.CUSTOMER360.DOCUMENTS` | ACTION | `ATC.CUSTOMER360` | Búsqueda de documentos | `buscarDocumentos` (ver) · sin operación en la Etapa 1 (HU-053 fuera, P-025) |
 | `ATC.LEGAL_CASES` | SUBMENU | `ATC` | Mesa de casos sensibles (SGD) | `registrarCasoSensible` (crear), `reclasificarCaso` (editar), `emitirCargo` (crear), `clasificarRiesgo` (editar), `escalarCaso` (editar), `buscarCoincidencias` (ver), `vincularCasos` (editar), `cerrarCaso` (editar) |
 | `ATC.AFTERSALES` | SUBMENU | `ATC` | Garantías postventa | `registrarReclamoGarantia` (crear), `registrarInspeccion` (crear), `resolverReclamo` (editar), `escalarGarantia` (editar), `registrarAdenda` (crear) |
-| `ATC.EVENT_CASES` | SUBMENU | `ATC` | Entrega Fest | `registrarCasoEvento` (crear), `listarCasosEvento` (ver) |
-| `ATC.EVENT_CASES.ANCHOR_PHRASES` | ACTION | `ATC.EVENT_CASES` | Frases Ancla | `registrarFraseAncla` (crear) |
+| `ATC.EVENT_CASES` | SUBMENU | `ATC` | Entrega Fest | `registrarCasoEvento` (crear), `listarCasosEvento` (ver) · sin operación en la Etapa 1 (HU-037 a 039 fuera, P-025) |
+| `ATC.EVENT_CASES.ANCHOR_PHRASES` | ACTION | `ATC.EVENT_CASES` | Frases Ancla | `registrarFraseAncla` (crear) · sin operación en la Etapa 1 (HU-037 fuera, P-025) |
 | `ATC.SITE_ENTRY` | SUBMENU | `ATC` | Ingreso al proyecto | `registrarIngreso` (crear) |
 | `ATC.PORTAL` | SUBMENU | `ATC` | Mi Portal | `listarMisTickets` (ver), `registrarMiTicket` (crear), `verTrazabilidad` (ver), `responderMiTicket` (editar), `listarTiposPortal` (ver), `confirmarSolucion` (aprobar) |
 | `ATC.PORTAL.BUS_BOOKING` | SUBMENU | `ATC.PORTAL` | Reserva de bus del Entrega Fest | `reservarBus` (crear), `cancelarReserva` (eliminar) |
@@ -133,8 +133,8 @@ Cada operación del contrato (`aybar-atc.openapi.yaml` 0.6.0-borrador) declara s
 | `reasignarEnBloque` | `ATC.TICKETS.REASSIGN_BULK + editar` | `ATC_SUPERVISOR` | HU-008 CA-03: solo el supervisor |
 | `consultarSla` | `ATC.TICKETS.SLA + ver` | `ATC_AGENT`, `ATC_SUPERVISOR`, `ATC_LEGAL`, `ATC_POSTVENTA`, `ATC_CX` | HU-003, HU-010 |
 | `obtenerGuia` | `ATC.TICKETS.GUIDE + ver` | `ATC_AGENT`, `ATC_SUPERVISOR` | HU-047 (gestor de tickets) |
-| `pedirSugerenciaIa` | `ATC.TICKETS.AI_ASSIST + crear` | `ATC_AGENT` | HU-048; texto anonimizado (ADR-007) |
-| `decidirSugerenciaIa` | `ATC.TICKETS.AI_ASSIST + editar` | `ATC_AGENT` | HU-048: la IA sugiere, el gestor decide |
+| `pedirSugerenciaIa` | `ATC.TICKETS.AI_ASSIST + crear` | `ATC_AGENT` | HU-048; texto anonimizado (ADR-007) · fuera de la Etapa 1 (P-025) |
+| `decidirSugerenciaIa` | `ATC.TICKETS.AI_ASSIST + editar` | `ATC_AGENT` | HU-048: la IA sugiere, el gestor decide · fuera de la Etapa 1 (P-025) |
 | `marcarConflicto` | `ATC.TICKETS.LEGAL_GATE + crear` | `ATC_AGENT`, `ATC_POSTVENTA` | HU-026 (gestor de tickets o de Postventa) |
 | `retirarConflicto` | `ATC.TICKETS.LEGAL_GATE + eliminar` | `ATC_SUPERVISOR` | HU-026 CA-03: solo el supervisor, con justificación |
 | `armarHandoff` | `ATC.TICKETS.LEGAL_GATE + crear` | `ATC_AGENT`, `ATC_POSTVENTA` | HU-027 CA-01: 6 elementos completos |
@@ -156,7 +156,7 @@ Cada operación del contrato (`aybar-atc.openapi.yaml` 0.6.0-borrador) declara s
 | `consulta360` | `ATC.CUSTOMER360 + ver` | `ATC_AGENT`, `ATC_SUPERVISOR`, `ATC_LEGAL`, `ATC_POSTVENTA`, `ATC_CASES_DESK` | HU-050 CA-02, CA-07: secciones con candado según el rol |
 | `llamarCliente` | `ATC.CUSTOMER360.CALL + crear` | `ATC_AGENT` | HU-049 |
 | `consultarMotor` | `ATC.CUSTOMER360.QUERY_ENGINE + ver` | `ATC_AGENT` | HU-052 CA-03: dato no permitido, intento registrado |
-| `buscarDocumentos` | `ATC.CUSTOMER360.DOCUMENTS + ver` | `ATC_AGENT` | HU-053 CA-02: documento restringido no aparece |
+| `buscarDocumentos` | `ATC.CUSTOMER360.DOCUMENTS + ver` | `ATC_AGENT` | HU-053 CA-02: documento restringido no aparece · fuera de la Etapa 1 (P-025) |
 | `registrarCasoSensible` | `ATC.LEGAL_CASES + crear` | `ATC_CASES_DESK` | HU-020 (gestor de la Mesa SGD) |
 | `reclasificarCaso` | `ATC.LEGAL_CASES + editar` | `ATC_CASES_DESK` | HU-020 CA-02 |
 | `emitirCargo` | `ATC.LEGAL_CASES + crear` | `ATC_CASES_DESK` | HU-021 |
@@ -170,9 +170,9 @@ Cada operación del contrato (`aybar-atc.openapi.yaml` 0.6.0-borrador) declara s
 | `resolverReclamo` | `ATC.AFTERSALES + editar` | `ATC_POSTVENTA` | HU-035 |
 | `escalarGarantia` | `ATC.AFTERSALES + editar` | `ATC_POSTVENTA` | HU-036 |
 | `registrarAdenda` | `ATC.AFTERSALES + crear` | `ATC_POSTVENTA` | HU-036 |
-| `registrarFraseAncla` | `ATC.EVENT_CASES.ANCHOR_PHRASES + crear` | `ATC_EVENT` | HU-037 (moderador de evento) |
-| `registrarCasoEvento` | `ATC.EVENT_CASES + crear` | `ATC_EVENT`, `ATC_CX` | HU-038, HU-039 |
-| `listarCasosEvento` | `ATC.EVENT_CASES + ver` | `ATC_EVENT`, `ATC_CX`, `ATC_SUPERVISOR` | HU-039 |
+| `registrarFraseAncla` | `ATC.EVENT_CASES.ANCHOR_PHRASES + crear` | `ATC_EVENT` | HU-037 (moderador de evento) · fuera de la Etapa 1 (P-025) |
+| `registrarCasoEvento` | `ATC.EVENT_CASES + crear` | `ATC_EVENT`, `ATC_CX` | HU-038, HU-039 · fuera de la Etapa 1 (P-025) |
+| `listarCasosEvento` | `ATC.EVENT_CASES + ver` | `ATC_EVENT`, `ATC_CX`, `ATC_SUPERVISOR` | HU-039 · fuera de la Etapa 1 (P-025) |
 | `registrarIngreso` | `ATC.SITE_ENTRY + crear` | `ATC_SITE_ACCESS` | HU-059 (personal de control de acceso del proyecto; rol propuesto) |
 | `reservarBus` | `ATC.PORTAL.BUS_BOOKING + crear` | `CUSTOMER` | HU-060 (cliente convocado; cuenta `CUSTOMER`, ED-01) |
 | `cancelarReserva` | `ATC.PORTAL.BUS_BOOKING + eliminar` | `CUSTOMER` | HU-060 CA-03 |
@@ -194,7 +194,7 @@ Es el lote de permisos que ATC envía (una fila por rol y opción, con sus accio
 - **`ATC_ADMIN_FUNCIONAL`** (2 filas): `ATC` (ver); `ATC.WORKFLOWS` (ver, editar).
 - **`ATC_CASES_DESK`** (4 filas): `ATC` (ver); `ATC.TICKETS` (ver); `ATC.CUSTOMER360` (ver); `ATC.LEGAL_CASES` (ver, crear, editar).
 - **`ATC_CX`** (6 filas): `ATC` (ver); `ATC.TICKETS` (ver); `ATC.TICKETS.SLA` (ver); `ATC.DASHBOARD` (ver); `ATC.DASHBOARD.TEAM` (ver); `ATC.EVENT_CASES` (ver, crear).
-- **`ATC_EVENT`** (3 filas): `ATC` (ver); `ATC.EVENT_CASES` (ver, crear); `ATC.EVENT_CASES.ANCHOR_PHRASES` (crear).
+- **`ATC_EVENT`** (3 filas): `ATC` (ver); `ATC.EVENT_CASES` (ver, crear); `ATC.EVENT_CASES.ANCHOR_PHRASES` (crear). Sin operaciones en la Etapa 1: HU-037 a 039 fuera por P-025; se entrega al área cuando se retomen.
 - **`ATC_SITE_ACCESS`** (2 filas): `ATC` (ver); `ATC.SITE_ENTRY` (ver, crear).
 - **`CUSTOMER`** (3 filas): `ATC` (ver); `ATC.PORTAL` (ver, crear, editar, aprobar); `ATC.PORTAL.BUS_BOOKING` (ver, crear, eliminar).
 
@@ -240,7 +240,7 @@ Control de acceso evalúa estas incompatibilidades sobre la unión de los roles 
 |---|---|---|
 | Gestor de la Mesa de Casos (SGD) | HU-020 a HU-025 | Rol `ATC_CASES_DESK` |
 | Coordinador CX | HU-029 a HU-031, HU-039, HU-041 | Rol `ATC_CX` |
-| Moderador de evento y personal de apoyo | HU-037 a HU-039 | Rol `ATC_EVENT` |
+| Moderador de evento y personal de apoyo | HU-037 a HU-039 | Rol `ATC_EVENT` · sin operaciones en la Etapa 1: HU-037 a 039 fuera por P-025; se entrega al área cuando se retomen |
 | Personal de control de acceso del proyecto | HU-059 | Rol `ATC_SITE_ACCESS`; la persona necesita una cuenta `EMPLOYEE` invitada por el área (D-46) |
 | Cliente convocado al Entrega Fest | HU-060 | Cuenta `CUSTOMER` (S-2, ED-01), con sesión de Mi Portal |
 | Analista de Cobranza | HU-056, HU-057 | Los casos los abre un job (ADR-005); el analista no tiene operación en el contrato |
@@ -257,7 +257,8 @@ Control de acceso evalúa estas incompatibilidades sobre la unión de los roles 
 4. **Aprobación.** Una persona con `ROLE_IT_ADMIN` aprueba cada fila: son **118 tareas** (31 opciones + 9 roles + 75 permisos + 3 incompatibilidades; A24: una por fila), que vencen a los 7 días si nadie las resuelve (ADR-021 de PJ-05) ⚠ `HU-IDN-057`. Es la firma del área.
 5. **Clientes `PUBLIC`.** Los de la consola ATC y de Mi Portal los carga el seeder del área por ambiente, con su `redirect_uri` (D-223); todos sus tokens llevan `aybar-atc` en `aud` (ED-06).
 6. **Invitación y asignación.** El área invita a los gestores como cuentas `EMPLOYEE` ligadas a su `PARTY` (D-46) y les asigna los roles, globales o por empresa (sección 3), y `PROSPECT_VALIDATOR` a los supervisores de la cola `ATC`.
-7. **Cambios.** Un rol nuevo o un cambio posterior se pide al área (revisión del Líder Técnico, §3.1, punto 4). Las rutas de cambio y retiro de D-100 siguen en propuesta y no se usan en la Etapa 1.
+7. **Alcance de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8).** Las cifras de esta sección son las del catálogo documentado, que no cambia. El rol `ATC_EVENT` no tiene operaciones en la Etapa 1 (HU-037 a 039 fuera por P-025) y se entrega al área cuando se retomen. Las opciones `ATC.TICKETS.AI_ASSIST` (HU-048), `ATC.CUSTOMER360.DOCUMENTS` (HU-053) y `ATC.EVENT_CASES` con `ATC.EVENT_CASES.ANCHOR_PHRASES` (HU-037 a 039) siguen documentadas y no tienen operación construida en la Etapa 1.
+8. **Cambios.** Un rol nuevo o un cambio posterior se pide al área (revisión del Líder Técnico, §3.1, punto 4). Las rutas de cambio y retiro de D-100 siguen en propuesta y no se usan en la Etapa 1.
 
 ## 12 Decisiones del equipo que aplica este catálogo
 
@@ -282,7 +283,10 @@ Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técni
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: regla explícita para un rol global y uno por empresa (si se permite: unión de roles, como el permiso efectivo de PJ-05; sobre qué empresas: por operación, con los roles que la autorizan), con ejemplo, componente y prueba; incompatibilidad `ATC_SUPERVISOR` + `ATC_AGENT` (`WARN_AND_LOG`) y 118 tareas de aprobación; aviso ⚠ con los 7 archivos de PJ-05 que no coinciden con el sello; roles sembrados: 9 (D-176); intentos denegados con `AuthorizationEventPublisher` y desde el caso de uso; visor y Mi Portal según ADR-010 y ADR-011; la visibilidad del cliente citada por sus criterios |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): cita `analisis/decisiones.md` v0.6 y `proceso-atencion-prospectos.md` v0.2, las versiones vigentes (decían v0.5 y v0.1). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: catálogo decidido (ED-20; «líder» = `ATC_SUPERVISOR`, `ATC_LEGAL` confirma el handoff, rol global por invitación, incompatibilidades); S-1 (ED-02), S-2 y S-3 (ED-01, Mi Portal con cuenta `CUSTOMER`) y S-4 (ED-04) pasan de supuesto a decisión; `PROSPECT_VALIDATOR` para los supervisores de la cola `ATC` (ED-09); §11 con los dos lotes del ADR-021, una sola vez, por el cliente de servicio o el script de TI (ED-07); §12 pasa de preguntas a «Decisiones del equipo que aplica este catálogo» |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el catálogo documentado no cambia (mismos roles, opciones y permisos); `ATC_EVENT` sin operaciones en la Etapa 1 (HU-037 a 039 fuera), se entrega al área cuando se retomen; las operaciones de HU-037 a 039, 048 y 053 marcadas «fuera de la Etapa 1» |
 
 Generado por IA: documento completo (Claude, 2026-10-22), a partir de la revisión del Líder Técnico del 22-oct, las 62 historias de Nexora (actores y criterios de aceptación) y el contrato OpenAPI v5; actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente) · Aprueba: TL
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01, ED-02, ED-03, ED-04, ED-07, ED-09 y ED-20 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); operaciones y rol sin uso en la Etapa 1 anotados. — Revisado por: (pendiente)

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="generator" content="aybar paquete explorador">
-<meta name="aybar-huella" content="sha256:8c559aefb02a62e43ca3f4100bbb09875940db361a92698c73f1c26a0bda90ea">
+<meta name="aybar-huella" content="sha256:6fadad443ba227e1253dca07f2d4d1b7e736c924ae1981d675c4c0c9cf18cdaf">
 <title>Explorador del paquete</title>
 <!--
   Generado por `aybar paquete explorador` desde el docs/ del servicio. No se
@@ -225,7 +225,7 @@ const D = {
       "epicas": 11,
       "features": 23,
       "historias": 62,
-      "tareas": 321,
+      "tareas": 308,
       "flujos": 0,
       "casos": 0
     }
@@ -1257,15 +1257,10 @@ const D = {
         "veredicto": "NO READY",
         "origen": "humano"
       },
-      "endpoints": [
-        "POST /api/v1/entregafest/casos",
-        "POST /api/v1/entregafest/casos/{id}/derivacion",
-        "POST /api/v1/entregafest/registro-casos-sensibles"
-      ],
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-15 | EntregaFest: contención en vivo | EP-ATC-08 EntregaFest: contención y derivación en vivo |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Podría | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | S·6h · 6 h de desarrollo · Dev 1 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 1 (Brayan) | 30-oct-2026 → 2-nov-2026 | — |"
+          "md": "**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Sus historias tienen sus tareas en `roadmap/alcance-diferido.md`; la dependencia FT-09 → FT-15 deja de aplicar en la Etapa 1.\n\n| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-15 | EntregaFest: contención en vivo | EP-ATC-08 EntregaFest: contención y derivación en vivo |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Podría | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | S·6h · 6 h de desarrollo · Dev 1 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 1 (Brayan) | 30-oct-2026 → 2-nov-2026 | — |"
         },
         {
           "titulo": "1 Descripción y valor",
@@ -1293,7 +1288,7 @@ const D = {
         },
         {
           "titulo": "7 Preguntas abiertas",
-          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿El registro lo hace el moderador o el personal de apoyo? ¿Funciona sin conexión en el recinto? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)"
+          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿El registro lo hace el moderador o el personal de apoyo? ¿Funciona sin conexión en el recinto? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La funcionalidad entera (6 h) sale de la Etapa 1. No se cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -1563,13 +1558,12 @@ const D = {
         "SVC_TICKET_INTERACTION"
       ],
       "endpoints": [
-        "GET /api/v1/guias-solucion/{tipoTicket}",
-        "POST /api/v1/tickets/{id}/sugerencia-ia"
+        "GET /api/v1/guias-solucion/{tipoTicket}"
       ],
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-19 | Asistencia al gestor: guía e IA | EP-ATC-09 Bandeja orquestadora y asistencia al gestor |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Debería | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | M·9h · 9 h de desarrollo · Dev 3 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 3 (Michel) | 27-oct-2026 → 28-oct-2026 | — |"
+          "md": "**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la funcionalidad es HU-047 (4 h de las 9 h del PO) y la DEP-14 no aplica: la guía no usa IA.\n\n| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-19 | Asistencia al gestor: guía e IA | EP-ATC-09 Bandeja orquestadora y asistencia al gestor |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Debería | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | M·9h · 9 h de desarrollo · Dev 3 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 3 (Michel) | 27-oct-2026 → 28-oct-2026 | — |"
         },
         {
           "titulo": "1 Descripción y valor",
@@ -1597,7 +1591,7 @@ const D = {
         },
         {
           "titulo": "7 Preguntas abiertas",
-          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿Qué proveedor de IA aprueban TI y Seguridad? ¿Quién redacta y aprueba las guías por área? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)"
+          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿Qué proveedor de IA aprueban TI y Seguridad? ¿Quién redacta y aprueba las guías por área? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-048 (4 h de 9 h). No se cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -1688,14 +1682,13 @@ const D = {
       ],
       "endpoints": [
         "GET /api/v1/clientes/buscar",
-        "GET /api/v1/clientes/{id}/documentos/buscar-semantico",
         "GET /api/v1/tickets/{id}/consulta-360",
         "POST /api/v1/tickets"
       ],
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-20 | Búsqueda y consulta 360 del cliente | EP-ATC-10 Consulta 360 e integraciones operativas |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Debe | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | L · 22 h · 22 h de desarrollo · Dev 4 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 4 (Daniel) | 21-oct-2026 → 26-oct-2026 | — |"
+          "md": "**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la funcionalidad son las HU-049 a 052 (17 h de las 22 h del PO), sin DEP-06 ni DEP-14, que solo traía HU-053; sigue siendo predecesora de FT-17 por HU-052 → HU-042.\n\n| ID | Nombre | Épica padre |\n|---|---|---|\n| FT-ATC-20 | Búsqueda y consulta 360 del cliente | EP-ATC-10 Consulta 360 e integraciones operativas |\n| **Product Owner** | **Prioridad (MoSCoW)** | **Estado** |\n| Eddie Huamaní (PO) | Debe | Refinamiento |\n| **Release objetivo** | **Estimación** | **Fecha / Versión** |\n| v1.0 · Etapa 1 · 03-nov-2026 | L · 22 h · 22 h de desarrollo · Dev 4 | 16-oct-2026 · v1.3 |\n| **Desarrollador** | **Ventana (PLT-01)** | **Predecesora** |\n| Dev 4 (Daniel) | 21-oct-2026 → 26-oct-2026 | — |"
         },
         {
           "titulo": "1 Descripción y valor",
@@ -1723,7 +1716,7 @@ const D = {
         },
         {
           "titulo": "7 Preguntas abiertas",
-          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿Qué significa «llamar la cuenta»? ¿Qué sistemas alimentan cada sección? ¿Qué repositorios de documentos se indexan? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)"
+          "md": "| # | Pregunta | Dueño | Fecha límite | Bloquea G4 |\n|---|---|---|---|---|\n| P-01 | ¿Qué significa «llamar la cuenta»? ¿Qué sistemas alimentan cada sección? ¿Qué repositorios de documentos se indexan? | (por asignar) | (por definir) | (lo decide el PO) |\n\nUna pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-053 (17 h de 22 h). No se cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -3123,7 +3116,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-04 / FT-ATC-09\n- Como gestor de la Mesa de Casos (SGD) quiero cerrar el caso eligiendo uno de los 8 estados homologados y adjuntando la evidencia para que los cierres sean comparables y los originales queden custodiados en el GLI.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-025 | Debe | 3 h con IA | Dev 2 (Jesús) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-023 (RF-SVC-023 es predecesora de RF-SVC-025, PLT-03), HU-ATC-024 (RF-SVC-024 es predecesora de RF-SVC-025, PLT-03) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03 y PLT-04)\n\n**La necesitan:** HU-ATC-037\n\n**Requerimiento de origen:** El sistema debe cerrar cada caso en uno de los 8 estados homologados, con evidencia, y referenciar la custodia en el GLI."
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-04 / FT-ATC-09\n- Como gestor de la Mesa de Casos (SGD) quiero cerrar el caso eligiendo uno de los 8 estados homologados y adjuntando la evidencia para que los cierres sean comparables y los originales queden custodiados en el GLI.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-025 | Debe | 3 h con IA | Dev 2 (Jesús) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-023 (RF-SVC-023 es predecesora de RF-SVC-025, PLT-03), HU-ATC-024 (RF-SVC-024 es predecesora de RF-SVC-025, PLT-03) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03 y PLT-04)\n\n**La necesitan:** ninguna en la Etapa 1 (HU-037 fuera de la Etapa 1)\n\n**Requerimiento de origen:** El sistema debe cerrar cada caso en uno de los 8 estados homologados, con evidencia, y referenciar la custodia en el GLI."
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -3147,7 +3140,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-025 → HU-037 del bloque «La necesitan»: HU-037 sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -3663,7 +3656,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como moderador de evento quiero registrar la clasificación de riesgo y qué Frases Ancla apliqué para contener la insistencia antes de derivar formalmente.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-037 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-025 (EP-ATC-08 depende de EP-ATC-04, «gate legal», en la PLT-02 y el PLT-03, y esta es su última HU; el calendario no la respeta: A-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** HU-ATC-038\n\n**Requerimiento de origen:** El sistema debe registrar la clasificación de riesgo de la intervención en vivo y la secuencia de Frases Ancla (4, 5, 6) aplicada."
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como moderador de evento quiero registrar la clasificación de riesgo y qué Frases Ancla apliqué para contener la insistencia antes de derivar formalmente.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-037 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-025 (EP-ATC-08 depende de EP-ATC-04, «gate legal», en la PLT-02 y el PLT-03, y esta es su última HU; el calendario no la respeta: A-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** HU-ATC-038\n\n**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior.\n\n**Requerimiento de origen:** El sistema debe registrar la clasificación de riesgo de la intervención en vivo y la secuencia de Frases Ancla (4, 5, 6) aplicada."
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -3687,7 +3680,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -3708,7 +3701,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como moderador de evento quiero que al detectar «estafa», «fraude», «abuso» o «delito» el sistema me pida derivar a la Estación 4 para cerrar el tema en sala sin debatirlo.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-038 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-037 (RF-SVC-037 es predecesora de RF-SVC-038, PLT-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** HU-ATC-039\n\n**Requerimiento de origen:** El sistema debe registrar la derivación inmediata a la Estación 4 de todo caso sensible o imputación penal en vivo."
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como moderador de evento quiero que al detectar «estafa», «fraude», «abuso» o «delito» el sistema me pida derivar a la Estación 4 para cerrar el tema en sala sin debatirlo.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-038 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-037 (RF-SVC-037 es predecesora de RF-SVC-038, PLT-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** HU-ATC-039\n\n**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior.\n\n**Requerimiento de origen:** El sistema debe registrar la derivación inmediata a la Estación 4 de todo caso sensible o imputación penal en vivo."
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -3732,7 +3725,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -3753,7 +3746,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como coordinador CX o personal de apoyo quiero que cada caso del evento se registre con la etiqueta estándar para darle un seguimiento uniforme en el Registro de Casos Sensibles.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-039 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-038 (RF-SVC-038 es predecesora de RF-SVC-039, PLT-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** ninguna\n\n**Requerimiento de origen:** El sistema debe registrar todo caso sensible del evento con la etiqueta «Atención especial — derivación a Legal»."
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-08 / FT-ATC-15\n- Como coordinador CX o personal de apoyo quiero que cada caso del evento se registre con la etiqueta estándar para darle un seguimiento uniforme en el Registro de Casos Sensibles.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-039 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 2-nov-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-038 (RF-SVC-038 es predecesora de RF-SVC-039, PLT-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)\n\n**La necesitan:** ninguna\n\n**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior.\n\n**Requerimiento de origen:** El sistema debe registrar todo caso sensible del evento con la etiqueta «Atención especial — derivación a Legal»."
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -3777,7 +3770,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -3888,7 +3881,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-17\n- Como gestor de tickets del call center quiero ver la ficha del cliente al contestar y que la llamada quede registrada en su ticket para atender sin cambiar de sistema ni volver a escribir los datos.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-042 | Debe | 5 h con IA | Dev 4 (Daniel) | 1 | 26-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-053 (FT-ATC-20 es predecesora de FT-ATC-17 y esta es su última HU, PLT-02) · Dependencias externas: DEP-11 (plataforma del call center; PLT-03, PLT-04 y PLT-05)\n\n**La necesitan:** ninguna\n\n**Requerimiento de origen:** El sistema debe integrarse con la plataforma que usa el equipo de call center para mostrar los datos del cliente al recibir la llamada (screen pop), abrir o ubicar su ticket y registrar la llamada como interacción con su grabación. Feedback presentación · ítem 5"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-17\n- Como gestor de tickets del call center quiero ver la ficha del cliente al contestar y que la llamada quede registrada en su ticket para atender sin cambiar de sistema ni volver a escribir los datos.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-042 | Debe | 5 h con IA | Dev 4 (Daniel) | 1 | 26-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-052 (FT-ATC-20 es predecesora de FT-ATC-17, PLT-02, y esta es su última HU en la Etapa 1) (HU-053 fuera de la Etapa 1: antes dependía de ella, la última HU de FT-ATC-20) · Dependencias externas: DEP-11 (plataforma del call center; PLT-03, PLT-04 y PLT-05)\n\n**La necesitan:** ninguna\n\n**Requerimiento de origen:** El sistema debe integrarse con la plataforma que usa el equipo de call center para mostrar los datos del cliente al recibir la llamada (screen pop), abrir o ubicar su ticket y registrar la llamada como interacción con su grabación. Feedback presentación · ítem 5"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -3912,7 +3905,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Depende de HU-052 en lugar de HU-053, que sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8): FT-20 sigue siendo predecesora de FT-17 (PLT-02) y HU-052 es su última HU en la Etapa 1; `relacionados` y la tarea HU-ATC-042-T01 cambian igual. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4113,7 +4106,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-09 / FT-ATC-19\n- Como gestor de tickets quiero ver en el ticket la guía de cómo resolver ese tipo: pasos, plantillas y criterios de cierre para resolver de forma estándar en el primer contacto.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-047 | Debería | 4 h con IA | Dev 3 (Michel) | 1 | 27-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)\n\n**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03 y PLT-05)\n\n**La necesitan:** HU-ATC-048\n\n**Requerimiento de origen:** El sistema debe mostrar al gestor de tickets una guía de como solucionar cada tipo de ticket (pasos, plantillas de respuesta, documentos requeridos y criterios de cierre) mantenida por el administrador funcional. Feedback presentación · ítem 7"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-09 / FT-ATC-19\n- Como gestor de tickets quiero ver en el ticket la guía de cómo resolver ese tipo: pasos, plantillas y criterios de cierre para resolver de forma estándar en el primer contacto.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-047 | Debería | 4 h con IA | Dev 3 (Michel) | 1 | 27-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)\n\n**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03 y PLT-05) (DEP-14 no aplica en la Etapa 1: la guía de esta HU no usa IA y HU-048 queda fuera por P-025)\n\n**La necesitan:** ninguna en la Etapa 1 (HU-048 fuera de la Etapa 1)\n\n**Requerimiento de origen:** El sistema debe mostrar al gestor de tickets una guía de como solucionar cada tipo de ticket (pasos, plantillas de respuesta, documentos requeridos y criterios de cierre) mantenida por el administrador funcional. Feedback presentación · ítem 7"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4137,7 +4130,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-047 → HU-048 del bloque «La necesitan» y anota que DEP-14 no aplica en la Etapa 1: HU-048 sale por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4158,7 +4151,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-09 / FT-ATC-19\n- Como gestor de tickets quiero que la IA me sugiera respuesta y me avise qué criterios de cierre faltan para cerrar con mejor calidad y aprender en el momento.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-048 | Podría · flexible | 5 h con IA | Dev 3 (Michel) | 2 | 27-oct-2026 → 28-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-047 (RF-SVC-047 es predecesora de RF-SVC-048, PLT-03) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03, PLT-04 y PLT-05)\n\n**La necesitan:** ninguna\n\n**Requerimiento de origen:** El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. Feedback presentación · ítem 8"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-09 / FT-ATC-19\n- Como gestor de tickets quiero que la IA me sugiera respuesta y me avise qué criterios de cierre faltan para cerrar con mejor calidad y aprender en el momento.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-048 | Podría · flexible | 5 h con IA | Dev 3 (Michel) | 2 | 27-oct-2026 → 28-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-047 (RF-SVC-047 es predecesora de RF-SVC-048, PLT-03) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03, PLT-04 y PLT-05)\n\n**La necesitan:** ninguna\n\n**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior.\n\n**Requerimiento de origen:** El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. Feedback presentación · ítem 8"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4182,7 +4175,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4203,7 +4196,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero buscar al cliente por DNI, nombre, código, lote, teléfono o N.º de ticket y llamarlo desde la ficha para ubicarlo en segundos y contactarlo sin marcar a mano.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-049 | Debe | 4 h con IA | Dev 4 (Daniel) | 1 | 21-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-11 (plataforma del call center; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: la búsqueda respeta los permisos del rol, RN-SVC-036; P-034)\n\n**La necesitan:** HU-ATC-050, HU-ATC-051, HU-ATC-053\n\n**Requerimiento de origen:** El sistema debe ofrecer un motor de búsqueda de clientes por DNI, nombre, código de cliente, lote, teléfono o N.º de ticket, con opción de llamar a la cuenta desde la ficha. Feedback presentación · ítem 9"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero buscar al cliente por DNI, nombre, código, lote, teléfono o N.º de ticket y llamarlo desde la ficha para ubicarlo en segundos y contactarlo sin marcar a mano.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-049 | Debe | 4 h con IA | Dev 4 (Daniel) | 1 | 21-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-11 (plataforma del call center; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: la búsqueda respeta los permisos del rol, RN-SVC-036; P-034)\n\n**La necesitan:** HU-ATC-050, HU-ATC-051 (HU-053 fuera de la Etapa 1)\n\n**Requerimiento de origen:** El sistema debe ofrecer un motor de búsqueda de clientes por DNI, nombre, código de cliente, lote, teléfono o N.º de ticket, con opción de llamar a la cuenta desde la ficha. Feedback presentación · ítem 9"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4227,7 +4220,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): suma la DEP-16 con el criterio de las otras 23 HU que la llevan (autorizan por rol: RN-SVC-036 «Búsqueda respeta permisos», como HU-050, 052 y 053; P-034). No cambia texto del PO. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Suma la DEP-16 al bloque «Depende de» (RN-SVC-036 autoriza por rol; P-034), con el criterio de las otras 23 HU que la llevan. No cambia texto del PO. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): suma la DEP-16 con el criterio de las otras 23 HU que la llevan (autorizan por rol: RN-SVC-036 «Búsqueda respeta permisos», como HU-050, 052 y 053; P-034). No cambia texto del PO. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Suma la DEP-16 al bloque «Depende de» (RN-SVC-036 autoriza por rol; P-034), con el criterio de las otras 23 HU que la llevan. No cambia texto del PO. — Revisado por: (pendiente)\n\nHistorial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-049 → HU-053 del bloque «La necesitan»: HU-053 sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4338,7 +4331,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero ejecutar consultas específicas del cliente usando el motor que ya construyó José para obtener el dato sin un desarrollo nuevo.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-052 | Debería | 3 h con IA | Dev 4 (Daniel) | 1 | 23-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-050 (RF-SVC-050 es predecesora de RF-SVC-052, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-13 (motor de consultas de José; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: datos según el rol, CA-03)\n\n**La necesitan:** ninguna\n\n**Requerimiento de origen:** El sistema debe consumir el motor de consultas que ya construyó José para obtener datos especificos del cliente, integrándolo por API en lugar de desarrollar uno nuevo. Feedback presentación · ítem 17"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero ejecutar consultas específicas del cliente usando el motor que ya construyó José para obtener el dato sin un desarrollo nuevo.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-052 | Debería | 3 h con IA | Dev 4 (Daniel) | 1 | 23-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-050 (RF-SVC-050 es predecesora de RF-SVC-052, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-13 (motor de consultas de José; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: datos según el rol, CA-03)\n\n**La necesitan:** HU-ATC-042 (FT-ATC-20 es predecesora de FT-ATC-17, PLT-02; ocupa el lugar de HU-053, fuera de la Etapa 1)\n\n**Requerimiento de origen:** El sistema debe consumir el motor de consultas que ya construyó José para obtener datos especificos del cliente, integrándolo por API en lugar de desarrollar uno nuevo. Feedback presentación · ítem 17"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4362,7 +4355,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Suma HU-042 al bloque «La necesitan»: con HU-053 fuera de la Etapa 1 por P-025, HU-052 es la última HU de FT-20 y la predecesora de HU-042 (FT-20 → FT-17, PLT-02). No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4383,7 +4376,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero buscar en lenguaje natural dentro de los documentos del cliente para encontrar el documento aunque no sepa cómo está escrito.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-053 | Podría · flexible | 5 h con IA | Dev 4 (Daniel) | 1 | 23-oct-2026 → 26-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-049 (RF-SVC-049 es predecesora de RF-SVC-053, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-14 (proveedor de IA aprobado; PLT-04), DEP-16 (Control de acceso, PJ-05: documentos según el rol del gestor, CA-02)\n\n**La necesitan:** HU-ATC-042\n\n**Requerimiento de origen:** El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19"
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-10 / FT-ATC-20\n- Como gestor de tickets quiero buscar en lenguaje natural dentro de los documentos del cliente para encontrar el documento aunque no sepa cómo está escrito.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-053 | Podría · flexible | 5 h con IA | Dev 4 (Daniel) | 1 | 23-oct-2026 → 26-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-049 (RF-SVC-049 es predecesora de RF-SVC-053, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-14 (proveedor de IA aprobado; PLT-04), DEP-16 (Control de acceso, PJ-05: documentos según el rol del gestor, CA-02)\n\n**La necesitan:** HU-ATC-042\n\n**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. En la Etapa 1, HU-042 depende de HU-052 en su lugar (FT-20 sigue siendo predecesora de FT-17).\n\n**Requerimiento de origen:** El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19"
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -4407,7 +4400,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },
@@ -4909,16 +4902,16 @@ const D = {
   },
   "tareas": {
     "HU-ATC-001": {
-      "n": 8,
+      "n": 14,
       "capas": {
-        "adapters": 2,
-        "application": 1,
+        "adapters": 5,
+        "application": 2,
         "boot": 1,
         "domain": 1,
         "frontend": 2,
-        "infrastructure": 1
+        "infrastructure": 3
       },
-      "horas": 6,
+      "horas": 34,
       "sin_estimar": 0
     },
     "HU-ATC-002": {
@@ -5303,36 +5296,27 @@ const D = {
       "sin_estimar": 0
     },
     "HU-ATC-037": {
-      "n": 4,
+      "n": 1,
       "capas": {
-        "adapters": 1,
-        "boot": 1,
-        "domain": 1,
-        "frontend": 1
+        "docs": 1
       },
-      "horas": 2,
+      "horas": 0,
       "sin_estimar": 0
     },
     "HU-ATC-038": {
-      "n": 4,
+      "n": 1,
       "capas": {
-        "adapters": 1,
-        "application": 1,
-        "boot": 1,
-        "frontend": 1
+        "docs": 1
       },
-      "horas": 2,
+      "horas": 0,
       "sin_estimar": 0
     },
     "HU-ATC-039": {
-      "n": 4,
+      "n": 1,
       "capas": {
-        "adapters": 1,
-        "application": 1,
-        "boot": 1,
-        "frontend": 1
+        "docs": 1
       },
-      "horas": 2,
+      "horas": 0,
       "sin_estimar": 0
     },
     "HU-ATC-040": {
@@ -5428,15 +5412,11 @@ const D = {
       "sin_estimar": 0
     },
     "HU-ATC-048": {
-      "n": 6,
+      "n": 1,
       "capas": {
-        "adapters": 2,
-        "application": 1,
-        "boot": 1,
-        "domain": 1,
-        "frontend": 1
+        "docs": 1
       },
-      "horas": 5,
+      "horas": 0,
       "sin_estimar": 0
     },
     "HU-ATC-049": {
@@ -5485,15 +5465,11 @@ const D = {
       "sin_estimar": 0
     },
     "HU-ATC-053": {
-      "n": 6,
+      "n": 1,
       "capas": {
-        "adapters": 2,
-        "application": 1,
-        "boot": 1,
-        "domain": 1,
-        "frontend": 1
+        "docs": 1
       },
-      "horas": 5,
+      "horas": 0,
       "sin_estimar": 0
     },
     "HU-ATC-054": {

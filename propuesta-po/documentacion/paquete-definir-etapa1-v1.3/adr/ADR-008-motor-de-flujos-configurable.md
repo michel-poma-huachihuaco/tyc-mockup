@@ -16,7 +16,7 @@ tags: [adr, arquitectura, g3]
 
 - Estado: propuesto
 - Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-08 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: las tablas de flujo, subtipo y versión como **cambio formal al v7** (P-016) y cerrar las combinaciones tipo · subtipo · área del piloto (P-017). Registrado en `analisis/decisiones.md` v0.7; el catálogo y las tablas los decide el equipo (ED-14 y ED-15).
 - Reglas 1 a 5: criterios de aceptación de la HU-043 v1.3 (CA-02 a CA-08) y de la HU-044 (CA-02). La regla 6 es decisión del equipo (mockup de la Etapa 1, `DECISIONES.md` §5.9, respuesta 19).
@@ -106,4 +106,4 @@ Reglas que el mockup ya prueba:
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): las 9 combinaciones son el catálogo del piloto, con responsables por cola y rol sin personas y publicación de `ATC_ADMIN_FUNCIONAL` sin aprobación (ED-14); tablas del flujo con `SVC_TICKET_ACTIVITY` y `AutoCloseBusinessDays` (ED-15); se quita la condición del PO; ticket que cambia de área y lugar del subtipo decididos; «Registro y acceso de clientes» para una etapa posterior (ED-09); regla 6 como decisión |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

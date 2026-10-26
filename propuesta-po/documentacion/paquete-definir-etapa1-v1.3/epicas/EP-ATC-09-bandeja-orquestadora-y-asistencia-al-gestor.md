@@ -4,7 +4,7 @@ tipo: epica
 titulo: "Bandeja orquestadora y asistencia al gestor"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -13,6 +13,8 @@ tags: [epica, plt-02]
 ---
 
 # PLT-02 - EP-ATC-09 Bandeja orquestadora y asistencia al gestor
+
+**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la épica suma 39 h de las 44 h del PO, y la DEP-14 no aplica (la guía de HU-047 no usa IA).
 
 | ID | Nombre | Producto |
 |---|---|---|
@@ -96,3 +98,5 @@ Riesgos (PLT-01):
 | Líder técnico | (pendiente) |  |  |
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-02 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-048 (39 h de 44 h). No se cambia texto del PO. — Revisado por: (pendiente)

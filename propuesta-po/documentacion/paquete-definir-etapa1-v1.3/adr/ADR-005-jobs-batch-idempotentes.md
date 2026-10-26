@@ -16,7 +16,7 @@ tags: [adr, arquitectura, g3]
 
 - Estado: propuesto
 - Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md` v0.7. Cierra P-006.
 
@@ -121,4 +121,4 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): frecuencias, reintento y destinatarios de la alerta como decisión; calendario del Equipo Datos con el script sintético en local y DEV y el calendario configurado mientras falten las tablas (ED-11); HU-046 con `GestoresPort` «actividad de ATC» y carga por puntos (ED-03, Q-046-1); HU-055 con aviso al rol (ED-03); job de vinculación con `SVC_TICKET_PROSPECT` (ED-05); cierre automático con `AutoCloseBusinessDays` (ED-15); umbrales de escalamiento de la Mesa (FT-09); plazo de HU-058 (Q-058-3); horas dentro de HU-003 y del ADR-05 del PO; supuestos del costo en ED-12 |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

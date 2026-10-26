@@ -2,10 +2,11 @@
   "epica": "EP-ATC-09",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025. 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-054-T01 <- HU-ATC-046-T04 (PO: HU-ATC-046 -> HU-ATC-054); HU-ATC-045-T01 ya no lleva en depende_de HU-ATC-001-T02; HU-ATC-046-T01 ya no lleva en depende_de HU-ATC-007-T01; HU-ATC-046-T02 ya no lleva en depende_de HU-ATC-008-T01. — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-054-T01 <- HU-ATC-046-T04 (PO: HU-ATC-046 -> HU-ATC-054); HU-ATC-045-T01 ya no lleva en depende_de HU-ATC-001-T02; HU-ATC-046-T01 ya no lleva en depende_de HU-ATC-007-T01; HU-ATC-046-T02 ya no lleva en depende_de HU-ATC-008-T01. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Cambios en este archivo: HU-ATC-048 fuera de la Etapa 1 (6 tareas, 5 h, a roadmap/alcance-diferido.md); queda HU-ATC-048-T00, de 0 h, con la dependencia del PO HU-ATC-047 -> HU-ATC-048. EP-ATC-09 en la Etapa 1: 39 h. — Revisado por: (pendiente)",
   "titulo": "Bandeja orquestadora y asistencia al gestor",
   "responsable": "Michel Poma Huachihuaco",
   "horas": 44,
+  "horas_etapa_1": 39,
   "ventana": "2026-10-21 -> 2026-10-29",
   "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
   "historias": [
@@ -442,76 +443,21 @@
       "feature": "FT-ATC-19",
       "prioridad": "Podría",
       "flexible": true,
+      "etapa": "fuera de la Etapa 1 (P-025)",
       "horas": 5,
       "iteracion": 2,
       "inicio": "2026-10-27",
       "fin": "2026-10-28",
       "tareas": [
         {
-          "id": "HU-ATC-048-T01",
-          "titulo": "[inbox] Entidad SVC_AI_SUGGESTION_LOG (ENT-SVC-016: sugerencia y decision del gestor) y puerto en domain.port.out; la IA se usa solo via el servicio de asistencia, con anonimizacion y registro (ADR-007, DEP-14)",
-          "capa": "domain",
-          "actividad": "DESARROLLO",
+          "id": "HU-ATC-048-T00",
+          "titulo": "Fuera de la Etapa 1 por decision del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Su desglose (6 tareas, 5 h del PLT-04) esta sin cambios en roadmap/alcance-diferido.md. Tarea de 0 h que solo deja constancia; depende_de conserva la dependencia del PO (HU-ATC-047 -> HU-ATC-048) para cuando se retome",
+          "capa": "docs",
+          "actividad": "PLANIFICACION",
           "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 0.5,
+          "estimacion_horas": 0,
           "depende_de": [
-            "HU-ATC-047-T01"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T02",
-          "titulo": "[inbox] Migracion Flyway V18__crear_tabla_ai_suggestion_log.sql",
-          "capa": "adapters",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 0.5,
-          "depende_de": [
-            "HU-ATC-048-T01"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T03",
-          "titulo": "[inbox] Caso de uso SugerirRespuestaIaUseCase: sugiere respuesta, verifica criterios de cierre de la guia, senala tono o datos faltantes; el gestor acepta/edita/descarta (RN-SVC-032)",
-          "capa": "application",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 1.5,
-          "depende_de": [
-            "HU-ATC-048-T02",
-            "HU-ATC-047-T03"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T04",
-          "titulo": "[inbox] Endpoint POST /api/v1/tickets/{id}/sugerencia-ia; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
-          "capa": "adapters",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 0.5,
-          "depende_de": [
-            "HU-ATC-048-T03"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T05",
-          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-048 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
-          "capa": "boot",
-          "actividad": "PRUEBAS",
-          "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 0.5,
-          "depende_de": [
-            "HU-ATC-048-T04"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T06",
-          "titulo": "[inbox] Sugerencia de IA visible en el ticket, con aceptar/editar/descartar, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
-          "capa": "frontend",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 1.5,
-          "depende_de": [
-            "HU-ATC-048-T04"
+            "HU-ATC-047-T06"
           ]
         }
       ]

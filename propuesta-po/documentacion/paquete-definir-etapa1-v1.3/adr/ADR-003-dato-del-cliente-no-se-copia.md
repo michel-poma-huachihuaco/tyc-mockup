@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,8 +15,8 @@ tags: [adr, arquitectura, g3]
 # ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-03 del PLT-05 v1.3, con la decisión DT-06 del Líder Técnico (Jose Jara, 22-oct-2026): las tablas de ATC van en la base única del v7 con FK físicas y **`PARTY` es la fuente viva del cliente, no una copia**. Registrada en `analisis/decisiones.md` v0.7. Cierra P-010 en lo técnico; el interesado sin `PARTY` y la relación con SIGDA/TAXON los decide el equipo (P-037 y P-027, ED-05).
 - Las referencias a Control de acceso (PJ-05: R29, A26, D-119 y ADR-019) se verificaron el 26-oct en la copia sellada de su paquete aprobado (`docs-roles-y-permisos/`).
@@ -60,7 +60,7 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
   - La plantilla de la hoja con el Anexo I del Reglamento (punto 6).
 - Impide:
   - Persistir nombre, DNI o contacto de un cliente vinculado en columnas de ATC, y crear o escribir `PARTY` desde ATC.
-- Cuesta: **0 h fuera del plan**: la caché corta de la consulta 360 va dentro de las horas que el PO estimó para HU-050 (tarea HU-ATC-050-T02; tabla del ADR-012), y `SVC_TICKET_PROSPECT` y su borrado van en HU-051 (tarea HU-ATC-051-T01; si no caben, lo decide el coordinador en P-025). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md` v0.5, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
+- Cuesta: **0 h fuera del plan**: la caché corta de la consulta 360 va dentro de las horas que el PO estimó para HU-050 (tarea HU-ATC-050-T02; tabla del ADR-012), y `SVC_TICKET_PROSPECT` y su borrado van en HU-051 (tarea HU-ATC-051-T01, con las horas del PLT-04: P-025, decidida por el equipo el 26-oct-2026, no las reestima y lo que exceda es parte de su riesgo aceptado). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md` v0.5, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -80,5 +80,6 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: qué datos lleva la hoja se cita en la DEP-05 y la retención en P-007; `SVC_SEARCH_INDEX` es una colección del almacén de lectura (ADR-012), no una tabla ni un cambio al v7; fuente del costo en la v0.4 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): interesado «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT`, que se borran al vincular cuando Control de acceso crea su `PARTY` (ED-05); la consulta del cliente devuelve el `PartyID` (relación con SIGDA/TAXON); sin JOIN a las tablas de personas; hoja del Libro con el Anexo I del Reglamento y 2 años de retención (ED-13); caché dentro de HU-050; diferencias con el PO en ED-19 |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_TICKET_PROSPECT` y su borrado se hacen en HU-ATC-051-T01 con las horas del PLT-04; lo que exceda es parte del riesgo aceptado (la v0.5 lo dejaba pendiente de P-025) |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

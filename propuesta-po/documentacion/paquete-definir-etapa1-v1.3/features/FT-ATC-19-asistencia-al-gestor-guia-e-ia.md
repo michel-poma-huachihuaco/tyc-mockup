@@ -4,7 +4,7 @@ tipo: feature
 titulo: "Asistencia al gestor: guía e IA"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -13,6 +13,8 @@ tags: [feature, plt-03, ui]
 ---
 
 # PLT-03 - FT-ATC-19 Asistencia al gestor: guía e IA
+
+**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la funcionalidad es HU-047 (4 h de las 9 h del PO) y la DEP-14 no aplica: la guía no usa IA.
 
 | ID | Nombre | Épica padre |
 |---|---|---|
@@ -77,3 +79,5 @@ Cada RF llega a una HU, y cada criterio de la HU a un TC de `docs/pruebas/test-p
 Una pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la respuesta va a `docs/analisis/decisiones.md` y aquí se enlaza.
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-048 (4 h de 9 h). No se cambia texto del PO. — Revisado por: (pendiente)

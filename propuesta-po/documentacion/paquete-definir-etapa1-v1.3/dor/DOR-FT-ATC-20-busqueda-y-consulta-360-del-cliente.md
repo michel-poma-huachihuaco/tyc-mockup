@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-20 Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.3"
+version: "1.3.4"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -13,6 +13,8 @@ tags: [dor, plt-05, g4]
 ---
 
 # PLT-05 - Definition of Ready (G4) - FT-ATC-20 Búsqueda y consulta 360 del cliente
+
+**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). Para la Etapa 1 este DoR se evalúa con las HU-049 a 052 (17 h); la DEP-06 y la DEP-14 solo las traía HU-053 y no aplican en la Etapa 1.
 
 | Ítem evaluado | Product Owner | Líder técnico |
 |---|---|---|
@@ -34,7 +36,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 | 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-01, DEP-06, DEP-08, DEP-11, DEP-13, DEP-14; y DEP-16 (añadida el 26-oct desde PLT-03/PLT-04/PLT-05); la DEP-16, como riesgo aceptado con mitigación (R-11; ED-08) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (`datos/` y `arquitectura/` del paquete, listos para la firma del Líder Técnico y del Data Chief) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
-| 9 | Estimada por el equipo | [ ] | PLT-04: 22 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y el cierre de horas lo hace el coordinador (P-025) |
+| 9 | Estimada por el equipo | [ ] | PLT-04: 22 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y las horas quedan cerradas por P-025 (decidida por el equipo el 26-oct-2026, `analisis/decisiones.md` v0.8): en la Etapa 1, 17 h (HU-049 a 052); HU-053 (5 h) queda fuera y sus tareas están en `docs/roadmap/alcance-diferido.md` |
 | 10 | Cabe en un sprint | [ ] | 22 h dentro de la ventana 21-oct-2026 → 26-oct-2026 (PLT-01) |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Línea «Revisado por» de cada documento: pendiente |
 
@@ -115,3 +117,5 @@ Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección
 Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-16 suma HU-ATC-049 (RN-SVC-036 «Búsqueda respeta permisos», con el mismo criterio que HU-050, 052 y 053; P-034): la llevan 4 de sus 5 HU (todas menos HU-051, que no autoriza por rol). No cambian las DEP de la sección 2 ni el criterio 6. No se borra texto del PO. — Revisado por: (pendiente)
 
 Historial: 1.3.3 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo de `analisis/decisiones.md` v0.7: el criterio 9 remite el cierre de horas al coordinador (P-025); ADR aplicables: las de `adr/` v0.5; regla del criterio 6 con riesgos mitigados; DEP-16 como riesgo aceptado con mitigación (R-11); condiciones del PLT-05 anotadas con la decisión del equipo, sin borrar su texto. Modelado y arquitectura (secciones 3 y 4, criterio 7) citan los documentos de `datos/` y `arquitectura/` del paquete. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el criterio 9 ya no remite el cierre de horas al coordinador. Nota de alcance al inicio: la Etapa 1 no incluye HU-053; DEP-06 y DEP-14 no aplican en la Etapa 1. No se borra texto del PO. — Revisado por: (pendiente)

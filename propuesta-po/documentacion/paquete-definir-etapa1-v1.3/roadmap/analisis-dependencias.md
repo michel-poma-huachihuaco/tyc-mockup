@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Análisis de dependencias de Aybar Atiende (plan v1.3, Etapa 1)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -15,7 +15,7 @@ tags: [roadmap, dependencias, analisis]
 # Análisis de dependencias
 
 Hecho el mié 21-oct-2026, día 1 de desarrollo, con el plan v1.3 del PO del 16-oct (PLT-01 a
-PLT-05). El 22-oct se cambió la DEP-02 (maestro local de RR. HH.) por la DEP-16 (Control de acceso, PJ-05), según el Líder Técnico (DT-03). El 26-oct se alinearon las dependencias del producto con el bloque «Depende de» de cada HU (PLT-02, PLT-03, PLT-04, PLT-05 y DT-03) y la DEP-16 tomó el nombre y el estado que pide el Líder Técnico (C-12). **Corte de esta versión: lun 26-oct-2026, día 4 de desarrollo.** Las dependencias entre historias y entre features se recalcularon con las 54 del bloque «Depende de» (antes 50), y el backlog de tareas se alineó con ellas: `aybar paquete plan` da las mismas olas que la sección 4. **v0.6 (26-oct):** se aplican las decisiones del equipo de `analisis/decisiones.md` v0.7: cada dependencia del producto es un riesgo con su mitigación (R-02, R-03, R-08 y R-11 del roadmap) y la DEP-16 es un riesgo aceptado con mitigación (ED-08). Sigue los cuatro niveles del SDK Aybar:
+PLT-05). El 22-oct se cambió la DEP-02 (maestro local de RR. HH.) por la DEP-16 (Control de acceso, PJ-05), según el Líder Técnico (DT-03). El 26-oct se alinearon las dependencias del producto con el bloque «Depende de» de cada HU (PLT-02, PLT-03, PLT-04, PLT-05 y DT-03) y la DEP-16 tomó el nombre y el estado que pide el Líder Técnico (C-12). **Corte de esta versión: lun 26-oct-2026, día 4 de desarrollo.** Las dependencias entre historias y entre features se recalcularon con las 54 del bloque «Depende de» (antes 50), y el backlog de tareas se alineó con ellas: `aybar paquete plan` da las mismas olas que la sección 4. **v0.6 (26-oct):** se aplican las decisiones del equipo de `analisis/decisiones.md` v0.7: cada dependencia del producto es un riesgo con su mitigación (R-02, R-03, R-08 y R-11 del roadmap) y la DEP-16 es un riesgo aceptado con mitigación (ED-08). **v0.7 (26-oct): P-025 decidida por el equipo** (`analisis/decisiones.md` v0.8): salen de la Etapa 1 HU-037, 038 y 039 (EP-08 y FT-15 completas), HU-048 y HU-053 (alcance flexible, R-01). Las cifras de esta versión son las de la Etapa 1 (57 HU); donde cambian, se da también la del paquete documentado (62 HU). Sigue los cuatro niveles del SDK Aybar:
 
 - dependencias del producto (roadmap, sección 2);
 - dependencias por requerimiento (trazabilidad de cada feature);
@@ -26,7 +26,7 @@ Los diagramas están en `dependencias.mmd` y `olas-features.mmd`.
 
 ## 1 Resumen
 
-- **14 dependencias** del producto: las 13 del PLT-01 v1.3 §3 (se retiró la DEP-02) y la DEP-16, que pide el Líder Técnico (C-12). 9 internas, 3 técnicas, 1 legal y 1 externa. En
+- **14 dependencias** del producto: las 13 del PLT-01 v1.3 §3 (se retiró la DEP-02) y la DEP-16, que pide el Líder Técnico (C-12). **En la Etapa 1 aplican 13:** la DEP-14 (proveedor de IA) no, porque HU-048 y HU-053 salen por P-025 y la guía de HU-047 no usa IA. 9 internas, 3 técnicas, 1 legal y 1 externa. En
   el PLT-01 había 8 pendientes, 2 en curso y 4 por evaluar; la DEP-16 es pendiente y está **en riesgo, mitigado** (R-11 del roadmap; P-040 y ED-08).
 - **Ninguna tiene fecha comprometida por su responsable.** Solo tienen fecha requerida, y es el dato
   que más pesa en G4 (criterio 6). Cada una se cubre con su riesgo y su mitigación (R-02: contrato de interfaz y simulador; R-11 para la DEP-16), y el criterio 6 de los DoR la registra como riesgo aceptado.
@@ -36,23 +36,23 @@ Los diagramas están en `dependencias.mmd` y `olas-features.mmd`.
 - **53 de 62 historias** dependen de al menos una dependencia del producto, según la trazabilidad del
   PLT-03. Las 9 que no dependen de ninguna son HU-020, HU-021, HU-022, HU-037, HU-038, HU-039, HU-059,
   HU-060 y HU-067. **Con el bloque «Depende de» de cada HU (26-oct) son 57:** HU-020 a 022 suman la DEP-03
-  (PLT-05) y HU-067 la DEP-16; solo HU-037, 038, 039, 059 y 060 no tienen ninguna.
-- **54 dependencias entre historias** (bloque «Depende de» de cada HU), sin ciclos, en 11 niveles de orden. De dónde salen:
-  - 35 son predecesoras de RF dentro de la misma feature (PLT-03 §2).
-  - 8 son predecesoras entre features (PLT-02, tabla «Funcionalidades que componen la épica»).
+  (PLT-05) y HU-067 la DEP-16; solo HU-037, 038, 039, 059 y 060 no tienen ninguna. **En la Etapa 1 (57 HU), 55 tienen alguna:** solo HU-059 y 060 no tienen ninguna (la DEP-14 de HU-047 no aplica en la Etapa 1).
+- **49 dependencias entre historias de la Etapa 1** (bloque «Depende de» de cada HU), sin ciclos, en 8 niveles de orden. Antes de P-025 eran 54 entre las 62 HU, en 11 niveles: salen 6 (HU-025 → 037, 037 → 038, 038 → 039, 047 → 048, 049 → 053 y 053 → 042) y entra 1, HU-052 → HU-042, porque FT-20 sigue siendo predecesora de FT-17 (PLT-02) y HU-052 es su última HU en la Etapa 1. De dónde salen las 49:
+  - 31 son predecesoras de RF dentro de la misma feature (PLT-03 §2; antes 35).
+  - 8 son predecesoras entre features (PLT-02, tabla «Funcionalidades que componen la épica»; FT-20 → FT-17 pasa a HU-052 → HU-042).
   - 5 son flechas del Gantt del PLT-01 (p. 4).
-  - 2 vienen de la PLT-02: EP-04 → EP-08 (HU-025 → HU-037) y la HU-043 que declara la EP-06 (HU-043 → HU-064).
+  - 1 viene de la PLT-02: la HU-043 que declara la EP-06 (HU-043 → HU-064). La otra, EP-04 → EP-08 (HU-025 → HU-037), sale con EP-08.
   - 4 las escribe el PO en notas o criterios: HU-026 → HU-036 (notas de HU-036: «reutiliza el gate de FT-ATC-07», PLT-04), HU-019 → HU-066 (CA-02 de HU-066, PLT-04), y HU-043 → HU-067 y HU-044 → HU-067 (traza de FT-25 en el PLT-03, «eventos de la bandeja orquestadora (HU-043, 044)»; ficha de HU-043 en el PLT-04 y anexo del PLT-05).
-  - Por nivel: el 0 tiene 14, el 1 tiene 13, el 2 tiene 9, el 3 tiene 9, el 4 tiene 4, el 5 tiene 6, el 6 tiene 2 y el 7 tiene 2. Los niveles 8, 9 y 10 tienen 1 cada uno.
-- **17 dependencias entre features** (sección 4), en 5 olas y sin ciclos. Las dos que suma esta versión son FT-07 → FT-10 (HU-026 → HU-036) y FT-13 → FT-24 (HU-019 → HU-066); la carga de Nexora ya las tenía. `aybar paquete plan` da las mismas 5 olas (sección 4.3).
-- **Ruta crítica por horas** (la cadena más larga de historias, recalculada con las 54): HU-003 → HU-029 → HU-026 → HU-028 →
-  HU-020 → HU-022 → HU-023 → HU-025 → HU-037 → HU-038 → HU-039 (36 h). Pasa por EP-04 → EP-08, la
-  dependencia que el calendario no respeta (A-03). Sin ella, la ruta crítica es HU-001 → HU-002 →
-  HU-004 → HU-006 → HU-012 → HU-013 → HU-015 → HU-016 (34 h). Las 4 dependencias nuevas no la cambian.
+  - Por nivel: el 0 tiene 14, el 1 tiene 11, el 2 tiene 8, el 3 tiene 10, el 4 tiene 4, el 5 tiene 6, el 6 tiene 2 y el 7 tiene 2. Antes de P-025: 14, 13, 9, 9, 4, 6, 2, 2, 1, 1 y 1.
+- **16 dependencias entre las 22 features de la Etapa 1** (sección 4), en 4 olas (0 a 3) y sin ciclos; sale FT-09 → FT-15 con FT-15 (antes de P-025: 17 en 5 olas). Las dos que sumó la v0.5 son FT-07 → FT-10 (HU-026 → HU-036) y FT-13 → FT-24 (HU-019 → HU-066); la carga de Nexora ya las tenía. `aybar paquete plan` da las mismas 4 olas y pone FT-15, fuera de la Etapa 1, sola en la ola 4 con 0 h (sección 4.3).
+- **Ruta crítica por horas de la Etapa 1** (la cadena más larga de historias, recalculada con las 49): HU-001 → HU-002 →
+  HU-004 → HU-006 → HU-012 → HU-013 → HU-015 → HU-016 (34 h), todo en Dev 1. La de 36 h (HU-003 → HU-029 → HU-026 → HU-028 →
+  HU-020 → HU-022 → HU-023 → HU-025 → HU-037 → HU-038 → HU-039) pasaba por EP-04 → EP-08, la
+  dependencia que el calendario no respetaba (A-03), y ya no es de la Etapa 1; su tramo de la Etapa 1, hasta HU-025, suma 30 h. Las 28 h técnicas de DT-02 no entran en la cadena: son la fundación de la ola 0 y se reparten entre los 4 desarrolladores.
 
 ## 2 Matriz dependencia × épica
 
-● = la dependencia bloquea a la épica (PLT-01; para la DEP-16, las historias que la tienen). ○ = la suman las historias el 26-oct y el PLT-01 no la pone (diferencia con el PLT-01, anotada aquí). Las columnas son las 11 épicas del plan.
+● = la dependencia bloquea a la épica (PLT-01; para la DEP-16, las historias que la tienen). ○ = la suman las historias el 26-oct y el PLT-01 no la pone (diferencia con el PLT-01, anotada aquí). Las columnas son las 11 épicas del plan; EP-08 queda fuera de la Etapa 1 (P-025) y su columna no tiene ninguna dependencia.
 
 | Dependencia | EP-01 | EP-02 | EP-03 | EP-04 | EP-05 | EP-06 | EP-07 | EP-08 | EP-09 | EP-10 | EP-11 | Fecha requerida |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|---|
@@ -71,24 +71,24 @@ Los diagramas están en `dependencias.mmd` y `olas-features.mmd`.
 | DEP-14 Proveedor de IA |  |  |  |  |  |  |  |  | ● | ● |  | 23-oct |
 | DEP-15 Proyectos |  |  |  |  |  |  |  |  |  |  | ● | 29-oct |
 
-La DEP-16 toma sus épicas de las 24 historias que la tienen: las 12 que heredan la DEP-02 de la traza del PLT-03 (EP-01, EP-02 y EP-09) y 12 que autentican, autorizan por rol o leen líderes o al cliente autenticado (HU-001, 026, 027, 049, 050, 052, 053, 058, 064 a 066 y 067), que suman EP-04, EP-06, EP-10 y EP-11. La HU-049 se sumó el 26-oct con el mismo criterio que sus hermanas 050, 052 y 053: su regla RN-SVC-036 («Búsqueda respeta permisos») autoriza por rol (P-034). La HU-023 no la lleva: su cadena de escalamiento (jefatura de la Mesa SGD, Comité y Directorio) es la matriz de escalamiento de la Mesa, no un dato de Control de acceso (P-036). Tampoco la HU-051: su interesado se registra «sin cliente vinculado» y lo vincula el job cuando Control de acceso crea su `PARTY` (P-037, ED-05), sin depender del emisor ni de los roles. En DEV, sin el emisor no responde ningún endpoint protegido de ninguna épica; en local se trabaja con el emisor de pruebas (`roadmap/RMP-001-roadmap-aybar-atiende.md` §2), así que no bloquea la construcción de las demás (riesgo R-11, mitigado). El PLT-01 pone la DEP-06 en EP-01, pero ninguna HU de EP-01 la nombra: la tabla la deja como la pone el PLT-01.
+**En la Etapa 1 (P-025):** la DEP-14 no aplica en EP-09 ni en EP-10 (HU-048 y HU-053 salen y la guía de HU-047 no usa IA), y la DEP-06 de EP-10 no la usa ninguna historia de la Etapa 1 (solo la traía HU-053); las filas se dejan como las pone el PLT-01. La DEP-16 toma sus épicas de las 24 historias que la tienen (23 en la Etapa 1: HU-053 sale): las 12 que heredan la DEP-02 de la traza del PLT-03 (EP-01, EP-02 y EP-09) y 12 que autentican, autorizan por rol o leen líderes o al cliente autenticado (HU-001, 026, 027, 049, 050, 052, 053, 058, 064 a 066 y 067), que suman EP-04, EP-06, EP-10 y EP-11. La HU-049 se sumó el 26-oct con el mismo criterio que sus hermanas 050, 052 y 053: su regla RN-SVC-036 («Búsqueda respeta permisos») autoriza por rol (P-034). La HU-023 no la lleva: su cadena de escalamiento (jefatura de la Mesa SGD, Comité y Directorio) es la matriz de escalamiento de la Mesa, no un dato de Control de acceso (P-036). Tampoco la HU-051: su interesado se registra «sin cliente vinculado» y lo vincula el job cuando Control de acceso crea su `PARTY` (P-037, ED-05), sin depender del emisor ni de los roles. En DEV, sin el emisor no responde ningún endpoint protegido de ninguna épica; en local se trabaja con el emisor de pruebas (`roadmap/RMP-001-roadmap-aybar-atiende.md` §2), así que no bloquea la construcción de las demás (riesgo R-11, mitigado). El PLT-01 pone la DEP-06 en EP-01, pero ninguna HU de EP-01 la nombra: la tabla la deja como la pone el PLT-01.
 
 Las dependencias lógicas entre épicas (el Gantt del PLT-01 y la PLT-02) están en la sección 1 del
-roadmap: EP-01 → EP-03, EP-01 → EP-11, EP-02 → EP-04, EP-02 → EP-07, EP-09 → EP-06 y EP-04 → EP-08. Son las 6 que lleva el `depende_de` de las épicas en la carga de Nexora. Las dos que llegan por una sola historia (HU-026 → HU-036 y HU-019 → HU-066) quedan en la historia y en su feature (FT-07 → FT-10 y FT-13 → FT-24) y no suben a la épica: a nivel de épica irían contra el calendario (EP-04 termina el 2-nov y EP-05 empieza el 29-oct; EP-07 termina el 2-nov y EP-06 empieza el 30-oct).
+roadmap: EP-01 → EP-03, EP-01 → EP-11, EP-02 → EP-04, EP-02 → EP-07, EP-09 → EP-06 y EP-04 → EP-08. Son las 6 que lleva el `depende_de` de las épicas en la carga de Nexora; en la Etapa 1 quedan 5, porque EP-04 → EP-08 sale con EP-08 (P-025). Las dos que llegan por una sola historia (HU-026 → HU-036 y HU-019 → HU-066) quedan en la historia y en su feature (FT-07 → FT-10 y FT-13 → FT-24) y no suben a la épica: a nivel de épica irían contra el calendario (EP-04 termina el 2-nov y EP-05 empieza el 29-oct; EP-07 termina el 2-nov y EP-06 empieza el 30-oct).
 
 ## 3 Dependencias por fecha requerida
 
-| Fecha requerida | Días hábiles al corte (lun 26-oct) | Dependencia | Tipo | Responsable | Estado PLT-01 | Historias que bloquea | Con las HU (26-oct) |
+| Fecha requerida | Días hábiles al corte (lun 26-oct) | Dependencia | Tipo | Responsable | Estado PLT-01 | Historias que bloquea | Con las HU (26-oct; entre paréntesis, en la Etapa 1) |
 |---|---|---|---|---|---|---|---|
-| 21-oct | vencida hace 3 | DEP-01 SIGDA/TAXON | Interna | CDO / Equipo Datos | Pendiente | 13 | 14 |
-| 21-oct | vencida hace 3 | DEP-16 Control de acceso | Interna | Área de Roles y Permisos (Sony Montoya) | Pendiente (nueva) · en riesgo, mitigado (R-11) | 12 | 24 |
+| 21-oct | vencida hace 3 | DEP-01 SIGDA/TAXON | Interna | CDO / Equipo Datos | Pendiente | 13 | 14 (13) |
+| 21-oct | vencida hace 3 | DEP-16 Control de acceso | Interna | Área de Roles y Permisos (Sony Montoya) | Pendiente (nueva) · en riesgo, mitigado (R-11) | 12 | 24 (23) |
 | 21-oct | vencida hace 3 | DEP-08 Cobranza | Interna | Cobranza | Pendiente | 6 | 7 |
 | 21-oct | vencida hace 3 | DEP-11 Call center | Externa | TI / proveedor de call center | Por evaluar | 1 | 2 |
 | 22-oct | vencida hace 2 | DEP-03 Matriz SLA | Interna | Gerencia ATC · Mesa SGD | Pendiente | 4 | 7 |
 | 22-oct | vencida hace 2 | DEP-04 Calendario | Técnica | Equipo Datos | En curso | 4 | 5 |
-| 23-oct | vencida hace 1 | DEP-06 Documental y GLI | Técnica | Arquitectura / Legal | En curso | 8 | 9 |
-| 23-oct | vencida hace 1 | DEP-13 Motor de José | Interna | José · TI | Por evaluar | 5 | 5 |
-| 23-oct | vencida hace 1 | DEP-14 Proveedor de IA | Técnica | TI · Seguridad | Por evaluar | 2 | 3 |
+| 23-oct | vencida hace 1 | DEP-06 Documental y GLI | Técnica | Arquitectura / Legal | En curso | 8 | 9 (8) |
+| 23-oct | vencida hace 1 | DEP-13 Motor de José | Interna | José · TI | Por evaluar | 5 | 5 (4) |
+| 23-oct | vencida hace 1 | DEP-14 Proveedor de IA | Técnica | TI · Seguridad | Por evaluar | 2 | 3 (1: HU-047, que no usa IA; no aplica en la Etapa 1) |
 | 26-oct | 0 (hoy) | DEP-05 Validación legal | Legal | Gerencia Legal | Pendiente | 4 | 9 |
 | 26-oct | 0 (hoy) | DEP-12 Herramienta de Legal | Interna | Gerencia Legal · TI | Por evaluar | 2 | 2 |
 | 29-oct | 3 | DEP-07 Contratos | Interna | Equipo Contratos | Pendiente | 4 | 4 |
@@ -99,12 +99,12 @@ roadmap: EP-01 → EP-03, EP-01 → EP-11, EP-02 → EP-04, EP-02 → EP-07, EP-
 Las que siguen **Por evaluar** (DEP-11, DEP-12, DEP-13 y DEP-14) no tienen ni siquiera una respuesta
 de su responsable sobre si pueden entregar. El PLT-01 fija la regla: sin contrato de interfaz y
 simulador a la fecha indicada, la historia que bloquean no puede marcarse Lista y se cambia por otra
-del mismo desarrollador. Los contratos y simuladores son de ATC (ADR-004), así que la historia se construye contra el simulador (R-02). La DEP-14 ya tiene proveedor decidido por el equipo (ED-17).
+del mismo desarrollador. Los contratos y simuladores son de ATC (ADR-004), así que la historia se construye contra el simulador (R-02). La DEP-14 ya tiene proveedor decidido por el equipo (ED-17) y no aplica en la Etapa 1 (P-025).
 
 ## 4 Olas de features
 
 Una feature depende de otra cuando una de sus historias depende de una historia de la otra. Las
-dependencias entre historias son las 54 del bloque «Depende de» de cada HU (sección 1), que salen de
+dependencias entre historias son las 49 de la Etapa 1 del bloque «Depende de» de cada HU (sección 1; 54 en el paquete documentado), que salen de
 cinco fuentes:
 
 - las predecesoras de cada RF dentro de su feature (PLT-03 §2);
@@ -115,8 +115,7 @@ cinco fuentes:
 
 Una dependencia entre features o entre épicas se lleva a las historias así: la última historia de la
 predecesora, por fecha, va antes de la primera de la sucesora. Es el mismo criterio de la carga de
-Nexora (`nexora-items/`), que tiene las mismas 54 dependencias entre historias y las mismas 17 entre
-features.
+Nexora (`nexora-items/`), que tiene las mismas: 54 entre historias y 17 entre features, de las que 49 y 16 son entre ítems de la Etapa 1 (las otras salen de las HU y de la feature fuera de la Etapa 1, columna `etapa`).
 
 La ola 0 son las features sin predecesoras (la «fundación» del plan del SDK). La fuente de cada
 vínculo está en la tabla de la sección 4.2.
@@ -130,8 +129,8 @@ vínculo está en la tabla de la sección 4.2.
 | 0 | FT-04 | Motor SLA y alertas | EP-02 | Dev 2 | — | DEP-03, DEP-04 | 22-oct | 22-oct a 26-oct |
 | 0 | FT-16 | Integración con Legal y prevención de denuncias | EP-10 | Dev 4 | — | DEP-05, DEP-12 | 26-oct | 26-oct a 28-oct |
 | 0 | FT-18 | Bandeja orquestadora y flujos por área | EP-09 | Dev 3 | — | DEP-16 | 21-oct | 21-oct a 23-oct |
-| 0 | FT-19 | Asistencia al gestor: guía e IA | EP-09 | Dev 3 | — | DEP-14 | 23-oct | 27-oct a 28-oct |
-| 0 | FT-20 | Búsqueda y consulta 360 del cliente | EP-10 | Dev 4 | — | DEP-01, DEP-06, DEP-08, DEP-11, DEP-13, DEP-14, DEP-16 | 21-oct | 21-oct a 26-oct |
+| 0 | FT-19 | Asistencia al gestor: guía e IA (en la Etapa 1, sin HU-048) | EP-09 | Dev 3 | — | — (la DEP-14 no aplica en la Etapa 1) | — | 27-oct a 27-oct |
+| 0 | FT-20 | Búsqueda y consulta 360 del cliente (en la Etapa 1, sin HU-053) | EP-10 | Dev 4 | — | DEP-01, DEP-08, DEP-11, DEP-13, DEP-16 | 21-oct | 21-oct a 23-oct |
 | 0 | FT-23 | Formularios simples: ingreso al proyecto y Entrega Fest | EP-11 | Dev 4 | — | — | — | 29-oct a 30-oct |
 | 1 | FT-02 | Ciclo de vida, interacciones e hitos | EP-01 | Dev 1 | FT-01 | DEP-16 | 21-oct | 22-oct a 26-oct |
 | 1 | FT-07 | Gate de derivación a Eje 3 y handoff | EP-04 | Dev 2 | FT-04 | DEP-01, DEP-08, DEP-16 | 21-oct | 27-oct a 28-oct |
@@ -147,9 +146,9 @@ vínculo está en la tabla de la sección 4.2.
 | 2 | FT-24 | Autogestión de tickets del cliente en Mi Portal | EP-06 | Dev 4 | FT-13, FT-18, FT-21 | DEP-01, DEP-16 | 21-oct | 30-oct a 2-nov |
 | 3 | FT-06 | Apelaciones internas e INDECOPI | EP-03 | Dev 1 | FT-05 | DEP-05, DEP-06 | 23-oct | 28-oct a 29-oct |
 | 3 | FT-09 | Escalamiento, vinculación y cierre tipificado | EP-04 | Dev 2 | FT-08 | DEP-06 | 23-oct | 29-oct a 2-nov |
-| 4 | FT-15 | EntregaFest: contención en vivo | EP-08 | Dev 1 | FT-09 | — | — | 30-oct a 2-nov |
+| Fuera de la Etapa 1 (en `plan`, ola 4 con 0 h) | FT-15 | EntregaFest: contención en vivo | EP-08 | Dev 1 | FT-09 (al retomarla) | — | — | PLT-01: 30-oct a 2-nov; sale por P-025 |
 
-«Dependencias del producto» es la unión de las DEP del bloque «Depende de» de sus historias; «Primera fecha requerida», la más temprana de esas DEP. Cuadra con la sección 2 de cada DoR.
+«Dependencias del producto» es la unión de las DEP del bloque «Depende de» de sus historias de la Etapa 1; «Primera fecha requerida», la más temprana de esas DEP. Cuadra con la sección 2 de cada DoR (FT-19 y FT-20 llevan la nota de alcance de P-025).
 
 ```mermaid
 flowchart LR
@@ -159,8 +158,8 @@ flowchart LR
     FTATC04["FT-04 · Motor SLA<br/>EP-02 · Dev 2"]
     FTATC16["FT-16 · Integración con Legal<br/>EP-10 · Dev 4"]
     FTATC18["FT-18 · Bandeja orquestadora<br/>EP-09 · Dev 3"]
-    FTATC19["FT-19 · Asistencia al gestor<br/>EP-09 · Dev 3"]
-    FTATC20["FT-20 · Búsqueda y consulta 360<br/>EP-10 · Dev 4"]
+    FTATC19["FT-19 · Asistencia al gestor (sin HU-048)<br/>EP-09 · Dev 3"]
+    FTATC20["FT-20 · Búsqueda y consulta 360 (sin HU-053)<br/>EP-10 · Dev 4"]
     FTATC23["FT-23 · Formularios simples<br/>EP-11 · Dev 4"]
   end
   subgraph O1["Ola 1"]
@@ -183,8 +182,8 @@ flowchart LR
     FTATC06["FT-06 · Apelaciones internas e INDECOPI<br/>EP-03 · Dev 1"]
     FTATC09["FT-09 · Escalamiento y cierre tipificado<br/>EP-04 · Dev 2"]
   end
-  subgraph O4["Ola 4"]
-    FTATC15["FT-15 · EntregaFest<br/>EP-08 · Dev 1"]
+  subgraph O4["Fuera de la Etapa 1 (P-025) · ola 4 de aybar paquete plan, 0 h"]
+    FTATC15["FT-15 · EntregaFest<br/>EP-08 · se retoma en una etapa posterior"]
   end
   FTATC01 --> FTATC02
   FTATC02 --> FTATC05
@@ -196,7 +195,7 @@ flowchart LR
   FTATC04 --> FTATC13
   FTATC13 --> FTATC14
   FTATC13 --> FTATC24
-  FTATC09 -. no se respeta .-> FTATC15
+  FTATC09 -. al retomarla .-> FTATC15
   FTATC20 --> FTATC17
   FTATC18 --> FTATC21
   FTATC02 --> FTATC22
@@ -219,8 +218,8 @@ flowchart LR
 | FT-04 | FT-13 | Gantt del PLT-01: EP-02 → EP-07 | HU-029 → HU-019 |
 | FT-13 | FT-14 | Predecesora de la feature (PLT-02) | HU-019 → HU-030 |
 | FT-13 | FT-24 | PLT-04, CA-02 de HU-066: «se dispara la encuesta (HU-019)». El calendario la respeta: FT-13 es el 29-oct y FT-24 empieza el 30-oct | HU-019 → HU-066 |
-| FT-09 | FT-15 | PLT-02, EP-08: «EP-ATC-04 (gate legal)». **No se respeta** (A-03) | HU-025 → HU-037 |
-| FT-20 | FT-17 | Predecesora de la feature (PLT-02) | HU-053 → HU-042 |
+| FT-09 | FT-15 | PLT-02, EP-08: «EP-ATC-04 (gate legal)». **No se respeta** (A-03). **Fuera de la Etapa 1** (P-025): aplica al retomar FT-15 | HU-025 → HU-037 |
+| FT-20 | FT-17 | Predecesora de la feature (PLT-02) | HU-052 → HU-042 (antes HU-053 → HU-042; HU-053 sale de la Etapa 1 por P-025 y HU-052 es la última HU de FT-20 en la Etapa 1) |
 | FT-18 | FT-21 | Predecesora de la feature (PLT-02) | HU-046 → HU-054 |
 | FT-02 | FT-22 | Gantt del PLT-01: EP-01 → EP-11 | HU-006 → HU-056 |
 | FT-18 | FT-25 | Predecesora de la feature (PLT-02); además, la traza de FT-25 del PLT-03 («eventos de la bandeja orquestadora (HU-043, 044)») y la ficha de HU-043 del PLT-04 | HU-046 → HU-067, HU-043 → HU-067, HU-044 → HU-067 |
@@ -233,7 +232,7 @@ flowchart LR
 historia depende de otra si una de sus tareas depende de una tarea de la otra, y una feature, si una
 de sus historias depende de una historia de otra feature. Para que dé las olas del PO:
 
-- **Las 54 dependencias del PO están en las tareas.** 43 ya estaban, entre distintas tareas de las dos historias. El 26-oct se añadieron las 11 que faltaban, haciendo que la primera tarea de la historia sucesora dependa de la última de su predecesora: HU-002 → 004, 006 → 012, 006 → 056, 015 → 016, 025 → 037, 028 → 020, 029 → 019, 029 → 026, 046 → 054, 053 → 042 y 055 → 064.
+- **Las 54 dependencias del PO están en las tareas.** 43 ya estaban, entre distintas tareas de las dos historias. El 26-oct se añadieron las 11 que faltaban, haciendo que la primera tarea de la historia sucesora dependa de la última de su predecesora: HU-002 → 004, 006 → 012, 006 → 056, 015 → 016, 025 → 037, 028 → 020, 029 → 019, 029 → 026, 046 → 054, 053 → 042 y 055 → 064. **Tras P-025 siguen las 54:** 49 entre historias de la Etapa 1 (053 → 042 pasa a 052 → 042) y 5 desde las tareas de 0 h de las historias fuera de la Etapa 1 (025 → 037, 037 → 038, 038 → 039, 047 → 048 y 049 → 053).
 - **Las dependencias técnicas son adicionales a las del PO** (por ejemplo, «usa la entidad Ticket de HU-001»). El backlog tiene 38 entre historias que el bloque «Depende de» no declara. Las que van entre features distintas solo se dejan si la feature predecesora está en una ola anterior: así no cambian las olas del PO.
 - **17 dependencias técnicas entre tareas cambiaban las olas del PO** (la tarea predecesora es de una feature de la misma ola o de una posterior) y ya no van en `depende_de`. Ninguna se pierde: la tarea lo dice en su título. **El orden lo sostiene el calendario del PO**, que en las 17 termina la historia predecesora antes de que empiece la sucesora o el mismo día (en 2, sin holgura). Solo 4 tienen además la fundación del SDK, porque usan una tarea de dominio de la ola 0 (`plan` la pone en la fundación). `plan` no las ve: si una predecesora se atrasa, la sucesora espera (A-13).
 
@@ -249,9 +248,13 @@ de sus historias depende de una historia de otra feature. Para que dé las olas 
 | HU-ATC-041-T01 (FT-16, 0) | Entidad `SVC_COMPLAINT_BOOK_ENTRY` | HU-ATC-012-T01 (FT-05, 2) | Calendario: HU-012 termina el 26-oct. **El orden de las olas va al revés** |
 | HU-ATC-065-T03 (FT-24, 2) | Adaptador de notificaciones multicanal | HU-ATC-057-T01 (FT-22, 2) | Calendario: HU-057 termina el 29-oct (mismo desarrollador) |
 
-Resultado al 26-oct: `aybar paquete validar` da 0 errores y 0 advertencias (321 tareas, 243 h, las
-mismas horas por historia que el PLT-04) y `aybar paquete plan` da **5 olas, sin ciclos** de tareas,
-historias ni features, con las mismas features por ola que la tabla 4.1. Además de las del PO, `plan`
+**Tras P-025 (26-oct):**
+
+- Las tareas de HU-037, 038, 039, 048 y 053 (24 tareas, 16 h) pasan sin cambios a `roadmap/alcance-diferido.md` (EP-ATC-08, 09 y 10), que `aybar paquete validar` no lee. En `backlog/tareas/` queda una tarea de 0 h por historia (`HU-ATC-0xx-T00`) que lo dice; sin ella, `validar` avisaría `hu-sin-tareas`. Su `depende_de` conserva las dependencias del PO (025 → 037, 037 → 038, 038 → 039, 047 → 048 y 049 → 053) para cuando se retomen: por eso `plan` pone FT-15 en la ola 4 con 0 h.
+- **Ninguna tarea de la Etapa 1 depende de una diferida.** La única que lo hacía, HU-ATC-042-T01 (de HU-ATC-053-T06), depende ahora de HU-ATC-052-T04.
+- Las 28 h técnicas de DT-02 son 6 tareas (DT02-T01 a DT02-T06) sobre HU-ATC-001, en FT-01 (ola 0, la fundación): outbox (Brayan, 6 h; tras HU-ATC-001-T02 y T03), bus (Daniel, 6 h), publicador (Jesús, 4 h; tras outbox y bus), purga y métrica (Michel, 2 h; tras el publicador), proyector (Michel, 7 h; tras outbox y bus) y re-proyección (Brayan, 3 h; tras el proyector). Ninguna tarea de historia depende de ellas en `depende_de`: las vistas de lectura de FT-03, 04, 16, 18, 19, 20 y 23, que están en la ola 0, pasarían a la ola 1. El orden lo da la fundación: se construyen primero, como las tareas de dominio de la ola 0 (A-13).
+
+Resultado al 26-oct, tras P-025: `aybar paquete validar` da 0 errores y 0 advertencias, con 308 tareas en `backlog/tareas/` y 255 h: 297 tareas de historias de la Etapa 1 con 227 h (las mismas horas por historia que el PLT-04), 6 técnicas con 28 h y 5 de 0 h. Por persona: Brayan 64 h, Jesús 64 h, Michel 64 h y Daniel 63 h. `aybar paquete plan` da, **sin ciclos** de tareas, historias ni features, las olas 0 a 3 con las mismas features por ola que la tabla 4.1, y FT-15 sola en la ola 4 con 0 h. Antes de P-025: 321 tareas, 243 h y 5 olas. Además de las del PO, `plan`
 muestra estas dependencias técnicas entre features, que no cambian la ola:
 
 | Feature (ola) | Depende de (PO) | Además, en `plan` (técnicas del backlog) |
@@ -269,9 +272,9 @@ muestra estas dependencias técnicas entre features, que no cambian la ola:
 | # | Hallazgo | Severidad | Dueño |
 |---|---|---|---|
 | A-01 | **Ninguna dependencia tiene fecha comprometida** (0 de 14); solo fecha requerida. Al corte (26-oct) ya pasó la fecha requerida de 9 y hoy vence la de DEP-05 y DEP-12. **Decisión del equipo (26-oct):** cada una es un riesgo con mitigación (R-02, R-03, R-08 y R-11) y el criterio 6 de los DoR lo registra así; la historia se construye contra el contrato y el simulador | Riesgo con mitigación | Equipo ATC (mitigación); responsable de cada DEP (entrega) |
-| A-02 | 4 dependencias siguen «Por evaluar»: DEP-11, DEP-12, DEP-13 y DEP-14. Todas bloquean la épica EP-10; las de DEP-11, DEP-13 y DEP-14 ya pasaron su fecha requerida y la de DEP-12 vence hoy | Alto (R-02) | TL |
-| A-03 | La dependencia EP-04 → EP-08 de la PLT-02 **no se respeta en las fechas**: EP-08 (Entrega Fest) empieza el 30-oct y EP-04 termina el 2-nov. Es la que alarga la ruta crítica a 36 h | Corregir | PO |
-| A-04 | De las 54 dependencias entre historias, 1 tiene la predecesora terminando **después** de que empieza la dependiente: HU-025 → HU-037, que es la causa de A-03. En otras 28 la predecesora termina el mismo día en que empieza la dependiente, así que no hay holgura y cualquier retraso las rompe | Corregir | PO / TL |
+| A-02 | 4 dependencias siguen «Por evaluar»: DEP-11, DEP-12, DEP-13 y DEP-14. Todas bloquean la épica EP-10; las de DEP-11, DEP-13 y DEP-14 ya pasaron su fecha requerida y la de DEP-12 vence hoy. La DEP-14 ya no aplica en la Etapa 1 (P-025) | Alto (R-02) | TL |
+| A-03 | La dependencia EP-04 → EP-08 de la PLT-02 **no se respeta en las fechas**: EP-08 (Entrega Fest) empieza el 30-oct y EP-04 termina el 2-nov. Es la que alarga la ruta crítica a 36 h. **Resuelto por P-025 (26-oct):** EP-08 sale de la Etapa 1; la ruta crítica de la Etapa 1 es de 34 h. Al retomar EP-08, su fecha tiene que ir después de EP-04 | Resuelto (P-025) | PO (al retomarla) |
+| A-04 | De las 54 dependencias entre historias, 1 tiene la predecesora terminando **después** de que empieza la dependiente: HU-025 → HU-037, que es la causa de A-03. En otras 28 la predecesora termina el mismo día en que empieza la dependiente, así que no hay holgura y cualquier retraso las rompe. **Tras P-025:** de las 49 de la Etapa 1, ninguna va al revés y 24 terminan el mismo día | Vigilar (24 sin holgura) | PO / TL |
 | A-05 | **Corregido (26-oct).** El backlog de tareas v1.3 (11 JSON, 321 tareas, 243 h) se publicó en Nexora el 26-oct y reemplaza al de la línea v1.2. Su `depende_de` no recogía 11 dependencias del PO y tenía 17 técnicas que cambiaban las olas: `plan` daba 7 olas. Desde esta versión (local, por publicar) recoge las 54 y `plan` da las 5 olas de la sección 4 (4.3) | Corregido | Cada dueño de épica revisa la suya y rellena `revisado_por`; el equipo confirma las horas (PLT-05, acuerdo 1) |
 | A-06 | Los responsables son áreas, no personas (por ejemplo «Equipo Datos» o «TI»). Para comprometer una fecha hace falta un nombre | Corregir | PO |
 | A-07 | **Dependencia nueva que no está en el PLT-01:** la DEP-16 (Control de acceso, P-026), que reemplaza a la DEP-02: el emisor de tokens, el login de internos y de Mi Portal y los roles son de Control de acceso (DT-03, DT-04, DT-05; ADR-009, ADR-011 y ADR-014). Ya no hacen falta el canal ni el proveedor de envío del código de Mi Portal. El proveedor de IA ya figura como DEP-14 (proveedor decidido, ED-17). El equipo acepta la DEP-16 como riesgo con mitigación (R-11, ED-08); que no esté en el PLT-01 es una diferencia listada en ED-19 | Informativa | TL |
@@ -281,6 +284,7 @@ muestra estas dependencias técnicas entre features, que no cambian la ola:
 | A-11 | **Los DoR no tenían todas las DEP de sus historias.** El 26-oct se añadieron, con la nota «(añadida el 26-oct desde PLT-03/PLT-04/PLT-05)»: DEP-16 en FT-01, 07, 20, 22, 24 y 25; DEP-05 en FT-06, 16 y 22; DEP-03 en FT-08. En FT-20 la DEP-16 suma la HU-049 (P-034), y los DoR de FT-14 y FT-16 dicen por qué historia la DEP-01 y la DEP-05 alcanzan a EP-07 y EP-10 | Corregido | PO confirma |
 | A-12 | **Esta versión pasa de 50 a 54 dependencias entre historias y de 15 a 17 entre features**, con las que el bloque «Depende de» de cada HU toma del PO (sección 1): FT-10 sale de la ola 0 y pasa a la 2 (por FT-07) y FT-24 suma FT-13. Las olas siguen siendo 5 y la ruta crítica no cambia | Informativa (corregido en esta versión) | PO confirma |
 | A-13 | **17 tareas de FT-03, 04, 07, 13, 16, 17, 18, 20, 23 y 24 usan piezas de otras features que el PO pone en la misma ola o en una posterior** (la entidad Ticket, su migración y `RegistrarTicketUseCase` de FT-01; `CambiarEstadoTicketUseCase` y `SVC_TICKET_INTERACTION` de FT-02; `GestoresPort` y `SVC_TICKET_ASSIGNMENT_LOG` de FT-03; `SVC_COMPLAINT_BOOK_ENTRY` de FT-05; el adaptador de notificaciones de FT-22). No van en `depende_de` para no cambiar las olas del PO, así que `plan` no las ordena: las sostiene el calendario del PO (y la fundación, en 4). **Dos van al revés de las olas:** FT-04 (ola 0) usa `CambiarEstadoTicketUseCase` de FT-02 (ola 1) en HU-011 y HU-029, y FT-16 (ola 0) usa la entidad del Libro de FT-05 (ola 2) en HU-041. Si la pieza se atrasa, la historia que la usa espera | Vigilar en la daily | Líder Técnico, con Jesús Chávez Elías (FT-04), Daniel David Lorenzo Ramos (FT-16) y Brayan Hurtado (FT-01, 02 y 05) |
+| A-14 | **P-025, decidida por el equipo el 26-oct** (`analisis/decisiones.md` v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01: HU-037, 038, 039, 048 y 053; 16 h) y entran las 28 h técnicas de DT-02. La Etapa 1 queda en 57 HU, 22 features, 10 épicas, 49 dependencias entre historias, 16 entre features y 5 entre épicas, en 4 olas. FT-17 sigue en la ola 1 porque HU-042 pasa a depender de HU-052. La DEP-14 no aplica en la Etapa 1 | Informativa | Equipo ATC; el PO, al retomar las 5 HU |
 
 ## 6 Cómo se pasa esto al paquete del SDK
 
@@ -288,15 +292,15 @@ muestra estas dependencias técnicas entre features, que no cambian la ola:
 |---|---|---|
 | Roadmap, sección 2 (`docs/roadmap/RMP-001-roadmap-aybar-atiende.md`) | Las 14 dependencias con la forma de la plantilla y las 6 dependencias lógicas entre épicas | Hecho. En Nexora está la v4 del documento (`6da162eb28ba`, según G4); las versiones 0.4 a 0.6 del 26-oct son locales, por publicar |
 | Cada feature, sección 5 (trazabilidad RF → HU → DEP → riesgo) | Una fila por requerimiento con su `DEP-NN` | Hecho: las 23 features v1.3 lo traen (en Nexora, pendientes de aprobación) |
-| Cada historia, bloque «Depende de» | Las HU de las que depende y sus DEP | Hecho el 26-oct (54 dependencias; DEP-16 en 24 HU) |
+| Cada historia, bloque «Depende de» | Las HU de las que depende y sus DEP | Hecho el 26-oct (54 dependencias; DEP-16 en 24 HU). Tras P-025: 49 en la Etapa 1 y DEP-16 en 23; las HU que siguen dicen «(HU-0xx fuera de la Etapa 1)» donde se quitó una dependencia |
 | DoR por feature, sección 2 | Cada `DEP-NN` con **fecha comprometida**, y el diagrama (`dependencias.mmd`) | Los responsables no dieron fecha: cada DEP queda como riesgo con mitigación (R-02, R-03, R-08 y R-11) en el criterio 6. Los 23 DoR v1.3 dicen «con condiciones». Desde el 26-oct cada DoR tiene las DEP de sus historias (A-11) |
-| `docs/backlog/tareas/<ÉPICA>.json` | Tareas por historia con `depende_de` (entre tareas), horas y capa | v1.3 publicado en Nexora el 26-oct (11 JSON, 321 tareas, 243 h). Desde esta versión (local, por publicar) su `depende_de` recoge las 54 dependencias del PO y `plan` da las olas de la sección 4 (A-05). `revisado_por` lo completa cada dueño de épica al revisar; las horas las cierra el coordinador (P-025) |
-| `docs/gates/AYB-0001/G2.md` | Diseño UX/UI de las pantallas: las 62 historias tienen `ui: true` | G2 v0.4 en el paquete, en borrador y listo para su firma. `aybar paquete validar` ya no avisa `ui-sin-g2` (0 advertencias) |
+| `docs/backlog/tareas/<ÉPICA>.json` | Tareas por historia con `depende_de` (entre tareas), horas y capa | v1.3 publicado en Nexora el 26-oct (11 JSON, 321 tareas, 243 h). Desde esta versión (local, por publicar) su `depende_de` recoge las 54 dependencias del PO y `plan` da las olas de la sección 4 (A-05). `revisado_por` lo completa cada dueño de épica al revisar. Tras P-025 (decidida por el equipo el 26-oct): 308 tareas con 255 h en la Etapa 1 (227 h de historias y 28 h técnicas) y las 5 HU fuera en `roadmap/alcance-diferido.md` (4.3) |
+| `docs/gates/AYB-0001/G2.md` | Diseño UX/UI de las pantallas: las 62 historias tienen `ui: true` (57 en la Etapa 1) | G2 v0.4 en el paquete, en borrador y listo para su firma. `aybar paquete validar` ya no avisa `ui-sin-g2` (0 advertencias) |
 
 Comandos: `aybar paquete validar docs` (reglas `tarea-dependencia-inexistente`, `tareas-ciclo` y
 `ui-sin-g2`) y `aybar paquete plan docs --json` (olas, listas para construir y ciclos). El paquete v1.3
-con este análisis y este roadmap valida con 0 errores y 0 advertencias, y `plan` da 5 olas sin ciclos
-(26-oct). El agente `analista-paquete` informa las contradicciones y `orquestador-feature` arma las
+con este análisis y este roadmap valida con 0 errores y 0 advertencias, y `plan` da, sin ciclos, las 4 olas de la Etapa 1 y FT-15 sola en la ola 4
+(26-oct, tras P-025). El agente `analista-paquete` informa las contradicciones y `orquestador-feature` arma las
 olas; deciden el PO y el TL.
 
 | Versión | Fecha | Autor | Cambio |
@@ -308,6 +312,7 @@ olas; deciden el PO y el TL.
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Recalculado con las 54 dependencias entre historias del bloque «Depende de» (antes 50) y 17 entre features (FT-07 → FT-10 y FT-13 → FT-24): FT-10 pasa a la ola 2 y FT-24 suma FT-13; niveles 14/13/9/9/4/6/2/2/1/1/1; ruta crítica igual (36 h y 34 h). La fuente de las predecesoras de feature es la PLT-02. FT-05 suma DEP-04 (22-oct) y FT-14 DEP-01 (21-oct). La DEP-16 pasa a 24 HU (HU-049, P-034) y la HU-023 no la lleva (P-036). Corte de fechas al 26-oct. Sección 4.3 nueva: backlog alineado y `plan` con las mismas 5 olas; las 17 dependencias técnicas fuera de `depende_de` las sostiene el calendario (4 también la fundación) y A-13 nombra las dos que van al revés de las olas. A-05 corregido (backlog v1.3 publicado), §6 al 26-oct (G2 en borrador), hallazgos en orden A-01 a A-13 (A-12 y A-13 nuevos); se quita el detalle del backlog v1.2 |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): A-08 cita ADR-009 v0.4, la versión vigente (decía v0.3). |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: cada dependencia del producto queda como riesgo con mitigación (R-02, R-03, R-08 y R-11) y la DEP-16 como riesgo aceptado (R-11, ED-08); A-01, A-07 y A-10 con esa decisión; HU-051 con ED-05; DEP-14 con proveedor decidido (ED-17); diferencias con el PLT-01 anotadas en la matriz; §6 al 26-oct |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): recalculado para la Etapa 1 sin HU-037, 038, 039, 048 y 053: 49 dependencias entre historias (sale 6, entra HU-052 → HU-042), 8 niveles, 16 entre features en 4 olas, 5 entre épicas, ruta crítica de 34 h; DEP-14 sin efecto en la Etapa 1, «Con las HU» con la cifra de la Etapa 1, FT-19 y FT-20 sin las HU que salen, FT-15 fuera; §4.3 con el backlog tras P-025 (diferidas, tareas de 0 h y 28 h técnicas) y `plan`; A-02, A-03 y A-04 con P-025 y A-14 nuevo; §6 al día; diagrama de olas con FT-15 fuera de la Etapa 1 |
 
 Generado por IA: borrador completo. Versión base de Nexora (v1, de Jesús, 19-oct), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
 
@@ -318,3 +323,5 @@ Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la rev
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude) a partir de las revisiones de coherencia y del Líder Técnico del 26-oct: 54 dependencias entre historias, 17 entre features, backlog alineado con `aybar paquete plan`. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): dependencias como riesgos con mitigación y DEP-16 como riesgo aceptado (R-11). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude) a partir de P-025, decidida por el equipo (`analisis/decisiones.md` v0.8): dependencias, olas y ruta crítica de la Etapa 1 recalculadas, coherentes con `aybar paquete plan`. — Revisado por: (pendiente)

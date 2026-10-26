@@ -1,16 +1,16 @@
 # Paquete Definir · Etapa 1 (v1.3)
 
-Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 158 documentos (los que cuenta `aybar paquete validar`), 7 diagramas Mermaid, el contrato OpenAPI y 11 archivos de tareas (321 tareas, 243 h). **Nada está aprobado**: ni los documentos, ni los DoR, ni los gates G0 a G4.
+Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 158 documentos (los que cuenta `aybar paquete validar`), 7 diagramas Mermaid, el contrato OpenAPI y 11 archivos de tareas (308 tareas, 255 h: 227 h de las 57 HU de la Etapa 1 y 28 h técnicas de DT-02), más el desglose de las 5 HU que salen de la Etapa 1 en `roadmap/alcance-diferido.md`. **Nada está aprobado**: ni los documentos, ni los DoR, ni los gates G0 a G4.
 
 | Carpeta | Qué hay | Base |
 |---|---|---|
-| `epicas/`, `features/`, `historias/`, `dor/` | 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (índice abajo) | Documentos del PO v1.3, sin cambiar su contenido. El 26-oct cada historia sumó, fuera del texto del PO, el bloque «Responsable / Depende de / La necesitan» (54 dependencias entre historias, trazadas al PO), y cada DoR, las DEP de sus historias |
-| [`analisis/`](analisis/) | BRD, ficha de intake, cobertura de requisitos, `decisiones.md` (fuente de verdad del paquete, 0.7) y el proceso de atención de prospectos (C-06; propuesta para una etapa posterior) | Versión de Nexora (Jesús y Daniel), llevada a la v1.3 y a las decisiones del Líder Técnico |
-| [`roadmap/`](roadmap/) | RMP-001, análisis de dependencias (54 entre historias, 17 entre funcionalidades, 5 olas), dependencias y olas (Mermaid) | Versión de Nexora (Jesús), con la flecha EP-09→EP-06 del Gantt del PLT-01 y el bloque «Depende de» de las historias |
+| `epicas/`, `features/`, `historias/`, `dor/` | 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (índice abajo). En la Etapa 1, tras P-025: 10 épicas, 22 funcionalidades y 57 historias | Documentos del PO v1.3, sin cambiar su contenido. El 26-oct cada historia sumó, fuera del texto del PO, el bloque «Responsable / Depende de / La necesitan» (54 dependencias entre historias, trazadas al PO), y cada DoR, las DEP de sus historias |
+| [`analisis/`](analisis/) | BRD, ficha de intake, cobertura de requisitos, `decisiones.md` (fuente de verdad del paquete, 0.8) y el proceso de atención de prospectos (C-06; propuesta para una etapa posterior) | Versión de Nexora (Jesús y Daniel), llevada a la v1.3 y a las decisiones del Líder Técnico |
+| [`roadmap/`](roadmap/) | RMP-001, análisis de dependencias (en la Etapa 1: 49 entre historias, 16 entre funcionalidades, 4 olas y ruta crítica de 34 h), dependencias y olas (Mermaid) | Versión de Nexora (Jesús), con la flecha EP-09→EP-06 del Gantt del PLT-01 y el bloque «Depende de» de las historias |
 | [`adr/`](adr/) | 14 ADR: ADR-001…011 son las ADR-01…11 del PO; 012 stack, 013 outbox y 014 plataforma las propone el equipo | Versión de Nexora (Jesús), con las decisiones DT-01 a DT-10 del Líder Técnico (22-oct) y su segunda revisión (26-oct, 0.4); la 0.5 aplica las decisiones del equipo del 26-oct. Los conflictos con el PO quedan anotados |
 | [`arquitectura/`](arquitectura/) | OpenAPI (59 operaciones, `0.6.0-borrador`), C4, módulos, seguridad, roles y permisos, costo cloud (USD 2.592,53 al mes con PRE), migración y reversión, operaciones y trazabilidad por historia | Versión de Nexora (Jesús), con los esquemas del OpenAPI completados desde el PO y el Excel |
 | [`datos/`](datos/) | Registro de tablas (C-11, nuevo), modelo entidad-relación, diccionario, estados, linaje y acta F4 (lista para la firma del Data Chief) | Versión de Nexora (Jesús), con lo que el PO, el Excel y el modelo v7 ya definen |
-| [`backlog/tareas/`](backlog/tareas/) | 321 tareas en 11 archivos (uno por épica), 243 h (61, 60, 60 y 62 por desarrollador) | Versión de Nexora (Daniel), rehecha con la v1.3. `depende_de` recoge las 54 dependencias del PO y `aybar paquete plan` da las 5 olas del roadmap |
+| [`backlog/tareas/`](backlog/tareas/) | 308 tareas en 11 archivos (uno por épica), 255 h en la Etapa 1: 227 h de historias (55, 60, 55 y 57 por desarrollador) y 28 h técnicas de DT-02 (DT02-T01 a T06, en `EP-ATC-01.json`): 64, 64, 64 y 63 h por desarrollador. Las 5 HU fuera de la Etapa 1 tienen una tarea de 0 h aquí y su desglose (24 tareas, 16 h) en `roadmap/alcance-diferido.md` | Versión de Nexora (Daniel), rehecha con la v1.3. `depende_de` recoge las dependencias del PO (49 en la Etapa 1), ninguna tarea de la Etapa 1 depende de una diferida y `aybar paquete plan` da las 4 olas de la Etapa 1 del roadmap |
 | [`gates/AYB-0001/`](gates/AYB-0001/) | G0, G1, G2, G3 y G4 en borrador | Versión de Nexora y de `main`, llevada a la v1.3. G2 es nuevo |
 
 **Qué ya está decidido.** El Líder Técnico (Jose Jara) fijó el 22-oct las decisiones DT-01 a DT-10, registradas en [`analisis/decisiones.md`](analisis/decisiones.md) 0.7:
@@ -18,7 +18,7 @@ Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 158 d
 - la clave foránea del ticket a `PARTY` frente a la ADR-03 del PO (P-021, D-003 y D-006, cerradas por DT-06): una sola base del modelo v7, con FK físicas, y `PARTY` es la fuente viva del cliente;
 - la nube y la plataforma (P-001, cerrada por DT-07): Azure; el emisor de tokens es Control de acceso (DT-05), los jobs usan ShedLock (DT-08) y las llamadas entre servicios, `client_credentials` (DT-10).
 
-Que estén decididas no las aprueba: los ADR que las recogen (v0.5) quedan listos para la firma del Líder Técnico, y los documentos del PO no se editan: las diferencias están listadas en ED-19 (P-027). La D-12 de la rama de Daniel no se aplica: HU-048 y HU-053 siguen en la Etapa 1 (P-020, ED-17).
+Que estén decididas no las aprueba: los ADR que las recogen (v0.5) quedan listos para la firma del Líder Técnico, y los documentos del PO no se editan: las diferencias están listadas en ED-19 (P-027). La D-12 de la rama de Daniel no se aplica; HU-048 y HU-053 salen de la Etapa 1 por P-025, no por D-12 (P-020, ED-17).
 
 **Qué decidió el equipo el 26-oct** (Brayan Hurtado; propuesto al Líder Técnico en este envío). Nadie más responde, así que el equipo cerró cada punto con su fundamento y su evidencia en [`analisis/decisiones.md`](analisis/decisiones.md) 0.7 (ED-01 a ED-27), sin cambiar ninguna DT:
 - identidad y permisos: el `PartyID` sale del vínculo de la cuenta en la base única (ED-01); se autoriza por rol del token (ED-02); gestores y líderes con datos propios de ATC y el rol `ATC_SUPERVISOR`, sin copiar usuarios ni roles (ED-03); `MAE_AREA` es solo la cola (ED-04); la audiencia es `aybar-atc` (ED-06); el catálogo se entrega en los lotes del ADR-021 (ED-07);
@@ -26,10 +26,11 @@ Que estén decididas no las aprueba: los ADR que las recogen (v0.5) quedan listo
 - Control de acceso en DEV (DEP-16): riesgo aceptado con mitigación, R-11 del roadmap (ED-08); los casos manuales de prospectos quedan fuera de la Etapa 1 (ED-09);
 - datos: dueño de migración (ED-11), tablas del flujo (ED-15), tipos y largos (ED-16) y catálogo del piloto (ED-14); el acta F4 queda lista para la firma del Data Chief (ED-23);
 - evidencia: 2 años de retención (art. 12 del Reglamento del Libro de Reclamaciones), inmutabilidad bloqueada en PRE y producción y hash encadenado (ED-13);
-- costo: Brazil South, USD 2.592,53 al mes (ED-12); proveedor de IA, Azure OpenAI Service (ED-17), y HU-048 y HU-053 siguen en la Etapa 1;
+- costo: Brazil South, USD 2.592,53 al mes (ED-12); proveedor de IA, Azure OpenAI Service (ED-17), decidido y sin consumo en la Etapa 1 (HU-048 y HU-053 salen por P-025);
+- horas (P-025, opción A): las 28 h nuevas de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6) entran como tareas técnicas de la fundación y salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01): HU-ATC-037, 038 y 039 (EP-ATC-08 y FT-ATC-15 completas), 048 y 053, 16 h; las 3 h restantes las absorbe el equipo (riesgo aceptado). Etapa 1: 57 HU y 227 h de historias + 28 h técnicas = 255 h (Brayan 64, Jesús 64, Michel 64, Daniel 63);
 - las 58 preguntas de las historias y las 23 de las funcionalidades tienen su decisión (ED-26); M0 queda «requiere dispensa (solicitada)» (ED-25).
 
-**Qué sigue abierto:** solo **P-025** (horas): lo nuevo que exige DT-02 son 28 h; con 9 h de holgura, la brecha es de 19 h. La cierra el coordinador. Las firmas no son pendientes del paquete: cada documento queda listo para la firma de su rol.
+**Qué sigue abierto:** nada. **P-025** (horas: 28 h nuevas de DT-02 y 9 h de holgura, brecha de 19 h) la decidió el equipo el 26-oct (Brayan Hurtado; `analisis/decisiones.md` v0.8): 16 h salen con el alcance flexible y el equipo absorbe 3 h. Las firmas no son pendientes del paquete: cada documento queda listo para la firma de su rol.
 
 Las correcciones que se le proponen al Excel del PO están en [`../correcciones-excel-v1.3.md`](../correcciones-excel-v1.3.md).
 
@@ -40,20 +41,19 @@ a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por:
 **Estado.** Todo está en borrador y nada está aprobado. Nexora PJ-06 tiene versiones sin aprobar de todo el paquete: épicas, funcionalidades,
 historias y DoR desde el 20-oct; el resto desde el 21-oct; el 26-oct se publicaron la versión 0.4 de `decisiones.md` (v6 en Nexora), el backlog y 19 DoR. Las versiones
 locales del 26-oct están **por publicar**: 131 archivos difieren de Nexora (ADR, arquitectura, datos, roadmap, análisis, las 62 historias,
-16 DoR, el backlog y los gates G0 a G4), y `analisis/proceso-atencion-prospectos.md` y `datos/registro-de-tablas.md` son nuevos. Ver
+16 DoR, el backlog y los gates G0 a G4), y `analisis/proceso-atencion-prospectos.md` y `datos/registro-de-tablas.md` son nuevos. Tras P-025 cambian además los documentos que lista `PLAN-NEXORA.md` y hay 3 archivos nuevos en `roadmap/alcance-diferido.md`. Ver
 `PLAN-NEXORA.md`. Lo que solo hace una persona no es parte del borrador: el «Revisado por» de cada documento (lo completa el coordinador), el
 `revisado_por` de las tareas (el dueño de cada épica) y las firmas del PO, el Líder Técnico, el project manager y el Data Chief.
 
 **Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`, 26-oct): **0 errores y 0 advertencias**.
-Son 158 documentos y 321 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. `aybar paquete plan` da 5 olas sin ciclos, con las
-mismas funcionalidades por ola que el roadmap. Ninguna funcionalidad está lista para construir (0 de 23), porque los DoR y los gates esperan
+Son 158 documentos y 308 tareas, con 255 h estimadas (227 h de historias de la Etapa 1, 28 h técnicas y 5 tareas de 0 h de las HU fuera), 0 sin estimar y 0 sin responsable. `aybar paquete plan` da, sin ciclos, las 4 olas de la Etapa 1 con las mismas funcionalidades por ola que el roadmap, y FT-15 (fuera de la Etapa 1) sola en la ola 4 con 0 h. Ninguna funcionalidad está lista para construir (0 de 23), porque los DoR y los gates esperan
 su firma.
 
 **Para leerlo** sin instalar nada, abre `explorador.html` en el navegador. Lo generó `aybar paquete explorador` del SDK (regenerado el 26-oct).
 
 ## [EP-ATC-01 · Núcleo de tickets omnicanal](epicas/EP-ATC-01-nucleo-de-tickets-omnicanal.md)
 
-Dev 1 (Brayan) · 22 h · iteración 1 · Debe
+Dev 1 (Brayan) · 22 h · iteración 1 · Debe · además, la fundación técnica de DT-02 (28 h entre los 4 desarrolladores, P-025)
 
 | Funcionalidad | DoR | Historias |
 |---|---|---|
@@ -115,30 +115,30 @@ Dev 3 (Michel) · 16 h · iteración 2 · Debería
 
 ## [EP-ATC-08 · EntregaFest: contención y derivación en vivo](epicas/EP-ATC-08-entregafest-contencion-y-derivacion-en-vivo.md)
 
-Dev 1 (Brayan) · 6 h · iteración 2 · Podría
+Dev 1 (Brayan) · 6 h · iteración 2 · Podría · **fuera de la Etapa 1 (P-025)**
 
 | Funcionalidad | DoR | Historias |
 |---|---|---|
-| [FT-ATC-15 EntregaFest: contención en vivo](features/FT-ATC-15-entregafest-contencion-en-vivo.md) | [DoR](dor/DOR-FT-ATC-15-entregafest-contencion-en-vivo.md) | [037](historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md) · [038](historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md) · [039](historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md) |
+| [FT-ATC-15 EntregaFest: contención en vivo](features/FT-ATC-15-entregafest-contencion-en-vivo.md) (fuera de la Etapa 1) | [DoR](dor/DOR-FT-ATC-15-entregafest-contencion-en-vivo.md) | [037](historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md) · [038](historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md) · [039](historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md) |
 
 ## [EP-ATC-09 · Bandeja orquestadora y asistencia al gestor](epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md)
 
-Dev 3 (Michel) · 44 h · iteración 1 y 2 · Debe
+Dev 3 (Michel) · 44 h (39 h en la Etapa 1: HU-048 fuera, P-025) · iteración 1 y 2 · Debe
 
 | Funcionalidad | DoR | Historias |
 |---|---|---|
 | [FT-ATC-18 Bandeja orquestadora y flujos por área](features/FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md) | [DoR](dor/DOR-FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md) | [043](historias/HU-ATC-043-configurar-el-flujo-de-trabajo-de-un-tipo-de-ticket-por-area.md) · [044](historias/HU-ATC-044-trabajar-desde-una-bandeja-unica-ordenada-por-urgencia.md) · [045](historias/HU-ATC-045-marcar-un-ticket-critico-con-el-rayo-de-prioridad.md) · [046](historias/HU-ATC-046-reasignar-automaticamente-al-gestor-con-menos-carga.md) |
 | [FT-ATC-25 Visor del proceso 3D (operación en vivo)](features/FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md) | [DoR](dor/DOR-FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md) | [067](historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md) |
-| [FT-ATC-19 Asistencia al gestor: guía e IA](features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md) | [DoR](dor/DOR-FT-ATC-19-asistencia-al-gestor-guia-e-ia.md) | [047](historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md) · [048](historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md) |
+| [FT-ATC-19 Asistencia al gestor: guía e IA](features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md) | [DoR](dor/DOR-FT-ATC-19-asistencia-al-gestor-guia-e-ia.md) | [047](historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md) · [048](historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md) (fuera de la Etapa 1) |
 | [FT-ATC-21 Productividad y notificaciones del gestor](features/FT-ATC-21-productividad-y-notificaciones-del-gestor.md) | [DoR](dor/DOR-FT-ATC-21-productividad-y-notificaciones-del-gestor.md) | [054](historias/HU-ATC-054-ver-mi-avance-diario-y-el-de-mi-equipo.md) · [055](historias/HU-ATC-055-recibir-un-correo-al-asignarme-un-ticket-con-copia-a-mi.md) |
 
 ## [EP-ATC-10 · Consulta 360 e integraciones operativas](epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md)
 
-Dev 4 (Daniel) · 36 h · iteración 1 y 2 · Debe
+Dev 4 (Daniel) · 36 h (31 h en la Etapa 1: HU-053 fuera, P-025) · iteración 1 y 2 · Debe
 
 | Funcionalidad | DoR | Historias |
 |---|---|---|
-| [FT-ATC-20 Búsqueda y consulta 360 del cliente](features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md) | [DoR](dor/DOR-FT-ATC-20-busqueda-y-consulta-360-del-cliente.md) | [049](historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md) · [050](historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md) · [051](historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md) · [052](historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md) · [053](historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md) |
+| [FT-ATC-20 Búsqueda y consulta 360 del cliente](features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md) | [DoR](dor/DOR-FT-ATC-20-busqueda-y-consulta-360-del-cliente.md) | [049](historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md) · [050](historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md) · [051](historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md) · [052](historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md) · [053](historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md) (fuera de la Etapa 1) |
 | [FT-ATC-17 Integración con la plataforma del call center](features/FT-ATC-17-integracion-con-la-plataforma-del-call-center.md) | [DoR](dor/DOR-FT-ATC-17-integracion-con-la-plataforma-del-call-center.md) | [042](historias/HU-ATC-042-atender-la-llamada-con-la-ficha-del-cliente-y-registrarla-en.md) |
 | [FT-ATC-16 Integración con Legal y prevención de denuncias](features/FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md) | [DoR](dor/DOR-FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md) | [040](historias/HU-ATC-040-sincronizar-con-legal-los-tickets-derivados-a-eje-3.md) · [041](historias/HU-ATC-041-priorizar-los-reclamos-con-riesgo-de-denuncia-por-su.md) |
 
@@ -152,3 +152,7 @@ Dev 4 (Daniel) · 17 h · iteración 2 · Debe
 | [FT-ATC-23 Formularios simples: ingreso al proyecto y Entrega Fest](features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md) | [DoR](dor/DOR-FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md) | [059](historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md) · [060](historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): «Qué decidió el equipo» y P-025 como única pendiente. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): no queda nada abierto; alcance de la Etapa 1 (57 HU, 227 h, 10 épicas y 22 funcionalidades, más 28 h técnicas), backlog, validación y plan. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Cierre de P-025: «Qué sigue abierto» pasa a «nada»; cifras de la Etapa 1 (57 HU, 227 h + 28 h técnicas, 308 tareas, 4 olas); EP-ATC-08, FT-ATC-15, HU-048 y HU-053 marcadas fuera de la Etapa 1 en el índice; `roadmap/alcance-diferido.md` nuevo. — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-012: Stack (Java 21 con Spring Boot y Angular) y CQRS: PostgreSQL para escribir, API de MongoDB para leer"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,10 +15,10 @@ tags: [adr, arquitectura, g3]
 # ADR-012: Stack (Java 21 con Spring Boot y Angular) y CQRS: PostgreSQL para escribir, API de MongoDB para leer
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
-- Origen: decisiones DT-01 y DT-02 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.7. Cierra D-001, D-002, P-003 y P-009 (la decisión; el cierre de la brecha de horas de la tabla de este ADR lo decide el coordinador en P-025).
+- Origen: decisiones DT-01 y DT-02 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.8. Cierra D-001, D-002, P-003 y P-009 (la decisión; la brecha de horas de la tabla de este ADR la cierra P-025, decidida por el equipo el 26-oct-2026).
 - Reemplaza el stack del PLT-05 v1.3 §4.1 (Node.js con NestJS, React y una sola PostgreSQL con índice de búsqueda) y el ADR-01 del PO. Es una diferencia con los documentos del PO listada en ED-19 de `analisis/decisiones.md` (P-027); el PLT-01 y el PLT-05 no se editan.
 
 ## Contexto
@@ -47,7 +47,7 @@ El SDK trae seguridad OIDC y JWT, logs con correlationId, auditoría con lista b
 - **Retraso máximo del almacén de lectura: 5 segundos (p95)** entre el commit y la vista actualizada; atención a 5 s y crítico a 10 s (regla Q-006 del acta F4). Sale de HU-067 CA-08 (cambio de estado reflejado en el visor en 5 s o menos). Con el publicador leyendo cada 1 s (ADR-013), el presupuesto es: 1 s de espera en el outbox, hasta 1 s de envío por el bus y hasta 3 s de proyección. Una operación que necesita leer lo que acaba de escribir devuelve el recurso desde la escritura y no consulta el almacén.
 - **El dato del cliente no se copia:** el almacén guarda lo de ATC; `PARTY` es la fuente viva (ADR-003, DT-06).
 - **Filtros de lectura:** por empresa según los roles que autorizan cada operación (globales o de la empresa activa, C-08 y D-178 de PJ-05; regla en `roles-y-permisos-atc.md` v0.4 §3). En Mi Portal, por el `PartyID` del cliente autenticado, que ATC lee del vínculo `IDN_USER_ACCOUNT` del token con `CuentaPersonaPort` (decisión del equipo, ED-01; ADR-009).
-- **Búsqueda (`SVC_SEARCH_INDEX`, ENT-SVC-017 del PLT-05):** es una **colección del almacén de lectura**, no una tabla de PostgreSQL ni un cambio al v7. Guarda identificadores y metadatos de permiso, sin datos personales, y la escribe el proyector. La búsqueda por significado de HU-053 («Podría · flexible», R-01; sigue en la Etapa 1, P-020) usa la búsqueda vectorial del mismo servicio gestionado, con filtro previo por los permisos del gestor (HU-053 CA-02). El índice IVF sirve en M10 y M20; HNSW y DiskANN piden M30 o más (`https://learn.microsoft.com/en-us/azure/documentdb/vector-search`). Los vectores los da `text-embedding-3-small` de Azure OpenAI Service, el proveedor que decide el equipo (ED-17, ADR-007); mientras TI y Seguridad no lo habiliten en un ambiente, el simulador.
+- **Búsqueda (`SVC_SEARCH_INDEX`, ENT-SVC-017 del PLT-05):** es una **colección del almacén de lectura**, no una tabla de PostgreSQL ni un cambio al v7. Guarda identificadores y metadatos de permiso, sin datos personales, y la escribe el proyector. La búsqueda por significado de HU-053 («Podría · flexible», R-01) **queda fuera de la Etapa 1** (P-025); cuando entre, usa la búsqueda vectorial del mismo servicio gestionado, con filtro previo por los permisos del gestor (HU-053 CA-02). El índice IVF sirve en M10 y M20; HNSW y DiskANN piden M30 o más (`https://learn.microsoft.com/en-us/azure/documentdb/vector-search`). Los vectores los da `text-embedding-3-small` de Azure OpenAI Service, el proveedor que decide el equipo (ED-17, ADR-007); mientras TI y Seguridad no lo habiliten en un ambiente, el simulador.
 - Los servicios gestionados son los del ADR-014 (Azure Cosmos DB for MongoDB vCore, que Microsoft hoy llama Azure DocumentDB, para la lectura; Azure Event Hubs para el bus; Azure Key Vault para las credenciales).
 
 ## Consecuencias
@@ -69,7 +69,7 @@ El SDK trae seguridad OIDC y JWT, logs con correlationId, auditoría con lista b
   | Reglas ArchUnit de frontera entre módulos | ADR-001 | viene en la plantilla del SDK (`boot/src/test/java/com/aybarsac/atc/boot/NormaHexagonalTest.java`) |
   | WebSocket del visor: autenticación en el *handshake*, cierre al vencer el token y reparto entre réplicas | ADR-010 | incluido en HU-067 (tarea HU-ATC-067-T02) |
 
-  El plan del PO tiene 243 h de 252 h (holgura de 9 h): la brecha es 28 h − 9 h = **19 h**. El cierre lo decide el coordinador (P-025). La re-proyección está dentro de las 10 h del proyector: no hay otra pieza sin estimar.
+  El plan del PO tiene 243 h de 252 h (holgura de 9 h): la brecha es 28 h − 9 h = **19 h**. **P-025, decidida por el equipo (Brayan Hurtado, 26-oct-2026)**, la cierra así: las 28 h son tareas técnicas de la fundación (DT02-T01 a DT02-T06 en `backlog/tareas/EP-ATC-01.json`): outbox 6 h y re-proyección 3 h (Brayan), publicador 4 h (Jesús), proyector 7 h y purga y métrica del outbox 2 h (Michel) y bus 6 h (Daniel); y salen de la Etapa 1 las 5 HU de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053; 16 h; R-01). Las 3 h restantes las absorbe el equipo (riesgo aceptado). La Etapa 1 queda en 227 h de historias más 28 h técnicas: 255 h. La re-proyección está dentro de las 10 h del proyector: no hay otra pieza sin estimar.
 - Los eventos llevan solo referencias; el SDK no admite texto libre en el payload. El proyector completa el detalle desde PostgreSQL.
 - Los consumidores (proyector, notificaciones, KPI, visor 3D, Mi Portal) son idempotentes.
 - Frontend Angular: sin generador de cliente TypeScript desde el OpenAPI. Verificar que Angular y `@aybarcorp/ui-angular` están en la versión instalada (`aybar info comandos`, `aybar framework`).
@@ -77,7 +77,7 @@ El SDK trae seguridad OIDC y JWT, logs con correlationId, auditoría con lista b
   - Consultas de lectura contra PostgreSQL (salvo los jobs de plazos, ADR-005).
   - Que un `EventPublisher` (el puerto de mensajería del SDK) o un repositorio use tecnología fuera de `adapters`. `PublicadorEventos` es el puerto de la auditoría (`aybar-starter-audit`), que este ADR no reemplaza.
   - Que otro componente escriba en el almacén de lectura.
-- Cuesta: **28 h** nuevas (19 h sobre la holgura; P-025) y **USD 1.310,41 al mes en producción** por los dos almacenes y el bus: Azure Database for PostgreSQL 378,37 (con alta disponibilidad entre zonas), Azure Cosmos DB for MongoDB (vCore) 844,44 y Azure Event Hubs 87,60; en DEV 155,11, en QA 315,63 y en PRE (UAT) 315,63; en los 4 ambientes, USD 2.096,78 (`arquitectura/costo-cloud.md` v0.5, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12).
+- Cuesta: **28 h** nuevas, en las tareas técnicas de la fundación (P-025, decidida: salen de la Etapa 1 las 5 HU de alcance flexible, 16 h, y el equipo absorbe las 3 h restantes) y **USD 1.310,41 al mes en producción** por los dos almacenes y el bus: Azure Database for PostgreSQL 378,37 (con alta disponibilidad entre zonas), Azure Cosmos DB for MongoDB (vCore) 844,44 y Azure Event Hubs 87,60; en DEV 155,11, en QA 315,63 y en PRE (UAT) 315,63; en los 4 ambientes, USD 2.096,78 (`arquitectura/costo-cloud.md` v0.5, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -97,5 +97,6 @@ El SDK trae seguridad OIDC y JWT, logs con correlationId, auditoría con lista b
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: tres textos del SDK corregidos (`aybar-starter-web` ya declarado; registros de Resilience4j opcionales; `EventPublisher` frente a `PublicadorEventos`); usuarios del almacén de lectura según Microsoft Learn (permisos de clúster: clúster exclusivo de ATC por ambiente); búsqueda como colección de lectura y búsqueda vectorial para HU-053; re-proyección dentro de las 10 h; quién confirma las horas y propuesta de recorte de 16 h para P-025; Flyway de ADR-001; costo con PRE (UAT); dueño de dato remitido al registro |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Corrección de horas (26-oct): lo nuevo que exige DT-02 y no está en el plan del PO son **28 h** (outbox 6, publicador 6, proyector 10 y bus 6); las demás piezas de la tabla ya están dentro de las horas que el PO estimó para sus historias (ADR-02 y ADR-05 del PO; HU-003, 004, 006, 012, 050 y 067; ArchUnit viene en la plantilla del SDK). Brecha: 28 h − 9 h de holgura = 19 h; el cierre lo decide el coordinador (P-025). Se quitan la confirmación por los 4 desarrolladores y la propuesta de recorte de 16 h y 38 h. Filtro de Mi Portal por `CuentaPersonaPort` (ED-01); vectores con Azure OpenAI (ED-17); bus con `SASL_SSL` (ED-24); papel `app` como decisión del equipo; diferencia con el PO en ED-19; supuestos del costo en ED-12 |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las 28 h de la tabla son tareas técnicas de la fundación (DT02-T01 a T06 en `backlog/tareas/EP-ATC-01.json`, con su responsable) y salen de la Etapa 1 las 5 HU de alcance flexible (16 h); el equipo absorbe 3 h (riesgo aceptado). La búsqueda por significado de HU-053 queda fuera de la Etapa 1. «Cuesta» y el origen ya no remiten la brecha al coordinador |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

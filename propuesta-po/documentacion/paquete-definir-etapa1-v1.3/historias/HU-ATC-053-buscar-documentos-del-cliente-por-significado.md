@@ -4,7 +4,7 @@ tipo: hu
 titulo: "Buscar documentos del cliente por significado"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -27,6 +27,8 @@ ui: true
 **Depende de:** HU-ATC-049 (RF-SVC-049 es predecesora de RF-SVC-053, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-14 (proveedor de IA aprobado; PLT-04), DEP-16 (Control de acceso, PJ-05: documentos según el rol del gestor, CA-02)
 
 **La necesitan:** HU-ATC-042
+
+**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. En la Etapa 1, HU-042 depende de HU-052 en su lugar (FT-20 sigue siendo predecesora de FT-17).
 
 **Requerimiento de origen:** El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19
 
@@ -88,3 +90,5 @@ Escenario: CA-03 · Sin resultados (agregado por el PO)
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)

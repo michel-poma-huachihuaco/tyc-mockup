@@ -1,6 +1,6 @@
 {
  "proyecto": "PJ-06",
- "descripcion": "Ítems de trabajo de la Etapa 1 de Aybar Atiende (11 épicas, 23 funcionalidades, 62 historias) con responsable y dependencias, según PLT-01 a PLT-05 v1.3 (16-oct-2026) y DT-03 (DEP-16).",
+ "descripcion": "Ítems de trabajo de Aybar Atiende: 11 épicas, 23 funcionalidades y 62 historias documentadas, con responsable y dependencias, según PLT-01 a PLT-05 v1.3 (16-oct-2026) y DT-03 (DEP-16). En la Etapa 1, tras P-025 (decidida por el equipo el 26-oct-2026), 10 épicas, 22 funcionalidades y 57 historias: la columna etapa marca con «fuera de E1 (P-025)» a EP-ATC-08, FT-ATC-15 y HU-ATC-037, 038, 039, 048 y 053.",
  "generado": "2026-10-26",
  "autor": "Brayan Hurtado con IA (Claude)",
  "revisado_por": null,
@@ -17,7 +17,8 @@
   "prioridad",
   "depende_de",
   "dependencias_externas",
-  "ruta_documento"
+  "ruta_documento",
+  "etapa"
  ],
  "items": [
   {
@@ -36,7 +37,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-01-nucleo-de-tickets-omnicanal.md"
+   "ruta_documento": "epicas/EP-ATC-01-nucleo-de-tickets-omnicanal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -55,7 +57,8 @@
     "DEP-04",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-02-enrutamiento-sla-y-alertas.md"
+   "ruta_documento": "epicas/EP-ATC-02-enrutamiento-sla-y-alertas.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -76,7 +79,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "epicas/EP-ATC-03-libro-de-reclamaciones-y-apelaciones.md"
+   "ruta_documento": "epicas/EP-ATC-03-libro-de-reclamaciones-y-apelaciones.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -99,7 +103,8 @@
     "DEP-08",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-04-gate-legal-eje-3-y-mesa-de-casos-sensibles.md"
+   "ruta_documento": "epicas/EP-ATC-04-gate-legal-eje-3-y-mesa-de-casos-sensibles.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -116,7 +121,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "epicas/EP-ATC-05-postventa-reclamos-de-garantia.md"
+   "ruta_documento": "epicas/EP-ATC-05-postventa-reclamos-de-garantia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -136,7 +142,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-06-autogestion-del-cliente-y-trazabilidad-mi-portal.md"
+   "ruta_documento": "epicas/EP-ATC-06-autogestion-del-cliente-y-trazabilidad-mi-portal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -156,7 +163,8 @@
     "DEP-01",
     "DEP-10"
    ],
-   "ruta_documento": "epicas/EP-ATC-07-calidad-de-atencion-y-torre-de-control-cx.md"
+   "ruta_documento": "epicas/EP-ATC-07-calidad-de-atencion-y-torre-de-control-cx.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -173,7 +181,8 @@
     "EP-ATC-04"
    ],
    "dependencias_externas": [],
-   "ruta_documento": "epicas/EP-ATC-08-entregafest-contencion-y-derivacion-en-vivo.md"
+   "ruta_documento": "epicas/EP-ATC-08-entregafest-contencion-y-derivacion-en-vivo.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "épica",
@@ -191,7 +200,8 @@
     "DEP-14",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md"
+   "ruta_documento": "epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -216,7 +226,8 @@
     "DEP-14",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md"
+   "ruta_documento": "epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md",
+   "etapa": "E1"
   },
   {
    "tipo": "épica",
@@ -238,7 +249,8 @@
     "DEP-15",
     "DEP-16"
    ],
-   "ruta_documento": "epicas/EP-ATC-11-resolucion-por-morosidad-y-formularios-simples.md"
+   "ruta_documento": "epicas/EP-ATC-11-resolucion-por-morosidad-y-formularios-simples.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -256,7 +268,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-01-registro-multicanal-y-tipificacion.md"
+   "ruta_documento": "features/FT-ATC-01-registro-multicanal-y-tipificacion.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -275,7 +288,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md"
+   "ruta_documento": "features/FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -292,7 +306,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-03-derivacion-reasignacion-y-casillero.md"
+   "ruta_documento": "features/FT-ATC-03-derivacion-reasignacion-y-casillero.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -310,7 +325,8 @@
     "DEP-03",
     "DEP-04"
    ],
-   "ruta_documento": "features/FT-ATC-04-motor-sla-y-alertas.md"
+   "ruta_documento": "features/FT-ATC-04-motor-sla-y-alertas.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -331,7 +347,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "features/FT-ATC-05-libro-de-reclamaciones.md"
+   "ruta_documento": "features/FT-ATC-05-libro-de-reclamaciones.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -351,7 +368,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "features/FT-ATC-06-apelaciones-internas-e-indecopi.md"
+   "ruta_documento": "features/FT-ATC-06-apelaciones-internas-e-indecopi.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -372,7 +390,8 @@
     "DEP-08",
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md"
+   "ruta_documento": "features/FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -391,7 +410,8 @@
    "dependencias_externas": [
     "DEP-03"
    ],
-   "ruta_documento": "features/FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md"
+   "ruta_documento": "features/FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -410,7 +430,8 @@
    "dependencias_externas": [
     "DEP-06"
    ],
-   "ruta_documento": "features/FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md"
+   "ruta_documento": "features/FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -429,7 +450,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "features/FT-ATC-10-reclamos-de-garantia-postventa.md"
+   "ruta_documento": "features/FT-ATC-10-reclamos-de-garantia-postventa.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -448,7 +470,8 @@
    "dependencias_externas": [
     "DEP-10"
    ],
-   "ruta_documento": "features/FT-ATC-13-encuesta-post-atencion.md"
+   "ruta_documento": "features/FT-ATC-13-encuesta-post-atencion.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -468,7 +491,8 @@
     "DEP-01",
     "DEP-10"
    ],
-   "ruta_documento": "features/FT-ATC-14-torre-de-control-cx.md"
+   "ruta_documento": "features/FT-ATC-14-torre-de-control-cx.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -485,7 +509,8 @@
     "FT-ATC-09"
    ],
    "dependencias_externas": [],
-   "ruta_documento": "features/FT-ATC-15-entregafest-contencion-en-vivo.md"
+   "ruta_documento": "features/FT-ATC-15-entregafest-contencion-en-vivo.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "funcionalidad",
@@ -503,7 +528,8 @@
     "DEP-05",
     "DEP-12"
    ],
-   "ruta_documento": "features/FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md"
+   "ruta_documento": "features/FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -522,7 +548,8 @@
    "dependencias_externas": [
     "DEP-11"
    ],
-   "ruta_documento": "features/FT-ATC-17-integracion-con-la-plataforma-del-call-center.md"
+   "ruta_documento": "features/FT-ATC-17-integracion-con-la-plataforma-del-call-center.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -539,7 +566,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md"
+   "ruta_documento": "features/FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -556,7 +584,8 @@
    "dependencias_externas": [
     "DEP-14"
    ],
-   "ruta_documento": "features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md"
+   "ruta_documento": "features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -579,7 +608,8 @@
     "DEP-14",
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md"
+   "ruta_documento": "features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -598,7 +628,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-21-productividad-y-notificaciones-del-gestor.md"
+   "ruta_documento": "features/FT-ATC-21-productividad-y-notificaciones-del-gestor.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -620,7 +651,8 @@
     "DEP-15",
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-22-resolucion-de-contrato-por-morosidad.md"
+   "ruta_documento": "features/FT-ATC-22-resolucion-de-contrato-por-morosidad.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -635,7 +667,8 @@
    "prioridad": "Debería",
    "depende_de": [],
    "dependencias_externas": [],
-   "ruta_documento": "features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md"
+   "ruta_documento": "features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -657,7 +690,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md"
+   "ruta_documento": "features/FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "funcionalidad",
@@ -676,7 +710,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "features/FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md"
+   "ruta_documento": "features/FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -694,7 +729,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-001-registrar-un-ticket-tipificado-desde-cualquier-canal.md"
+   "ruta_documento": "historias/HU-ATC-001-registrar-un-ticket-tipificado-desde-cualquier-canal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -713,7 +749,8 @@
    "dependencias_externas": [
     "DEP-01"
    ],
-   "ruta_documento": "historias/HU-ATC-002-entregar-al-cliente-un-numero-de-ticket-por-razon-social.md"
+   "ruta_documento": "historias/HU-ATC-002-entregar-al-cliente-un-numero-de-ticket-por-razon-social.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -731,7 +768,8 @@
     "DEP-03",
     "DEP-04"
    ],
-   "ruta_documento": "historias/HU-ATC-003-congelar-el-sla-del-ticket-al-abrirlo.md"
+   "ruta_documento": "historias/HU-ATC-003-congelar-el-sla-del-ticket-al-abrirlo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -750,7 +788,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-004-cambiar-el-estado-del-ticket-con-historial-inmutable.md"
+   "ruta_documento": "historias/HU-ATC-004-cambiar-el-estado-del-ticket-con-historial-inmutable.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -769,7 +808,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-005-registrar-interacciones-visibles-o-internas-con-evidencia.md"
+   "ruta_documento": "historias/HU-ATC-005-registrar-interacciones-visibles-o-internas-con-evidencia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -788,7 +828,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-006-conservar-los-hitos-temporales-probatorios.md"
+   "ruta_documento": "historias/HU-ATC-006-conservar-los-hitos-temporales-probatorios.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -805,7 +846,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-007-derivar-un-ticket-a-otra-area-con-motivo-tipificado.md"
+   "ruta_documento": "historias/HU-ATC-007-derivar-un-ticket-a-otra-area-con-motivo-tipificado.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -824,7 +866,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-008-reasignar-en-bloque-los-tickets-de-un-colaborador-que-cesa.md"
+   "ruta_documento": "historias/HU-ATC-008-reasignar-en-bloque-los-tickets-de-un-colaborador-que-cesa.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -843,7 +886,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-009-ver-mi-casillero-de-tareas-por-area-y-responsable.md"
+   "ruta_documento": "historias/HU-ATC-009-ver-mi-casillero-de-tareas-por-area-y-responsable.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -863,7 +907,8 @@
     "DEP-03",
     "DEP-04"
    ],
-   "ruta_documento": "historias/HU-ATC-010-recibir-una-sola-alerta-por-incumplimiento-de-sla.md"
+   "ruta_documento": "historias/HU-ATC-010-recibir-una-sola-alerta-por-incumplimiento-de-sla.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -883,7 +928,8 @@
     "DEP-03",
     "DEP-04"
    ],
-   "ruta_documento": "historias/HU-ATC-011-reabrir-un-ticket-con-un-nuevo-compromiso-sin-borrar-el.md"
+   "ruta_documento": "historias/HU-ATC-011-reabrir-un-ticket-con-un-nuevo-compromiso-sin-borrar-el.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -903,7 +949,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-012-registrar-el-asiento-del-libro-de-reclamaciones.md"
+   "ruta_documento": "historias/HU-ATC-012-registrar-el-asiento-del-libro-de-reclamaciones.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -924,7 +971,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-013-calcular-el-plazo-legal-y-gestionar-la-prorroga-unica.md"
+   "ruta_documento": "historias/HU-ATC-013-calcular-el-plazo-legal-y-gestionar-la-prorroga-unica.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -944,7 +992,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-014-registrar-la-respuesta-formal-con-cargo.md"
+   "ruta_documento": "historias/HU-ATC-014-registrar-la-respuesta-formal-con-cargo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -964,7 +1013,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-015-vigilar-el-plazo-legal-y-detectar-reclamos-huerfanos.md"
+   "ruta_documento": "historias/HU-ATC-015-vigilar-el-plazo-legal-y-detectar-reclamos-huerfanos.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -984,7 +1034,8 @@
     "DEP-05",
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-016-dar-seguimiento-a-apelaciones-internas-y-ante-indecopi.md"
+   "ruta_documento": "historias/HU-ATC-016-dar-seguimiento-a-apelaciones-internas-y-ante-indecopi.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1003,7 +1054,8 @@
    "dependencias_externas": [
     "DEP-10"
    ],
-   "ruta_documento": "historias/HU-ATC-019-disparar-la-encuesta-al-cerrar-el-ticket.md"
+   "ruta_documento": "historias/HU-ATC-019-disparar-la-encuesta-al-cerrar-el-ticket.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1022,7 +1074,8 @@
    "dependencias_externas": [
     "DEP-03"
    ],
-   "ruta_documento": "historias/HU-ATC-020-registrar-un-caso-sensible-con-codigo-unico.md"
+   "ruta_documento": "historias/HU-ATC-020-registrar-un-caso-sensible-con-codigo-unico.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1041,7 +1094,8 @@
    "dependencias_externas": [
     "DEP-03"
    ],
-   "ruta_documento": "historias/HU-ATC-021-emitir-cargo-previo-y-cargo-de-activacion-por-separado.md"
+   "ruta_documento": "historias/HU-ATC-021-emitir-cargo-previo-y-cargo-de-activacion-por-separado.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1060,7 +1114,8 @@
    "dependencias_externas": [
     "DEP-03"
    ],
-   "ruta_documento": "historias/HU-ATC-022-clasificar-el-riesgo-del-caso-con-matriz-objetiva.md"
+   "ruta_documento": "historias/HU-ATC-022-clasificar-el-riesgo-del-caso-con-matriz-objetiva.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1079,7 +1134,8 @@
    "dependencias_externas": [
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-023-escalar-en-cadena-un-caso-que-incumple-su-sla.md"
+   "ruta_documento": "historias/HU-ATC-023-escalar-en-cadena-un-caso-que-incumple-su-sla.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1096,7 +1152,8 @@
    "dependencias_externas": [
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-024-validar-casos-cruzados-o-vinculados-antes-de-registrar.md"
+   "ruta_documento": "historias/HU-ATC-024-validar-casos-cruzados-o-vinculados-antes-de-registrar.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1116,7 +1173,8 @@
    "dependencias_externas": [
     "DEP-06"
    ],
-   "ruta_documento": "historias/HU-ATC-025-cerrar-el-caso-con-estado-homologado-y-evidencia.md"
+   "ruta_documento": "historias/HU-ATC-025-cerrar-el-caso-con-estado-homologado-y-evidencia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1137,7 +1195,8 @@
     "DEP-08",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-026-bloquear-la-resolucion-en-eje-1-2-ante-senal-de-conflicto.md"
+   "ruta_documento": "historias/HU-ATC-026-bloquear-la-resolucion-en-eje-1-2-ante-senal-de-conflicto.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1158,7 +1217,8 @@
     "DEP-08",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-027-armar-el-paquete-minimo-de-handoff-y-confirmar-su-recepcion.md"
+   "ruta_documento": "historias/HU-ATC-027-armar-el-paquete-minimo-de-handoff-y-confirmar-su-recepcion.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1178,7 +1238,8 @@
     "DEP-01",
     "DEP-08"
    ],
-   "ruta_documento": "historias/HU-ATC-028-registrar-la-nota-de-estado-emocional-sin-juicios-de-valor.md"
+   "ruta_documento": "historias/HU-ATC-028-registrar-la-nota-de-estado-emocional-sin-juicios-de-valor.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1198,7 +1259,8 @@
     "DEP-03",
     "DEP-04"
    ],
-   "ruta_documento": "historias/HU-ATC-029-medir-el-cierre-end-to-end-de-la-experiencia.md"
+   "ruta_documento": "historias/HU-ATC-029-medir-el-cierre-end-to-end-de-la-experiencia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1217,7 +1279,8 @@
    "dependencias_externas": [
     "DEP-10"
    ],
-   "ruta_documento": "historias/HU-ATC-030-monitorear-en-tiempo-real-y-corregir-antes-del.md"
+   "ruta_documento": "historias/HU-ATC-030-monitorear-en-tiempo-real-y-corregir-antes-del.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1236,7 +1299,8 @@
    "dependencias_externas": [
     "DEP-10"
    ],
-   "ruta_documento": "historias/HU-ATC-031-generar-el-informe-diario-y-el-quincenal.md"
+   "ruta_documento": "historias/HU-ATC-031-generar-el-informe-diario-y-el-quincenal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1254,7 +1318,8 @@
     "DEP-01",
     "DEP-10"
    ],
-   "ruta_documento": "historias/HU-ATC-032-auditar-registros-paralelos-del-dato-de-cliente.md"
+   "ruta_documento": "historias/HU-ATC-032-auditar-registros-paralelos-del-dato-de-cliente.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1271,7 +1336,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "historias/HU-ATC-033-registrar-un-reclamo-de-garantia-vinculado-a-la-entrega.md"
+   "ruta_documento": "historias/HU-ATC-033-registrar-un-reclamo-de-garantia-vinculado-a-la-entrega.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1290,7 +1356,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "historias/HU-ATC-034-validar-la-vigencia-de-la-garantia-contra-la-cobertura.md"
+   "ruta_documento": "historias/HU-ATC-034-validar-la-vigencia-de-la-garantia-contra-la-cobertura.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1309,7 +1376,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "historias/HU-ATC-035-registrar-la-inspeccion-tecnica-antes-de-resolver.md"
+   "ruta_documento": "historias/HU-ATC-035-registrar-la-inspeccion-tecnica-antes-de-resolver.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1329,7 +1397,8 @@
    "dependencias_externas": [
     "DEP-07"
    ],
-   "ruta_documento": "historias/HU-ATC-036-escalar-la-garantia-a-eje-3-y-gestionar-la-adenda.md"
+   "ruta_documento": "historias/HU-ATC-036-escalar-la-garantia-a-eje-3-y-gestionar-la-adenda.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1346,7 +1415,8 @@
     "HU-ATC-025"
    ],
    "dependencias_externas": [],
-   "ruta_documento": "historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md"
+   "ruta_documento": "historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "historia",
@@ -1363,7 +1433,8 @@
     "HU-ATC-037"
    ],
    "dependencias_externas": [],
-   "ruta_documento": "historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md"
+   "ruta_documento": "historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "historia",
@@ -1380,7 +1451,8 @@
     "HU-ATC-038"
    ],
    "dependencias_externas": [],
-   "ruta_documento": "historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md"
+   "ruta_documento": "historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "historia",
@@ -1397,7 +1469,8 @@
    "dependencias_externas": [
     "DEP-12"
    ],
-   "ruta_documento": "historias/HU-ATC-040-sincronizar-con-legal-los-tickets-derivados-a-eje-3.md"
+   "ruta_documento": "historias/HU-ATC-040-sincronizar-con-legal-los-tickets-derivados-a-eje-3.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1415,7 +1488,8 @@
     "DEP-05",
     "DEP-12"
    ],
-   "ruta_documento": "historias/HU-ATC-041-priorizar-los-reclamos-con-riesgo-de-denuncia-por-su.md"
+   "ruta_documento": "historias/HU-ATC-041-priorizar-los-reclamos-con-riesgo-de-denuncia-por-su.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1429,12 +1503,13 @@
    "iteracion": "1",
    "prioridad": "Debe",
    "depende_de": [
-    "HU-ATC-053"
+    "HU-ATC-052"
    ],
    "dependencias_externas": [
     "DEP-11"
    ],
-   "ruta_documento": "historias/HU-ATC-042-atender-la-llamada-con-la-ficha-del-cliente-y-registrarla-en.md"
+   "ruta_documento": "historias/HU-ATC-042-atender-la-llamada-con-la-ficha-del-cliente-y-registrarla-en.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1451,7 +1526,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-043-configurar-el-flujo-de-trabajo-de-un-tipo-de-ticket-por-area.md"
+   "ruta_documento": "historias/HU-ATC-043-configurar-el-flujo-de-trabajo-de-un-tipo-de-ticket-por-area.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1470,7 +1546,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-044-trabajar-desde-una-bandeja-unica-ordenada-por-urgencia.md"
+   "ruta_documento": "historias/HU-ATC-044-trabajar-desde-una-bandeja-unica-ordenada-por-urgencia.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1489,7 +1566,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-045-marcar-un-ticket-critico-con-el-rayo-de-prioridad.md"
+   "ruta_documento": "historias/HU-ATC-045-marcar-un-ticket-critico-con-el-rayo-de-prioridad.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1508,7 +1586,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-046-reasignar-automaticamente-al-gestor-con-menos-carga.md"
+   "ruta_documento": "historias/HU-ATC-046-reasignar-automaticamente-al-gestor-con-menos-carga.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1525,7 +1604,8 @@
    "dependencias_externas": [
     "DEP-14"
    ],
-   "ruta_documento": "historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md"
+   "ruta_documento": "historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1544,7 +1624,8 @@
    "dependencias_externas": [
     "DEP-14"
    ],
-   "ruta_documento": "historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md"
+   "ruta_documento": "historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "historia",
@@ -1564,7 +1645,8 @@
     "DEP-13",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md"
+   "ruta_documento": "historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1586,7 +1668,8 @@
     "DEP-13",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md"
+   "ruta_documento": "historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1606,7 +1689,8 @@
     "DEP-01",
     "DEP-13"
    ],
-   "ruta_documento": "historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md"
+   "ruta_documento": "historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1627,7 +1711,8 @@
     "DEP-13",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md"
+   "ruta_documento": "historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1650,7 +1735,8 @@
     "DEP-14",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md"
+   "ruta_documento": "historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md",
+   "etapa": "fuera de E1 (P-025)"
   },
   {
    "tipo": "historia",
@@ -1669,7 +1755,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-054-ver-mi-avance-diario-y-el-de-mi-equipo.md"
+   "ruta_documento": "historias/HU-ATC-054-ver-mi-avance-diario-y-el-de-mi-equipo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1686,7 +1773,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-055-recibir-un-correo-al-asignarme-un-ticket-con-copia-a-mi.md"
+   "ruta_documento": "historias/HU-ATC-055-recibir-un-correo-al-asignarme-un-ticket-con-copia-a-mi.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1707,7 +1795,8 @@
     "DEP-08",
     "DEP-15"
    ],
-   "ruta_documento": "historias/HU-ATC-056-abrir-el-caso-de-resolucion-por-3-meses-impagos.md"
+   "ruta_documento": "historias/HU-ATC-056-abrir-el-caso-de-resolucion-por-3-meses-impagos.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1728,7 +1817,8 @@
     "DEP-08",
     "DEP-15"
    ],
-   "ruta_documento": "historias/HU-ATC-057-enviar-al-cliente-la-alerta-de-cancelacion-en-paralelo.md"
+   "ruta_documento": "historias/HU-ATC-057-enviar-al-cliente-la-alerta-de-cancelacion-en-paralelo.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1750,7 +1840,8 @@
     "DEP-15",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-058-enviar-la-carta-de-alerta-al-responsable-del-proyecto-y-su.md"
+   "ruta_documento": "historias/HU-ATC-058-enviar-la-carta-de-alerta-al-responsable-del-proyecto-y-su.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1765,7 +1856,8 @@
    "prioridad": "Debería",
    "depende_de": [],
    "dependencias_externas": [],
-   "ruta_documento": "historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md"
+   "ruta_documento": "historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1780,7 +1872,8 @@
    "prioridad": "Debería",
    "depende_de": [],
    "dependencias_externas": [],
-   "ruta_documento": "historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md"
+   "ruta_documento": "historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1801,7 +1894,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-064-registrar-y-consultar-mis-tickets-en-mi-portal.md"
+   "ruta_documento": "historias/HU-ATC-064-registrar-y-consultar-mis-tickets-en-mi-portal.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1821,7 +1915,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-065-ver-la-trazabilidad-de-mi-ticket.md"
+   "ruta_documento": "historias/HU-ATC-065-ver-la-trazabilidad-de-mi-ticket.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1842,7 +1937,8 @@
     "DEP-01",
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-066-responder-adjuntar-y-confirmar-la-solucion-de-mi-ticket.md"
+   "ruta_documento": "historias/HU-ATC-066-responder-adjuntar-y-confirmar-la-solucion-de-mi-ticket.md",
+   "etapa": "E1"
   },
   {
    "tipo": "historia",
@@ -1863,7 +1959,8 @@
    "dependencias_externas": [
     "DEP-16"
    ],
-   "ruta_documento": "historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md"
+   "ruta_documento": "historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md",
+   "etapa": "E1"
   }
  ]
 }

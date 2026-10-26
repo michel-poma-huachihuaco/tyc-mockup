@@ -4,7 +4,7 @@ tipo: hu
 titulo: "Cerrar el caso con estado homologado y evidencia"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -26,7 +26,7 @@ ui: true
 
 **Depende de:** HU-ATC-023 (RF-SVC-023 es predecesora de RF-SVC-025, PLT-03), HU-ATC-024 (RF-SVC-024 es predecesora de RF-SVC-025, PLT-03) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03 y PLT-04)
 
-**La necesitan:** HU-ATC-037
+**La necesitan:** ninguna en la Etapa 1 (HU-037 fuera de la Etapa 1)
 
 **Requerimiento de origen:** El sistema debe cerrar cada caso en uno de los 8 estados homologados, con evidencia, y referenciar la custodia en el GLI.
 
@@ -83,3 +83,5 @@ Escenario: CA-02 · Custodia
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-025 → HU-037 del bloque «La necesitan»: HU-037 sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)

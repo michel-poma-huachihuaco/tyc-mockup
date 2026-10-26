@@ -51,7 +51,8 @@ Siguen en Nexora los 4 gates v1.2 en `gates/` (sin carpeta de ticket) y el dupli
 ## Publicado el 26-oct: lo resuelto de la revisión del Líder Técnico
 
 Brayan publicó 31 versiones nuevas, pendientes de aprobación: `analisis/decisiones.md` v0.4 (P-033 a P-042, las preguntas abiertas
-a Control de acceso y al Líder Técnico, y la respuesta sobre las reglas), los 11 archivos de `backlog/tareas/` (321 tareas, 243 h) y
+a Control de acceso y al Líder Técnico, y la respuesta sobre las reglas), los 11 archivos de `backlog/tareas/` (321 tareas, 243 h; desde el 26-oct por la noche el backlog local tiene 308 tareas y
+255 h por P-025: ver «Por publicar (26-oct, noche)») y
 19 DoR con la nota de la revisión. Antes se comprobó que nadie los había cambiado en Nexora. **No se subieron los gates G3 y G4**:
 Jesús había publicado versiones nuevas y se conservan las suyas, que también se trajeron a esta carpeta junto con su BRD v3 y su G2 v3.
 
@@ -82,11 +83,31 @@ carpeta, idénticos, más los 5 sobrantes de Nexora (la HU-001 duplicada y los 4
 Faltan los pasos de personas: firmar «Revisado por», enviar los correos de `../correos-revision-tl-26-oct.md` y crear los ítems con
 `../nexora-items/carga-items-pj06.csv`.
 
+## Por publicar (26-oct, noche): P-025
+
+El equipo decidió P-025 (Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md` 0.8): las 28 h de DT-02 entran como trabajo
+técnico de la fundación y salen de la Etapa 1 las 5 historias de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053).
+Los cambios son **locales** y se publican como versiones nuevas, pendientes de aprobación, con el `dry_run` primero y la luz
+verde de Brayan:
+
+- **Backlog:** los 11 archivos de `backlog/tareas/` (308 tareas, 255 h: 227 h de las 57 historias de la Etapa 1, 28 h técnicas
+  de DT-02 en `EP-ATC-01.json` y 5 tareas de 0 h que dejan constancia de las historias fuera) y **3 archivos nuevos** en
+  `roadmap/alcance-diferido.md` (`EP-ATC-08.json`, `EP-ATC-09.json` y `EP-ATC-10.json`: el desglose sin cambios de las 5 historias, 24 tareas
+  y 16 h). `aybar paquete validar` no lee `roadmap/alcance-diferido.md`; si Nexora no admite esa carpeta, se guarda fuera de la publicación
+  y la tarea de 0 h de cada historia dice dónde está.
+- **Documentos** que cambian por P-025: `analisis/decisiones.md` (0.8), BRD, cobertura de requisitos y ficha de intake; las ADR
+  que la citan (al menos ADR-007, 012 y 013) y los documentos de `arquitectura/` y `datos/` que hablaban del proveedor de IA o de
+  las 5 historias; el costo cloud; el roadmap, el análisis de dependencias y sus dos diagramas; las 5 historias fuera y las que
+  dependían de ellas; EP-ATC-08, 09 y 10; FT-ATC-15, 19 y 20; los 23 DoR (criterio 9) y los gates G0 a G4. La lista exacta sale
+  del `dry_run` contra Nexora.
+- **Carga de ítems** (`../nexora-items/`): suma la columna `etapa` («E1» o «fuera de E1 (P-025)»). La carga la hace el PO o el
+  admin.
+
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
 Estado al 26-oct (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
 
-- **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO), los 23 DoR (el líder técnico y el project manager),
+- **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO; 57, 10 y 22 en la Etapa 1), los 23 DoR (el líder técnico y el project manager),
   el análisis, el roadmap y el backlog (el PO), los ADR, la arquitectura y los datos (el líder técnico; el acta F4 la firma el Data
   Chief) y los gates (quien aprueba cada uno).
 - **Retirar el duplicado de Daniel**, `historias/HU-DOC-001 HU-ATC-001-registrar-tickets-multicanal-tipificados.md.md` (v1
@@ -222,3 +243,5 @@ El 20-oct solo se subieron las carpetas `epicas/`, `features/`, `historias/` y `
 | `historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md` | Dev 3 (Michel) | Ya estaba igual: v1 pendiente (la subió Daniel) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): sección «Por publicar» y estado al 26-oct de lo pendiente en Nexora (gates, ítems y aprobaciones). Las secciones del 20, 21 y 26-oct (mañana) se dejan como registro. — Revisado por: (pendiente)
+
+Historial: 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Sección «Por publicar (26-oct, noche): P-025» (backlog de 308 tareas y 255 h, `roadmap/alcance-diferido.md` nuevo, documentos que cambian y carga de ítems con la columna `etapa`); nota en lo publicado el 26-oct sobre el backlog local; lo que se aprueba, con las cifras de la Etapa 1. Las secciones anteriores se dejan como registro (la 0.1 es todo lo anterior, sin número). — Revisado por: (pendiente)

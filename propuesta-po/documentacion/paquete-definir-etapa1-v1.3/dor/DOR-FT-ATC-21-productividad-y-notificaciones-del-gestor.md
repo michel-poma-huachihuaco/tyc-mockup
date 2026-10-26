@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-21 Productividad y notificaciones del gestor"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.2"
+version: "1.3.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -34,7 +34,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-02 líder 
 | 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-16 (reemplaza a DEP-02); la DEP-16, como riesgo aceptado con mitigación (R-11; ED-08) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (`datos/` y `arquitectura/` del paquete, listos para la firma del Líder Técnico y del Data Chief) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
-| 9 | Estimada por el equipo | [ ] | PLT-04: 6 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y el cierre de horas lo hace el coordinador (P-025) |
+| 9 | Estimada por el equipo | [ ] | PLT-04: 6 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y las horas quedan cerradas por P-025 (decidida por el equipo el 26-oct-2026, `analisis/decisiones.md` v0.8) |
 | 10 | Cabe en un sprint | [ ] | 6 h dentro de la ventana 28-oct-2026 → 29-oct-2026 (PLT-01) |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Línea «Revisado por» de cada documento: pendiente |
 
@@ -105,3 +105,5 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-16 toma el nombre, el estado («en riesgo», sin fecha comprometida) y el emisor de pruebas local que pide el Líder Técnico (C-12). No se borra texto del PO. — Revisado por: (pendiente)
 
 Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo de `analisis/decisiones.md` v0.7: el criterio 9 remite el cierre de horas al coordinador (P-025); ADR aplicables: las de `adr/` v0.5; regla del criterio 6 con riesgos mitigados; DEP-16 como riesgo aceptado con mitigación (R-11); condiciones del PLT-05 anotadas con la decisión del equipo, sin borrar su texto. Modelado y arquitectura (secciones 3 y 4, criterio 7) citan los documentos de `datos/` y `arquitectura/` del paquete. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.3 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el criterio 9 ya no remite el cierre de horas al coordinador. No se borra texto del PO. — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Estrategia de migración y reversión, con el registro de tablas de ATC"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [arquitectura, migracion, g3]
 
 # Estrategia de migración y reversión
 
-Versión 0.5 del 26-oct-2026. Aplica DT-03, DT-06, DT-07 y DT-08 del Líder Técnico y las decisiones del equipo ED-01, ED-05, ED-11 y ED-15 (`analisis/decisiones.md` v0.7), **sin carga de usuarios desde RR. HH.** (C-01) y **con el registro de tablas de ATC** (C-11), cuyo detalle está en `datos/registro-de-tablas.md`.
+Versión 0.6 del 26-oct-2026 (la 0.6 aplica P-025, decidida por el equipo el 26-oct). Aplica DT-03, DT-06, DT-07 y DT-08 del Líder Técnico y las decisiones del equipo ED-01, ED-05, ED-11 y ED-15 (`analisis/decisiones.md` v0.7), **sin carga de usuarios desde RR. HH.** (C-01) y **con el registro de tablas de ATC** (C-11), cuyo detalle está en `datos/registro-de-tablas.md`.
 
 ## 1 Base de escritura (PostgreSQL)
 
@@ -34,7 +34,7 @@ ATC no crea ni migra tablas de identidad, roles, permisos ni sesiones: son de Co
 | Grupo | Tablas | Quién corre la migración | Detalle |
 |---|---|---|---|
 | **Crea ATC** (fragmento SERVICE del v7) | `MAE_AREA` (solo cola de atención, C-07), `MAE_TICKET_TYPE`, `MAE_TICKET_PRIORITY`, `MAE_SLA_POLICY`, `SVC_TICKET`, `SVC_TICKET_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`, `SVC_TICKET_INTERACTION`, `SVC_SLA_BREACH_ALERT`, `SVC_COMPLAINT_BOOK_ENTRY`, `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG`, `SVC_COMPLAINT_APPEAL`, `SVC_COMPLAINT_APPEAL_STATUS_LOG` | ATC, por módulo (`tickets`, `sla`, `complaintbook`) | Registro §2. No están entre las que crea Control de acceso: las crea ATC |
-| **Cambios al v7 del fragmento SERVICE** | Outbox `SVC_OUTBOX_EVENT` y su lista `SVC_OUTBOX_EVENT_TYPE` (ADR-013 v0.5; `INTG_OUTBOX_EVENT` no sirve: es para envíos a sistemas externos), `SVC_AI_SUGGESTION_LOG`, flujo, subtipo y versión (`SVC_WORKFLOW_DEFINITION`, `SVC_WORKFLOW_ACTIVITY`, `MAE_TICKET_SUBTYPE`), `SVC_TICKET_ACTIVITY`, `SVC_TICKET_SLA_PAUSE`, `AutoCloseBusinessDays` en `MAE_SLA_POLICY` (ED-15), `SVC_TICKET_PROSPECT` (ED-05), `IntegrityHash` en las 5 bitácoras (ADR-002), `shedlock`, `flyway_schema_history_atc` y las demás | ATC; van en el acta F4, lista para la firma del Data Chief | Registro §3 (H-03, H-12 y H-14 del acta) |
+| **Cambios al v7 del fragmento SERVICE** | Outbox `SVC_OUTBOX_EVENT` y su lista `SVC_OUTBOX_EVENT_TYPE` (ADR-013 v0.5; `INTG_OUTBOX_EVENT` no sirve: es para envíos a sistemas externos), `SVC_AI_SUGGESTION_LOG`, flujo, subtipo y versión (`SVC_WORKFLOW_DEFINITION`, `SVC_WORKFLOW_ACTIVITY`, `MAE_TICKET_SUBTYPE`), `SVC_TICKET_ACTIVITY`, `SVC_TICKET_SLA_PAUSE`, `AutoCloseBusinessDays` en `MAE_SLA_POLICY` (ED-15), `SVC_TICKET_PROSPECT` (ED-05), `IntegrityHash` en las 5 bitácoras (ADR-002), `shedlock`, `flyway_schema_history_atc` y las demás | ATC; van en el acta F4, lista para la firma del Data Chief | Registro §3 (H-03, H-12 y H-14 del acta). `SVC_AI_SUGGESTION_LOG` (HU-ATC-048) y la del caso sensible del evento (HU-ATC-037 a 039) no se crean en la Etapa 1 (P-025): se crean cuando entren esas HU |
 | **Solo lee** | `PARTY`, `ORG_COMPANY`, `MAE_BUSINESS_LINE`, `MAE_GENERIC_LIST`, `MAE_GENERIC_LIST_VALUE`, `MAE_CHANNEL`, `MAE_CURRENCY` (las crea Control de acceso); `CONTRACT`, `AST_UNIT` (dueño del fragmento CONTRACT, DEP-07); `MAE_TIME`, `MAE_HOLIDAY` (Equipo Datos, DEP-04); las columnas de vínculo de `IDN_USER_ACCOUNT` (Control de acceso; ED-01) | Su dueño de migración (ED-11); ATC custodia `ORG_COMPANY_ADDRESS` y `ORG_PRODUCT` | Registro §4. ATC no lee las tablas de personas: el dato llega por la consulta del cliente en línea (D-119 de PJ-05; ED-05) |
 | **Escribe filas en otro dominio** | Listas de SERVICE en `MAE_GENERIC_LIST_VALUE`, canal `MI_PORTAL` en `MAE_CHANNEL`, excepciones en `GOV_INTEGRITY_EXCEPTION`, espejo en `GOV_DOCUMENT_REPOSITORY`, encuesta en `SVY_SURVEY_RESPONSE`, reclamo en `CONTRACT_WARRANTY_CLAIM` | Semilla versionada o escritura de la aplicación; la estructura no la toca ATC | Registro §5 y §6 |
 | **No crea, no migra, no copia** | Las 24 tablas del fragmento 01 (`IDN_*`; de `IDN_USER_ACCOUNT` solo lee sus columnas de vínculo), `MAE_SYSTEM_ROLE`, `MAE_MENU_OPTION`, `NEX_USER_COMPANY_ROLE`, sesiones, códigos de un solo uso, maestro local, `PARTY` (ni la no verificada) | — | Registro §8 (C-11) |
@@ -56,7 +56,7 @@ ATC no crea ni migra tablas de identidad, roles, permisos ni sesiones: son de Co
 
 ## 4 Almacén de lectura
 
-- Es **derivado**. Si falla, se reconstruye. El outbox (`SVC_OUTBOX_EVENT`) conserva las filas publicadas solo 7 días (propuesta del ADR-013), así que **volver a proyectar los eventos no basta** para reconstruir todo: hace falta **re-proyectar desde PostgreSQL**. Esa reconstrucción de las vistas está dentro de las 10 h del proyector, una de las 28 h nuevas de ADR-012 v0.5 (outbox, publicador, proyector y bus); el cierre de esas horas lo decide el coordinador en P-025.
+- Es **derivado**. Si falla, se reconstruye. El outbox (`SVC_OUTBOX_EVENT`) conserva las filas publicadas solo 7 días (propuesta del ADR-013), así que **volver a proyectar los eventos no basta** para reconstruir todo: hace falta **re-proyectar desde PostgreSQL**. Esa reconstrucción de las vistas está dentro de las 10 h del proyector, una de las 28 h nuevas de ADR-012 (outbox, publicador, proyector y bus). P-025, decidida por el equipo el 26-oct-2026 (`analisis/decisiones.md` v0.8), las pone como tareas técnicas de la fundación: la re-proyección es `DT02-T06` (3 h) y el proyector `DT02-T05` (7 h), en `backlog/tareas/EP-ATC-01.json`.
 - Sin migraciones propias del almacén en el starter de datos. El proyector es el único que escribe y usa su credencial de escritura propia (ADR-012).
 
 ## 5 Despliegue
@@ -97,6 +97,7 @@ Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técni
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Outbox único `SVC_OUTBOX_EVENT` (ADR-013 v0.3). Como ADR-001 v0.4 (regla 5), ADR-012 y `seguridad.md` 0.4: tabla de historial de Flyway propia (`flyway_schema_history_atc`) con línea base en la versión 0, roles `app_atc_migracion` y `app_atc_servicio`, y job de migraciones aparte que corre antes de cada despliegue, con el servicio arrancando con Flyway apagado. P-043 como condición del acta F4, con la propuesta de custodia. La re-proyección queda dentro de las 10 h del proyector (ADR-012), sin confirmar. PRE entra por la UAT del 03-nov (PLT-05) |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: dueño de migración y orden de despliegue (ED-11: custodia de ATC, script de datos sintéticos fuera de Flyway en local y DEV, línea base 0 y FK diferida en QA, PRE y producción); `SELECT` por columna sobre `IDN_USER_ACCOUNT` (ED-01); `SVC_TICKET_PROSPECT` y su borrado al vincular (ED-05); tablas del flujo (ED-15); re-proyección dentro de las 28 h nuevas de ADR-012 v0.5. «Pendientes» pasa a «Decisiones del equipo que aplica este documento» |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las horas del proyector y la re-proyección son tareas técnicas de la fundación (DT02-T05 y DT02-T06); `SVC_AI_SUGGESTION_LOG` y la tabla del caso sensible del evento no se crean en la Etapa 1 |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
 
@@ -105,3 +106,5 @@ Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la rev
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgos 4, 5, 8, 11 y 12 de la técnica; 6 de la de coherencia). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01, ED-05, ED-11, ED-12 y ED-15 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)

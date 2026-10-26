@@ -24,6 +24,7 @@ info:
     - '0.5.0 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: esquemas propios de Mi Portal sin identificador de cliente ni datos internos (additionalProperties: false en la entrada; AYB-PTL-404 y AYB-PTL-422 donde corresponde); Reserva sin clienteId; colaboradorId y gestorId declarados como PartyID; WebSocket del visor autenticado en el handshake; la visibilidad del cliente citada por los criterios de HU-064 a 066.'
     - '0.4.0 · 2026-10-26 · Brayan Hurtado, con IA · x-permiso con la forma de PJ-05 (opción + acción) y x-roles por operación; respuestas de error del SDK por código; x-errores-negocio con las áreas TKT, SLA, LRC, APL, GAR y PTL; ProblemaAybar igual al del SDK; política de compatibilidad con convivencia v1/v2; Mi Portal sin PartyID en el token (P-033); sin descripciones «por completar».'
     - '0.6.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo (ED-01 a ED-27 de `analisis/decisiones.md` v0.7): PartyID del cliente y del colaborador por `CuentaPersonaPort` (ED-01); autorización por rol (ED-02); audiencia `aybar-atc` (ED-06); interesado «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT` (ED-05); gestores de la cola (ED-03). Los `x-pendiente` pasan a `x-decision` con su decisión y fuente: listas de SERVICE (estado del asiento, instancia de apelación, motivos `REASSIGNMENT_TERMINATION` y `REASSIGNMENT_WORKLOAD`, `CALL`), columnas nuevas (prórroga, resolución de la apelación, eje, actividades del ticket), valores del mockup (adjuntos, Mesa SGD, buses) y `sinGuia` en la guía.'
+    - '0.6.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8), misma versión: nota «fuera de la Etapa 1» en la descripción de las 6 operaciones de HU-037, 038, 039, 048 y 053 (registrarFraseAncla, registrarCasoEvento, listarCasosEvento, pedirSugerenciaIa, decidirSugerenciaIa y buscarDocumentos). No cambia ninguna operación, campo ni respuesta: el contrato documenta las 59 y en la Etapa 1 se construyen 53.'
 x-areas-de-error:
   - { area: TKT, alcance: 'Tickets y todo lo que se registra como ticket o actúa sobre uno: bandeja, flujos, rayo, actividades, Mesa de casos sensibles (SGD), señal de conflicto y handoff, notas de estado, Entrega Fest y formularios simples (ingreso y reserva de bus son tipos de ticket del catálogo)' }
   - { area: SLA, alcance: 'Políticas y alertas de SLA; hoy ninguna operación del contrato la usa' }
@@ -916,6 +917,7 @@ paths:
       tags: [inbox]
       operationId: pedirSugerenciaIa
       summary: "Pedir una sugerencia de IA al redactar o cerrar (el texto va anonimizado; ADR-007)"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-048 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-048]
       x-estado: borrador
       x-permiso: "ATC.TICKETS.AI_ASSIST + crear"
@@ -948,6 +950,7 @@ paths:
       tags: [inbox]
       operationId: decidirSugerenciaIa
       summary: "Registrar si el gestor aceptó, editó o descartó la sugerencia"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-048 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-048]
       x-estado: borrador
       x-permiso: "ATC.TICKETS.AI_ASSIST + editar"
@@ -1113,6 +1116,7 @@ paths:
       tags: [customer360]
       operationId: buscarDocumentos
       summary: "Buscar documentos del cliente por significado (solo los que el rol puede ver)"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-053 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-053]
       x-estado: borrador
       x-permiso: "ATC.CUSTOMER360.DOCUMENTS + ver"
@@ -1730,6 +1734,7 @@ paths:
       tags: [tickets]
       operationId: registrarFraseAncla
       summary: "Registrar el riesgo verbal y la Frase Ancla aplicada (la Frase 6 obliga a registrar el caso)"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-037 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-037]
       x-estado: borrador
       x-permiso: "ATC.EVENT_CASES.ANCHOR_PHRASES + crear"
@@ -1761,6 +1766,7 @@ paths:
       tags: [tickets]
       operationId: registrarCasoEvento
       summary: "Registrar el caso sensible del evento con la etiqueta estándar y derivarlo de inmediato a la Estación 4"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-038 y 039 salen de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-038, HU-039]
       x-estado: borrador
       x-permiso: "ATC.EVENT_CASES + crear"
@@ -1791,6 +1797,7 @@ paths:
       tags: [tickets]
       operationId: listarCasosEvento
       summary: "Revisar los casos del bloque con su estado (derivado o no a la Estación 4)"
+      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-039 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
       x-historias: [HU-039]
       x-estado: borrador
       x-permiso: "ATC.EVENT_CASES + ver"

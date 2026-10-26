@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -18,7 +18,7 @@ tags: [arquitectura, api, g3]
 
 Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 20-oct-2026: las historias sin operación (casos sensibles, garantía, EntregaFest, formularios, guía, IA, tablero) ya tienen una; las que quedan sin API propia son eventos, jobs o adaptadores. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
 
-Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, job o adaptador) y 0 por añadir.
+Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, job o adaptador) y 0 por añadir. **En la Etapa 1** (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): 44 historias con operación y 13 sin API propia, 57 en total; HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 y sus 6 operaciones (`registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento`, `pedirSugerenciaIa`, `decidirSugerenciaIa` y `buscarDocumentos`) quedan en el contrato, documentadas, y no se construyen en la Etapa 1.
 
 | Historia | Título | Módulo | Operación | Estado |
 |---|---|---|---|---|
@@ -56,9 +56,9 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-034 | Validar la vigencia de la garantía contra la cobertura | `aftersales` | `POST /api/v1/postventa/reclamos` | en el OpenAPI |
 | HU-035 | Registrar la inspección técnica antes de resolver | `aftersales` | `POST /api/v1/postventa/reclamos/{reclamoId}/inspecciones`<br>`POST /api/v1/postventa/reclamos/{reclamoId}/resolucion` | en el OpenAPI |
 | HU-036 | Escalar la garantía a Eje 3 y gestionar la adenda | `aftersales` | `POST /api/v1/postventa/reclamos/{reclamoId}/escalamiento`<br>`POST /api/v1/postventa/reclamos/{reclamoId}/adenda` | en el OpenAPI |
-| HU-037 | Registrar el riesgo verbal y la secuencia de Frases Ancla | `tickets` | `POST /api/v1/entregafest/frases-ancla` | en el OpenAPI |
-| HU-038 | Derivar de inmediato a la Estación 4 sin debate | `tickets` | `POST /api/v1/entregafest/casos` | en el OpenAPI |
-| HU-039 | Registrar el caso con la etiqueta estándar | `tickets` | `POST /api/v1/entregafest/casos`<br>`GET /api/v1/entregafest/casos` | en el OpenAPI |
+| HU-037 | Registrar el riesgo verbal y la secuencia de Frases Ancla | `tickets` | `POST /api/v1/entregafest/frases-ancla` | en el OpenAPI · fuera de la Etapa 1 (P-025) |
+| HU-038 | Derivar de inmediato a la Estación 4 sin debate | `tickets` | `POST /api/v1/entregafest/casos` | en el OpenAPI · fuera de la Etapa 1 (P-025) |
+| HU-039 | Registrar el caso con la etiqueta estándar | `tickets` | `POST /api/v1/entregafest/casos`<br>`GET /api/v1/entregafest/casos` | en el OpenAPI · fuera de la Etapa 1 (P-025) |
 | HU-040 | Sincronizar con Legal los tickets derivados a Eje 3 | `customer360` | Adaptador de Legal (DEP-12) | sin API propia (evento, job o adaptador) |
 | HU-041 | Priorizar los reclamos con riesgo de denuncia por su exposición | `customer360` | Adaptador de Legal (DEP-12) | sin API propia (evento, job o adaptador) |
 | HU-042 | Atender la llamada con la ficha del cliente y registrarla en el ticket | `customer360` | Evento de la central (CTI, DEP-11) + ficha | sin API propia (evento, job o adaptador) |
@@ -67,12 +67,12 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-045 | Marcar un ticket crítico con el rayo de prioridad | `inbox` | `GET /api/v1/bandeja`<br>`POST /api/v1/tickets/{ticketId}/rayo` | en el OpenAPI |
 | HU-046 | Reasignar automáticamente al gestor con menos carga | `inbox` | Orquestador: balanceo por carga al entrar el ticket (ADR-008) | sin API propia (evento, job o adaptador) |
 | HU-047 | Consultar la guía de solución del tipo de ticket | `inbox` | `GET /api/v1/tickets/{ticketId}/guia` | en el OpenAPI |
-| HU-048 | Recibir retroalimentación de IA mientras atiendo y cierro | `inbox` | `POST /api/v1/tickets/{ticketId}/sugerencias-ia`<br>`POST /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision` | en el OpenAPI |
+| HU-048 | Recibir retroalimentación de IA mientras atiendo y cierro | `inbox` | `POST /api/v1/tickets/{ticketId}/sugerencias-ia`<br>`POST /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision` | en el OpenAPI · fuera de la Etapa 1 (P-025) |
 | HU-049 | Buscar al cliente y llamarlo desde su ficha | `customer360` | `GET /api/v1/clientes`<br>`POST /api/v1/clientes/{partyId}/llamadas` | en el OpenAPI |
 | HU-050 | Ver la consulta 360 del cliente dentro del ticket | `customer360` | `GET /api/v1/tickets/{ticketId}`<br>`GET /api/v1/clientes/{partyId}/consulta-360` | en el OpenAPI |
 | HU-051 | Continuar la atención cuando la consulta del cliente falla | `customer360` | `POST /api/v1/tickets`<br>`GET /api/v1/clientes/{partyId}/consulta-360` | en el OpenAPI |
 | HU-052 | Consultar datos específicos con el motor de José | `customer360` | `POST /api/v1/tickets/{ticketId}/consultas-motor` | en el OpenAPI |
-| HU-053 | Buscar documentos del cliente por significado | `customer360` | `GET /api/v1/clientes/{partyId}/documentos` | en el OpenAPI |
+| HU-053 | Buscar documentos del cliente por significado | `customer360` | `GET /api/v1/clientes/{partyId}/documentos` | en el OpenAPI · fuera de la Etapa 1 (P-025) |
 | HU-054 | Ver mi avance diario y el de mi equipo | `inbox` | `GET /api/v1/tablero` | en el OpenAPI |
 | HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | `inbox` | Notificación por correo al asignar (evento `aybar.service.ticket_assigned`, ADR-013) | sin API propia (evento, job o adaptador) |
 | HU-056 | Abrir el caso de resolución por 3 meses impagos | `delinquency` | Job diario de evaluación de 3 cuotas vencidas (DEP-08; ADR-005) | sin API propia (evento, job o adaptador) |
@@ -111,6 +111,7 @@ Los casos manuales de prospectos que Control de acceso deriva a ATC («correo di
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 (`aybar.service.ticket_status_changed` y `aybar.service.ticket_assigned`) y outbox `SVC_OUTBOX_EVENT` |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el contrato se cita en su versión vigente, `0.5.0-borrador` (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: la tabla de lo que falta de Control de acceso pasa a «decisiones del equipo que aplican» (ED-01 a ED-05 y ED-08); prospectos fuera de la Etapa 1 (ED-09); contrato `0.6.0-borrador` |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): HU-ATC-037, 038, 039, 048 y 053 fuera de la Etapa 1; sus 6 operaciones siguen en el contrato y no se construyen en la Etapa 1; en la Etapa 1, 44 historias con operación y 13 sin API propia |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 
@@ -121,3 +122,5 @@ Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la rev
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 15): nombres de evento con el formato de tópico del SDK. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01 a ED-06, ED-08 y ED-09 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); operaciones de las 5 HU fuera de la Etapa 1. — Revisado por: (pendiente)

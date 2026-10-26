@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-007: IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,10 +15,10 @@ tags: [adr, arquitectura, g3]
 # ADR-007: IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
-- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
-- Origen: convierte a la plantilla del marco el ADR-07 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: proveedor con fecha (DEP-14), lista de campos que se anonimizan y `SVC_AI_SUGGESTION_LOG` como cambio al v7. Registrado en `analisis/decisiones.md` v0.7; el proveedor lo decide el equipo (DEP-14, ED-17).
+- Origen: convierte a la plantilla del marco el ADR-07 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: proveedor con fecha (DEP-14), lista de campos que se anonimizan y `SVC_AI_SUGGESTION_LOG` como cambio al v7. Registrado en `analisis/decisiones.md` v0.8; el proveedor lo decide el equipo (DEP-14, ED-17). **Alcance en la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026):** HU-048 y HU-053, las dos historias que usan IA, salen de la Etapa 1 como alcance flexible del PO (R-01). Este ADR y su proveedor quedan decididos y **se usan cuando entren HU-048 y HU-053**; en la Etapa 1 no hay consumo de IA.
 
 ## Contexto
 
@@ -35,7 +35,7 @@ Motivo: RN-SVC-032 (la IA asesora y el gestor decide) y RNF-SEC-009 («Uso segur
 
 La IA solo se usa a través de un **servicio de asistencia** que anonimiza antes de enviar y registra cada sugerencia y la decisión del gestor (`SVC_AI_SUGGESTION_LOG`). La IA sugiere; el gestor decide.
 
-1. **Proveedor (decisión del equipo, ED-17).** **Azure OpenAI Service** en la suscripción de Azure de ATC (DT-07: Azure para todo ATC), con despliegue estándar global: **`gpt-4o-mini`** (versión 2024-07-18) para las sugerencias de HU-048 y **`text-embedding-3-small`** para la búsqueda vectorial de HU-053 (ADR-012, punto «Búsqueda»). Solo recibe texto anonimizado (punto 2; RNF-SEC-009) y queda en el mismo tenant que el resto de ATC. Credencial por identidad administrada o en Azure Key Vault (ADR-014). Precios de la API pública de Azure del 26-oct-2026: `gpt-4o-mini-0718-Inp-glbl` USD 0,00015 y `gpt-4o-mini-0718-Outp-glbl` USD 0,0006 por 1.000 tokens en `brazilsouth`; `text-embedding-3-small-glbl` USD 0,00002 por 1.000 tokens en `eastus2` (la lista no publica ese medidor en `brazilsouth`). La habilitación de TI y Seguridad en cada ambiente (DEP-14) es una aprobación; mientras no esté, el servicio usa su **simulador** con el mismo contrato (ADR-004). **HU-048 y HU-053 siguen en la Etapa 1**, como las cuenta el PO (alcance flexible, R-01; P-020, ED-17): se retira el corte del 29-oct de la v0.4. Si el recorte de horas de P-025 las alcanza, lo ajusta el coordinador.
+1. **Proveedor (decisión del equipo, ED-17).** **Azure OpenAI Service** en la suscripción de Azure de ATC (DT-07: Azure para todo ATC), con despliegue estándar global: **`gpt-4o-mini`** (versión 2024-07-18) para las sugerencias de HU-048 y **`text-embedding-3-small`** para la búsqueda vectorial de HU-053 (ADR-012, punto «Búsqueda»). Solo recibe texto anonimizado (punto 2; RNF-SEC-009) y queda en el mismo tenant que el resto de ATC. Credencial por identidad administrada o en Azure Key Vault (ADR-014). Precios de la API pública de Azure del 26-oct-2026: `gpt-4o-mini-0718-Inp-glbl` USD 0,00015 y `gpt-4o-mini-0718-Outp-glbl` USD 0,0006 por 1.000 tokens en `brazilsouth`; `text-embedding-3-small-glbl` USD 0,00002 por 1.000 tokens en `eastus2` (la lista no publica ese medidor en `brazilsouth`). La habilitación de TI y Seguridad en cada ambiente (DEP-14) es una aprobación; mientras no esté, el servicio usa su **simulador** con el mismo contrato (ADR-004). Se retira el corte del 29-oct de la v0.4. **HU-048 y HU-053 quedan fuera de la Etapa 1 por P-025** (alcance flexible, R-01; P-020 y ED-17 actualizadas en `analisis/decisiones.md` v0.8): el proveedor queda decidido y se usa cuando entren; DEP-14 deja de aplicar en la Etapa 1.
 2. **Qué se anonimiza.** La anonimización es obligatoria para todo texto que sale hacia el proveedor (RNF-SEC-009). Las categorías, según la skill `aybar-datos-que-no-salen` y la Ley 29733, son:
    - **Datos personales:** nombres reales, documentos de identidad (DNI), correos, teléfonos, direcciones y cualquier dato que identifique a una persona;
    - **Secretos:** claves de API, tokens, contraseñas, certificados y claves privadas;
@@ -51,16 +51,16 @@ La IA solo se usa a través de un **servicio de asistencia** que anonimiza antes
   - Un adaptador a Azure OpenAI Service, un simulador (ADR-004) y un anonimizador.
   - Registrar la sugerencia y la decisión del gestor.
   - Que los datos personales y credenciales nunca entren a un prompt ni a datos de prueba.
-  - Desplegar los dos modelos en la suscripción de cada ambiente cuando TI y Seguridad lo habiliten (DEP-14, riesgo R-02 con el simulador como mitigación).
-  - Crear `SVC_AI_SUGGESTION_LOG` con la migración de ATC (acta F4, ED-23).
+  - Desplegar los dos modelos en la suscripción de cada ambiente cuando TI y Seguridad lo habiliten (DEP-14, riesgo R-02 con el simulador como mitigación), cuando entren HU-048 y HU-053: en la Etapa 1 no se despliegan (P-025).
+  - Crear `SVC_AI_SUGGESTION_LOG` con la migración de ATC (acta F4, ED-23), cuando entre HU-048: no se crea en la Etapa 1 (P-025).
 - Impide:
   - Enviar datos personales sin anonimizar al proveedor.
   - Que la IA resuelva o cierre un ticket sin la decisión del gestor.
-- Cuesta: **USD 0,45 al mes en producción** (`arquitectura/costo-cloud.md` v0.5, §1.4; supuestos fijados en ED-12): HU-048, 1.000 sugerencias al mes (2 por ticket × 500 tickets) de 1.500 tokens de entrada y 300 de salida = 1,5 millones × 0,00015 + 0,3 millones × 0,0006 por 1.000 = USD 0,41; HU-053, 2,1 millones de tokens de embeddings al mes (documentos indexados y consultas) × 0,00002 por 1.000 = USD 0,04. En DEV, QA y PRE corre el simulador, salvo las pruebas, que no suman una cifra apreciable. **5 h** de desarrollo de HU-048, del plan del PO (`backlog/tareas/EP-ATC-09.json`), que incluyen el servicio de asistencia, el anonimizador y el registro; HU-053 suma 5 h.
+- Cuesta: **USD 0 en la Etapa 1** (HU-048 y HU-053 fuera por P-025). Cuando entren, **USD 0,45 al mes en producción** (`arquitectura/costo-cloud.md` v0.6, §1.4; supuestos fijados en ED-12): HU-048, 1.000 sugerencias al mes (2 por ticket × 500 tickets) de 1.500 tokens de entrada y 300 de salida = 1,5 millones × 0,00015 + 0,3 millones × 0,0006 por 1.000 = USD 0,41; HU-053, 2,1 millones de tokens de embeddings al mes (documentos indexados y consultas) × 0,00002 por 1.000 = USD 0,04. En DEV, QA y PRE corre el simulador, salvo las pruebas, que no suman una cifra apreciable. **5 h** de desarrollo de HU-048, del plan del PO, que incluyen el servicio de asistencia, el anonimizador y el registro; HU-053 suma 5 h. Las dos están fuera de la Etapa 1 (P-025): sus tareas están en `roadmap/alcance-diferido.md` y `EP-ATC-10.json`.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016 del PLT-05) no existe en el v7: cambio al v7 en el acta F4, lista para la firma del Data Chief (ED-23).
+- `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016 del PLT-05) no existe en el v7: cambio al v7 en el acta F4, lista para la firma del Data Chief (ED-23). No se crea en la Etapa 1: se crea cuando entre HU-048 (P-025).
 - PII: anonimizada antes de salir (lista del punto 2, decisión del equipo); el registro no guarda texto libre.
 
 ## Historial de cambios
@@ -74,5 +74,6 @@ La IA solo se usa a través de un **servicio de asistencia** que anonimiza antes
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: fecha de corte propuesta para DEP-14 (29-oct, control de alcance H-06) y su consecuencia: sin proveedor, HU-048 y HU-053 salen de la Etapa 1 por R-01; la deciden el PO y el Líder Técnico |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): proveedor decidido, Azure OpenAI Service con `gpt-4o-mini` y `text-embedding-3-small` en despliegue estándar global, con precios de la API pública de Azure (ED-17); se retira el corte del 29-oct y HU-048 y HU-053 siguen en la Etapa 1 (P-020); la habilitación de TI y Seguridad es una aprobación, con el simulador mientras tanto; lista de campos anonimizados y Q-048-2 decididas; `SVC_AI_SUGGESTION_LOG` en el acta F4 (ED-23); costo USD 0,45 al mes en producción |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): HU-048 y HU-053 salen de la Etapa 1 (alcance flexible, R-01). El proveedor (ED-17) queda decidido, sin consumo en la Etapa 1, y se usa cuando entren HU-048 y HU-053; DEP-14 deja de aplicar en la Etapa 1; costo de IA en la Etapa 1: USD 0 (USD 0,45 al mes en PROD cuando entren); `SVC_AI_SUGGESTION_LOG` no se crea en la Etapa 1; tareas en `roadmap/alcance-diferido.md` |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

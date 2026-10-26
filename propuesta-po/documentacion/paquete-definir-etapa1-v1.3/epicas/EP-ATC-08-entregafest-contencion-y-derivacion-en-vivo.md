@@ -4,7 +4,7 @@ tipo: epica
 titulo: "EntregaFest: contención y derivación en vivo"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -13,6 +13,8 @@ tags: [epica, plt-02]
 ---
 
 # PLT-02 - EP-ATC-08 EntregaFest: contención y derivación en vivo
+
+**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Sus 3 historias (HU-ATC-037, 038 y 039, 6 h) tienen sus tareas en `roadmap/alcance-diferido.md`; la dependencia EP-ATC-04 → EP-ATC-08 deja de aplicar en la Etapa 1.
 
 | ID | Nombre | Producto |
 |---|---|---|
@@ -80,3 +82,5 @@ Riesgos (PLT-01):
 | Líder técnico | (pendiente) |  |  |
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-02 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La épica entera (FT-ATC-15, 6 h) sale de la Etapa 1. No se cambia texto del PO. — Revisado por: (pendiente)
