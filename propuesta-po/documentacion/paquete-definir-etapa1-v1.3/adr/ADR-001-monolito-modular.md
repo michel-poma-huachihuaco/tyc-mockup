@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-01 del PLT-05 v1.3, con las decisiones DT-01, DT-03 y DT-06 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.5. Cierra D-001 en lo que toca a este ADR.
+- Origen: convierte a la plantilla del marco el ADR-01 del PLT-05 v1.3, con las decisiones DT-01, DT-03 y DT-06 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.6. Cierra D-001 en lo que toca a este ADR.
 - Cambia lo que fija el PO: el ADR-01 del PO dice «Monolito modular por capacidad (NestJS) sobre la infraestructura vigente». Se conserva la forma (monolito modular) y cambia el lenguaje a Java con Spring Boot (DT-01). El PO actualiza el PLT-01 §1 y el PLT-05 §4 (P-027).
 - Alineado con el modelo de datos corporativo v7: no hay un esquema por módulo; los módulos son dueños de tablas `SVC_` y `MAE_` del fragmento SERVICE dentro de la **base única** (DT-06).
 
@@ -100,5 +100,6 @@ La estructura interna sigue la plantilla hexagonal del servicio (`domain`, `appl
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Alineado con DT-01 y DT-06. Se quita el módulo `identidad` (DT-03). Módulos y paquetes en inglés (propuesta). Costo sin cifra, con su razón |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Paquetes en inglés por capa y qué incluye cada módulo (igual a las etiquetas del contrato); tablas transversales (outbox y ShedLock); `GestoresPort` en `integrations`; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: regla 5 de migraciones en la base única (tabla de historial `flyway_schema_history_atc`, línea base en la versión 0, roles `app_atc_migracion` y `app_atc_servicio` y job de migraciones aparte); P-014 cerrada con el registro de tablas §5; dueño de dato remitido al registro; costo con PRE (UAT) incluido, USD 2.592,53 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

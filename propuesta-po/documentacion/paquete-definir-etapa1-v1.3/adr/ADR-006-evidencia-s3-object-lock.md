@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-06 del PLT-05 v1.3, con la decisión DT-07 del Líder Técnico (Jose Jara, 22-oct-2026): Azure Blob Storage con inmutabilidad para la evidencia. Registrada en `analisis/decisiones.md` v0.5.
+- Origen: convierte a la plantilla del marco el ADR-06 del PLT-05 v1.3, con la decisión DT-07 del Líder Técnico (Jose Jara, 22-oct-2026): Azure Blob Storage con inmutabilidad para la evidencia. Registrada en `analisis/decisiones.md` v0.6.
 - Cambia lo que fija el PO: el ADR-06 del PO («Evidencia probatoria en S3 con Object Lock y checksum») y el Excel (RNF-CUM-007, RNF-AUD-004) piden S3. **El PO actualiza esos textos a Blob Storage con inmutabilidad** (P-027).
 - El nombre del archivo conserva «s3-object-lock» para publicarse como versión nueva del mismo documento.
 
@@ -71,5 +71,6 @@ La evidencia probatoria vive en **Azure Blob Storage con inmutabilidad y checksu
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Azure Blob Storage con inmutabilidad (DT-07) en lugar de S3; retención mínima de 2 años para el Libro, a confirmar por Legal; relación con `GOV_DOCUMENT_REPOSITORY` |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Cliente de Blob gobernado por el BOM (`azure-sdk-bom` 1.3.8); `GOV_DOCUMENT_REPOSITORY` como tabla firmada de otro fragmento (P-014); qué pasa mientras Legal no confirma la retención; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: lo que ATC escribe en `GOV_DOCUMENT_REPOSITORY` remite al registro de tablas §5 (cierra el «se acuerda» de P-014) y conserva el formato de hash del v7 (ADR-002); costo con PRE (UAT) |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

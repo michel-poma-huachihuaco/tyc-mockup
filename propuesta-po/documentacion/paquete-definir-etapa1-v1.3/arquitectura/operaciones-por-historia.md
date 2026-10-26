@@ -14,7 +14,7 @@ tags: [arquitectura, api, g3]
 
 # Operaciones de API por historia
 
-**Versión del 22-oct-2026:** los módulos van con su nombre en inglés (propuesta de ADR-001) y HU-064 ya no tiene operaciones de código ni de sesión (DT-04). El contrato `aybar-atc.openapi.yaml` v0.3 declara además el permiso de cada operación (`x-permiso`; `roles-y-permisos-atc.md`).
+**Versión del 22-oct-2026:** los módulos van con su nombre en inglés (propuesta de ADR-001) y HU-064 ya no tiene operaciones de código ni de sesión (DT-04). El contrato `aybar-atc.openapi.yaml` `0.5.0-borrador` declara además el permiso de cada operación (`x-permiso`; `roles-y-permisos-atc.md`).
 
 Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 20-oct-2026: las historias sin operación (casos sensibles, garantía, EntregaFest, formularios, guía, IA, tablero) ya tienen una; las que quedan sin API propia son eventos, jobs o adaptadores. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
 
@@ -109,6 +109,7 @@ Las operaciones no cambian; lo que sigue es lo que cada una necesita de Control 
 | 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías, con IA | Operaciones por historia; módulos en inglés y sin operaciones de código ni sesión en HU-064 (DT-04) |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Lo que cada operación necesita de Control de acceso, con su pregunta (P-033 a P-037; DEP-16), y el proceso de atención de prospectos (C-06), sin operaciones nuevas |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 (`aybar.service.ticket_status_changed` y `aybar.service.ticket_assigned`) y outbox `SVC_OUTBOX_EVENT` |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el contrato se cita en su versión vigente, `0.5.0-borrador` (decía v0.3). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 

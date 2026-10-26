@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md` v0.5. Cierra P-006.
+- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md` v0.6. Cierra P-006.
 
 > Las frecuencias, los reintentos y la alerta de la sección «Decisión» son la **propuesta del equipo** que este ADR fija, como pidió el Líder Técnico. Los aprueba el Líder Técnico y, para los plazos de negocio, el PO.
 
@@ -118,5 +118,6 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-08: ShedLock, idempotencia, fuente de lectura, reintento, alerta ante fallo y frecuencias por job (propuesta) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Destinatarios y severidad de la alerta (antes «por definir»); jobs del publicador y la purga del outbox y de la verificación del hash; `GestoresPort` para HU-046 y HU-055 (P-035); tópicos con el formato del SDK; ShedLock con versión fija; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: HU-046 es del orquestador, no un job; la columna «Mecanismo» queda como decisión del ADR (sin «el arquitecto decide»); `CalendarioPort` con simulador mientras `MAE_TIME` y `MAE_HOLIDAY` no existan en la base única (P-043, DEP-04); dueño de dato remitido al registro; fuente del costo en la v0.4 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

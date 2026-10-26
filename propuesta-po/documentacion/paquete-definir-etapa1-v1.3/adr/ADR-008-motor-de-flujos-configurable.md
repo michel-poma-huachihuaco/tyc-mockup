@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-08 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: las tablas de flujo, subtipo y versión como **cambio formal al v7** (P-016) y cerrar las combinaciones tipo · subtipo · área del piloto (P-017). Registrado en `analisis/decisiones.md` v0.5.
+- Origen: convierte a la plantilla del marco el ADR-08 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: las tablas de flujo, subtipo y versión como **cambio formal al v7** (P-016) y cerrar las combinaciones tipo · subtipo · área del piloto (P-017). Registrado en `analisis/decisiones.md` v0.6.
 - Reglas 1 a 5: criterios de aceptación de la HU-043 v1.3 (CA-02 a CA-08) y de la HU-044 (CA-02). La regla 6 sigue siendo propuesta del equipo (mockup de la Etapa 1, rama `feature/AYB-0001-propuesta-po-v1-3` de `tyc-mockup`).
 
 ## Contexto
@@ -101,5 +101,6 @@ Reglas que el mockup ya prueba:
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Tablas de flujo, subtipo, versión y pausa como cambio formal al v7 (propuesta de entidades); combinaciones del piloto siguen abiertas para el PO (P-017); RN-SVC-045 sustituida por su criterio de origen |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | RN-SVC-045 se conserva, con su evidencia en los PDF del PO (P-030); permiso de publicación del catálogo de ATC; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: lista cerrada de 9 combinaciones tipo · subtipo · área con sus actividades y SLA, sacada de los flujos del PO (prototipo y HU-043 CA-01) y de los subtipos reales registrados el 20-oct, como propuesta para que el PO la confirme (P-017); flujo por defecto de cada área (propuesta); condición explícita sobre la HU-043; la clave única se cita por HU-043 CA-06 y no por el código de regla que falta en el Excel |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: decisiones DT-01 y DT-02 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.5. Cierra D-001, D-002, P-003 y P-009 (la decisión; las horas, en la tabla de este ADR, las decide P-025).
+- Origen: decisiones DT-01 y DT-02 del Líder Técnico (Jose Jara, 22-oct-2026), registradas en `analisis/decisiones.md` v0.6. Cierra D-001, D-002, P-003 y P-009 (la decisión; las horas, en la tabla de este ADR, las decide P-025).
 - Reemplaza el stack del PLT-05 v1.3 §4.1 (Node.js con NestJS, React y una sola PostgreSQL con índice de búsqueda) y el ADR-01 del PO. **El PO actualiza el PLT-01 §1 y el PLT-05** (P-027).
 
 ## Contexto
@@ -98,5 +98,6 @@ El SDK trae seguridad OIDC y JWT, logs con correlationId, auditoría con lista b
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-01 y DT-02. Fija el único escritor del almacén y su credencial, el retraso máximo (propuesta de 5 s) y el papel del frontend (propuesta). Lista las horas por estimar |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Horas estimadas por pieza (28 h de outbox, proyector y bus; 63 h en total; P-025); credencial de escritura del proyector con su permiso y su secreto; presupuesto del retraso de 5 s; filtros de lectura por origen del rol (C-08) y por `PartyID` (P-033); costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: tres textos del SDK corregidos (`aybar-starter-web` ya declarado; registros de Resilience4j opcionales; `EventPublisher` frente a `PublicadorEventos`); usuarios del almacén de lectura según Microsoft Learn (permisos de clúster: clúster exclusivo de ATC por ambiente); búsqueda como colección de lectura y búsqueda vectorial para HU-053; re-proyección dentro de las 10 h; quién confirma las horas y propuesta de recorte de 16 h para P-025; Flyway de ADR-001; costo con PRE (UAT); dueño de dato remitido al registro |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

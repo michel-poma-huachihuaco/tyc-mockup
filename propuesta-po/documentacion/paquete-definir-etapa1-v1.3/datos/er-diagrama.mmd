@@ -169,6 +169,7 @@ erDiagram
     int PublishStatusID FK
     int UserAccountID "user_account_id del token, sin FK; nulo en los jobs"
   }
-%% Diagrama entidad-relación del fragmento 10 SERVICE del v7 (13 entidades) más SVC_OUTBOX_EVENT, cambio al v7 propuesto (ADR-013 v0.3). Se explica en er.md.
+%% Diagrama entidad-relación del fragmento 10 SERVICE del v7 (13 entidades) más SVC_OUTBOX_EVENT, cambio al v7 propuesto (ADR-013 v0.4). Se explica en er.md.
 %% 0.1 · 2026-10-19 a 2026-10-22 · Jesús Chávez Elías y Brayan Hurtado, con IA · 13 entidades de SERVICE desde el v7 (sin historial propio hasta ahora; ver er.md).
 %% 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Se dibuja SVC_OUTBOX_EVENT (propuesta, ADR-013 v0.3 y v0.4: INTG_OUTBOX_EVENT no sirve) con sus 4 relaciones y la columna UserAccountID (sin FK, nula en los jobs). — Revisado por: (pendiente)
+%% 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). — Revisado por: (pendiente)

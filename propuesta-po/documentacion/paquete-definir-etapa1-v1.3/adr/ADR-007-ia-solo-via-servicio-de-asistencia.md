@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-07 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: proveedor con fecha (DEP-14), lista de campos que se anonimizan y `SVC_AI_SUGGESTION_LOG` como cambio al v7. Registrado en `analisis/decisiones.md` v0.5.
+- Origen: convierte a la plantilla del marco el ADR-07 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: proveedor con fecha (DEP-14), lista de campos que se anonimizan y `SVC_AI_SUGGESTION_LOG` como cambio al v7. Registrado en `analisis/decisiones.md` v0.6.
 
 ## Contexto
 
@@ -73,5 +73,6 @@ La IA solo se usa a través de un **servicio de asistencia** que anonimiza antes
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Proveedor pendiente con su fecha requerida (DEP-14), lista de campos anonimizados (propuesta), `SVC_AI_SUGGESTION_LOG` como cambio al v7 con columnas propuestas |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Estado de DEP-14 al 26-oct; evidencia de RNF-SEC-009 en el Excel (hoja `03_RNF`, fila 30); costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: fecha de corte propuesta para DEP-14 (29-oct, control de alcance H-06) y su consecuencia: sin proveedor, HU-048 y HU-053 salen de la Etapa 1 por R-01; la deciden el PO y el Líder Técnico |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

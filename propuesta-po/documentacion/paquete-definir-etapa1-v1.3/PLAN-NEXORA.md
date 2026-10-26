@@ -56,20 +56,32 @@ a Control de acceso y al Líder Técnico, y la respuesta sobre las reglas), los 
 Jesús había publicado versiones nuevas y se conservan las suyas, que también se trajeron a esta carpeta junto con su BRD v3 y su G2 v3.
 
 Copia completa de Nexora (180 documentos, sellada con `aybar paquete sellar`): `/Users/lorem/Documents/aybar-atiende/docs-atiende/`.
-Coincide con esta carpeta, salvo lo que sobra en Nexora: la HU-001 duplicada y los 4 gates sueltos en `gates/`, que dan 5 errores
-de identificador duplicado en `aybar paquete validar`.
+Al sellarla (26-oct, 10:17) coincidía con esta carpeta, salvo lo que sobra en Nexora: la HU-001 duplicada y los 4 gates sueltos en
+`gates/`, que dan 5 errores de identificador duplicado en `aybar paquete validar`. El índice de PJ-06 leído el 26-oct por la tarde da las
+mismas versiones y huellas que ese sello.
+
+## Por publicar (26-oct, tarde)
+
+Las correcciones del 26-oct por la tarde (revisiones del Líder Técnico y de coherencia, y el barrido final) son **locales**: 131 archivos
+del paquete difieren de Nexora y 2 son nuevos (`analisis/proceso-atencion-prospectos.md` y `datos/registro-de-tablas.md`). Solo 44 siguen
+iguales: las 11 épicas, las 23 funcionalidades, 7 DoR en 1.3, la ficha de intake, la cobertura de requisitos y `estados-ticket.mmd`. Se
+publican como versiones nuevas, pendientes de aprobación, con el `dry_run` primero y la luz verde de Brayan; nadie las aprueba al publicarlas.
+G3 y G4 suben como versión nueva de los de Jesús (v2 en Nexora), con su texto.
 
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
-- **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO) y los 23 DoR (el líder técnico y el project manager).
+Estado al 26-oct (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
+
+- **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO), los 23 DoR (el líder técnico y el project manager),
+  el análisis, el roadmap y el backlog (el PO), los ADR, la arquitectura y los datos (el líder técnico; el acta F4 la firma el Data
+  Chief) y los gates (quien aprueba cada uno).
 - **Retirar el duplicado de Daniel**, `historias/HU-DOC-001 HU-ATC-001-registrar-tickets-multicanal-tipificados.md.md` (v1
   pendiente). Lo puede rechazar el PO.
-- **Ítems y gates:** el proyecto tiene 0 ítems (ni ticket ni backlog) y solo los gates G0 y G1, pendientes. Faltan G2, G3 y G4
-  antes de construir.
-- **El resto de Jesús** (14 ADR, análisis, arquitectura, datos y roadmap) no se tocó.
+- **Ítems y gates:** el proyecto tiene 0 ítems (ni ticket ni backlog; la carga está en `../nexora-items/`). Los 5 gates de
+  `gates/AYB-0001/` están en Nexora, pendientes; sobran los 4 sueltos de `gates/` (P-029).
 
-Solo se subieron las carpetas `epicas/`, `features/`, `historias/` y `dor/`. `README.md`, `explorador.html`, este documento y
-`NEXORA-BRAYAN-v1.3.md` son material de consulta y no van a Nexora.
+El 20-oct solo se subieron las carpetas `epicas/`, `features/`, `historias/` y `dor/`; el resto, el 21 y el 26-oct. `README.md`,
+`explorador.html`, este documento y `NEXORA-BRAYAN-v1.3.md` son material de consulta y no van a Nexora.
 
 ## Documento por documento
 
@@ -194,3 +206,5 @@ Solo se subieron las carpetas `epicas/`, `features/`, `historias/` y `dor/`. `RE
 | `historias/HU-ATC-065-ver-la-trazabilidad-de-mi-ticket.md` | Dev 4 (Daniel) | Ya estaba igual: v1 pendiente (la subió Daniel) |
 | `historias/HU-ATC-066-responder-adjuntar-y-confirmar-la-solucion-de-mi-ticket.md` | Dev 4 (Daniel) | Ya estaba igual: v1 pendiente (la subió Daniel) |
 | `historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md` | Dev 3 (Michel) | Ya estaba igual: v1 pendiente (la subió Daniel) |
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): sección «Por publicar» y estado al 26-oct de lo pendiente en Nexora (gates, ítems y aprobaciones). Las secciones del 20, 21 y 26-oct (mañana) se dejan como registro. — Revisado por: (pendiente)

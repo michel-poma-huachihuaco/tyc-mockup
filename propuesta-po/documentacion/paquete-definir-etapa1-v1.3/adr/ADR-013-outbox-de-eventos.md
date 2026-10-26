@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: decisión DT-02 del Líder Técnico (Jose Jara, 22-oct-2026): CQRS completo desde la Etapa 1, con el outbox construido en el servicio porque el SDK no lo trae; el proyector del servicio es el único que escribe en el almacén de lectura. Registrada en `analisis/decisiones.md` v0.5.
+- Origen: decisión DT-02 del Líder Técnico (Jose Jara, 22-oct-2026): CQRS completo desde la Etapa 1, con el outbox construido en el servicio porque el SDK no lo trae; el proyector del servicio es el único que escribe en el almacén de lectura. Registrada en `analisis/decisiones.md` v0.6.
 
 > Las condiciones de la revisión del 22-oct para este ADR son tres: usar `INTG_OUTBOX_EVENT` del v7 y, si no sirve, presentar la tabla propia como cambio al v7; estimar las horas; nombrar los eventos con el formato de tópico del SDK. Las tres se resuelven en la sección «Decisión» (puntos 6, 7 y 9).
 
@@ -100,5 +100,6 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Alineado con DT-02: publicador con ShedLock, entrega al menos una vez, condiciones para usar `INTG_OUTBOX_EVENT` o una tabla propia, umbrales propuestos. Los nombres de tópico quedan pendientes del formato del SDK |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | `INTG_OUTBOX_EVENT` verificada en el libro del v7: no sirve; `SVC_OUTBOX_EVENT` como cambio al v7 con sus columnas; horas (28 h con proyector y bus); los 5 tópicos con el formato del SDK `aybar.<fragmento>.<evento>` (estaba en `aybar-starter-messaging`), colas `.DLQ`, clave y cabeceras; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: la fila se marca publicada solo cuando el broker confirma (`CompletableFuture`), con reintento y `FAILED`; columna `UserAccountID` y cabeceras desde la fila por el MDC; clave del mensaje que cumple la regla del SDK con cualquier `TicketID` (ya no remite a P-032); capacidad del bus verificada en Microsoft Learn (10 event hubs por espacio de nombres Standard: espacio exclusivo de ATC por ambiente); una sola cifra de costo, con los 4 ambientes |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

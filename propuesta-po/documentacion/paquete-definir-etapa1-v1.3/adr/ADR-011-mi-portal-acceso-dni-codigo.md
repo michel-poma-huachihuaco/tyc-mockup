@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.5. **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
+- Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.6. **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
 - Cambia lo que fija el PO: HU-064 CA-01 y el requisito de seguridad de FT-ATC-24 (código de 6 dígitos, vence a los 5 minutos, 3 intentos, al correo o al celular). **El PO acepta el cambio o reescribe el criterio según lo que cumpla Control de acceso** (P-027).
 - El nombre del archivo (`ADR-011-mi-portal-acceso-dni-codigo.md`) es el de la v0.1 y dice lo contrario de la decisión: se conserva porque Nexora usa la ruta como clave del documento. Vale el título. Renombrarlo exige un control de cambio en Nexora.
 
@@ -84,5 +84,6 @@ Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets;
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Reescrito con DT-04: login de clientes de Control de acceso, sin sesiones ni códigos propios. El nombre del archivo conserva «dni-codigo» para publicarse como versión nueva |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Referencias a PJ-05 verificadas: el token no trae `PartyID` y el diseño del filtro queda para P-033; rol `CUSTOMER` en la cuenta por DNI (P-033); sin `PROSPECT` en Mi Portal (D-62); ATC no crea la `PARTY` de quien no existe (R29); evidencia de RN-SVC-044 en los PDF del PO; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: contrato de Mi Portal con esquemas propios (decisión 8): identidad solo del token, rechazo de cualquier campo de más en el cuerpo, lo que fija el servidor y lo que devuelve, reclamo o queja con `AYB-PTL-422`; lo que ve el cliente se cita por los criterios HU-064 CA-02 y HU-065 CA-03 y CA-04; contrato 0.5.0-borrador; nota sobre el nombre del archivo |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL

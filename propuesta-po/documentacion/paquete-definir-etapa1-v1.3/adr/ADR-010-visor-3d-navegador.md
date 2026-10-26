@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-10 del PLT-05 v1.3. Incorpora la condición de la revisión del Líder Técnico del 22-oct-2026: el visor recibe los eventos **del servicio** por WebSocket, no directo del bus. Registrado en `analisis/decisiones.md` v0.5.
+- Origen: convierte a la plantilla del marco el ADR-10 del PLT-05 v1.3. Incorpora la condición de la revisión del Líder Técnico del 22-oct-2026: el visor recibe los eventos **del servicio** por WebSocket, no directo del bus. Registrado en `analisis/decisiones.md` v0.6.
 
 ## Contexto
 
@@ -77,5 +77,6 @@ El visor es un **canvas isométrico** en el navegador, alimentado por eventos en
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | El visor recibe los eventos del servicio por WebSocket, no directo del bus; filtro por área; estado inicial; reparto entre réplicas; corrección pendiente de `c4-contenedores.mmd` |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Tópicos con el formato del SDK; autenticación y permiso del WebSocket; decisión del reparto entre réplicas (un grupo de consumidores por réplica); `c4-contenedores.mmd` corregido; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: el JWT se valida en el *handshake* con la cadena de `aybar-starter-security` (token en `Sec-WebSocket-Protocol`, `BearerTokenResolver` propio, firma, emisor, vencimiento y audiencia), rol en el `HandshakeInterceptor`, cierre 4401 al vencer y reconexión con la foto; `/ws/visor` entra por Cloudflare al ingreso de Container Apps porque API Management de consumo no admite WebSocket (verificado en Microsoft Learn); límite de grupos de consumidores de Kafka verificado; dependencia y horas |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

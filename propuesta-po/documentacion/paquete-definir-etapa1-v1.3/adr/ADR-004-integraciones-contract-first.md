@@ -18,7 +18,7 @@ tags: [adr, arquitectura, g3]
 - Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
-- Origen: convierte a la plantilla del marco el ADR-04 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: reintento y circuit breaker con Resilience4j (BOM), token de servicio `client_credentials` (DT-10), y dueño y fecha de cada API externa. Registrado en `analisis/decisiones.md` v0.5.
+- Origen: convierte a la plantilla del marco el ADR-04 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: reintento y circuit breaker con Resilience4j (BOM), token de servicio `client_credentials` (DT-10), y dueño y fecha de cada API externa. Registrado en `analisis/decisiones.md` v0.6.
 
 ## Contexto
 
@@ -42,7 +42,7 @@ Cada sistema externo se toca por un **puerto** en `domain.port.out`, un **adapta
 
 ## Dueño y fecha de cada API externa
 
-Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2 (diagrama de dependencias), roadmap `RMP-001` v0.4 §2, `roadmap/analisis-dependencias.md` v0.4 §3 y el bloque «Depende de» de las 62 historias (26-oct). Son las 11 dependencias con API o sistema; DEP-03 (matriz SLA), DEP-04 (calendario) y DEP-05 (validación legal) son decisiones o datos y siguen en el roadmap. La «fecha requerida» es el inicio de la primera historia que la necesita (PLT-01 §3).
+Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2 (diagrama de dependencias), roadmap `RMP-001` v0.5 §2, `roadmap/analisis-dependencias.md` v0.5 §3 y el bloque «Depende de» de las 62 historias (26-oct). Son las 11 dependencias con API o sistema; DEP-03 (matriz SLA), DEP-04 (calendario) y DEP-05 (validación legal) son decisiones o datos y siguen en el roadmap. La «fecha requerida» es el inicio de la primera historia que la necesita (PLT-01 §3).
 
 El PLT-01 nombra áreas, salvo en tres dependencias: la herramienta de Legal (Rosario), el motor de José y Control de acceso (Sony Montoya). Donde el plan no da un nombre, la tabla dice quién lo tiene que dar: este ADR no inventa nombres ni fechas. **Al 26-oct ninguna tiene fecha comprometida** (0 de 11): 7 ya pasaron su fecha requerida (DEP-01, 06, 08, 11, 13, 14 y 16) y la de la DEP-12 vence hoy.
 
@@ -89,5 +89,6 @@ El PLT-01 nombra áreas, salvo en tres dependencias: la herramienta de Legal (Ro
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Resilience4j (reintento y circuit breaker) con el BOM, `client_credentials` (DT-10), tabla de dueño y fecha por API externa |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | DEP-15 en la tabla; DEP-16 con fecha requerida y sin la API de líderes como si existiera (P-035, P-040); variables del cliente de servicio; versión de Resilience4j del BOM; costo con número y fuente |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: fuente RMP-001 v0.4 y `analisis-dependencias.md` v0.4; por dependencia, persona responsable (las que da el PLT-01: Rosario, José y Sony Montoya; las demás, «por confirmar» con quién la da), fecha comprometida por confirmar, historias que bloquea y qué pasa sin fecha; DEP-16 deja de ser «propuesta» y queda «Pendiente · en riesgo (P-040)» |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6 y la fuente de la tabla de dependencias, RMP-001 v0.5 y `analisis-dependencias.md` v0.5 (24 HU con la DEP-16), las versiones vigentes (decían v0.5, v0.4 y v0.4). |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
