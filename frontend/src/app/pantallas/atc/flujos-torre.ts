@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { AyAvatar, AyBadge, AyProgressBar } from '@aybarcorp/ui-angular';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { AyAvatar, AyBadge, AyButton, AyProgressBar } from '@aybarcorp/ui-angular';
 import { AREAS_ATC } from './datos-atc';
 import type { FlujoTipoConfig } from './estado-prototipo-atc';
 
@@ -14,12 +14,12 @@ interface SalaArea {
 /**
  * Flujos activos por área resolutora, como una planta de operaciones: una sala por área y,
  * dentro, una pista por flujo con sus estaciones (pasos) y el relevo entre responsables.
- * Solo lectura: los flujos se editan en Configuración.
+ * Edita solo quien recibe `puedeEditar`; el resto lo ve en solo lectura.
  */
 @Component({
   selector: 'app-flujos-torre',
   standalone: true,
-  imports: [AyAvatar, AyBadge, AyProgressBar],
+  imports: [AyAvatar, AyBadge, AyButton, AyProgressBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./flujos-torre.css', './flujos-torre-codo.css'],
   template: `
@@ -41,6 +41,11 @@ interface SalaArea {
                     <h4 class="ft__flujo-nombre">{{ f.nombreTipo }}</h4>
                     <ay-badge size="sm" tono="info">{{ f.tipo }}</ay-badge>
                     <ay-badge size="sm" tono="neutral">v{{ f.versionActual }}</ay-badge>
+                    @if (puedeEditar()) {
+                      <span class="ft__editar">
+                        <ay-button tamano="sm" variante="secondary" (click)="editar.emit(f)">Editar</ay-button>
+                      </span>
+                    }
                   </header>
                   <ay-progress-bar
                     size="sm"
@@ -87,6 +92,9 @@ interface SalaArea {
 })
 export class FlujosTorreComponent {
   readonly flujos = input.required<readonly FlujoTipoConfig[]>();
+  /** Con permiso, cada flujo trae «Editar», igual que la tabla. */
+  readonly puedeEditar = input(false);
+  readonly editar = output<FlujoTipoConfig>();
   protected readonly sla = SLA_E2E_HORAS;
 
   protected readonly salas = computed<SalaArea[]>(() => {

@@ -1,0 +1,10 @@
+/* Tablero de la Torre de Control CX. Solo tokens --aybar-*. */
+:host { display: block; }
+
+.tt { display: grid; gap: var(--aybar-space-6); }
+.tt__nota { margin: 0; color: var(--aybar-color-fg-muted); font-size: var(--aybar-font-size-sm); }
+.tt__datos { margin-block-start: var(--aybar-space-4); }
+.tt__datos summary { cursor: pointer; color: var(--aybar-color-fg-link); font-size: var(--aybar-font-size-sm); }
+.tt__datos[open] summary { margin-block-end: var(--aybar-space-2); }
+.tt__alto-lg { --grafico-alto: 22rem; }
+.tt__alto-md { --grafico-alto: 18rem; }

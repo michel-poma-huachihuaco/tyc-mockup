@@ -1,0 +1,33 @@
+:host { display: block; }
+.tr-filtros { display: flex; flex-wrap: wrap; gap: var(--aybar-space-3); align-items: flex-end; }
+.tr-filtro { flex: 0 1 14rem; min-inline-size: 0; }
+.tr-vivo { display: inline-flex; align-items: center; gap: var(--aybar-space-2); margin-inline-start: auto; font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-muted); }
+.tr-vivo__punto { inline-size: 0.5rem; block-size: 0.5rem; border-radius: 50%; background: var(--aybar-color-feedback-success-border); animation: tr-pulso 1.6s ease-in-out infinite; }
+@keyframes tr-pulso { 50% { opacity: 0.35; } }
+
+.tr-leyenda { display: flex; flex-wrap: wrap; gap: var(--aybar-space-3); margin: 0; padding: 0; list-style: none; font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
+.tr-leyenda li { display: inline-flex; align-items: center; gap: var(--aybar-space-1); }
+.tr-leyenda__punto { inline-size: 0.625rem; block-size: 0.625rem; border-radius: 2px; background: var(--tr-color); }
+
+/* Color por estado: lo comparten la leyenda y los segmentos de la barra. */
+
+/* Tabla con scroll horizontal propio (defecto D6 de la auditoría). */
+.tr-scroll { overflow-x: auto; border: 1px solid var(--aybar-color-border-subtle); border-radius: var(--aybar-radius-md); }
+.tr-scroll:focus-visible { outline: 2px solid var(--aybar-color-border-focus); outline-offset: 2px; }
+.tr-tabla { inline-size: 100%; min-inline-size: 44rem; border-collapse: collapse; font-size: var(--aybar-font-size-sm); }
+.tr-tabla th, .tr-tabla td { padding: var(--aybar-space-2) var(--aybar-space-3); text-align: start; vertical-align: middle; border-block-end: 1px solid var(--aybar-color-border-subtle); }
+.tr-tabla th { font-weight: var(--aybar-font-weight-semibold); color: var(--aybar-color-fg-muted); background: var(--aybar-color-bg-surface-sunken); white-space: nowrap; }
+.tr-tabla tbody tr:last-child td { border-block-end: 0; }
+.tr-tabla .tr-num { text-align: end; font-variant-numeric: tabular-nums; }
+.tr-nowrap { white-space: nowrap; }
+
+.tr-fila { cursor: pointer; }
+.tr-fila:hover { background: var(--aybar-color-bg-surface-sunken); }
+.tr-fila__btn { display: flex; align-items: center; gap: var(--aybar-space-2); inline-size: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
+.tr-fila__btn:focus-visible { outline: 2px solid var(--aybar-color-border-focus); outline-offset: 2px; border-radius: var(--aybar-radius-sm); }
+.tr-fila__texto { display: flex; flex-direction: column; min-inline-size: 0; }
+
+.tr-barra { display: flex; gap: 2px; min-inline-size: 8rem; block-size: 0.75rem; }
+.tr-barra__seg { flex-basis: 0; min-inline-size: 4px; background: var(--tr-color); border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) { .tr-vivo__punto { animation: none; } }

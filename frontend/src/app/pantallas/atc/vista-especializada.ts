@@ -31,6 +31,7 @@ import {
   AyProgressBar,
   AyRow,
   AySelect,
+  AySegmentedControl,
   AyStack,
   AyStatistic,
   AyTable,
@@ -39,6 +40,7 @@ import {
   AyText,
   type AyColumna,
   type AyOpcionSelect,
+  type AySegmentoOpcion,
   type AyTabsElemento,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
@@ -46,6 +48,7 @@ import {
   AHORA_BASE,
   AREAS_ATC,
   EMPRESAS_AYBAR,
+  PRIORIDADES_TICKET,
   TIPOS_TICKET,
   diasHabilesEntre,
   fmtFecha,
@@ -59,6 +62,18 @@ import {
   type ReclamoGarantia,
   type TicketAtc,
 } from './datos-atc';
+import {
+  ALERTA_SLA_ES,
+  APELACION_INSTANCIA_ES,
+  AREA_ES,
+  ASIENTO_TIPO_ES,
+  CIERRE_SGD_ES,
+  CRITICIDAD_ES,
+  EVENTO_URBEMIND_ES,
+  GARANTIA_ESTADO_ES,
+  etiqueta,
+  opcionesDe,
+} from './etiquetas-es';
 import {
   EstadoPrototipoAtcService,
   type AlertaAdminConfig,
@@ -81,12 +96,15 @@ import {
 import { IngresosHoyComponent } from './ingresos-hoy';
 import { ProtocoloFrasesComponent } from './protocolo-frases';
 import { BarraFiltrosComponent } from './barra-filtros';
+import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 import { CeldaTicketComponent } from './celda-ticket';
 import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
+import { TableroTorreComponent } from './graficos/tablero-torre';
 import { FlujosTorreComponent } from './flujos-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
+import { evaluarContextoMorosidad } from './contexto-morosidad';
 
 export type SubvistaEspecializadaAtc =
   | 'morosidad'
@@ -99,7 +117,7 @@ export type SubvistaEspecializadaAtc =
   | 'alertas'
   | 'cierre'
   | 'politicas'
-  | 'configuracion'
+  | 'workflow'
   | 'urbemind'
   | 'torre'
   | 'evento';
@@ -111,6 +129,7 @@ export type SubvistaEspecializadaAtc =
     IngresosHoyComponent,
     ProtocoloFrasesComponent,
     BarraFiltrosComponent,
+    FiltroColumnasTablaDirective,
     VacioFiltrosComponent,
     AyAlert,
     AyBadge,
@@ -135,6 +154,7 @@ export type SubvistaEspecializadaAtc =
     AyProgressBar,
     AyRow,
     AySelect,
+    AySegmentedControl,
     AyStack,
     AyStatistic,
     AyTable,
@@ -143,8 +163,9 @@ export type SubvistaEspecializadaAtc =
     AyText,
     CeldaTicketComponent,
     EditorPasosFlujoComponent,
-    FlujosTorreComponent,
+    TableroTorreComponent,
     PasosFlujoComponent,
+    FlujosTorreComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -159,28 +180,29 @@ export type SubvistaEspecializadaAtc =
     }
 
     <!-- ====================================================================== -->
-    <!-- 1. CONFIGURACIÓN (ADMIN_FUNCIONAL): FLUJOS, GUÍAS Y ALERTAS            -->
+    <!-- 1. WORKFLOW (ADMIN_FUNCIONAL, SUPERVISOR; COORDINADOR_CX solo lectura): FLUJOS, GUÍAS Y ALERTAS -->
     <!-- ====================================================================== -->
-    @if (subvista() === 'configuracion') {
+    @if (subvista() === 'workflow') {
       <div ayStack gap="6">
         <ay-page-header
-          titulo="Configuración"
-          descripcion="Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket."
-        >
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ estadoProto.alertasAdmin().length }} alertas para el administrador
-          </ay-badge>
-          <ay-tabs
-            ayPestanas
-            etiqueta="Secciones de configuración"
-            variante="underline"
-            [items]="tabsConfiguracion()"
-            [valor]="tabConfig()"
-            (valorChange)="tabConfig.set($event)"
-          />
+          titulo="Workflow"
+          [descripcion]="puedeEditarWorkflow()
+            ? 'Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket.'
+            : 'Flujos de atención activos por área resolutora. Solo lectura: los cambios los publica el Administrador Funcional.'"
+          [conPestanas]="puedeEditarWorkflow()">
+          @if (puedeEditarWorkflow()) {
+            <ay-tabs
+              ayPestanas
+              etiqueta="Secciones de workflow"
+              variante="underline"
+              [items]="tabsWorkflow()"
+              [valor]="tabConfig()"
+              (valorChange)="tabConfig.set($event)"
+            />
+          }
         </ay-page-header>
 
-        @if (estadoProto.rolActivo() !== 'ADMIN_FUNCIONAL' && estadoProto.rolActivo() !== 'SUPERVISOR') {
+        @if (!puedeVerWorkflow()) {
           <ay-card superficie="solid">
             <ay-card-body padding="md">
               <ay-empty-state
@@ -191,10 +213,30 @@ export type SubvistaEspecializadaAtc =
           </ay-card>
         } @else {
           @if (tabConfig() === 'flujos') {
+            <ay-segmented-control
+              etiqueta="Vista de los flujos"
+              size="sm"
+              [opciones]="opcionesVistaFlujos"
+              [valor]="vistaFlujos()"
+              (valorChange)="elegirVistaFlujos($event)"
+            />
+          }
+
+          @if (tabConfig() === 'flujos' && vistaFlujos() === 'area') {
+            <app-flujos-torre
+              [flujos]="estadoProto.flujosPorTipo()"
+              [puedeEditar]="puedeEditarWorkflow()"
+              (editar)="abrirEditorFlujo($event)"
+            />
+          }
+
+          @if (tabConfig() === 'flujos' && vistaFlujos() === 'tabla') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Flujos por tipo de ticket"
-                subtitulo="Cada cambio publica una versión nueva (vN+1); los tickets abiertos conservan la suya."
+                [subtitulo]="puedeEditarWorkflow()
+                  ? 'Cada cambio publica una versión nueva (vN+1); los tickets abiertos conservan la suya.'
+                  : 'Solo lectura. Los tickets abiertos conservan la versión con la que se crearon.'"
                 nivel="h2"
                 [separador]="true"
               />
@@ -205,7 +247,7 @@ export type SubvistaEspecializadaAtc =
                   [filas]="estadoProto.flujosPorTipo()"
                   [rayada]="true"
                 >
-                  <ng-template ayCelda="tipo" let-fila>
+                  <ng-template ayCelda="nombreTipo" let-fila>
                     @let f = comoFlujo(fila);
                     <div>
                       <strong>{{ f.nombreTipo }}</strong>
@@ -214,9 +256,9 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="area" let-fila>
                     @let f = comoFlujo(fila);
-                    <ay-badge size="sm" tono="neutral">{{ f.area }}</ay-badge>
+                    <ay-badge size="sm" tono="neutral">{{ areaEs(f.area) }}</ay-badge>
                   </ng-template>
-                  <ng-template ayCelda="version" let-fila>
+                  <ng-template ayCelda="versionActual" let-fila>
                     @let f = comoFlujo(fila);
                     <ay-badge size="sm" tono="info">v{{ f.versionActual }}</ay-badge>
                   </ng-template>
@@ -226,16 +268,20 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let f = comoFlujo(fila);
-                    <ay-button tamano="sm" variante="ghost" (click)="abrirEditorFlujo(f)">
-                      Editar
-                    </ay-button>
+                    @if (puedeEditarWorkflow()) {
+                      <div class="pl-atc-acciones-celda">
+                        <ay-button tamano="sm" variante="secondary" (click)="abrirEditorFlujo(f)">
+                          Editar
+                        </ay-button>
+                      </div>
+                    }
                   </ng-template>
                 </ay-table>
               </ay-card-body>
             </ay-card>
           }
 
-          @if (tabConfig() === 'guias') {
+          @if (puedeEditarWorkflow() && tabConfig() === 'guias') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Guías de solución"
@@ -250,14 +296,14 @@ export type SubvistaEspecializadaAtc =
                   [filas]="estadoProto.guiasPorTipo()"
                   [rayada]="true"
                 >
-                  <ng-template ayCelda="tipo" let-fila>
+                  <ng-template ayCelda="nombreTipo" let-fila>
                     @let g = comoGuia(fila);
                     <div>
                       <strong>{{ g.nombreTipo }}</strong>
                       <span ayText="mono" size="xs"> ({{ g.tipo }})</span>
                     </div>
                   </ng-template>
-                  <ng-template ayCelda="vigente" let-fila>
+                  <ng-template ayCelda="versionActual" let-fila>
                     @let g = comoGuia(fila);
                     @if (g.versionActual !== null) {
                       <ay-badge size="sm" tono="success">v{{ g.versionActual }}</ay-badge>
@@ -277,16 +323,18 @@ export type SubvistaEspecializadaAtc =
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let g = comoGuia(fila);
-                    <ay-button tamano="sm" variante="ghost" (click)="abrirEditorGuia(g)">
-                      {{ g.versionActual !== null ? 'Nueva versión' : 'Crear la guía' }}
-                    </ay-button>
+                    <div class="pl-atc-acciones-celda">
+                      <ay-button tamano="sm" variante="secondary" (click)="abrirEditorGuia(g)">
+                        {{ g.versionActual !== null ? 'Nueva versión' : 'Crear la guía' }}
+                      </ay-button>
+                    </div>
                   </ng-template>
                 </ay-table>
               </ay-card-body>
             </ay-card>
           }
 
-          @if (tabConfig() === 'alertas') {
+          @if (puedeEditarWorkflow() && tabConfig() === 'alertas') {
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Alertas para el administrador"
@@ -305,14 +353,13 @@ export type SubvistaEspecializadaAtc =
                     @let a = comoAlertaAdmin(fila);
                     <span ayText="mono" size="xs">{{ fmtHora(a.fecha) }}</span>
                   </ng-template>
-                  <ng-template ayCelda="alerta" let-fila>
+                  <ng-template ayCelda="etiqueta" let-fila>
                     @let a = comoAlertaAdmin(fila);
                     <div ayStack gap="1">
                       <strong>{{ a.etiqueta }}</strong>
-                      <code ayText="mono" size="xs">{{ a.codigo }}</code>
                     </div>
                   </ng-template>
-                  <ng-template ayCelda="tipo" let-fila>
+                  <ng-template ayCelda="tipoTicket" let-fila>
                     @let a = comoAlertaAdmin(fila);
                     <span>{{ a.tipoTicket ?? '—' }}</span>
                   </ng-template>
@@ -379,21 +426,21 @@ export type SubvistaEspecializadaAtc =
                   Publicará la versión v{{ (gu.versionActual ?? 0) + 1 }}. Los gestores verán esta versión de inmediato al abrir un ticket de «{{ gu.nombreTipo }}».
                 </p>
                 <ay-form-field etiqueta="Pasos (uno por línea)" obligatorio>
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-pasos-txt"
                     [filas]="4"
                     [valor]="editGuiaPasosTxt()"
                     (valorChange)="editGuiaPasosTxt.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Plantillas de respuesta (una por línea; puedes usar {resumen})">
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-plantillas-txt"
                     [filas]="3"
                     [valor]="editGuiaPlantillasTxt()"
                     (valorChange)="editGuiaPlantillasTxt.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Criterios de cierre (uno por línea)" obligatorio>
-                  <ay-textarea
+                  <ay-textarea nombre="edit-guia-criterios-txt"
                     [filas]="3"
                     [valor]="editGuiaCriteriosTxt()"
                     (valorChange)="editGuiaCriteriosTxt.set($event)"
@@ -420,11 +467,7 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Políticas SLA"
           descripcion="En horas hábiles. Precedencia: específica (tipo + prioridad) sobre genérica por tipo, y esta sobre la genérica global. Editar una política crea una versión nueva sin tocar los tickets abiertos."
-        >
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ estadoProto.politicasSla().length }} políticas activas
-          </ay-badge>
-        </ay-page-header>
+        />
 
         @if (estadoProto.rolActivo() !== 'SUPERVISOR' && estadoProto.rolActivo() !== 'ADMIN_FUNCIONAL') {
           <ay-card superficie="solid">
@@ -463,13 +506,13 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="tipo" let-fila>
                   @let p = comoPolitica(fila);
-                  <span>{{ p.tipo ?? 'Todos' }} · {{ p.prioridad ?? 'Todas' }}</span>
+                  <span>{{ p.tipo ?? 'Todos' }} · {{ p.prioridad ? nombrePrioridad(p.prioridad) : 'Todas' }}</span>
                 </ng-template>
-                <ng-template ayCelda="respuesta" let-fila>
+                <ng-template ayCelda="respuestaH" let-fila>
                   @let p = comoPolitica(fila);
                   <strong>{{ p.respuestaH }} h</strong>
                 </ng-template>
-                <ng-template ayCelda="resolucion" let-fila>
+                <ng-template ayCelda="resolucionH" let-fila>
                   @let p = comoPolitica(fila);
                   <strong>{{ p.resolucionH }} h</strong>
                 </ng-template>
@@ -479,9 +522,11 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="accion" let-fila>
                   @let p = comoPolitica(fila);
-                  <ay-button tamano="sm" variante="ghost" (click)="abrirEditorPolitica(p)">
-                    Editar
-                  </ay-button>
+                  <div class="pl-atc-acciones-celda">
+                    <ay-button tamano="sm" variante="secondary" (click)="abrirEditorPolitica(p)">
+                      Editar
+                    </ay-button>
+                  </div>
                 </ng-template>
               </ay-table>
             </ay-card-body>
@@ -500,14 +545,14 @@ export type SubvistaEspecializadaAtc =
                   Publicará la versión v{{ pol.version + 1 }}. Los tickets nuevos en «Nuevo ticket» congelarán estos nuevos plazos.
                 </p>
                 <ay-form-field etiqueta="1.ª respuesta (horas hábiles)" obligatorio>
-                  <ay-input
+                  <ay-input nombre="edit-pol-respuesta-h"
                     tipo="number"
                     [valor]="editPolRespuestaH()"
                     (valorChange)="editPolRespuestaH.set($event)"
                   />
                 </ay-form-field>
                 <ay-form-field etiqueta="Resolución (horas hábiles)" obligatorio>
-                  <ay-input
+                  <ay-input nombre="edit-pol-resolucion-h"
                     tipo="number"
                     [valor]="editPolResolucionH()"
                     (valorChange)="editPolResolucionH.set($event)"
@@ -534,11 +579,7 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Reasignar en bloque"
           descripcion="Pasa los tickets abiertos de un colaborador a otro o repártelos por carga. El SLA no se reinicia."
-        >
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ ticketsDeColaboradorSaliente().length }} pendientes del colaborador elegido
-          </ay-badge>
-        </ay-page-header>
+        />
 
         @if (estadoProto.rolActivo() !== 'SUPERVISOR') {
           <ay-card superficie="solid">
@@ -557,28 +598,28 @@ export type SubvistaEspecializadaAtc =
                 <ay-form class="pl-atc-form-ancho" (enviar)="ejecutarReasignacionEnBloque()">
                   <div ayStack gap="4" class="pl-atc-fila-campos">
                     <ay-form-field etiqueta="Colaborador que deja los tickets" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-de"
                         [opciones]="opcionesOrigenReasignar()"
                         [valor]="reasignarDe()"
                         (valorChange)="reasignarDe.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Motivo" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-motivo"
                         [opciones]="opcionesMotivoReasignar"
                         [valor]="reasignarMotivo()"
                         (valorChange)="reasignarMotivo.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="A quién pasan (menor carga en el área)" obligatorio>
-                      <ay-select
+                      <ay-select nombre="reasignar-a"
                         [opciones]="opcionesDestinoReasignar"
                         [valor]="reasignarA()"
                         (valorChange)="reasignarA.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Nota de auditoría (opcional)">
-                      <ay-textarea
+                      <ay-textarea nombre="reasignar-nota"
                         [filas]="2"
                         [valor]="reasignarNota()"
                         (valorChange)="reasignarNota.set($event)"
@@ -616,7 +657,7 @@ export type SubvistaEspecializadaAtc =
                     @let t = comoTicket(fila);
                     <strong ayText="mono" size="xs">{{ t.num }}</strong>
                   </ng-template>
-                  <ng-template ayCelda="resumen" let-fila>
+                  <ng-template ayCelda="summary" let-fila>
                     @let t = comoTicket(fila);
                     <span ayText="body" size="xs">{{ t.summary }}</span>
                   </ng-template>
@@ -646,9 +687,6 @@ export type SubvistaEspecializadaAtc =
           titulo="Alertas SLA"
           descripcion="El job revisa los tickets abiertos cada 15 minutos y registra una sola alerta por tipo de incumplimiento y por ciclo."
         >
-          <ay-badge ayEstado size="sm" tono="warning">
-            {{ estadoProto.alertasSla().length }} alertas registradas
-          </ay-badge>
           <ay-button ayAcciones tamano="sm" variante="secondary" (click)="correrJobSlaAhora()">
             Ejecutar el job ahora
           </ay-button>
@@ -702,24 +740,28 @@ export type SubvistaEspecializadaAtc =
               [filas]="estadoProto.alertasSla()"
               [rayada]="true"
             >
-              <ng-template ayCelda="ticket" let-fila>
+              <ng-template ayCelda="ticketNum" let-fila>
                 @let a = comoAlertaSla(fila);
-                <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(a.ticketNum)">
-                  {{ a.ticketNum }}
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  [disabled]="!a.ticketNum"
+                  (click)="a.ticketNum && seleccionarTicket.emit(a.ticketNum)"
+                >
+                  {{ a.ticketNum || 'Sin ticket' }}
                 </ay-button>
               </ng-template>
               <ng-template ayCelda="tipo" let-fila>
                 @let a = comoAlertaSla(fila);
                 <div ayStack gap="1">
                   <strong>{{ nombreAlertaSla(a.tipo) }}</strong>
-                  <code ayText="mono" size="xs">{{ a.tipo }}</code>
                 </div>
               </ng-template>
               <ng-template ayCelda="ciclo" let-fila>
                 @let a = comoAlertaSla(fila);
                 <span>{{ a.ciclo === 0 ? 'Original' : 'Reapertura ' + a.ciclo }}</span>
               </ng-template>
-              <ng-template ayCelda="vence" let-fila>
+              <ng-template ayCelda="vencimientoEvaluado" let-fila>
                 @let a = comoAlertaSla(fila);
                 <span ayText="mono" size="xs">{{ fmtHora(a.vencimientoEvaluado) }}</span>
               </ng-template>
@@ -753,7 +795,7 @@ export type SubvistaEspecializadaAtc =
                 @let c = comoCorridaJob(fila);
                 <span>{{ c.revisados }} tickets abiertos</span>
               </ng-template>
-              <ng-template ayCelda="nuevas" let-fila>
+              <ng-template ayCelda="nuevasAlertas" let-fila>
                 @let c = comoCorridaJob(fila);
                 <ay-badge size="sm" [tono]="c.nuevasAlertas > 0 ? 'warning' : 'success'">
                   {{ c.nuevasAlertas }} nuevas
@@ -773,9 +815,7 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Cierre end-to-end"
           descripcion="Meta: cerrar el ticket dentro de 72 horas hábiles desde la apertura. Si pasó a Eje 3, se mide contra el plazo del eje (90 h)."
-        >
-          <ay-badge ayEstado size="sm" tono="info">Meta Eje 1/2 ≤ 72 h hábiles</ay-badge>
-        </ay-page-header>
+        />
 
         <div ayGrid [columnas]="4" gap="sm">
           <ay-card superficie="solid">
@@ -824,9 +864,10 @@ export type SubvistaEspecializadaAtc =
               leyenda="Seguimiento del cierre end-to-end"
               [columnas]="columnasCierreE2E"
               [filas]="filtrosCierre.filtradas()"
+              [filtrosTabla]="filtrosCierre"
               [rayada]="true"
             >
-              <ng-template ayCelda="ticket" let-fila>
+              <ng-template ayCelda="num" let-fila>
                 @let r = comoFilaCierre(fila);
                 <app-celda-ticket [ticket]="r.ticket" (abrir)="seleccionarTicket.emit($event)" />
               </ng-template>
@@ -836,7 +877,7 @@ export type SubvistaEspecializadaAtc =
                   Eje {{ r.ticket.eje }} ({{ r.limite }} h)
                 </ay-badge>
               </ng-template>
-              <ng-template ayCelda="avance" let-fila>
+              <ng-template ayCelda="pct" let-fila>
                 @let r = comoFilaCierre(fila);
                 <ay-progress-bar
                   size="sm"
@@ -845,7 +886,7 @@ export type SubvistaEspecializadaAtc =
                   [etiqueta]="r.horas + ' de ' + r.limite + ' h hábiles'"
                 />
               </ng-template>
-              <ng-template ayCelda="situacion" let-fila>
+              <ng-template ayCelda="etiqueta" let-fila>
                 @let r = comoFilaCierre(fila);
                 <ay-badge size="sm" [tono]="r.tono === 'brand' ? 'info' : r.tono">
                   {{ r.etiqueta }}
@@ -866,8 +907,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Integración UrbeMind"
           descripcion="Contrato bidireccional: UrbeMind consulta, registra e interactúa por API con alcance acotado, y recibe los eventos del ciclo de vida."
-        >
-          <ay-badge ayEstado size="sm" tono="info">OAuth2 Client Credentials + Webhooks</ay-badge>
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Secciones de UrbeMind"
@@ -891,14 +932,14 @@ export type SubvistaEspecializadaAtc =
                 <ay-form (enviar)="ejecutarSimulacionUrbeMind()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="Operación API" obligatorio>
-                      <ay-select
+                      <ay-select nombre="um-operacion"
                         [opciones]="opcionesOperacionUrbeMind"
                         [valor]="umOperacion()"
                         (valorChange)="umOperacion.set($event)"
                       />
                     </ay-form-field>
                     <ay-form-field etiqueta="Alcance del token OAuth2" obligatorio>
-                      <ay-select
+                      <ay-select nombre="um-alcance"
                         [opciones]="opcionesAlcanceUrbeMind"
                         [valor]="umAlcance()"
                         (valorChange)="umAlcance.set($event)"
@@ -928,7 +969,7 @@ export type SubvistaEspecializadaAtc =
                       <span ayText="body" size="xs">{{ l.detalle }}</span>
                     </div>
                   </ng-template>
-                  <ng-template ayCelda="estado" let-fila>
+                  <ng-template ayCelda="estadoHttp" let-fila>
                     @let l = comoLlamadaUm(fila);
                     <ay-badge size="sm" [tono]="l.estadoHttp < 300 ? 'success' : 'danger'">
                       HTTP {{ l.estadoHttp }}
@@ -967,9 +1008,9 @@ export type SubvistaEspecializadaAtc =
               >
                 <ng-template ayCelda="tipo" let-fila>
                   @let e = comoEventoUm(fila);
-                  <code ayText="mono" size="xs">{{ e.tipo }}</code>
+                  <code ayText="mono" size="xs">{{ etiqueta(eventoUmEs, e.tipo) }}</code>
                 </ng-template>
-                <ng-template ayCelda="ticket" let-fila>
+                <ng-template ayCelda="ticketNum" let-fila>
                   @let e = comoEventoUm(fila);
                   <strong ayText="mono" size="xs">{{ e.ticketNum }}</strong>
                 </ng-template>
@@ -979,7 +1020,7 @@ export type SubvistaEspecializadaAtc =
                     {{ e.estado === 'ENTREGADO' ? 'Entregado' : 'Pendiente de reintento' }} ({{ e.intentos }} int.)
                   </ay-badge>
                 </ng-template>
-                <ng-template ayCelda="detalle" let-fila>
+                <ng-template ayCelda="error" let-fila>
                   @let e = comoEventoUm(fila);
                   <span ayText="body" size="xs">{{ e.error ?? 'ACK 200 OK recibido' }}</span>
                 </ng-template>
@@ -997,12 +1038,15 @@ export type SubvistaEspecializadaAtc =
       <div ayStack gap="6">
         <ay-page-header
           titulo="Resolución por morosidad"
-          descripcion="Casos que abre la evaluación diaria con 3 cuotas vencidas e impagas, con su alerta al cliente y su carta al responsable del proyecto."
-        >
-          <ay-badge ayEstado size="sm" tono="danger">
-            {{ estadoProto.casosResolucionMora().length }} casos de resolución
-          </ay-badge>
-        </ay-page-header>
+          descripcion="Contexto de mora para el asesor responsable del ticket: cuotas vencidas, alerta al cliente y carta al responsable del proyecto. Solo consulta."
+        />
+
+        <ay-alert tono="warning" size="sm" titulo="Regla pendiente de validación contractual">
+          La condición de posible disolución contractual se evalúa como «más de tres cuotas» (más de 3 cuotas
+          vencidas) y está pendiente de validación por negocio. Esta vista solo informa: no disuelve contratos
+          ni toma decisiones contractuales. El flujo de negociación entre el cliente e Iver es una dependencia
+          pendiente.
+        </ay-alert>
 
         <div ayGrid [columnas]="4" gap="sm">
           <ay-card superficie="solid">
@@ -1052,11 +1096,11 @@ export type SubvistaEspecializadaAtc =
               [filas]="estadoProto.casosResolucionMora()"
               [rayada]="true"
             >
-              <ng-template ayCelda="ticket" let-fila>
+              <ng-template ayCelda="ticketNum" let-fila>
                 @let m = comoMoraDetalle(fila);
                 <strong ayText="mono" size="xs">{{ m.ticketNum }}</strong>
               </ng-template>
-              <ng-template ayCelda="cliente" let-fila>
+              <ng-template ayCelda="clienteNombre" let-fila>
                 @let m = comoMoraDetalle(fila);
                 <div ayStack gap="1">
                   <strong>{{ m.clienteNombre }}</strong>
@@ -1094,11 +1138,17 @@ export type SubvistaEspecializadaAtc =
               </ng-template>
               <ng-template ayCelda="accion" let-fila>
                 @let m = comoMoraDetalle(fila);
-                <div ayRow gap="2" [ajuste]="true">
+                <div class="pl-atc-acciones-celda">
                   <ay-button tamano="sm" variante="secondary" (click)="moraSeleccionada.set(m)">
                     Abrir caso
                   </ay-button>
-                  <ay-button tamano="sm" variante="ghost" (click)="verContrato.emit(m.contrato)">
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="!m.contrato"
+                    [attr.title]="m.contrato ? 'Ver contrato ' + m.contrato : 'Sin contrato vinculado'"
+                    (click)="m.contrato && verContrato.emit(m.contrato)"
+                  >
                     Contrato
                   </ay-button>
                 </div>
@@ -1132,6 +1182,27 @@ export type SubvistaEspecializadaAtc =
                   El cliente tiene un reclamo abierto en el Libro: no se envían alertas de corte ni cartas hasta responderlo.
                 </ay-alert>
               }
+              @let ctx = contextoMora(mc);
+              <ay-card superficie="solid">
+                <ay-card-header
+                  titulo="Contexto de mora del ticket (regla pendiente de validación)"
+                  nivel="h3"
+                  [separador]="true"
+                />
+                <ay-card-body padding="sm">
+                  <ay-card-pairs
+                    [pares]="[
+                      { clave: 'Ticket', valor: mc.ticketNum },
+                      { clave: 'Cliente · contrato', valor: mc.clienteNombre + ' · ' + mc.contrato },
+                      { clave: 'Cuotas vencidas', valor: '' + ctx.cuotasVencidas },
+                      { clave: 'Deuda vencida', valor: 'S/ ' + mc.deuda },
+                      { clave: 'Condición «más de tres cuotas»', valor: ctx.superaCondicion ? 'Cumple (indicativo)' : 'No cumple (indicativo)' },
+                      { clave: 'Lectura', valor: ctx.lectura },
+                      { clave: 'Etapa de negociación cliente-Iver', valor: ctx.etapaNegociacion }
+                    ]"
+                  />
+                </ay-card-body>
+              </ay-card>
               <div ayGrid [columnas]="2" gap="md">
                 <ay-card superficie="solid">
                   <ay-card-header titulo="Constancias de envío de alerta al cliente" nivel="h3" [separador]="true" />
@@ -1175,9 +1246,7 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Ingreso a proyecto"
           descripcion="Registra a cada persona que entra en garita. Se crea el ticket de visita y se avisa al responsable del proyecto."
-        >
-          <ay-badge ayEstado size="sm" tono="info">{{ asistentes().length }} ingresos hoy</ay-badge>
-        </ay-page-header>
+        />
 
         @if (!estadoProto.puedeRegistrarIngreso()) {
           <ay-card superficie="solid">
@@ -1201,7 +1270,7 @@ export type SubvistaEspecializadaAtc =
                 <ay-form class="pl-atc-form-ancho" (enviar)="registrarIngresoProyecto()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="1. Nombre completo" obligatorio>
-                      <ay-input
+                      <ay-input nombre="nuevo-asistente-nombre"
                         [valor]="nuevoAsistenteNombre()"
                         (valorChange)="nuevoAsistenteNombre.set($event)"
                         placeholder="Nombre y apellidos"
@@ -1209,14 +1278,14 @@ export type SubvistaEspecializadaAtc =
                     </ay-form-field>
                     <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="2. DNI (8 dígitos)" obligatorio>
-                        <ay-input
+                        <ay-input nombre="nuevo-asistente-dni"
                           [valor]="nuevoAsistenteDni()"
                           (valorChange)="nuevoAsistenteDni.set($event)"
                           placeholder="Ej. 72282555"
                         />
                       </ay-form-field>
                       <ay-form-field etiqueta="3. Teléfono de contacto" obligatorio>
-                        <ay-input
+                        <ay-input nombre="nuevo-asistente-telefono"
                           [valor]="nuevoAsistenteTelefono()"
                           (valorChange)="nuevoAsistenteTelefono.set($event)"
                           placeholder="+51 987 654 321"
@@ -1225,14 +1294,14 @@ export type SubvistaEspecializadaAtc =
                     </div>
                     <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
                       <ay-form-field etiqueta="4. Motivo de la visita" obligatorio>
-                        <ay-select
+                        <ay-select nombre="nuevo-asistente-motivo"
                           [opciones]="opcionesMotivoVisita"
                           [valor]="nuevoAsistenteMotivo()"
                           (valorChange)="nuevoAsistenteMotivo.set($event)"
                         />
                       </ay-form-field>
                       <ay-form-field etiqueta="5. Proyecto o área que visita" obligatorio>
-                        <ay-select
+                        <ay-select nombre="nuevo-asistente-proyecto"
                           [opciones]="opcionesProyectoVisita"
                           [valor]="nuevoAsistenteProyecto()"
                           (valorChange)="nuevoAsistenteProyecto.set($event)"
@@ -1240,7 +1309,7 @@ export type SubvistaEspecializadaAtc =
                       </ay-form-field>
                     </div>
                     <ay-form-field etiqueta="6. Lote / Unidad o referencia">
-                      <ay-input
+                      <ay-input nombre="nuevo-asistente-lote"
                         [valor]="nuevoAsistenteLote()"
                         (valorChange)="nuevoAsistenteLote.set($event)"
                         placeholder="Ej. Mz. C Lt. 07"
@@ -1278,10 +1347,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Libro de Reclamaciones"
           descripcion="Ley 29571, art. 24: respuesta en 15 días hábiles desde el registro, prorrogables una sola vez por 15 si se comunica antes del vencimiento."
-        >
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ estadoProto.asientosLibroDetalle().length }} asientos regulados
-          </ay-badge>
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Secciones del Libro de Reclamaciones"
@@ -1302,7 +1369,7 @@ export type SubvistaEspecializadaAtc =
                 [cabeceraFija]="true"
                 [rayada]="true"
               >
-                <ng-template ayCelda="asiento" let-fila>
+                <ng-template ayCelda="n" let-fila>
                   @let b = comoAsiento(fila);
                   <div ayStack gap="1">
                     <strong ayText="mono" size="xs">{{ b.co }}-2026-{{ b.n }}</strong>
@@ -1311,15 +1378,20 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="ticket" let-fila>
                   @let b = comoAsiento(fila);
-                  <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(b.ticket)">
-                    {{ b.ticket }}
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="!b.ticket"
+                    (click)="b.ticket && seleccionarTicket.emit(b.ticket)"
+                  >
+                    {{ b.ticket || 'Sin ticket' }}
                   </ay-button>
                 </ng-template>
                 <ng-template ayCelda="kind" let-fila>
                   @let b = comoAsiento(fila);
                   <div ayStack gap="1">
                     <ay-badge size="sm" [tono]="b.kind === 'RECLAMO' ? 'warning' : 'neutral'">
-                      {{ b.kind }}
+                      {{ etiqueta(asientoTipoEs, b.kind) }}
                     </ay-badge>
                     <span ayText="body" size="xs">{{ b.amount ?? 'Sin monto' }}</span>
                   </div>
@@ -1331,7 +1403,7 @@ export type SubvistaEspecializadaAtc =
                     <span ayText="body" size="xs">{{ b.facts }}</span>
                   </div>
                 </ng-template>
-                <ng-template ayCelda="plazo" let-fila>
+                <ng-template ayCelda="reg" let-fila>
                   @let b = comoAsiento(fila);
                   <div ayStack gap="1">
                     <ay-badge size="sm" [tono]="plazoLibro(b).tono">{{ plazoLibro(b).texto }}</ay-badge>
@@ -1340,40 +1412,35 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="prorroga" let-fila>
                   @let b = comoAsiento(fila);
-                  @if (b.ext) {
-                    <ay-badge size="sm" tono="warning">Prórroga aplicada</ay-badge>
-                  } @else if (!b.resp && estadoProto.puedeGestionarLibro()) {
-                    <ay-button tamano="sm" variante="secondary" (click)="aplicarProrrogaUnica(b)">
-                      Prorrogar 15 días
-                    </ay-button>
-                  } @else {
-                    <span ayText="body" size="xs">{{ b.resp ? 'No requerida' : 'Solo Legal' }}</span>
-                  }
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="b.ext || !!b.resp || !estadoProto.puedeGestionarLibro()"
+                    (click)="!b.ext && !b.resp && estadoProto.puedeGestionarLibro() && aplicarProrrogaUnica(b)"
+                  >
+                    {{ b.ext ? 'Prórroga aplicada' : 'Prorrogar 15 días' }}
+                  </ay-button>
                 </ng-template>
                 <ng-template ayCelda="respuesta" let-fila>
                   @let b = comoAsiento(fila);
-                  @if (!b.resp) {
-                    @if (estadoProto.puedeGestionarLibro()) {
-                      <ay-button tamano="sm" variante="primary" (click)="emitirRespuestaConCargo(b)">
-                        Emitir carta + cargo
-                      </ay-button>
-                    } @else {
-                      <ay-badge size="sm" tono="neutral">Pendiente de Legal</ay-badge>
-                    }
-                  } @else {
-                    <div ayStack gap="1">
-                      <ay-badge size="sm" tono="success">Respondido {{ fmtDia(b.resp) }}</ay-badge>
-                      @if (b.appeal) {
-                        <span ayText="body" size="xs">
-                          Apelación {{ b.appeal.to }}: <strong>{{ b.appeal.caseNo }}</strong> ({{ b.appeal.st }})
-                        </span>
-                      } @else if (estadoProto.puedeGestionarLibro()) {
-                        <ay-button tamano="sm" variante="ghost" (click)="registrarApelacionIndecopi(b)">
-                          + Registrar apelación INDECOPI
-                        </ay-button>
-                      }
-                    </div>
-                  }
+                  <div class="pl-atc-acciones-celda">
+                    <ay-button
+                      tamano="sm"
+                      variante="secondary"
+                      [disabled]="!!b.resp || !estadoProto.puedeGestionarLibro()"
+                      (click)="!b.resp && estadoProto.puedeGestionarLibro() && emitirRespuestaConCargo(b)"
+                    >
+                      {{ b.resp ? 'Carta emitida (' + fmtDia(b.resp) + ')' : 'Emitir carta + cargo' }}
+                    </ay-button>
+                    <ay-button
+                      tamano="sm"
+                      variante="secondary"
+                      [disabled]="!b.resp || !!b.appeal || !estadoProto.puedeGestionarLibro()"
+                      (click)="b.resp && !b.appeal && estadoProto.puedeGestionarLibro() && registrarApelacionIndecopi(b)"
+                    >
+                      {{ b.appeal ? 'INDECOPI ' + b.appeal.caseNo : 'Apelación INDECOPI' }}
+                    </ay-button>
+                  </div>
                 </ng-template>
               </ay-table>
             </ay-card-body>
@@ -1427,8 +1494,8 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Mesa de Casos Sensibles SGD"
           descripcion="Cinco líneas de ingreso, Código Único por caso, SLA desde el cargo de activación, matriz objetiva de riesgo y cierre con custodia GLI."
-        >
-          <ay-badge ayEstado size="sm" tono="warning">{{ casosSgd().length }} casos SGD</ay-badge>
+        
+          [conPestanas]="true">
           <ay-tabs
             ayPestanas
             etiqueta="Vistas de la Mesa SGD"
@@ -1469,20 +1536,14 @@ export type SubvistaEspecializadaAtc =
                   @let s = comoSgd(fila);
                   <div ayStack gap="1">
                     <span ayText="body" size="xs">Previo: {{ fmtDia(s.pre) }}</span>
-                    @if (s.act) {
-                      <ay-badge size="sm" tono="info">
-                        Activado: {{ fmtDia(s.act) }} (SLA {{ s.slaDays }}d)
-                      </ay-badge>
-                    } @else {
-                      <ay-button
-                        tamano="sm"
-                        variante="secondary"
-                        [disabled]="!estadoProto.puedeOperarMesaSgd()"
-                        (click)="activarCargoSgd(s)"
-                      >
-                        Emitir cargo de activación
-                      </ay-button>
-                    }
+                    <ay-button
+                      tamano="sm"
+                      variante="secondary"
+                      [disabled]="!!s.act || !estadoProto.puedeOperarMesaSgd()"
+                      (click)="!s.act && estadoProto.puedeOperarMesaSgd() && activarCargoSgd(s)"
+                    >
+                      {{ s.act ? 'Activado ' + fmtDia(s.act) + ' (SLA ' + s.slaDays + 'd)' : 'Emitir cargo de activación' }}
+                    </ay-button>
                   </div>
                 </ng-template>
                 <ng-template ayCelda="linked" let-fila>
@@ -1491,18 +1552,16 @@ export type SubvistaEspecializadaAtc =
                 </ng-template>
                 <ng-template ayCelda="estado" let-fila>
                   @let s = comoSgd(fila);
-                  @if (s.closeState) {
-                    <ay-badge size="sm" tono="success">{{ s.closeState }} · GLI</ay-badge>
-                  } @else {
+                  <div class="pl-atc-acciones-celda">
                     <ay-button
                       tamano="sm"
-                      variante="primary"
-                      [disabled]="!s.act || !estadoProto.puedeOperarMesaSgd()"
-                      (click)="cerrarCasoSgdConGli(s)"
+                      variante="secondary"
+                      [disabled]="!!s.closeState || !s.act || !estadoProto.puedeOperarMesaSgd()"
+                      (click)="!s.closeState && s.act && estadoProto.puedeOperarMesaSgd() && cerrarCasoSgdConGli(s)"
                     >
-                      Cerrar con evidencia GLI
+                      {{ s.closeState ? etiqueta(cierreSgdEs, s.closeState) + ' · GLI' : 'Cerrar con evidencia GLI' }}
                     </ay-button>
-                  }
+                  </div>
                 </ng-template>
               </ay-table>
             </ay-card-body>
@@ -1571,9 +1630,7 @@ export type SubvistaEspecializadaAtc =
         <ay-page-header
           titulo="Garantías postventa"
           descripcion="Un reclamo siempre cuelga de un Acta de Entrega y solo procede dentro de la cobertura (120 meses estructural; 12 meses impermeabilización, acabados e instalaciones)."
-        >
-          <ay-badge ayEstado size="sm" tono="info">{{ garantias().length }} reclamos de garantía</ay-badge>
-        </ay-page-header>
+        />
 
         <ay-card variante="elevated" superficie="solid">
           <ay-card-body padding="sm">
@@ -1603,22 +1660,18 @@ export type SubvistaEspecializadaAtc =
               </ng-template>
               <ng-template ayCelda="insp" let-fila>
                 @let g = comoGarantia(fila);
-                @if (g.insp) {
-                  <span ayText="mono" size="xs">Programada: {{ g.insp }}</span>
-                } @else {
-                  <ay-button
-                    tamano="sm"
-                    variante="secondary"
-                    [disabled]="!estadoProto.puedeOperarGarantias()"
-                    (click)="agendarInspeccion(g)"
-                  >
-                    Programar inspección
-                  </ay-button>
-                }
+                <ay-button
+                  tamano="sm"
+                  variante="secondary"
+                  [disabled]="!!g.insp || !estadoProto.puedeOperarGarantias()"
+                  (click)="!g.insp && estadoProto.puedeOperarGarantias() && agendarInspeccion(g)"
+                >
+                  {{ g.insp ? 'Programada: ' + g.insp : 'Programar inspección' }}
+                </ay-button>
               </ng-template>
               <ng-template ayCelda="state" let-fila>
                 @let g = comoGarantia(fila);
-                <div ayRow gap="2" [ajuste]="true">
+                <div class="pl-atc-acciones-celda">
                   <ay-badge
                     size="sm"
                     [tono]="
@@ -1629,16 +1682,24 @@ export type SubvistaEspecializadaAtc =
                           : 'warning'
                     "
                   >
-                    {{ g.state }}
+                    {{ etiqueta(garantiaEs, g.state) }}
                   </ay-badge>
-                  @if (g.state === 'UNDER_REVIEW' && estadoProto.puedeOperarGarantias()) {
-                    <ay-button tamano="sm" variante="primary" (click)="g.state = 'APPROVED'">
-                      Resolver / Aprobar
-                    </ay-button>
-                    <ay-button tamano="sm" variante="danger" (click)="g.state = 'ESCALATED_EJE3'">
-                      Derivar a Eje 3
-                    </ay-button>
-                  }
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="g.state !== 'UNDER_REVIEW' || !estadoProto.puedeOperarGarantias()"
+                    (click)="g.state === 'UNDER_REVIEW' && estadoProto.puedeOperarGarantias() && (g.state = 'APPROVED')"
+                  >
+                    Resolver / Aprobar
+                  </ay-button>
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="g.state !== 'UNDER_REVIEW' || !estadoProto.puedeOperarGarantias()"
+                    (click)="g.state === 'UNDER_REVIEW' && estadoProto.puedeOperarGarantias() && (g.state = 'ESCALATED_EJE3')"
+                  >
+                    Derivar a Eje 3
+                  </ay-button>
                 </div>
               </ng-template>
             </ay-table>
@@ -1659,16 +1720,7 @@ export type SubvistaEspecializadaAtc =
               ? 'Reserva tu cupo con tus acompañantes (hasta 3) y tu punto de embarque desde Mi Portal.'
               : 'Tablero del evento: casos por criticidad, protocolo de contención con las 6 frases ancla, derivación inmediata a Estación 4 y aforo y reservas de buses.'
           "
-        >
-          @if (estadoProto.rolActivo() !== 'CLIENTE') {
-            <ay-badge ayEstado size="sm" tono="danger">
-              {{ estadoProto.casosEventoFest().filter(c => c.criticidad === 'CRITICA').length }} críticos activos
-            </ay-badge>
-          }
-          <ay-badge ayEstado size="sm" tono="info">
-            {{ estadoProto.reservasBusFest().length }} reservas de bus
-          </ay-badge>
-        </ay-page-header>
+        />
 
         @if (estadoProto.rolActivo() !== 'CLIENTE') {
           @if (imputacionPenalDetectada()) {
@@ -1695,7 +1747,7 @@ export type SubvistaEspecializadaAtc =
                   [filas]="estadoProto.casosEventoFest()"
                   [rayada]="true"
                 >
-                  <ng-template ayCelda="ticket" let-fila>
+                  <ng-template ayCelda="ticketNum" let-fila>
                     @let c = comoCasoEvento(fila);
                     <strong ayText="mono" size="xs">{{ c.ticketNum }}</strong>
                   </ng-template>
@@ -1709,25 +1761,28 @@ export type SubvistaEspecializadaAtc =
                   <ng-template ayCelda="criticidad" let-fila>
                     @let c = comoCasoEvento(fila);
                     <ay-badge size="sm" [tono]="c.criticidad === 'CRITICA' ? 'danger' : 'warning'">
-                      {{ c.criticidad }}
+                      {{ etiqueta(criticidadEs, c.criticidad) }}
                     </ay-badge>
                   </ng-template>
                   <ng-template ayCelda="situacion" let-fila>
                     @let c = comoCasoEvento(fila);
-                    @if (c.estacion4) {
-                      <ay-badge size="sm" tono="danger">En Estación 4 (Legal)</ay-badge>
-                    } @else {
-                      <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
-                        Derivar a Estación 4
+                    <div class="pl-atc-acciones-celda">
+                      <ay-button
+                        tamano="sm"
+                        variante="secondary"
+                        [disabled]="!!c.estacion4"
+                        (click)="!c.estacion4 && derivarCasoAEstacion4(c)"
+                      >
+                        {{ c.estacion4 ? 'En Estación 4 (Legal)' : 'Derivar a Estación 4' }}
                       </ay-button>
-                    }
+                    </div>
                   </ng-template>
                 </ay-table>
 
                 <ay-divider espaciado="sm" />
 
                 <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de imputación penal)">
-                  <ay-textarea
+                  <ay-textarea nombre="texto-evento"
                     [filas]="2"
                     [valor]="textoEvento()"
                     (valorChange)="textoEvento.set($event)"
@@ -1793,21 +1848,21 @@ export type SubvistaEspecializadaAtc =
               <ay-form (enviar)="confirmarReservaBusCliente()">
                 <div ayGrid [columnas]="3" gap="sm">
                   <ay-form-field etiqueta="Bus y horario" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-id"
                       [opciones]="opcionesBusesSelect()"
                       [valor]="formBusId()"
                       (valorChange)="formBusId.set($event)"
                     />
                   </ay-form-field>
                   <ay-form-field etiqueta="Punto de embarque" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-punto"
                       [opciones]="opcionesPuntosEmbarque"
                       [valor]="formBusPunto()"
                       (valorChange)="formBusPunto.set($event)"
                     />
                   </ay-form-field>
                   <ay-form-field etiqueta="Acompañantes (0 a 3)" obligatorio>
-                    <ay-select
+                    <ay-select nombre="form-bus-acompanantes"
                       [opciones]="opcionesAcompanantesBus"
                       [valor]="formBusAcompanantes()"
                       (valorChange)="formBusAcompanantes.set($event)"
@@ -1836,11 +1891,11 @@ export type SubvistaEspecializadaAtc =
               [filas]="estadoProto.reservasBusFest()"
               [rayada]="true"
             >
-              <ng-template ayCelda="cliente" let-fila>
+              <ng-template ayCelda="clienteNombre" let-fila>
                 @let r = comoReservaBus(fila);
                 <strong>{{ r.clienteNombre }}</strong>
               </ng-template>
-              <ng-template ayCelda="bus" let-fila>
+              <ng-template ayCelda="busId" let-fila>
                 @let r = comoReservaBus(fila);
                 <span>{{ nombreBus(r.busId) }}</span>
               </ng-template>
@@ -1848,7 +1903,7 @@ export type SubvistaEspecializadaAtc =
                 @let r = comoReservaBus(fila);
                 <span ayText="body" size="xs">{{ r.punto }}</span>
               </ng-template>
-              <ng-template ayCelda="personas" let-fila>
+              <ng-template ayCelda="acompanantes" let-fila>
                 @let r = comoReservaBus(fila);
                 <strong>{{ 1 + r.acompanantes }} ({{ r.acompanantes }} acomp.)</strong>
               </ng-template>
@@ -1863,11 +1918,16 @@ export type SubvistaEspecializadaAtc =
               </ng-template>
               <ng-template ayCelda="accion" let-fila>
                 @let r = comoReservaBus(fila);
-                @if (r.estado !== 'CANCELADA') {
-                  <ay-button tamano="sm" variante="ghost" (click)="cancelarReservaBus(r)">
-                    Cancelar reserva
+                <div class="pl-atc-acciones-celda">
+                  <ay-button
+                    tamano="sm"
+                    variante="secondary"
+                    [disabled]="r.estado === 'CANCELADA'"
+                    (click)="r.estado !== 'CANCELADA' && cancelarReservaBus(r)"
+                  >
+                    {{ r.estado === 'CANCELADA' ? 'Cancelada' : 'Cancelar reserva' }}
                   </ay-button>
-                }
+                </div>
               </ng-template>
             </ay-table>
           </ay-card-body>
@@ -1882,9 +1942,9 @@ export type SubvistaEspecializadaAtc =
       <div ayStack gap="6">
         <ay-page-header
           titulo="Torre de Control CX"
-          descripcion="Volumen, cumplimiento de SLA, prevención de denuncias (+8 % interés legal), encuestas post-atención, informes periódicos y auditoría de datos."
+          descripcion="Estado de atención de tickets por área (nivel macro) con gráficos, además de riesgo de denuncia (+8 % interés legal), encuestas post-atención, informes periódicos y auditoría de datos."
+          [conPestanas]="true"
         >
-          <ay-badge ayEstado size="sm" tono="success">SLA E2E 91.4 % · NPS +54</ay-badge>
           <ay-tabs
             ayPestanas
             etiqueta="Secciones de la Torre de Control CX"
@@ -1896,59 +1956,7 @@ export type SubvistaEspecializadaAtc =
         </ay-page-header>
 
         @if (tabTorre() === 'tablero') {
-          <div ayGrid [columnas]="4" gap="md">
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="SLA E2E ≤ 72 h (Eje 1/2)"
-                  valor="91.4%"
-                  periodo="Meta corporativa ≥ 90%"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Resueltos en 1.er contacto (FCR)"
-                  valor="68%"
-                  periodo="Sin reaperturas ni derivaciones"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Cumplimiento 1.ª respuesta"
-                  valor="94.2%"
-                  periodo="En horario hábil de Perú"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-            <ay-card superficie="solid">
-              <ay-card-body padding="md">
-                <ay-statistic
-                  etiqueta="Cumplimiento resolución"
-                  valor="90.8%"
-                  periodo="Con políticas SLA versionadas"
-                  size="sm"
-                />
-              </ay-card-body>
-            </ay-card>
-          </div>
-
-          <ay-card superficie="solid">
-            <ay-card-header
-              titulo="Flujos activos por área resolutora (sincronizados con Configuración)"
-              nivel="h2"
-              [separador]="true"
-            />
-            <ay-card-body padding="md">
-              <app-flujos-torre [flujos]="estadoProto.flujosPorTipo()" />
-            </ay-card-body>
-          </ay-card>
+          <app-tablero-torre [tickets]="tickets()" (verAreaEnVivo)="verAreaEnVivo.emit($event)" />
         }
 
         @if (tabTorre() === 'riesgo') {
@@ -1962,7 +1970,7 @@ export type SubvistaEspecializadaAtc =
               />
               <ay-card-body padding="md" gap="md">
                 <ay-form-field etiqueta="Capital reclamado en controversia (S/)">
-                  <ay-input
+                  <ay-input nombre="capital-controversia-str"
                     tipo="number"
                     size="sm"
                     [valor]="capitalControversiaStr()"
@@ -2007,15 +2015,15 @@ export type SubvistaEspecializadaAtc =
                 [filas]="estadoProto.encuestasCx()"
                 [rayada]="true"
               >
-                <ng-template ayCelda="ticket" let-fila>
+                <ng-template ayCelda="ticketNum" let-fila>
                   @let e = comoEncuesta(fila);
                   <strong ayText="mono" size="xs">{{ e.ticketNum }}</strong>
                 </ng-template>
                 <ng-template ayCelda="gestor" let-fila>
                   @let e = comoEncuesta(fila);
-                  <span>{{ e.gestor }} ({{ e.area }})</span>
+                  <span>{{ e.gestor }} ({{ areaEs(e.area) }})</span>
                 </ng-template>
-                <ng-template ayCelda="metricas" let-fila>
+                <ng-template ayCelda="csat" let-fila>
                   @let e = comoEncuesta(fila);
                   <ay-badge size="sm" tono="success">
                     CSAT {{ e.csat }}/5 · CES {{ e.ces }}/5 · NPS {{ e.nps }}/10
@@ -2120,13 +2128,28 @@ export class VistaEspecializadaComponent {
 
   readonly verContrato = output<string>();
   readonly seleccionarTicket = output<string>();
+  /** Código de área (p. ej. 'LEGAL') que el Tablero de la Torre quiere ver en Vivo. */
+  readonly verAreaEnVivo = output<string>();
   readonly irANuevo = output<void>();
 
   readonly avisoOperacion = signal<string | null>(null);
 
   /* ── Pestañas de cada vista 5181 ── */
   readonly tabConfig = signal<string>('flujos');
-  readonly tabsConfiguracion = computed<AyTabsElemento[]>(() => [
+  /** Coordinador CX consulta los flujos; el resto de pestañas y la edición son del Admin Funcional y el Supervisor. */
+  readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.estadoProto.rolActivo()));
+  readonly puedeVerWorkflow = computed(() => this.puedeEditarWorkflow() || this.estadoProto.rolActivo() === 'COORDINADOR_CX');
+  private readonly vistaFlujosElegida = signal<'area' | 'tabla' | null>(null);
+  /** Quien edita abre en la tabla; quien solo consulta, en la vista por área. */
+  readonly vistaFlujos = computed(() => this.vistaFlujosElegida() ?? (this.puedeEditarWorkflow() ? 'tabla' : 'area'));
+  elegirVistaFlujos(v: string): void {
+    this.vistaFlujosElegida.set(v === 'tabla' ? 'tabla' : 'area');
+  }
+  readonly opcionesVistaFlujos: AySegmentoOpcion[] = [
+    { valor: 'area', etiqueta: 'Por área' },
+    { valor: 'tabla', etiqueta: 'Tabla' },
+  ];
+  readonly tabsWorkflow = computed<AyTabsElemento[]>(() => [
     { value: 'flujos', label: 'Flujos', contador: this.estadoProto.flujosPorTipo().length },
     { value: 'guias', label: 'Guías', contador: this.estadoProto.guiasPorTipo().length },
     { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
@@ -2163,135 +2186,135 @@ export class VistaEspecializadaComponent {
 
   /* ── Columnas de tablas ── */
   readonly columnasFlujosConfig: readonly AyColumna[] = [
-    { clave: 'tipo', cabecera: 'Tipo de ticket', ancho: '14rem' },
-    { clave: 'area', cabecera: 'Área receptora', ancho: '9rem' },
-    { clave: 'version', cabecera: 'Versión', ancho: '6rem' },
+    { clave: 'nombreTipo', cabecera: 'Tipo de ticket', ancho: '14rem', ordenable: true },
+    { clave: 'area', cabecera: 'Área receptora', ancho: '9rem', ordenable: true },
+    { clave: 'versionActual', cabecera: 'Versión', ancho: '6rem', ordenable: true },
     { clave: 'pasos', cabecera: 'Pasos y responsables' },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '7rem' },
   ];
 
   readonly columnasGuiasConfig: readonly AyColumna[] = [
-    { clave: 'tipo', cabecera: 'Tipo de ticket', ancho: '15rem' },
-    { clave: 'vigente', cabecera: 'Versión vigente', ancho: '9rem' },
+    { clave: 'nombreTipo', cabecera: 'Tipo de ticket', ancho: '15rem', ordenable: true },
+    { clave: 'versionActual', cabecera: 'Versión vigente', ancho: '9rem', ordenable: true },
     { clave: 'resumen', cabecera: 'Contenido publicado' },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
   readonly columnasAlertasAdmin: readonly AyColumna[] = [
-    { clave: 'fecha', cabecera: 'Fecha', ancho: '9rem' },
-    { clave: 'alerta', cabecera: 'Alerta', ancho: '15rem' },
-    { clave: 'tipo', cabecera: 'Tipo', ancho: '7rem' },
-    { clave: 'detalle', cabecera: 'Detalle' },
+    { clave: 'fecha', cabecera: 'Fecha', ancho: '9rem', ordenable: true },
+    { clave: 'etiqueta', cabecera: 'Alerta', ancho: '15rem', ordenable: true },
+    { clave: 'tipo', cabecera: 'Tipo', ancho: '7rem', ordenable: true },
+    { clave: 'detalle', cabecera: 'Detalle', ordenable: true },
   ];
 
   readonly columnasPoliticasSla: readonly AyColumna[] = [
-    { clave: 'id', cabecera: 'Política', ancho: '10rem' },
-    { clave: 'alcance', cabecera: 'Alcance', ancho: '14rem' },
-    { clave: 'tipo', cabecera: 'Tipo y Prioridad' },
-    { clave: 'respuesta', cabecera: '1.ª respuesta', ancho: '8rem' },
-    { clave: 'resolucion', cabecera: 'Resolución', ancho: '8rem' },
-    { clave: 'version', cabecera: 'Versión', ancho: '6rem' },
+    { clave: 'id', cabecera: 'Política', ancho: '10rem', ordenable: true },
+    { clave: 'alcance', cabecera: 'Alcance', ancho: '14rem', ordenable: true },
+    { clave: 'tipoTicket', cabecera: 'Tipo y Prioridad', ordenable: true },
+    { clave: 'respuestaH', cabecera: '1.ª respuesta', ancho: '8rem', ordenable: true },
+    { clave: 'resolucionH', cabecera: 'Resolución', ancho: '8rem', ordenable: true },
+    { clave: 'version', cabecera: 'Versión', ancho: '6rem', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '7rem' },
   ];
 
   readonly columnasPreviewReasignar: readonly AyColumna[] = [
-    { clave: 'num', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'resumen', cabecera: 'Solicitud' },
+    { clave: 'num', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'summary', cabecera: 'Solicitud', ordenable: true },
     { clave: 'destino', cabecera: 'Pasará a', ancho: '11rem' },
   ];
 
   readonly columnasAlertasSla: readonly AyColumna[] = [
-    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'tipo', cabecera: 'Tipo de incumplimiento' },
-    { clave: 'ciclo', cabecera: 'Ciclo', ancho: '8rem' },
-    { clave: 'vence', cabecera: 'Vencimiento evaluado', ancho: '10rem' },
-    { clave: 'destinatario', cabecera: 'Destinatario y canal', ancho: '15rem' },
+    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'tipo', cabecera: 'Tipo de incumplimiento', ordenable: true },
+    { clave: 'ciclo', cabecera: 'Ciclo', ancho: '8rem', ordenable: true },
+    { clave: 'vencimientoEvaluado', cabecera: 'Vencimiento evaluado', ancho: '10rem', ordenable: true },
+    { clave: 'destinatario', cabecera: 'Destinatario y canal', ancho: '15rem', ordenable: true },
   ];
 
   readonly columnasCorridasJob: readonly AyColumna[] = [
-    { clave: 'fecha', cabecera: 'Corrida', ancho: '10rem' },
-    { clave: 'revisados', cabecera: 'Evaluados' },
-    { clave: 'nuevas', cabecera: 'Resultado', ancho: '9rem' },
+    { clave: 'fecha', cabecera: 'Corrida', ancho: '10rem', ordenable: true },
+    { clave: 'revisados', cabecera: 'Evaluados', ordenable: true },
+    { clave: 'nuevasAlertas', cabecera: 'Resultado', ancho: '9rem', ordenable: true },
   ];
 
   readonly columnasCierreE2E: readonly AyColumna[] = [
-    { clave: 'ticket', cabecera: 'Ticket y resumen' },
-    { clave: 'eje', cabecera: 'Eje y objetivo', ancho: '10rem' },
-    { clave: 'avance', cabecera: 'Horas hábiles consumidas', ancho: '16rem' },
-    { clave: 'situacion', cabecera: 'Situación', ancho: '10rem' },
+    { clave: 'num', cabecera: 'Ticket y resumen', ordenable: true },
+    { clave: 'eje', cabecera: 'Eje y objetivo', ancho: '10rem', ordenable: true },
+    { clave: 'pct', cabecera: 'Horas hábiles consumidas', ancho: '16rem', ordenable: true },
+    { clave: 'etiqueta', cabecera: 'Situación', ancho: '10rem', ordenable: true },
   ];
 
   readonly columnasLlamadasUrbeMind: readonly AyColumna[] = [
-    { clave: 'operacion', cabecera: 'Operación y respuesta' },
-    { clave: 'estado', cabecera: 'HTTP', ancho: '7rem' },
+    { clave: 'operacion', cabecera: 'Operación y respuesta', ordenable: true },
+    { clave: 'estadoHttp', cabecera: 'HTTP', ancho: '7rem', ordenable: true },
   ];
 
   readonly columnasEventosUrbeMind: readonly AyColumna[] = [
-    { clave: 'tipo', cabecera: 'Evento', ancho: '13rem' },
-    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'estado', cabecera: 'Entrega', ancho: '14rem' },
-    { clave: 'detalle', cabecera: 'Detalle' },
+    { clave: 'tipo', cabecera: 'Evento', ancho: '13rem', ordenable: true },
+    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'estado', cabecera: 'Entrega', ancho: '14rem', ordenable: true },
+    { clave: 'error', cabecera: 'Detalle', ordenable: true },
   ];
 
   readonly columnasMorosidad5181: readonly AyColumna[] = [
-    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'cliente', cabecera: 'Cliente y Proyecto' },
-    { clave: 'deuda', cabecera: 'Deuda vencida', ancho: '11rem' },
-    { clave: 'estado', cabecera: 'Estado', ancho: '11rem' },
-    { clave: 'carta', cabecera: 'Carta al responsable', ancho: '14rem' },
-    { clave: 'accion', cabecera: 'Acciones', alineacion: 'end', ancho: '13rem' },
+    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'clienteNombre', cabecera: 'Cliente y Proyecto', ordenable: true },
+    { clave: 'deuda', cabecera: 'Deuda vencida', ancho: '11rem', ordenable: true },
+    { clave: 'estado', cabecera: 'Estado', ancho: '11rem', ordenable: true },
+    { clave: 'carta', cabecera: 'Carta al responsable', ancho: '14rem', ordenable: true },
+    { clave: 'accion', cabecera: 'Acciones', alineacion: 'end', ancho: '15rem' },
   ];
 
   readonly columnasReservasBus: readonly AyColumna[] = [
-    { clave: 'cliente', cabecera: 'Cliente convocado' },
-    { clave: 'bus', cabecera: 'Bus y horario', ancho: '13rem' },
+    { clave: 'n', cabecera: 'Cliente convocado', ordenable: true },
+    { clave: 'busId', cabecera: 'Bus y horario', ancho: '13rem', ordenable: true },
     { clave: 'punto', cabecera: 'Punto de embarque' },
-    { clave: 'personas', cabecera: 'Personas', ancho: '9rem' },
-    { clave: 'estado', cabecera: 'Estado', ancho: '10rem' },
+    { clave: 'acompanantes', cabecera: 'Personas', ancho: '9rem', ordenable: true },
+    { clave: 'reg', cabecera: 'Estado', ancho: '10rem', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
   readonly columnasCasosEvento: readonly AyColumna[] = [
-    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'cliente', cabecera: 'Cliente / Proyecto' },
-    { clave: 'criticidad', cabecera: 'Criticidad', ancho: '8rem' },
-    { clave: 'situacion', cabecera: 'Estación 4', alineacion: 'end', ancho: '11rem' },
+    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'clienteNombre', cabecera: 'Cliente / Proyecto', ordenable: true },
+    { clave: 'criticidad', cabecera: 'Criticidad', ancho: '8rem', ordenable: true },
+    { clave: 'situacion', cabecera: 'Acción Estación 4', alineacion: 'end', ancho: '12rem' },
   ];
 
   readonly columnasEncuestasCx: readonly AyColumna[] = [
-    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem' },
-    { clave: 'gestor', cabecera: 'Gestor y Área', ancho: '13rem' },
-    { clave: 'metricas', cabecera: 'Calificación', ancho: '15rem' },
-    { clave: 'comentario', cabecera: 'Comentario del cliente' },
+    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'gestor', cabecera: 'Gestor y Área', ancho: '13rem', ordenable: true },
+    { clave: 'csat', cabecera: 'Calificación', ancho: '15rem', ordenable: true },
+    { clave: 'comentario', cabecera: 'Comentario del cliente', ordenable: true },
   ];
 
   readonly columnasLibro: readonly AyColumna[] = [
-    { clave: 'asiento', cabecera: 'Asiento / Establecimiento', ancho: '13rem' },
-    { clave: 'ticket', cabecera: 'Ticket Padre', ancho: '8rem' },
-    { clave: 'kind', cabecera: 'Tipo / Monto', ancho: '9rem' },
-    { clave: 'cli', cabecera: 'Cliente y Hechos' },
-    { clave: 'plazo', cabecera: 'Plazo Legal (15 d)', ancho: '11rem' },
-    { clave: 'prorroga', cabecera: 'Prórroga Única', ancho: '11rem' },
-    { clave: 'respuesta', cabecera: 'Respuesta / Apelación', ancho: '15rem' },
+    { clave: 'asiento', cabecera: 'Asiento / Establecimiento', ancho: '13rem', ordenable: true },
+    { clave: 'ticket', cabecera: 'Ticket Padre', ancho: '8rem', ordenable: true },
+    { clave: 'kind', cabecera: 'Tipo / Monto', ancho: '9rem', ordenable: true },
+    { clave: 'cli', cabecera: 'Cliente y Hechos', ordenable: true },
+    { clave: 'plazo', cabecera: 'Plazo Legal (15 d)', ancho: '11rem', ordenable: true },
+    { clave: 'prorroga', cabecera: 'Prórroga Única', ancho: '11rem', ordenable: true },
+    { clave: 'respuesta', cabecera: 'Acciones / Apelación', alineacion: 'end', ancho: '16rem' },
   ];
 
   readonly columnasSgd: readonly AyColumna[] = [
-    { clave: 'code', cabecera: 'Código SGD', ancho: '9rem' },
-    { clave: 'line', cabecera: 'Línea / Cliente' },
-    { clave: 'cargo', cabecera: 'Cargo Previo vs. Activación' },
-    { clave: 'linked', cabecera: 'Vínculo Cruzado', ancho: '8rem' },
-    { clave: 'estado', cabecera: 'Estado / Custodia GLI', alineacion: 'end', ancho: '12rem' },
+    { clave: 'code', cabecera: 'Código SGD', ancho: '9rem', ordenable: true },
+    { clave: 'line', cabecera: 'Línea / Cliente', ordenable: true },
+    { clave: 'cargo', cabecera: 'Cargo Previo vs. Activación', ordenable: true },
+    { clave: 'linked', cabecera: 'Vínculo Cruzado', ancho: '8rem', ordenable: true },
+    { clave: 'estado', cabecera: 'Estado / Acciones GLI', alineacion: 'end', ancho: '14rem' },
   ];
 
   readonly columnasGarantias: readonly AyColumna[] = [
-    { clave: 'id', cabecera: 'ID Garantía / Ticket', ancho: '11rem' },
-    { clave: 'unit', cabecera: 'Unidad / Acta de Entrega' },
-    { clave: 'type', cabecera: 'Rubro y Cobertura', ancho: '13rem' },
-    { clave: 'insp', cabecera: 'Inspección Técnica', ancho: '13rem' },
-    { clave: 'state', cabecera: 'Estado / Escalamiento Eje 3', alineacion: 'end', ancho: '18rem' },
+    { clave: 'id', cabecera: 'ID Garantía / Ticket', ancho: '11rem', ordenable: true },
+    { clave: 'unit', cabecera: 'Unidad / Acta de Entrega', ordenable: true },
+    { clave: 'type', cabecera: 'Rubro y Cobertura', ancho: '13rem', ordenable: true },
+    { clave: 'insp', cabecera: 'Inspección Técnica', ancho: '13rem', ordenable: true },
+    { clave: 'state', cabecera: 'Estado / Acciones Postventa', alineacion: 'end', ancho: '19rem' },
   ];
 
-  /* ── Estado de edición de Configuración (Flujos y Guías) ── */
+  /* ── Estado de edición de Workflow (Flujos y Guías) ── */
   readonly flujoEditando = signal<FlujoTipoConfig | null>(null);
   readonly editFlujoArea = signal<string>('ATC');
   readonly editFlujoPasos = signal<PasoFlujoConfig[]>([]);
@@ -2301,10 +2324,26 @@ export class VistaEspecializadaComponent {
   readonly editGuiaPlantillasTxt = signal<string>('');
   readonly editGuiaCriteriosTxt = signal<string>('');
 
-  readonly opcionesAreasSelect: AyOpcionSelect[] = AREAS_ATC.map((a) => ({ value: a, label: a }));
+  readonly etiqueta = etiqueta;
+  readonly eventoUmEs = EVENTO_URBEMIND_ES;
+  readonly asientoTipoEs = ASIENTO_TIPO_ES;
+  readonly apelacionEs = APELACION_INSTANCIA_ES;
+  readonly cierreSgdEs = CIERRE_SGD_ES;
+  readonly garantiaEs = GARANTIA_ESTADO_ES;
+  readonly criticidadEs = CRITICIDAD_ES;
+
+  areaEs(a: string): string {
+    return etiqueta(AREA_ES, a);
+  }
+
+  nombrePrioridad(id: string): string {
+    return PRIORIDADES_TICKET.find((p) => p.id === id)?.nombre ?? id;
+  }
+
+  readonly opcionesAreasSelect: AyOpcionSelect[] = opcionesDe(AREAS_ATC, AREA_ES);
   readonly opcionesResponsablesSelect: AyOpcionSelect[] = this.estadoProto.colaboradores.map((c) => ({
     value: c.nombre,
-    label: `${c.nombre} (${c.area})`,
+    label: `${c.nombre} (${etiqueta(AREA_ES, c.area)})`,
   }));
 
   /* ── Estado de edición de Políticas SLA ── */
@@ -2368,7 +2407,7 @@ export class VistaEspecializadaComponent {
             : pct >= 80
               ? 'Por vencer (≥ 80 %)'
               : 'En plazo';
-      return { ticket: t, horas, limite, pct, tono, etiqueta };
+      return { ticket: t, num: t.num, eje: t.eje, horas, limite, pct, tono, etiqueta };
     }),
   );
 
@@ -2603,7 +2642,7 @@ export class VistaEspecializadaComponent {
     return f.pasos.map((p, i) => `${i + 1}. ${p.nombre} (${p.responsable}, ${p.horas} h)`).join(' → ');
   }
 
-  /* ── Acciones de Configuración (Flujos y Guías) ── */
+  /* ── Acciones de Workflow (Flujos y Guías) ── */
   abrirEditorFlujo(f: FlujoTipoConfig): void {
     this.flujoEditando.set(f);
     this.editFlujoArea.set(f.area);
@@ -2648,7 +2687,7 @@ export class VistaEspecializadaComponent {
     );
     this.flujoEditando.set(null);
     this.avisoOperacion.set(
-      `Flujo de «${nuevo.nombreTipo}» actualizado a v${nuevo.versionActual} (Área: ${nuevo.area}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
+      `Flujo de «${nuevo.nombreTipo}» actualizado a v${nuevo.versionActual} (Área: ${etiqueta(AREA_ES, nuevo.area)}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
     );
   }
 
@@ -2739,13 +2778,7 @@ export class VistaEspecializadaComponent {
   }
 
   nombreAlertaSla(tipo: AlertaSlaItem['tipo']): string {
-    const mapa: Record<AlertaSlaItem['tipo'], string> = {
-      FIRST_RESPONSE_AT_RISK: '1.ª respuesta por vencer (≤ 25 %)',
-      FIRST_RESPONSE_BREACHED: '1.ª respuesta vencida',
-      RESOLUTION_AT_RISK: 'Resolución por vencer (≤ 25 %)',
-      RESOLUTION_BREACHED: 'Resolución vencida',
-    };
-    return mapa[tipo];
+    return etiqueta(ALERTA_SLA_ES, tipo);
   }
 
   correrJobSlaAhora(): void {
@@ -2792,6 +2825,10 @@ export class VistaEspecializadaComponent {
   }
 
   /* ── Acciones de Morosidad ── */
+  contextoMora(mc: CasoResolucionMoraDetalle) {
+    return evaluarContextoMorosidad(mc.cuotasImpagas);
+  }
+
   contarMorosidadEstado(est: CasoResolucionMoraDetalle['estado']): number {
     return this.estadoProto.casosResolucionMora().filter((c) => c.estado === est).length;
   }

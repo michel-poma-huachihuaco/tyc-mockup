@@ -15,15 +15,22 @@ import {
 
 export type RolPrototipoAtc =
   | 'GESTOR'
-  | 'COLABORADOR'
   | 'SUPERVISOR'
-  | 'COORDINADOR_CX'
   | 'LEGAL_RECLAMOS'
   | 'MESA_SGD'
-  | 'MODERADOR_EVENTO'
-  | 'ADMIN_FUNCIONAL'
-  | 'CONTROL_ACCESO'
+  | 'COORDINADOR_CX'
+  | 'GESTOR_POSTVENTA'
   | 'CLIENTE'
+  | 'LIDER_EQUIPO'
+  | 'COLABORADOR'
+  | 'MODERADOR_EVENTO'
+  | 'ANALISTA_COBRANZA'
+  | 'CDO'
+  | 'APOYO_CX'
+  | 'RESPONSABLE_PROYECTO'
+  | 'REFERENTE_ATENCION'
+  | 'CONTROL_ACCESO'
+  | 'ADMIN_FUNCIONAL'
   | 'SIN_ATENCION';
 
 export interface PerfilRolPrototipoAtc {
@@ -441,27 +448,13 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'gestor',
     clave: 'demo-gestor',
     nombre: 'Lucía Benavides',
-    cargo: 'Gestor de tickets (ATC)',
+    cargo: '1. Gestor de tickets',
     area: 'ATC',
     rol360: 'gestor',
     nodoInicial360: 'lote',
     vistaPrincipal: 'bandeja',
     resumenPerspectiva:
-      'Atención multicanal en Eje 1/2, Consulta 360 estándar, Bandeja de tickets, Tu Día, Nuevo ticket, Libro de Reclamaciones, Garantías e Integración UrbeMind.',
-  },
-  {
-    id: 'COLABORADOR',
-    personaId: 'p-diego',
-    usuario: 'colaborador',
-    clave: 'demo-colaborador',
-    nombre: 'Diego Salazar',
-    cargo: 'Colaborador de área (Cobranza)',
-    area: 'COBRANZA',
-    rol360: 'gestor',
-    nodoInicial360: 'cuotas',
-    vistaPrincipal: 'bandeja',
-    resumenPerspectiva:
-      'Resolución de tickets derivados a Cobranza, conciliación de vouchers, Tu Día, Resolución por morosidad, Libro, Garantías e Integración UrbeMind.',
+      'Atención multicanal en Eje 1/2 (16 HU en alcance): Bandeja única ordenada por urgencia, Nuevo ticket, Expediente con Guía y Bot IA, Consulta 360 y Tu Día.',
   },
   {
     id: 'SUPERVISOR',
@@ -469,27 +462,13 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'supervisor',
     clave: 'demo-supervisor',
     nombre: 'Gabriela Núñez',
-    cargo: 'Supervisor ATC',
+    cargo: '2. Supervisor ATC',
     area: 'ATC',
     rol360: 'supervisor',
     nodoInicial360: 'ecta',
     vistaPrincipal: 'vivo',
     resumenPerspectiva:
-      'Supervisión integral de Operación y Supervisión: Reasignar en bloque, Alertas SLA, Cierre end-to-end, Políticas SLA, prioridad Rayo y Torre de Control CX.',
-  },
-  {
-    id: 'COORDINADOR_CX',
-    personaId: 'p-valeria',
-    usuario: 'cx',
-    clave: 'demo-cx',
-    nombre: 'Valeria Paredes',
-    cargo: 'Coordinador CX',
-    area: 'CX',
-    rol360: 'cx',
-    nodoInicial360: 'tick',
-    vistaPrincipal: 'torre',
-    resumenPerspectiva:
-      'Torre de Control CX, Cierre end-to-end (72 h), Alertas SLA, EntregaFest en vivo, Buses del Entrega Fest, Resolución por morosidad y Libro en modo consulta.',
+      'Supervisión de atención (8 HU): Operación en Vivo (Dashboard KPI + Visor 3D + Sala de Comandos), Reasignación en bloque, Alertas SLA, Cierre/CSAT y Políticas SLA.',
   },
   {
     id: 'LEGAL_RECLAMOS',
@@ -497,13 +476,13 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'legal',
     clave: 'demo-legal',
     nombre: 'Patricia Vílchez',
-    cargo: 'Responsable legal de reclamos',
+    cargo: '3. Responsable legal de reclamos',
     area: 'LEGAL',
     rol360: 'legal',
     nodoInicial360: 'expo',
     vistaPrincipal: 'libro',
     resumenPerspectiva:
-      'Gestión formal del Libro de Reclamaciones (prórrogas, respuestas con cargo e INDECOPI), recepción de Handoff 6/6 en Eje 3, Resolución por morosidad y Mesa SGD.',
+      'Gestión formal del Libro de Reclamaciones (6 HU): asiento, plazo legal 15 d y prórroga única, respuesta con cargo, reclamos huérfanos, apelaciones INDECOPI y Eje 3.',
   },
   {
     id: 'MESA_SGD',
@@ -511,13 +490,83 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'sgd',
     clave: 'demo-sgd',
     nombre: 'Rocío Castillo',
-    cargo: 'Mesa de Casos SGD',
+    cargo: '4. Gestor de la Mesa de Casos (SGD)',
     area: 'LEGAL',
     rol360: 'legal',
     nodoInicial360: 'expo',
     vistaPrincipal: 'sgd',
     resumenPerspectiva:
-      'Operación exclusiva de la Mesa de Casos Sensibles SGD: cinco líneas de ingreso, cargo previo vs. activación, matriz de riesgo, hilo de evidencia y custodia GLI.',
+      'Operación de la Mesa de Casos Sensibles SGD (6 HU): Código Único, cargo previo vs. activación, matriz de riesgo, escalamiento en cadena a Comité, cruce y cierre GLI.',
+  },
+  {
+    id: 'COORDINADOR_CX',
+    personaId: 'p-valeria',
+    usuario: 'cx',
+    clave: 'demo-cx',
+    nombre: 'Valeria Paredes',
+    cargo: '5. Coordinador CX',
+    area: 'CX',
+    rol360: 'cx',
+    nodoInicial360: 'tick',
+    vistaPrincipal: 'torre',
+    resumenPerspectiva:
+      'Gobierno de experiencia del cliente (6 HU): Torre de Control CX, Cierre end-to-end 72 h, informes diario/quincenal, radar de exposición legal y EntregaFest.',
+  },
+  {
+    id: 'GESTOR_POSTVENTA',
+    personaId: 'p-nelly',
+    usuario: 'postventa',
+    clave: 'demo-postventa',
+    nombre: 'Nelly Quispe',
+    cargo: '6. Gestor de Postventa',
+    area: 'POSTVENTA',
+    rol360: 'gestor',
+    nodoInicial360: 'acta',
+    vistaPrincipal: 'garantias',
+    resumenPerspectiva:
+      'Gestión de Garantías Postventa (5 HU): registro vinculado al Acta de Entrega, validación automática de cobertura, inspección técnica y escalamiento a Eje 3 con adenda.',
+  },
+  {
+    id: 'CLIENTE',
+    personaId: 'cli-001',
+    usuario: 'cliente',
+    clave: 'demo-cliente',
+    nombre: 'Cliente de Aybar (Mi Portal)',
+    cargo: '7. Cliente de Aybar · Mi Portal',
+    area: 'CLIENTE',
+    rol360: 'gestor',
+    nodoInicial360: 'lote',
+    vistaPrincipal: 'bandeja',
+    resumenPerspectiva:
+      'Autogestión en Mi Portal (4 HU): registrar y consultar mis tickets, ver trazabilidad en línea, responder/adjuntar y confirmar solución, y reservar cupo en bus de EntregaFest.',
+  },
+  {
+    id: 'LIDER_EQUIPO',
+    personaId: 'p-marco',
+    usuario: 'lider',
+    clave: 'demo-lider',
+    nombre: 'Marco Alarcón',
+    cargo: '8. Supervisor o líder de equipo',
+    area: 'ATC',
+    rol360: 'supervisor',
+    nodoInicial360: 'tick',
+    vistaPrincipal: 'tudia',
+    resumenPerspectiva:
+      'Liderazgo operativo de equipo (2 HU en alcance): marcar tickets críticos con el Rayo de prioridad y monitorear el avance diario individual y del equipo.',
+  },
+  {
+    id: 'COLABORADOR',
+    personaId: 'p-diego',
+    usuario: 'colaborador',
+    clave: 'demo-colaborador',
+    nombre: 'Diego Salazar',
+    cargo: '9. Colaborador de área',
+    area: 'OPERACIONES',
+    rol360: 'gestor',
+    nodoInicial360: 'lote',
+    vistaPrincipal: 'bandeja',
+    resumenPerspectiva:
+      'Atención resolutora en área especializada (3 HU): ver mi casillero de tareas por área y responsable, cambiar estado con historial inmutable y registrar interacciones con evidencia.',
   },
   {
     id: 'MODERADOR_EVENTO',
@@ -525,27 +574,83 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'moderador',
     clave: 'demo-moderador',
     nombre: 'Sebastián Moreno',
-    cargo: 'Moderador de evento',
+    cargo: '10. Moderador de evento',
     area: 'CX',
     rol360: 'cx',
     nodoInicial360: 'acta',
     vistaPrincipal: 'evento',
     resumenPerspectiva:
-      'Moderación presencial de EntregaFest en vivo (6 frases ancla y derivación inmediata a Estación 4 Legal) y control de Buses del Entrega Fest.',
+      'Moderación presencial de EntregaFest en vivo (2 HU): clasificar riesgo verbal con secuencia de 6 Frases Ancla y derivar de inmediato a la Estación 4 Legal sin debate.',
   },
   {
-    id: 'ADMIN_FUNCIONAL',
-    personaId: 'p-alonso',
-    usuario: 'admin',
-    clave: 'demo-admin',
-    nombre: 'Alonso Pérez',
-    cargo: 'Administrador funcional',
-    area: 'ADMINISTRACION',
-    rol360: 'supervisor',
-    nodoInicial360: 'contrato',
-    vistaPrincipal: 'configuracion',
+    id: 'ANALISTA_COBRANZA',
+    personaId: 'p-carla',
+    usuario: 'cobranza',
+    clave: 'demo-cobranza',
+    nombre: 'Carla Villarán',
+    cargo: '11. Analista de Cobranza',
+    area: 'COBRANZA',
+    rol360: 'gestor',
+    nodoInicial360: 'cuotas',
+    vistaPrincipal: 'morosidad',
     resumenPerspectiva:
-      'Gobierno de Configuración: versionado de Flujos de atención por tipo de ticket, publicación de Guías de solución e inspección de Alertas de configuración.',
+      'Gestión de cartera en mora (2 HU): abrir caso de resolución de contrato por 3 meses impagos y enviar en paralelo al cliente la alerta de cancelación del servicio.',
+  },
+  {
+    id: 'CDO',
+    personaId: 'p-hector',
+    usuario: 'cdo',
+    clave: 'demo-cdo',
+    nombre: 'Héctor Samaniego',
+    cargo: '12. CDO (Gobierno de Datos)',
+    area: 'DATOS',
+    rol360: 'supervisor',
+    nodoInicial360: 'kyc',
+    vistaPrincipal: 'torre',
+    resumenPerspectiva:
+      'Gobierno del dato único de cliente (1 HU): auditoría quincenal de registros paralelos del dato de cliente entre SIGDA y canales de atención.',
+  },
+  {
+    id: 'APOYO_CX',
+    personaId: 'p-camila',
+    usuario: 'apoyo-cx',
+    clave: 'demo-apoyo',
+    nombre: 'Camila Orrego',
+    cargo: '13. Personal de apoyo (CX)',
+    area: 'CX',
+    rol360: 'cx',
+    nodoInicial360: 'acta',
+    vistaPrincipal: 'evento',
+    resumenPerspectiva:
+      'Soporte operativo en eventos (1 HU): registrar cada caso atendido en el EntregaFest con la etiqueta estándar de clasificación.',
+  },
+  {
+    id: 'RESPONSABLE_PROYECTO',
+    personaId: 'p-jorge',
+    usuario: 'proyecto',
+    clave: 'demo-proyecto',
+    nombre: 'Ing. Jorge Zambrano',
+    cargo: '15. Responsable de proyecto',
+    area: 'PROYECTO',
+    rol360: 'gestor',
+    nodoInicial360: 'lote',
+    vistaPrincipal: 'morosidad',
+    resumenPerspectiva:
+      'Custodia de unidades en obra (1 HU): recibir la carta de alerta por cada caso de resolución de contrato de su proyecto (con copia a su supervisor) y registrar la acción en campo.',
+  },
+  {
+    id: 'REFERENTE_ATENCION',
+    personaId: 'p-soledad',
+    usuario: 'referente',
+    clave: 'demo-referente',
+    nombre: 'Soledad Rivas',
+    cargo: '16. Referente de atención',
+    area: 'ATC',
+    rol360: 'gestor',
+    nodoInicial360: 'kyc',
+    vistaPrincipal: 'bandeja',
+    resumenPerspectiva:
+      'Contención empática en atención (1 HU): registrar la nota de estado emocional del cliente describiendo hechos observados sin juicios de valor.',
   },
   {
     id: 'CONTROL_ACCESO',
@@ -553,27 +658,27 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
     usuario: 'garita',
     clave: 'demo-garita',
     nombre: 'Gustavo Huamán',
-    cargo: 'Control de acceso (garita)',
+    cargo: '17. Personal de control de acceso',
     area: 'ADMINISTRACION',
     rol360: 'gestor',
     nodoInicial360: 'lote',
     vistaPrincipal: 'ingreso',
     resumenPerspectiva:
-      'Vista dedicada de garita para registrar cada Ingreso a proyecto (con soporte sin conexión en celular) y avisar al responsable del proyecto.',
+      'Control en garita de obra (1 HU): registrar desde el celular, con un formulario simple, a cada persona que ingresa al proyecto.',
   },
   {
-    id: 'CLIENTE',
-    personaId: 'cli-001',
-    usuario: 'cliente',
-    clave: 'demo-cliente',
-    nombre: 'Cliente convocado (Mi Portal)',
-    cargo: 'Cliente convocado · Mi Portal',
-    area: 'CLIENTE',
-    rol360: 'gestor',
-    nodoInicial360: 'lote',
-    vistaPrincipal: 'evento',
+    id: 'ADMIN_FUNCIONAL',
+    personaId: 'p-alonso',
+    usuario: 'admin',
+    clave: 'demo-admin',
+    nombre: 'Alonso Pérez',
+    cargo: '18. Administrador funcional',
+    area: 'ADMINISTRACION',
+    rol360: 'supervisor',
+    nodoInicial360: 'contrato',
+    vistaPrincipal: 'workflow',
     resumenPerspectiva:
-      'Experiencia de autogestión en Mi Portal para reservar cupo con acompañantes en los Buses del Entrega Fest o anotarse en lista de espera.',
+      'Parametrización sin desarrollo (1 HU): configurar el flujo de trabajo de cada tipo y subtipo de ticket por área (responsable, actividades en orden y SLA).',
   },
   {
     id: 'SIN_ATENCION',
@@ -654,13 +759,13 @@ export class EstadoPrototipoAtcService {
       id: 'p-alonso',
       nombre: 'Alonso Pérez',
       area: 'ADMINISTRACION',
-      rol: 'Administrador funcional (sin líder en NEXUS)',
+      rol: 'Administrador funcional (sin líder inmediato)',
       lider: '',
       correo: 'alonso.perez@aybarcorp.pe',
     },
   ];
 
-  /* ── 1. Configuración reactiva: Flujos, Guías y Alertas del Administrador ── */
+  /* ── 1. Workflow reactivo: Flujos, Guías y Alertas del Administrador ── */
   readonly flujosPorTipo = signal<FlujoTipoConfig[]>([
     {
       tipo: 'CTA',
@@ -1897,21 +2002,39 @@ export class EstadoPrototipoAtcService {
     },
   ]);
 
-  /* ── Métodos de Permisos y Menú Lateral según Rol (fiel a 5181) ── */
+  /* ── Métodos de Permisos y Menú Lateral según Rol (fiel a las 67 HU por rol) ── */
   puedeAtender(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['GESTOR', 'COLABORADOR', 'SUPERVISOR', 'LEGAL_RECLAMOS'].includes(rol);
+    return [
+      'GESTOR',
+      'SUPERVISOR',
+      'LEGAL_RECLAMOS',
+      'GESTOR_POSTVENTA',
+      'LIDER_EQUIPO',
+      'COLABORADOR',
+      'ANALISTA_COBRANZA',
+      'RESPONSABLE_PROYECTO',
+      'REFERENTE_ATENCION',
+    ].includes(rol);
   }
 
   puedeRegistrarTicket(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['GESTOR', 'COLABORADOR', 'SUPERVISOR'].includes(rol);
+    return [
+      'GESTOR',
+      'SUPERVISOR',
+      'GESTOR_POSTVENTA',
+      'CLIENTE',
+      'LIDER_EQUIPO',
+      'COLABORADOR',
+      'REFERENTE_ATENCION',
+    ].includes(rol);
   }
 
   puedeMarcarRayo(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['SUPERVISOR', 'ADMIN_FUNCIONAL'].includes(rol);
+    return ['SUPERVISOR', 'LIDER_EQUIPO', 'ADMIN_FUNCIONAL'].includes(rol);
   }
 
   puedeVerLibro(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return this.puedeAtender(rol) || rol === 'COORDINADOR_CX';
+    return ['LEGAL_RECLAMOS', 'SUPERVISOR', 'COORDINADOR_CX', 'CLIENTE'].includes(rol);
   }
 
   puedeGestionarLibro(rol: RolPrototipoAtc = this.rolActivo()): boolean {
@@ -1927,15 +2050,17 @@ export class EstadoPrototipoAtcService {
   }
 
   puedeVerMorosidad(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['COLABORADOR', 'SUPERVISOR', 'LEGAL_RECLAMOS', 'COORDINADOR_CX', 'GESTOR'].includes(rol);
+    return ['ANALISTA_COBRANZA', 'RESPONSABLE_PROYECTO', 'SUPERVISOR', 'LEGAL_RECLAMOS', 'COORDINADOR_CX'].includes(
+      rol,
+    );
   }
 
   puedeVerGarantias(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return !['SIN_ATENCION', 'CONTROL_ACCESO', 'CLIENTE'].includes(rol);
+    return ['GESTOR_POSTVENTA', 'SUPERVISOR', 'GESTOR', 'LEGAL_RECLAMOS'].includes(rol);
   }
 
   puedeOperarGarantias(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['COLABORADOR', 'SUPERVISOR', 'GESTOR'].includes(rol);
+    return ['GESTOR_POSTVENTA', 'SUPERVISOR'].includes(rol);
   }
 
   puedeRegistrarIngreso(rol: RolPrototipoAtc = this.rolActivo()): boolean {
@@ -1943,59 +2068,89 @@ export class EstadoPrototipoAtcService {
   }
 
   puedeVerBuses(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['CLIENTE', 'COORDINADOR_CX', 'MODERADOR_EVENTO', 'SUPERVISOR'].includes(rol);
+    return ['CLIENTE', 'COORDINADOR_CX', 'MODERADOR_EVENTO', 'APOYO_CX', 'SUPERVISOR'].includes(rol);
   }
 
   vistasPermitidasParaRol(rol: RolPrototipoAtc = this.rolActivo()): readonly VistaAtc[] {
-    if (rol === 'CONTROL_ACCESO') return ['ingreso'];
-    if (rol === 'CLIENTE') return ['evento'];
-
-    const vistas: VistaAtc[] = [];
-    if (rol !== 'SIN_ATENCION') {
-      vistas.push('c360', 'vivo');
+    switch (rol) {
+      case 'GESTOR':
+        // #1 Gestor de tickets (HU-ATC-001, 002, 007, 026, 027, 042, 044, 047, 048, 049, 050, 051, 052, 053, 054, 055)
+        return ['c360', 'vivo', 'bandeja', 'tudia', 'nuevo', 'detalle'];
+      case 'SUPERVISOR':
+        // #2 Supervisor ATC — acceso transversal a todas las vistas en alcance (19 vistas)
+        return [
+          'vivo',
+          'c360',
+          'bandeja',
+          'tudia',
+          'nuevo',
+          'detalle',
+          'libro',
+          'sgd',
+          'garantias',
+          'morosidad',
+          'reasignar',
+          'alertas',
+          'cierre',
+          'politicas',
+          'workflow',
+          'evento',
+          'ingreso',
+          'buses',
+          'torre',
+        ];
+      case 'LEGAL_RECLAMOS':
+        // #3 Responsable legal de reclamos (HU-ATC-012, 013, 014, 015, 016, 040)
+        return ['libro', 'bandeja', 'detalle', 'c360'];
+      case 'MESA_SGD':
+        // #4 Gestor de la Mesa de Casos SGD (HU-ATC-020, 021, 022, 023, 024, 025)
+        return ['sgd', 'vivo', 'c360'];
+      case 'COORDINADOR_CX':
+        // #5 Coordinador CX (HU-ATC-029, 030, 031, 032, 039, 041)
+        return ['torre', 'cierre', 'alertas', 'vivo', 'evento', 'c360'];
+      case 'GESTOR_POSTVENTA':
+        // #6 Gestor de Postventa (HU-ATC-026, 033, 034, 035, 036)
+        return ['garantias', 'bandeja', 'detalle', 'c360'];
+      case 'CLIENTE':
+        // #7 Cliente de Aybar / Convocado Entrega Fest (HU-ATC-060, 064, 065, 066)
+        return ['bandeja', 'nuevo', 'detalle', 'evento', 'libro'];
+      case 'LIDER_EQUIPO':
+        // #8 Supervisor o líder de equipo (HU-ATC-045, 054)
+        return ['vivo', 'tudia', 'bandeja', 'detalle', 'reasignar'];
+      case 'COLABORADOR':
+        // #9 Colaborador de área (HU-ATC-004, 005, 009)
+        return ['bandeja', 'detalle', 'tudia'];
+      case 'MODERADOR_EVENTO':
+        // #10 Moderador de evento (HU-ATC-037, 038)
+        return ['evento'];
+      case 'ANALISTA_COBRANZA':
+        // #11 Analista de Cobranza (HU-ATC-056, 057)
+        return ['morosidad', 'bandeja', 'detalle', 'c360'];
+      case 'CDO':
+        // #12 CDO (HU-ATC-032)
+        return ['torre', 'c360'];
+      case 'APOYO_CX':
+        // #13 Personal de apoyo CX (HU-ATC-039)
+        return ['evento'];
+      case 'RESPONSABLE_PROYECTO':
+        // #15 Responsable de proyecto (HU-ATC-058)
+        return ['morosidad', 'bandeja', 'detalle'];
+      case 'REFERENTE_ATENCION':
+        // #16 Referente de atención (HU-ATC-028)
+        return ['bandeja', 'detalle', 'c360'];
+      case 'CONTROL_ACCESO':
+        // #17 Personal de control de acceso (HU-ATC-059)
+        return ['ingreso'];
+      case 'ADMIN_FUNCIONAL':
+        // #18 Administrador funcional (HU-ATC-043)
+        return ['workflow', 'politicas'];
+      case 'SIN_ATENCION':
+      default:
+        return ['bandeja', 'nuevo'];
     }
-    vistas.push('bandeja');
-    if (['GESTOR', 'COLABORADOR', 'SUPERVISOR', 'ADMIN_FUNCIONAL'].includes(rol)) {
-      vistas.push('tudia');
-    }
-    vistas.push('nuevo', 'detalle');
-    if (['COLABORADOR', 'SUPERVISOR', 'LEGAL_RECLAMOS', 'COORDINADOR_CX'].includes(rol)) {
-      vistas.push('morosidad');
-    }
-    if (rol === 'SUPERVISOR') {
-      vistas.push('ingreso');
-    }
-    if (this.puedeVerLibro(rol)) {
-      vistas.push('libro');
-    }
-    if (rol !== 'SIN_ATENCION') {
-      vistas.push('garantias');
-    }
-    if (['MESA_SGD', 'LEGAL_RECLAMOS', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('sgd');
-    }
-    if (rol === 'SUPERVISOR') {
-      vistas.push('reasignar');
-    }
-    if (['SUPERVISOR', 'COORDINADOR_CX'].includes(rol)) {
-      vistas.push('alertas', 'cierre');
-    }
-    if (rol === 'SUPERVISOR') {
-      vistas.push('politicas');
-    }
-    if (rol === 'ADMIN_FUNCIONAL' || rol === 'SUPERVISOR') {
-      vistas.push('configuracion');
-    }
-    if (['COORDINADOR_CX', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('torre');
-    }
-    if (['COORDINADOR_CX', 'MODERADOR_EVENTO', 'SUPERVISOR'].includes(rol)) {
-      vistas.push('evento');
-    }
-    return vistas;
   }
 
-  /* ── Métodos que conectan Configuración y Políticas SLA con el resto de vistas ── */
+  /* ── Métodos que conectan Workflow y Políticas SLA con el resto de vistas ── */
   obtenerFlujoActivo(tipo: string): FlujoTipoConfig {
     return (
       this.flujosPorTipo().find((f) => f.tipo === tipo) ?? {

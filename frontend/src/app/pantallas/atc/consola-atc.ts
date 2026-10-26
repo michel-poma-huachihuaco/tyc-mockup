@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,10 @@ import {
   afterNextRender,
   computed,
   effect,
+  untracked,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -16,6 +19,7 @@ import {
   AyAppearancePanel,
   AyBadge,
   AyButton,
+  AyToggleButton,
   AyCard,
   AyCardBody,
   AyCardHeader,
@@ -87,7 +91,9 @@ import {
   type RolPrototipoAtc,
 } from './estado-prototipo-atc';
 import { BarraFiltrosComponent } from './barra-filtros';
+import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
+import { alternarFavorito, guardarFavoritos, leerFavoritos } from './favoritos-atc';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 interface ItemMenuAtc {
@@ -104,12 +110,15 @@ interface ItemMenuAtc {
   selector: 'app-consola-atc',
   standalone: true,
   imports: [
+    NgTemplateOutlet,
     BarraFiltrosComponent,
+    FiltroColumnasTablaDirective,
     VacioFiltrosComponent,
     AyAlert,
     AyAppearancePanel,
     AyBadge,
     AyButton,
+    AyToggleButton,
     AyCard,
     AyCardBody,
     AyCardHeader,
@@ -192,18 +201,160 @@ interface ItemMenuAtc {
 
     <div class="pl-atc-cuerpo">
       <div class="pl-atc-lateral" (click)="alInterceptarEnlaceSidebar($event)">
+        <ng-template #herramientas>
+        <!-- Herramientas (pie del sidebar) (Ver como, Tema, Apariencia, Simulación, Notas) -->
+        <div class="pt-herr">
+          @if (herramientasAbierto()) {
+            @if (vistaHerramientas() === 'notas') {
+              <div class="pt-herr__panel" role="region" aria-label="Notas de esta pantalla">
+                <div class="pt-herr__cab">
+                  <button
+                    type="button"
+                    class="pt-herr__atras"
+                    aria-label="Volver a las herramientas"
+                    (click)="vistaHerramientas.set('menu')"
+                  >
+                    ‹
+                  </button>
+                  <div>
+                    <h2>Notas de esta pantalla</h2>
+                    <small>Supuestos, límites y pendientes para revisar</small>
+                  </div>
+                </div>
+                <div class="pt-herr__sec">
+                  <ay-checkbox
+                    [marcado]="mostrarTrazabilidadHu()"
+                    (marcadoChange)="mostrarTrazabilidadHu.set($event)"
+                  >
+                    Mostrar etiquetas de trazabilidad HU en pantalla
+                  </ay-checkbox>
+                </div>
+                @if (notasPantallaActual().length) {
+                  <div class="pt-herr__notas">
+                    @for (nota of notasPantallaActual(); track nota) {
+                      <div class="pt-herr__nota">{{ nota }}</div>
+                    }
+                  </div>
+                } @else {
+                  <p class="pt-herr__vacio">Esta pantalla no tiene notas.</p>
+                }
+              </div>
+            } @else {
+              <div class="pt-herr__panel" role="region" aria-label="Herramientas">
+                <div class="pt-herr__cab">
+                  <div>
+                    <h2>Herramientas</h2>
+                    <small>Reloj: {{ relojSimuladoTexto() }}</small>
+                  </div>
+                </div>
+
+                <div class="pt-herr__sec">
+                  <ay-form-field etiqueta="Ver como">
+                    <ay-select
+                      [opciones]="opcionesSelectPerspectivas"
+                      [valor]="perspectivaId()"
+                      (valorChange)="alCambiarPerspectivaId($event)"
+                    />
+                  </ay-form-field>
+                  <small ayText="body" size="xs">Cambia de usuario y sus permisos.</small>
+                </div>
+
+                <div class="pt-herr__sec">
+                  <b>Tema</b>
+                  <app-boton-tema />
+                </div>
+
+                <div class="pt-herr__filas">
+                  <button type="button" class="pt-herr__fila" (click)="abrirPanelApariencia()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <span>
+                      <b>Apariencia</b>
+                      <small>Paleta, grises, densidad y bordes</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+
+                  <button type="button" class="pt-herr__fila" (click)="abrirPanelSimulacion()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l3 2" />
+                    </svg>
+                    <span>
+                      <b>Simulación</b>
+                      <small>Reloj, escenarios y fuentes caídas</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+
+                  <button type="button" class="pt-herr__fila" (click)="vistaHerramientas.set('notas')">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                    </svg>
+                    <span>
+                      <b>
+                        Notas
+                        @if (notasPantallaActual().length) {
+                          <span class="pt-herr__cuenta">{{ notasPantallaActual().length }}</span>
+                        }
+                      </b>
+                      <small>Supuestos y pendientes de esta pantalla</small>
+                    </span>
+                    <i aria-hidden="true">›</i>
+                  </button>
+                </div>
+              </div>
+            }
+          }
+
+          <button
+            type="button"
+            class="pt-herr__fab"
+            [attr.aria-expanded]="herramientasAbierto()"
+            aria-label="Herramientas"
+            title="Herramientas"
+            (click)="alternarHerramientas()"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+              />
+            </svg>
+          </button>
+        </div>
+        </ng-template>
         <ay-sidebar
           etiqueta="Módulos de Aybar Atiende"
           [grupos]="gruposSidebar()"
           [(colapsada)]="lateralPlegado"
         >
-          <div ayPie ayStack gap="2">
+          <div ayPie class="pl-sidebar-pie">
+            <ng-container *ngTemplateOutlet="herramientas" />
             <ay-button
               tamano="sm"
               variante="ghost"
               [bloque]="true"
+              title="Cerrar sesión"
               (click)="irAPantallaLogin()"
             >
+              <svg
+                ayIconoInicio
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
               Cerrar sesión
             </ay-button>
           </div>
@@ -211,6 +362,30 @@ interface ItemMenuAtc {
       </div>
 
       <main id="atc-contenido" class="pl-atc-principal" tabindex="-1">
+        <div #favoritosHost class="pl-favoritos" [hidden]="!opcionActual()">
+          <ay-toggle-button
+            variante="icon"
+            tamano="lg"
+            [etiqueta]="actualEsFavorito() ? 'Quitar de favoritos' : 'Marcar como favorito'"
+            [presionado]="actualEsFavorito()"
+            [disabled]="!opcionActual()"
+            (presionadoChange)="alternarFavoritoActual()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              [attr.fill]="actualEsFavorito() ? 'currentColor' : 'none'"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </ay-toggle-button>
+        </div>
         <div ayStack gap="6">
           @if (avisoNavegacion()) {
             <ay-alert
@@ -237,6 +412,8 @@ interface ItemMenuAtc {
             @case ('vivo') {
               <app-vista-vivo
                 [mostrarHu]="mostrarTrazabilidadHu()"
+                [tickets]="ticketsVisibles()"
+                [areaInicial]="areaVivo()"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irABandeja)="vistaActiva.set('bandeja')"
               />
@@ -272,6 +449,7 @@ interface ItemMenuAtc {
                 [tickets]="ticketsVisibles()"
                 [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
+                [contexto]="contextoNuevoTicket()"
                 (ticketCreado)="alCrearTicket($event)"
               />
             }
@@ -446,9 +624,9 @@ interface ItemMenuAtc {
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
-            @case ('configuracion') {
+            @case ('workflow') {
               <app-vista-especializada
-                subvista="configuracion"
+                subvista="workflow"
                 [tickets]="ticketsVisibles()"
                 [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
@@ -492,6 +670,7 @@ interface ItemMenuAtc {
                 (verContrato)="abrirContrato($event)"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
+                (verAreaEnVivo)="abrirVivoEnArea($event)"
               />
             }
           }
@@ -693,131 +872,6 @@ interface ItemMenuAtc {
       </ay-side-panel>
     </div>
 
-    <!-- Herramientas flotantes en esquina inferior izquierda (Ver como, Tema, Apariencia, Simulación, Notas) -->
-    <div class="pt-herr">
-      @if (herramientasAbierto()) {
-        @if (vistaHerramientas() === 'notas') {
-          <div class="pt-herr__panel" role="region" aria-label="Notas de esta pantalla">
-            <div class="pt-herr__cab">
-              <button
-                type="button"
-                class="pt-herr__atras"
-                aria-label="Volver a las herramientas"
-                (click)="vistaHerramientas.set('menu')"
-              >
-                ‹
-              </button>
-              <div>
-                <h2>Notas de esta pantalla</h2>
-                <small>Supuestos, límites y pendientes para revisar</small>
-              </div>
-            </div>
-            <div class="pt-herr__sec">
-              <ay-checkbox
-                [marcado]="mostrarTrazabilidadHu()"
-                (marcadoChange)="mostrarTrazabilidadHu.set($event)"
-              >
-                Mostrar etiquetas de trazabilidad HU en pantalla
-              </ay-checkbox>
-            </div>
-            @if (notasPantallaActual().length) {
-              <div class="pt-herr__notas">
-                @for (nota of notasPantallaActual(); track nota) {
-                  <div class="pt-herr__nota">{{ nota }}</div>
-                }
-              </div>
-            } @else {
-              <p class="pt-herr__vacio">Esta pantalla no tiene notas.</p>
-            }
-          </div>
-        } @else {
-          <div class="pt-herr__panel" role="region" aria-label="Herramientas">
-            <div class="pt-herr__cab">
-              <div>
-                <h2>Herramientas</h2>
-                <small>Reloj: {{ relojSimuladoTexto() }}</small>
-              </div>
-            </div>
-
-            <div class="pt-herr__sec">
-              <ay-form-field etiqueta="Ver como">
-                <ay-select
-                  [opciones]="opcionesSelectPerspectivas"
-                  [valor]="perspectivaId()"
-                  (valorChange)="alCambiarPerspectivaId($event)"
-                />
-              </ay-form-field>
-              <small ayText="body" size="xs">Cambia de usuario y sus permisos.</small>
-            </div>
-
-            <div class="pt-herr__sec">
-              <b>Tema</b>
-              <app-boton-tema />
-            </div>
-
-            <div class="pt-herr__filas">
-              <button type="button" class="pt-herr__fila" (click)="abrirPanelApariencia()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <span>
-                  <b>Apariencia</b>
-                  <small>Paleta, grises, densidad y bordes</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-
-              <button type="button" class="pt-herr__fila" (click)="abrirPanelSimulacion()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 2" />
-                </svg>
-                <span>
-                  <b>Simulación</b>
-                  <small>Reloj, escenarios y fuentes caídas</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-
-              <button type="button" class="pt-herr__fila" (click)="vistaHerramientas.set('notas')">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-                </svg>
-                <span>
-                  <b>
-                    Notas
-                    @if (notasPantallaActual().length) {
-                      <span class="pt-herr__cuenta">{{ notasPantallaActual().length }}</span>
-                    }
-                  </b>
-                  <small>Supuestos y pendientes de esta pantalla</small>
-                </span>
-                <i aria-hidden="true">›</i>
-              </button>
-            </div>
-          </div>
-        }
-      }
-
-      <button
-        type="button"
-        class="pt-herr__fab"
-        [attr.aria-expanded]="herramientasAbierto()"
-        aria-label="Herramientas"
-        title="Herramientas"
-        (click)="alternarHerramientas()"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="3" />
-          <path
-            d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
-          />
-        </svg>
-      </button>
-    </div>
-
     <!-- Robot Asistente de IA 3D flotante en esquina inferior derecha (HU-ATC-048) -->
     <app-asistente-bot-atc
       [vistaActiva]="vistaActiva()"
@@ -835,20 +889,24 @@ interface ItemMenuAtc {
     >
       <div ayStack gap="3">
         @for (grupo of gruposSidebar(); track grupo.etiqueta) {
-          <ay-heading [nivel]="3" size="sm">{{ grupo.etiqueta }}</ay-heading>
+          <ay-heading class="pl-nav-movil__grupo" [nivel]="3" size="sm">{{ grupo.etiqueta }}</ay-heading>
           <div ayStack gap="1">
             @for (el of grupo.elementos; track el.href) {
               <ay-button
                 tamano="sm"
                 [variante]="el.actual ? 'primary' : 'ghost'"
                 [bloque]="true"
+                class="pl-nav-movil__item"
+                [attr.data-href]="el.href"
                 (click)="irAVistaDesdeHref(el.href); navegacionMovilAbierta.set(false)"
               >
+                <span class="ay-sidebar__icon" aria-hidden="true"></span>
                 {{ el.etiqueta }}
               </ay-button>
             }
           </div>
         }
+        <ng-container *ngTemplateOutlet="herramientas" />
       </div>
     </ay-drawer>
 
@@ -1097,20 +1155,21 @@ interface ItemMenuAtc {
       }
     </ay-modal>
 
-    <!-- Modal de consulta de catálogo funcional de 60 HUs -->
+    <!-- Modal de consulta de catálogo funcional -->
     <ay-modal
       size="lg"
       [abierto]="modalCatalogoHuAbierto()"
       (abiertoChange)="modalCatalogoHuAbierto.set($event)"
-      titulo="Catálogo Funcional del Sistema (60 Historias de Usuario)"
+      titulo="Catálogo Funcional del Sistema"
     >
       <div ayStack gap="4">
         <app-barra-filtros [filtros]="filtrosHu" />
 
         <ay-table
-          leyenda="Catálogo de 60 Historias de Usuario"
+          leyenda="Catálogo de Historias de Usuario"
           [columnas]="columnasCatalogoHu"
           [filas]="filtrosHu.filtradas()"
+          [filtrosTabla]="filtrosHu"
           [cabeceraFija]="true"
           [rayada]="true"
         >
@@ -1126,19 +1185,29 @@ interface ItemMenuAtc {
             <div ayStack gap="1">
               <span>{{ hu.titulo }}</span>
               <span ayText="body" size="xs">Módulo: {{ hu.pantalla }}</span>
+              @if (hu.etapaNota) {
+                <span ayText="body" size="xs">{{ hu.etapaNota }}</span>
+              }
             </div>
           </ng-template>
           <ng-template ayCelda="etapa" let-fila>
             @let hu = comoHu(fila);
-            <ay-badge size="sm" [tono]="hu.etapa === 'Etapa 2' ? 'warning' : 'success'">
-              {{ hu.etapa ?? 'Etapa 1' }}
+            <ay-badge size="sm" [tono]="hu.etapaNota ? 'neutral' : hu.etapa === 'Etapa 2' ? 'warning' : 'success'">
+              {{ hu.etapaNota ? 'Fuera de alcance' : (hu.etapa ?? 'Etapa 1') }}
             </ay-badge>
           </ng-template>
           <ng-template ayCelda="accion" let-fila>
             @let hu = comoHu(fila);
-            <ay-button tamano="sm" variante="secondary" (click)="irAVistaDeHu(hu.vista)">
-              Ir a vista →
-            </ay-button>
+            <div class="pl-atc-acciones-celda">
+              <ay-button
+                tamano="sm"
+                variante="secondary"
+                [disabled]="!hu.vista || !!hu.etapaNota"
+                (click)="irAVistaDeHu(hu.vista)"
+              >
+                {{ hu.etapaNota ? 'Fuera de alcance' : 'Ir a vista →' }}
+              </ay-button>
+            </div>
           </ng-template>
           <app-vacio-filtros ayVacio [filtros]="filtrosHu" elemento="historia" />
         </ay-table>
@@ -1150,6 +1219,7 @@ export class ConsolaAtcComponent {
   private readonly acceso = inject(Acceso);
   private readonly router = inject(Router);
   private readonly anfitrion: HTMLElement = inject(ElementRef).nativeElement;
+  private readonly favoritosHostRef = viewChild<ElementRef<HTMLElement>>('favoritosHost');
   readonly estadoProto = inject(EstadoPrototipoAtcService);
 
   readonly destinosSalto = [{ id: 'atc-contenido', etiqueta: 'Saltar al contenido principal' }];
@@ -1193,26 +1263,26 @@ export class ConsolaAtcComponent {
 
 
   readonly columnasFirmantes: readonly AyColumna[] = [
-    { clave: 'rol', cabecera: 'Rol Contractual' },
-    { clave: 'nombre', cabecera: 'Nombre y Documento' },
-    { clave: 'fechaFirma', cabecera: 'Fecha y Hora de Firma' },
-    { clave: 'modalidad', cabecera: 'Modalidad de Certificación' },
-    { clave: 'hashCustodia', cabecera: 'Hash SHA-256 Custodia GLI' },
+    { clave: 'rol', cabecera: 'Rol Contractual', ordenable: true },
+    { clave: 'nombre', cabecera: 'Nombre y Documento', ordenable: true },
+    { clave: 'fechaFirma', cabecera: 'Fecha y Hora de Firma', ordenable: true },
+    { clave: 'modalidad', cabecera: 'Modalidad de Certificación', ordenable: true },
+    { clave: 'hashCustodia', cabecera: 'Hash SHA-256 Custodia GLI', ordenable: true },
   ];
 
   readonly columnasCronograma: readonly AyColumna[] = [
-    { clave: 'numero', cabecera: 'N.º Letra' },
-    { clave: 'vencimiento', cabecera: 'Vencimiento' },
-    { clave: 'monto', cabecera: 'Importe', alineacion: 'end' },
-    { clave: 'estado', cabecera: 'Estado' },
-    { clave: 'fechaPago', cabecera: 'Fecha de Pago' },
-    { clave: 'operacion', cabecera: 'Operación Conciliada' },
+    { clave: 'numero', cabecera: 'N.º Letra', ordenable: true },
+    { clave: 'vencimiento', cabecera: 'Vencimiento', ordenable: true },
+    { clave: 'monto', cabecera: 'Importe', alineacion: 'end', ordenable: true },
+    { clave: 'estado', cabecera: 'Estado', ordenable: true },
+    { clave: 'fechaPago', cabecera: 'Fecha de Pago', ordenable: true },
+    { clave: 'operacion', cabecera: 'Operación Conciliada', ordenable: true },
   ];
 
   readonly columnasCatalogoHu: readonly AyColumna[] = [
-    { clave: 'id', cabecera: 'Código y Feature', ancho: '13rem' },
-    { clave: 'titulo', cabecera: 'Historia de Usuario y Módulo' },
-    { clave: 'etapa', cabecera: 'Etapa', ancho: '7rem' },
+    { clave: 'id', cabecera: 'Código y Feature', ancho: '13rem', ordenable: true },
+    { clave: 'titulo', cabecera: 'Historia de Usuario y Módulo', ordenable: true },
+    { clave: 'etapa', cabecera: 'Etapa', ancho: '7rem', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
@@ -1259,10 +1329,10 @@ export class ConsolaAtcComponent {
       ],
       nuevo: [
         'El cálculo de SLA en horas hábiles queda congelado al momento de la apertura según la versión vigente de la matriz en Políticas SLA.',
-        'El flujo configurado en Configuración determina el área inicial del ticket.',
+        'El flujo configurado en Workflow determina el área inicial del ticket.',
       ],
       detalle: [
-        'Muestra la versión de Guía de solución publicada en Configuración y permite reportar falta de guía hacia Alertas de Configuración.',
+        'Muestra la versión de Guía de solución publicada en Workflow y permite reportar falta de guía hacia Alertas de Workflow.',
         'El historial de estados del ticket es inmutable y auditable.',
       ],
       morosidad: [
@@ -1295,11 +1365,8 @@ export class ConsolaAtcComponent {
       politicas: [
         'Matriz parametrizable de Políticas SLA. Todo cambio aquí actualiza de inmediato el SLA congelado al registrar un Nuevo Ticket.',
       ],
-      configuracion: [
-        'Flujos por tipo, Guías de solución versionadas y Alertas de configuración. Publicar una versión impacta en Nuevo Ticket y Detalle.',
-      ],
-      urbemind: [
-        'Integración CTI UrbeMind con webhook HMAC-SHA256 e idempotencia por callId.',
+      workflow: [
+        'Workflow: Flujos por tipo (vista por área y tabla), Guías de solución versionadas y Alertas. Publicar una versión impacta en Nuevo Ticket y Detalle.',
       ],
       evento: [
         'Control de padrón EntregaFest por QR/DNI y reserva de cupos en buses con validación de titularidad y estado de pago.',
@@ -1327,7 +1394,7 @@ export class ConsolaAtcComponent {
       id: 'vivo',
       grupo: 'ESTRELLA',
       titulo: 'Operación en Vivo',
-      subtitulo: 'Planta de atención en tiempo real, colas y niveles de servicio',
+      subtitulo: 'Estado de atención por responsable, planta en tiempo real y niveles de servicio',
       icono: 'M22 12h-4l-3 9L9 3l-3 9H2',
     },
   ];
@@ -1446,7 +1513,7 @@ export class ConsolaAtcComponent {
       id: 'torre',
       grupo: 'SUPERVISION',
       titulo: 'Torre de Control CX',
-      subtitulo: 'Tablero, riesgo de denuncia, encuestas, informes y auditoría IA',
+      subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
       icono: 'M18 20V10 M12 20V4 M6 20v-6',
     },
   ];
@@ -1460,15 +1527,19 @@ export class ConsolaAtcComponent {
       icono: 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
     },
     {
-      id: 'configuracion',
+      id: 'workflow',
       grupo: 'GESTION',
-      titulo: 'Configuración',
-      subtitulo: 'Flujos por tipo, guías de solución versionadas y alertas de configuración',
-      icono: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.65 1.65 0 0 0 .33 1.82',
+      titulo: 'Workflow',
+      subtitulo: 'Flujos por tipo y área resolutora, guías de solución versionadas y alertas',
+      icono: 'M6 3v6 M6 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M18 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M6 15v3a3 3 0 0 0 3 3h6 M18 15v-3',
     },
   ];
 
   readonly vistaActiva = signal<VistaAtc>('c360');
+  /** Área con la que la Torre abre Vivo; vacía si se entra por el menú. */
+  readonly areaVivo = signal<string>('');
+  /** Cliente y lote con los que la Vista 360 abrió «Nueva gestión» (GRA-02). */
+  readonly contextoNuevoTicket = signal<{ cliente: string; dni: string; proyecto: string; lote?: string } | null>(null);
   /** Vista desde la que se abrió el ticket en curso: a ella vuelve «Volver» y es la que se resalta en el sidebar. */
   readonly vistaOrigen = signal<VistaAtc>('bandeja');
   readonly avisoNavegacion = signal<string | null>(null);
@@ -1511,10 +1582,36 @@ export class ConsolaAtcComponent {
     const listables = this.todosLosMenus.filter((m) => !m.oculto);
     if (!this.filtrarSidebarPorRol()) return listables;
     const permitidos = this.estadoProto.vistasPermitidasParaRol(this.perspectivaId());
-    return listables.filter((m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id));
+    return listables.filter((m) => permitidos.includes(m.id));
   });
 
+  /** FAV-01: el grupo «Favoritos» aparece arriba del menú en cuanto la persona marca uno y retira esas vistas de su grupo original para evitar duplicación. */
   readonly gruposSidebar = computed<AySidebarGrupo[]>(() => {
+    const favoritos = this.favoritosDisponibles();
+    if (favoritos.length === 0) return this.gruposMenu();
+    const hrefsFavoritos = new Set(favoritos.map((o) => o.href));
+    const grupo: AySidebarGrupo = {
+      etiqueta: 'Favoritos',
+      plegable: true,
+      abiertoInicial: true,
+      elementos: favoritos.map((o) => ({
+        href: o.href,
+        icono: o.id,
+        etiqueta: o.titulo,
+        actual: o.actual,
+        insignia: o.insignia,
+      })),
+    };
+    const gruposSinDuplicados = this.gruposMenu()
+      .map((g) => ({
+        ...g,
+        elementos: g.elementos.filter((el) => !hrefsFavoritos.has(el.href)),
+      }))
+      .filter((g) => g.elementos.length > 0);
+    return [grupo, ...gruposSinDuplicados];
+  });
+
+  private readonly gruposMenu = computed<AySidebarGrupo[]>(() => {
     const rol = this.perspectivaId();
     const activa = this.vistaActiva();
     // Dentro de un ticket se resalta la vista desde la que se abrió.
@@ -1523,32 +1620,27 @@ export class ConsolaAtcComponent {
     if (rol === 'CLIENTE') {
       return [
         {
-          etiqueta: 'Núcleo 360 y Planta',
-          plegable: true,
-          abiertoInicial: true,
-          elementos: this.menuEstrella.map((m) => ({
-            href: `#vista:${m.id}`,
-            icono: m.id,
-            etiqueta: m.titulo,
-            actual: activa === m.id,
-          })),
-        },
-        {
-          etiqueta: 'Mi Portal',
+          etiqueta: 'Mi Portal (Autogestión)',
           plegable: true,
           abiertoInicial: true,
           elementos: [
             {
-              href: '#vista:evento',
-              icono: 'evento',
-              etiqueta: 'EntregaFest en vivo',
-              actual: activa === 'evento' || activa === 'buses',
+              href: '#vista:bandeja',
+              icono: 'bandeja',
+              etiqueta: 'Mis tickets y trazabilidad',
+              actual: activa === 'bandeja' || activa === 'detalle',
             },
             {
               href: '#vista:nuevo',
               icono: 'nuevo',
-              etiqueta: 'Mis solicitudes y nueva solicitud',
+              etiqueta: 'Registrar nueva solicitud',
               actual: activa === 'nuevo',
+            },
+            {
+              href: '#vista:evento',
+              icono: 'evento',
+              etiqueta: 'EntregaFest y reserva de bus',
+              actual: activa === 'evento' || activa === 'buses',
             },
             {
               href: '#vista:libro',
@@ -1569,7 +1661,7 @@ export class ConsolaAtcComponent {
       if (id === 'bandeja') return String(this.ticketsVisibles().length);
       if (id === 'tudia') return 'Hoy';
       if (id === 'alertas' && alertasAbiertas > 0) return String(alertasAbiertas);
-      if (id === 'configuracion' && alertasConfigPend > 0) return String(alertasConfigPend);
+      if (id === 'workflow' && alertasConfigPend > 0 && this.estadoProto.rolActivo() !== 'COORDINADOR_CX') return String(alertasConfigPend);
       if (id === 'libro') return String(this.estadoProto.asientosLibroDetalle().length);
       if (id === 'sgd')
         return String(
@@ -1606,6 +1698,49 @@ export class ConsolaAtcComponent {
       }))
       .filter((g) => g.elementos.length > 0);
   });
+
+  /** FAV-01: opciones del menú del rol activo (para no mostrar favoritos que el rol no ve). */
+  private readonly opcionesMenu = computed(() =>
+    this.gruposMenu().flatMap((g) =>
+      g.elementos.map((el) => ({
+        id: el.href.replace('#vista:', ''),
+        href: el.href,
+        titulo: el.etiqueta,
+        grupo: g.etiqueta,
+        actual: !!el.actual,
+        insignia: el.insignia,
+      })),
+    ),
+  );
+  readonly opcionActual = computed(() => {
+    const activa = this.vistaActiva();
+    if (this.vistaMetaActual().oculto) return undefined;
+    return this.opcionesMenu().find((o) => o.id === activa);
+  });
+  /** Favoritos por persona del rol activo; la memoria evita releer el almacén en cada cálculo. */
+  private readonly favoritosPorPersona = signal<Record<string, string[]>>({});
+  private readonly favoritosIds = computed(() => {
+    const persona = this.perspectivaActual().personaId;
+    return this.favoritosPorPersona()[persona] ?? leerFavoritos(persona);
+  });
+  /** Los favoritos que el rol activo puede ver, el más reciente primero. */
+  readonly favoritosDisponibles = computed(() => {
+    const opciones = this.opcionesMenu();
+    return [...this.favoritosIds()].reverse().flatMap((id) => opciones.filter((o) => o.id === id));
+  });
+  readonly actualEsFavorito = computed(() => {
+    const o = this.opcionActual();
+    return !!o && this.favoritosIds().includes(o.id);
+  });
+
+  alternarFavoritoActual(): void {
+    const o = this.opcionActual();
+    if (!o) return;
+    const persona = this.perspectivaActual().personaId;
+    const ids = alternarFavorito(this.favoritosIds(), o.id);
+    this.favoritosPorPersona.update((m) => ({ ...m, [persona]: ids }));
+    guardarFavoritos(persona, ids);
+  }
 
   readonly menuCuenta = computed<AyMenuItem[]>(() => {
     const p = this.perspectivaActual();
@@ -1703,21 +1838,62 @@ export class ConsolaAtcComponent {
   constructor() {
     const destruccion = inject(DestroyRef);
     const doc = inject(DOCUMENT);
+    // El contexto de «Nueva gestión» vale para una sola apertura del formulario.
+    effect(() => {
+      if (this.vistaActiva() !== 'nuevo') untracked(() => this.contextoNuevoTicket.set(null));
+    });
     effect(() => {
       const uid = this.acceso.sesion()?.usuarioId;
       if (!uid) return;
       const mapaUidRol: Record<string, RolPrototipoAtc> = {
-        admin: 'SUPERVISOR',
-        supervisor: 'SUPERVISOR',
         gestor: 'GESTOR',
+        supervisor: 'SUPERVISOR',
         legal: 'LEGAL_RECLAMOS',
+        sgd: 'MESA_SGD',
         cx: 'COORDINADOR_CX',
-        postventa: 'COLABORADOR',
+        postventa: 'GESTOR_POSTVENTA',
+        cliente: 'CLIENTE',
+        usuario: 'CLIENTE',
+        lider: 'LIDER_EQUIPO',
+        colaborador: 'COLABORADOR',
+        moderador: 'MODERADOR_EVENTO',
+        cobranza: 'ANALISTA_COBRANZA',
+        cdo: 'CDO',
+        'apoyo-cx': 'APOYO_CX',
+        proyecto: 'RESPONSABLE_PROYECTO',
+        referente: 'REFERENTE_ATENCION',
+        garita: 'CONTROL_ACCESO',
+        admin: 'ADMIN_FUNCIONAL',
       };
       const rol = mapaUidRol[uid];
       if (rol && rol !== this.estadoProto.rolActivo()) {
         this.estadoProto.rolActivo.set(rol);
+        const permitidas = this.estadoProto.vistasPermitidasParaRol(rol);
+        if (this.filtrarSidebarPorRol() && permitidas.length > 0 && !permitidas.includes(this.vistaActiva())) {
+          const perfil = ROLES_PROTOTIPO_ATC.find((r) => r.id === rol);
+          if (perfil) {
+            this.vistaActiva.set(perfil.vistaPrincipal);
+          }
+        }
       }
+    });
+
+    const anclarFavoritoEnHeader = () => {
+      const favEl = this.favoritosHostRef()?.nativeElement;
+      if (!favEl) return;
+      for (const nodo of Array.from(this.anfitrion.querySelectorAll<HTMLElement>('.pl-favoritos'))) {
+        if (nodo !== favEl) nodo.remove();
+      }
+      const titulo = this.anfitrion.querySelector<HTMLElement>('#atc-contenido .ay-pageheader__title');
+      if (titulo && (favEl.parentElement !== titulo || titulo.firstChild !== favEl)) {
+        titulo.prepend(favEl);
+      }
+    };
+
+    effect(() => {
+      this.vistaActiva();
+      this.favoritosHostRef();
+      queueMicrotask(anclarFavoritoEnHeader);
     });
 
     afterNextRender(() => {
@@ -1730,6 +1906,10 @@ export class ConsolaAtcComponent {
         obs.observe(barra);
         destruccion.onDestroy(() => obs.disconnect());
       }
+      anclarFavoritoEnHeader();
+      const mo = new MutationObserver(anclarFavoritoEnHeader);
+      mo.observe(this.anfitrion, { childList: true, subtree: true });
+      destruccion.onDestroy(() => mo.disconnect());
       const onKey = (ev: KeyboardEvent) => {
         if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
           ev.preventDefault();
@@ -1740,8 +1920,7 @@ export class ConsolaAtcComponent {
       };
       const onPointerDown = (ev: PointerEvent) => {
         if (!this.herramientasAbierto()) return;
-        const cont = this.anfitrion.querySelector('.pt-herr');
-        if (cont && ev.target instanceof Node && !cont.contains(ev.target)) {
+        if (ev.target instanceof Element && !ev.target.closest('.pt-herr')) {
           this.cerrarHerramientas();
         }
       };
@@ -1943,9 +2122,15 @@ export class ConsolaAtcComponent {
     }
   }
 
+  abrirVivoEnArea(area: string): void {
+    this.areaVivo.set(area);
+    this.vistaActiva.set('vivo');
+  }
+
   irAVistaDesdeHref(href: string): void {
     const id = href.replace('#vista:', '') as VistaAtc;
     if (this.todosLosMenus.some((m) => m.id === id)) {
+      this.areaVivo.set('');
       this.irAVista(id);
     }
   }
@@ -2069,7 +2254,8 @@ export class ConsolaAtcComponent {
     this.vistaActiva.set(this.vistaOrigen());
   }
 
-  alCrearDesde360(_ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean }): void {
+  alCrearDesde360(ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean; lote?: string }): void {
+    this.contextoNuevoTicket.set(ev);
     this.vistaActiva.set('nuevo');
   }
 

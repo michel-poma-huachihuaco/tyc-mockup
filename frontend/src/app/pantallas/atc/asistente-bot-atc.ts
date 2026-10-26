@@ -71,6 +71,7 @@ const NOMBRES_ESTADO: Record<string, string> = {
   IN_PROGRESS: 'En atención',
   PENDING_CUSTOMER: 'Pendiente del cliente',
   ESCALATED: 'Escalado',
+  IN_COMMITTEE: 'Elevado a comité',
   RESOLVED: 'Resuelto',
   CLOSED: 'Cerrado',
   REOPENED: 'Reabierto',
@@ -123,12 +124,12 @@ export class BotAvatarCanvasComponent {
                 <app-bot-avatar-canvas [estado]="estado()" />
               </div>
               <div>
-                <h2>Asistente</h2>
+                <h2>Tigo · Asistente IA</h2>
                 <small>
                   @if (ctx(); as c) {
                     Ticket {{ c.numero }} · {{ c.tipo }}
                   } @else {
-                    Sin ticket abierto
+                    Mascota asistente · Sin ticket abierto
                   }
                 </small>
               </div>
@@ -356,14 +357,15 @@ export class BotAvatarCanvasComponent {
 
         @if (mostrarGlobo() && !abierto() && ctx(); as c) {
           <button type="button" class="pt-bot__globo" (click)="abrirPanel()">
-            ¿Te ayudo con el ticket {{ c.numero }}?
+            Tigo: ¿Te ayudo con el ticket {{ c.numero }}?
           </button>
         }
 
         <button
           type="button"
           class="pt-bot__fab"
-          [attr.aria-label]="abierto() ? 'Cerrar el asistente' : 'Abrir el asistente de IA'"
+          title="Tigo · Asistente de IA"
+          [attr.aria-label]="abierto() ? 'Cerrar el asistente Tigo' : 'Abrir a Tigo, asistente de IA'"
           [attr.aria-expanded]="abierto()"
           (click)="alternarPanel()"
         >
@@ -399,6 +401,7 @@ export class AsistenteBotAtcComponent {
   });
 
   readonly ctx = computed<CtxBot | null>(() => {
+    if (this.vistaActiva() !== 'detalle') return null;
     const num = this.ticketSeleccionadoNum();
     if (!num) return null;
     const t = this.tickets().find((x) => x.num === num);
@@ -484,7 +487,16 @@ export class AsistenteBotAtcComponent {
       this.doc.addEventListener('focusin', onFocusIn);
       this.doc.addEventListener('keydown', onKeyDown);
       window.addEventListener('pt:asistente', onAsistente);
+      // El globo no debe tapar contenido: se va con cualquier scroll o interacción fuera de él.
+      const ocultarGlobo = (ev: Event) => {
+        if (ev.target instanceof Element && ev.target.closest('.pt-bot__globo')) return;
+        if (this.mostrarGlobo()) this.mostrarGlobo.set(false);
+      };
+      this.doc.addEventListener('scroll', ocultarGlobo, true);
+      this.doc.addEventListener('pointerdown', ocultarGlobo, true);
       destroyRef.onDestroy(() => {
+        this.doc.removeEventListener('scroll', ocultarGlobo, true);
+        this.doc.removeEventListener('pointerdown', ocultarGlobo, true);
         this.doc.removeEventListener('focusin', onFocusIn);
         this.doc.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('pt:asistente', onAsistente);
@@ -495,12 +507,12 @@ export class AsistenteBotAtcComponent {
       const c = this.ctx();
       const vista = this.vistaActiva();
       const estaAbierto = this.abierto();
-      if (!c || estaAbierto || (vista !== 'detalle' && vista !== 'bandeja' && vista !== 'vivo')) {
+      if (!c || estaAbierto || vista !== 'detalle') {
         this.mostrarGlobo.set(false);
         return;
       }
       const t1 = window.setTimeout(() => this.mostrarGlobo.set(true), 1400);
-      const t2 = window.setTimeout(() => this.mostrarGlobo.set(false), 9000);
+      const t2 = window.setTimeout(() => this.mostrarGlobo.set(false), 7000);
       onCleanup(() => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);

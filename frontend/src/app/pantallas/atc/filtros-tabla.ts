@@ -10,8 +10,8 @@ import type { AyFilterOpcion, AyFilterValor, AySegmentoOpcion } from '@aybarcorp
  * Semántica: AND entre filtros distintos y con la búsqueda; OR dentro de un filtro `multi`.
  */
 
-/** multi: varias opciones · single: una · boolean: «solo …» · segmento: una vista rápida de 2 a 5 opciones. */
-export type TipoFiltroTabla = 'multi' | 'single' | 'boolean' | 'segmento';
+/** multi: varias opciones · single: una · boolean: «solo …» · segmento: una vista rápida de 2 a 5 opciones · rango-fechas: intervalo [desde, hasta]. */
+export type TipoFiltroTabla = 'multi' | 'single' | 'boolean' | 'segmento' | 'rango-fechas';
 
 export interface OpcionBaseFiltro {
   readonly valor: string;
@@ -22,8 +22,8 @@ export interface DefFiltroTabla<T> {
   readonly id: string;
   readonly etiqueta: string;
   readonly tipo: TipoFiltroTabla;
-  /** Valor de la fila para este filtro; en `boolean`, true si la fila cumple la condición. */
-  readonly valorDe: (fila: T) => string | boolean;
+  /** Valor de la fila para este filtro; en `boolean`, true si la fila cumple la condición; en `rango-fechas`, `Date` o texto de fecha. */
+  readonly valorDe: (fila: T) => string | boolean | Date;
   /** Catálogo fijo de opciones; si falta se derivan de las filas. */
   readonly opciones?: readonly OpcionBaseFiltro[];
   readonly etiquetaDe?: (valor: string) => string;
@@ -53,6 +53,56 @@ const SIN_FILTROS: EstadoFiltros = { busqueda: '', valores: {} };
 export const TODAS = '__todas__';
 const MAX_EN_LINEA = 6;
 const EN_LINEA_CON_MAS = 4;
+
+export function parsearFechaValor(v: unknown): number | null {
+  if (v instanceof Date) {
+    const t = v.getTime();
+    return Number.isNaN(t) ? null : t;
+  }
+  if (typeof v !== 'string') return null;
+  const s = v.trim();
+  if (!s) return null;
+  const isoMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (isoMatch) {
+    return new Date(`${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}T12:00:00`).getTime();
+  }
+  const latamMatch = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(s);
+  if (latamMatch) {
+    return new Date(`${latamMatch[3]}-${latamMatch[2]}-${latamMatch[1]}T12:00:00`).getTime();
+  }
+  const parsed = Date.parse(s);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+export function coincideRangoFecha(v: unknown, desdeIso: string, hastaIso: string): boolean {
+  const desde = desdeIso.trim();
+  const hasta = hastaIso.trim();
+  if (!desde && !hasta) return true;
+  const ms = parsearFechaValor(v);
+  if (ms === null) return false;
+  if (desde) {
+    const minMs = new Date(`${desde}T00:00:00`).getTime();
+    if (!Number.isNaN(minMs) && ms < minMs) return false;
+  }
+  if (hasta) {
+    const maxMs = new Date(`${hasta}T23:59:59.999`).getTime();
+    if (!Number.isNaN(maxMs) && ms > maxMs) return false;
+  }
+  return true;
+}
+
+export function formatearRangoIso(desdeIso: string, hastaIso: string): string {
+  const fmt = (iso: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso.trim());
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+  };
+  const d = desdeIso.trim();
+  const h = hastaIso.trim();
+  if (d && h) return d === h ? fmt(d) : `${fmt(d)} → ${fmt(h)}`;
+  if (d) return `Desde ${fmt(d)}`;
+  if (h) return `Hasta ${fmt(h)}`;
+  return '';
+}
 
 /** Guarda el estado de cada tabla durante la sesión, para que sobreviva a cambiar de vista. */
 @Injectable({ providedIn: 'root' })
@@ -94,7 +144,10 @@ export class FiltrosTabla<T> {
     this.filtradas = computed(() => this.filas().filter((f) => this.coincide(f)));
     this.hayActivos = computed(() => {
       const e = this.estado();
-      return e.busqueda.trim().length > 0 || Object.values(e.valores).some((v) => v.length > 0);
+      return (
+        e.busqueda.trim().length > 0 ||
+        Object.values(e.valores).some((v) => v.some((x) => x.trim().length > 0))
+      );
     });
     this.huella = computed(() => JSON.stringify(this.estado()));
     const muchos = cfg.filtros.length > MAX_EN_LINEA;
@@ -109,8 +162,12 @@ export class FiltrosTabla<T> {
     for (const d of this.cfg.filtros) {
       if (d.id === omitir) continue;
       const vs = e.valores[d.id];
-      if (!vs?.length) continue;
+      if (!vs?.some((x) => x.trim().length > 0)) continue;
       const v = d.valorDe(f);
+      if (d.tipo === 'rango-fechas') {
+        if (!coincideRangoFecha(v, vs[0] ?? '', vs[1] ?? '')) return false;
+        continue;
+      }
       if (d.tipo === 'boolean' ? v !== true : !vs.includes(String(v))) return false;
     }
     return true;
@@ -182,7 +239,7 @@ export class FiltrosTabla<T> {
   }
 
   activo(id: string): boolean {
-    return this.valores(id).length > 0;
+    return this.valores(id).some((x) => x.trim().length > 0);
   }
 
   /** Cuántos filtros de «Más filtros» tienen valor. */

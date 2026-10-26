@@ -53,10 +53,12 @@ import {
 } from './datos-atc';
 import { leerTokenRgb, type RGB } from './three/comun';
 import { inyectarEstilos } from './three/estilos';
+import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import {
   montarGrafo,
   type PulsoGrafo,
   type Ref,
+  type SateliteNodoGrafo,
   type VistaGrafo,
 } from './three/grafo360';
 
@@ -68,6 +70,496 @@ interface NodoCanvasPos {
   readonly s?: Fuente360;
   readonly n?: NodoDato360;
 }
+
+export interface MovimientoRecienteCliente360 {
+  readonly id: string;
+  readonly area: string;
+  readonly titulo: string;
+  readonly detalle: string;
+  readonly fecha: string;
+  readonly nodoId: string;
+  readonly tono: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+}
+
+const ZONA_FIJA_NODO_360: Readonly<Record<string, string>> = {
+  kyc: 'Comercial · Identidad',
+  cont: 'Comercial · Contacto',
+  lote: 'Activos · Unidades',
+  contrato: 'Legal · Contratos',
+  acta: 'Postventa · Entrega',
+  gar: 'Postventa · Garantías',
+  crono: 'Cobranza · Cronograma',
+  cuotas: 'Cobranza · Letras',
+  saldo: 'Finanzas · Liquidación',
+  ecta: 'Finanzas · Estado Cta.',
+  docs: 'Documental · GLI/S3',
+  correos: 'Canales · Correo',
+  llam: 'Canales · Central CTI',
+  tick: 'Atención · Tickets ATC',
+  libro: 'Regulatorio · Libro',
+  expo: 'Legal · Riesgo SGD',
+};
+
+const VOLUMEN_NODOS_CLIENTE_360: Readonly<Record<string, Readonly<Record<string, number>>>> = {
+  eh: {
+    kyc: 3,
+    cont: 4,
+    lote: 2,
+    contrato: 4,
+    acta: 2,
+    gar: 2,
+    crono: 60,
+    cuotas: 13,
+    saldo: 13,
+    ecta: 84,
+    docs: 9,
+    correos: 14,
+    llam: 4,
+    tick: 2,
+    libro: 0,
+    expo: 0,
+  },
+  jr: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 5,
+    acta: 0,
+    gar: 0,
+    crono: 48,
+    cuotas: 22,
+    saldo: 19,
+    ecta: 100,
+    docs: 11,
+    correos: 8,
+    llam: 6,
+    tick: 3,
+    libro: 1,
+    expo: 1,
+  },
+  lp: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 4,
+    crono: 36,
+    cuotas: 8,
+    saldo: 8,
+    ecta: 52,
+    docs: 7,
+    correos: 5,
+    llam: 0,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+  mq: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 0,
+    crono: 48,
+    cuotas: 18,
+    saldo: 18,
+    ecta: 76,
+    docs: 6,
+    correos: 4,
+    llam: 3,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+  rh: {
+    kyc: 2,
+    cont: 3,
+    lote: 2,
+    contrato: 3,
+    acta: 1,
+    gar: 5,
+    crono: 24,
+    cuotas: 24,
+    saldo: 1,
+    ecta: 38,
+    docs: 8,
+    correos: 4,
+    llam: 2,
+    tick: 1,
+    libro: 0,
+    expo: 1,
+  },
+  hq: {
+    kyc: 2,
+    cont: 2,
+    lote: 1,
+    contrato: 4,
+    acta: 0,
+    gar: 0,
+    crono: 60,
+    cuotas: 16,
+    saldo: 16,
+    ecta: 68,
+    docs: 5,
+    correos: 6,
+    llam: 3,
+    tick: 1,
+    libro: 0,
+    expo: 1,
+  },
+  vs: {
+    kyc: 2,
+    cont: 2,
+    lote: 0,
+    contrato: 0,
+    acta: 0,
+    gar: 0,
+    crono: 0,
+    cuotas: 0,
+    saldo: 0,
+    ecta: 0,
+    docs: 0,
+    correos: 1,
+    llam: 1,
+    tick: 1,
+    libro: 0,
+    expo: 0,
+  },
+};
+
+const MOVIMIENTOS_CLIENTE_360: Readonly<Record<string, readonly MovimientoRecienteCliente360[]>> = {
+  eh: [
+    {
+      id: 'eh-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000486 · Cupo bus EntregaFest',
+      detalle: 'En atención por Administración · Lote C-07',
+      fecha: '19 oct · 09:40',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'eh-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante (3 min 12 s)',
+      detalle: 'Consulta de logística EntregaFest · Audio #9921',
+      fecha: '09 oct · 16:15',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'eh-3',
+      area: 'Correo',
+      titulo: 'Hilo «Fecha de entrega de mi lote C-07»',
+      detalle: '2 mensajes · Cronograma de entrega confirmado',
+      fecha: '06 oct · 11:20',
+      nodoId: 'correos',
+      tono: 'neutral',
+    },
+    {
+      id: 'eh-4',
+      area: 'Cobranza',
+      titulo: 'Pago Cuota 13/60 · S/ 1,180.00',
+      detalle: 'Conciliado BCP Op. #774120 · 0 días de mora',
+      fecha: '29 sep · 14:05',
+      nodoId: 'cuotas',
+      tono: 'success',
+    },
+    {
+      id: 'eh-5',
+      area: 'Contratos',
+      titulo: 'Adenda N.º 01 cambio a Lote C-07',
+      detalle: 'Firmada digitalmente · Custodia GLI #99102',
+      fecha: '18 jun · 10:30',
+      nodoId: 'contrato',
+      tono: 'success',
+    },
+  ],
+  jr: [
+    {
+      id: 'jr-1',
+      area: 'Correo Legal',
+      titulo: 'Alerta paralela de cancelación de servicios',
+      detalle: 'Notificación enviada con constancia por 3 meses impagos',
+      fecha: '14 oct · 17:10',
+      nodoId: 'correos',
+      tono: 'danger',
+    },
+    {
+      id: 'jr-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante crítica (7 min 40 s)',
+      detalle: 'Cliente mencionó carta notarial · Grabación #9840',
+      fecha: '13 oct · 11:48',
+      nodoId: 'llam',
+      tono: 'warning',
+    },
+    {
+      id: 'jr-3',
+      area: 'Libro INDECOPI',
+      titulo: 'Hoja de Reclamación ALT-2026-0042',
+      detalle: 'Reclamo por demora de minuta · Vence 03-nov (15 d háb.)',
+      fecha: '12 oct · 15:22',
+      nodoId: 'libro',
+      tono: 'danger',
+    },
+    {
+      id: 'jr-4',
+      area: 'Comité SGD',
+      titulo: 'Ticket ALT-001204 escalado a Legal (Eje 3)',
+      detalle: 'Exposición S/ 3,180.00 · Suspende resolución contractual',
+      fecha: '12 oct · 16:05',
+      nodoId: 'expo',
+      tono: 'warning',
+    },
+    {
+      id: 'jr-5',
+      area: 'Cobranza',
+      titulo: '3.ª Letra vencida acumulada (Cuota 22/48)',
+      detalle: 'Mora exigible S/ 2,940.00 · Caso MOR-2026-0019',
+      fecha: '15 sep · 00:00',
+      nodoId: 'cuotas',
+      tono: 'danger',
+    },
+  ],
+  lp: [
+    {
+      id: 'lp-1',
+      area: 'Postventa',
+      titulo: 'Inspección técnica GAR-0092 programada',
+      detalle: 'Visita de Ing. Pedro L. a Lote C-21 por fisura en muro',
+      fecha: '18 oct · 10:15',
+      nodoId: 'gar',
+      tono: 'info',
+    },
+    {
+      id: 'lp-2',
+      area: 'Tickets ATC',
+      titulo: 'Ticket APV-000412 · Garantía postventa',
+      detalle: 'En atención · Evidencia fotográfica adjunta en GLI',
+      fecha: '16 oct · 14:30',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'lp-3',
+      area: 'Repositorio GLI',
+      titulo: 'Carga de fotos de fisura en muro.jpg',
+      detalle: 'Subidas desde Mi Portal · Indexadas por IA',
+      fecha: '16 oct · 14:28',
+      nodoId: 'docs',
+      tono: 'neutral',
+    },
+    {
+      id: 'lp-4',
+      area: 'Cobranza',
+      titulo: 'Pago Cuota 8/36 · S/ 1,560.00',
+      detalle: 'Débito automático Interbank conciliado al día',
+      fecha: '05 oct · 08:00',
+      nodoId: 'cuotas',
+      tono: 'success',
+    },
+    {
+      id: 'lp-5',
+      area: 'Activos',
+      titulo: 'Firma de Acta de Entrega Lote C-21',
+      detalle: 'Inicia cobertura estructural de 120 meses',
+      fecha: '20 sep · 12:00',
+      nodoId: 'acta',
+      tono: 'success',
+    },
+  ],
+  mq: [
+    {
+      id: 'mq-1',
+      area: 'Cobranza · Rayo',
+      titulo: 'Ticket AIN-000482 con prioridad Rayo',
+      detalle: 'Validación urgente de voucher BCP #88231 (R. Salazar)',
+      fecha: '18 oct · 16:40',
+      nodoId: 'tick',
+      tono: 'warning',
+    },
+    {
+      id: 'mq-2',
+      area: 'Central CTI',
+      titulo: 'Llamada de seguimiento (4 min 05 s)',
+      detalle: 'Solicita constancia de no adeudo para firmar adenda',
+      fecha: '18 oct · 16:20',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'mq-3',
+      area: 'Correo',
+      titulo: 'Recibido «Envío comprobante de pago septiembre»',
+      detalle: 'Adjunta Voucher_BCP_88231.jpg por S/ 1,250.00',
+      fecha: '18 oct · 15:55',
+      nodoId: 'correos',
+      tono: 'info',
+    },
+    {
+      id: 'mq-4',
+      area: 'Cobranza',
+      titulo: 'Abono en tránsito Cuota 18/48 · S/ 1,250.00',
+      detalle: 'Agente BCP #4102 en conciliación bancaria',
+      fecha: '28 sep · 17:12',
+      nodoId: 'cuotas',
+      tono: 'warning',
+    },
+    {
+      id: 'mq-5',
+      area: 'Contratos',
+      titulo: 'Solicitud de Adenda de reprogramación',
+      detalle: 'Contrato VS-2024-0412 · Lote C-14 Villa Sol II',
+      fecha: '25 sep · 10:00',
+      nodoId: 'contrato',
+      tono: 'neutral',
+    },
+  ],
+  rh: [
+    {
+      id: 'rh-1',
+      area: 'Postventa',
+      titulo: 'Programación de cuadrilla GAR-0091',
+      detalle: 'Sellado epóxico en baño principal Dpto. B-402',
+      fecha: '18 oct · 12:30',
+      nodoId: 'gar',
+      tono: 'info',
+    },
+    {
+      id: 'rh-2',
+      area: 'Central CTI',
+      titulo: 'Llamada saliente Postventa (2 min 50 s)',
+      detalle: 'Confirmación de fecha con L. Ccahuana',
+      fecha: '18 oct · 12:10',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'rh-3',
+      area: 'Tickets ATC',
+      titulo: 'Ticket APV-000089 · Garantía impermeabilización',
+      detalle: 'Dentro de cobertura vigente de 12 meses',
+      fecha: '15 oct · 09:20',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'rh-4',
+      area: 'Repositorio GLI',
+      titulo: 'Informe Preliminar GAR-0091.pdf',
+      detalle: 'Evaluación técnica indexada en expediente digital',
+      fecha: '16 oct · 18:00',
+      nodoId: 'docs',
+      tono: 'neutral',
+    },
+    {
+      id: 'rh-5',
+      area: 'Cobranza',
+      titulo: 'Liquidación total de crédito hipotecario',
+      detalle: 'S/ 268,000.00 cancelados · Saldo S/ 0.00',
+      fecha: '14 nov 2025',
+      nodoId: 'ecta',
+      tono: 'success',
+    },
+  ],
+  hq: [
+    {
+      id: 'hq-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000491 · Solicitud de fraccionamiento',
+      detalle: 'Pide reprogramar 3 letras vencidas del Lote E-19',
+      fecha: '18 oct · 11:05',
+      nodoId: 'tick',
+      tono: 'warning',
+    },
+    {
+      id: 'hq-2',
+      area: 'Repositorio GLI',
+      titulo: 'Liquidación de mora MOR-2026-0024.pdf',
+      detalle: 'Emitida por Cobranza · S/ 3,540.00 exigibles',
+      fecha: '17 oct · 16:40',
+      nodoId: 'docs',
+      tono: 'danger',
+    },
+    {
+      id: 'hq-3',
+      area: 'Central CTI',
+      titulo: 'Llamada saliente Cobranza (5 min 18 s)',
+      detalle: 'Negociación de compromiso de pago · Audio #9892',
+      fecha: '15 oct · 10:12',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'hq-4',
+      area: 'Correo',
+      titulo: 'Recordatorio de vencimiento de 3.ª letra',
+      detalle: 'Notificación preventiva enviada al titular',
+      fecha: '05 oct · 09:00',
+      nodoId: 'correos',
+      tono: 'warning',
+    },
+    {
+      id: 'hq-5',
+      area: 'Cobranza',
+      titulo: 'Detección de 3 cuotas impagas (Letras 14–16)',
+      detalle: 'Caso MOR-2026-0024 en Mesa de Morosidad',
+      fecha: '30 sep · 23:59',
+      nodoId: 'cuotas',
+      tono: 'danger',
+    },
+  ],
+  vs: [
+    {
+      id: 'vs-1',
+      area: 'Tickets ATC',
+      titulo: 'Ticket AIN-000495 · Consulta preventa Villa Sol III',
+      detalle: 'Interesada en requisitos de separación de lote',
+      fecha: '19 oct · 10:05',
+      nodoId: 'tick',
+      tono: 'info',
+    },
+    {
+      id: 'vs-2',
+      area: 'Central CTI',
+      titulo: 'Llamada entrante informativa (2 min 10 s)',
+      detalle: 'Orientación comercial · Grabación CTI #9945',
+      fecha: '19 oct · 09:58',
+      nodoId: 'llam',
+      tono: 'neutral',
+    },
+    {
+      id: 'vs-3',
+      area: 'Correo',
+      titulo: 'Recibido «Consulta sobre requisitos Villa Sol III»',
+      detalle: 'Solicita brochure y simulador de financiamiento',
+      fecha: '19 oct · 09:42',
+      nodoId: 'correos',
+      tono: 'neutral',
+    },
+    {
+      id: 'vs-4',
+      area: 'SIGDA / KYC',
+      titulo: 'Alta de titular en maestro SIGDA/TAXON',
+      detalle: 'DNI 74819203 verificado sin lote adjudicado aún',
+      fecha: '19 oct · 09:40',
+      nodoId: 'kyc',
+      tono: 'success',
+    },
+    {
+      id: 'vs-5',
+      area: 'Contacto',
+      titulo: 'Verificación de WhatsApp y correo titular',
+      detalle: '+51 961 402 118 habilitado para Click-to-Call',
+      fecha: '19 oct · 09:40',
+      nodoId: 'cont',
+      tono: 'success',
+    },
+  ],
+};
 
 interface ConsultaMotorRapida {
   readonly id: string;
@@ -383,6 +875,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
     AySelect,
     AyStack,
     AyTable,
+    FiltroColumnasTablaDirective,
     AyTag,
     AyText,
   ],
@@ -397,9 +890,6 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
             : 'Busca a un cliente y consulta en línea sus lotes, cuotas, contratos, documentos, correos y llamadas.'
         "
       >
-        <ay-badge ayEstado size="sm" [tono]="fuentesCaidas().length > 0 ? 'warning' : 'success'">
-          {{ (8 - fuentesCaidas().length) + '/8 fuentes en línea' }}
-        </ay-badge>
         <ng-container ayAcciones>
           @if (clienteSeleccionado()) {
             <ay-button
@@ -433,24 +923,63 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
       <ay-card>
         <ay-card-body>
           <div ayStack gap="3">
-            <!-- Barra superior: Buscador de cliente / documental -->
+            <!-- Barra superior: Buscador de cliente (con aproximación fonética) / documental + Controles de Zonas Fijas -->
             <div #buscador360Host ayRow gap="2" [ajuste]="true" role="search">
               <ay-search-input
                 [etiqueta]="
                   clienteSeleccionado()
-                    ? 'Buscar otro cliente (DNI, nombre, lote, contrato) o consultar documentos/secciones 360'
-                    : 'Buscar cliente (DNI, nombre, código, lote, teléfono o contrato)'
+                    ? 'Buscar otro cliente (DNI, nombre, sonido fonético, lote) o consultar documentos/secciones 360'
+                    : 'Buscar cliente (DNI, nombre, aproximación fonética: Wamani, Parades, Kispe, Marya…)'
                 "
                 size="sm"
                 [retardo]="0"
                 [valor]="busquedaTexto()"
                 (valorChange)="alCambiarBusqueda($event)"
                 (buscar)="ejecutarBusquedaSemantica($event)"
-                placeholder="Ej. 72282555, Huamaní, Paredes, Mamani, Quispe, Soto (sin lote/contrato) o VS-2025-0507…"
+                placeholder="Ej. 72282555, Wamani (≈Huamaní), Parades (≈Paredes), Kispe (≈Quispe), Soto o VS-2025-0507…"
               />
               <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
                 {{ clienteSeleccionado() ? 'Consultar' : 'Buscar cliente' }}
               </ay-button>
+              <ay-button
+                tamano="sm"
+                [variante]="ocultarNodosVacios() ? 'primary' : 'secondary'"
+                (click)="alternarOcultarNodosVacios()"
+              >
+                {{
+                  ocultarNodosVacios()
+                    ? 'Zonas fijas · Solo con datos (' + nodosConDatosRealesCount() + '/' + nodos.length + ')'
+                    : 'Mostrar los 16 nodos (incl. vacíos)'
+                }}
+              </ay-button>
+            </div>
+
+            <!-- Barra rápida de demostración: Clientes de prueba + Búsqueda fonética + Reglas de tamaño y zona -->
+            <div ayRow gap="2" [ajuste]="true" justificar="between">
+              <div ayRow gap="2" [ajuste]="true">
+                <span ayText="label" size="xs">Clientes 360:</span>
+                @for (cliDemo of clientes; track cliDemo.k) {
+                  <ay-button
+                    tamano="sm"
+                    [variante]="clienteSeleccionado() && clienteKey() === cliDemo.k ? 'primary' : 'ghost'"
+                    (click)="entrarAFichaCliente(cliDemo.k)"
+                  >
+                    {{ cliDemo.nombre }} ({{ contarNodosConDatosDe(cliDemo) }}/{{ nodos.length }})
+                  </ay-button>
+                }
+              </div>
+              <div ayRow gap="2" [ajuste]="true">
+                <ay-badge size="sm" [tono]="hayCoincidenciaFoneticaActiva() ? 'info' : 'neutral'">
+                  {{
+                    hayCoincidenciaFoneticaActiva()
+                      ? '≈ Coincidencia fonética por sonido activa'
+                      : '≈ Fonética ES habilitada (B/V, C/S/Z, H/G/W, Q/K, Y/LL)'
+                  }}
+                </ay-badge>
+                <ay-badge size="sm" tono="neutral">
+                  Tamaño proporcional: 1 a 100 registros
+                </ay-badge>
+              </div>
             </div>
 
             @if (!clienteSeleccionado() && busquedaTexto().trim().length >= 2) {
@@ -470,7 +999,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                 </ay-alert>
               } @else {
                 <ay-table
-                  leyenda="Coincidencias en el maestro SIGDA/TAXON"
+                  leyenda="Coincidencias en el maestro SIGDA/TAXON (exacta + aproximación fonética)"
                   [columnas]="columnasBusquedaClientes"
                   [filas]="clientesCoincidentesIdle()"
                   [rayada]="true"
@@ -478,7 +1007,12 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   <ng-template ayCelda="nombre" let-fila>
                     @let c = comoCliente360(fila);
                     <div ayStack gap="1">
-                      <strong>{{ c.nombre }}</strong>
+                      <div ayRow gap="2" [ajuste]="true">
+                        <strong>{{ c.nombre }}</strong>
+                        @if (esCoincidenciaFonetica(c)) {
+                          <ay-badge size="sm" tono="info">≈ Fonética</ay-badge>
+                        }
+                      </div>
                       <span ayText="body" size="xs">{{ c.telefono }} · {{ correoCliente(c) }}</span>
                     </div>
                   </ng-template>
@@ -486,7 +1020,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     @let c = comoCliente360(fila);
                     <span ayText="mono" size="xs">{{ c.doc }}</span>
                   </ng-template>
-                  <ng-template ayCelda="lote" let-fila>
+                  <ng-template ayCelda="proyecto" let-fila>
                     @let c = comoCliente360(fila);
                     @if (c.lotes.length > 0) {
                       <span>{{ c.proyecto }} · Lote {{ c.lotes.join(', ') }}</span>
@@ -494,7 +1028,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                       <span ayText="subtitle" size="xs">{{ c.proyecto }} · Sin lote aún</span>
                     }
                   </ng-template>
-                  <ng-template ayCelda="contrato" let-fila>
+                  <ng-template ayCelda="contratoPrincipal" let-fila>
                     @let c = comoCliente360(fila);
                     @if (c.contratoPrincipal) {
                       <ay-badge size="sm" tono="neutral">{{ c.contratoPrincipal }}</ay-badge>
@@ -504,13 +1038,15 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                   </ng-template>
                   <ng-template ayCelda="accion" let-fila>
                     @let c = comoCliente360(fila);
-                    <ay-button
-                      tamano="sm"
-                      variante="primary"
-                      (click)="entrarAFichaCliente(c.k)"
-                    >
-                      Activar Grafo 360 →
-                    </ay-button>
+                    <div class="pl-atc-acciones-celda">
+                      <ay-button
+                        tamano="sm"
+                        variante="secondary"
+                        (click)="entrarAFichaCliente(c.k)"
+                      >
+                        Activar Grafo 360 →
+                      </ay-button>
+                    </div>
                   </ng-template>
                   <ay-empty-state
                     ayVacio
@@ -532,40 +1068,45 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
               }
             }
 
-            <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante cuando el cliente está activo) -->
-            <div class="pt-escena-wrap">
-              <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
-              <div
-                #poGrafoHost
-                class="pt-escena-grafo"
-                [hidden]="modoRenderizado() !== 'po3d'"
-              >
+            <!-- Tablero principal: Escena 3D/2D con Zonas Fijas + Panel lateral «Últimos 5 movimientos recientes» -->
+            <div
+              class="pt-c360-tablero"
+              [class.pt-c360-tablero--con-movs]="clienteSeleccionado()"
+            >
+              <!-- Contenedor de escena (Grafo 3D + Grafo 2D + Ficha flotante cuando el cliente está activo) -->
+              <div class="pt-escena-wrap">
+                <!-- Escena 3D Principal (dos anillos, curvas Bézier 3D, pulsos y etiquetas interactivas) -->
+                <div
+                  #poGrafoHost
+                  class="pt-escena-grafo"
+                  [hidden]="modoRenderizado() !== 'po3d'"
+                >
+                  <canvas
+                    #poGrafoCanvas
+                    role="img"
+                    [attr.aria-label]="
+                      clienteSeleccionado()
+                        ? 'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodosConDatosRealesCount() + ' áreas activas con información.'
+                        : 'Red de consulta 360 en espera de búsqueda de cliente.'
+                    "
+                    (click)="alClickPoGrafo($event)"
+                    (mousemove)="alMoverMousePoGrafo($event)"
+                    (mouseleave)="alSalirMousePoGrafo()"
+                  ></canvas>
+                </div>
+
+                <!-- Escena 2D Radial (alternativa ligera) -->
                 <canvas
-                  #poGrafoCanvas
-                  role="img"
-                  [attr.aria-label]="
-                    clienteSeleccionado()
-                      ? 'Red de consulta 360 de ' + clienteActual().nombre + ': ' + fuentes.length + ' sistemas de origen y ' + nodos.length + ' datos.'
-                      : 'Red de consulta 360 en espera de búsqueda de cliente.'
-                  "
-                  (click)="alClickPoGrafo($event)"
-                  (mousemove)="alMoverMousePoGrafo($event)"
-                  (mouseleave)="alSalirMousePoGrafo()"
+                  #astraCanvas
+                  class="atc-astra-canvas"
+                  [hidden]="modoRenderizado() !== '2d'"
+                  (mousemove)="alMoverMouseCanvas($event)"
+                  (mouseleave)="alSalirMouseCanvas()"
+                  (click)="alClickCanvas()"
                 ></canvas>
-              </div>
 
-              <!-- Escena 2D Radial (alternativa) -->
-              <canvas
-                #astraCanvas
-                class="atc-astra-canvas"
-                [hidden]="modoRenderizado() !== '2d'"
-                (mousemove)="alMoverMouseCanvas($event)"
-                (mouseleave)="alSalirMouseCanvas()"
-                (click)="alClickCanvas()"
-              ></canvas>
-
-              <!-- Ficha lateral desplegable tipo drawer del nodo o sistema seleccionado (nace desde el borde derecho hacia la izquierda y se contrae al cerrar) -->
-              @if (clienteSeleccionado()) {
+                <!-- Ficha lateral desplegable tipo drawer del nodo o sistema seleccionado (nace desde el borde derecho hacia la izquierda y se contrae al cerrar) -->
+                @if (clienteSeleccionado()) {
                   @if (fuenteInspeccionada(); as src) {
                     <div
                       class="pl-atc-ficha-flotante"
@@ -612,7 +1153,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                                     [variante]="nodoSeleccionadoId() === nd.id ? 'primary' : 'secondary'"
                                     (click)="seleccionarNodo(nd.id)"
                                   >
-                                    {{ nd.nombre }}
+                                    {{ nd.nombre }} ({{ cantidadRegistrosNodo(clienteActual(), nd.id) }})
                                   </ay-button>
                                 }
                               </div>
@@ -654,11 +1195,14 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                       </button>
                       <ay-card>
                         <ay-card-header
-                          [titulo]="nodoActual().nombre"
+                          [titulo]="nodoActual().nombre + ' · ' + zonaFijaNodo(nodoActual().id)"
                           [subtitulo]="trazabilidadNodo(nodoActual().id).hu + ' · ' + clienteActual().nombre"
                           nivel="h3"
                         >
                           <div ayAcciones ayRow gap="2" [ajuste]="true">
+                            <ay-badge size="sm" tono="neutral">
+                              {{ cantidadRegistrosNodo(clienteActual(), nodoActual().id) }} reg.
+                            </ay-badge>
                             <ay-badge size="sm" [tono]="estadoNodo(nodoActual()).tono">
                               {{ estadoNodo(nodoActual()).etiqueta }}
                             </ay-badge>
@@ -676,9 +1220,12 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                                 Cambia de perfil a Supervisor o Legal en «Herramientas → Ver como» para visualizarlo.
                               </ay-alert>
                             } @else if (estadoNodo(nodoActual()).codigo === 'down') {
-                              <ay-alert tono="danger" titulo="Fuente no disponible temporalmente">
-                                {{ nombresFuentesCaidasNodoActual() || 'Esta sección' }} no está disponible en este instante. Las demás
-                                secciones siguen activas.
+                              <ay-alert tono="danger" titulo="Sin registros o fuente no disponible">
+                                {{
+                                  cantidadRegistrosNodo(clienteActual(), nodoActual().id) === 0
+                                    ? 'El cliente no registra movimientos ni operaciones en esta área empresarial.'
+                                    : (nombresFuentesCaidasNodoActual() || 'Esta sección') + ' no está disponible en este instante.'
+                                }}
                               </ay-alert>
                             } @else {
                               <ay-card-pairs [pares]="paresNodo(nodoActual().id)" />
@@ -737,6 +1284,52 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                 }
               </div>
 
+              <!-- Panel lateral fijo: Últimos 5 movimientos recientes del cliente (Cobranzas, Reclamos, Pagos, Llamadas, Contratos) -->
+              @if (clienteSeleccionado()) {
+                <aside class="pt-c360-movs" aria-label="Últimos 5 movimientos recientes del cliente">
+                  <div ayRow gap="2" justificar="between" [ajuste]="true">
+                    <div ayStack gap="1">
+                      <strong ayText="title" size="sm">Últimos 5 movimientos</strong>
+                      <span ayText="subtitle" size="xs">
+                        Cuotas, pagos, reclamos, llamadas y contratos de {{ clienteActual().nombre }}
+                      </span>
+                    </div>
+                    <ay-badge size="sm" tono="info">En vivo</ay-badge>
+                  </div>
+
+                  <ay-divider espaciado="sm" />
+
+                  <div ayStack gap="2">
+                    @for (mov of ultimosMovimientosCliente(); track mov.id) {
+                      <button
+                        type="button"
+                        class="pt-c360-movs__item"
+                        [class.pt-c360-movs__item--activo]="nodoSeleccionadoId() === mov.nodoId"
+                        (click)="seleccionarNodo(mov.nodoId)"
+                      >
+                        <div ayRow gap="2" justificar="between" [ajuste]="true">
+                          <ay-badge size="sm" [tono]="mov.tono">{{ mov.area }}</ay-badge>
+                          <span ayText="mono" size="xs">{{ mov.fecha }}</span>
+                        </div>
+                        <strong ayText="title" size="xs">{{ mov.titulo }}</strong>
+                        <span ayText="subtitle" size="xs">{{ mov.detalle }}</span>
+                        <div ayRow gap="2" justificar="between" [ajuste]="true">
+                          <span ayText="label" size="xs">Zona: {{ zonaFijaNodo(mov.nodoId) }}</span>
+                          <span
+                            ayText="label"
+                            size="xs"
+                            (click)="$event.stopPropagation(); ejecutarRedireccionNodo(mov.nodoId)"
+                          >
+                            Abrir módulo →
+                          </span>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                </aside>
+              }
+            </div>
+
               <!-- Barra inferior de leyenda y telemetría -->
               <div ayRow gap="2" [ajuste]="true" justificar="between">
                 <div ayRow gap="2" [ajuste]="true">
@@ -745,7 +1338,7 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     Sistema de origen ({{ clienteSeleccionado() ? fuentes.length - fuentesCaidas().length : 0 }}/{{ fuentes.length }})
                   </ay-tag>
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-fg-link)">
-                    Dato del cliente ({{ clienteSeleccionado() ? nodosEncendidosCount() : 0 }}/{{ nodos.length }})
+                    Áreas con datos ({{ clienteSeleccionado() ? nodosConDatosRealesCount() : 0 }}/{{ nodos.length }} en zonas fijas)
                   </ay-tag>
                   <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-danger-border)">
                     Restringido / sin conexión
@@ -1072,25 +1665,28 @@ export class VistaC360Component {
   readonly busquedaClienteIdle = signal<string>('');
 
   readonly columnasBusquedaClientes: readonly AyColumna[] = [
-    { clave: 'nombre', cabecera: 'Titular / Razón social', ancho: '28%' },
-    { clave: 'doc', cabecera: 'Documento', ancho: '16%' },
-    { clave: 'lote', cabecera: 'Proyecto y lote(s)', ancho: '28%' },
-    { clave: 'contrato', cabecera: 'Contrato / Contacto', ancho: '16%' },
+    { clave: 'nombre', cabecera: 'Titular / Razón social', ancho: '28%', ordenable: true },
+    { clave: 'doc', cabecera: 'Documento', ancho: '16%', ordenable: true },
+    { clave: 'proyecto', cabecera: 'Proyecto y lote(s)', ancho: '28%', ordenable: true },
+    { clave: 'contratoPrincipal', cabecera: 'Contrato / Contacto', ancho: '16%', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', ancho: '12%', alineacion: 'end' },
   ];
+
+  readonly ocultarNodosVacios = signal<boolean>(true);
 
   readonly clientesCoincidentesIdle = computed<readonly Cliente360[]>(() => {
     const q = this.busquedaTexto().trim().toLowerCase();
     if (!q) return this.clientes;
     return this.clientes.filter(
-      (c) =>
-        c.nombre.toLowerCase().includes(q) ||
-        c.dni.toLowerCase().includes(q) ||
-        c.doc.toLowerCase().includes(q) ||
-        c.telefono.toLowerCase().includes(q) ||
-        c.proyecto.toLowerCase().includes(q) ||
-        c.contratoPrincipal.toLowerCase().includes(q) ||
-        c.lotes.some((l) => l.toLowerCase().includes(q)),
+      (c) => this.coincideExactaCliente(c, q) || this.coincideFoneticaCliente(c, q),
+    );
+  });
+
+  readonly hayCoincidenciaFoneticaActiva = computed<boolean>(() => {
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (q.length < 2) return false;
+    return this.clientes.some(
+      (c) => !this.coincideExactaCliente(c, q) && this.coincideFoneticaCliente(c, q),
     );
   });
 
@@ -1159,6 +1755,14 @@ export class VistaC360Component {
     () => this.clientes.find((c) => c.k === this.clienteKey()) ?? this.clientes[0],
   );
 
+  readonly nodosConDatosRealesCount = computed<number>(() =>
+    this.contarNodosConDatosDe(this.clienteActual()),
+  );
+
+  readonly ultimosMovimientosCliente = computed<readonly MovimientoRecienteCliente360[]>(
+    () => MOVIMIENTOS_CLIENTE_360[this.clienteActual().k] ?? MOVIMIENTOS_CLIENTE_360['eh'],
+  );
+
   readonly tieneLotesYContrato = computed<boolean>(() => {
     const cli = this.clienteActual();
     const tieneLotes = cli.lotes.length > 0 && Boolean(cli.datos['lote']?.length);
@@ -1218,12 +1822,14 @@ export class VistaC360Component {
       this.semGrafoRef.current = hits.length > 0 ? { hits: [...hits] } : null;
     });
 
-    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol, fuentes caídas o estado activo
+    // Efecto para recalcular la vista del Grafo 3D y disparar la oleada de pulsos cuando cambia cliente, rol, fuentes caídas, filtro de nodos vacíos o estado activo
     effect(() => {
       const cli = this.clienteActual();
       const caidas = this.fuentesCaidas();
       const rol = this.rolActivo();
       const activo = this.clienteSeleccionado();
+      const ocultarVacios = this.ocultarNodosVacios();
+      void ocultarVacios;
       this.dispararOleadaPulsosGrafo(cli, caidas, rol, activo);
     });
 
@@ -1261,6 +1867,125 @@ export class VistaC360Component {
       if (this.timerLlamada !== null) clearInterval(this.timerLlamada);
       if (this.timerConsulta !== null) clearTimeout(this.timerConsulta);
     });
+  }
+
+  alternarOcultarNodosVacios(): void {
+    this.ocultarNodosVacios.update((v) => !v);
+  }
+
+  zonaFijaNodo(nodoId: string): string {
+    return ZONA_FIJA_NODO_360[nodoId] ?? 'Área corporativa';
+  }
+
+  cantidadRegistrosNodo(cli: Cliente360, nodoId: string): number {
+    const mapa = VOLUMEN_NODOS_CLIENTE_360[cli.k];
+    if (mapa && typeof mapa[nodoId] === 'number') {
+      return mapa[nodoId];
+    }
+    const filas = cli.datos[nodoId];
+    if (!filas || filas.length === 0) return 0;
+    const primero = `${filas[0][0]} ${filas[0][1]}`.toLowerCase();
+    if (
+      primero.includes('sin asientos') ||
+      primero.includes('sin reclamos') ||
+      primero.includes('sin acta') ||
+      primero.includes('no aplica') ||
+      primero.includes('sin llamadas') ||
+      primero.includes('sin riesgo')
+    ) {
+      return 0;
+    }
+    return filas.length;
+  }
+
+  contarNodosConDatosDe(cli: Cliente360): number {
+    return this.nodos.filter((n) => this.cantidadRegistrosNodo(cli, n.id) > 0).length;
+  }
+
+  satelitesDeNodo(cli: Cliente360, nodoId: string): readonly SateliteNodoGrafo[] {
+    const cant = this.cantidadRegistrosNodo(cli, nodoId);
+    if (cant === 0) return [];
+    const filas = cli.datos[nodoId] ?? [];
+    return filas.slice(0, 4).map(([clave, valor], idx) => ({
+      id: `${nodoId}-sat-${idx}`,
+      titulo: clave.length > 26 ? `${clave.slice(0, 24)}…` : clave,
+      detalle: valor.length > 30 ? `${valor.slice(0, 28)}…` : valor,
+    }));
+  }
+
+  private codigoFoneticoEs(texto: string): string {
+    return texto
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/hu([aei])/g, 'w$1')
+      .replace(/gu([aei])/g, 'w$1')
+      .replace(/qu([ei])/g, 'k$1')
+      .replace(/c([ei])/g, 's$1')
+      .replace(/cc/g, 'k')
+      .replace(/ch/g, 'x')
+      .replace(/ll/g, 'y')
+      .replace(/v/g, 'b')
+      .replace(/z/g, 's')
+      .replace(/c/g, 'k')
+      .replace(/q/g, 'k')
+      .replace(/h/g, '')
+      .replace(/i/g, 'y')
+      .replace(/(.)\1+/g, '$1')
+      .replace(/[^a-z0-9\s]/g, '');
+  }
+
+  private distanciaLevenshteinCorta(a: string, b: string): number {
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > 2) return 99;
+    const dp: number[][] = Array.from({ length: a.length + 1 }, (_, i) =>
+      Array.from({ length: b.length + 1 }, (__, j) => (i === 0 ? j : j === 0 ? i : 0)),
+    );
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        const costo = a[i - 1] === b[j - 1] ? 0 : 1;
+        dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + costo);
+      }
+    }
+    return dp[a.length][b.length];
+  }
+
+  private coincideExactaCliente(c: Cliente360, q: string): boolean {
+    const qNorm = q.toLowerCase();
+    return (
+      c.nombre.toLowerCase().includes(qNorm) ||
+      c.dni.toLowerCase().includes(qNorm) ||
+      c.doc.toLowerCase().includes(qNorm) ||
+      c.telefono.toLowerCase().includes(qNorm) ||
+      c.proyecto.toLowerCase().includes(qNorm) ||
+      c.contratoPrincipal.toLowerCase().includes(qNorm) ||
+      c.lotes.some((l) => l.toLowerCase().includes(qNorm))
+    );
+  }
+
+  private coincideFoneticaCliente(c: Cliente360, q: string): boolean {
+    const tokensQ = this.codigoFoneticoEs(q)
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
+    if (tokensQ.length === 0) return false;
+    const tokensNombre = this.codigoFoneticoEs(c.nombre)
+      .split(/\s+/)
+      .filter((t) => t.length >= 2);
+
+    return tokensQ.every((tq) =>
+      tokensNombre.some(
+        (tn) =>
+          tn.includes(tq) ||
+          tq.includes(tn) ||
+          (tq.length >= 4 && tn.length >= 4 && this.distanciaLevenshteinCorta(tq, tn) <= 1),
+      ),
+    );
+  }
+
+  esCoincidenciaFonetica(c: Cliente360): boolean {
+    const q = this.busquedaTexto().trim().toLowerCase();
+    if (q.length < 2) return false;
+    return !this.coincideExactaCliente(c, q) && this.coincideFoneticaCliente(c, q);
   }
 
   private inicializarPoGrafo3D(): void {
@@ -1313,6 +2038,8 @@ export class VistaC360Component {
     activo = this.clienteSeleccionado(),
   ): void {
     const rolPermiso = rol === 'cx' ? 'supervisor' : rol;
+    const ocultarVacios = this.ocultarNodosVacios();
+    const totalSlots = this.nodos.length;
     const vista: VistaGrafo = {
       apagado: !activo,
       cliente: { nombre: cli.nombre },
@@ -1322,9 +2049,10 @@ export class VistaC360Component {
         d: s.detalle,
         caida: caidas.includes(s.id),
       })),
-      nodos: this.nodos.map((n) => {
+      nodos: this.nodos.map((n, slotIndex) => {
         const restringido = Boolean(n.restringidoPara?.includes(rolPermiso));
-        const sinDatosNodo = !cli.datos[n.id]?.length;
+        const cant = this.cantidadRegistrosNodo(cli, n.id);
+        const sinDatosNodo = cant === 0;
         const caido = n.fuentes.some((fid) => caidas.includes(fid)) || sinDatosNodo;
         return {
           id: n.id,
@@ -1332,6 +2060,12 @@ export class VistaC360Component {
           estado: restringido ? 'restringido' : caido ? 'caido' : 'ok',
           sem: n.semantico,
           fuentes: n.fuentes,
+          slotIndex,
+          totalSlots,
+          cantidad: cant,
+          zona: this.zonaFijaNodo(n.id),
+          ocultarVacio: ocultarVacios && sinDatosNodo,
+          satelites: this.satelitesDeNodo(cli, n.id),
         };
       }),
     };
@@ -1359,19 +2093,21 @@ export class VistaC360Component {
         src: s.id,
       });
     });
-    vista.nodos.forEach((d) => {
-      d.fuentes.forEach((sid) => {
-        const ms = latenciaDe(sid);
-        nuevosPulsos.push({
-          a: sid,
-          b: d.id,
-          t0: ms * 0.55,
-          dur: ms * 0.45 + 120,
-          src: sid,
-          dst: d.id,
+    vista.nodos
+      .filter((d) => !d.ocultarVacio)
+      .forEach((d) => {
+        d.fuentes.forEach((sid) => {
+          const ms = latenciaDe(sid);
+          nuevosPulsos.push({
+            a: sid,
+            b: d.id,
+            t0: ms * 0.55,
+            dur: ms * 0.45 + 120,
+            src: sid,
+            dst: d.id,
+          });
         });
       });
-    });
 
     this.pulsosGrafoRef.current = nuevosPulsos;
     this.t0GrafoRef.current = typeof performance !== 'undefined' ? performance.now() : 0;
@@ -1379,7 +2115,8 @@ export class VistaC360Component {
     const maxMs =
       Math.max(...vista.nodos.map((d) => Math.min(...d.fuentes.map(latenciaDe)))) + 120;
     const numCaidas = caidas.length;
-    const resumenFinal = `respuesta en ${(maxMs / 1000).toFixed(2)} s · ${
+    const activosConDatos = vista.nodos.filter((n) => (n.cantidad ?? 0) > 0).length;
+    const resumenFinal = `respuesta en ${(maxMs / 1000).toFixed(2)} s · ${activosConDatos}/${totalSlots} zonas con datos · ${
       numCaidas > 0
         ? `${numCaidas} ${numCaidas === 1 ? 'fuente no disponible' : 'fuentes no disponibles'}`
         : `${vista.fuentes.length} fuentes en línea`
@@ -1389,7 +2126,7 @@ export class VistaC360Component {
     if (this.timerConsulta !== null) clearTimeout(this.timerConsulta);
     this.timerConsulta = setTimeout(() => {
       this.estadoConsultaTexto.set(resumenFinal);
-      const disponibles = vista.nodos.filter((n) => n.estado === 'ok').length;
+      const disponibles = vista.nodos.filter((n) => n.estado === 'ok' && !n.ocultarVacio).length;
       this.nodosEncendidosCount.set(disponibles);
     }, maxMs + 140);
   }
@@ -1653,13 +2390,7 @@ export class VistaC360Component {
       return;
     }
     const encontrado = this.clientes.find(
-      (c) =>
-        c.dni.toLowerCase().includes(v) ||
-        c.doc.toLowerCase().includes(v) ||
-        c.nombre.toLowerCase().includes(v) ||
-        c.telefono.toLowerCase().includes(v) ||
-        c.contratoPrincipal.toLowerCase().includes(v) ||
-        c.lotes.some((l) => l.toLowerCase().includes(v)),
+      (c) => this.coincideExactaCliente(c, v) || this.coincideFoneticaCliente(c, v),
     );
     if (encontrado && encontrado.k !== this.clienteKey()) {
       this.modoNoEncontrado.set(false);
@@ -1710,13 +2441,7 @@ export class VistaC360Component {
     }
 
     const cliMatch = this.clientes.find(
-      (c) =>
-        c.dni.toLowerCase().includes(q) ||
-        c.doc.toLowerCase().includes(q) ||
-        c.nombre.toLowerCase().includes(q) ||
-        c.telefono.toLowerCase().includes(q) ||
-        c.contratoPrincipal.toLowerCase().includes(q) ||
-        c.lotes.some((l) => l.toLowerCase().includes(q)),
+      (c) => this.coincideExactaCliente(c, q) || this.coincideFoneticaCliente(c, q),
     );
     if (cliMatch && cliMatch.k !== this.clienteKey()) {
       this.seleccionarCliente(cliMatch.k);
@@ -1891,11 +2616,14 @@ export class VistaC360Component {
     if (n.restringidoPara?.includes(rolPermiso)) {
       return { codigo: 'locked', tono: 'warning', etiqueta: 'Restringido' };
     }
-    const sinDatosNodo = !this.clienteActual().datos[n.id]?.length;
-    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid)) || sinDatosNodo) {
+    const cant = this.cantidadRegistrosNodo(this.clienteActual(), n.id);
+    if (cant === 0) {
+      return { codigo: 'down', tono: 'danger', etiqueta: 'Sin registros' };
+    }
+    if (n.fuentes.some((fid) => this.fuentesCaidas().includes(fid))) {
       return { codigo: 'down', tono: 'danger', etiqueta: 'No disponible' };
     }
-    return { codigo: 'ok', tono: 'success', etiqueta: 'En línea' };
+    return { codigo: 'ok', tono: 'success', etiqueta: `En línea · ${cant}` };
   }
 
   filasNodo(nodoId: string): readonly (readonly [string, string])[] {
@@ -1918,6 +2646,7 @@ export class VistaC360Component {
   paresTrazabilidadNodo(nodoId: string): ParCardPairs[] {
     const traz = this.trazabilidadNodo(nodoId);
     return [
+      { clave: 'Zona fija en Grafo 360', valor: this.zonaFijaNodo(nodoId) },
       { clave: 'Sistema de origen', valor: traz.entidadDep },
       { clave: 'Criterio', valor: traz.rfRn },
       { clave: 'Consulta en línea', valor: traz.inputReal },
@@ -1993,6 +2722,8 @@ export class VistaC360Component {
     const rojo = readColor('--aybar-color-danger-500') || '#D63D4A';
     const blanco = readColor('--aybar-color-neutral-0') || '#FFFFFF';
     const activoCliente = this.clienteSeleccionado();
+    const cli = this.clienteActual();
+    const ocultarVacios = this.ocultarNodosVacios();
 
     ctx.fillStyle = tealOscuro;
     ctx.fillRect(0, 0, W, H);
@@ -2033,12 +2764,15 @@ export class VistaC360Component {
     const posNodos: Record<string, NodoCanvasPos> = {};
     this.nodos.forEach((n, i) => {
       const a = -Math.PI / 2 + (i * 2 * Math.PI) / this.nodos.length;
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      const escala = cant <= 1 ? 0 : Math.min(1, Math.log10(cant) / 2);
+      const radioProp = cant > 0 ? 10.5 + escala * 11.5 : 8;
       posNodos[n.id] = {
         kind: 'node',
         n,
         x: cx + Math.cos(a) * rNode,
         y: cy + Math.sin(a) * rNode,
-        r: 13,
+        r: radioProp,
       };
     });
 
@@ -2061,6 +2795,10 @@ export class VistaC360Component {
     };
 
     this.nodos.forEach((n, idx) => {
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      if (activoCliente && ocultarVacios && cant === 0) {
+        return;
+      }
       const np = posNodos[n.id];
       const st = this.estadoNodo(n).codigo;
       n.fuentes.forEach((sid, j) => {
@@ -2162,6 +2900,17 @@ export class VistaC360Component {
 
     this.nodos.forEach((n) => {
       const p = posNodos[n.id];
+      const cant = activoCliente ? this.cantidadRegistrosNodo(cli, n.id) : 1;
+      if (activoCliente && ocultarVacios && cant === 0) {
+        // Ancla sutil de zona fija vacía para que el usuario ubique siempre las 12 áreas
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        return;
+      }
+
       if (activoCliente) this.hitTargets.push(p);
       const st = this.estadoNodo(n).codigo;
       const isSel = activoCliente && selId === n.id;
@@ -2190,7 +2939,7 @@ export class VistaC360Component {
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, Math.max(3.5, p.r * 0.3), 0, Math.PI * 2);
       ctx.fillStyle = col;
       ctx.fill();
 
@@ -2202,10 +2951,36 @@ export class VistaC360Component {
         !activoCliente || st === 'locked' ? 'rgba(255, 255, 255, 0.55)' : blanco;
       ctx.textAlign = Math.cos(ang) > 0.22 ? 'left' : Math.cos(ang) < -0.22 ? 'right' : 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(n.nombre, lx, ly);
+      ctx.fillText(activoCliente && cant > 0 ? `${n.nombre} (${cant})` : n.nombre, lx, ly);
+
+      // Si el nodo está seleccionado, amplificar sus elementos hijos (satélites de lote/tickets/cuotas)
+      if (isSel) {
+        const sats = this.satelitesDeNodo(cli, n.id);
+        sats.forEach((sat, sIdx) => {
+          const sa = ang - 0.55 + (sIdx * 1.1) / Math.max(1, sats.length - 1);
+          const sr = p.r + 28;
+          const sx = p.x + Math.cos(sa) * sr;
+          const sy = p.y + Math.sin(sa) * sr;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(sx, sy);
+          ctx.strokeStyle = 'rgba(255, 167, 38, 0.65)';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+          ctx.fillStyle = naranja;
+          ctx.fill();
+
+          ctx.font = '600 9.5px Inter, system-ui, sans-serif';
+          ctx.fillStyle = naranja;
+          ctx.textAlign = Math.cos(sa) >= 0 ? 'left' : 'right';
+          ctx.fillText(sat.titulo, sx + (Math.cos(sa) >= 0 ? 8 : -8), sy);
+        });
+      }
     });
 
-    const cli = this.clienteActual();
     if (activoCliente) {
       const pulso = 34 + Math.sin(t * 2.6) * 2.5;
       ctx.beginPath();

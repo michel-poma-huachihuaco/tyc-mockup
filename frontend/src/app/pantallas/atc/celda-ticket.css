@@ -13,10 +13,11 @@
   border: 0;
   background: none;
   color: var(--aybar-color-fg-link);
+  white-space: nowrap;
   cursor: pointer;
 }
 .ct__num:hover { text-decoration: underline; }
-.ct__num:focus-visible { outline: 2px solid var(--aybar-color-border-focus); outline-offset: 2px; border-radius: var(--aybar-radius-sm); }
+.ct__num:focus-visible { border-radius: var(--aybar-radius-sm); }
 
 /* Dos líneas reservadas: todas las filas miden lo mismo. */
 .ct__resumen {
