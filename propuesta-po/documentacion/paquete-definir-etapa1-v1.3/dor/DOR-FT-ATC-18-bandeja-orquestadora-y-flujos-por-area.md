@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-18 Bandeja orquestadora y flujos por área"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -28,13 +28,13 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Push o pull ·
 |---|---|---|---|
 | 1 | Historia con valor claro para el usuario | [ ] | HU-ATC-043, HU-ATC-044, HU-ATC-045, HU-ATC-046: «Como … quiero … para …» (PLT-04) |
 | 2 | Criterios de aceptación verificables en Gherkin | [ ] | 17 criterios CA en 4 HU (PLT-04) |
-| 3 | Reglas de negocio explícitas | [ ] | FT-ATC-18 sección 4 (4 reglas) |
+| 3 | Reglas de negocio explícitas | [ ] | FT-ATC-18 sección 4 (4 reglas); las reglas de HU-043 las completa el catálogo del piloto decidido por el equipo (ED-14) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 4 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-16 (reemplaza a DEP-02) |
-| 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-16 (reemplaza a DEP-02); la DEP-16, como riesgo aceptado con mitigación (R-11; ED-08) |
+| 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (`datos/` y `arquitectura/` del paquete, listos para la firma del Líder Técnico y del Data Chief) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
-| 9 | Estimada por el equipo | [ ] | PLT-04: 19 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
+| 9 | Estimada por el equipo | [ ] | PLT-04: 19 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y el cierre de horas lo hace el coordinador (P-025) |
 | 10 | Cabe en un sprint | [ ] | 19 h dentro de la ventana 21-oct-2026 → 23-oct-2026 (PLT-01) |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Línea «Revisado por» de cada documento: pendiente |
 
@@ -42,20 +42,20 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Push o pull ·
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-043 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08); HU-ATC-044 (reemplaza a la DEP-02 del PLT-03, DT-03; área y rol del gestor, CA-03); HU-ATC-045 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02); HU-ATC-046 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores, su disponibilidad y el supervisor) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
+| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-043 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08); HU-ATC-044 (reemplaza a la DEP-02 del PLT-03, DT-03; área y rol del gestor, CA-03); HU-ATC-045 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02); HU-ATC-046 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores, su disponibilidad y el supervisor) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de `analisis/decisiones.md` v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas |
 
-Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
+Una dependencia sin desbloquear deja el criterio 6 sin cumplir. Si su responsable no compromete fecha, se registra como riesgo con su mitigación (R-02: contrato de interfaz y simulador; R-11 para la DEP-16), según `analisis/decisiones.md` v0.7 (ED-08).
 
 ## 3 Modelado (datos y proceso)
 
 - Entidades citadas en el PLT-04: ENT-SVC-001, ENT-SVC-003, ENT-SVC-014, MAE_AREA, MAE_SLA_POLICY, SVC_TICKET, SVC_TICKET_ASSIGNMENT_LOG, SVC_WORKFLOW_DEFINITION
-- ER, estados y diccionario: (pendiente: `docs/datos/`)
-- Puerta F4 de Gobierno de Datos: (pendiente, si toca datos)
+- ER, estados y diccionario: `datos/er.md`, `datos/estados.md` y `datos/diccionario.md` (tipos y tablas de ATC decididos por el equipo, ED-15 y ED-16)
+- Puerta F4 de Gobierno de Datos: `datos/acta-validacion-arquitectura-datos.md` v0.4 y `datos/registro-de-tablas.md` v0.3, listos para la firma del Data Chief
 
 ## 4 Arquitectura
 
-- Diagrama C4 y contrato: (pendiente: `docs/arquitectura/`)
-- Registro de ADR de la Etapa 1 (PLT-01 §1 y PLT-05 §4.4; se aprueban en el comité del 20-oct). Cuáles aplican a esta funcionalidad lo confirma el líder técnico:
+- Diagrama C4 y contrato: `arquitectura/c4-contenedores.mmd` y `arquitectura/aybar-atc.openapi.yaml` (`0.6.0-borrador`)
+- Registro de ADR de la Etapa 1 (PLT-01 §1 y PLT-05 §4.4; se aprueban en el comité del 20-oct). Las que aplican a esta funcionalidad son las de `adr/` (v0.5), listas para la firma del líder técnico:
 
 | ID | Decisión | Motivo / historias | Alcance | Estado (PLT-05) |
 |---|---|---|---|---|
@@ -87,8 +87,8 @@ Decision: NO READY
 Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (Push o pull · quién marca el rayo). El marco solo admite READY o NO READY: lo decide quien aprueba el DoR.
 
 Condiciones pendientes (solo si NO READY):
-- [ ] Push o pull · quién marca el rayo (PLT-05)
-- [ ] DEP-16 Control de acceso disponible en DEV (sección 2); sin fecha comprometida (P-040)
+- [ ] Push o pull · quién marca el rayo (PLT-05) — decisión del equipo: push con cola del área (Q-044-1); solo `ATC_SUPERVISOR` marca el rayo (Q-045-1); catálogo del piloto de HU-043 (ED-14)
+- [ ] DEP-16 Control de acceso disponible en DEV (sección 2): riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de `analisis/decisiones.md` v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -105,3 +105,5 @@ Generado por IA: transcripción al formato del paquete Definir desde los documen
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04 y DT-07 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-16 toma el nombre, el estado («en riesgo», sin fecha comprometida) y el emisor de pruebas local que pide el Líder Técnico (C-12); la DEP-16 entra en las condiciones pendientes. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo de `analisis/decisiones.md` v0.7: el criterio 9 remite el cierre de horas al coordinador (P-025); ADR aplicables: las de `adr/` v0.5; regla del criterio 6 con riesgos mitigados; DEP-16 como riesgo aceptado con mitigación (R-11); condiciones del PLT-05 anotadas con la decisión del equipo, sin borrar su texto. Modelado y arquitectura (secciones 3 y 4, criterio 7) citan los documentos de `datos/` y `arquitectura/` del paquete. No se borra texto del PO. — Revisado por: (pendiente)

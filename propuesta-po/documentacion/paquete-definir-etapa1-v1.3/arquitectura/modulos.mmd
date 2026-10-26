@@ -1,6 +1,6 @@
 flowchart LR
   ctrl[["Control de acceso (PJ-05)<br/>JWT con roles · API de catálogo"]]
-  sec["Seguridad transversal<br/>aybar-starter-security · @PreAuthorize por rol"]
+  sec["Seguridad transversal<br/>aybar-starter-security · @PreAuthorize por rol<br/>CuentaPersonaPort (ED-01)"]
   tickets[tickets]
   sla[sla]
   cbook[complaintbook]
@@ -11,7 +11,7 @@ flowchart LR
   inbox[inbox]
   c360[customer360]
   delinq[delinquency]
-  integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort"]
+  integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort: actividad de ATC (ED-03)"]
   outbox[("Outbox<br/>SVC_OUTBOX_EVENT")]
   bus{{"Bus · aybar.service.*"}}
   ctrl -. "roles en el token" .-> sec
@@ -40,3 +40,4 @@ flowchart LR
   integ --> ext[(Sistemas externos)]
 %% Generado por IA (Claude, 2026-10-22), versión base v1 de Nexora; actualizado con DT-03 y ADR-001: sin módulo identidad y módulos en inglés. — Revisado por: (pendiente)
 %% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · eventos por el outbox con los tópicos del SDK (ADR-013); seguridad transversal con roles del token; integrations con GestoresPort y el registro del catálogo en Control de acceso (ADR-009)
+%% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: CuentaPersonaPort en la seguridad transversal (ED-01) y GestoresPort con datos de ATC (ED-03)

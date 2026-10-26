@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Diagrama de arquitectura (C4: contexto, contenedores, módulos, ambientes y logs)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [arquitectura, c4, g3]
 
 # Diagrama de arquitectura · C4
 
-Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión 0.4 del 26-oct-2026: dibuja las decisiones DT-01 a DT-10 del Líder Técnico (`analisis/decisiones.md` v0.6) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
+Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión 0.5 del 26-oct-2026: dibuja las decisiones DT-01 a DT-10 del Líder Técnico y las del equipo que tocan el diagrama (ED-01, ED-03, ED-06, ED-08, ED-17 y ED-24; `analisis/decisiones.md` v0.7) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
 
 | DT | Dónde se ve |
 |---|---|
@@ -39,10 +39,10 @@ flowchart LR
     ges[Gestores, supervisores<br/>y áreas · consola ATC]
     obra[Personal de proyecto<br/>y del Entrega Fest<br/>formularios]
   end
-  borde["Borde corporativo<br/>Cloudflare + Azure API Management<br/>TLS · WAF · JWT y audiencia<br/>el WebSocket del visor no pasa por API Management"]
+  borde["Borde corporativo<br/>Cloudflare + Azure API Management<br/>TLS · WAF · JWT y audiencia aybar-atc<br/>el WebSocket del visor no pasa por API Management"]
   atc(["<b>Aybar Atiende</b><br/>plataforma ATC · monolito modular<br/>Java 21 · Spring Boot · SDK Aybar 0.7.1 · Angular<br/>Azure · DEV, QA, PRE (UAT) y producción"])
   ctrl[["Control de acceso (PJ-05) · DEP-16<br/>emisor de tokens · login de internos y clientes<br/>catálogo de roles y permisos"]]
-  base[("Base única del v7<br/>PARTY y maestros de otros dominios")]
+  base[("Base única del v7<br/>PARTY, IDN_USER_ACCOUNT y maestros de otros dominios")]
   mon[["Azure Monitor<br/>logs y auditoría técnica"]]
   subgraph Ext["Sistemas externos (adaptador + simulador)"]
     sigda[SIGDA/TAXON<br/>DEP-01]
@@ -51,7 +51,7 @@ flowchart LR
     cti[Call center CTI<br/>DEP-11]
     leg[Herramienta de Legal<br/>DEP-12]
     jose[Motor de José<br/>DEP-13]
-    ia[Proveedor de IA<br/>DEP-14 · por evaluar]
+    ia[Azure OpenAI Service<br/>DEP-14 · ED-17]
     kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
     proy[Proyectos<br/>DEP-15]
   end
@@ -65,8 +65,8 @@ flowchart LR
   wa --> ges
   mail --> ges
   atc -- "registro del catálogo · client_credentials" --> ctrl
-  atc -. "gestores y líderes: sin API todavía (P-035)" .-> ctrl
-  atc -- "FK a PARTY · fuente viva" --> base
+  atc -. "evolución: gestores y líderes por API (ED-03)" .-> ctrl
+  atc -- "FK a PARTY · fuente viva<br/>lee el vínculo de la cuenta (ED-01)" --> base
   atc -. "logs y auditoría" .-> mon
   atc <--> sigda
   atc <--> con
@@ -92,7 +92,7 @@ flowchart TB
   end
   subgraph borde["Borde"]
     cf["Cloudflare<br/>TLS · WAF · DDoS"]
-    apim["Azure API Management<br/>JWT, audiencia y nivel por API REST<br/>nivel de consumo: sin WebSocket"]
+    apim["Azure API Management<br/>JWT, aud = aybar-atc y nivel por API REST<br/>nivel de consumo: sin WebSocket"]
   end
   subgraph front["Frontend · Angular · @aybarcorp/ui-angular · Azure Container Apps"]
     consola[Consola ATC]
@@ -113,7 +113,7 @@ flowchart TB
   subgraph datos["Datos en Azure"]
     pg[("Azure Database for PostgreSQL<br/>base única v7 · SVC_* · MAE_*<br/>SVC_OUTBOX_EVENT · shedlock<br/>flyway_schema_history_atc")]
     mg[("Azure Cosmos DB for MongoDB vCore<br/>Azure DocumentDB · clúster de ATC<br/>vistas de lectura")]
-    eh{{"Azure Event Hubs Standard · protocolo Kafka<br/>espacio de nombres de ATC<br/>5 tópicos aybar.service.* y 5 colas .DLQ"}}
+    eh{{"Azure Event Hubs Standard · protocolo Kafka<br/>espacio de nombres de ATC<br/>5 tópicos aybar.service.* y 5 colas .DLQ<br/>SASL_SSL (ED-24)"}}
     blob[("Azure Blob Storage<br/>evidencia inmutable")]
   end
   kv[["Azure Key Vault<br/>secretos y llave HMAC"]]
@@ -140,6 +140,7 @@ flowchart TB
   rest --> mods
   mods -- "escribe y guarda el evento en la misma transacción" --> pg
   mods -- "lee" --> mg
+  mods -- "lee el vínculo de IDN_USER_ACCOUNT · solo lectura (ED-01)" --> pg
   jobs -- "lee y escribe" --> pg
   pub -- "lee pendientes" --> pg
   pub -- "publica" --> eh
@@ -164,7 +165,7 @@ Reglas que muestra el diagrama:
 - **El visor 3D recibe los eventos del servicio por WebSocket, no del bus:** el consumidor del visor está dentro de `aybar-atc` y reenvía a cada conexión los eventos de las áreas que su rol permite (ADR-010). El JWT viaja en `Sec-WebSocket-Protocol` y el servicio lo valida en el *handshake* con `aybar-starter-security` (firma, emisor, audiencia y vencimiento); al vencer, cierra la conexión y el visor se reconecta. `/ws/visor` entra por Cloudflare al ingreso de Container Apps y **no pasa por API Management**, porque su nivel de consumo no admite WebSocket (`https://learn.microsoft.com/en-us/azure/api-management/websocket-api`).
 - Los módulos no se tocan las tablas: se hablan por su API pública o por eventos (ADR-001). Solo `integrations` habla con los sistemas externos (ADR-004).
 - El almacén de lectura guarda lo de ATC, no el dato del cliente; `PARTY` es la fuente viva (ADR-003, DT-06).
-- **ATC no administra identidad** (DT-03): el emisor, el login de internos y de clientes, los roles y los permisos son de Control de acceso. ATC valida el JWT con las llaves públicas del emisor, autoriza por los roles del token y registra su catálogo con `client_credentials` (ADR-009, DT-10). La consulta de gestores y líderes no existe todavía en Control de acceso (P-035).
+- **ATC no administra identidad** (DT-03): el emisor, el login de internos y de clientes, los roles y los permisos son de Control de acceso. ATC valida el JWT con las llaves públicas del emisor, autoriza por los roles del token y registra su catálogo con `client_credentials` (ADR-009, DT-10). Control de acceso no tiene consulta de gestores y líderes: ATC usa los gestores que su bitácora muestra en cada cola y el rol del token (ED-03); la flecha punteada del contexto es la evolución. La persona del token sale del vínculo de `IDN_USER_ACCOUNT`, en solo lectura (ED-01).
 - Los jobs corren con ShedLock sobre PostgreSQL (ADR-005). Las migraciones Flyway corren en un job aparte, con el rol dueño de las tablas y la tabla de historial `flyway_schema_history_atc`; el servicio no migra (ADR-001, punto 5).
 - Event Hubs y Cosmos DB son exclusivos de ATC en cada ambiente: Event Hubs Standard admite 10 event hubs por espacio de nombres y ATC usa los 10 (ADR-013), y en Cosmos DB los usuarios secundarios tienen permisos de clúster (ADR-012).
 - Los secretos y la llave HMAC se leen de Key Vault con identidad administrada; los logs y la auditoría técnica van a Azure Monitor; cada release es una imagen del registro (ADR-014).
@@ -174,7 +175,7 @@ Reglas que muestra el diagrama:
 ```mermaid
 flowchart LR
   ctrl[["Control de acceso (PJ-05)<br/>JWT con roles · API de catálogo"]]
-  sec["Seguridad transversal<br/>aybar-starter-security · @PreAuthorize por rol"]
+  sec["Seguridad transversal<br/>aybar-starter-security · @PreAuthorize por rol<br/>CuentaPersonaPort (ED-01)"]
   tickets[tickets]
   sla[sla]
   cbook[complaintbook]
@@ -185,7 +186,7 @@ flowchart LR
   inbox[inbox]
   c360[customer360]
   delinq[delinquency]
-  integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort"]
+  integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort: actividad de ATC (ED-03)"]
   outbox[("Outbox<br/>SVC_OUTBOX_EVENT")]
   bus{{"Bus · aybar.service.*"}}
   ctrl -. "roles en el token" .-> sec
@@ -226,7 +227,7 @@ flowchart LR
   end
   subgraph dev["DEV · perfil dev · datos sintéticos"]
     d1["Container Apps · PostgreSQL · Cosmos DB<br/>Event Hubs · Blob · Key Vault · Monitor<br/>pruebas del equipo"]
-    d2[["Control de acceso en DEV<br/>DEP-16 sin fecha · P-040"]]
+    d2[["Control de acceso en DEV<br/>DEP-16 · riesgo aceptado (ED-08)"]]
   end
   subgraph qa["QA · perfil qa · datos anonimizados"]
     q1["La misma topología, de su tamaño<br/>E2E desde el día 3 · ciclos QA 0 a 2"]
@@ -258,7 +259,7 @@ flowchart LR
   mig -. "en cada ambiente" .-> d1
 ```
 
-Fuente: ADR-014 (punto 8) y PLT-05 v1.3 §4.2 («Ambiente QA · E2E desde el día 3», «Ambiente PRE · UAT 03-nov»). PRE entra en la Etapa 1 con la UAT del PO. Cada ambiente tiene sus propios recursos de Azure; el registro de imágenes es uno, y el job de migraciones corre en cada ambiente antes del despliegue. El costo de cada ambiente está en `arquitectura/costo-cloud.md` v0.4 (USD 2.592,53 al mes con PRE). Ningún dato real sale de producción ni entra a un prompt de IA.
+Fuente: ADR-014 (punto 8) y PLT-05 v1.3 §4.2 («Ambiente QA · E2E desde el día 3», «Ambiente PRE · UAT 03-nov»). PRE entra en la Etapa 1 con la UAT del PO. Cada ambiente tiene sus propios recursos de Azure; el registro de imágenes es uno, y el job de migraciones corre en cada ambiente antes del despliegue. El costo de cada ambiente está en `arquitectura/costo-cloud.md` v0.5 (USD 2.592,53 al mes con PRE; ED-12). Mientras el área no tenga Control de acceso en DEV, el equipo trabaja con el emisor de pruebas local (ED-08). Ningún dato real sale de producción ni entra a un prompt de IA.
 
 ## 5 Logs y auditoría
 
@@ -294,19 +295,21 @@ flowchart LR
 
 Qué va a cada lado:
 - **Logs técnicos:** JSON de `aybar-starter-logging` con `correlationId`, recogido por Azure Monitor (Log Analytics y Application Insights), sin datos personales (ADR-014; `seguridad.md`).
-- **Auditoría técnica:** `aybar-starter-audit` con su publicador de log, porque no tiene destino Azure Blob (ADR-014; P-032). Incluye los intentos denegados que piden las historias: los 403 por falta de rol llegan por el `AuthorizationEventPublisher` que declara ATC, y las negaciones de negocio (404 del ticket de otro cliente, dato no permitido del motor) las emite el caso de uso (`seguridad.md`).
+- **Auditoría técnica:** `aybar-starter-audit` con su publicador de log, porque no tiene destino Azure Blob (ADR-014; ED-24). Incluye los intentos denegados que piden las historias: los 403 por falta de rol llegan por el `AuthorizationEventPublisher` que declara ATC, y las negaciones de negocio (404 del ticket de otro cliente, dato no permitido del motor) las emite el caso de uso (`seguridad.md`).
 - **Evidencia de negocio:** las bitácoras firmadas con HMAC encadenado en PostgreSQL y los documentos probatorios en Blob Storage con inmutabilidad; el job diario verifica el hash y deja un punto de control por cadena en Blob Storage para detectar un borrado del final (ADR-002, ADR-006).
 - **Alertas:** jobs sin éxito, antigüedad del outbox e incidentes de integridad, al grupo de acción del equipo ATC y de TI (ADR-005).
 - **Auditoría de accesos:** la del login y de los tokens es de Control de acceso, no de ATC (DT-03).
 
-## 6 Pendientes del diagrama
+## 6 Decisiones del equipo que muestra el diagrama
 
-- Control de acceso disponible en DEV (DEP-16; P-026, P-040): sin emisor, los endpoints protegidos responden 401.
-- Consulta de gestores y líderes con token de servicio (P-035): la flecha punteada del contexto.
-- Audiencia del token en el borde y en el servicio (P-038).
-- Autenticación del broker con Azure Event Hubs (P-032).
-- La región de Azure y el nivel de la instancia corporativa de API Management (P-044).
-- El host propio de `/ws/visor` en Cloudflare y la restricción de IP del ingreso (Seguridad TI y Líder Técnico; ADR-010).
+Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técnico en este envío (`analisis/decisiones.md` v0.7):
+
+- Control de acceso en DEV (DEP-16): riesgo aceptado con mitigación; en local y DEV, el emisor de pruebas (ED-08).
+- Gestores y líderes: datos de la cola de ATC y rol del token; la flecha punteada del contexto es la evolución (ED-03).
+- Audiencia: `aud` = `aybar-atc`, validada en API Management y en el servicio (ED-06).
+- Event Hubs: `SASL_SSL` con la cadena de conexión en Key Vault (ED-24).
+- Región Brazil South y API Management en el nivel de consumo (ED-12).
+- `/ws/visor`: host propio en Cloudflare y restricción de IP del ingreso, que configura infraestructura con el despliegue (ADR-010).
 
 ## Historial de cambios
 
@@ -318,5 +321,8 @@ Qué va a cada lado:
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Contenedores redibujados: el visor recibe los eventos del consumidor del servicio por WebSocket (antes salía del bus), outbox y publicador, proyector, Cloudflare y API Management, JWKS del emisor, identidad administrada, registro de imágenes y registro del catálogo; contexto con borde, base única y la consulta de gestores sin API (P-035); módulos con outbox y tópicos del SDK; diagramas nuevos de ambientes y de logs y auditoría; tabla DT → diagrama; validados con `mmdc` |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: contenedores con `/ws/visor` por Cloudflare al ingreso, sin API Management (el nivel de consumo no admite WebSocket, verificado en Microsoft Learn), JWT validado en el *handshake* y job de migraciones; contexto y ambientes con PRE para la UAT del 03-nov (PLT-05 §4.2); logs con el `AuthorizationEventPublisher`, los intentos denegados desde el caso de uso y el punto de control diario; reglas y pendientes al día |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7 en los diagramas: audiencia `aybar-atc` (ED-06), lectura del vínculo de `IDN_USER_ACCOUNT` (ED-01), `GestoresPort` con datos de ATC y consulta de líderes como evolución (ED-03), DEP-16 como riesgo aceptado (ED-08), Azure OpenAI (ED-17) y Event Hubs con SASL (ED-24). «Pendientes del diagrama» pasa a «Decisiones del equipo que muestra el diagrama» |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): decisiones del equipo de `analisis/decisiones.md` v0.7 en los diagramas. — Revisado por: (pendiente)

@@ -5,31 +5,31 @@ Borrador del paquete Definir completo de la Etapa 1 en el formato del SDK: 158 d
 | Carpeta | Qué hay | Base |
 |---|---|---|
 | `epicas/`, `features/`, `historias/`, `dor/` | 11 épicas, 23 funcionalidades, 62 historias y 23 DoR (índice abajo) | Documentos del PO v1.3, sin cambiar su contenido. El 26-oct cada historia sumó, fuera del texto del PO, el bloque «Responsable / Depende de / La necesitan» (54 dependencias entre historias, trazadas al PO), y cada DoR, las DEP de sus historias |
-| [`analisis/`](analisis/) | BRD, ficha de intake, cobertura de requisitos, `decisiones.md` (fuente de verdad del paquete, 0.6) y el proceso de atención de prospectos (C-06, nuevo) | Versión de Nexora (Jesús y Daniel), llevada a la v1.3 y a las decisiones del Líder Técnico |
+| [`analisis/`](analisis/) | BRD, ficha de intake, cobertura de requisitos, `decisiones.md` (fuente de verdad del paquete, 0.7) y el proceso de atención de prospectos (C-06; propuesta para una etapa posterior) | Versión de Nexora (Jesús y Daniel), llevada a la v1.3 y a las decisiones del Líder Técnico |
 | [`roadmap/`](roadmap/) | RMP-001, análisis de dependencias (54 entre historias, 17 entre funcionalidades, 5 olas), dependencias y olas (Mermaid) | Versión de Nexora (Jesús), con la flecha EP-09→EP-06 del Gantt del PLT-01 y el bloque «Depende de» de las historias |
-| [`adr/`](adr/) | 14 ADR: ADR-001…011 son las ADR-01…11 del PO; 012 stack, 013 outbox y 014 plataforma las propone el equipo | Versión de Nexora (Jesús), con las decisiones DT-01 a DT-10 del Líder Técnico (22-oct) y su segunda revisión (26-oct, 0.4). Los conflictos con el PO quedan anotados |
-| [`arquitectura/`](arquitectura/) | OpenAPI (59 operaciones, `0.5.0-borrador`), C4, módulos, seguridad, roles y permisos, costo cloud (USD 2.592,53 al mes con PRE), migración y reversión, operaciones y trazabilidad por historia | Versión de Nexora (Jesús), con los esquemas del OpenAPI completados desde el PO y el Excel |
-| [`datos/`](datos/) | Registro de tablas (C-11, nuevo), modelo entidad-relación, diccionario, estados, linaje y acta F4 (sin firmar) | Versión de Nexora (Jesús), con lo que el PO, el Excel y el modelo v7 ya definen |
+| [`adr/`](adr/) | 14 ADR: ADR-001…011 son las ADR-01…11 del PO; 012 stack, 013 outbox y 014 plataforma las propone el equipo | Versión de Nexora (Jesús), con las decisiones DT-01 a DT-10 del Líder Técnico (22-oct) y su segunda revisión (26-oct, 0.4); la 0.5 aplica las decisiones del equipo del 26-oct. Los conflictos con el PO quedan anotados |
+| [`arquitectura/`](arquitectura/) | OpenAPI (59 operaciones, `0.6.0-borrador`), C4, módulos, seguridad, roles y permisos, costo cloud (USD 2.592,53 al mes con PRE), migración y reversión, operaciones y trazabilidad por historia | Versión de Nexora (Jesús), con los esquemas del OpenAPI completados desde el PO y el Excel |
+| [`datos/`](datos/) | Registro de tablas (C-11, nuevo), modelo entidad-relación, diccionario, estados, linaje y acta F4 (lista para la firma del Data Chief) | Versión de Nexora (Jesús), con lo que el PO, el Excel y el modelo v7 ya definen |
 | [`backlog/tareas/`](backlog/tareas/) | 321 tareas en 11 archivos (uno por épica), 243 h (61, 60, 60 y 62 por desarrollador) | Versión de Nexora (Daniel), rehecha con la v1.3. `depende_de` recoge las 54 dependencias del PO y `aybar paquete plan` da las 5 olas del roadmap |
 | [`gates/AYB-0001/`](gates/AYB-0001/) | G0, G1, G2, G3 y G4 en borrador | Versión de Nexora y de `main`, llevada a la v1.3. G2 es nuevo |
 
-**Qué ya está decidido.** El Líder Técnico (Jose Jara) fijó el 22-oct las decisiones DT-01 a DT-10, registradas en [`analisis/decisiones.md`](analisis/decisiones.md) 0.6:
+**Qué ya está decidido.** El Líder Técnico (Jose Jara) fijó el 22-oct las decisiones DT-01 a DT-10, registradas en [`analisis/decisiones.md`](analisis/decisiones.md) 0.7:
 - el stack (D-001 y D-002, cerradas por DT-01): Java 21 con Spring Boot y Angular del SDK Aybar 0.7.1, con CQRS (DT-02): PostgreSQL para escribir, API de MongoDB para leer y Kafka con outbox;
 - la clave foránea del ticket a `PARTY` frente a la ADR-03 del PO (P-021, D-003 y D-006, cerradas por DT-06): una sola base del modelo v7, con FK físicas, y `PARTY` es la fuente viva del cliente;
 - la nube y la plataforma (P-001, cerrada por DT-07): Azure; el emisor de tokens es Control de acceso (DT-05), los jobs usan ShedLock (DT-08) y las llamadas entre servicios, `client_credentials` (DT-10).
 
-Que estén decididas no las aprueba: los ADR que las recogen siguen sin la firma del Líder Técnico, y el PO tiene que actualizar sus documentos (P-027). La D-12 de la rama de Daniel, que saca la HU-048 y la 053 de la Etapa 1, no se aplicó (P-020).
+Que estén decididas no las aprueba: los ADR que las recogen (v0.5) quedan listos para la firma del Líder Técnico, y los documentos del PO no se editan: las diferencias están listadas en ED-19 (P-027). La D-12 de la rama de Daniel no se aplica: HU-048 y HU-053 siguen en la Etapa 1 (P-020, ED-17).
 
-**Qué sigue abierto** (dueño entre paréntesis; el detalle, en `decisiones.md`):
-- P-005 dispensa M0 (Enrique Albán, Data Chief) y P-042, si a ATC se le exige otra vara que a PJ-05 (Líder Técnico);
-- P-007 encadenado del hash y retención de la evidencia (Líder Técnico; el plazo, Legal);
-- P-015 tipos, largos y recetas del hash del v7 (Jesús Chávez Elías con Gobierno de Datos), P-016 tablas de flujo (Líder Técnico) y P-031 tablas nuevas en la base única (Data Chief);
-- P-017 combinaciones del piloto, P-018 preguntas de las historias, P-020 D-12 de la rama de Daniel, P-022 reglas que faltan en el Excel, P-027 textos del PO que cambian y P-041 alcance del proceso de prospectos (PO, Eddie Huamaní);
-- P-025 horas de CQRS y outbox: 63 h estimadas fuera del plan (Líder Técnico y PO, en el control de alcance del jue 29-oct; las horas las confirman los 4 desarrolladores);
-- P-026 y P-040 Control de acceso en DEV (DEP-16, en riesgo; la llevan 24 HU) y P-033 a P-039, lo que falta de Control de acceso (Sony Montoya, área de Roles y Permisos, con el Líder Técnico). Los 5 pedidos y las preguntas siguen sin enviar: los envían Brayan Hurtado y Jesús Chávez;
-- P-028 catálogo de roles (Líder Técnico, PO y Control de acceso) y P-032 huecos del SDK (Líder Técnico y equipo del SDK);
-- P-043 dueño de migración de los maestros compartidos, condición de la firma del acta F4 (Data Chief con el Líder Técnico), y P-044 supuestos del costo (Líder Técnico; los volúmenes, el PO u Operaciones);
-- P-019, P-023, P-024 y P-029: el duplicado de la HU-001 y los gates sueltos en Nexora, PJ-06 sin ítems y ningún documento aprobado (PO, project manager o administrador de Nexora).
+**Qué decidió el equipo el 26-oct** (Brayan Hurtado; propuesto al Líder Técnico en este envío). Nadie más responde, así que el equipo cerró cada punto con su fundamento y su evidencia en [`analisis/decisiones.md`](analisis/decisiones.md) 0.7 (ED-01 a ED-27), sin cambiar ninguna DT:
+- identidad y permisos: el `PartyID` sale del vínculo de la cuenta en la base única (ED-01); se autoriza por rol del token (ED-02); gestores y líderes con datos propios de ATC y el rol `ATC_SUPERVISOR`, sin copiar usuarios ni roles (ED-03); `MAE_AREA` es solo la cola (ED-04); la audiencia es `aybar-atc` (ED-06); el catálogo se entrega en los lotes del ADR-021 (ED-07);
+- cliente: ATC no crea `PARTY`; el interesado se registra «sin cliente vinculado», con sus datos mínimos (ED-05);
+- Control de acceso en DEV (DEP-16): riesgo aceptado con mitigación, R-11 del roadmap (ED-08); los casos manuales de prospectos quedan fuera de la Etapa 1 (ED-09);
+- datos: dueño de migración (ED-11), tablas del flujo (ED-15), tipos y largos (ED-16) y catálogo del piloto (ED-14); el acta F4 queda lista para la firma del Data Chief (ED-23);
+- evidencia: 2 años de retención (art. 12 del Reglamento del Libro de Reclamaciones), inmutabilidad bloqueada en PRE y producción y hash encadenado (ED-13);
+- costo: Brazil South, USD 2.592,53 al mes (ED-12); proveedor de IA, Azure OpenAI Service (ED-17), y HU-048 y HU-053 siguen en la Etapa 1;
+- las 58 preguntas de las historias y las 23 de las funcionalidades tienen su decisión (ED-26); M0 queda «requiere dispensa (solicitada)» (ED-25).
+
+**Qué sigue abierto:** solo **P-025** (horas): lo nuevo que exige DT-02 son 28 h; con 9 h de holgura, la brecha es de 19 h. La cierra el coordinador. Las firmas no son pendientes del paquete: cada documento queda listo para la firma de su rol.
 
 Las correcciones que se le proponen al Excel del PO están en [`../correcciones-excel-v1.3.md`](../correcciones-excel-v1.3.md).
 
@@ -37,17 +37,17 @@ Las correcciones que se le proponen al Excel del PO están en [`../correcciones-
 «Como / quiero / para», criterios de aceptación, reglas, horas, fechas, dependencias y riesgos. Solo se omitieron las frases que remiten
 a la Etapa 2. Cada documento termina con «Generado por IA … — Revisado por: (pendiente)».
 
-**Estado.** Todo está en borrador y nada está aprobado. Nexora PJ-06 tiene versiones pendientes de todo el paquete: épicas, funcionalidades,
+**Estado.** Todo está en borrador y nada está aprobado. Nexora PJ-06 tiene versiones sin aprobar de todo el paquete: épicas, funcionalidades,
 historias y DoR desde el 20-oct; el resto desde el 21-oct; el 26-oct se publicaron la versión 0.4 de `decisiones.md` (v6 en Nexora), el backlog y 19 DoR. Las versiones
 locales del 26-oct están **por publicar**: 131 archivos difieren de Nexora (ADR, arquitectura, datos, roadmap, análisis, las 62 historias,
 16 DoR, el backlog y los gates G0 a G4), y `analisis/proceso-atencion-prospectos.md` y `datos/registro-de-tablas.md` son nuevos. Ver
-`PLAN-NEXORA.md`. Falta además lo que solo hace una persona: el «Revisado por» de cada documento (Jesús Chávez Elías y Brayan Hurtado), el
+`PLAN-NEXORA.md`. Lo que solo hace una persona no es parte del borrador: el «Revisado por» de cada documento (lo completa el coordinador), el
 `revisado_por` de las tareas (el dueño de cada épica) y las firmas del PO, el Líder Técnico, el project manager y el Data Chief.
 
 **Validación** (`aybar paquete validar propuesta-po/documentacion/paquete-definir-etapa1-v1.3`, 26-oct): **0 errores y 0 advertencias**.
 Son 158 documentos y 321 tareas, con 243 h estimadas, 0 sin estimar y 0 sin responsable. `aybar paquete plan` da 5 olas sin ciclos, con las
-mismas funcionalidades por ola que el roadmap. Ninguna funcionalidad está lista para construir (0 de 23), porque los DoR y los gates siguen
-sin aprobar.
+mismas funcionalidades por ola que el roadmap. Ninguna funcionalidad está lista para construir (0 de 23), porque los DoR y los gates esperan
+su firma.
 
 **Para leerlo** sin instalar nada, abre `explorador.html` en el navegador. Lo generó `aybar paquete explorador` del SDK (regenerado el 26-oct).
 
@@ -150,3 +150,5 @@ Dev 4 (Daniel) · 17 h · iteración 2 · Debe
 |---|---|---|
 | [FT-ATC-22 Resolución de contrato por morosidad](features/FT-ATC-22-resolucion-de-contrato-por-morosidad.md) | [DoR](dor/DOR-FT-ATC-22-resolucion-de-contrato-por-morosidad.md) | [056](historias/HU-ATC-056-abrir-el-caso-de-resolucion-por-3-meses-impagos.md) · [057](historias/HU-ATC-057-enviar-al-cliente-la-alerta-de-cancelacion-en-paralelo.md) · [058](historias/HU-ATC-058-enviar-la-carta-de-alerta-al-responsable-del-proyecto-y-su.md) |
 | [FT-ATC-23 Formularios simples: ingreso al proyecto y Entrega Fest](features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md) | [DoR](dor/DOR-FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md) | [059](historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md) · [060](historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md) |
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): «Qué decidió el equipo» y P-025 como única pendiente. — Revisado por: (pendiente)

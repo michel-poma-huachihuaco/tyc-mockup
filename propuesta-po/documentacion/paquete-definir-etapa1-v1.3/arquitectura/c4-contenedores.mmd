@@ -8,7 +8,7 @@ flowchart TB
   end
   subgraph borde["Borde"]
     cf["Cloudflare<br/>TLS · WAF · DDoS"]
-    apim["Azure API Management<br/>JWT, audiencia y nivel por API REST<br/>nivel de consumo: sin WebSocket"]
+    apim["Azure API Management<br/>JWT, aud = aybar-atc y nivel por API REST<br/>nivel de consumo: sin WebSocket"]
   end
   subgraph front["Frontend · Angular · @aybarcorp/ui-angular · Azure Container Apps"]
     consola[Consola ATC]
@@ -29,7 +29,7 @@ flowchart TB
   subgraph datos["Datos en Azure"]
     pg[("Azure Database for PostgreSQL<br/>base única v7 · SVC_* · MAE_*<br/>SVC_OUTBOX_EVENT · shedlock<br/>flyway_schema_history_atc")]
     mg[("Azure Cosmos DB for MongoDB vCore<br/>Azure DocumentDB · clúster de ATC<br/>vistas de lectura")]
-    eh{{"Azure Event Hubs Standard · protocolo Kafka<br/>espacio de nombres de ATC<br/>5 tópicos aybar.service.* y 5 colas .DLQ"}}
+    eh{{"Azure Event Hubs Standard · protocolo Kafka<br/>espacio de nombres de ATC<br/>5 tópicos aybar.service.* y 5 colas .DLQ<br/>SASL_SSL (ED-24)"}}
     blob[("Azure Blob Storage<br/>evidencia inmutable")]
   end
   kv[["Azure Key Vault<br/>secretos y llave HMAC"]]
@@ -56,6 +56,7 @@ flowchart TB
   rest --> mods
   mods -- "escribe y guarda el evento en la misma transacción" --> pg
   mods -- "lee" --> mg
+  mods -- "lee el vínculo de IDN_USER_ACCOUNT · solo lectura (ED-01)" --> pg
   jobs -- "lee y escribe" --> pg
   pub -- "lee pendientes" --> pg
   pub -- "publica" --> eh
@@ -75,3 +76,4 @@ flowchart TB
 %% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con DT-01 a DT-08 del Líder Técnico: sin módulo identidad, emisor de Control de acceso, Azure, módulos en inglés y visor alimentado por el servicio (ADR-010). Ambientes: DEV, QA, PRE y producción, con la misma topología (ADR-014; diagrama de ambientes en diagrama-arquitectura.md). — Revisado por: (pendiente)
 %% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · el visor recibe los eventos del consumidor del servicio por WebSocket, no del bus; outbox y ShedLock en PostgreSQL; publicador y proyector; Cloudflare y API Management por separado; JWKS del emisor; Key Vault con identidad administrada; logs y auditoría técnica a Azure Monitor; registro de imágenes; registro del catálogo en Control de acceso
 %% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · segunda revisión del Líder Técnico: /ws/visor entra por Cloudflare al ingreso, sin API Management (el nivel de consumo no admite WebSocket); el JWT se valida en el handshake; job de migraciones con su rol y su tabla de historial; Event Hubs y Cosmos DB exclusivos de ATC
+%% Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: aud = aybar-atc en API Management (ED-06), lectura del vínculo de IDN_USER_ACCOUNT (ED-01) y Event Hubs con SASL_SSL (ED-24)

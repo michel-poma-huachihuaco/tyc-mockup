@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [arquitectura, api, g3]
 
 # Operaciones de API por historia
 
-**Versión del 22-oct-2026:** los módulos van con su nombre en inglés (propuesta de ADR-001) y HU-064 ya no tiene operaciones de código ni de sesión (DT-04). El contrato `aybar-atc.openapi.yaml` `0.5.0-borrador` declara además el permiso de cada operación (`x-permiso`; `roles-y-permisos-atc.md`).
+**Versión del 22-oct-2026:** los módulos van con su nombre en inglés (propuesta de ADR-001) y HU-064 ya no tiene operaciones de código ni de sesión (DT-04). El contrato `aybar-atc.openapi.yaml` `0.6.0-borrador` declara además el permiso de cada operación (`x-permiso`; `roles-y-permisos-atc.md`).
 
 Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 20-oct-2026: las historias sin operación (casos sensibles, garantía, EntregaFest, formularios, guía, IA, tablero) ya tienen una; las que quedan sin API propia son eventos, jobs o adaptadores. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
 
@@ -85,22 +85,22 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-066 | Responder, adjuntar y confirmar la solución de mi ticket | `portal` | `POST /api/v1/portal/tickets/{ticketId}/respuestas`<br>`POST /api/v1/portal/tickets/{ticketId}/confirmacion` | en el OpenAPI |
 | HU-067 | Ver el proceso de atención en un visor 3D (operación en vivo) | `inbox` | `GET /api/v1/visor/estado` | en el OpenAPI |
 
-## Operaciones que dependen de Control de acceso (PJ-05)
+## Operaciones que dependen de Control de acceso (PJ-05): decisiones del equipo que aplican
 
-Las operaciones no cambian; lo que sigue es lo que cada una necesita de Control de acceso y que hoy no está resuelto (preguntas de `analisis/decisiones.md`). ATC no guarda usuarios, roles, líderes ni sesiones (DT-03, C-11).
+Las operaciones no cambian. Lo que cada una necesita de Control de acceso tiene una decisión del equipo (Brayan Hurtado), 26-oct-2026, propuesta al Líder Técnico en este envío (`analisis/decisiones.md` v0.7). ATC no guarda usuarios, roles, líderes ni sesiones (DT-03, C-11).
 
-| Historias | Qué necesitan | Pregunta |
+| Historias | Qué necesitan | Decisión del equipo |
 |---|---|---|
-| Todas las operaciones del contrato | Token del emisor de Control de acceso en DEV; en local, el emisor de pruebas `herramientas/emisor-local.mjs` del repo `AybarCorp/aybar-access-control-deus` | DEP-16 (P-026, P-040) |
-| Todas las que exigen `x-permiso` | Si ATC autoriza por rol del token o consulta el permiso efectivo | P-034 |
-| HU-008, HU-046, HU-054, HU-055, HU-058 | Gestores que cesan, gestores de un área con su disponibilidad y líder de un gestor: no hay API con token de servicio | P-035 |
-| HU-044, HU-045, HU-054, HU-055, HU-023, HU-027 | Áreas y jefaturas: la tabla de áreas organizacionales no existe; `MAE_AREA` es solo la cola (C-07) | P-036 |
-| HU-001, HU-049, HU-050, HU-051 | El interesado que no está en `PARTY`: ATC no crea su Party; el ticket queda con la vinculación pendiente | P-037 |
-| HU-064, HU-065, HU-066 | El `PartyID` del cliente no viaja en el token | P-033 |
+| Todas las operaciones del contrato | Token del emisor de Control de acceso | DEP-16 como riesgo aceptado con mitigación: en local y mientras el área no esté en DEV, el emisor de pruebas `herramientas/emisor-local.mjs` del repo `AybarCorp/aybar-access-control-deus`, con `aud=aybar-atc` (ED-06, ED-08) |
+| Todas las que exigen `x-permiso` | Cómo se autoriza | Por rol del token, `@PreAuthorize(hasAnyRole(x-roles))`; `x-permiso` es el permiso del catálogo (ED-02) |
+| HU-008, HU-046, HU-054, HU-055, HU-058, HU-067 | Gestores de un área, gestor que cesa, disponibilidad y líder | Gestores de la cola según la bitácora de asignaciones de ATC; líder = `ATC_SUPERVISOR` del token; avisos a un rol y una cola; el responsable del proyecto (HU-058) sale de la DEP-15 (ED-03) |
+| HU-044, HU-045, HU-054, HU-055, HU-023, HU-027 | Áreas y jefaturas | `MAE_AREA` solo como cola; el área de cada rol es un parámetro de ATC; HU-023 usa la matriz de escalamiento de la Mesa SGD (ED-04) |
+| HU-001, HU-049, HU-050, HU-051 | El interesado que no está en `PARTY` | Ticket «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT`; el job de vinculación completa el `PartyID` cuando Control de acceso crea la `PARTY` (ED-05) |
+| HU-064, HU-065, HU-066 | El `PartyID` del cliente, que no viaja en el token | `CuentaPersonaPort` sobre `IDN_USER_ACCOUNT`; Mi Portal admite la cuenta `CUSTOMER` (ED-01) |
 
 ## Proceso de atención de prospectos (C-06)
 
-`analisis/proceso-atencion-prospectos.md` propone atender como tipos de ticket los casos que Control de acceso deriva a ATC («correo distinto», DNI tomado, suplantación y prospecto por validar). **No agrega operaciones:** el ticket se registra con `registrarTicket` (HU-001) y sigue el flujo del tipo (HU-043); la validación y la suspensión se hacen en la consola de Control de acceso, no en la API de ATC. Es alcance nuevo para el PO (P-041).
+Los casos manuales de prospectos que Control de acceso deriva a ATC («correo distinto», DNI tomado, suplantación y prospecto por validar) no están en el PLT-04 y quedan **fuera de la Etapa 1** (ED-09); `analisis/proceso-atencion-prospectos.md` queda como propuesta para una etapa posterior. **No agrega operaciones:** si llega uno de esos casos, se registra con `registrarTicket` (HU-001) como «Pedido simple · Otra solicitud» y lo resuelve en la consola de Control de acceso un supervisor de la cola `ATC` con `PROSPECT_VALIDATOR`.
 
 ## Historial de cambios
 
@@ -110,6 +110,7 @@ Las operaciones no cambian; lo que sigue es lo que cada una necesita de Control 
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Lo que cada operación necesita de Control de acceso, con su pregunta (P-033 a P-037; DEP-16), y el proceso de atención de prospectos (C-06), sin operaciones nuevas |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 (`aybar.service.ticket_status_changed` y `aybar.service.ticket_assigned`) y outbox `SVC_OUTBOX_EVENT` |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el contrato se cita en su versión vigente, `0.5.0-borrador` (decía v0.3). |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: la tabla de lo que falta de Control de acceso pasa a «decisiones del equipo que aplican» (ED-01 a ED-05 y ED-08); prospectos fuera de la Etapa 1 (ED-09); contrato `0.6.0-borrador` |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 
@@ -118,3 +119,5 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06, C-07, C-11 y C-12) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 15): nombres de evento con el formato de tópico del SDK. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01 a ED-06, ED-08 y ED-09 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)

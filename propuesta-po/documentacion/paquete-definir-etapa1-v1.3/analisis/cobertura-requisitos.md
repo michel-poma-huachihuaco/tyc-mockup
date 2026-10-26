@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Cobertura de los requisitos del Excel por las historias de la Etapa 1 (plan v1.3)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
-owner: "[por asignar: PO / arquitecto]"
+version: "0.3"
+owner: "Brayan Hurtado (Dev 1)"
 aprobadores: []
-fecha: "2026-10-21"
+fecha: "2026-10-26"
 relacionados: ["AYB-0001"]
 tags: [analisis, trazabilidad, g3]
 ---
@@ -35,8 +35,8 @@ El Excel tiene varias capas, y se distinguen por color y por número:
 
 **Consecuencia:** un identificador como RN-SVC-032, ENT-SVC-014 o RF-SVC-048 **no es inventado**: está
 en el Excel, en una capa de feedback. Una revisión que compare solo con la capa base (39 RF, 14 RNF,
-30 reglas) los verá como inexistentes. El PO tiene que confirmar que las capas de feedback cuentan como
-origen (`decisiones.md` D-004); hasta entonces, cada cita lleva su capa. Los únicos que no están en el
+30 reglas) los verá como inexistentes. Las capas de feedback cuentan como origen (decisión del equipo del
+26-oct, `decisiones.md` v0.7, D-004) y cada cita lleva su capa. Los únicos que no están en el
 Excel son RF-SVC-064 a 067 y RN-SVC-044 y 045, que vienen del PLT-03/04 v1.3. Las correcciones
 propuestas al Excel van en `decisiones.md` P-022.
 
@@ -64,9 +64,9 @@ versión anterior de este documento medía la cobertura solo por las citas en la
 «sin cobertura». Con el PLT-03 v1.3, **cada RNF de la Etapa 1 está declarado en al menos una
 funcionalidad**, con su métrica y su umbral. Lo que falta es que 19 no se citan en ningún criterio de
 historia. Ese hueco se cierra en el plan de pruebas de cada funcionalidad: un TC por RNF con su umbral.
-No hace falta otra historia. La decisión está en `decisiones.md` P-012.
+No hace falta otra historia. La decisión está en `decisiones.md` v0.7, P-012 (decidida por el equipo, ED-27).
 
-Las 62 historias están en Nexora (carpeta `historias/`, v1.3) y siguen pendientes de aprobación del PO.
+Las 62 historias están en Nexora (carpeta `historias/`, v1.3), listas para la firma del PO.
 
 ## Requisitos funcionales de la Etapa 1
 
@@ -194,5 +194,8 @@ No tienen identificador del Excel.
 |---|---|---|---|
 | 0.1 | 2026-10-19 | Jesús (Dev 2), con IA | Versión inicial publicada en Nexora (v1), contra el Excel v2 |
 | 0.2 | 2026-10-21 | Brayan (Dev 1), con IA | Pasa al Excel (3) con la división por etapas: cuenta solo los RF y RNF de la Etapa 1 y dice cuántos quedan fuera. Suma la medida por funcionalidad (PLT-03) a la de historias. Añade la prioridad del PLT-03, RN-SVC-044 y 045, y quita la nota de las «15 historias» en Nexora (hoy están las 62) |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: las capas de feedback del Excel cuentan como origen (D-004); los 19 RNF sin cita en historias se verifican en el plan de pruebas (P-012); historias listas para la firma del PO. Owner: Brayan Hurtado (Dev 1). |
 
 Generado por IA: borrador completo. Versión base de Nexora (v1, de Jesús, 19-oct), actualizada a la v1.3 del PO (Etapa 1) y al Excel (3) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (los requisitos que el Excel deja fuera de la Etapa 1 se cuentan, no se listan). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7, D-004 y P-012). — Revisado por: (pendiente)
