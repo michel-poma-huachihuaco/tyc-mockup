@@ -48,6 +48,17 @@ Nexora, las versiones nuevas de documentos de Jesús y Daniel quedan a nombre de
 
 Siguen en Nexora los 4 gates v1.2 en `gates/` (sin carpeta de ticket) y el duplicado de la HU-001: los retira el PO o el admin.
 
+## Publicado el 26-oct: lo resuelto de la revisión del Líder Técnico
+
+Brayan publicó 31 versiones nuevas, pendientes de aprobación: `analisis/decisiones.md` v0.4 (P-033 a P-042, las preguntas abiertas
+a Control de acceso y al Líder Técnico, y la respuesta sobre las reglas), los 11 archivos de `backlog/tareas/` (321 tareas, 243 h) y
+19 DoR con la nota de la revisión. Antes se comprobó que nadie los había cambiado en Nexora. **No se subieron los gates G3 y G4**:
+Jesús había publicado versiones nuevas y se conservan las suyas, que también se trajeron a esta carpeta junto con su BRD v3 y su G2 v3.
+
+Copia completa de Nexora (180 documentos, sellada con `aybar paquete sellar`): `/Users/lorem/Documents/aybar-atiende/docs-atiende/`.
+Coincide con esta carpeta, salvo lo que sobra en Nexora: la HU-001 duplicada y los 4 gates sueltos en `gates/`, que dan 5 errores
+de identificador duplicado en `aybar paquete validar`.
+
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
 - **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO) y los 23 DoR (el líder técnico y el project manager).

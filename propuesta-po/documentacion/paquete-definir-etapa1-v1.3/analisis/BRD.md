@@ -4,10 +4,10 @@ tipo: brd
 titulo: "BRD - Aybar Atiende (plataforma de atención al cliente) · Etapa 1"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.2"
+version: "0.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-21"
+fecha: "2026-10-22"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [brd, intake, plt-01]
 ---
@@ -117,7 +117,7 @@ En resumen, la Etapa 1 cubre:
 - los formularios simples (ingreso al proyecto y buses del Entrega Fest);
 - la autogestión del cliente en Mi Portal.
 
-La Etapa 1 opera con usuarios, roles y líderes **locales** (DEP-02, ADR-09).
+En la Etapa 1, los usuarios, los roles y los líderes los administra Control de acceso (PJ-05) y ATC solo los consume (DEP-16 propuesta, ADR-009), según el Líder Técnico (DT-03). El plan del PO tenía un maestro local con carga de RR. HH. (DEP-02).
 
 **Orden de prioridad 1-3** (PLT-01 v1.3). Estas historias se construyen primero, cada una con su
 desarrollador:
@@ -147,8 +147,8 @@ Recortarlos no afecta la v1.0 (PLT-01 v1.3, R-01).
 
 Los riesgos y las dependencias viven en `docs/roadmap/RMP-001-roadmap-aybar-atiende.md` y el
 análisis completo en `docs/roadmap/analisis-dependencias.md`. Son los riesgos R-01 a R-10 del PLT-01
-v1.3, con dueño y mitigación, y las 14 dependencias DEP-01 a DEP-15 (la numeración del PLT-01 salta
-la DEP-09). El BRD no los duplica, solo los referencia. Los más urgentes son:
+v1.3, con dueño y mitigación, y las 14 dependencias vigentes: DEP-01, DEP-03 a DEP-08 y DEP-10 a DEP-16 (la numeración del PLT-01 salta
+la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los referencia. Los más urgentes son:
 
 - **R-01**: 243 h de 252 h (96 %), con Dev 4 al 98 %.
 - **R-02**: APIs externas sin fecha.
@@ -160,7 +160,7 @@ la DEP-09). El BRD no los duplica, solo los referencia. Los más urgentes son:
 - Los 4 desarrolladores están dedicados al 100 % del 21-oct al 03-nov, con asistentes de IA.
 - El PO acepta historias a diario, a las 17:00.
 - Las integraciones externas se construyen contra simuladores.
-- PostgreSQL Multi-AZ y S3 existen en la arquitectura vigente.
+- La plataforma es Azure (PostgreSQL con alta disponibilidad entre zonas y Blob Storage con inmutabilidad), según el Líder Técnico (ADR-014, DT-07).
 
 **Restricciones** (PLT-01 v1.3):
 
@@ -171,8 +171,9 @@ la DEP-09). El BRD no los duplica, solo los referencia. Los más urgentes son:
 
 **Abierto en `decisiones.md`** que afecta a este BRD:
 
-- **D-001**: el stack de la Etapa 1, que sigue sin decidir.
-- **P-021**: el origen del dato de cliente frente al modelo de datos.
+- **DT-01**: el stack de la Etapa 1 lo decidió el Líder Técnico (Java y Angular del SDK). El PO actualiza PLT-01 y PLT-05 (P-027).
+- **P-021**: el origen del dato de cliente. El Líder Técnico fijó `PARTY` de la base única como fuente viva (DT-06); el PO confirma la regla.
+- **P-025**: las horas del CQRS y del outbox (DT-02) no están en el plan de 243 h.
 - **P-022**: las diferencias del Excel con los PDF.
 - **P-024**: ningún documento del paquete está aprobado todavía.
 
@@ -189,5 +190,8 @@ Solo cuenta como evidencia la aprobación registrada en Nexora o `estado: approv
 |---|---|---|---|
 | 0.1 | 2026-10-15 | Daniel (Dev 4), con IA | Versión inicial publicada en Nexora (v1), sobre el plan v1.2 |
 | 0.2 | 2026-10-21 | Brayan (Dev 1), con IA | Actualización a la v1.3 del PO, solo Etapa 1. Pasa a 62 HU, 23 funcionalidades y 243 h de 252 h, con desarrollo del 21-oct al 03-nov y control de alcance el 29-oct. Se ajustan el alcance flexible y el fuera de alcance, las metas por épica y las rutas del roadmap |
+| 0.3 | 2026-10-22 | Jesús Chávez Elías, con IA | Cambios de la revisión del Líder Técnico: identidad y roles de Control de acceso (DEP-16 en lugar de DEP-02), plataforma Azure, y el estado de D-001, P-021 y P-025 |
 
 Generado por IA: contenido completo. Versión base de Nexora (v1, de Daniel, 15-oct, sobre el plan v1.2), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-01 a DT-10 de `analisis/decisiones.md` v5). — Revisado por: (pendiente)
