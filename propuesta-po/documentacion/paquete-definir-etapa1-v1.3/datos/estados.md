@@ -4,11 +4,11 @@ tipo: "spec"
 titulo: "Estados y transiciones del ticket"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
-owner: "[por asignar: arquitecto / TL]"
-aprobadores: []
-fecha: "2026-10-19"
-relacionados: [ADR-002]
+version: "0.2"
+owner: "Jesús Chávez Elías"
+aprobadores: [tech_lead]
+fecha: "2026-10-26"
+relacionados: [ADR-002, ADR-005, ADR-008, SPEC-DATOS-ACTA-F4, SPEC-DATOS-DICCIONARIO]
 tags: [datos, estados, g3]
 ---
 
@@ -124,3 +124,12 @@ Contraste del 20-oct-2026 con las 62 historias de PJ-06. Lo que sigue sale de su
 | EntregaFest | Caso derivado a la Estación 4: el moderador no puede reabrirlo | HU-038 CA-02 |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: códigos de la lista `SVC_TICKET_STATUS`, transiciones del PLT-04 (HU-004 y HU-064 a 066, con la reapertura de HU-011 y HU-066), estados de la apelación, del asiento, del reclamo de garantía y de los casos sensibles con los 8 estados de cierre. — Revisado por: (pendiente)
+
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 a 2026-10-21 | Jesús Chávez Elías y Brayan Hurtado, con IA | Estados y transiciones desde el v7 y la v1.3 del PO (versiones de Nexora hasta la v4) |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Frontmatter completo para el acta F4, de la que es evidencia: owner (Jesús Chávez Elías, autor de la versión base), aprobador (Líder Técnico, como el resto de `datos/`), versión, fecha, relacionados e historial. Los estados no cambian |
+
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)

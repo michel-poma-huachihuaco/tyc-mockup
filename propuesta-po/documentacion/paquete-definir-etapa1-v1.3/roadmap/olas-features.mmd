@@ -3,7 +3,6 @@ flowchart LR
     FTATC01["FT-01 · Registro multicanal<br/>EP-01 · Dev 1"]
     FTATC03["FT-03 · Derivación<br/>EP-02 · Dev 2"]
     FTATC04["FT-04 · Motor SLA<br/>EP-02 · Dev 2"]
-    FTATC10["FT-10 · Reclamos de garantía postventa<br/>EP-05 · Dev 1"]
     FTATC16["FT-16 · Integración con Legal<br/>EP-10 · Dev 4"]
     FTATC18["FT-18 · Bandeja orquestadora<br/>EP-09 · Dev 3"]
     FTATC19["FT-19 · Asistencia al gestor<br/>EP-09 · Dev 3"]
@@ -21,6 +20,7 @@ flowchart LR
   subgraph O2["Ola 2"]
     FTATC05["FT-05 · Libro de Reclamaciones<br/>EP-03 · Dev 1"]
     FTATC08["FT-08 · Mesa SGD<br/>EP-04 · Dev 2"]
+    FTATC10["FT-10 · Reclamos de garantía postventa<br/>EP-05 · Dev 1"]
     FTATC14["FT-14 · Torre de Control CX<br/>EP-07 · Dev 3"]
     FTATC22["FT-22 · Resolución por morosidad<br/>EP-11 · Dev 4"]
     FTATC24["FT-24 · Autogestión en Mi Portal<br/>EP-06 · Dev 4"]
@@ -37,9 +37,11 @@ flowchart LR
   FTATC05 --> FTATC06
   FTATC04 --> FTATC07
   FTATC07 --> FTATC08
+  FTATC07 --> FTATC10
   FTATC08 --> FTATC09
   FTATC04 --> FTATC13
   FTATC13 --> FTATC14
+  FTATC13 --> FTATC24
   FTATC09 -. no se respeta .-> FTATC15
   FTATC20 --> FTATC17
   FTATC18 --> FTATC21
@@ -47,3 +49,6 @@ flowchart LR
   FTATC18 --> FTATC25
   FTATC21 --> FTATC24
   FTATC18 --> FTATC24
+%% Olas de features de Aybar Atiende (plan v1.3, Etapa 1): 17 dependencias entre features en 5 olas; es el diagrama de analisis-dependencias.md §4.1 y coincide con aybar paquete plan (§4.3).
+%% Antes: 15 vinculos entre features en 5 olas (el de analisis-dependencias.md v0.2 a v0.4), sin historial propio.
+%% 0.2 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · 17 vinculos: FT-07 → FT-10 (HU-026 → HU-036, PLT-04) y FT-13 → FT-24 (HU-019 → HU-066, PLT-04); FT-10 pasa de la ola 0 a la 2. — Revisado por: (pendiente)

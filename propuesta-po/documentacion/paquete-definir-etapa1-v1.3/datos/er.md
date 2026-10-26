@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Diagrama entidad-relación de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [datos, er, g3]
 
 # Diagrama entidad-relación
 
-**Revisión del 20-oct-2026, desde el Modelo de Datos Corporativo v7 (fragmento 10 SERVICE, diapositivas 115 a 117).** Se dibujan las 13 entidades de SERVICE con sus claves (`int`) y una línea por clave foránea. Los pares `<Campo>ListID` y `<Campo>ID` se dibujan como una sola relación hacia `MAE_GENERIC_LIST_VALUE` (la columna `ListID` apunta a `MAE_GENERIC_LIST`). Las entidades de otros fragmentos aparecen sin atributos: sus claves no están transcritas en el Anexo A. Fuente del diagrama: `er-diagrama.mmd`.
+**Revisión del 20-oct-2026, desde el Modelo de Datos Corporativo v7 (fragmento 10 SERVICE, diapositivas 115 a 117).** Se dibujan las 13 entidades de SERVICE con sus claves (`int`) y una línea por clave foránea, más el outbox `SVC_OUTBOX_EVENT`, que no está en el v7: es el cambio al v7 que propone ADR-013 v0.3 (26-oct). Los pares `<Campo>ListID` y `<Campo>ID` se dibujan como una sola relación hacia `MAE_GENERIC_LIST_VALUE` (la columna `ListID` apunta a `MAE_GENERIC_LIST`). Las entidades de otros fragmentos aparecen sin atributos: sus claves no están transcritas en el Anexo A. Fuente del diagrama: `er-diagrama.mmd`.
 
 **Dónde viven (DT-06):** en la base única del modelo v7, en Azure Database for PostgreSQL, con las relaciones como FK físicas. Las 13 tablas de SERVICE las crea ATC; las de otros fragmentos (`PARTY`, `ORG_COMPANY`, `MAE_CHANNEL`, `MAE_GENERIC_LIST_VALUE`…) no las crea ni las recrea: quién las migra está en `registro-de-tablas.md` (C-11). `MAE_AREA` es solo la cola de atención del ticket (C-07).
 
@@ -73,6 +73,10 @@ erDiagram
   SVC_COMPLAINT_APPEAL ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "ComplaintAppealID"
   MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "AppealStatusID"
   PARTY ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "ChangedByPartyID"
+  SVC_TICKET ||--o{ SVC_OUTBOX_EVENT : "TicketID"
+  ORG_COMPANY ||--o{ SVC_OUTBOX_EVENT : "CompanyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_OUTBOX_EVENT : "EventTypeID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_OUTBOX_EVENT : "PublishStatusID"
   MAE_AREA {
     int AreaID PK
   }
@@ -176,15 +180,25 @@ erDiagram
     int AppealStatusID FK
     int ChangedByPartyID FK
   }
+  SVC_OUTBOX_EVENT {
+    int OutboxEventID PK "propuesta ADR-013, cambio al v7"
+    int TicketID FK
+    int CompanyID FK
+    int EventTypeListID FK
+    int EventTypeID FK
+    int PublishStatusListID FK
+    int PublishStatusID FK
+    int UserAccountID "user_account_id del token, sin FK; nulo en los jobs"
+  }
 ```
 
-- Las relaciones son 53 líneas (el v7 declara 61 para el fragmento; la diferencia viene de agrupar los pares ListID/ID y de las FK a `MAE_GENERIC_LIST`, que no se dibujan).
+- Las relaciones de las 13 entidades del v7 son 53 líneas (el v7 declara 61 para el fragmento; la diferencia viene de agrupar los pares ListID/ID y de las FK a `MAE_GENERIC_LIST`, que no se dibujan). El outbox suma 4.
 - `SVC_COMPLAINT_BOOK_ENTRY` es una extensión 1:1 de `SVC_TICKET`: su PK es `TicketID`, que a la vez es FK.
-- Las bitácoras (`*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`) tienen PK propia y una fila por cambio. El Excel del PO pide firmar 5 bitácoras append-only (RNF-AUD-004): las tres `*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG` y `SVC_SLA_BREACH_ALERT`; el v7 dice 4 firmadas en SERVICE: se concilia con Gobierno de Datos.
+- Las bitácoras (`*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`) tienen PK propia y una fila por cambio. El Excel del PO pide firmar 5 bitácoras append-only (RNF-AUD-004): las tres `*_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG` y `SVC_SLA_BREACH_ALERT`; el v7 firma otras 4 (`SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_COMPLAINT_BOOK_ENTRY` y `SVC_COMPLAINT_APPEAL`). ADR-002 (en borrador) propone firmar las 9; la columna `IntegrityHash` de las 5 bitácoras es un cambio al v7 (P-031).
 - `SVC_COMPLAINT_APPEAL` es 1 a N por asiento: así lo dibuja el PLT-04 v1.3 (HU-016 §6.5) y lo permite el esquema de claves del v7.
 - **`PARTY` es la fuente viva del cliente (DT-06, 22-oct).** `SVC_TICKET.PartyID` es clave foránea física a `PARTY` del v7: es una referencia, no una copia. El PO reescribe el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 (P-027). ATC no crea la `PARTY` del «Interesado» (HU-051): en PJ-05 la Party no verificada solo la crea el autorregistro de Control de acceso (R29, A26); el ticket queda con la vinculación pendiente hasta que exista (P-037). Ver el diccionario, C-1.
 - Las líneas desde `PARTY` hacia las bitácoras (`ChangedByPartyID`, `AssignedToPartyID`, `AgentPartyID`…) son colaboradores. El token trae `user_account_id`, no `PartyID` (P-033).
-- El outbox (`INTG_OUTBOX_EVENT` del fragmento INTEGRATION-HUB, o `SVC_OUTBOX_EVENT` propia si no sirve, ADR-013) y la identidad (Control de acceso; ATC no crea tablas de identidad, C-11) viven fuera de SERVICE; no se redibujan aquí.
+- **El outbox es `SVC_OUTBOX_EVENT`** (ADR-013 v0.3), en el fragmento SERVICE, como cambio al v7 propuesto (`registro-de-tablas.md` §3; P-031). Se dibuja con sus claves (el ticket del evento, la empresa y los pares de lista del tipo de evento, `SVC_OUTBOX_EVENT_TYPE`, y del estado de publicación) y con `UserAccountID`, el `user_account_id` del token de quien hizo el cambio (nulo en los jobs; sin FK, porque ATC no lee las tablas de identidad; ADR-013 v0.4). Las demás columnas están en el diccionario. `INTG_OUTBOX_EVENT` (INTEGRATION-HUB) no se usa: es para envíos a sistemas externos. La identidad (Control de acceso; ATC no crea tablas de identidad, C-11) vive fuera de SERVICE y no se dibuja.
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: 5 bitácoras firmadas (RNF-AUD-004), cardinalidad de la apelación del PLT-04 y conflicto abierto por la clave a PARTY. — Revisado por: (pendiente)
 
@@ -196,5 +210,8 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 |---|---|---|---|
 | 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías y Brayan Hurtado, con IA | Diagrama desde el v7 y decisiones del 22-oct (versiones de Nexora hasta la v5) |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Base única en Azure con FK físicas (DT-06) y enlace al registro de tablas (C-11); `MAE_AREA` como cola (C-07); ATC no crea la `PARTY` del interesado (P-037); colaboradores y `PartyID` del token (P-033). El diagrama no cambia |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | El outbox es `SVC_OUTBOX_EVENT` (ADR-013 v0.3 y v0.4) y se dibuja como cambio al v7 propuesto, con 4 relaciones y la columna `UserAccountID` (sin FK); las 9 tablas firmadas de ADR-002 |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (outbox de ADR-013 v0.3 y tablas firmadas de ADR-002). — Revisado por: (pendiente)

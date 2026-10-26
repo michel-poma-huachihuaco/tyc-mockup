@@ -7,8 +7,8 @@ flowchart LR
     ges[Gestores, supervisores<br/>y áreas · consola ATC]
     obra[Personal de proyecto<br/>y del Entrega Fest<br/>formularios]
   end
-  borde["Borde corporativo<br/>Cloudflare + Azure API Management<br/>TLS · WAF · JWT y audiencia"]
-  atc(["<b>Aybar Atiende</b><br/>plataforma ATC · monolito modular<br/>Java 21 · Spring Boot · SDK Aybar 0.7.1 · Angular<br/>Azure · DEV, QA, PRE y producción"])
+  borde["Borde corporativo<br/>Cloudflare + Azure API Management<br/>TLS · WAF · JWT y audiencia<br/>el WebSocket del visor no pasa por API Management"]
+  atc(["<b>Aybar Atiende</b><br/>plataforma ATC · monolito modular<br/>Java 21 · Spring Boot · SDK Aybar 0.7.1 · Angular<br/>Azure · DEV, QA, PRE (UAT) y producción"])
   ctrl[["Control de acceso (PJ-05) · DEP-16<br/>emisor de tokens · login de internos y clientes<br/>catálogo de roles y permisos"]]
   base[("Base única del v7<br/>PARTY y maestros de otros dominios")]
   mon[["Azure Monitor<br/>logs y auditoría técnica"]]
@@ -47,3 +47,4 @@ flowchart LR
   atc <--> proy
 %% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con las decisiones DT-01 a DT-07 del Líder Técnico (Control de acceso emite los tokens y hace el login; Azure; borde con Cloudflare y API Management; base única con PARTY como fuente viva). — Revisado por: (pendiente)
 %% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · borde corporativo, base única, Azure Monitor y ambientes; DEP-15; la consulta de gestores y líderes queda punteada porque Control de acceso no la tiene (P-035); los canales llegan por los gestores
+%% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · segunda revisión del Líder Técnico: PRE con la UAT (PLT-05 §4.2) y el WebSocket del visor fuera de API Management

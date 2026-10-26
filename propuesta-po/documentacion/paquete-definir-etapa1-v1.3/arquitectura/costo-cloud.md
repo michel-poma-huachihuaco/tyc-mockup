@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Impacto en costo cloud por ambiente (Azure, DT-07)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -16,7 +16,7 @@ tags: [arquitectura, costo, g3]
 
 El criterio de G3 pide el «impacto en costo cloud estimado», con número y fuente, y la revisión del Líder Técnico (22-oct, §4) pide llenarlo **por ambiente**, con la calculadora de Azure y los volúmenes esperados. Este documento da el **costo mensual de cada ambiente** para cada servicio de DT-07, con la fuente de cada precio y los supuestos que faltan confirmar.
 
-**Fuente de los precios:** API pública de precios de Azure, `https://prices.azure.com/api/retail/prices`, consultada el **26-oct-2026**, en **USD**, precio de lista (`priceType = Consumption`, sin reservas ni descuentos de contrato). Es la misma lista que usa la calculadora de precios de Azure. Cada precio se identifica abajo por su `serviceName`, `productName`, `skuName` y `meterName`, para que cualquiera lo vuelva a consultar.
+**Fuente de los precios:** API pública de precios de Azure, `https://prices.azure.com/api/retail/prices`, consultada el **26-oct-2026** (y otra vez ese día para la v0.4, con los mismos precios), en **USD**, precio de lista (`priceType = Consumption`, sin reservas ni descuentos de contrato). Es la misma lista que usa la calculadora de precios de Azure. Cada precio se identifica abajo por su `serviceName`, `productName`, `skuName` y `meterName`, para que cualquiera lo vuelva a consultar.
 
 **Región:** ningún documento de PJ-05 ni de ATC fija la región. Se calcula en **Brazil South** (`brazilsouth`, la región de Azure más cercana a Lima) como base y en **East US 2** (`eastus2`) como comparación. La fija el Líder Técnico (**P-044**).
 
@@ -24,41 +24,43 @@ El criterio de G3 pide el «impacto en costo cloud estimado», con número y fue
 
 ## 1 Costo mensual por ambiente (USD)
 
+Los ambientes son los cuatro del PLT-05 v1.3 §4.2: DEV (pruebas del equipo), QA (E2E desde el día 3), **PRE (UAT del 03-nov)** y producción (ADR-014, punto 8). PRE entra en la Etapa 1 y en el costo base. Tiene el tamaño de QA.
+
 ### 1.1 Brazil South (base)
 
-| Servicio (DT-07) | DEV | QA/UAT | PROD |
-|---|---:|---:|---:|
-| Azure Database for PostgreSQL | 32,54 | 109,19 | 378,37 |
-| Azure Cosmos DB for MongoDB (vCore) | 34,97 | 118,84 | 844,44 |
-| Azure Event Hubs (protocolo Kafka) | 87,60 | 87,60 | 87,60 |
-| Azure Blob Storage con inmutabilidad | 0,04 | 0,08 | 2,07 |
-| Azure Key Vault | 0,15 | 0,15 | 0,15 |
-| Azure Container Apps | 59,21 | 59,25 | 197,70 |
-| Azure Monitor (Log Analytics) | 13,80 | 13,80 | 46,00 |
-| Azure API Management (parte de ATC) | 0,85 | 1,28 | 6,38 |
-| Cloudflare (parte de ATC) | 0,00 | 0,00 | 0,00 |
-| **Total por ambiente** | **229,16** | **390,19** | **1.562,71** |
+| Servicio (DT-07) | DEV | QA | PRE (UAT) | PROD |
+|---|---:|---:|---:|---:|
+| Azure Database for PostgreSQL | 32,54 | 109,19 | 109,19 | 378,37 |
+| Azure Cosmos DB for MongoDB (vCore) | 34,97 | 118,84 | 118,84 | 844,44 |
+| Azure Event Hubs (protocolo Kafka) | 87,60 | 87,60 | 87,60 | 87,60 |
+| Azure Blob Storage con inmutabilidad | 0,04 | 0,08 | 0,08 | 2,07 |
+| Azure Key Vault | 0,15 | 0,15 | 0,15 | 0,15 |
+| Azure Container Apps | 59,21 | 59,25 | 59,25 | 197,70 |
+| Azure Monitor (Log Analytics) | 13,80 | 13,80 | 13,80 | 46,00 |
+| Azure API Management (parte de ATC) | 0,85 | 1,28 | 1,28 | 6,38 |
+| Cloudflare (parte de ATC) | 0,00 | 0,00 | 0,00 | 0,00 |
+| **Total por ambiente** | **229,16** | **390,19** | **390,19** | **1.562,71** |
 
-Común a los tres ambientes: **Azure Container Registry** Standard, un registro para todas las imágenes, **20,28** al mes.
+Común a los cuatro ambientes: **Azure Container Registry** Standard, un registro para todas las imágenes, **20,28** al mes.
 
-**Total mensual de ATC en Brazil South: USD 2.202,34** (DEV + QA/UAT + PROD + registro). Si se levanta PRE, que ADR-014 nombra, con el tamaño de QA/UAT: **+390,19** (USD 2.592,53).
+**Total mensual de ATC en Brazil South: USD 2.592,53** (DEV + QA + PRE + PROD + registro). Es la cifra que citan ADR-001 y ADR-014. Sin PRE serían 2.202,34, pero esa no es una opción del plan: el PLT-05 hace la UAT en PRE.
 
 ### 1.2 East US 2 (comparación)
 
-| Servicio (DT-07) | DEV | QA/UAT | PROD |
-|---|---:|---:|---:|
-| Azure Database for PostgreSQL | 16,09 | 53,32 | 274,60 |
-| Azure Cosmos DB for MongoDB (vCore) | 18,36 | 60,19 | 426,03 |
-| Azure Event Hubs (protocolo Kafka) | 87,60 | 87,60 | 87,60 |
-| Azure Blob Storage con inmutabilidad | 0,02 | 0,05 | 1,19 |
-| Azure Key Vault | 0,15 | 0,15 | 0,15 |
-| Azure Container Apps | 59,21 | 59,25 | 197,70 |
-| Azure Monitor (Log Analytics) | 8,28 | 8,28 | 27,60 |
-| Azure API Management (parte de ATC) | 0,70 | 1,05 | 5,25 |
-| Cloudflare (parte de ATC) | 0,00 | 0,00 | 0,00 |
-| **Total por ambiente** | **190,41** | **269,89** | **1.020,12** |
+| Servicio (DT-07) | DEV | QA | PRE (UAT) | PROD |
+|---|---:|---:|---:|---:|
+| Azure Database for PostgreSQL | 16,09 | 53,32 | 53,32 | 274,60 |
+| Azure Cosmos DB for MongoDB (vCore) | 18,36 | 60,19 | 60,19 | 426,03 |
+| Azure Event Hubs (protocolo Kafka) | 87,60 | 87,60 | 87,60 | 87,60 |
+| Azure Blob Storage con inmutabilidad | 0,02 | 0,05 | 0,05 | 1,19 |
+| Azure Key Vault | 0,15 | 0,15 | 0,15 | 0,15 |
+| Azure Container Apps | 59,21 | 59,25 | 59,25 | 197,70 |
+| Azure Monitor (Log Analytics) | 8,28 | 8,28 | 8,28 | 27,60 |
+| Azure API Management (parte de ATC) | 0,70 | 1,05 | 1,05 | 5,25 |
+| Cloudflare (parte de ATC) | 0,00 | 0,00 | 0,00 | 0,00 |
+| **Total por ambiente** | **190,41** | **269,89** | **269,89** | **1.020,12** |
 
-Común: Azure Container Registry Standard, **20,28**. **Total mensual en East US 2: USD 1.500,70**; con PRE del tamaño de QA/UAT, **+269,89**.
+Común: Azure Container Registry Standard, **20,28**. **Total mensual en East US 2: USD 1.770,59.**
 
 ### 1.3 Sensibilidad al volumen
 
@@ -72,14 +74,16 @@ Con **diez veces** el volumen de PROD (5.000 tickets al mes, 480 GB de evidencia
 | Proveedor de IA (ADR-007, HU-048, HU-053) | **Sin cifra posible** | Sin proveedor aprobado (DEP-14, «Por evaluar») |
 | Emisor de tokens, login de internos y de clientes, verificación de identidad | **0 para ATC** | Son de Control de acceso (DT-03, DT-04, DT-05). ATC no envía códigos de Mi Portal |
 | ShedLock (DT-08) | **0** | Usa una tabla de la base de PostgreSQL; no agrega servicio |
+| Job de migraciones Flyway (ADR-001, punto 5) | **0** en la práctica | Azure Container Apps Job con la misma imagen; corre segundos antes de cada despliegue, en el plan de consumo y dentro de su capa gratuita |
+| WebSocket del visor (ADR-010) | **0** | Entra por el ingreso de Container Apps del backend, sin pasar por API Management (el nivel de consumo no admite WebSocket, §2.2), y corre en el mismo contenedor |
 
 ## 2 Supuestos por ambiente (a confirmar, P-044)
 
 ### 2.1 Volúmenes
 
-Ningún documento del PO los da: el PLT-02 dice «Volumen y tiempos actuales: por medir en Iteración 0». Se usan estos, **a confirmar por el PO u Operaciones**:
+Ningún documento del PO los da: el PLT-02 dice «Volumen y tiempos actuales: por medir en Iteración 0». Se usan estos, **a confirmar por el PO u Operaciones**. PRE (UAT) usa los mismos de QA:
 
-| Supuesto | DEV | QA/UAT | PROD | De dónde sale |
+| Supuesto | DEV | QA y PRE | PROD | De dónde sale |
 |---|---|---|---|---|
 | Tickets al mes | sintéticos | sintéticos | **500** | 200 tickets activos (RNF del visor, FT-25: «200 tickets activos») ÷ 9 días hábiles de ciclo (72 horas hábiles de cierre, RNF-REN-005) × 22 días hábiles ≈ 490 |
 | Adjuntos por ticket | — | — | 4 MB (2 archivos de 2 MB; tope de 10 MB por archivo, HU-064 CA-05) | Supuesto |
@@ -92,17 +96,19 @@ Ningún documento del PO los da: el PLT-02 dice «Volumen y tiempos actuales: po
 
 ### 2.2 Tamaños (SKU)
 
-| Servicio | DEV | QA/UAT | PROD | Fórmula |
+PRE (UAT) tiene el mismo tamaño que QA.
+
+| Servicio | DEV | QA y PRE | PROD | Fórmula |
 |---|---|---|---|---|
 | Azure Database for PostgreSQL (Flexible Server) | Burstable B1ms, 32 GB | Burstable B2s, 32 GB | General Purpose D2ds_v5 (2 vCore), 64 GB, **alta disponibilidad con redundancia de zona** (RNF-DIS-003): cómputo y almacenamiento × 2 | precio por hora × 730 + GB × precio por GB |
-| Azure Cosmos DB for MongoDB (vCore) | M10 (Burstable, 1 vCore), 32 GB | M20 (Burstable, 2 vCore), 32 GB | M30 (2 vCore, General Purpose) con alta disponibilidad (× 2), 32 GB | precio por hora × 730 + GB × precio por GB |
-| Azure Event Hubs | Standard, 1 unidad de rendimiento | Standard, 1 unidad | Standard, 1 unidad | (unidad + endpoint Kafka) × 730 + eventos |
+| Azure Cosmos DB for MongoDB (vCore), hoy «Azure DocumentDB» | M10 (Burstable, 1 vCore, 2 GiB), 32 GB | M20 (Burstable, 2 vCore, 4 GiB), 32 GB | M30 (2 vCore, 8 GiB) con alta disponibilidad (× 2), 32 GB | precio por hora × 730 + GB × precio por GB. Un clúster exclusivo de ATC por ambiente (ADR-012) |
+| Azure Event Hubs | Standard, 1 unidad de rendimiento | Standard, 1 unidad | Standard, 1 unidad | (unidad + endpoint Kafka) × 730 + eventos. Un espacio de nombres exclusivo de ATC por ambiente, con 10 event hubs, el límite de Standard (ADR-013) |
 | Azure Blob Storage | Hot LRS | Hot LRS | **Hot ZRS** (zonas), con política de inmutabilidad (sin costo propio) | GB × precio + operaciones |
 | Azure Key Vault | Standard | Standard | Standard | operaciones ÷ 10.000 × precio |
 | Azure Container Apps (plan de consumo) | backend 1 réplica de 0,5 vCPU y 1 GiB; frontend 1 de 0,25 vCPU y 0,5 GiB | igual que DEV | backend **2 réplicas** de 1 vCPU y 2 GiB; frontend 2 de 0,25 vCPU y 0,5 GiB | vCPU × 2.628.000 s × precio + GiB × 2.628.000 s × precio + llamadas |
 | Azure Container Registry | Standard, uno para los tres ambientes | | | precio por día × 365 ÷ 12 |
 | Azure Monitor | Log Analytics, Analytics Logs | igual | igual | GB × precio |
-| Azure API Management | Llamadas de ATC a precio del nivel de consumo | igual | igual | llamadas ÷ 10.000 × precio |
+| Azure API Management | Llamadas REST de ATC a precio del nivel de consumo. El WebSocket del visor no pasa por API Management: «WebSocket APIs aren't supported yet in the Consumption tier» (`https://learn.microsoft.com/en-us/azure/api-management/websocket-api`); entra por Cloudflare al ingreso de Container Apps (ADR-010) | igual | igual | llamadas ÷ 10.000 × precio |
 | Cloudflare | Zona corporativa | igual | igual | 0 |
 
 **Lo compartido con Control de acceso** (P-044):
@@ -139,13 +145,13 @@ Ningún documento del PO los da: el PLT-02 dice «Volumen y tiempos actuales: po
 
 Notas sobre los medidores:
 
-- **Azure Cosmos DB for MongoDB (vCore)** aparece en la lista de precios como **«Azure DocumentDB»**. La correspondencia de los niveles M10, M20 y M30 con esos medidores se confirma en la calculadora de Azure antes de aprobar el costo.
-- **Event Hubs** lista un medidor «Standard Kafka Endpoint» (USD 65,70 al mes por espacio de nombres). Se suma como cota superior; si la calculadora no lo cobra con el nivel Standard, Event Hubs baja a USD 21,90 más los eventos.
-- Las capas gratuitas no restadas: Container Apps (180.000 vCPU-segundo, 360.000 GiB-segundo y 2 millones de llamadas al mes por suscripción), Log Analytics (5 GB al mes por cuenta de facturación) y API Management de consumo (1 millón de llamadas). Con ellas, DEV y QA/UAT bajan.
+- **Azure Cosmos DB for MongoDB (vCore)** se llama hoy **«Azure DocumentDB»** en la documentación de Microsoft y en la lista de precios. Los niveles salen de Microsoft Learn (`https://learn.microsoft.com/en-us/azure/documentdb/compute-storage`): M10 = 1 vCore *burstable* y 2 GiB; M20 = 2 vCore *burstable* y 4 GiB; M30 = 2 vCore y 8 GiB, sin *burstable*. Se cobran con estos medidores: M10, «Burstable 1 vCore»; M20, «Burstable 2 vCore», que tiene el mismo precio que el medidor B2S; M30, «Worker Node 2 vCore». La lista tiene también «Coordinator Node 2 vCore», más barato (0,297254 por hora en Brazil South). Se toma el de nodo de trabajo, el de mayor precio, para que la cifra no quede corta. La alta disponibilidad duplica el cómputo: la página de precios dice que quitarla en dev/test «reduce the cost by 50%». **Cifra única:** 844,44 en PROD.
+- **Event Hubs:** el protocolo Kafka está disponible en Standard (`https://learn.microsoft.com/en-us/azure/event-hubs/azure-event-hubs-apache-kafka-overview`). La lista de precios minorista (la que usa la calculadora) trae el medidor «Standard Kafka Endpoint» (0,09 por hora, USD 65,70 al mes por espacio de nombres), y la página de precios marca Kafka «Available» en Standard sin precio aparte. **Cifra única: USD 87,60 al mes por ambiente**, con el medidor incluido. Si la primera factura de DEV no lo cobra, se corrige aquí y en ADR-013 a la baja (21,90 más los eventos); lo revisa el Líder Técnico.
+- Las capas gratuitas no restadas: Container Apps (180.000 vCPU-segundo, 360.000 GiB-segundo y 2 millones de llamadas al mes por suscripción), Log Analytics (5 GB al mes por cuenta de facturación) y API Management de consumo (1 millón de llamadas). Con ellas, DEV, QA y PRE bajan.
 
 ## 4 Horas de desarrollo
 
-El costo de construir lo que el SDK no trae (outbox, proyector, bitácoras con HMAC, calendario, caché, circuit breaker, ShedLock, ArchUnit) no es costo cloud. Tiene una estimación propuesta en ADR-012: **63 h**, de las que 28 h son outbox, proyector y bus. Frente a las 9 h de holgura del plan del PO (243 h de 252 h) faltan 54 h. La estimación sigue abierta en P-025 hasta que la confirme el equipo y la decidan el Líder Técnico y el PO.
+El costo de construir lo que el SDK no trae (outbox, proyector, bitácoras con HMAC, calendario, caché, circuit breaker, ShedLock, ArchUnit) no es costo cloud. Tiene una estimación propuesta en ADR-012: **63 h**, de las que 28 h son outbox, proyector y bus. Frente a las 9 h de holgura del plan del PO (243 h de 252 h) faltan 54 h. La estimación sigue abierta en P-025 hasta que la confirme el equipo y la decidan el Líder Técnico y el PO. ADR-012 propone sacar primero el alcance flexible de R-01 (16 h) en el control de alcance del 29-oct. Quedan 38 h que deciden el Líder Técnico y el PO.
 
 ## Historial de cambios
 
@@ -154,6 +160,7 @@ El costo de construir lo que el SDK no trae (outbox, proyector, bitácoras con H
 | 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Estructura con servicios «por decidir» |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Servicios de Azure (DT-07), sin cifras; volúmenes que faltan; qué ya no cuesta a ATC |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Costo mensual por ambiente (DEV, QA/UAT y PROD, y PRE si se levanta) para cada servicio de DT-07, con precios de la API pública de Azure del 26-oct-2026 en USD, en Brazil South y East US 2; supuestos de volumen y tamaño por confirmar (P-044); sensibilidad al volumen; lo compartido con Control de acceso; precios unitarios con su medidor |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: PRE (UAT del 03-nov) entra en el costo base como dice el PLT-05 §4.2: USD 2.592,53 en Brazil South y 1.770,59 en East US 2 (precios consultados de nuevo en la API el 26-oct, sin cambios); el WebSocket no pasa por API Management de consumo (verificado en Microsoft Learn); Event Hubs con espacio de nombres exclusivo y su límite de 10 event hubs; niveles M10, M20 y M30 de Azure DocumentDB verificados en Microsoft Learn y una sola cifra para Cosmos DB y Event Hubs; job de migraciones y WebSocket sin costo propio |
 
 Generado por IA: borrador completo (Claude, 2026-10-19); actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
 

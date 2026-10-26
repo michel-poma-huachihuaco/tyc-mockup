@@ -1561,7 +1561,8 @@
    "dependencias_externas": [
     "DEP-01",
     "DEP-11",
-    "DEP-13"
+    "DEP-13",
+    "DEP-16"
    ],
    "ruta_documento": "historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md"
   },

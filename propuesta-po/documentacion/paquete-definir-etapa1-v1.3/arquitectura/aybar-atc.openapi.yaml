@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Aybar Atiende · Plataforma ATC
-  version: 0.4.0-borrador
+  version: 0.5.0-borrador
   license:
     name: Uso interno de Aybar (propietario)
   description: |
@@ -12,13 +12,16 @@ info:
     Errores (DT-09, C-10): ProblemDetail RFC 7807 de `aybar-starter-web` (esquema `ProblemaAybar`: `codigo` con el formato `AYB-<ÁREA>-<HTTP>`, `correlationId`, `timestamp` y `campos`). Los de plataforma los emite el SDK (`AYB-VAL-400`, `AYB-SEG-401`, `AYB-SEG-403`, `AYB-REC-404`, `AYB-GEN-429`, `AYB-GEN-500`); los de seguridad (401, 403, falta de rol) los emiten el SDK y Control de acceso con sus códigos y ATC no los reinventa ni emite `AYB-PEF-403` (área de Control de acceso, D-169). Los de negocio de ATC se lanzan con `AybarException` y usan solo las áreas `TKT`, `SLA`, `LRC`, `APL`, `GAR` y `PTL` (`x-areas-de-error`); cada operación que tiene uno lo lista en `x-errores-negocio`.
     Versionado y compatibilidad: la versión mayor va en la ruta (`/api/v1`). Mientras el contrato es borrador, `info.version` es `0.MENOR.PARCHE-borrador`; al aprobarse en G3 pasa a `1.0.0`, y desde ahí su MAYOR es la de la ruta. Dentro de `/api/v1` solo se agregan operaciones y campos opcionales (sube la MENOR) o se corrigen descripciones (sube el PARCHE). Quitar o renombrar una operación o un campo, cambiar un tipo o volver obligatorio un campo es incompatible: crea `/api/v2` (sube la MAYOR) y vuelve a G3. `/api/v1` y `/api/v2` conviven en el mismo despliegue; la operación de v1 que tiene reemplazo se marca `deprecated: true` y se retira cuando sus clientes migraron (consola ATC, Mi Portal y formularios, que son de ATC) y no antes de 90 días (propuesta del equipo; el plazo lo confirma el Líder Técnico).
     Estados: el del ticket y el de la apelación usan los códigos de las listas del Excel (`SVC_TICKET_STATUS` y `SVC_COMPLAINT_APPEAL_STATUS`). Cliente: `PARTY` de la base única es la fuente viva y la clave foránea del ticket no es una copia (DT-06); el PO actualiza su ADR-03 (P-027).
-    No incluye WebSocket: el visor 3D recibe los eventos del servicio por `/ws/visor` (ADR-010), que OpenAPI no describe; exige el mismo permiso que `estadoVisor`.
+    Mi Portal (ADR-011, decisión 8): sus operaciones usan esquemas propios (`PortalTicketNuevo`, `PortalRespuesta`, `PortalTicket`, `PortalTicketResumen`, `PortalPaginaTickets`, `PortalTrazabilidad` y `PortalInteraccion`). La identidad del cliente sale solo de su token (P-033): ninguna operación de Mi Portal recibe un identificador de cliente, y los esquemas de entrada declaran `additionalProperties: false` (un campo de más responde AYB-VAL-400). Las respuestas no llevan `PartyID`, prioridad, responsable, creador, conflicto, eje, rayo, flujo ni notas internas. Los esquemas de la consola (`TicketNuevo`, `Ticket`, `TicketResumen`, `Interaccion`) no se usan en Mi Portal.
+    Identificadores de colaborador: `colaboradorId`, `gestorId`, `responsableId` y `destinatarioId` son el `PartyID` del colaborador, como las columnas `*PartyID` del v7 (no el `user_account_id` del token; P-033).
+    No incluye WebSocket: el visor 3D recibe los eventos del servicio por `/ws/visor` (ADR-010), que OpenAPI no describe. Exige el mismo permiso que `estadoVisor`. El JWT va en la cabecera `Sec-WebSocket-Protocol` (`aybar.visor.v1`, <jwt>), nunca en la URL, y el servicio lo valida en el handshake con `aybar-starter-security` (firma, emisor, vencimiento y audiencia). Al vencer el token, el servidor cierra con el código 4401 y el visor se reconecta. Entra por Cloudflare al ingreso de Container Apps, sin API Management.
     Generado por IA — Revisado por: (pendiente).
   x-historial:
     - '2026-10-19 · Jesús Chávez Elías, con IA · Borrador de operaciones por módulo a partir de las 62 historias.'
     - '2026-10-20 · Equipo, con IA · Campos de clave con los nombres del Modelo de Datos Corporativo v7.'
     - '2026-10-21 · Brayan, con IA · Esquemas completados con fuentes del PO y del Excel; x-pendiente para lo que falta.'
     - '0.3.0 · 2026-10-22 · Jesús Chávez Elías, con IA · Sin operaciones de código y sesión de Mi Portal (DT-04), x-permiso por operación (C-02), etiquetas en inglés.'
+    - '0.5.0 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: esquemas propios de Mi Portal sin identificador de cliente ni datos internos (additionalProperties: false en la entrada; AYB-PTL-404 y AYB-PTL-422 donde corresponde); Reserva sin clienteId; colaboradorId y gestorId declarados como PartyID; WebSocket del visor autenticado en el handshake; la visibilidad del cliente citada por los criterios de HU-064 a 066.'
     - '0.4.0 · 2026-10-26 · Brayan Hurtado, con IA · x-permiso con la forma de PJ-05 (opción + acción) y x-roles por operación; respuestas de error del SDK por código; x-errores-negocio con las áreas TKT, SLA, LRC, APL, GAR y PTL; ProblemaAybar igual al del SDK; política de compatibilidad con convivencia v1/v2; Mi Portal sin PartyID en el token (P-033); sin descripciones «por completar».'
 x-areas-de-error:
   - { area: TKT, alcance: 'Tickets y todo lo que se registra como ticket o actúa sobre uno: bandeja, flujos, rayo, actividades, Mesa de casos sensibles (SGD), señal de conflicto y handoff, notas de estado, Entrega Fest y formularios simples (ingreso y reserva de bus son tipos de ticket del catálogo)' }
@@ -255,6 +258,7 @@ paths:
         - name: colaboradorId
           in: path
           required: true
+          description: 'PartyID del colaborador que cesa, como las columnas `*PartyID` del v7 (no es el `user_account_id` del token; cómo se relacionan es P-033).'
           schema: { type: string }
       requestBody:
         required: true
@@ -581,7 +585,7 @@ paths:
       tags: [portal]
       operationId: listarMisTickets
       summary: "Consultar mis tickets"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Devuelve solo los tickets de ese cliente, del más reciente al más antiguo, con número, tipo, estado, área y fecha de compromiso (HU-064 CA-02), en el esquema propio `PortalTicketResumen`: sin responsable, prioridad, notas internas ni datos internos del ticket.'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
@@ -595,7 +599,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/PaginaTickets' }
+              schema: { $ref: '#/components/schemas/PortalPaginaTickets' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
@@ -606,28 +610,32 @@ paths:
       tags: [portal]
       operationId: registrarMiTicket
       summary: "Registrar un ticket desde Mi Portal"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo es `PortalTicketNuevo` (`additionalProperties: false`): un campo que no está en el esquema, por ejemplo `clienteId`, `partyId`, `prioridadId`, `canal` o `visible`, se rechaza con AYB-VAL-400. El servidor fija el `PartyID` del token, el canal `MI_PORTAL`, la empresa y la línea de negocio del contrato del cliente (RN-SVC-005) y la prioridad (la del flujo o la del tipo). Responde `PortalTicket` con el número y la fecha de compromiso (HU-064 CA-01). Un adjunto de más de 10 MB o de un formato no admitido responde AYB-VAL-400 con el tamaño y los formatos permitidos (HU-064 CA-05).'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + crear"
       x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-PTL-422, cuando: 'El tipo elegido va al Libro de Reclamaciones (reclamo o queja): se responde con el aviso legal y no se crea un ticket común (HU-064 CA-04). También cuando el cliente tiene varios contratos y no eligió `contratoId`, o el subtipo no está habilitado para Mi Portal.' }
+        - { codigo: AYB-PTL-404, cuando: 'El `contratoId` no es de un contrato del cliente autenticado.' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/TicketNuevo' }
+            schema: { $ref: '#/components/schemas/PortalTicketNuevo' }
       responses:
         '201':
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Ticket' }
+              schema: { $ref: '#/components/schemas/PortalTicket' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
         '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
         '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
         '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tickets/{ticketId}/trazabilidad:
@@ -635,7 +643,7 @@ paths:
       tags: [portal]
       operationId: verTrazabilidad
       summary: "Ver la trazabilidad de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente: el de otro cliente responde AYB-PTL-404, como si no existiera, y el intento queda en la auditoría (HU-065 CA-04). Devuelve `PortalTrazabilidad`: pasos con fecha y hora, área y fecha de compromiso, e interacciones visibles sin el nombre ni el ID del gestor ni notas internas (HU-065 CA-01 y CA-03).'
       x-historias: [HU-065]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
@@ -653,7 +661,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Trazabilidad' }
+              schema: { $ref: '#/components/schemas/PortalTrazabilidad' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
@@ -665,13 +673,13 @@ paths:
       tags: [portal]
       operationId: responderMiTicket
       summary: "Responder, adjuntar y confirmar la solución de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). El cuerpo es `PortalRespuesta` (texto y adjuntos, `additionalProperties: false`): el servidor fija el tipo `CUSTOMER_MESSAGE`, la visibilidad (`IsVisibleToCustomer = true`) y el canal `MI_PORTAL`; un campo de más responde AYB-VAL-400. Si el ticket estaba en PENDING_CUSTOMER, vuelve a IN_PROGRESS y el SLA se reanuda (HU-066 CA-01).'
       x-historias: [HU-066]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + editar"
       x-roles: [CUSTOMER]
       x-errores-negocio:
-        - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado (HU-064 CA-02).' }
+        - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría (HU-064 CA-02; HU-065 CA-04).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -682,13 +690,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Interaccion' }
+            schema: { $ref: '#/components/schemas/PortalRespuesta' }
       responses:
         '201':
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Interaccion' }
+              schema: { $ref: '#/components/schemas/PortalInteraccion' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
@@ -723,7 +731,7 @@ paths:
       tags: [portal]
       operationId: listarTiposPortal
       summary: "Tipos y subtipos que ve el cliente al registrar un ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). Devuelve el catálogo de tipos y subtipos que el cliente puede elegir al registrar un ticket; no lee ni devuelve datos de ningún cliente. Reclamo y queja van marcados `libro: true`: Mi Portal no los registra como ticket común (HU-064 CA-04).'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
@@ -747,13 +755,15 @@ paths:
       tags: [portal]
       operationId: confirmarSolucion
       summary: "Confirmar o rechazar la solución de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). Confirmar cierra el ticket con cierre formal en Mi Portal (RN-SVC-023) y dispara la encuesta (HU-066 CA-02); rechazar exige un motivo y reabre el ticket hacia el área responsable (HU-066 CA-03). El cuerpo (`ConfirmacionSolucion`) no admite otros campos; responde `PortalTicket`.'
       x-historias: [HU-066]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + aprobar"
       x-roles: [CUSTOMER]
       x-errores-negocio:
         - { codigo: AYB-PTL-409, cuando: 'El ticket no está RESOLVED: ya se cerró o todavía no tiene solución (HU-066).' }
+        - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría (HU-065 CA-04).' }
+        - { codigo: AYB-PTL-422, cuando: 'Rechazo sin motivo: el rechazo exige un motivo, que queda en la bitácora (HU-066 CA-03).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -770,12 +780,13 @@ paths:
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Ticket' }
+              schema: { $ref: '#/components/schemas/PortalTicket' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
         '404': { $ref: '#/components/responses/NoEncontrado' }
         '409': { $ref: '#/components/responses/Conflicto' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
         '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
         '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/flujos/publicaciones:
@@ -1832,7 +1843,7 @@ paths:
       tags: [delinquency]
       operationId: reservarBus
       summary: "Reservar un cupo en el bus del Entrega Fest; sin cupo ofrece otro bus o la lista de espera"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo `ReservaBus` (`additionalProperties: false`) no admite identificadores de cliente: un campo de más responde AYB-VAL-400. La reserva crea un ticket del cliente del token (HU-060 CA-01; RN-SVC-041) y la respuesta (`Reserva`) no devuelve el `PartyID`.'
       x-historias: [HU-060]
       x-estado: borrador
       x-permiso: "ATC.PORTAL.BUS_BOOKING + crear"
@@ -1864,11 +1875,13 @@ paths:
       tags: [delinquency]
       operationId: cancelarReserva
       summary: "Cancelar la reserva: libera el cupo y lo pasa al primero de la lista de espera"
-      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
+      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token de Control de acceso no lo trae; cómo lo obtiene ATC lo responde Sony Montoya, P-033, supuesto S-3 de `roles-y-permisos-atc.md`). Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre una reserva de ese cliente: la de otro cliente responde AYB-PTL-404 y el intento queda en la auditoría.'
       x-historias: [HU-060]
       x-estado: borrador
       x-permiso: "ATC.PORTAL.BUS_BOOKING + eliminar"
       x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-PTL-404, cuando: 'La reserva no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría.' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reservaId
@@ -1962,7 +1975,7 @@ components:
           items: { type: object, properties: { campo: { type: string }, mensaje: { type: string } } }
     TicketNuevo:
       type: object
-      description: "Alta de un ticket tipificado desde cualquier canal (HU-001, HU-002, HU-051): empresa y línea obligatorias y no derivables (RN-SVC-005); va `clienteId` o `interesado`."
+      description: "Alta de un ticket tipificado desde la consola, por cualquier canal (HU-001, HU-002, HU-051): empresa y línea obligatorias y no derivables (RN-SVC-005); va `clienteId` o `interesado`. Solo para gestores; Mi Portal usa `PortalTicketNuevo`."
       required: [canal, empresaId, lineaNegocioId, tipoId, prioridadId, resumen]
       properties:
         canal: { type: string }
@@ -1981,7 +1994,7 @@ components:
         productoId: { type: string, description: 'ProductID del v7.' }
     Ticket:
       type: object
-      description: "Ticket (SVC_TICKET, ENT-SVC-001). Cada propiedad cita la columna del v7 o del Excel del PO y su fuente; los ids del v7 son enteros y se exponen como cadenas opacas."
+      description: "Ticket (SVC_TICKET, ENT-SVC-001) tal como lo ve la consola. Cada propiedad cita la columna del v7 o del Excel del PO y su fuente; los ids del v7 son enteros y se exponen como cadenas opacas. No se devuelve en Mi Portal, que usa `PortalTicket`."
       x-pendiente: "Tipos, largos y obligatoriedad de los atributos no clave (archivos de Drive del v7). Rayo, señal de conflicto, eje actual, vinculación pendiente, subtipo, flujo y actividades no tienen columna en el v7 (los dibuja el PLT-04 §6.5). Con DT-06, `PARTY` de la base única es la fuente viva de la clave foránea PartyID; el PO confirma la regla frente al ADR-03 («el dato del cliente no se copia», P-027)."
       required: [ticketId, numero, empresaId, lineaNegocioId, canal, tipoId, prioridadId, estado]
       properties:
@@ -2038,7 +2051,7 @@ components:
       enum: [OPEN, IN_PROGRESS, PENDING_CUSTOMER, ESCALATED, RESOLVED, CLOSED, REOPENED]
     TicketResumen:
       type: object
-      description: "Fila de la bandeja, del casillero y de «Mis tickets» (HU-009, HU-044, HU-045 y HU-064 CA-02)."
+      description: "Fila de la bandeja, del casillero y del tablero (HU-009, HU-044, HU-045). «Mis tickets» de Mi Portal usa `PortalTicketResumen`."
       x-pendiente: "Orden por urgencia de la bandeja (HU-044 CA-01: rayo, SLA más próximo y prioridad) y definición de «en riesgo» (HU-009 CA-02)."
       properties:
         ticketId: { type: string }
@@ -2049,7 +2062,7 @@ components:
         prioridadId: { type: string }
         estado: { $ref: '#/components/schemas/EstadoTicket' }
         areaActualId: { type: string, description: 'Área responsable (HU-064 CA-02).' }
-        responsableActualId: { type: string, nullable: true, description: 'Vacío es «sin asignar» (HU-009 CA-03). No se devuelve en Mi Portal (RN-SVC-044).' }
+        responsableActualId: { type: string, nullable: true, description: 'CurrentOwnerPartyID (PartyID del colaborador); vacío es «sin asignar» (HU-009 CA-03).' }
         venceResolucion: { type: string, format: date-time, description: 'Fecha de compromiso (HU-064 CA-02): ResolutionDueDateTime, o ReopenedResolutionDueDateTime si el ticket se reabrió.' }
         abiertoEn: { type: string, format: date-time }
         rayo: { type: boolean, description: 'Los tickets con rayo van primero (HU-045 CA-01).', x-pendiente: 'Sin columna en el v7.' }
@@ -2061,12 +2074,12 @@ components:
         estado: { $ref: '#/components/schemas/EstadoTicket' }
     Interaccion:
       type: object
-      description: "Interacción (SVC_TICKET_INTERACTION, ENT-SVC-004): visible al cliente o nota interna, con la evidencia adjunta."
+      description: "Interacción (SVC_TICKET_INTERACTION, ENT-SVC-004) registrada desde la consola: visible al cliente o nota interna, con la evidencia adjunta. Mi Portal no usa este esquema: el cliente responde con `PortalRespuesta` y ve `PortalInteraccion`."
       required: [tipo, visible, texto]
       properties:
         interaccionId: { type: string, readOnly: true, description: 'TicketInteractionID.' }
         tipo: { type: string, description: 'InteractionTypeID: lista SVC_TICKET_INTERACTION_TYPE del Excel (RF-SVC-005): CUSTOMER_MESSAGE, AGENT_RESPONSE, INTERNAL_NOTE, STATUS_CHANGE.', x-pendiente: 'El PLT-04 (HU-042 §6.5) dibuja la llamada como «Tipo = LLAMADA», que no está en la lista del Excel: el PO fija la lista.' }
-        visible: { type: boolean, description: 'IsVisibleToCustomer: false es nota interna y no se muestra en Mi Portal (HU-005 CA-03; RN-SVC-044).' }
+        visible: { type: boolean, description: 'IsVisibleToCustomer: false es nota interna y no se muestra en Mi Portal (HU-005 CA-03; HU-065 CA-03).' }
         texto: { type: string, description: 'El sistema advierte si una nota trae un DNI o una tarjeta (HU-005 CA-04; RN-SVC-012).' }
         canal: { type: string, description: 'ChannelID.' }
         autor: { type: string, readOnly: true, description: 'Cliente o gestor (PLT-04 HU-064 a 066 §6.5); el gestor es AgentPartyID.' }
@@ -2079,7 +2092,7 @@ components:
       required: [areaId, motivoId]
       properties:
         areaId: { type: string, description: 'AreaID (MAE_AREA, ENT-SVC-007: ATC, COBRANZA, LEGAL, POSTVENTA, TI, ADMINISTRACION).' }
-        responsableId: { type: string, nullable: true, description: 'AssignedToPartyID: opcional (HU-007 CA-01).' }
+        responsableId: { type: string, nullable: true, description: 'AssignedToPartyID (PartyID del colaborador): opcional (HU-007 CA-01).' }
         motivoId: { type: string, description: 'AssignmentReasonID: motivo obligatorio del catálogo (HU-007 CA-03). Lista SVC_ASSIGNMENT_REASON del Excel (RF-SVC-007): ESCALATION, DERIVATION_TO_AREA, REASSIGNMENT_ROTATION, REASSIGNMENT_RESIGNATION, REASSIGNMENT_TERMINATION.', x-pendiente: 'El PLT-04 usa REASSIGNMENT_CESE (HU-008) y REASSIGNMENT_CARGA (HU-046), que no están en la lista del Excel: el PO fija la lista.' }
     Reapertura:
       type: object
@@ -2101,7 +2114,7 @@ components:
             type: object
             required: [responsableId]
             properties:
-              responsableId: { type: string }
+              responsableId: { type: string, description: 'PartyID del colaborador que recibe los tickets.' }
               areaDestinoId: { type: string }
     ResultadoReasignacion:
       type: object
@@ -2146,7 +2159,7 @@ components:
         tipo: { type: string, enum: [FIRST_RESPONSE_OVERDUE, RESOLUTION_OVERDUE, LEGAL_RESPONSE_OVERDUE, LEGAL_EXTENSION_WINDOW_CLOSING], description: 'BreachTypeID: lista SVC_SLA_BREACH_TYPE del Excel (RF-SVC-010).' }
         ciclo: { type: integer, description: 'ReopenCycleNumber (RN-SVC-008).' }
         vencimientoEvaluado: { type: string, format: date-time, description: 'EvaluatedDueDateTime (HU-010 CA-02).' }
-        destinatarioId: { type: string, description: 'AlertedPartyID.' }
+        destinatarioId: { type: string, description: 'AlertedPartyID (PartyID del colaborador alertado).' }
         canal: { type: string, description: 'ChannelID.' }
         fecha: { type: string, format: date-time, description: 'Fecha de la alerta (HU-010 CA-02).', x-pendiente: 'Nombre de la columna (Drive v7).' }
     PaginaTickets:
@@ -2309,27 +2322,6 @@ components:
         tiempoRespuestaMs: { type: integer, description: 'Tiempo de respuesta (HU-050 CA-09; p95 de 2 s o menos, RNF-REN-007).' }
         fuentesRespondieron: { type: integer, description: 'Cuántas fuentes respondieron (HU-050 CA-09).' }
         fuentesConsultadas: { type: integer, example: 8 }
-    Trazabilidad:
-      type: object
-      description: "Línea de tiempo del ticket en Mi Portal (HU-065): cada paso con fecha y hora, área responsable y fecha de compromiso, en el orden de la bitácora de estados. Sin notas internas ni nombre del gestor (CA-03; RN-SVC-044)."
-      x-pendiente: "Si se muestra el nombre del área o uno genérico (pregunta abierta de FT-24)."
-      properties:
-        ticketId: { type: string }
-        numero: { type: string }
-        estado: { $ref: '#/components/schemas/EstadoTicket' }
-        venceResolucion: { type: string, format: date-time, description: 'Fecha de compromiso.' }
-        pasos:
-          type: array
-          items:
-            type: object
-            properties:
-              paso: { type: string, description: 'Registrado, asignado, en atención, pendiente del cliente, resuelto o cerrado (RF-SVC-065).' }
-              fechaHora: { type: string, format: date-time }
-              areaId: { type: string, description: 'Área responsable.' }
-        interacciones:
-          type: array
-          description: 'Solo las visibles al cliente (IsVisibleToCustomer).'
-          items: { $ref: '#/components/schemas/Interaccion' }
     EstadoVisor:
       type: object
       description: "Instantánea de la operación en vivo (HU-067); los cambios llegan por WebSocket en 5 s o menos (CA-08; ADR-010). Solo las áreas y tickets que el rol puede ver (CA-07; RN-SVC-036). Sin ranking individual (CA-10)."
@@ -2352,8 +2344,8 @@ components:
               areaId: { type: string }
               nombre: { type: string }
               enCola: { type: integer }
-              gestoresOcupados: { type: integer }
-              gestoresTotal: { type: integer }
+              gestoresOcupados: { type: integer, description: 'Gestores con un ticket en atención en la cola del área (dato de ATC).' }
+              gestoresTotal: { type: integer, description: 'Gestores del área según GestoresPort (ADR-009, P-035). Mientras sea el simulador, los que tuvieron tickets en la cola en los últimos 30 días.' }
               resueltos: { type: integer }
               porcentajeEnSla: { type: number }
               cargaPorGestor:
@@ -2361,7 +2353,7 @@ components:
                 items:
                   type: object
                   properties:
-                    gestorId: { type: string }
+                    gestorId: { type: string, description: 'PartyID del gestor (HU-067 CA-04).' }
                     tickets: { type: integer }
         tickets:
           type: array
@@ -2384,6 +2376,102 @@ components:
             properties:
               fechaHora: { type: string, format: date-time }
               evento: { type: string }
+    PortalTicketNuevo:
+      type: object
+      additionalProperties: false
+      description: "Alta de un ticket desde Mi Portal (HU-064 CA-01; ADR-011, decisión 8). Solo lleva lo que el cliente elige y escribe. No lleva identificador de cliente, canal, prioridad, empresa ni línea: el servidor toma el `PartyID` del token (P-033), fija el canal `MI_PORTAL` y la prioridad (la del flujo o la del tipo; el mockup propone Media) y saca la empresa y la línea del contrato (RN-SVC-005). Cualquier otro campo responde AYB-VAL-400."
+      required: [tipoId, subtipo, descripcion]
+      properties:
+        tipoId: { type: string, description: 'Tipo elegido de los que devuelve listarTiposPortal. Si es reclamo o queja (`libro: true`), responde AYB-PTL-422 con el aviso legal (HU-064 CA-04).' }
+        subtipo: { type: string, description: 'Subtipo elegido de los del tipo (HU-064 CA-01; lista cerrada propuesta en ADR-008, P-017).' }
+        descripcion: { type: string, minLength: 1, description: 'Lo que describe el cliente (HU-064 CA-01).' }
+        contratoId: { type: string, description: 'Contrato (lote) del cliente al que se refiere el ticket. El servidor comprueba que es suyo (si no, AYB-PTL-404) y de él saca la empresa y la línea. Si el cliente tiene un solo contrato puede omitirse.', x-pendiente: 'Propuesta del mockup (DECISIONES.md §5.2: «el cliente elige el lote»); lo confirma el PO.' }
+        adjuntos:
+          type: array
+          description: 'Referencias de los archivos ya subidos. Hasta 10 MB cada uno y formatos admitidos; si no, AYB-VAL-400 con el tamaño y los formatos permitidos (HU-064 CA-05).'
+          x-pendiente: 'Formatos (JPG, PNG o PDF) y máximo 3 son propuesta del mockup; los confirma el PO (ADR-011, decisión 7).'
+          items: { type: string }
+    PortalTicketResumen:
+      type: object
+      description: "Fila de «Mis tickets» en Mi Portal (HU-064 CA-02). Solo número, tipo, estado, área y fecha de compromiso. No lleva el `PartyID`, la prioridad, el responsable, el creador, el conflicto, el eje, el rayo ni el flujo (HU-065 CA-03)."
+      required: [ticketId, numero, tipoId, estado, area, fechaCompromiso]
+      properties:
+        ticketId: { type: string, description: 'Identificador opaco para abrir el detalle; solo sirve para un ticket del mismo cliente.' }
+        numero: { type: string, description: 'TicketNumber (HU-064 CA-01).' }
+        tipoId: { type: string }
+        tipo: { type: string, description: 'Nombre del tipo.' }
+        subtipo: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        area: { type: string, description: 'Nombre del área responsable (HU-064 CA-02); para ATC, «Atención al cliente».', x-pendiente: 'Si se muestra el nombre del área o uno genérico (pregunta abierta de FT-24).' }
+        fechaCompromiso: { type: string, format: date-time, description: 'Fecha de compromiso (HU-064 CA-02): ResolutionDueDateTime, o ReopenedResolutionDueDateTime si el ticket se reabrió.' }
+        registradoEn: { type: string, format: date-time, description: 'Fecha de registro; ordena la lista del más reciente al más antiguo (HU-064 CA-02).' }
+    PortalTicket:
+      type: object
+      description: "Ticket tal como lo ve el cliente en Mi Portal (respuesta de registrarMiTicket y confirmarSolucion). Los mismos campos de `PortalTicketResumen` más la descripción que escribió el cliente. Sin datos internos (HU-065 CA-03)."
+      required: [ticketId, numero, tipoId, estado, area, fechaCompromiso]
+      properties:
+        ticketId: { type: string }
+        numero: { type: string, description: 'TicketNumber: el número de caso que recibe el cliente (HU-064 CA-01).' }
+        tipoId: { type: string }
+        tipo: { type: string }
+        subtipo: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        area: { type: string, description: 'Nombre del área responsable.' }
+        fechaCompromiso: { type: string, format: date-time, description: 'Fecha de compromiso según el flujo (HU-064 CA-01; HU-043).' }
+        registradoEn: { type: string, format: date-time }
+        descripcion: { type: string, description: 'Lo que escribió el cliente al registrar.' }
+    PortalPaginaTickets:
+      type: object
+      description: "Página de «Mis tickets» (HU-064 CA-02)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/PortalTicketResumen' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    PortalTrazabilidad:
+      type: object
+      description: "Línea de tiempo del ticket en Mi Portal (HU-065): cada paso con fecha y hora, área responsable y fecha de compromiso, en el orden de la bitácora de estados (CA-01). Sin notas internas ni nombre ni ID del gestor (CA-03)."
+      x-pendiente: "Si se muestra el nombre del área o uno genérico (pregunta abierta de FT-24)."
+      required: [ticketId, numero, estado, pasos]
+      properties:
+        ticketId: { type: string }
+        numero: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoTicket' }
+        area: { type: string, description: 'Área responsable actual.' }
+        fechaCompromiso: { type: string, format: date-time, description: 'Fecha de compromiso.' }
+        pasos:
+          type: array
+          items:
+            type: object
+            properties:
+              paso: { type: string, description: 'Registrado, asignado, en atención, pendiente del cliente, resuelto o cerrado (RF-SVC-065).' }
+              fechaHora: { type: string, format: date-time }
+              area: { type: string, description: 'Área responsable en ese paso.' }
+        interacciones:
+          type: array
+          description: 'Solo las visibles al cliente (IsVisibleToCustomer).'
+          items: { $ref: '#/components/schemas/PortalInteraccion' }
+    PortalInteraccion:
+      type: object
+      description: "Interacción visible al cliente en Mi Portal: sus mensajes y las respuestas de Aybar (IsVisibleToCustomer = true). Nunca una nota interna. En lugar del gestor dice «AYBAR», sin su nombre ni su ID (HU-005 CA-03; HU-065 CA-03)."
+      required: [interaccionId, fechaHora, origen]
+      properties:
+        interaccionId: { type: string, readOnly: true }
+        fechaHora: { type: string, format: date-time }
+        origen: { type: string, enum: [CLIENTE, AYBAR], description: 'CLIENTE para CUSTOMER_MESSAGE; AYBAR para AGENT_RESPONSE.' }
+        texto: { type: string }
+        adjuntos: { type: array, items: { type: string }, description: 'Referencias de los archivos de la interacción.' }
+    PortalRespuesta:
+      type: object
+      additionalProperties: false
+      description: "Respuesta del cliente desde Mi Portal (HU-066 CA-01). Solo texto y adjuntos. El servidor fija el tipo `CUSTOMER_MESSAGE`, la visibilidad (`IsVisibleToCustomer = true`), el canal `MI_PORTAL` y el autor (el `PartyID` del token). Cualquier otro campo, como `tipo`, `visible` o `clienteId`, responde AYB-VAL-400."
+      required: [texto]
+      properties:
+        texto: { type: string, minLength: 1 }
+        adjuntos:
+          type: array
+          description: 'Referencias de los archivos ya subidos; hasta 10 MB y formatos admitidos (HU-064 CA-05).'
+          items: { type: string }
     TiposPortal:
       type: object
       description: "Tipos y subtipos habilitados para el cliente en Mi Portal (propuesta del equipo)."
@@ -2399,11 +2487,12 @@ components:
               subtipos: { type: array, items: { type: string } }
     ConfirmacionSolucion:
       type: object
-      description: "Confirmación o rechazo de la solución por el cliente (HU-066)."
+      description: "Confirmación o rechazo de la solución por el cliente (HU-066). No admite otros campos (Mi Portal)."
+      additionalProperties: false
       required: [acepta]
       properties:
         acepta: { type: boolean, description: 'true confirma la solución; false la rechaza y reabre el ticket.' }
-        motivo: { type: string }
+        motivo: { type: string, description: 'Obligatorio si `acepta` es false; queda en la bitácora (HU-066 CA-03). Sin motivo, AYB-PTL-422.' }
     PublicacionFlujo:
       type: object
       description: "Publicación de un flujo en la bitácora: autor, fecha y versión (HU-043 CA-08)."
@@ -2473,7 +2562,7 @@ components:
           items:
             type: object
             properties:
-              gestorId: { type: string }
+              gestorId: { type: string, description: 'PartyID del gestor (HU-054).' }
               atendidos: { type: integer }
               pendientes: { type: integer }
               enRiesgo: { type: integer }
@@ -2742,7 +2831,8 @@ components:
         proyectoId: { type: string }
     ReservaBus:
       type: object
-      description: "Reserva de cupo en el bus del Entrega Fest (HU-060)."
+      description: "Reserva de cupo en el bus del Entrega Fest (HU-060). El cliente sale del token; no admite identificadores de cliente ni otros campos (AYB-VAL-400)."
+      additionalProperties: false
       required: [busId, puntoEmbarque, acompanantes]
       properties:
         busId: { type: string }
@@ -2755,10 +2845,9 @@ components:
       properties:
         reservaId: { type: string }
         ticketId: { type: string, description: 'Cada reserva crea un ticket (HU-060 CA-01; RN-SVC-041).' }
-        clienteId: { type: string }
         busId: { type: string }
         horario: { type: string }
         puntoEmbarque: { type: string }
         acompanantes: { type: string }
         estado: { type: string, description: 'Confirmada, en lista de espera o cancelada (HU-060; RN-SVC-042).' }
-# Historial: 0.4.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · ver info.x-historial. Generado por IA — Revisado por: (pendiente).
+# Historial: 0.5.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · ver info.x-historial. Generado por IA — Revisado por: (pendiente).

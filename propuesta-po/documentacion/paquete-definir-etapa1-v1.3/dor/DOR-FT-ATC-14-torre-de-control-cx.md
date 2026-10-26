@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-14 Torre de Control CX"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -42,7 +42,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-10.
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato) | Interna | EP-ATC-01, EP-ATC-04, EP-ATC-06, EP-ATC-10 | CDO / Equipo Datos | 21-oct-2026 | Pendiente |
+| DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato). En esta funcionalidad: HU-ATC-032 (auditoría de registros paralelos del dato de cliente; PLT-04) | Interna | EP-ATC-01, EP-ATC-04, EP-ATC-06, EP-ATC-10 (PLT-01); por HU-ATC-032 también EP-ATC-07 (PLT-04; lo confirma el PO) | CDO / Equipo Datos | 21-oct-2026 | Pendiente |
 | DEP-10 | KPI Engine + SVY_SURVEY_RESPONSE (encuestas) | Interna | EP-ATC-07 | Equipo Datos / BI | 29-oct-2026 | Pendiente |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
@@ -102,3 +102,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La fila DEP-01 dice qué historia de esta funcionalidad la necesita (HU-ATC-032) y que por ella alcanza también a EP-ATC-07, que la columna «Bloquea a» del PLT-01 no trae (roadmap §2; lo confirma el PO). No se borra texto del PO. — Revisado por: (pendiente)

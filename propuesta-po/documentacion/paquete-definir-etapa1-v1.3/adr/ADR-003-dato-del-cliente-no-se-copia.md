@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.3 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
 - Origen: convierte a la plantilla del marco el ADR-03 del PLT-05 v1.3, con la decisión DT-06 del Líder Técnico (Jose Jara, 22-oct-2026): las tablas de ATC van en la base única del v7 con FK físicas y **`PARTY` es la fuente viva del cliente, no una copia**. Registrada en `analisis/decisiones.md` v0.5. Cierra P-010 en lo técnico.
@@ -48,7 +48,7 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 3. **Consulta 360 federada en línea** para lo que `PARTY` no tiene (contratos, cobranza, documentos), con **caché corta** y **degradación por fuente**: si una fuente falla, la consulta responde con el resto y el ticket sigue (ticket mínimo y reintento de vinculación, RF-051). La relación de `PARTY` con SIGDA/TAXON (DEP-01) la define el PO con Gobierno de Datos (P-027).
 4. **Dato sensible:** llega enmascarado desde su dueño según `MAE_FIELD_MASKING_POLICY`, que publica Control de acceso (D-119 de PJ-05, que se construye en la Etapa 2), y el acceso excepcional pasa por `IDN_SENSITIVE_ACCESS_REQUEST`, también de Control de acceso.
 5. **El almacén de lectura** guarda lo de ATC, no el dato del cliente (ADR-012).
-6. **Excepción de la hoja del Libro de Reclamaciones (condición del Líder Técnico; la valida Legal).** La hoja de reclamación debe llevar los datos del consumidor que la norma exige (Ley 29571 y su reglamento del Libro de Reclamaciones): nombre, documento, domicilio y contacto. Ese contenido es la **hoja**, un documento probatorio que vive en el almacén de evidencia con inmutabilidad y checksum (ADR-006), con su fila espejo en `GOV_DOCUMENT_REPOSITORY`; el asiento (`SVC_COMPLAINT_BOOK_ENTRY`) guarda la referencia y el `PartyID`, no los datos en columnas. **La valida Legal** (DEP-05, Gerencia Legal, fecha requerida 26-oct): qué datos lleva la hoja y cuánto se conserva (P-007). Si Legal pide además los datos en columnas del asiento, es un cambio al v7 (P-031).
+6. **Excepción de la hoja del Libro de Reclamaciones (condición del Líder Técnico; la valida Legal).** La hoja de reclamación debe llevar los datos del consumidor que la norma exige (Ley 29571 y su reglamento del Libro de Reclamaciones): nombre, documento, domicilio y contacto. Ese contenido es la **hoja**, un documento probatorio que vive en el almacén de evidencia con inmutabilidad y checksum (ADR-006), con su fila espejo en `GOV_DOCUMENT_REPOSITORY`; el asiento (`SVC_COMPLAINT_BOOK_ENTRY`) guarda la referencia y el `PartyID`, no los datos en columnas. **La valida Legal:** qué datos lleva la hoja es parte del «formato del asiento» de la DEP-05 (Gerencia Legal, fecha requerida 26-oct), y cuánto se conserva es la retención de P-007 (ADR-006). Si Legal pide además los datos en columnas del asiento, es un cambio al v7 (P-031).
 
 ## Consecuencias
 
@@ -60,11 +60,11 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
   - Que Legal valide la excepción de la hoja del Libro (DEP-05).
 - Impide:
   - Persistir nombre, DNI o contacto del cliente en columnas de ATC, y crear o escribir `PARTY` desde ATC.
-- Cuesta: **4 h** de la caché corta de la consulta 360 (tabla del ADR-012; P-025). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md` v0.3 (API de precios de Azure del 26-oct-2026, USD por mes, región base Brazil South; supuestos de región, volumen y tamaño en P-044), §1.1). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
+- Cuesta: **4 h** de la caché corta de la consulta 360 (tabla del ADR-012; P-025). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md` v0.4, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos en P-044). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- Sin tabla de cliente propia: `SVC_TICKET` guarda las claves (`PartyID`, `CompanyID`, `ContractID`, `UnitID`) y el dato sensible vive en `PARTY_SENSITIVE_DATA` (DAC, fuera de ATC). `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05) no existe en el v7: es una propuesta de vista de lectura con identificadores y metadatos de permisos (ADR-012).
+- Sin tabla de cliente propia: `SVC_TICKET` guarda las claves (`PartyID`, `CompanyID`, `ContractID`, `UnitID`) y el dato sensible vive en `PARTY_SENSITIVE_DATA` (DAC, fuera de ATC). `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05) no existe en el v7 y **no es una tabla**: es una colección del almacén de lectura con identificadores y metadatos de permisos, que escribe el proyector (ADR-012, punto «Búsqueda»). No es un cambio al v7.
 - Linaje: `PARTY` y las demás fuentes → consulta en línea → pantalla; no se persiste.
 - PII: el dato no se guarda en columnas de ATC; permisos del origen en cada consulta (RNF-SEC-010: está en el Excel `ATC_requerimientos (3).xlsx`, hoja `03_RNF`, fila 31). Excepción por validar: la hoja del Libro (Legal, DEP-05). Los datos mínimos del interesado sin `PARTY` siguen P-037. El registro de lo que ATC crea, lee y escribe está en `datos/registro-de-tablas.md`.
 - H-11 del acta F4 (FK a `PARTY` frente al ADR-03 del PO): resuelto en lo técnico por DT-06; falta el PO.
@@ -77,5 +77,6 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | Línea de conflicto abierto por la FK a `PARTY` |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Alineado con DT-06: `PARTY` fuente viva, `PARTY` no verificada para el interesado, excepción de la hoja del Libro por validar con Legal |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Verificado contra PJ-05: ATC no crea la `PARTY` (R29, A26) ni la lee por JOIN (D-119); el interesado queda con vinculación pendiente: su `PARTY` la autorregistra Control de acceso o la crea la vía que defina P-037; excepción de la hoja del Libro como documento probatorio, con Legal (DEP-05); evidencia de RNF-SEC-010; costo con número y fuente |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: qué datos lleva la hoja se cita en la DEP-05 y la retención en P-007; `SVC_SEARCH_INDEX` es una colección del almacén de lectura (ADR-012), no una tabla ni un cambio al v7; fuente del costo en la v0.4 |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL

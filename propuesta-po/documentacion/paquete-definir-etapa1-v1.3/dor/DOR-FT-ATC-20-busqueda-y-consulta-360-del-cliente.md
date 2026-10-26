@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-20 Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -48,7 +48,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 | DEP-11 | Plataforma del call center: API/CTI para screen pop, registro de llamadas, grabación y click-to-call | Externa | EP-ATC-10 | TI / proveedor de call center | 21-oct-2026 | Por evaluar |
 | DEP-13 | Motor de consultas de José: contrato de API y responsable de mantenimiento | Interna | EP-ATC-10 | José · TI | 23-oct-2026 | Por evaluar |
 | DEP-14 | Proveedor de IA aprobado por TI y Seguridad, con política de datos personales | Técnica | EP-ATC-09, EP-ATC-10 | TI · Seguridad | 23-oct-2026 | Por evaluar |
-| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-050 (datos por rol, CA-02 y CA-07, RN-SVC-036); HU-ATC-052 (datos según el rol, CA-03); HU-ATC-053 (documentos según el rol del gestor, CA-02) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
+| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-049 (la búsqueda respeta los permisos del rol, RN-SVC-036; P-034); HU-ATC-050 (datos por rol, CA-02 y CA-07, RN-SVC-036); HU-ATC-052 (datos según el rol, CA-03); HU-ATC-053 (documentos según el rol del gestor, CA-02) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -111,3 +111,5 @@ Generado por IA: transcripción al formato del paquete Definir desde los documen
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-16), con la nota de origen, en el criterio 6 y en las condiciones; la DEP-06 anota Azure Blob Storage (DT-07). No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-16 suma HU-ATC-049 (RN-SVC-036 «Búsqueda respeta permisos», con el mismo criterio que HU-050, 052 y 053; P-034): la llevan 4 de sus 5 HU (todas menos HU-051, que no autoriza por rol). No cambian las DEP de la sección 2 ni el criterio 6. No se borra texto del PO. — Revisado por: (pendiente)

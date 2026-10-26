@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -38,7 +38,7 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-014 | Registrar la respuesta formal con cargo | `complaintbook` | `POST /api/v1/libro/asientos/{asientoId}/respuesta` | en el OpenAPI |
 | HU-015 | Vigilar el plazo legal y detectar reclamos huérfanos | `complaintbook` | Job de plazo legal (ADR-005) | sin API propia (evento, job o adaptador) |
 | HU-016 | Dar seguimiento a apelaciones internas y ante INDECOPI | `complaintbook` | `POST /api/v1/libro/asientos/{asientoId}/apelaciones`<br>`POST /api/v1/libro/asientos/{asientoId}/apelaciones/{apelacionId}/estado` | en el OpenAPI |
-| HU-019 | Disparar la encuesta al cerrar el ticket | `quality` | Evento `ticket.closed` → encuesta (DEP-10) | sin API propia (evento, job o adaptador) |
+| HU-019 | Disparar la encuesta al cerrar el ticket | `quality` | Evento `aybar.service.ticket_status_changed` al pasar a `CLOSED` (ADR-013) → encuesta (DEP-10) | sin API propia (evento, job o adaptador) |
 | HU-020 | Registrar un caso sensible con Código Único | `legalcases` | `POST /api/v1/casos-sensibles`<br>`POST /api/v1/casos-sensibles/{casoId}/reclasificacion` | en el OpenAPI |
 | HU-021 | Emitir cargo previo y cargo de activación por separado | `legalcases` | `POST /api/v1/casos-sensibles/{casoId}/cargos` | en el OpenAPI |
 | HU-022 | Clasificar el riesgo del caso con matriz objetiva | `legalcases` | `PUT /api/v1/casos-sensibles/{casoId}/riesgo` | en el OpenAPI |
@@ -74,9 +74,9 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-052 | Consultar datos específicos con el motor de José | `customer360` | `POST /api/v1/tickets/{ticketId}/consultas-motor` | en el OpenAPI |
 | HU-053 | Buscar documentos del cliente por significado | `customer360` | `GET /api/v1/clientes/{partyId}/documentos` | en el OpenAPI |
 | HU-054 | Ver mi avance diario y el de mi equipo | `inbox` | `GET /api/v1/tablero` | en el OpenAPI |
-| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | `inbox` | Notificación por correo al asignar (evento `ticket.assigned`) | sin API propia (evento, job o adaptador) |
+| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | `inbox` | Notificación por correo al asignar (evento `aybar.service.ticket_assigned`, ADR-013) | sin API propia (evento, job o adaptador) |
 | HU-056 | Abrir el caso de resolución por 3 meses impagos | `delinquency` | Job diario de evaluación de 3 cuotas vencidas (DEP-08; ADR-005) | sin API propia (evento, job o adaptador) |
-| HU-057 | Enviar al cliente la alerta de cancelación en paralelo | `delinquency` | Evento al crear el ticket de resolución; envío en paralelo desde el outbox (ADR-013) | sin API propia (evento, job o adaptador) |
+| HU-057 | Enviar al cliente la alerta de cancelación en paralelo | `delinquency` | Evento al crear el ticket de resolución, por el outbox `SVC_OUTBOX_EVENT` (ADR-013); envío en paralelo | sin API propia (evento, job o adaptador) |
 | HU-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | `delinquency` | Evento al crear el ticket de resolución; carta desde plantilla (DEP-15) | sin API propia (evento, job o adaptador) |
 | HU-059 | Registrar el ingreso de una persona al proyecto | `delinquency` | `POST /api/v1/formularios/ingresos` | en el OpenAPI |
 | HU-060 | Reservar un cupo en el bus del Entrega Fest | `delinquency` | `POST /api/v1/formularios/reservas-bus`<br>`POST /api/v1/formularios/reservas-bus/{reservaId}/cancelacion` | en el OpenAPI |
@@ -108,9 +108,12 @@ Las operaciones no cambian; lo que sigue es lo que cada una necesita de Control 
 |---|---|---|---|
 | 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías, con IA | Operaciones por historia; módulos en inglés y sin operaciones de código ni sesión en HU-064 (DT-04) |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Lo que cada operación necesita de Control de acceso, con su pregunta (P-033 a P-037; DEP-16), y el proceso de atención de prospectos (C-06), sin operaciones nuevas |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 (`aybar.service.ticket_status_changed` y `aybar.service.ticket_assigned`) y outbox `SVC_OUTBOX_EVENT` |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04, DT-07 y ADR-001 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06, C-07, C-11 y C-12) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 15): nombres de evento con el formato de tópico del SDK. — Revisado por: (pendiente)

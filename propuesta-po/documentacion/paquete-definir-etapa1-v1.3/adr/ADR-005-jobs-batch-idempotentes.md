@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.3"
+version: "0.4"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.3 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.4 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
 - Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md` v0.5. Cierra P-006.
@@ -40,12 +40,12 @@ Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempo
 
 1. **Mecanismo:** `@Scheduled` con `@SchedulerLock` (ShedLock con su proveedor JDBC) sobre la base única; `usingDbTime()` para no depender del reloj de cada réplica. Cada job fija `lockAtMostFor` (propuesta: 2 veces su duración esperada) y `lockAtLeastFor`. Dependencia nueva, con versión fija porque el BOM del SDK 0.7.1 no la gobierna, y tabla `shedlock` a registrar con Gobierno de Datos (P-031).
 2. **Idempotencia:** ShedLock evita la ejecución simultánea, no la repetición tras una caída. Cada job es idempotente por la clave del hecho (ticket + ciclo + tipo de incumplimiento): repetirlo no duplica alertas ni asientos.
-3. **Calendario:** días hábiles y feriados por geografía desde `MAE_TIME` y `MAE_HOLIDAY` de la base única (DEP-04 define su carga). Cálculo de plazos siempre en días hábiles, nunca en horas corridas.
+3. **Calendario:** días hábiles y feriados por geografía desde `MAE_TIME` y `MAE_HOLIDAY` de la base única (DEP-04 define su carga). Cálculo de plazos siempre en días hábiles, nunca en horas corridas. El cálculo usa un puerto `CalendarioPort` (`domain.port.out`) con un adaptador sobre esas dos tablas. **Mientras nadie las cree en la base única** (su dueño de migración es P-043; el registro de tablas propone al Equipo Datos, DEP-04), local, las pruebas y DEV usan un simulador del calendario con los feriados nacionales del año (ADR-004), por configuración del perfil. QA, PRE y producción exigen las tablas reales: sin ellas la versión no pasa a QA.
 4. **Fuente de lectura:** **los jobs del SLA y del plazo legal leen PostgreSQL, no el almacén de lectura** (que puede ir hasta 5 s atrás, ADR-012).
 5. **Reintento:** si un job falla, la siguiente ejecución lo recoge, porque es idempotente. Dentro de una ejecución, cada llamada a un externo reintenta 3 veces con espera creciente (Resilience4j, ADR-004); si sigue fallando, el ítem queda «pendiente de sincronizar» y se reintenta en la siguiente ejecución.
 6. **Alerta ante fallo:** cada job registra en el log (con `correlationId`) su inicio, fin y cantidad procesada, y publica una métrica con la hora de su último éxito. Una regla de alerta de Azure Monitor (ADR-014) avisa si un job no tuvo éxito en 2 veces su frecuencia, o si termina en error. **Destinatarios (propuesta):** un grupo de acción con el correo del equipo de ATC (equipo Tiketes) y la mesa de ayuda de TI; severidad S2, y S1 si el job es del plazo legal (HU-013, HU-015). Lo confirma el Líder Técnico. La misma regla vigila la antigüedad del outbox (ADR-013, Q-007).
 7. **Eventos, no jobs:** lo que se dispara por un cambio (correo al asignar, alerta de cancelación al cliente, aviso de estado en Mi Portal) va por el outbox (ADR-013), no por un job.
-8. **Datos de otros dueños:** el job de reasignación por menor carga (HU-046) pide los gestores del área y su disponibilidad al puerto `GestoresPort`, hoy contra su simulador, porque Control de acceso no tiene esa consulta con token de servicio (ADR-009, P-035); sin candidatos, el ticket queda en la cola del área y se alerta al supervisor. El responsable del proyecto de HU-058 sale de la DEP-15.
+8. **Datos de otros dueños:** la reasignación por menor carga (HU-046) **no es un job**: la hace el orquestador de la bandeja (ADR-008) cada vez que entra un ticket, dentro del caso de uso. Pide los gestores del área y su disponibilidad al puerto `GestoresPort`, hoy contra su simulador, porque Control de acceso no tiene esa consulta con token de servicio (ADR-009, P-035); sin candidatos, el ticket queda en la cola del área y se alerta al supervisor. El responsable del proyecto de HU-058 sale de la DEP-15.
 
 **Frecuencias propuestas** (la unidad de plazo siempre son días hábiles; la frecuencia es cada cuánto el job mira):
 
@@ -69,7 +69,7 @@ Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempo
 
 ## Controles programados, plazos y reintentos que piden las historias
 
-Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU-015, otras 15 piden un job, un control o un reintento. Todos cuentan en días hábiles (`MAE_TIME`, `MAE_HOLIDAY`) y deben ser idempotentes. El arquitecto decide cuáles son jobs, cuáles son eventos del outbox y cuáles son del orquestador.
+Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU-015, otras 15 piden un job, un control o un reintento. Todos cuentan en días hábiles (`MAE_TIME`, `MAE_HOLIDAY`) y deben ser idempotentes. **La columna «Mecanismo» es la decisión de este ADR:** un «job» o «control programado» está en la tabla de frecuencias; un «evento» sale del outbox (ADR-013); «orquestador» es el caso de uso de la bandeja (ADR-008), sin job; «adaptador con reintento» es ADR-004.
 
 | Historia | Qué pide | Mecanismo |
 |---|---|---|
@@ -102,11 +102,11 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 - Impide:
   - Cálculos de plazo en horas corridas.
   - Que un job lea el almacén de lectura para decidir un plazo legal.
-- Cuesta: **8 h**: 6 h del calendario de días hábiles y 2 h de ShedLock (tabla del ADR-012; P-025). **USD 0 de nube propio**: ShedLock usa una tabla de la base de PostgreSQL (`arquitectura/costo-cloud.md` v0.3 (API de precios de Azure del 26-oct-2026, USD por mes, región base Brazil South; supuestos de región, volumen y tamaño en P-044), §1.4); los logs y la alerta de los jobs van en Azure Monitor, USD 46,00 al mes en producción (§1.1).
+- Cuesta: **8 h**: 6 h del calendario de días hábiles (con su simulador) y 2 h de ShedLock (tabla del ADR-012; P-025). **USD 0 de nube propio**: ShedLock usa una tabla de la base de PostgreSQL (`arquitectura/costo-cloud.md` v0.4, §1.4: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos en P-044); los logs y la alerta de los jobs van en Azure Monitor, USD 46,00 al mes en producción (§1.1).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- Entidades `SVC_SLA_BREACH_ALERT` y `MAE_SLA_POLICY` (SERVICE) y maestros `MAE_TIME` y `MAE_HOLIDAY` (REFERENCE, fuente única de días hábiles en el v7); dueño de dato por asignar. Tabla nueva `shedlock` (P-031).
+- Entidades `SVC_SLA_BREACH_ALERT` y `MAE_SLA_POLICY` (SERVICE) y maestros `MAE_TIME` y `MAE_HOLIDAY` (REFERENCE, fuente única de días hábiles en el v7). Dueño de dato: el que propone `datos/registro-de-tablas.md` (§2 para las de SERVICE, §6 para los maestros) y designa Gobierno de Datos en la puerta F4. Tabla nueva `shedlock` (P-031).
 - Regla de calidad (F10): una sola alerta por ticket, tipo de incumplimiento y ciclo (HU-010): `UNIQUE (TicketID, BreachTypeID, ReopenCycleNumber)` según el Excel (RN-SVC-008). La alerta es una bitácora firmada (RNF-AUD-004, ADR-002).
 
 ## Historial de cambios
@@ -117,5 +117,6 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-05 y clave única de la alerta (RN-SVC-008) |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-08: ShedLock, idempotencia, fuente de lectura, reintento, alerta ante fallo y frecuencias por job (propuesta) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Destinatarios y severidad de la alerta (antes «por definir»); jobs del publicador y la purga del outbox y de la verificación del hash; `GestoresPort` para HU-046 y HU-055 (P-035); tópicos con el formato del SDK; ShedLock con versión fija; costo con número y fuente |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: HU-046 es del orquestador, no un job; la columna «Mecanismo» queda como decisión del ADR (sin «el arquitecto decide»); `CalendarioPort` con simulador mientras `MAE_TIME` y `MAE_HOLIDAY` no existan en la base única (P-043, DEP-04); dueño de dato remitido al registro; fuente del costo en la v0.4 |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

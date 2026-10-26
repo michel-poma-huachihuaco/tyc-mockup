@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Roles y permisos de ATC: catálogo que ATC entrega a Control de acceso"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -16,18 +16,19 @@ tags: [arquitectura, seguridad, roles, g3]
 
 Resuelve las colisiones C-02 (no había catálogo de ATC) y C-08 (asignación global o por empresa) de la revisión del Líder Técnico (Jose Jara, 22-oct-2026), con DT-03 (`analisis/decisiones.md` v0.5). Es la **propuesta** de catálogo de ATC. **No la aprueba ATC:** ATC la entrega a Control de acceso (PJ-05) por el mecanismo del ADR-021 de PJ-05 y desde ahí la aprueba, la asigna y la cambia el área de Roles y Permisos (Sony Montoya) (ADR-009).
 
-**Fuentes verificadas el 26-oct** en la copia sellada del paquete **aprobado** de Control de acceso (`docs-roles-y-permisos/`, traída de Nexora el 22-oct; el perfil desarrollador recibe 403 al leer PJ-05 en Nexora). ⚠ marca `arquitectura/access-control.openapi.yaml`, cuya copia local no coincide con la huella del sello: lo que se cita de ese archivo se confirma con la versión aprobada (P-039).
+**Fuentes verificadas el 26-oct** en la copia sellada del paquete **aprobado** de Control de acceso (`docs-roles-y-permisos/`, traída de Nexora el 22-oct; el perfil desarrollador recibe 403 al leer PJ-05 en Nexora). ⚠ marca lo que sale de los 7 archivos de esa copia que no coinciden con la huella del sello (recalculada el 26-oct): `arquitectura/access-control.openapi.yaml`, `VARIABLES.md` y las historias `HU-IDN-003` (credencial local), `HU-IDN-014` (permisos de menú por rol), `HU-IDN-054` (otorgar `CATALOG_REGISTRAR` a una cuenta de servicio), `HU-IDN-057` (aprobar o rechazar lo registrado por un microservicio) y `HU-IDN-059` (validar prospecto). Lo que se cita de ellos se confirma con la versión aprobada (P-039).
 
 | Hecho de PJ-05 | Dónde |
 |---|---|
-| El catálogo se registra en tres partes: opciones de menú (código, nombre, tipo `MENU`, `SUBMENU` o `ACTION`, padre), roles, y permisos por rol y opción con cinco acciones (`ver`, `crear`, `editar`, `eliminar`, `aprobar`), más incompatibilidades (par de roles, alcance, `BLOCK` o `WARN_AND_LOG`, motivo) | ADR-021 PJ-05 (Contexto y Decisión 2); ⚠ esquemas `LoteDeOpcionesDeMenu`, `LoteDeRolesPermisosEIncompatibilidades` y `AccionesPermitidas` |
-| Solo registra una cuenta de servicio (`client_credentials`) con el rol de cliente `CATALOG_REGISTRAR`; todo nace inactivo y lo aprueba una persona con `ROLE_IT_ADMIN`, una tarea por fila; nadie se auto-aprueba | ADR-021 PJ-05 (Decisión 1 a 5); D-61 |
-| Un servicio solo da permisos sobre las opciones que él registró y solo declara incompatibilidades entre sus propios roles; un código de rol no puede repetir los 8 roles sembrados (D-30) | ADR-021 PJ-05 (Decisión 2); D-66; ⚠ `AYB-RCD-422` |
+| El catálogo se registra en tres partes: opciones de menú (código, nombre, tipo `MENU`, `SUBMENU` o `ACTION`, padre), roles, y permisos por rol y opción con cinco acciones (`ver`, `crear`, `editar`, `eliminar`, `aprobar`), más incompatibilidades (par de roles, alcance, `BLOCK` o `WARN_AND_LOG`, motivo) | ADR-021 PJ-05 (Contexto y Decisión 2); ⚠ esquemas `LoteDeOpcionesDeMenu`, `LoteDeRolesPermisosEIncompatibilidades` y `AccionesPermitidas`; ⚠ `HU-IDN-014` |
+| Solo registra una cuenta de servicio (`client_credentials`) con el rol de cliente `CATALOG_REGISTRAR`; todo nace inactivo y lo aprueba una persona con `ROLE_IT_ADMIN`, una tarea por fila; nadie se auto-aprueba | ADR-021 PJ-05 (Decisión 1 a 5); D-61; ⚠ `HU-IDN-054` y `HU-IDN-057` |
+| Un servicio solo da permisos sobre las opciones que él registró y solo declara incompatibilidades entre sus propios roles; un código de rol no puede repetir un rol sembrado. Los sembrados son **9**: los 8 de D-30 (`ADMIN`, `IT_ADMIN`, `PROSPECT`, `CUSTOMER`, `BROKER`, `SECURITY_BATCH`, `DATA_PROTECTION_OFFICER` y `SENSITIVE_ACCESS_APPROVER`) y `PROSPECT_VALIDATOR`, que suma D-176. D-281 todavía habla de «los 8 roles de D-30». Ningún rol de ATC coincide con los 9 | ADR-021 PJ-05 (Decisión 2); D-30, D-66, D-176 y D-281; ⚠ `AYB-RCD-422` |
 | La ruta para otorgar o retirar `CATALOG_REGISTRAR` y las de cambiar o retirar roles y opciones siguen en `x-estado: propuesta` | D-171; ⚠ `access-control.openapi.yaml:41-52` |
 | El token trae **roles, no permisos**: `realm_access.roles` (globales) y `company_roles` (por empresa), con `companyId` (empresa activa), `user_account_id`, `preferred_username`, `sid` y `aybar_nivel`. **No trae `PartyID`** | ADR-012 PJ-05 (Decisión); `arquitectura/arquitectura-tecnica.md:976-988` |
 | El permiso efectivo (opción y acción) lo calcula Control de acceso sobre su base; el token sirve para «el filtro grueso de `@PreAuthorize`» | ADR-007 PJ-05 (Opción B y Decisión); ⚠ `consultarMiPermiso` (`GET /api/v1/mi/permisos/{codigoOpcion}?accion=`) |
 | `companyId` y `company_roles` no viajan para `CUSTOMER`, `BROKER`, `PROSPECT` ni para un `EMPLOYEE` sin roles por empresa; cambiar de empresa renueva el token | D-178 |
-| `CUSTOMER`, `BROKER`, `PROSPECT`, `PROSPECT_VALIDATOR`, `IT_ADMIN` y los demás roles sembrados son de Control de acceso; `ATC_AGENT` lo registra el microservicio de ATC | D-30, D-176; ADR-021 PJ-05 (Contexto) |
+| `CUSTOMER`, `BROKER`, `PROSPECT`, `PROSPECT_VALIDATOR`, `IT_ADMIN` y los demás roles sembrados son de Control de acceso; `ATC_AGENT` lo registra el microservicio de ATC | D-30, D-176; ADR-021 PJ-05 (Contexto); ⚠ `HU-IDN-059` |
+| El permiso efectivo es la unión de los roles vigentes por las dos vías (globales y de la empresa activa), acumulativa y sin negación; la incompatibilidad (SoD) se evalúa sobre esa misma unión | ADR-007 PJ-05 (Decisión); ADR-008 PJ-05; ADR-003 PJ-05 |
 
 ## 1 Qué es propuesta y qué viene de los documentos
 
@@ -65,10 +66,18 @@ Las asignaciones las hace Control de acceso (`asignarRol` para un rol global y `
 |---|---|---|
 | Gestor que atiende las 11 razones sociales | Rol de ATC **global**, en `realm_access.roles`. Sin roles por empresa, el token puede llegar sin `companyId` (D-178; P-034) | Las 11 empresas. Puede filtrar por empresa en la consulta |
 | Gestor de una o varias empresas | Rol de ATC **por empresa**, en `company_roles`, y la empresa activa en `companyId`. Cambiar de empresa renueva el token (D-178) | Solo la empresa activa |
-| Gestor con los dos | La unión de los dos (`ROLE_*` de `realm_access.roles` ∪ `company_roles[companyId]`) | Lo que dé el rol global |
+| Gestor con los dos | La unión de los dos (`ROLE_*` de `realm_access.roles` ∪ `company_roles[companyId]`) | **Depende de la operación** (regla de abajo): las 11 empresas en las operaciones que su rol global autoriza; solo la empresa activa en las que solo autoriza su rol por empresa |
 | Cliente (`CUSTOMER`) | Sin `companyId` ni `company_roles` (D-178) | Solo sus tickets, filtrados por su `PartyID` (sección 7, S-3) |
 
-**Regla de ATC:** el filtro de empresa sale de **dónde vino el rol**, no del `companyId` solo. ATC lo lee de `AybarUserContext` (`roles` para los globales y `rolesDe(companyId)` para los de la empresa activa): si el rol de ATC está entre los globales, la consulta no se limita a una empresa; si solo está en `company_roles`, se limita a `companyId`. **Quiénes van con rol global no está en los documentos:** la lista de personas la entrega el PO o la Gerencia ATC al área de Roles y Permisos (P-028).
+**Regla de ATC (combinación de un rol global y uno por empresa):**
+
+1. **Si la operación se permite** lo decide la unión de los dos caminos, igual que el permiso efectivo de Control de acceso (ADR-007 de PJ-05): `@PreAuthorize(hasAnyRole(<x-roles>))` sobre los `ROLE_*` que arma el SDK con los roles globales y los de la empresa activa.
+2. **Sobre qué empresas actúa** se calcula **por operación**, solo con los roles que la autorizan. Sea `R` el conjunto de `x-roles` de la operación: si `R ∩ roles globales` (`AybarUserContext.roles`) no está vacío, el alcance son las 11 razones sociales; si solo `R ∩ rolesDe(companyId)` no está vacío, el alcance es `{companyId}`. Un rol que no está en `R` nunca amplía el alcance. Los roles de empresas que no son la activa no cuentan: cambiar de empresa renueva el token (D-178).
+3. **Ejemplo que la regla impide:** `ATC_AGENT` global con `ATC_SUPERVISOR` solo en la empresa X. Pasa `@PreAuthorize` de `reasignarEnBloque` (`x-roles: ATC_SUPERVISOR`), pero como `ATC_SUPERVISOR` solo llega por la empresa X, reasigna únicamente tickets de X. En `listarBandeja`, que autoriza `ATC_AGENT`, ve las 11.
+4. **Dónde vive y cómo se prueba:** un solo componente de `application` (`AlcanceDeEmpresa`) recibe los `x-roles` de la operación y el `AybarUserContext` y devuelve el conjunto de empresas. Todos los casos de uso con filtro de empresa lo usan, y ninguno lee `companyId` directamente. Prueba obligatoria: la combinación del punto 3 y sus variantes (solo global, solo por empresa, los dos con el mismo rol).
+5. **Incompatibilidad que lo acompaña:** sección 9.
+
+**Quiénes van con rol global no está en los documentos:** la lista de personas la entrega el PO o la Gerencia ATC al área de Roles y Permisos (P-028).
 
 ## 4 Opciones de menú
 
@@ -110,7 +119,7 @@ Las asignaciones las hace Control de acceso (`asignarRol` para un rol global y `
 
 ## 5 Matriz: operación del OpenAPI → permiso → roles
 
-Cada operación del contrato (`aybar-atc.openapi.yaml` 0.4.0-borrador) declara su permiso en `x-permiso`, con la forma que usa PJ-05 en su propio contrato (`<opción> + <acción>`), y los roles que exige `@PreAuthorize` en `x-roles`. Son 59 operaciones y 45 pares opción + acción distintos; las operaciones que comparten un par tienen los mismos roles (lo comprueba el script que genera esta tabla). «Base» es el actor de la historia que pide la operación.
+Cada operación del contrato (`aybar-atc.openapi.yaml` 0.5.0-borrador) declara su permiso en `x-permiso`, con la forma que usa PJ-05 en su propio contrato (`<opción> + <acción>`), y los roles que exige `@PreAuthorize` en `x-roles`. Son 59 operaciones y 45 pares opción + acción distintos; las operaciones que comparten un par tienen los mismos roles (lo comprueba el script que genera esta tabla). «Base» es el actor de la historia que pide la operación.
 
 | Operación | `x-permiso` (opción + acción) | `x-roles` | Base (historia) |
 |---|---|---|---|
@@ -176,7 +185,7 @@ Cada operación del contrato (`aybar-atc.openapi.yaml` 0.4.0-borrador) declara s
 
 ## 6 Matriz: rol → permisos (lo que ATC registra)
 
-Es el lote de permisos que ATC envía (una fila por rol y opción, con sus acciones). Cada rol lleva además `ver` sobre `ATC` y sobre cada `SUBMENU` que usa, para que el menú efectivo de Control de acceso (`GET /api/v1/mi/menu`) le muestre la pantalla. 75 filas: 72 de los roles de ATC y 3 del rol `CUSTOMER` (supuesto S-2).
+Es el lote de permisos que ATC envía (una fila por rol y opción, con sus acciones). Cada rol lleva además `ver` sobre `ATC` y sobre cada `SUBMENU` que usa, para que el menú efectivo de Control de acceso (`GET /api/v1/mi/menu`) le muestre la pantalla. 75 filas: 72 de los roles de ATC y 3 del rol `CUSTOMER` (supuesto S-2). Más las 3 incompatibilidades de la sección 9.
 
 - **`ATC_AGENT`** (16 filas): `ATC` (ver); `ATC.TICKETS` (ver, crear, editar); `ATC.TICKETS.SLA` (ver); `ATC.TICKETS.REFER` (editar); `ATC.TICKETS.GUIDE` (ver); `ATC.TICKETS.AI_ASSIST` (crear, editar); `ATC.TICKETS.LEGAL_GATE` (crear); `ATC.TICKETS.STATE_NOTE` (crear); `ATC.INBOX` (ver); `ATC.INBOX.LOCKER` (ver); `ATC.DASHBOARD` (ver); `ATC.CUSTOMER360` (ver); `ATC.CUSTOMER360.SEARCH` (ver); `ATC.CUSTOMER360.CALL` (crear); `ATC.CUSTOMER360.QUERY_ENGINE` (ver); `ATC.CUSTOMER360.DOCUMENTS` (ver).
 - **`ATC_SUPERVISOR`** (19 filas): `ATC` (ver); `ATC.TICKETS` (ver, crear, editar); `ATC.TICKETS.SLA` (ver); `ATC.TICKETS.REFER` (editar); `ATC.TICKETS.REOPEN` (editar); `ATC.TICKETS.REASSIGN_BULK` (editar); `ATC.TICKETS.GUIDE` (ver); `ATC.TICKETS.LEGAL_GATE` (eliminar); `ATC.TICKETS.STATE_NOTE` (crear); `ATC.INBOX` (ver); `ATC.INBOX.LOCKER` (ver); `ATC.INBOX.LIGHTNING` (crear); `ATC.DASHBOARD` (ver); `ATC.DASHBOARD.TEAM` (ver); `ATC.VIEWER` (ver); `ATC.WORKFLOWS` (ver); `ATC.CUSTOMER360` (ver); `ATC.CUSTOMER360.SEARCH` (ver); `ATC.EVENT_CASES` (ver).
@@ -203,15 +212,15 @@ El Líder Técnico pidió que ATC «autorice cada operación con el permiso que 
 
 | Regla | Cómo se aplica | Fuente |
 |---|---|---|
-| Empresa | Según dónde vino el rol: global sin filtro de empresa; por empresa, la empresa activa (sección 3) | C-08; ADR-009; D-178 |
+| Empresa | Por operación, con los roles que la autorizan: si alguno es global, las 11 empresas; si solo es de la empresa activa, esa empresa (sección 3) | C-08; ADR-009; ADR-007 y D-178 de PJ-05 |
 | Área | El gestor no ve tickets de áreas ajenas salvo que supervise. El token no dice a qué área pertenece el gestor y Control de acceso no administra áreas (`NEX_COMPANY_AREA` no existe, D-74, D-193). **Supuesto S-4:** mientras P-036 no se responda, el área de cada rol de ATC es un parámetro de ATC (por ejemplo, `ATC_LEGAL` → cola `LEGAL`, `ATC_POSTVENTA` → cola `POSTVENTA`), sin guardar personas; el gestor ve las colas de su rol y los tickets asignados a él. La correspondencia de `MAE_AREA` con el área organizacional está propuesta en `datos/registro-de-tablas.md` §7 | HU-044 CA-03; C-07; P-036 |
 | Secciones de la consulta 360 | Cada rol ve solo los datos que su permiso permite; los demás aparecen con candado. Los permisos del sistema de origen se aplican en cada consulta | HU-050 CA-02, CA-07; RN-SVC-036; RNF-SEC-010 |
-| Visor 3D | Solo las áreas permitidas (regla de área de esta tabla) | HU-067 CA-07 |
+| Visor 3D | Solo las áreas permitidas (regla de área de esta tabla). El WebSocket `/ws/visor` exige el mismo rol que `estadoVisor`, validado en el *handshake* con el JWT; al vencer el token se cierra y el visor se reconecta (ADR-010) | HU-067 CA-07 |
 | Tablero | El del gestor es solo suyo; el del equipo exige además `ATC.DASHBOARD.TEAM + ver` | HU-054 CA-03 |
-| Cliente | Solo ve sus tickets, filtrados por su `PartyID` (S-3); el ticket de otro cliente responde `AYB-PTL-404` y el intento queda en la bitácora | HU-064 CA-02; HU-065 CA-04; RN-SVC-044 |
-| Intentos denegados | Quedan registrados: registrar un ticket sin rol de atención (HU-001 CA-04), consultar al motor un dato no permitido (HU-052 CA-03) y abrir el ticket de otro cliente (HU-065 CA-04). El 403 lo sigue dando el SDK; ATC escucha el evento de acceso denegado de Spring Security y emite un evento de auditoría (`aybar-starter-audit`) | Historias citadas; `seguridad.md` |
+| Cliente | Solo ve sus tickets, filtrados por el `PartyID` que sale de su token (S-3); el cuerpo de la petición no puede traer un identificador de cliente (esquemas propios de Mi Portal, ADR-011); el ticket de otro cliente responde `AYB-PTL-404` y el intento queda en la auditoría | HU-064 CA-02; HU-065 CA-03 y CA-04 |
+| Intentos denegados | Quedan registrados: registrar un ticket sin rol de atención (HU-001 CA-04), consultar al motor un dato no permitido (HU-052 CA-03) y abrir el ticket de otro cliente (HU-065 CA-04). El 403 por falta de rol lo da el SDK: ATC declara un bean `AuthorizationEventPublisher` (sin él, Spring Security no publica `AuthorizationDeniedEvent`) y un listener emite el evento de auditoría (`aybar-starter-audit`). HU-052 CA-03 y HU-065 CA-04 no son 403: el caso de uso emite el evento de auditoría por su puerto antes de responder | Historias citadas; `seguridad.md` |
 
-RN-SVC-044 no está en el Excel del PO: está en los PDF v1.3 (PLT-03, catálogo de reglas, «propuesta PO v1.3»; PLT-04, HU-064 a 066; PLT-05). La registra el PO en el Excel (P-022, P-030). RNF-SEC-010 sí está en el Excel `ATC_requerimientos (3).xlsx`, hoja `03_RNF`, fila 31.
+Lo que ve el cliente se cita por sus criterios de origen (HU-064 CA-02; HU-065 CA-03 y CA-04): el código de regla que le dan los PDF del PO no está en el Excel y lo registra el PO (P-022, P-030). RNF-SEC-010 sí está en el Excel `ATC_requerimientos (3).xlsx`, hoja `03_RNF`, fila 31.
 
 ## 9 Incompatibilidades
 
@@ -221,8 +230,9 @@ La segregación de funciones (SoD) la administra Control de acceso: la matriz em
 |---|---|---|---|---|---|
 | `ATC_ADMIN_FUNCIONAL` | `ATC_AGENT` | Grupo (`companyId` nulo) | `BLOCK` | Quien publica los flujos no atiende los tickets que esos flujos gobiernan | Propuesta del equipo, sin respaldo en las historias |
 | `ATC_ADMIN_FUNCIONAL` | `ATC_SUPERVISOR` | Grupo | `BLOCK` | Quien publica los flujos no supervisa los tickets que esos flujos gobiernan | Propuesta del equipo, sin respaldo en las historias |
+| `ATC_SUPERVISOR` | `ATC_AGENT` | Grupo | `WARN_AND_LOG` | Un supervisor que también atiende puede tener los dos roles, por eso no se bloquea. El riesgo es tenerlos con alcances distintos (uno global y otro por empresa), la combinación que la sección 3 acota: queda avisada y registrada para que Control de acceso confirme que la asignación es la que se quiso | Propuesta del equipo (segunda revisión del Líder Técnico) |
 
-La confirman el Líder Técnico y Control de acceso (P-028). Las demás reglas de «solo el supervisor» (HU-008 CA-03, HU-026, HU-045 CA-02) se resuelven con el permiso, no con una incompatibilidad.
+Control de acceso evalúa estas incompatibilidades sobre la unión de los roles globales y por empresa (ADR-003 y ADR-007 de PJ-05), así que el par `ATC_SUPERVISOR` + `ATC_AGENT` se detecta también cuando uno es global y el otro por empresa. La escalada no depende de esa alerta: la impide la regla de alcance por operación de la sección 3, que vale aunque el área no registre la incompatibilidad. Las tres incompatibilidades las confirman el Líder Técnico y Control de acceso (P-028). Las demás reglas de «solo el supervisor» (HU-008 CA-03, HU-026, HU-045 CA-02) se resuelven con el permiso, no con una incompatibilidad.
 
 ## 10 Actores de las historias sin rol en la lista del Líder Técnico
 
@@ -243,8 +253,8 @@ La confirman el Líder Técnico y Control de acceso (P-028). Las demás reglas d
 
 1. **Cliente de servicio de ATC.** TI crea el cliente OAuth `CONFIDENTIAL` de ATC con su script (D-223): secreto de 32 bytes que se muestra una vez y se guarda en Azure Key Vault (ADR-014).
 2. **Rol `CATALOG_REGISTRAR`.** Lo otorga una persona con `ROLE_IT_ADMIN`. La ruta para hacerlo (`PUT /api/v1/clientes/{clientId}/roles/CATALOG_REGISTRAR`) sigue en `x-estado: propuesta` (D-171) ⚠: **cómo se otorga en la Etapa 1 lo responde Sony Montoya (P-039).**
-3. **Registro.** ATC llama con `client_credentials` (`aybar-starter-client`, DT-10) a `POST /api/v1/catalogo/opciones-de-menu` (31 opciones, un lote de hasta 200) y después a `POST /api/v1/catalogo/roles` (9 roles, 75 permisos y 2 incompatibilidades) ⚠. Todo nace inactivo.
-4. **Aprobación.** Una persona con `ROLE_IT_ADMIN` aprueba cada fila: son **117 tareas** (31 + 9 + 75 + 2; A24: una por fila), que vencen a los 7 días si nadie las resuelve (ADR-021 de PJ-05).
+3. **Registro.** ATC llama con `client_credentials` (`aybar-starter-client`, DT-10) a `POST /api/v1/catalogo/opciones-de-menu` (31 opciones, un lote de hasta 200) y después a `POST /api/v1/catalogo/roles` (9 roles, 75 permisos y 3 incompatibilidades) ⚠. Todo nace inactivo.
+4. **Aprobación.** Una persona con `ROLE_IT_ADMIN` aprueba cada fila: son **118 tareas** (31 opciones + 9 roles + 75 permisos + 3 incompatibilidades; A24: una por fila), que vencen a los 7 días si nadie las resuelve (ADR-021 de PJ-05) ⚠ `HU-IDN-057`.
 5. **Invitación y asignación.** El área invita a los gestores como cuentas `EMPLOYEE` ligadas a su `PARTY` (D-46) y les asigna los roles, globales o por empresa (sección 3).
 6. **Cambios.** La revisión del Líder Técnico dice que ATC entrega el catálogo «una sola vez» y que un rol nuevo se le solicita al área. D-100 de PJ-05 permite además que el servicio pida cambiar o retirar lo aprobado, pero esas rutas siguen en propuesta. **Si es «una sola vez» o puede pedir cambios lo deciden el Líder Técnico y Sony Montoya (P-039).**
 
@@ -266,5 +276,6 @@ La confirman el Líder Técnico y Control de acceso (P-028). Las demás reglas d
 |---|---|---|---|
 | 0.1 | 2026-10-22 | Jesús Chávez Elías, con IA | Primera versión: roles, opciones, acciones, matriz por operación y por rol, alcance, incompatibilidad propuesta, actores sin rol y preguntas abiertas |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Verificado contra el paquete aprobado de PJ-05: catálogo en su formato (árbol de 31 opciones y permiso = opción + una de las cinco acciones), `x-permiso` con la forma `<opción> + <acción>` y `x-roles` por operación; autorización por rol porque el token no trae permisos (S-1, P-034); permisos de `CUSTOMER` y `PartyID` como supuestos para Sony Montoya (S-2, S-3; P-033); asignación global o por empresa con D-178 (C-08); filtro por área sin áreas en Control de acceso (S-4, P-036); rol propuesto `ATC_SITE_ACCESS` (HU-059); la frase ancla ya no comparte permiso con el caso del evento; pasos de entrega con 117 tareas de aprobación y la ruta de `CATALOG_REGISTRAR` en propuesta (P-039) |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: regla explícita para un rol global y uno por empresa (si se permite: unión de roles, como el permiso efectivo de PJ-05; sobre qué empresas: por operación, con los roles que la autorizan), con ejemplo, componente y prueba; incompatibilidad `ATC_SUPERVISOR` + `ATC_AGENT` (`WARN_AND_LOG`) y 118 tareas de aprobación; aviso ⚠ con los 7 archivos de PJ-05 que no coinciden con el sello; roles sembrados: 9 (D-176); intentos denegados con `AuthorizationEventPublisher` y desde el caso de uso; visor y Mi Portal según ADR-010 y ADR-011; la visibilidad del cliente citada por sus criterios |
 
 Generado por IA: documento completo (Claude, 2026-10-22), a partir de la revisión del Líder Técnico del 22-oct, las 62 historias de Nexora (actores y criterios de aceptación) y el contrato OpenAPI v5; actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente) · Aprueba: TL

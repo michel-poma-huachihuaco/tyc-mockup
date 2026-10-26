@@ -2,9 +2,9 @@
   "epica": "EP-ATC-02",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025 — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, proyector y bus (DT-02) no estan en estas horas: P-025. 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-003-T01 ya no lleva en depende_de HU-ATC-001-T01; HU-ATC-003-T03 ya no lleva en depende_de HU-ATC-001-T03; HU-ATC-007-T01 ya no lleva en depende_de HU-ATC-001-T01; HU-ATC-011-T02 ya no lleva en depende_de HU-ATC-004-T03; HU-ATC-029-T01 ya no lleva en depende_de HU-ATC-004-T03. — Revisado por: (pendiente)",
   "titulo": "Enrutamiento, SLA y alertas",
-  "responsable": "Jesús (Dev 2)",
+  "responsable": "Jesus Chavez Elias",
   "horas": 28,
   "ventana": "2026-10-21 -> 2026-10-26",
   "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
@@ -22,21 +22,19 @@
       "tareas": [
         {
           "id": "HU-ATC-007-T01",
-          "titulo": "[tickets] Entidad SVC_TICKET_ASSIGNMENT_LOG (ENT-SVC-003, append-only RN-SVC-006: area MAE_AREA, responsable, motivo) y puerto en domain.port.out; MAE_AREA solo como cola de atencion del ticket (C-07) y el responsable como user_account_id del token, sin tabla de usuarios ni de lideres (DT-03)",
+          "titulo": "[tickets] Entidad SVC_TICKET_ASSIGNMENT_LOG (ENT-SVC-003, append-only RN-SVC-006: area MAE_AREA, responsable, motivo) y puerto en domain.port.out; MAE_AREA solo como cola de atencion del ticket (C-07) y el responsable como user_account_id del token, sin tabla de usuarios ni de lideres (DT-03). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa la entidad Ticket y TicketRepository de HU-ATC-001-T01 (tarea de dominio de la ola 0: es fundacion del SDK y se mergea antes de abrir las olas; el calendario del PO termina HU-ATC-001 el 21-oct, el mismo dia en que empieza esta HU, sin holgura)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
-          "depende_de": [
-            "HU-ATC-001-T01"
-          ]
+          "depende_de": []
         },
         {
           "id": "HU-ATC-007-T02",
           "titulo": "[tickets] Migracion Flyway V4__crear_tabla_ticket_assignment_log.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T01"
@@ -47,7 +45,7 @@
           "titulo": "[tickets] Caso de uso DerivarTicketUseCase (permite derivar a area sin persona asignada)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T01"
@@ -58,7 +56,7 @@
           "titulo": "[tickets] Endpoint POST /api/v1/tickets/{id}/derivaciones; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T02",
@@ -70,7 +68,7 @@
           "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-007 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T04"
@@ -81,7 +79,7 @@
           "titulo": "[tickets] Accion de derivar ticket entre areas en la pantalla de ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-007-T04"
@@ -105,7 +103,7 @@
           "titulo": "[integrations] Puerto GestoresPort en domain.port.out y adaptador contract-first con simulador (ADR-004) en adapters.outbound para obtener los gestores que cesan o rotan, los gestores de un area con su disponibilidad y el lider de un gestor; la fuente es Control de acceso con token de servicio client_credentials (aybar-starter-client, DT-10), pero esa API no existe: obtener lideres/gestores pendiente P-035 (areas y jefaturas: P-036); sin copia local de usuarios ni roles (DT-03; sustituye al maestro local de DEP-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T01"
@@ -116,7 +114,7 @@
           "titulo": "[tickets] Caso de uso ReasignarMasivamenteUseCase: genera filas REASSIGNMENT_CESE sin borrar el rastro anterior",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-007-T01",
@@ -128,7 +126,7 @@
           "titulo": "[tickets] Endpoint POST /api/v1/tickets/reasignacion-masiva con @PreAuthorize por el rol ATC_SUPERVISOR del token (CA-03: solo el supervisor; arquitectura/roles-y-permisos-atc.md, P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-008-T02"
@@ -139,7 +137,7 @@
           "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-008 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-03 con un token del emisor de pruebas sin rol de supervisor",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-008-T03"
@@ -150,7 +148,7 @@
           "titulo": "[tickets] Pantalla administrativa de reasignacion masiva para supervisor, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-008-T03"
@@ -174,7 +172,7 @@
           "titulo": "[tickets] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector de DT-02, fuera de esta HU: P-025) para el casillero: proyeccion de SVC_TICKET + ultimo movimiento de SVC_TICKET_ASSIGNMENT_LOG",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-007-T02"
@@ -185,7 +183,7 @@
           "titulo": "[tickets] Caso de uso ConsultarCasilleroUseCase (consulta sobre el read model, sin tabla adicional)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-009-T01"
@@ -196,7 +194,7 @@
           "titulo": "[tickets] Endpoint GET /api/v1/tickets/casillero; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-009-T02"
@@ -207,7 +205,7 @@
           "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-009 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-009-T03"
@@ -218,7 +216,7 @@
           "titulo": "[tickets] Vista de casillero de tareas por area/responsable, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-009-T03"
@@ -239,21 +237,19 @@
       "tareas": [
         {
           "id": "HU-ATC-003-T01",
-          "titulo": "[sla] Entidad MAE_SLA_POLICY y servicio de dominio SelectorPoliticaSla (precedencia tipo+prioridad sobre generica, RN-SVC-001) en domain, con su puerto en domain.port.out",
+          "titulo": "[sla] Entidad MAE_SLA_POLICY y servicio de dominio SelectorPoliticaSla (precedencia tipo+prioridad sobre generica, RN-SVC-001) en domain, con su puerto en domain.port.out. Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa la entidad Ticket y TicketRepository de HU-ATC-001-T01 (tarea de dominio de la ola 0: es fundacion del SDK y se mergea antes de abrir las olas; el calendario del PO termina HU-ATC-001 el 21-oct, antes de que empiece esta HU)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
-          "depende_de": [
-            "HU-ATC-001-T01"
-          ]
+          "depende_de": []
         },
         {
           "id": "HU-ATC-003-T02",
           "titulo": "[sla] Migracion Flyway V7__crear_tabla_sla_policy_y_columnas_vencimiento_ticket.sql (MAE_SLA_POLICY + FirstResponseDueDateTime/ResolutionDueDateTime en SVC_TICKET, expand)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-003-T01"
@@ -261,13 +257,12 @@
         },
         {
           "id": "HU-ATC-003-T03",
-          "titulo": "[sla] Congelar vencimientos al abrir el ticket dentro de RegistrarTicketUseCase (RN-SVC-002), con MAE_TIME/MAE_HOLIDAY por geografia del establecimiento (DEP-03, DEP-04)",
+          "titulo": "[sla] Congelar vencimientos al abrir el ticket dentro de RegistrarTicketUseCase (RN-SVC-002), con MAE_TIME/MAE_HOLIDAY por geografia del establecimiento (DEP-03, DEP-04). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa RegistrarTicketUseCase de HU-ATC-001-T03 (el calendario del PO termina HU-ATC-001 el 21-oct, antes de que empiece esta HU)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
-            "HU-ATC-001-T03",
             "HU-ATC-003-T02"
           ]
         },
@@ -276,7 +271,7 @@
           "titulo": "[sla] Un test por cada criterio de aceptacion de HU-ATC-003 (CA-01 a CA-04) con datos sinteticos; incluye cambio de politica posterior sin afectar el vencimiento ya congelado; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-003-T03"
@@ -287,7 +282,7 @@
           "titulo": "[sla] Panel «SLA que se congelara» en Nuevo ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-003-T03"
@@ -311,7 +306,7 @@
           "titulo": "[sla] Entidad SVC_SLA_BREACH_ALERT (ENT-SVC-009) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-003-T01"
@@ -322,7 +317,7 @@
           "titulo": "[sla] Migracion Flyway V11__crear_tabla_sla_breach_alert.sql (UNIQUE TicketID+BreachTypeID+ReopenCycleNumber)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-010-T01"
@@ -333,7 +328,7 @@
           "titulo": "[sla] Caso de uso DetectarIncumplimientosSlaUseCase: FIRST_RESPONSE_OVERDUE y RESOLUTION_OVERDUE, una alerta por tipo y ciclo (RN-SVC-008)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-010-T02"
@@ -344,7 +339,7 @@
           "titulo": "[sla] Job batch idempotente programado (segun ADR-005; ShedLock, DT-08) que invoca DetectarIncumplimientosSlaUseCase",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-010-T03"
@@ -355,7 +350,7 @@
           "titulo": "[sla] Un test por cada criterio de aceptacion de HU-ATC-010 (CA-01 a CA-03) con datos sinteticos; incluye no duplicar alerta en el mismo ciclo; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-010-T04"
@@ -366,7 +361,7 @@
           "titulo": "[sla] Chip «En riesgo / vencido» en la bandeja, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-010-T03"
@@ -390,7 +385,7 @@
           "titulo": "[sla] Migracion Flyway V14__agregar_columnas_reapertura_ticket.sql (ReopenCount, ReopenedResolutionDueDateTime, expand)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-003-T02"
@@ -398,13 +393,12 @@
         },
         {
           "id": "HU-ATC-011-T02",
-          "titulo": "[sla] Caso de uso ReabrirTicketUseCase: incrementa ReopenCount, calcula el nuevo vencimiento con la politica vigente, conserva el original y abre un nuevo ciclo de alertas (RN-SVC-007, RN-SVC-008)",
+          "titulo": "[sla] Caso de uso ReabrirTicketUseCase: incrementa ReopenCount, calcula el nuevo vencimiento con la politica vigente, conserva el original y abre un nuevo ciclo de alertas (RN-SVC-007, RN-SVC-008). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa CambiarEstadoTicketUseCase de HU-ATC-004-T03 (el calendario del PO termina HU-ATC-004 el 22-oct, antes de que empiece esta HU)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-004-T03",
             "HU-ATC-011-T01",
             "HU-ATC-010-T03"
           ]
@@ -414,7 +408,7 @@
           "titulo": "[sla] Endpoint PATCH /api/v1/tickets/{id}/reapertura; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-011-T02"
@@ -425,7 +419,7 @@
           "titulo": "[sla] Un test por cada criterio de aceptacion de HU-ATC-011 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-011-T03"
@@ -436,7 +430,7 @@
           "titulo": "[sla] Boton de reapertura y vencimiento vigente visible en la pantalla de ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-011-T03"
@@ -457,13 +451,12 @@
       "tareas": [
         {
           "id": "HU-ATC-029-T01",
-          "titulo": "[sla] Logica de medicion del cierre end-to-end del ticket (sin escalamiento vs. con escalamiento, RN-SVC-025) con SVC_TICKET y MAE_SLA_POLICY",
+          "titulo": "[sla] Logica de medicion del cierre end-to-end del ticket (sin escalamiento vs. con escalamiento, RN-SVC-025) con SVC_TICKET y MAE_SLA_POLICY. Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa CambiarEstadoTicketUseCase de HU-ATC-004-T03 (el calendario del PO termina HU-ATC-004 el 22-oct, antes de que empiece esta HU)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 1.5,
           "depende_de": [
-            "HU-ATC-004-T03",
             "HU-ATC-010-T03",
             "HU-ATC-003-T01"
           ]
@@ -473,7 +466,7 @@
           "titulo": "[sla] Exponer la metrica de riesgo de cierre E2E en un read model de consulta, que despues consume la Torre de Control (HU-ATC-030)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-029-T01"
@@ -484,7 +477,7 @@
           "titulo": "[sla] Un test por cada criterio de aceptacion de HU-ATC-029 (CA-01 y CA-02) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-029-T02"
@@ -495,7 +488,7 @@
           "titulo": "[sla] Indicador de cierre end-to-end como componente de la Torre de Control, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Jesús (Dev 2)",
+          "responsable": "Jesus Chavez Elias",
           "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-029-T02"

@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Trazabilidad de las historias de Nexora al paquete G3"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -27,7 +27,7 @@ Contraste del 20-oct-2026 entre las **62 historias publicadas en PJ-06** (carpet
 | Reglas de seguridad y de contenido, y tiempos de respuesta | `arquitectura/seguridad.md` |
 | Preguntas abiertas (58 en 25 historias y 23 de las funcionalidades) y decisiones D-008, P-018 y P-019 | `analisis/decisiones.md` |
 | Requisitos no funcionales con umbral (31) y estado de DoR de las 23 funcionalidades | esta página |
-| 59 operaciones de API en el contrato v0.3 (antes 61 y 28), con campos y errores de los criterios | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
+| 59 operaciones de API en el contrato al 26-oct (antes 61 y 28; la versión vigente está en su cabecera), con campos y errores de los criterios | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
 
 Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecanismo si la historia no tiene API propia); «Datos» son tablas y columnas del v7 o la falta de ellas; «Falta» es lo que impide cerrar la historia en G3. Una historia con «Sin tabla en el v7» no tiene todavía dónde guardar sus datos: depende de que Gobierno de Datos decida su tabla (P-016).
 
@@ -49,7 +49,7 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 | HU-014 | Registrar la respuesta formal con cargo | 1.3 | 3 (1 del PO) | `registrarRespuestaFormal` | `ResponderPartyID`, carta y cargo en `GOV_DOCUMENT_REPOSITORY` | ADR-006 (Azure Blob con inmutabilidad) | Repositorio y firma (DEP-06) |
 | HU-015 | Vigilar el plazo legal y detectar reclamos huérfanos | 1.3 | 3 (1 del PO) | Job de plazo legal (ADR-005) | `SVC_SLA_BREACH_ALERT` (`LEGAL_EXTENSION_WINDOW_CLOSING`), `GOV_INTEGRITY_EXCEPTION` (`ORPHAN_REFERENCE`), `RequiresComplaintBook` | ADR-005 (3 días hábiles, control diario, plazo prorrogado) | Ninguno de datos: los valores están en el Excel (`SVC_SLA_BREACH_TYPE`, RF-SVC-010; tipos de excepción, ENT-GOV-001) |
 | HU-016 | Dar seguimiento a apelaciones internas y ante INDECOPI | 1.3 | 3 (1 del PO) | `registrarApelacion`, `cambiarEstadoApelacion` | `SVC_COMPLAINT_APPEAL` (`IndecopiCaseNumber`) y su bitácora (`WITHDRAWN`) | estados.md | Código de la instancia interna (el Excel solo nombra `INDECOPI`); los 5 estados ya están en el Excel (`SVC_COMPLAINT_APPEAL_STATUS`) |
-| HU-019 | Disparar la encuesta al cerrar el ticket | 1.3 | 3 (1 del PO) | Evento `ticket.closed` → encuesta (DEP-10) | `SVY_SURVEY_RESPONSE` (`SubjectEntityName`) | ADR-013 (evento de cierre); linaje.md | Columnas de la encuesta (DEP-10) |
+| HU-019 | Disparar la encuesta al cerrar el ticket | 1.3 | 3 (1 del PO) | Evento `aybar.service.ticket_status_changed` al pasar a `CLOSED` → encuesta (DEP-10) | `SVY_SURVEY_RESPONSE` (`SubjectEntityName`) | ADR-013 (evento de cierre); linaje.md | Columnas de la encuesta (DEP-10) |
 | HU-020 | Registrar un caso sensible con Código Único | 1.3 | 2 | `registrarCasoSensible`, `reclasificarCaso` | Sin tabla en el v7: Código Único y cinco líneas de ingreso | diccionario.md (por modelar) | Modelo de casos sensibles (R-06, Mesa SGD) |
 | HU-021 | Emitir cargo previo y cargo de activación por separado | 1.3 | 3 (1 del PO) | `emitirCargo` | Sin tabla en el v7: cargo previo y de activación | ADR-005 (limbo de más de 2 días hábiles) | Modelo de casos sensibles |
 | HU-022 | Clasificar el riesgo del caso con matriz objetiva | 1.3 | 2 | `clasificarRiesgo` | Sin tabla en el v7: matriz de riesgo | diccionario.md | Criterios y pesos (Mesa SGD, R-08) |
@@ -85,9 +85,9 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 | HU-052 | Consultar datos específicos con el motor de José | 1.3 | 3 (1 del PO) | `consultarMotor` | Sin tabla: `SVC_SEARCH_INDEX` del PLT-05 | ADR-004 (adaptador) | Qué expone el motor de José (DEP-13) |
 | HU-053 | Buscar documentos del cliente por significado | 1.3 | 3 (1 del PO) | `buscarDocumentos` | Índice de búsqueda sin tabla; `GOV_DOCUMENT_REPOSITORY` | ADR-003; seguridad.md (permisos) | Repositorios que se indexan (DEP-06) |
 | HU-054 | Ver mi avance diario y el de mi equipo | 1.3 | 3 (1 del PO) | `verTablero` | `SVC_TICKET`, `SVY_SURVEY_RESPONSE` | ADR-012 | Metas diarias (pregunta abierta) |
-| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | 1.3 | 3 (1 del PO) | Notificación por correo al asignar (evento `ticket.assigned`) | `SVC_TICKET_ASSIGNMENT_LOG`; constancia del correo: candidata `NEX_NOTIFICATION_LOG` o cambio al v7 propuesto (`datos/registro-de-tablas.md`) | ADR-013 (evento); seguridad.md | Si el correo lleva datos del cliente (DLP); el líder del gestor: P-035 y P-036 |
+| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | 1.3 | 3 (1 del PO) | Notificación por correo al asignar (evento `aybar.service.ticket_assigned`) | `SVC_TICKET_ASSIGNMENT_LOG`; constancia del correo: candidata `NEX_NOTIFICATION_LOG` o cambio al v7 propuesto (`datos/registro-de-tablas.md`) | ADR-013 (evento); seguridad.md | Si el correo lleva datos del cliente (DLP); el líder del gestor: P-035 y P-036 |
 | HU-056 | Abrir el caso de resolución por 3 meses impagos | 1.3 | 3 (1 del PO) | Job diario de evaluación de 3 cuotas vencidas (DEP-08; ADR-005) | `PAY_COLLECTION_CASE`, `PAY_INSTALLMENT` (candidatas) | ADR-005 (job diario); estados.md | Disparador: cuotas consecutivas o acumuladas |
-| HU-057 | Enviar al cliente la alerta de cancelación en paralelo | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; envío en paralelo desde el outbox (ADR-013) | Constancia sin tabla propia; `SVC_TICKET_INTERACTION` | ADR-013; estados.md | Qué significa «cancelación» y su plazo |
+| HU-057 | Enviar al cliente la alerta de cancelación en paralelo | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución, por el outbox `SVC_OUTBOX_EVENT` (ADR-013); envío en paralelo | Constancia sin tabla propia; `SVC_TICKET_INTERACTION` | ADR-013; estados.md | Qué significa «cancelación» y su plazo |
 | HU-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; carta desde plantilla (DEP-15) | Carta en `GOV_DOCUMENT_REPOSITORY` | ADR-013 | Maestro de responsables de proyecto (DEP-15); el supervisor, si es una jefatura interna: P-035 y P-036 |
 | HU-059 | Registrar el ingreso de una persona al proyecto | 1.3 | 3 (1 del PO) | `registrarIngreso` | Formulario simple sin tabla (propuesta `SVC_SIMPLE_FORM_DEFINITION`) | ADR-001 | Funcionamiento sin conexión del celular |
 | HU-060 | Reservar un cupo en el bus del Entrega Fest | 1.3 | 3 (1 del PO) | `reservarBus`, `cancelarReserva` | `EVT_ATTENDEE` + `EVT_TRANSPORT` (candidatas) | ADR-001 | Aforo y alcance de «Buses entrega fest» |
@@ -125,7 +125,7 @@ Salen de la sección 3 de las 23 funcionalidades de Nexora (53 filas, 31 umbrale
 | RNF-SEC-009 | Uso seguro de IA | sugerencias_ia_con_datos_personales: 0; 100 % de sugerencias registradas | FT-19 | ADR-007 y seguridad.md |
 | RNF-REN-007 | Respuesta del motor de búsqueda | tiempo_respuesta_busqueda: p95 ≤ 2 s (DNI/código); ≤ 3 s (semántica) | FT-20 | ADR-003 y ADR-012 (búsqueda) |
 | RNF-SEC-010 | Permisos en búsqueda y consulta 360 | accesos_indebidos_busqueda: 0.0 | FT-20, FT-25 | seguridad.md (permisos del origen) |
-| RNF-REN-008 | Oportunidad del correo de asignación | minutos_envio_correo_asignacion: ≤ 1 min en el 99 % de los casos | FT-21 | ADR-013 (evento ticket.assigned) |
+| RNF-REN-008 | Oportunidad del correo de asignación | minutos_envio_correo_asignacion: ≤ 1 min en el 99 % de los casos | FT-21 | ADR-013 (evento `aybar.service.ticket_assigned`) |
 | RNF-INT-010 | Morosidad actualizada desde Cobranza | horas_desfase_morosidad: ≤ 24 h | FT-22 | ADR-004 (adaptador de Cobranza, DEP-08) |
 | RNF-AUD-005 | Constancia de alertas y cartas de resolución | alertas_con_constancia: 100 % | FT-22 | ADR-013 y ADR-006 (constancia de alertas) |
 | RNF-USA-004 | Formulario simple y móvil | tiempo_completar_formulario: ≤ 1 min; máximo 6 campos obligatorios | FT-23 | Formularios simples (HU-059, HU-060; G2) |
@@ -157,7 +157,7 @@ Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalú
 | FT-17 | Integración con la plataforma del call center | CON CONDICIONES | DEP-11 call center (por evaluar) | NO READY |
 | FT-18 | Bandeja orquestadora y flujos por área | CON CONDICIONES | Push o pull · quién marca el rayo | NO READY |
 | FT-19 | Asistencia al gestor: guía e IA | CON CONDICIONES | DEP-14 proveedor de IA | NO READY |
-| FT-20 | Búsqueda y consulta 360 del cliente | CON CONDICIONES | DEP-01 · DEP-13 · «llamar la cuenta»; además DEP-16 (datos por rol, HU-050, 052 y 053) | NO READY |
+| FT-20 | Búsqueda y consulta 360 del cliente | CON CONDICIONES | DEP-01 · DEP-13 · «llamar la cuenta»; además DEP-16 (permisos y datos por rol, HU-049, 050, 052 y 053) | NO READY |
 | FT-21 | Productividad y notificaciones del gestor | CON CONDICIONES | DEP-16 líder de cada gestor (API de Control de acceso; reemplaza a DEP-02) | NO READY |
 | FT-22 | Resolución de contrato por morosidad | CON CONDICIONES | DEP-08 · DEP-15 · causal legal (DEP-05); además DEP-16 (supervisor interno, HU-058) | NO READY |
 | FT-23 | Formularios simples: ingreso al proyecto y Entrega Fest | CON CONDICIONES | Alcance de «buses» · conectividad | NO READY |
@@ -179,9 +179,12 @@ No es una historia del PLT-04 v1.3. Los casos que Control de acceso deriva a ATC
 |---|---|---|---|
 | 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías y Brayan Hurtado, con IA | Contraste de las 62 historias con el paquete G3 y decisiones del 22-oct (versiones de Nexora hasta la v3) |
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | El `PartyID` → `PARTY` ya no es conflicto abierto (DT-06); dependencias de Control de acceso por historia (P-033, P-035, P-036, P-037); se retira `IDN_SYSTEM_TASK` de HU-055; condiciones de DoR con las DEP de las historias; nota del proceso de prospectos (C-06) |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 y outbox `SVC_OUTBOX_EVENT`; la DEP-16 de FT-20 suma HU-049 (P-034); el número de operaciones sin versión fija del contrato |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: columnas y listas que ya da el Excel, conflictos abiertos señalados y sin referencias a versiones anteriores. — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04, DT-07 y ADR-001 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-06, C-11 y C-12) y de las dependencias de las historias. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgo 15 de la técnica; DEP-16 de HU-049). — Revisado por: (pendiente)

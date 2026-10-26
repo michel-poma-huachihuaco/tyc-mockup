@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Registro de tablas de ATC en la base única: qué crea, qué lee y qué escribe en otro dominio"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
+version: "0.2"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: [tech_lead, data_chief]
 fecha: "2026-10-26"
@@ -40,23 +40,27 @@ Citas `archivo:línea` de la copia sellada de PJ-05 (`docs-roles-y-permisos/`, 1
 
 Son las 13 tablas del fragmento 10 SERVICE del v7. **No están en la lista de lo que crea Control de acceso** (sección 1), así que las crea ATC con sus migraciones Flyway, en la base única, con FK físicas (DT-06). Esto cierra el «por confirmar» de ADR-001 sobre si ya existían. Módulos según ADR-001.
 
-«Datos personales» es la **propuesta de clasificación para H-02** del acta F4: el v7 declara 0 tablas DAC en SERVICE, y la confirma Gobierno de Datos. «Dueño de dato» es propuesta; lo designa Gobierno de Datos en la puerta F4.
+«Datos personales» es la **propuesta de clasificación para H-02** del acta F4: el v7 declara 0 tablas DAC en SERVICE, y la confirma Gobierno de Datos.
 
-| Tabla | Clase | Módulo que la migra | Firmada (RNF-AUD-004) | Datos personales (propuesta H-02) | Dueño de dato (propuesta) |
+**Dueño de dato (propuesta para H-01): un rol, el Gerente de ATC** (Gerencia de Atención al Cliente), no un módulo ni un área. Es el mismo dueño para las 13 tablas de SERVICE, para los cambios al v7 de la sección 3 y para las vistas de lectura que derivan de ellas; en el Libro de Reclamaciones y las apelaciones consulta a la Gerencia Legal, que valida su contenido (DEP-05). La persona la designa el Data Chief al firmar el acta F4. Los ADR (ADR-001, 002, 005, 012 y 013, v0.4) remiten a este registro para el dueño de dato.
+
+**Tablas firmadas: 9 (propuesta de ADR-002, punto 3, en borrador).** Las 4 que firma el v7 (`SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_COMPLAINT_BOOK_ENTRY` y `SVC_COMPLAINT_APPEAL`) y las 5 bitácoras que pide RNF-AUD-004, a las que se agrega la columna `IntegrityHash` como cambio al v7 (P-031). La receta de las 3 entidades del v7 que no son `SVC_TICKET` se contrasta con la literal del v7 antes de su migración (P-015).
+
+| Tabla | Clase | Módulo que la migra | Firmada (v7 o RNF-AUD-004; ADR-002) | Datos personales (propuesta H-02) | Dueño de dato (propuesta) |
 |---|---|---|---|---|---|
-| `MAE_AREA` | Catálogo: **cola de atención** del ticket, no estructura organizacional (C-07, sección 7) | `tickets` | — | No | Gerencia ATC |
-| `MAE_TICKET_TYPE` | Catálogo | `tickets` | — | No | Gerencia ATC |
-| `MAE_TICKET_PRIORITY` | Catálogo | `tickets` | — | No | Gerencia ATC |
-| `MAE_SLA_POLICY` | Catálogo | `sla` | — | No | Gerencia ATC |
-| `SVC_TICKET` | Entidad | `tickets` | — (el Excel trae su receta de hash) | Solo referencias (`PartyID`, `ContractID`, `UnitID`): no copia el dato del cliente (DT-06, ADR-003) | Gerencia ATC |
-| `SVC_TICKET_STATUS_LOG` | Bitácora | `tickets` | Sí | No: `Notes_*` sin datos personales (RN-SVC-012) | Gerencia ATC |
-| `SVC_TICKET_ASSIGNMENT_LOG` | Bitácora | `tickets` | Sí | No (RN-SVC-012) | Gerencia ATC |
-| `SVC_TICKET_INTERACTION` | Entidad | `tickets` | — | **Sí, puede tener:** texto libre y adjuntos. Se propone tratarla como dato personal (Ley 29733): acceso por rol (RNF-SEC-008) | Gerencia ATC |
-| `SVC_SLA_BREACH_ALERT` | Entidad | `sla` | Sí | No | Gerencia ATC |
-| `SVC_COMPLAINT_BOOK_ENTRY` | Entidad (1:1 con el ticket) | `complaintbook` | — (la carta entra al hash, RN-SVC-010) | **Sí:** la hoja del Libro de Reclamaciones lleva datos del consumidor y la narrativa del reclamo. Es la excepción a ADR-003 que valida Legal | Gerencia ATC con Gerencia Legal |
-| `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG` | Bitácora | `complaintbook` | Sí | No (RN-SVC-012) | Gerencia ATC con Gerencia Legal |
-| `SVC_COMPLAINT_APPEAL` | Entidad | `complaintbook` | — | Puede tener: resumen de la resolución | Gerencia ATC con Gerencia Legal |
-| `SVC_COMPLAINT_APPEAL_STATUS_LOG` | Bitácora | `complaintbook` | Sí | No (RN-SVC-012) | Gerencia ATC con Gerencia Legal |
+| `MAE_AREA` | Catálogo: **cola de atención** del ticket, no estructura organizacional (C-07, sección 7) | `tickets` | — | No | Gerente de ATC |
+| `MAE_TICKET_TYPE` | Catálogo | `tickets` | — | No | Gerente de ATC |
+| `MAE_TICKET_PRIORITY` | Catálogo | `tickets` | — | No | Gerente de ATC |
+| `MAE_SLA_POLICY` | Catálogo | `sla` | — | No | Gerente de ATC |
+| `SVC_TICKET` | Entidad | `tickets` | Sí (v7; receta v2 en el Excel) | Solo referencias (`PartyID`, `ContractID`, `UnitID`): no copia el dato del cliente (DT-06, ADR-003) | Gerente de ATC |
+| `SVC_TICKET_STATUS_LOG` | Bitácora | `tickets` | Sí (RNF-AUD-004; columna nueva) | No: `Notes_*` sin datos personales (RN-SVC-012) | Gerente de ATC |
+| `SVC_TICKET_ASSIGNMENT_LOG` | Bitácora | `tickets` | Sí (RNF-AUD-004; columna nueva) | No (RN-SVC-012) | Gerente de ATC |
+| `SVC_TICKET_INTERACTION` | Entidad | `tickets` | Sí (v7; receta: P-015) | **Sí, puede tener:** texto libre y adjuntos. Se propone tratarla como dato personal (Ley 29733): acceso por rol (RNF-SEC-008) | Gerente de ATC |
+| `SVC_SLA_BREACH_ALERT` | Entidad | `sla` | Sí (RNF-AUD-004; columna nueva) | No | Gerente de ATC |
+| `SVC_COMPLAINT_BOOK_ENTRY` | Entidad (1:1 con el ticket) | `complaintbook` | Sí (v7; la carta entra al hash, RN-SVC-010; receta: P-015) | **No en columnas; confidencial.** El asiento guarda la referencia a la hoja y el `PartyID` (ADR-003, punto 6); la hoja con los datos del consumidor y la narrativa del reclamo es un documento del almacén de evidencia (ADR-006), con su espejo en `GOV_DOCUMENT_REPOSITORY`. El v7 la reclasificó «no DAC». Si Legal pide esos datos en columnas, es un cambio al v7 (P-031) | Gerente de ATC (consulta a la Gerencia Legal) |
+| `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG` | Bitácora | `complaintbook` | Sí (RNF-AUD-004; columna nueva) | No (RN-SVC-012) | Gerente de ATC (consulta a la Gerencia Legal) |
+| `SVC_COMPLAINT_APPEAL` | Entidad | `complaintbook` | Sí (v7; receta: P-015) | Puede tener: resumen de la resolución | Gerente de ATC (consulta a la Gerencia Legal) |
+| `SVC_COMPLAINT_APPEAL_STATUS_LOG` | Bitácora | `complaintbook` | Sí (RNF-AUD-004; columna nueva) | No (RN-SVC-012) | Gerente de ATC (consulta a la Gerencia Legal) |
 
 Las columnas que guardan a un colaborador (`CreatedByPartyID`, `CurrentOwnerPartyID`, `ChangedByPartyID`, `AssignedToPartyID`, `AssignedByPartyID`, `AgentPartyID`, `AlertedPartyID`, `ResponderPartyID` y `ClosedByPartyID`) son FK a `PARTY`. El token de Control de acceso trae `user_account_id` y no `PartyID`: de dónde sale la Party del colaborador y la del cliente de Mi Portal es la pregunta **P-033**.
 
@@ -66,7 +70,7 @@ El v7 no los trae. Ninguno está aprobado. Si Gobierno de Datos los acepta, son 
 
 | Cambio al v7 | Para qué | Historias o ADR | Estado |
 |---|---|---|---|
-| `SVC_OUTBOX_EVENT` (propia, fragmento 10) | Outbox transaccional del servicio (DT-02). ADR-013 la elige porque `INTG_OUTBOX_EVENT` del v7 es para envíos a sistemas externos y no sirve como outbox de ATC; es el cambio al v7 que se presenta | ADR-013; P-031 | Propuesta |
+| `SVC_OUTBOX_EVENT` (propia, fragmento 10) y la lista `SVC_OUTBOX_EVENT_TYPE` | Outbox transaccional del servicio (DT-02). ADR-013 la elige porque `INTG_OUTBOX_EVENT` del v7 es para envíos a sistemas externos y no sirve como outbox de ATC; es el cambio al v7 que se presenta. Columnas en ADR-013 v0.4, punto 6, entre ellas `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo si el evento lo origina un job; sin FK, porque ATC no lee las tablas de identidad). Sin datos personales y sin `IntegrityHash`; se purga a los 7 días | ADR-013; P-031 | Propuesta |
 | `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) | Registro de cada sugerencia de IA y su decisión, sin datos personales | ADR-007; HU-048; P-031 | Propuesta |
 | `SVC_WORKFLOW_DEFINITION` (ENT-SVC-014) y `SVC_WORKFLOW_ACTIVITY`, con su versión | Flujo por tipo, subtipo y área, versionado; el ticket congela su versión (RN-SVC-045) | ADR-008; HU-043; P-016 | Propuesta |
 | `MAE_TICKET_SUBTYPE` | Subtipo del ticket | ADR-008; HU-043, HU-064; P-016 | Propuesta |
@@ -74,12 +78,29 @@ El v7 no los trae. Ninguno está aprobado. Si Gobierno de Datos los acepta, son 
 | Columnas nuevas en `SVC_TICKET`: `SubtypeID`, `WorkflowID`, rayo y motivo, `ConflictFlag`, eje actual y vinculación pendiente | Lo que el PLT-04 §6.5 dibuja y el v7 no tiene | HU-043, HU-045, HU-026, HU-051, HU-064 | Propuesta |
 | Columnas nuevas en `MAE_AREA`: posición en la sede y referencia al área organizacional | Visor 3D (HU-067) y correspondencia de C-07 (sección 7) | HU-067; P-036 | Propuesta |
 | `SVC_KNOWLEDGE_ARTICLE` (ENT-SVC-015) | Guías de solución por tipo, con versiones | HU-047 | Propuesta |
-| `SVC_SEARCH_INDEX` (ENT-SVC-017) | Índice de búsqueda; es de lectura (ADR-012) y puede vivir fuera de PostgreSQL | HU-049, HU-053 | Propuesta |
 | `SVC_SIMPLE_FORM_DEFINITION` (ENT-SVC-019) y `SVC_EVENT_BUS_BOOKING` (ENT-SVC-020) | Formularios simples y reserva de bus. Candidatas del v7: `EVT_ATTENDEE` y `EVT_TRANSPORT` | HU-059, HU-060 | Propuesta |
 | `SVC_CONTRACT_DEFAULT_ALERT` (ENT-SVC-018) | Caso de resolución por morosidad y constancia de alertas. Candidata del v7: `PAY_COLLECTION_ACTIVITY` | HU-056 a HU-058 | Propuesta |
 | Casos sensibles: `SENSITIVE_CASE`, `MAE_INTAKE_LINE`, `RISK_ASSESSMENT`, `ESCALATION_LOG`, `CASE_CLOSURE`, vínculo entre casos | Mesa SGD (esbozos «por modelar» del PLT-04 §6.5) | HU-020 a HU-025 | Propuesta |
 | `HANDOFF_PACKAGE`, `EMOTIONAL_NOTE` y el caso sensible del evento | Handoff a Eje 3, nota de estado emocional y EntregaFest | HU-027, HU-028, HU-037 a HU-039 | Propuesta |
 | `shedlock` | Tabla técnica de ShedLock para que un job corra en una sola réplica (DT-08) | ADR-005; P-031 | Propuesta |
+| `flyway_schema_history_atc` | Tabla técnica de historial de Flyway propia de ATC en la base única (sección 3.1) | ADR-001 v0.4, regla 5; `arquitectura/migracion-y-reversion.md` §1; P-043 | Propuesta |
+
+**No es cambio al v7: `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05).** El índice de búsqueda de HU-049 y HU-053 no es una tabla de la base única: es una **colección del almacén de lectura**, con identificadores y metadatos de permisos y sin datos personales, que escribe el proyector (ADR-003 y ADR-012 v0.4). La búsqueda por significado de HU-053 (alcance flexible, R-01) usa, si entra a la Etapa 1, la búsqueda vectorial del mismo servicio con filtro previo por permisos; sin proveedor de IA (DEP-14) sale por R-01 (ADR-012).
+
+### 3.1 Historial de Flyway en la base única
+
+En la base única corren las migraciones de varios servicios: Control de acceso ya migra la suya y, si no la cambió en su configuración, usa la tabla de historial por defecto del starter (`flyway_schema_history`; lo confirma Sony Montoya). Si ATC usara la misma, Flyway vería migraciones que no son suyas y la validación fallaría al arrancar. Por eso ATC lleva **su propia tabla de historial** y no toca la de nadie:
+
+Es la regla 5 de ADR-001 v0.4:
+
+| Propiedad | Valor | Por qué |
+|---|---|---|
+| `aybar.data.flyway.baseline-table` | `flyway_schema_history_atc` | Historial propio de ATC; `aybar-starter-data` 0.7.1 lo traduce a `spring.flyway.table`. Va en el mismo esquema que las tablas del v7 de la base única |
+| `aybar.data.flyway.baseline-on-migrate` | `true` | La base no está vacía (tiene las tablas de Control de acceso): sin línea base, Flyway no arranca sobre un esquema con objetos |
+| `spring.flyway.baseline-version` | `0` | Con la de defecto (1), Flyway saltaría la `V1__` de ATC. Es la única propiedad `spring.flyway.*` que se declara, porque el SDK no la expone en `aybar.data.flyway.*`, y no se repite en los dos espacios. **Es una excepción a la regla literal del contrato** («no fijar `spring.flyway.*` y `aybar.data.flyway.*` a la vez»): la confirma el Líder Técnico con ADR-001, o el equipo del SDK la resuelve exponiendo `baseline-version` en `aybar.data.flyway.*` |
+| `aybar.data.flyway.locations` | `classpath:db/migration` | Solo las migraciones de ATC |
+
+Las migraciones corren en un **job aparte** (Azure Container Apps Job, antes de cada despliegue) con el rol de base **`app_atc_migracion`**, dueño de las tablas de ATC (`SVC_*` y `MAE_*` de SERVICE, `SVC_OUTBOX_EVENT`, `shedlock` y `flyway_schema_history_atc`) y con `REFERENCES` sobre las tablas ajenas de las FK. La aplicación arranca con `aybar.data.flyway.enabled: false` y el rol **`app_atc_servicio`**, que no es dueño de nada (ADR-001 v0.4, regla 5; ADR-002; `arquitectura/seguridad.md`). El esquema, el nombre de la tabla y la línea base los confirman Sony Montoya (Control de acceso, que ya migra en esa base) y Gobierno de Datos (Enrique Albán, Data Chief) con el Líder Técnico, junto con P-043.
 
 ## 4 Tablas que ATC solo lee (no las crea ni las migra)
 
@@ -126,6 +147,7 @@ C-11 pide un solo dueño de migración por maestro compartido. La propuesta sigu
 | `CONTRACT`, `AST_UNIT`, `CONTRACT_UNIT_HANDOVER`, `MAE_WARRANTY_COVERAGE_PERIOD`, `CONTRACT_WARRANTY_CLAIM` | Nadie | **El dueño del fragmento CONTRACT** (Equipo Contratos, DEP-07), que también las carga. Si no llega a tiempo, ATC como custodio | Sus datos vienen de Contratos; ATC solo los referencia o registra el reclamo |
 | `MAE_TIME`, `MAE_HOLIDAY` | Nadie | **Equipo Datos** (DEP-04), que da el calendario | El PLT-01 ya le asigna la DEP-04 |
 | `GOV_DOCUMENT_REPOSITORY` | Nadie en E1 | **ATC**, tal como está en el v7, como custodio | ATC es el primero que la necesita en la Etapa 1 (ADR-006) |
+| `flyway_schema_history_atc` | — | **ATC** (la crea Flyway en su primera migración, con el rol `app_atc_migracion`) | Historial propio de ATC (sección 3.1) |
 | `SVY_SURVEY_RESPONSE` | Nadie | **El dueño del KPI Engine** (Equipo Datos / BI, DEP-10). Alternativa: ATC como custodio | La lee el KPI Engine |
 | `EVT_ATTENDEE`, `EVT_TRANSPORT` (si se eligen) | Nadie | Por decidir con el dueño del fragmento EVENT | Candidatas |
 
@@ -155,7 +177,7 @@ Riesgo: igual que en PJ-05 (su R-03), ATC carga con tablas de otros dominios has
 ## 9 Dónde se usa este registro
 
 - `arquitectura/migracion-y-reversion.md` §2: qué migra ATC y en qué orden.
-- `datos/acta-validacion-arquitectura-datos.md`: evidencia de H-01 (dueños), H-02 (datos personales), H-03 (cambios al v7), H-08 (base única) y H-12.
+- `datos/acta-validacion-arquitectura-datos.md`: evidencia de H-01 (dueños), H-02 (datos personales), H-03 (cambios al v7), H-08 (base única), H-09 (tablas firmadas), H-12 y H-14 (historial de Flyway).
 - `datos/diccionario.md`: equivalencias con el v7.
 
 ## Historial de cambios
@@ -163,5 +185,8 @@ Riesgo: igual que en PJ-05 (su R-03), ATC carga con tablas de otros dominios has
 | Versión | Fecha | Autor | Cambio |
 |---|---|---|---|
 | 0.1 | 2026-10-26 | Brayan Hurtado, con IA | Versión inicial (C-11): tablas que crea ATC, cambios al v7, tablas que solo lee, filas que escribe en otro dominio, propuesta de dueño único de migración, `MAE_AREA` como cola (C-07) y lo que ATC no crea. Citas a la copia sellada de PJ-05 |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Dueño de dato propuesto como rol (Gerente de ATC), no como área ni módulo. Columna «Firmada» con las 9 tablas de ADR-002 (4 del v7 y 5 bitácoras). `SVC_COMPLAINT_BOOK_ENTRY` sin datos personales en columnas (la hoja va al almacén de evidencia, ADR-003 punto 6). `SVC_SEARCH_INDEX` sale de los cambios al v7: es una colección del almacén de lectura (ADR-012 v0.4). `SVC_OUTBOX_EVENT` con `UserAccountID` (ADR-013 v0.4). Tabla de historial de Flyway propia de ATC (`flyway_schema_history_atc`, línea base 0, roles `app_atc_migracion` y `app_atc_servicio`, job aparte; sección 3.1, ADR-001 v0.4) |
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-07 y C-11; DT-03, DT-04 y DT-06), el diccionario de datos de ATC y el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgos 5, 16, 17, 18 y 31 de la técnica). — Revisado por: (pendiente)

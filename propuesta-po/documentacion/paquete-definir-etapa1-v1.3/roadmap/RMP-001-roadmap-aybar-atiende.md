@@ -4,7 +4,7 @@ tipo: "roadmap"
 titulo: "Roadmap de producto - Aybar Atiende (plataforma ATC)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -16,12 +16,12 @@ tags: [roadmap, plt-01, dependencias]
 
 Va en `docs/roadmap/`. Recoge las dependencias, los riesgos y los hitos del producto. Esta versión
 usa el plan v1.3 del PO del 16-oct (PLT-01 a PLT-05) y el Excel `ATC_requerimientos (3).xlsx`, con la
-división por etapas. Se actualizó el **mié 21-oct-2026, día 1 de desarrollo**. A esa fecha no hay
-ningún documento del paquete aprobado en Nexora (`decisiones.md` P-024).
+división por etapas. **Corte de esta versión: lun 26-oct-2026, día 4 de desarrollo** (la v0.2 era del
+mié 21-oct, día 1). A esa fecha no hay ningún documento del paquete aprobado en Nexora (`decisiones.md` P-024).
 
 | Producto | Product Owner | Versión / Fecha |
 |---|---|---|
-| Aybar Atiende · plataforma ATC: tickets omnicanal, SLA, Libro de Reclamaciones, casos sensibles y autogestión del cliente | Eddie Huamaní | v0.4 · 2026-10-26 (plan del PO v1.3 · 16-oct-2026) |
+| Aybar Atiende · plataforma ATC: tickets omnicanal, SLA, Libro de Reclamaciones, casos sensibles y autogestión del cliente | Eddie Huamaní | v0.5 · 2026-10-26 (plan del PO v1.3 · 16-oct-2026) |
 | **Horizonte** | **Visión del producto** | **Estado** |
 | Etapa 1: diseño del jue 08 al mar 20-oct, desarrollo del mié 21-oct al mar 03-nov-2026 (iteración 1: 21–27-oct; iteración 2: 28-oct–03-nov; el 03-nov es el día de UAT y Go/No-Go) | Toda solicitud del cliente se registra una sola vez, se atiende con un plazo trazable y se cierra con evidencia, sin exposición ante INDECOPI | Borrador · en desarrollo desde el 21-oct |
 
@@ -74,6 +74,8 @@ la 1 tiene 29 historias (132 h) y la 2 tiene 33 historias (111 h).
 | EP-ATC-09 | EP-ATC-06 | Gantt del PLT-01 v1.3 (p. 4) | jue 29-oct → vie 30-oct | Sí |
 | EP-ATC-04 | EP-ATC-08 | PLT-02 v1.3, EP-ATC-08 («EP-ATC-04 gate legal») | EP-04 termina el lun 02-nov · EP-08 empieza el vie 30-oct | **No** (A-03 de `analisis-dependencias.md`) |
 
+Son las 6 dependencias que lleva el `depende_de` de las épicas en la carga de Nexora (`nexora-items/`). Las dos que llegan por una sola historia, HU-026 → HU-036 (FT-07 → FT-10) y HU-019 → HU-066 (FT-13 → FT-24), quedan en la historia y en su funcionalidad y no suben a la épica, porque EP-04 → EP-05 y EP-07 → EP-06 irían contra el calendario. Entre historias hay 54 dependencias y entre funcionalidades 17, en 5 olas; el detalle y la ruta crítica están en `analisis-dependencias.md` §1 y §4, y `aybar paquete plan` da las mismas olas.
+
 Hitos:
 
 | Hito | Fecha | Criterio de cumplimiento (observable) | Épicas |
@@ -87,17 +89,19 @@ Hitos:
 | H-07 | 2026-11-02 18:00 | Congelamiento de código (PLT-01, cadencia) | todas |
 | H-08 | 2026-11-03 | UAT, demo final y Go/No-Go de la v1.0: día de UAT y pase, sin desarrollo nuevo, con capacitación (R-10) | todas |
 
-Estado de los hitos al 21-oct:
+Estado de los hitos al 26-oct:
 
 - No consta en Nexora la aprobación de los PLT-02, 03 y 04 (H-02).
 - Las ADR siguen pendientes (H-03, acuerdo 6 del PLT-05).
 - Los 23 DoR dicen «con condiciones», un valor que el marco del SDK no admite (solo READY o NO READY).
+- G2 (diseño de las pantallas) está en el paquete en borrador (v0.3), sin aprobar.
+- H-05 (demo de la iteración 1, 27-oct) sigue con el criterio de aceptación por definir con el PO.
 
 Horizonte:
 
 - **Ahora:** las 11 épicas, con desarrollo del 21-oct al 3-nov. **Ninguna tiene G4 cerrado**. El DoR
-  del PLT-05 es «listo con condiciones» y G2 no existe en Nexora, aunque las 62 historias tienen
-  pantalla.
+  del PLT-05 es «listo con condiciones» y G2 está en borrador (sin aprobar), aunque las 62 historias
+  tienen pantalla.
 - **Siguiente:** sin épicas en refinamiento fuera de la Etapa 1 en este plan.
 - **Después:** los pendientes de producto, como los conectores automáticos de WhatsApp y correo
   (PLT-01 §2), sin épica.
@@ -105,7 +109,7 @@ Horizonte:
 ## 2 Dependencias
 
 Fuente: PLT-01 v1.3 §3, con 14 dependencias. La numeración salta la DEP-09, que no es de la Etapa 1.
-**Cambio del 22-oct-2026:** la DEP-02 (maestro local de RR. HH.) se retira y la DEP-16 (Control de acceso, PJ-05) ocupa su lugar, según el Líder Técnico (DT-03, ADR-009). **Cambio del 26-oct-2026:** la DEP-16 la pide el Líder Técnico en su revisión (C-12), con su responsable y su estado; el PO la incorpora al PLT-01 (P-026 de `decisiones.md`). Sus épicas salen de las historias que la tienen.
+**Cambio del 22-oct-2026:** la DEP-02 (maestro local de RR. HH.) se retira y la DEP-16 (Control de acceso, PJ-05) ocupa su lugar, según el Líder Técnico (DT-03, ADR-009). **Cambio del 26-oct-2026:** la DEP-16 la pide el Líder Técnico en su revisión (C-12), con su responsable y su estado; el PO todavía tiene que aceptarla e incorporarla al PLT-01 (P-026 de `decisiones.md`, abierta). Sus épicas salen de las historias que la tienen.
 «Fecha requerida» es el inicio de la primera historia que bloquea la dependencia. El contrato de
 interfaz y el simulador de cada una se cierran en la etapa de diseño (20-oct).
 
@@ -116,7 +120,7 @@ Pendiente o Por evaluar, y ese estado se conserva entre paréntesis.
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida | Estado |
 |---|---|---|---|---|---|---|
 | DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato) | Interna | EP-01, EP-04, EP-06, EP-10 | CDO / Equipo Datos | 2026-10-21 | Pendiente (PLT-01: Pendiente) |
-| DEP-16 | **Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados** (C-12 del Líder Técnico). Incluye el login de clientes de Mi Portal (DT-04), la política de API Management con su `aud` y las API de líderes y gestores (P-035). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. Mientras tanto, en local: el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus` | Interna | EP-01, EP-02, EP-04, EP-06, EP-09, EP-10, EP-11: las 23 HU que autentican, autorizan por rol o leen líderes o al cliente autenticado (bloque «Depende de» de cada HU). En DEV, sin emisor no responde ningún endpoint protegido | Área de Roles y Permisos (Sony Montoya) | 2026-10-21 | Pendiente · **en riesgo**: sin fecha comprometida (PJ-05 no la tiene, P-040). No está en el PLT-01 |
+| DEP-16 | **Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados** (C-12 del Líder Técnico). Incluye el login de clientes de Mi Portal (DT-04), la política de API Management con su `aud` y las API de líderes y gestores (P-035). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. Mientras tanto, en local: el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus` | Interna | EP-01, EP-02, EP-04, EP-06, EP-09, EP-10, EP-11: las 24 HU que autentican, autorizan por rol o leen líderes o al cliente autenticado (bloque «Depende de» de cada HU). En DEV, sin emisor no responde ningún endpoint protegido | Área de Roles y Permisos (Sony Montoya) | 2026-10-21 | Pendiente · **en riesgo**: sin fecha comprometida (PJ-05 no la tiene, P-040). No está en el PLT-01 |
 | DEP-03 | Decisión de negocio: matriz SLA por tipo y prioridad y plazos de línea de la Mesa SGD (RNF-REN-003) | Interna | EP-02, EP-04 | Gerencia ATC · Mesa SGD | 2026-10-22 | Pendiente (PLT-01: Pendiente) |
 | DEP-04 | Calendario MAE_TIME + MAE_HOLIDAY por geografía | Técnica | EP-02, EP-03 | Equipo Datos | 2026-10-22 | Pendiente (PLT-01: En curso) |
 | DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro | Legal | EP-03, EP-11 | Gerencia Legal | 2026-10-26 | Pendiente (PLT-01: Pendiente) |
@@ -134,8 +138,9 @@ Pendiente o Por evaluar, y ese estado se conserva entre paréntesis.
 
 **Desarrollo local mientras no haya DEP-16.** El emisor de pruebas de Control de acceso (`node herramientas/emisor-local.mjs`, puerto 9000; el backend apunta con `AYBAR_ISSUER_URI=http://localhost:9000`) entrega tokens con `realm_access.roles`, `user_account_id` y `preferred_username`, y la audiencia que se pida en `aud`. No emite `company_roles`, `companyId` ni `PartyID`: las pruebas de empresa (C-08) y de Mi Portal (P-033) esperan a la DEP-16.
 
-Una dependencia sin fecha comprometida deja en NO READY (G4) lo que bloquea. Hoy, 21-oct, ya se
-necesitan DEP-01, DEP-16 (antes DEP-02), DEP-08 y DEP-11. La DEP-16 está **en riesgo**: Control de acceso no tiene fecha en DEV (P-040). El análisis completo (matriz, olas, ruta crítica y
+Una dependencia sin fecha comprometida deja en NO READY (G4) lo que bloquea. Al 26-oct ya pasó la
+fecha requerida de 9 dependencias (DEP-01, DEP-16, DEP-08 y DEP-11 del 21-oct; DEP-03 y DEP-04 del
+22-oct; DEP-06, DEP-13 y DEP-14 del 23-oct) y hoy vence la de DEP-05 y DEP-12. La DEP-16 está **en riesgo**: Control de acceso no tiene fecha en DEV (P-040). El análisis completo (matriz, olas, ruta crítica y
 hallazgos) está en `analisis-dependencias.md`. El diagrama está en `dependencias.mmd`: las flechas
 continuas van de dependencia a épica y las punteadas son las dependencias lógicas entre épicas.
 
@@ -279,6 +284,7 @@ Restricciones:
 | v0.2 | 2026-10-21 | Brayan (Dev 1), con IA (Claude) | Añade la dependencia lógica EP-09 → EP-06 del Gantt del PLT-01 (p. 4) y la tabla de dependencias entre épicas. Pone el PO (Eddie Huamaní), los nombres de los desarrolladores, la capacidad por persona, las iteraciones y los hitos del 16 y el 19-oct con su criterio. Quita los textos caducos: el «Excel no entregado», «en refinamiento hasta el 20-oct» y las fechas «hoy, 19-oct». Deja el roadmap solo con la Etapa 1 | |
 | v0.3 | 2026-10-22 | Jesús Chávez Elías, con IA (Claude) | Cambios de la revisión del Líder Técnico: la DEP-02 pasa a la DEP-16 (Control de acceso), la DEP-06 usa Azure Blob con inmutabilidad y el supuesto S-05 dice Azure. No cambia ninguna fecha, hora ni épica | |
 | v0.4 | 2026-10-26 | Brayan Hurtado, con IA (Claude) | DEP-16 con el nombre que pide el Líder Técnico (C-12), su responsable, la fecha requerida, «sin fecha comprometida (PJ-05 no la tiene)», estado en riesgo y el emisor de pruebas local; sus épicas salen de las 23 HU que la tienen (suma EP-04, EP-06, EP-10 y EP-11). Nota con lo que las HU suman a DEP-01 y DEP-05. No cambia ninguna fecha, hora ni épica del PO | |
+| v0.5 | 2026-10-26 | Brayan Hurtado, con IA (Claude) | Corte al lun 26-oct (día 4): estado de los hitos y fechas vencidas de las dependencias al 26-oct. G2 está en borrador (ya no «no existe»). La DEP-16 la tienen 24 HU (suma HU-049, RN-SVC-036; P-034); sus épicas no cambian. Regla del `depende_de` de las épicas en la carga de Nexora (las 6 dependencias lógicas) y enlace a las 54 dependencias entre historias y 17 entre funcionalidades del análisis v0.5. La DEP-16 la tiene que aceptar todavía el PO (P-026, abierta). No cambia ninguna fecha, hora ni épica del PO | |
 
 Aprueba: PO. Solo `estado: approved` en `origin/main` (o la aprobación en Nexora) es evidencia.
 
@@ -287,3 +293,5 @@ Generado por IA: borrador completo. Versión base de Nexora (v2, de Jesús, 19-o
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04 y DT-07 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-04 y C-12) y de las dependencias de las historias. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude) a partir de las revisiones de coherencia del 26-oct: corte de fechas, G2 en borrador, DEP-16 en 24 HU y regla de las dependencias entre épicas. — Revisado por: (pendiente)

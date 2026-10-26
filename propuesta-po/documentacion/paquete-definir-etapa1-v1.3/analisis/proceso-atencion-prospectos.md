@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Proceso de atención de prospectos y casos de identidad que Control de acceso deriva a ATC"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
+version: "0.2"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: [product_owner, tech_lead]
 fecha: "2026-10-26"
@@ -32,18 +32,18 @@ ATC no construye pantallas de validación, no escribe `PARTY` ni `PARTY_VERIFICA
 
 ## 2 Qué dice el paquete aprobado de PJ-05
 
-Citas `archivo:línea` de la copia sellada de PJ-05 (`docs-roles-y-permisos/`). ⚠ marca `arquitectura/access-control.openapi.yaml`, cuya copia local no coincide con la huella del sello: esas líneas se confirman con la versión aprobada (como en P-033 a P-042).
+Citas `archivo:línea` de la copia sellada de PJ-05 (`docs-roles-y-permisos/`). ⚠ marca los archivos cuya copia local no coincide con la huella del sello (7, recalculado el 26-oct: `arquitectura/access-control.openapi.yaml`, `VARIABLES.md` y las historias `HU-IDN-003`, `014`, `054`, `057` y `059`): esas líneas se confirman con la versión aprobada (como en P-033 a P-042). Aquí se citan dos: el contrato y `HU-IDN-059`.
 
 | Tema | Qué dice | Cita |
 |---|---|---|
 | Prospecto | Quien no existe se autorregistra: Party no verificada y cuenta `PROSPECT`. Pasa a `CUSTOMER` o `BROKER` cuando una persona de la empresa valida su Party | `analisis/decisiones.md:118` (R29) |
 | Quién valida | Ventas o atención al cliente, con su rol; la validación queda en `PARTY_VERIFICATION_LOG` | `analisis/decisiones.md:264` (D-59) |
-| El rol | Se siembra `PROSPECT_VALIDATOR`; lo asignan Ventas y ATC | `analisis/decisiones.md:382` (D-176); `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:27` |
+| El rol | Se siembra `PROSPECT_VALIDATOR`; lo asignan Ventas y ATC | `analisis/decisiones.md:382` (D-176); `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:27` ⚠ |
 | Correo distinto | Mismo DNI con correos distintos: el principal es el del sistema más reciente y es el username. Con otro correo, se le pide contactar a Atención al cliente | `analisis/decisiones.md:285` (D-79); `historias/HU-IDN-061-carga-inicial-de-personas.md:44` (CA-4) |
 | Prospecto que la carga trae | La carga nunca convierte un prospecto en cliente: sigue como prospecto y va al reporte `prospectosParaRevision`, para que Ventas o ATC lo validen | `analisis/decisiones.md:286` (D-80); `historias/HU-IDN-061-carga-inicial-de-personas.md:45` (CA-5) |
 | Misma persona, impostor y DNI tomado | Ventas o ATC validan el DNI. Si es la misma persona, la pasan a cliente con el correo de la carga como principal; si es un impostor, suspenden la cuenta y liberan el DNI. Si la persona es nueva y el DNI está tomado, lo resuelve ATC con el DNI físico | `analisis/decisiones.md:290` (D-84) |
-| Impostor | Operación aparte que suspende la cuenta y anula la Party del prospecto, sin borrar el DNI; «se resuelve el DNI manualmente por ATC» | `analisis/decisiones.md:497` (D-291); `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:52` (CA-12) |
-| Lista de pendientes | `listarProspectos`: cuentas que siguen en `PROSPECT`, con el documento enmascarado; la coincidencia con la carga se consulta en el log auditado por hash de DNI | `arquitectura/access-control.openapi.yaml:4007` ⚠; `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:46` (CA-6) y `:48` (CA-8) |
+| Impostor | Operación aparte que suspende la cuenta y anula la Party del prospecto, sin borrar el DNI; «se resuelve el DNI manualmente por ATC» | `analisis/decisiones.md:497` (D-291); `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:52` ⚠ (CA-12) |
+| Lista de pendientes | `listarProspectos`: cuentas que siguen en `PROSPECT`, con el documento enmascarado; la coincidencia con la carga se consulta en el log auditado por hash de DNI | `arquitectura/access-control.openapi.yaml:4007` ⚠; `historias/HU-IDN-059-validar-prospecto-a-cliente-o-broker.md:46` ⚠ (CA-6) y `:48` ⚠ (CA-8) |
 | Validar o rechazar | `validarProspecto`, con el rol `ROLE_PROSPECT_VALIDATOR` y el permiso `SEC.PROSPECTOS` (código supuesto) | `arquitectura/access-control.openapi.yaml:4037` ⚠ |
 | Suspender | `suspenderProspecto` exige `ROLE_IT_ADMIN`; la HU-IDN-059 CA-12 se la da al validador | `arquitectura/access-control.openapi.yaml:1429` ⚠; P-041 |
 | Datos de personas | Nadie lee las tablas de personas directamente | `analisis/decisiones.md:325` (D-119) |
@@ -112,5 +112,8 @@ Para que el área de Roles y Permisos (Sony Montoya) lo asigne. Es un rol de Con
 | Versión | Fecha | Autor | Cambio |
 |---|---|---|---|
 | 0.1 | 2026-10-26 | Brayan Hurtado, con IA | Versión inicial (C-06): qué hace Control de acceso y qué hace ATC, citas al paquete aprobado de PJ-05, de dónde sale `prospectosParaRevision`, tipo de ticket con cuatro subtipos, gestores que necesitan `PROSPECT_VALIDATOR` y qué construye ATC. Todo es alcance nuevo para el PO (P-041) |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | El aviso ⚠ cubre los 7 archivos de PJ-05 que no coinciden con el sello y marca las citas a `HU-IDN-059`. P-041 de `decisiones.md` v0.6 ya dice lo mismo que este proceso: un tipo de ticket con cuatro subtipos. El proceso no cambia |
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-06; DT-03 y DT-06) y del paquete aprobado de Control de acceso (PJ-05). No cambia el plan del PO. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico (hallazgo 29) y de coherencia (hallazgo 9) del 26-oct. — Revisado por: (pendiente)

@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-16 Integración con Legal y prevención de denuncias"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -43,7 +43,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-12 herrami
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
 | DEP-12 | Herramienta de Legal (responsable: Rosario): API o intercambio para sincronizar casos de Eje 3 | Interna | EP-ATC-10 | Gerencia Legal · TI | 26-oct-2026 | Por evaluar |
-| DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). En esta funcionalidad: HU-ATC-041 (validación legal del 8 % de RN-SVC-034; PLT-05). El PLT-01 no pone EP-ATC-10 en la columna «Bloquea a» (roadmap §2) | Legal | EP-ATC-03, EP-ATC-11 | Gerencia Legal | 26-oct-2026 | Pendiente |
+| DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). En esta funcionalidad: HU-ATC-041 (validación legal del 8 % de RN-SVC-034; PLT-05). El PLT-01 no pone EP-ATC-10 en la columna «Bloquea a» (roadmap §2) | Legal | EP-ATC-03, EP-ATC-11 (PLT-01); por HU-ATC-041 también EP-ATC-10 (PLT-05; lo confirma el PO) | Gerencia Legal | 26-oct-2026 | Pendiente |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -106,3 +106,5 @@ Generado por IA: transcripción al formato del paquete Definir desde los documen
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-05), con la nota de origen, en el criterio 6 y en las condiciones. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · La columna «Bloquea a» de la DEP-05 dice que por HU-ATC-041 alcanza también a EP-ATC-10 (PLT-05; lo confirma el PO). No se borra texto del PO. — Revisado por: (pendiente)
