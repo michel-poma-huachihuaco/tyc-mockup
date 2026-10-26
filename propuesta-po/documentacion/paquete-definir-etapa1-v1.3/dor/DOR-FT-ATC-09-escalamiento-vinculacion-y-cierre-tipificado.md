@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-09 Escalamiento, vinculación y cierre tipificado"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-09", "EP-ATC-04", "HU-ATC-023", "HU-ATC-024", "HU-ATC-025"]
 tags: [dor, plt-05, g4]
 ---
@@ -42,7 +42,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Umbrales de es
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-06 | Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
+| DEP-06 | Repositorio documental S3 (con DT-07, Azure Blob Storage con inmutabilidad, ADR-006) + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -101,3 +101,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-06 anota Azure Blob Storage (DT-07). No se borra texto del PO. — Revisado por: (pendiente)

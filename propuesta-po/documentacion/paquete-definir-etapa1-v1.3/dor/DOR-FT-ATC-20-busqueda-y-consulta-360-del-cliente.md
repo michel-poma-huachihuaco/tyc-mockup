@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-20 Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-049", "HU-ATC-050", "HU-ATC-051", "HU-ATC-052", "HU-ATC-053"]
 tags: [dor, plt-05, g4]
 ---
@@ -31,7 +31,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 | 3 | Reglas de negocio explícitas | [ ] | FT-ATC-20 sección 4 (3 reglas) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 5 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-01, DEP-06, DEP-08, DEP-11, DEP-13, DEP-14 |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-01, DEP-06, DEP-08, DEP-11, DEP-13, DEP-14; y DEP-16 (añadida el 26-oct desde PLT-03/PLT-04/PLT-05) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
 | 9 | Estimada por el equipo | [ ] | PLT-04: 22 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
@@ -43,11 +43,12 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
 | DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato) | Interna | EP-ATC-01, EP-ATC-04, EP-ATC-06, EP-ATC-10 | CDO / Equipo Datos | 21-oct-2026 | Pendiente |
-| DEP-06 | Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
+| DEP-06 | Repositorio documental S3 (con DT-07, Azure Blob Storage con inmutabilidad, ADR-006) + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
 | DEP-08 | Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h) | Interna | EP-ATC-04, EP-ATC-10, EP-ATC-11 | Cobranza | 21-oct-2026 | Pendiente |
 | DEP-11 | Plataforma del call center: API/CTI para screen pop, registro de llamadas, grabación y click-to-call | Externa | EP-ATC-10 | TI / proveedor de call center | 21-oct-2026 | Por evaluar |
 | DEP-13 | Motor de consultas de José: contrato de API y responsable de mantenimiento | Interna | EP-ATC-10 | José · TI | 23-oct-2026 | Por evaluar |
 | DEP-14 | Proveedor de IA aprobado por TI y Seguridad, con política de datos personales | Técnica | EP-ATC-09, EP-ATC-10 | TI · Seguridad | 23-oct-2026 | Por evaluar |
+| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-050 (datos por rol, CA-02 y CA-07, RN-SVC-036); HU-ATC-052 (datos según el rol, CA-03); HU-ATC-053 (documentos según el rol del gestor, CA-02) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -93,6 +94,7 @@ Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-01 · D
 
 Condiciones pendientes (solo si NO READY):
 - [ ] DEP-01 · DEP-13 · «llamar la cuenta» (PLT-05)
+- [ ] DEP-16 Control de acceso disponible en DEV (añadida el 26-oct desde PLT-03/PLT-04/PLT-05); sin fecha comprometida (P-040)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -107,3 +109,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-16), con la nota de origen, en el criterio 6 y en las condiciones; la DEP-06 anota Azure Blob Storage (DT-07). No se borra texto del PO. — Revisado por: (pendiente)

@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-059 | Debería | 4 h con IA | Dev 4 (Daniel) | 2 | 29-oct-2026 → 30-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «conectividad en proyecto», que no es una DEP)
+
+**La necesitan:** ninguna
+
 **Requerimiento de origen:** El sistema debe permitir registrar el ingreso de una persona al proyecto con un formulario simple (nombre, DNI, teléfono, motivo, lote o área a visitar y fecha y hora) que genera automáticamente un ticket asignado al responsable del proyecto. Feedback 2.ª reunión · ítem 5
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -80,3 +86,5 @@ Escenario: CA-03 · Sin conexión (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

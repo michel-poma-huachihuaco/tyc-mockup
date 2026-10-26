@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-05", "EP-ATC-03"]
+relacionados: ["FT-ATC-05", "EP-ATC-03", "HU-ATC-012"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-013 | Debe | 6 h con IA | Dev 1 (Brayan) | 1 | 26-oct-2026 → 27-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-012 (RF-SVC-012 es predecesora de RF-SVC-013, PLT-03) · Dependencias externas: DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-04), DEP-05 (validación legal del Libro: asiento, textos y plazos; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-03)
+
+**La necesitan:** HU-ATC-015
 
 **Requerimiento de origen:** El sistema debe calcular 15 días hábiles desde el registro y gestionar una prórroga única de 15 días con justificación, cargo y canal, bloqueando una segunda.
 
@@ -85,3 +91,5 @@ Escenario: CA-04 · Fuera de ventana (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

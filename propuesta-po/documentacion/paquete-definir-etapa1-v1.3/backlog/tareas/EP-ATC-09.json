@@ -304,7 +304,7 @@
         },
         {
           "id": "HU-ATC-067-T02",
-          "titulo": "[inbox] Publicacion por WebSocket de los eventos ticket.created, ticket.assigned, ticket.status_changed y sla.breached hacia el visor (ADR-010), con modo simulacion de datos sinteticos (9 areas, 71 tickets, 3 gestores por area); el canal WebSocket exige el token de Control de acceso y filtra por la empresa activa o el rol global y por las areas permitidas (C-08, CA-07)",
+          "titulo": "[inbox] Publicacion por WebSocket de los eventos aybar.service.ticket_created, aybar.service.ticket_assigned, aybar.service.ticket_status_changed y aybar.service.sla_breached (ADR-013) hacia el visor (ADR-010), con modo simulacion de datos sinteticos (9 areas, 71 tickets, 3 gestores por area); el canal WebSocket exige el token de Control de acceso y filtra por la empresa activa o el rol global y por las areas permitidas (C-08, CA-07)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel (Dev 3)",

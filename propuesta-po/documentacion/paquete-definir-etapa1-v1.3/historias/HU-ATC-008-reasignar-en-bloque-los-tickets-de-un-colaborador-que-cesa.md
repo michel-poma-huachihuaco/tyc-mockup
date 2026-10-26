@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-03", "EP-ATC-02"]
+relacionados: ["FT-ATC-03", "EP-ATC-02", "HU-ATC-007"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-008 | Debe | 4 h con IA | Dev 2 (Jesús) | 1 | 21-oct-2026 → 22-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-007 (RF-SVC-007 es predecesora de RF-SVC-008, PLT-03) · Dependencias externas: DEP-16 (Control de acceso, PJ-05: reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores que cesan y rol de supervisor, CA-03)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe reasignar los tickets pendientes de un colaborador que rota o cesa, sin borrar el rastro anterior.
 
@@ -79,3 +85,5 @@ Escenario: CA-03 · Permiso (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

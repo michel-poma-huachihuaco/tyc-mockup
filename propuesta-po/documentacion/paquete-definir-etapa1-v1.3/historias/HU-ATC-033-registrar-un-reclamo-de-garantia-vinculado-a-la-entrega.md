@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-033 | Debería | 4 h con IA | Dev 1 (Brayan) | 2 | 29-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-07 (API de Contratos y Activos; PLT-03, PLT-04 y PLT-05)
+
+**La necesitan:** HU-ATC-034, HU-ATC-035
+
 **Requerimiento de origen:** El sistema debe registrar el reclamo de garantía tipificado y vinculado obligatoriamente a un Acta de Entrega existente.
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -74,3 +80,5 @@ Escenario: CA-02 · Catálogo cerrado
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

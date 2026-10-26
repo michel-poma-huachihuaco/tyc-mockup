@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-20", "EP-ATC-10"]
+relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-049"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-050 | Debe | 7 h con IA | Dev 4 (Daniel) | 1 | 21-oct-2026 → 22-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-049 (RF-SVC-049 es predecesora de RF-SVC-050, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-08 (API de Cobranza; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: datos por rol, CA-02 y CA-07, RN-SVC-036)
+
+**La necesitan:** HU-ATC-052
 
 **Requerimiento de origen:** El sistema debe mostrar en el ticket un submódulo de consulta del cliente con su detalle: lotes, cuotas y estado de cuenta, correos y mensajes, tickets e interacciones previas y documentos. Feedback presentación · ítem 12
 
@@ -115,3 +121,5 @@ Escenario: CA-10 · Trazabilidad de la consulta (agregado por PO · prototipo «
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

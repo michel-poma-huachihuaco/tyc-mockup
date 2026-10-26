@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-19", "EP-ATC-09"]
+relacionados: ["FT-ATC-19", "EP-ATC-09", "HU-ATC-047"]
 tags: [hu, plt-04, flexible]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-048 | Podría · flexible | 5 h con IA | Dev 3 (Michel) | 2 | 27-oct-2026 → 28-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-047 (RF-SVC-047 es predecesora de RF-SVC-048, PLT-03) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03, PLT-04 y PLT-05)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. Feedback presentación · ítem 8
 
@@ -80,3 +86,5 @@ Escenario: CA-03 · Datos personales (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-18", "EP-ATC-09"]
+relacionados: ["FT-ATC-18", "EP-ATC-09", "HU-ATC-044"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-045 | Debería | 2 h con IA | Dev 3 (Michel) | 1 | 22-oct-2026 → 23-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-044 (RF-SVC-044 es predecesora de RF-SVC-045, PLT-03) · Dependencias externas: DEP-16 (Control de acceso, PJ-05: reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe permitir marcar un ticket con un icono de rayo que lo sube al tope de la bandeja, registrando quien lo marco y por que. Feedback presentación · ítem 10
 
@@ -79,3 +85,5 @@ Escenario: CA-03 · Límite del área (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

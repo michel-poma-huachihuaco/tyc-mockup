@@ -1,18 +1,32 @@
 openapi: 3.0.3
 info:
   title: Aybar Atiende · Plataforma ATC
-  version: 0.3.0-borrador
+  version: 0.4.0-borrador
+  license:
+    name: Uso interno de Aybar (propietario)
   description: |
-    BORRADOR del contrato de API (criterio de G3). Estado: draft. Generado el 2026-10-19 a partir de las 62 historias del PLT-04 v1.3 (en refinamiento).
-    Es una PROPUESTA de operaciones por módulo: los campos de cada esquema los completa el desarrollador backend con el modelo de datos aprobado.
-    Revisión del 20-oct: los campos de clave siguen los nombres del Modelo de Datos Corporativo v7 (cada propiedad dice cuál); los ids del v7 son enteros y el contrato los expone como cadenas opacas hasta que G3 decida. Tipos, largos y obligatoriedad de los demás atributos siguen pendientes.
-    Revisión del 21-oct (versión base v4 de Jesús Chávez Elías en Nexora; actualizada por Brayan con IA a la v1.3 del PO): los esquemas que estaban vacíos se completan solo con campos que salen del PO (PLT-03, PLT-04 y PLT-05 v1.3), del Excel del PO (02_RF_Micro, 03_RNF y 05_Catalogos) y del diccionario de datos; cada propiedad cita su fuente. Lo que todavía no está definido lleva `x-pendiente`. El estado del ticket y el de la apelación usan los códigos de las listas del Excel (`SVC_TICKET_STATUS` y `SVC_COMPLAINT_APPEAL_STATUS`). La clave foránea del ticket a PARTY: el Líder Técnico fijó `PARTY` de la base única como fuente viva (DT-06) y el PO confirma la regla frente al ADR-03 (P-021).
+    BORRADOR del contrato de API (criterio de G3). Estado: draft. Generado el 2026-10-19 a partir de las 62 historias del PLT-04 v1.3; revisado el 20, 21, 22 y 26-oct.
+    Campos: los de clave siguen los nombres del Modelo de Datos Corporativo v7 (cada propiedad dice cuál; los ids del v7 son enteros y el contrato los expone como cadenas opacas). Los demás salen del PO (PLT-03, PLT-04 y PLT-05 v1.3), del Excel del PO (02_RF_Micro, 03_RNF y 05_Catalogos) y del diccionario de datos, con su fuente. Lo que ninguna fuente define todavía lleva `x-pendiente` (tipos, largos y nulabilidad de los atributos no clave: P-015). Todos los esquemas tienen sus propiedades.
+    Seguridad (ADR-009, ADR-014; `arquitectura/seguridad.md`): JWT del servidor de autorización de Control de acceso (PJ-05). ATC valida firma, emisor, vencimiento y audiencia con `aybar-starter-security`; Azure API Management también valida la audiencia en el borde (D-44 de PJ-05). ATC no tiene login, no emite códigos y no abre sesiones: no hay operaciones de código ni de sesión de Mi Portal (DT-04; se retiraron `solicitarCodigo` y `abrirSesion` el 22-oct).
+    Permisos (C-02; `arquitectura/roles-y-permisos-atc.md`): cada operación declara `x-permiso`, el permiso del catálogo que ATC entrega a Control de acceso, con la forma `<opción> + <acción>` que usa PJ-05 (acciones ver, crear, editar, eliminar y aprobar), y `x-roles`, los roles que exige `@PreAuthorize(hasAnyRole(...))`. El token trae roles, no permisos (ADR-012 y ADR-007 de PJ-05): si ATC además consulta el permiso efectivo en Control de acceso lo decide el Líder Técnico (P-034). Es propuesta hasta que Control de acceso apruebe el catálogo. El tablero declara además `x-permiso-adicional` y `x-roles-adicional` para la parte del equipo.
+    Errores (DT-09, C-10): ProblemDetail RFC 7807 de `aybar-starter-web` (esquema `ProblemaAybar`: `codigo` con el formato `AYB-<ÁREA>-<HTTP>`, `correlationId`, `timestamp` y `campos`). Los de plataforma los emite el SDK (`AYB-VAL-400`, `AYB-SEG-401`, `AYB-SEG-403`, `AYB-REC-404`, `AYB-GEN-429`, `AYB-GEN-500`); los de seguridad (401, 403, falta de rol) los emiten el SDK y Control de acceso con sus códigos y ATC no los reinventa ni emite `AYB-PEF-403` (área de Control de acceso, D-169). Los de negocio de ATC se lanzan con `AybarException` y usan solo las áreas `TKT`, `SLA`, `LRC`, `APL`, `GAR` y `PTL` (`x-areas-de-error`); cada operación que tiene uno lo lista en `x-errores-negocio`.
+    Versionado y compatibilidad: la versión mayor va en la ruta (`/api/v1`). Mientras el contrato es borrador, `info.version` es `0.MENOR.PARCHE-borrador`; al aprobarse en G3 pasa a `1.0.0`, y desde ahí su MAYOR es la de la ruta. Dentro de `/api/v1` solo se agregan operaciones y campos opcionales (sube la MENOR) o se corrigen descripciones (sube el PARCHE). Quitar o renombrar una operación o un campo, cambiar un tipo o volver obligatorio un campo es incompatible: crea `/api/v2` (sube la MAYOR) y vuelve a G3. `/api/v1` y `/api/v2` conviven en el mismo despliegue; la operación de v1 que tiene reemplazo se marca `deprecated: true` y se retira cuando sus clientes migraron (consola ATC, Mi Portal y formularios, que son de ATC) y no antes de 90 días (propuesta del equipo; el plazo lo confirma el Líder Técnico).
+    Estados: el del ticket y el de la apelación usan los códigos de las listas del Excel (`SVC_TICKET_STATUS` y `SVC_COMPLAINT_APPEAL_STATUS`). Cliente: `PARTY` de la base única es la fuente viva y la clave foránea del ticket no es una copia (DT-06); el PO actualiza su ADR-03 (P-027).
+    No incluye WebSocket: el visor 3D recibe los eventos del servicio por `/ws/visor` (ADR-010), que OpenAPI no describe; exige el mismo permiso que `estadoVisor`.
     Generado por IA — Revisado por: (pendiente).
-    No incluye WebSocket: el visor 3D recibe eventos en tiempo real por `/ws/visor` (ADR-010), que OpenAPI no describe.
-    Errores: RFC 7807 con `codigo` (formato `AYB-<ÁREA>-<HTTP>` del SDK), `correlationId`, `timestamp` y `campos` (aybar-starter-web, que hay que encender: `aybar add starter web`; DT-09). Los errores de seguridad (401, 403, falta de rol o permiso) los emiten el SDK y Control de acceso con sus códigos; ATC usa áreas de negocio propias (`TKT`, `SLA`, `LRC`, `APL`, `GAR`, `PTL`). Cada operación declara 400, 401, 403, 404, 429 y 500; las de negocio (409 y 422) se declaran donde un criterio de aceptación las pide.
-    Versionado y compatibilidad: la versión mayor va en la ruta (`/api/v1`) y `info.version` sigue `MAYOR.MENOR.PARCHE`. Dentro de `/api/v1` solo se agregan operaciones y campos opcionales; quitar o renombrar una operación o un campo, cambiar un tipo o volver obligatorio un campo es un cambio incompatible: crea `/api/v2`, vuelve a G3 y `/api/v1` convive con `/api/v2` hasta que los clientes migren. El plazo de convivencia lo fija el Líder Técnico (por definir).
-    Permisos: cada operación declara `x-permiso` (`ATC.<OPCIÓN>.<ACCIÓN>`), el permiso que exige `@PreAuthorize` según el catálogo que ATC entrega a Control de acceso (`arquitectura/roles-y-permisos-atc.md`; ADR-009). Es propuesta hasta que Control de acceso apruebe el catálogo. El tablero declara además `x-permiso-adicional` para la parte del equipo.
-    Revisión del 22-oct (decisiones DT-04, DT-09 y C-02 del Líder Técnico): se retiran las operaciones `solicitarCodigo` y `abrirSesion` y los esquemas `SolicitudCodigo`, `CodigoEnviado`, `AperturaSesion` y `Sesion` (Mi Portal usa el login de clientes de Control de acceso; ATC no emite códigos ni abre sesiones, ADR-011). Quedan 59 operaciones. Las etiquetas pasan al nombre inglés de cada módulo (ADR-001).
+  x-historial:
+    - '2026-10-19 · Jesús Chávez Elías, con IA · Borrador de operaciones por módulo a partir de las 62 historias.'
+    - '2026-10-20 · Equipo, con IA · Campos de clave con los nombres del Modelo de Datos Corporativo v7.'
+    - '2026-10-21 · Brayan, con IA · Esquemas completados con fuentes del PO y del Excel; x-pendiente para lo que falta.'
+    - '0.3.0 · 2026-10-22 · Jesús Chávez Elías, con IA · Sin operaciones de código y sesión de Mi Portal (DT-04), x-permiso por operación (C-02), etiquetas en inglés.'
+    - '0.4.0 · 2026-10-26 · Brayan Hurtado, con IA · x-permiso con la forma de PJ-05 (opción + acción) y x-roles por operación; respuestas de error del SDK por código; x-errores-negocio con las áreas TKT, SLA, LRC, APL, GAR y PTL; ProblemaAybar igual al del SDK; política de compatibilidad con convivencia v1/v2; Mi Portal sin PartyID en el token (P-033); sin descripciones «por completar».'
+x-areas-de-error:
+  - { area: TKT, alcance: 'Tickets y todo lo que se registra como ticket o actúa sobre uno: bandeja, flujos, rayo, actividades, Mesa de casos sensibles (SGD), señal de conflicto y handoff, notas de estado, Entrega Fest y formularios simples (ingreso y reserva de bus son tipos de ticket del catálogo)' }
+  - { area: SLA, alcance: 'Políticas y alertas de SLA; hoy ninguna operación del contrato la usa' }
+  - { area: LRC, alcance: 'Libro de Reclamaciones: asiento, prórroga y respuesta formal' }
+  - { area: APL, alcance: 'Apelaciones internas y ante INDECOPI' }
+  - { area: GAR, alcance: 'Reclamos de garantía postventa' }
+  - { area: PTL, alcance: 'Mi Portal (operaciones del cliente)' }
 servers:
   - url: http://localhost:8081
     description: local
@@ -20,14 +34,23 @@ security:
   - bearer-jwt: []
 tags:
   - name: tickets
+    description: 'Módulo `tickets` (ADR-001): núcleo del ticket, interacciones, derivación, reasignación, actividades del flujo, y los casos y frases del Entrega Fest (EP-ATC-01, 02 y 08).'
   - name: sla
+    description: 'Módulo `sla` (ADR-001, ADR-005): compromisos y alertas de SLA (EP-ATC-02).'
   - name: inbox
+    description: 'Módulo `inbox` (ADR-001): bandeja orquestadora, casillero, flujos por área, rayo, guía, asistencia de IA, tablero y visor 3D (EP-ATC-02, 07 y 09).'
   - name: complaintbook
+    description: 'Módulo `complaintbook` (ADR-001): Libro de Reclamaciones y apelaciones (EP-ATC-03).'
   - name: customer360
+    description: 'Módulo `customer360` (ADR-001, ADR-003): búsqueda y consulta 360 del cliente, llamada, motor de José y documentos (EP-ATC-10).'
   - name: portal
+    description: 'Módulo `portal` (ADR-001, ADR-011): operaciones del cliente en Mi Portal (EP-ATC-06).'
   - name: legalcases
+    description: 'Módulo `legalcases` (ADR-001): Mesa de casos sensibles SGD y gate a Eje 3: señal de conflicto, handoff y nota de estado (EP-ATC-04).'
   - name: aftersales
+    description: 'Módulo `aftersales` (ADR-001): reclamos de garantía postventa (EP-ATC-05).'
   - name: delinquency
+    description: 'Módulo `delinquency` (ADR-001): resolución por morosidad (jobs, ADR-005) y formularios simples de ingreso al proyecto y reserva de bus (EP-ATC-11).'
 paths:
   /api/v1/tickets:
     post:
@@ -36,7 +59,8 @@ paths:
       summary: "Registrar un ticket tipificado desde cualquier canal y entregar su número por razón social (cliente identificado o interesado con datos mínimos)"
       x-historias: [HU-001, HU-002, HU-051]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.CREATE"
+      x-permiso: "ATC.TICKETS + crear"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -50,12 +74,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}:
     get:
       tags: [tickets]
@@ -63,7 +87,8 @@ paths:
       summary: "Obtener un ticket con sus hitos probatorios"
       x-historias: [HU-004, HU-006, HU-050]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.VIEW"
+      x-permiso: "ATC.TICKETS + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CASES_DESK, ATC_CX]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -76,12 +101,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/estado:
     post:
       tags: [tickets]
@@ -89,7 +114,10 @@ paths:
       summary: "Cambiar el estado del ticket con historial inmutable (rechaza cerrar con señal de conflicto en Eje 1/2)"
       x-historias: [HU-004, HU-026]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.CHANGE_STATUS"
+      x-permiso: "ATC.TICKETS + editar"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'Transición no permitida: un ticket CLOSED no pasa a IN_PROGRESS sin reabrirse (HU-004 CA-04), o se intenta resolver o cerrar en Eje 1/2 un ticket con señal de conflicto (gate no compensable, HU-026 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -107,13 +135,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/interacciones:
     post:
       tags: [tickets]
@@ -121,7 +149,10 @@ paths:
       summary: "Registrar una interacción visible o una nota interna, con adjuntos"
       x-historias: [HU-005]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.ADD_INTERACTION"
+      x-permiso: "ATC.TICKETS + editar"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'Adjunto de más de 10 MB o de formato no admitido (HU-064 CA-05), o texto con DNI o número de tarjeta en una nota (HU-005 CA-04; RN-SVC-012).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -139,13 +170,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Interaccion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/derivaciones:
     post:
       tags: [tickets]
@@ -153,7 +184,8 @@ paths:
       summary: "Derivar un ticket a otra área con motivo tipificado"
       x-historias: [HU-007]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.REFER"
+      x-permiso: "ATC.TICKETS.REFER + editar"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -171,12 +203,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/reaperturas:
     post:
       tags: [tickets]
@@ -184,7 +216,8 @@ paths:
       summary: "Reabrir un ticket con un nuevo compromiso, sin borrar el original"
       x-historias: [HU-011]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.REOPEN"
+      x-permiso: "ATC.TICKETS.REOPEN + editar"
+      x-roles: [ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -202,12 +235,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/colaboradores/{colaboradorId}/reasignaciones:
     post:
       tags: [tickets]
@@ -215,7 +248,8 @@ paths:
       summary: "Reasignar en bloque los tickets de un colaborador que cesa"
       x-historias: [HU-008]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.REASSIGN_BULK"
+      x-permiso: "ATC.TICKETS.REASSIGN_BULK + editar"
+      x-roles: [ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: colaboradorId
@@ -233,12 +267,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ResultadoReasignacion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/sla:
     get:
       tags: [sla]
@@ -246,7 +280,8 @@ paths:
       summary: "Consultar los compromisos de SLA del ticket"
       x-historias: [HU-003, HU-010]
       x-estado: borrador
-      x-permiso: "ATC.SLA.VIEW"
+      x-permiso: "ATC.TICKETS.SLA + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CX]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -259,12 +294,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Sla' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/bandeja:
     get:
       tags: [inbox]
@@ -272,7 +307,8 @@ paths:
       summary: "Bandeja única ordenada por urgencia"
       x-historias: [HU-044, HU-045]
       x-estado: borrador
-      x-permiso: "ATC.INBOX.VIEW"
+      x-permiso: "ATC.INBOX + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -284,12 +320,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaTickets' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casillero:
     get:
       tags: [inbox]
@@ -297,7 +333,8 @@ paths:
       summary: "Casillero de tareas por área y responsable"
       x-historias: [HU-009]
       x-estado: borrador
-      x-permiso: "ATC.INBOX.VIEW_LOCKER"
+      x-permiso: "ATC.INBOX.LOCKER + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -309,12 +346,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaTickets' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/flujos/{tipoId}/{subtipoId}/{areaId}:
     put:
       tags: [inbox]
@@ -322,7 +359,10 @@ paths:
       summary: "Configurar el flujo de trabajo de un tipo de ticket por área (nueva versión)"
       x-historias: [HU-043]
       x-estado: borrador
-      x-permiso: "ATC.WORKFLOWS.PUBLISH"
+      x-permiso: "ATC.WORKFLOWS + editar"
+      x-roles: [ATC_ADMIN_FUNCIONAL]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'Falta el tipo, el subtipo, el área, el responsable, al menos una actividad o el SLA de alguna actividad; no se publica e indica cuál (HU-043 CA-03).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: tipoId
@@ -348,13 +388,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Flujo' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/libro/asientos:
     post:
       tags: [complaintbook]
@@ -362,7 +402,8 @@ paths:
       summary: "Registrar el asiento del Libro de Reclamaciones"
       x-historias: [HU-012]
       x-estado: borrador
-      x-permiso: "ATC.COMPLAINT_BOOK.CREATE"
+      x-permiso: "ATC.COMPLAINT_BOOK + crear"
+      x-roles: [ATC_LEGAL]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -376,12 +417,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Asiento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/libro/asientos/{asientoId}/prorroga:
     post:
       tags: [complaintbook]
@@ -389,7 +430,11 @@ paths:
       summary: "Calcular el plazo legal y gestionar la prórroga única"
       x-historias: [HU-013]
       x-estado: borrador
-      x-permiso: "ATC.COMPLAINT_BOOK.EXTEND"
+      x-permiso: "ATC.COMPLAINT_BOOK + editar"
+      x-roles: [ATC_LEGAL]
+      x-errores-negocio:
+        - { codigo: AYB-LRC-409, cuando: 'El asiento ya tiene su prórroga única (HU-013 CA-03).' }
+        - { codigo: AYB-LRC-422, cuando: 'La comunicación al consumidor es posterior al vencimiento original (HU-013 CA-04).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: asientoId
@@ -407,14 +452,14 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Asiento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/libro/asientos/{asientoId}/respuesta:
     post:
       tags: [complaintbook]
@@ -422,7 +467,8 @@ paths:
       summary: "Registrar la respuesta formal con cargo"
       x-historias: [HU-014]
       x-estado: borrador
-      x-permiso: "ATC.COMPLAINT_BOOK.RESPOND"
+      x-permiso: "ATC.COMPLAINT_BOOK + editar"
+      x-roles: [ATC_LEGAL]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: asientoId
@@ -440,12 +486,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Asiento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/libro/asientos/{asientoId}/apelaciones:
     post:
       tags: [complaintbook]
@@ -453,7 +499,8 @@ paths:
       summary: "Dar seguimiento a apelaciones internas y ante INDECOPI"
       x-historias: [HU-016]
       x-estado: borrador
-      x-permiso: "ATC.COMPLAINT_BOOK.CREATE_APPEAL"
+      x-permiso: "ATC.COMPLAINT_BOOK.APPEALS + crear"
+      x-roles: [ATC_LEGAL]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: asientoId
@@ -471,12 +518,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Apelacion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/clientes:
     get:
       tags: [customer360]
@@ -484,7 +531,8 @@ paths:
       summary: "Buscar al cliente por DNI, nombre, código, lote, teléfono o número de ticket"
       x-historias: [HU-049]
       x-estado: borrador
-      x-permiso: "ATC.CUSTOMER360.SEARCH"
+      x-permiso: "ATC.CUSTOMER360.SEARCH + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -495,12 +543,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaClientes' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/clientes/{partyId}/consulta-360:
     get:
       tags: [customer360]
@@ -508,7 +556,8 @@ paths:
       summary: "Ver la consulta 360 del cliente (respuesta degradada si una fuente falla)"
       x-historias: [HU-050, HU-051]
       x-estado: borrador
-      x-permiso: "ATC.CUSTOMER360.VIEW"
+      x-permiso: "ATC.CUSTOMER360 + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CASES_DESK]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: partyId
@@ -521,20 +570,22 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Consulta360' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tickets:
     get:
       tags: [portal]
       operationId: listarMisTickets
       summary: "Consultar mis tickets"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-064]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.VIEW_OWN"
+      x-permiso: "ATC.PORTAL + ver"
+      x-roles: [CUSTOMER]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -545,19 +596,21 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaTickets' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
     post:
       tags: [portal]
       operationId: registrarMiTicket
       summary: "Registrar un ticket desde Mi Portal"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-064]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.CREATE_OWN"
+      x-permiso: "ATC.PORTAL + crear"
+      x-roles: [CUSTOMER]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -571,20 +624,24 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tickets/{ticketId}/trazabilidad:
     get:
       tags: [portal]
       operationId: verTrazabilidad
       summary: "Ver la trazabilidad de mi ticket"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-065]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.VIEW_TRACE"
+      x-permiso: "ATC.PORTAL + ver"
+      x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la bitácora (HU-065 CA-04).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -597,20 +654,24 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Trazabilidad' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tickets/{ticketId}/respuestas:
     post:
       tags: [portal]
       operationId: responderMiTicket
       summary: "Responder, adjuntar y confirmar la solución de mi ticket"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-066]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.REPLY"
+      x-permiso: "ATC.PORTAL + editar"
+      x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado (HU-064 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -628,12 +689,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Interaccion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/visor/estado:
     get:
       tags: [inbox]
@@ -641,7 +702,8 @@ paths:
       summary: "Estado actual del visor 3D (el tiempo real va por WebSocket)"
       x-historias: [HU-067]
       x-estado: borrador
-      x-permiso: "ATC.VIEWER.VIEW"
+      x-permiso: "ATC.VIEWER + ver"
+      x-roles: [ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       responses:
@@ -650,20 +712,22 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/EstadoVisor' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tipos:
     get:
       tags: [portal]
       operationId: listarTiposPortal
       summary: "Tipos y subtipos que ve el cliente al registrar un ticket"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-064]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.VIEW_TYPES"
+      x-permiso: "ATC.PORTAL + ver"
+      x-roles: [CUSTOMER]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       responses:
@@ -672,20 +736,24 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/TiposPortal' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/portal/tickets/{ticketId}/confirmacion:
     post:
       tags: [portal]
       operationId: confirmarSolucion
       summary: "Confirmar o rechazar la solución de mi ticket"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-066]
       x-estado: borrador
-      x-permiso: "ATC.PORTAL.CONFIRM_SOLUTION"
+      x-permiso: "ATC.PORTAL + aprobar"
+      x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-PTL-409, cuando: 'El ticket no está RESOLVED: ya se cerró o todavía no tiene solución (HU-066).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -703,13 +771,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/flujos/publicaciones:
     get:
       tags: [inbox]
@@ -717,7 +785,8 @@ paths:
       summary: "Bitácora de publicaciones de flujos (autor, fecha y versión)"
       x-historias: [HU-043]
       x-estado: borrador
-      x-permiso: "ATC.WORKFLOWS.VIEW"
+      x-permiso: "ATC.WORKFLOWS + ver"
+      x-roles: [ATC_ADMIN_FUNCIONAL, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -728,12 +797,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaFlujos' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/actividades/{numero}/cierre:
     post:
       tags: [tickets]
@@ -741,7 +810,10 @@ paths:
       summary: "Cerrar la actividad en curso del flujo del ticket"
       x-historias: [HU-043]
       x-estado: borrador
-      x-permiso: "ATC.TICKETS.CLOSE_ACTIVITY"
+      x-permiso: "ATC.TICKETS + editar"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'La actividad no es la habilitada: las actividades se cierran en orden (HU-043 CA-04).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -758,13 +830,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/rayo:
     post:
       tags: [inbox]
@@ -772,7 +844,10 @@ paths:
       summary: "Marcar un ticket crítico con el rayo de prioridad, con motivo (solo el líder; tope del área)"
       x-historias: [HU-045]
       x-estado: borrador
-      x-permiso: "ATC.INBOX.MARK_LIGHTNING"
+      x-permiso: "ATC.INBOX.LIGHTNING + crear"
+      x-roles: [ATC_SUPERVISOR]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'Se superó el tope de rayos del área y no se confirmó ni se desmarcó otro (HU-045 CA-03).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -790,13 +865,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/guia:
     get:
       tags: [inbox]
@@ -804,7 +879,8 @@ paths:
       summary: "Consultar la guía de solución del tipo del ticket (última versión publicada)"
       x-historias: [HU-047]
       x-estado: borrador
-      x-permiso: "ATC.INBOX.VIEW_GUIDE"
+      x-permiso: "ATC.TICKETS.GUIDE + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -817,12 +893,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Guia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/sugerencias-ia:
     post:
       tags: [inbox]
@@ -830,7 +906,8 @@ paths:
       summary: "Pedir una sugerencia de IA al redactar o cerrar (el texto va anonimizado; ADR-007)"
       x-historias: [HU-048]
       x-estado: borrador
-      x-permiso: "ATC.AI_ASSIST.REQUEST"
+      x-permiso: "ATC.TICKETS.AI_ASSIST + crear"
+      x-roles: [ATC_AGENT]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -848,12 +925,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Sugerencia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision:
     post:
       tags: [inbox]
@@ -861,7 +938,8 @@ paths:
       summary: "Registrar si el gestor aceptó, editó o descartó la sugerencia"
       x-historias: [HU-048]
       x-estado: borrador
-      x-permiso: "ATC.AI_ASSIST.DECIDE"
+      x-permiso: "ATC.TICKETS.AI_ASSIST + editar"
+      x-roles: [ATC_AGENT]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -883,12 +961,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Sugerencia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tablero:
     get:
       tags: [inbox]
@@ -896,8 +974,10 @@ paths:
       summary: "Avance diario del gestor y, para el líder, el de su equipo; casos en riesgo"
       x-historias: [HU-030, HU-054]
       x-estado: borrador
-      x-permiso: "ATC.INBOX.VIEW_DASHBOARD"
-      x-permiso-adicional: "ATC.INBOX.VIEW_TEAM_DASHBOARD"
+      x-permiso: "ATC.DASHBOARD + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_CX]
+      x-permiso-adicional: "ATC.DASHBOARD.TEAM + ver"
+      x-roles-adicional: [ATC_SUPERVISOR, ATC_CX]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: ambito, in: query, schema: { type: string, enum: [GESTOR, EQUIPO], default: GESTOR }, description: 'EQUIPO solo para el líder (HU-054 CA-03).' }
@@ -907,12 +987,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Tablero' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/libro/asientos/{asientoId}/apelaciones/{apelacionId}/estado:
     post:
       tags: [complaintbook]
@@ -920,7 +1000,10 @@ paths:
       summary: "Registrar la resolución de INDECOPI o el desistimiento de una apelación"
       x-historias: [HU-016]
       x-estado: borrador
-      x-permiso: "ATC.COMPLAINT_BOOK.RESOLVE_APPEAL"
+      x-permiso: "ATC.COMPLAINT_BOOK.APPEALS + editar"
+      x-roles: [ATC_LEGAL]
+      x-errores-negocio:
+        - { codigo: AYB-APL-409, cuando: 'Transición no permitida o apelación cerrada por desistimiento: el ticket no puede volver a apelarse por la misma respuesta (HU-016 CA-03).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: asientoId
@@ -942,13 +1025,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Apelacion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/clientes/{partyId}/llamadas:
     post:
       tags: [customer360]
@@ -956,7 +1039,8 @@ paths:
       summary: "Iniciar la llamada desde la ficha por la plataforma del call center y dejarla como interacción"
       x-historias: [HU-049]
       x-estado: borrador
-      x-permiso: "ATC.CUSTOMER360.CALL"
+      x-permiso: "ATC.CUSTOMER360.CALL + crear"
+      x-roles: [ATC_AGENT]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: partyId
@@ -974,12 +1058,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Interaccion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/consultas-motor:
     post:
       tags: [customer360]
@@ -987,7 +1071,8 @@ paths:
       summary: "Consultar un dato específico del cliente con el motor de José (el permiso del rol decide)"
       x-historias: [HU-052]
       x-estado: borrador
-      x-permiso: "ATC.CUSTOMER360.QUERY_ENGINE"
+      x-permiso: "ATC.CUSTOMER360.QUERY_ENGINE + ver"
+      x-roles: [ATC_AGENT]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1005,12 +1090,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ResultadoConsulta' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/clientes/{partyId}/documentos:
     get:
       tags: [customer360]
@@ -1018,7 +1103,8 @@ paths:
       summary: "Buscar documentos del cliente por significado (solo los que el rol puede ver)"
       x-historias: [HU-053]
       x-estado: borrador
-      x-permiso: "ATC.CUSTOMER360.SEARCH_DOCUMENTS"
+      x-permiso: "ATC.CUSTOMER360.DOCUMENTS + ver"
+      x-roles: [ATC_AGENT]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: partyId
@@ -1034,12 +1120,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaDocumentos' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles:
     post:
       tags: [legalcases]
@@ -1047,7 +1133,8 @@ paths:
       summary: "Registrar un caso sensible y entregar su Código Único"
       x-historias: [HU-020]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.CREATE"
+      x-permiso: "ATC.LEGAL_CASES + crear"
+      x-roles: [ATC_CASES_DESK]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1061,12 +1148,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/reclasificacion:
     post:
       tags: [legalcases]
@@ -1074,7 +1161,8 @@ paths:
       summary: "Reclasificar un caso preventivo como reclamo formal (línea 2) conservando el origen"
       x-historias: [HU-020]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.RECLASSIFY"
+      x-permiso: "ATC.LEGAL_CASES + editar"
+      x-roles: [ATC_CASES_DESK]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1092,12 +1180,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/cargos:
     post:
       tags: [legalcases]
@@ -1105,7 +1193,10 @@ paths:
       summary: "Emitir el cargo previo o el cargo de activación (el SLA de línea corre desde la activación)"
       x-historias: [HU-021]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.ISSUE_CHARGE"
+      x-permiso: "ATC.LEGAL_CASES + crear"
+      x-roles: [ATC_CASES_DESK]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'Cargo de activación sin cargo previo, o cargo ya emitido (HU-021).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1123,13 +1214,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/riesgo:
     put:
       tags: [legalcases]
@@ -1137,7 +1228,8 @@ paths:
       summary: "Clasificar o recalibrar el riesgo con la matriz objetiva (queda quién, cuándo y por qué)"
       x-historias: [HU-022]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.CLASSIFY_RISK"
+      x-permiso: "ATC.LEGAL_CASES + editar"
+      x-roles: [ATC_CASES_DESK]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1155,12 +1247,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/escalamientos:
     post:
       tags: [legalcases]
@@ -1168,7 +1260,10 @@ paths:
       summary: "Escalar el caso al siguiente nivel de la cadena, sin saltar niveles"
       x-historias: [HU-023]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.ESCALATE"
+      x-permiso: "ATC.LEGAL_CASES + editar"
+      x-roles: [ATC_CASES_DESK]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'Salto de nivel en la cadena de escalamiento (HU-023 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1186,13 +1281,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/coincidencias:
     get:
       tags: [legalcases]
@@ -1200,7 +1295,8 @@ paths:
       summary: "Buscar casos abiertos del mismo cliente y hechos antes de registrar"
       x-historias: [HU-024]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.VIEW"
+      x-permiso: "ATC.LEGAL_CASES + ver"
+      x-roles: [ATC_CASES_DESK, ATC_LEGAL]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -1213,12 +1309,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaCasos' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/vinculos:
     post:
       tags: [legalcases]
@@ -1226,7 +1322,8 @@ paths:
       summary: "Vincular dos casos en un único hilo de evidencia"
       x-historias: [HU-024]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.LINK"
+      x-permiso: "ATC.LEGAL_CASES + editar"
+      x-roles: [ATC_CASES_DESK]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1244,12 +1341,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/casos-sensibles/{casoId}/cierre:
     post:
       tags: [legalcases]
@@ -1257,7 +1354,10 @@ paths:
       summary: "Cerrar el caso con uno de los 8 estados homologados y evidencia"
       x-historias: [HU-025]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.CLOSE"
+      x-permiso: "ATC.LEGAL_CASES + editar"
+      x-roles: [ATC_CASES_DESK]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'Cierre sin evidencia o con un estado fuera de los 8 homologados (HU-025; RN-SVC-019).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: casoId
@@ -1275,13 +1375,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoSensible' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/conflicto:
     post:
       tags: [legalcases]
@@ -1289,7 +1389,10 @@ paths:
       summary: "Marcar la señal de conflicto: bloquea la resolución en Eje 1/2 y exige derivar a Eje 3"
       x-historias: [HU-026]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.FLAG_CONFLICT"
+      x-permiso: "ATC.TICKETS.LEGAL_GATE + crear"
+      x-roles: [ATC_AGENT, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'El ticket ya tiene la señal de conflicto o ya está en Eje 3 (HU-026).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1307,13 +1410,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/conflicto/retiro:
     post:
       tags: [legalcases]
@@ -1321,7 +1424,8 @@ paths:
       summary: "Retirar con justificación una señal de conflicto marcada por error (solo supervisor)"
       x-historias: [HU-026]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.CLEAR_CONFLICT"
+      x-permiso: "ATC.TICKETS.LEGAL_GATE + eliminar"
+      x-roles: [ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1339,12 +1443,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/handoff:
     post:
       tags: [legalcases]
@@ -1352,7 +1456,10 @@ paths:
       summary: "Armar el paquete mínimo de handoff a Eje 3 (6 elementos completos antes de enviar)"
       x-historias: [HU-027]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.BUILD_HANDOFF"
+      x-permiso: "ATC.TICKETS.LEGAL_GATE + crear"
+      x-roles: [ATC_AGENT, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'Faltan elementos del paquete mínimo de 6 (HU-027 CA-01).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1370,13 +1477,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Handoff' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/handoff/confirmacion:
     post:
       tags: [legalcases]
@@ -1384,7 +1491,8 @@ paths:
       summary: "Confirmar en el mismo ticket la recepción del handoff en Eje 3"
       x-historias: [HU-027]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.CONFIRM_HANDOFF"
+      x-permiso: "ATC.TICKETS.LEGAL_GATE + aprobar"
+      x-roles: [ATC_LEGAL]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1402,12 +1510,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Handoff' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/tickets/{ticketId}/notas-estado:
     post:
       tags: [legalcases]
@@ -1415,7 +1523,10 @@ paths:
       summary: "Registrar la nota de estado emocional sin juicios de valor"
       x-historias: [HU-028]
       x-estado: borrador
-      x-permiso: "ATC.LEGAL_CASES.RECORD_STATE_NOTE"
+      x-permiso: "ATC.TICKETS.STATE_NOTE + crear"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'La nota tiene palabras de juicio de valor (HU-028 CA-03).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -1433,13 +1544,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Interaccion' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/postventa/reclamos:
     post:
       tags: [aftersales]
@@ -1447,7 +1558,10 @@ paths:
       summary: "Registrar un reclamo de garantía vinculado a la entrega y validar su vigencia"
       x-historias: [HU-033, HU-034]
       x-estado: borrador
-      x-permiso: "ATC.AFTERSALES.CREATE_CLAIM"
+      x-permiso: "ATC.AFTERSALES + crear"
+      x-roles: [ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-GAR-422, cuando: 'Sin entrega vinculada (HU-033 CA-01; RN-SVC-027), tipo fuera del catálogo (HU-033 CA-02) o fuera de la cobertura vigente: «no procedente por vigencia» (HU-034 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1461,13 +1575,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ReclamoGarantia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/postventa/reclamos/{reclamoId}/inspecciones:
     post:
       tags: [aftersales]
@@ -1475,7 +1589,8 @@ paths:
       summary: "Programar y registrar la inspección técnica antes de resolver"
       x-historias: [HU-035]
       x-estado: borrador
-      x-permiso: "ATC.AFTERSALES.INSPECT"
+      x-permiso: "ATC.AFTERSALES + crear"
+      x-roles: [ATC_POSTVENTA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reclamoId
@@ -1493,12 +1608,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ReclamoGarantia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/postventa/reclamos/{reclamoId}/resolucion:
     post:
       tags: [aftersales]
@@ -1506,7 +1621,10 @@ paths:
       summary: "Resolver el reclamo: aprobado, rechazado o resuelto, con fecha y descripción"
       x-historias: [HU-035]
       x-estado: borrador
-      x-permiso: "ATC.AFTERSALES.RESOLVE"
+      x-permiso: "ATC.AFTERSALES + editar"
+      x-roles: [ATC_POSTVENTA]
+      x-errores-negocio:
+        - { codigo: AYB-GAR-409, cuando: 'Resolver sin la inspección técnica registrada (HU-035 CA-01) o un reclamo ya resuelto.' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reclamoId
@@ -1524,13 +1642,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ReclamoGarantia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/postventa/reclamos/{reclamoId}/escalamiento:
     post:
       tags: [aftersales]
@@ -1538,7 +1656,8 @@ paths:
       summary: "Derivar a Eje 3 un reclamo con carta notarial, sin resolverlo en Eje 2"
       x-historias: [HU-036]
       x-estado: borrador
-      x-permiso: "ATC.AFTERSALES.ESCALATE"
+      x-permiso: "ATC.AFTERSALES + editar"
+      x-roles: [ATC_POSTVENTA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reclamoId
@@ -1556,12 +1675,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ReclamoGarantia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/postventa/reclamos/{reclamoId}/adenda:
     post:
       tags: [aftersales]
@@ -1569,7 +1688,8 @@ paths:
       summary: "Registrar la adenda de una reincorporación contractual tras una devolución"
       x-historias: [HU-036]
       x-estado: borrador
-      x-permiso: "ATC.AFTERSALES.ADDENDUM"
+      x-permiso: "ATC.AFTERSALES + crear"
+      x-roles: [ATC_POSTVENTA]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reclamoId
@@ -1587,12 +1707,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ReclamoGarantia' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/entregafest/frases-ancla:
     post:
       tags: [tickets]
@@ -1600,7 +1720,10 @@ paths:
       summary: "Registrar el riesgo verbal y la Frase Ancla aplicada (la Frase 6 obliga a registrar el caso)"
       x-historias: [HU-037]
       x-estado: borrador
-      x-permiso: "ATC.EVENT_CASES.CREATE"
+      x-permiso: "ATC.EVENT_CASES.ANCHOR_PHRASES + crear"
+      x-roles: [ATC_EVENT]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-422, cuando: 'Frase 6 aplicada sin registrar el caso (HU-037 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1614,13 +1737,13 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoEvento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '422': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '422': { $ref: '#/components/responses/NoProcesable' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/entregafest/casos:
     post:
       tags: [tickets]
@@ -1628,7 +1751,10 @@ paths:
       summary: "Registrar el caso sensible del evento con la etiqueta estándar y derivarlo de inmediato a la Estación 4"
       x-historias: [HU-038, HU-039]
       x-estado: borrador
-      x-permiso: "ATC.EVENT_CASES.CREATE"
+      x-permiso: "ATC.EVENT_CASES + crear"
+      x-roles: [ATC_EVENT, ATC_CX]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'El caso ya se derivó a la Estación 4: no se reabre ni se registra de nuevo (HU-038 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1642,20 +1768,21 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/CasoEvento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
     get:
       tags: [tickets]
       operationId: listarCasosEvento
       summary: "Revisar los casos del bloque con su estado (derivado o no a la Estación 4)"
       x-historias: [HU-039]
       x-estado: borrador
-      x-permiso: "ATC.EVENT_CASES.VIEW"
+      x-permiso: "ATC.EVENT_CASES + ver"
+      x-roles: [ATC_EVENT, ATC_CX, ATC_SUPERVISOR]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -1666,12 +1793,12 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/PaginaCasosEvento' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/formularios/ingresos:
     post:
       tags: [delinquency]
@@ -1679,7 +1806,8 @@ paths:
       summary: "Registrar el ingreso de una persona al proyecto (máximo 6 campos; idempotente para el envío sin conexión)"
       x-historias: [HU-059]
       x-estado: borrador
-      x-permiso: "ATC.FORMS.REGISTER_ENTRY"
+      x-permiso: "ATC.SITE_ENTRY + crear"
+      x-roles: [ATC_SITE_ACCESS]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1693,20 +1821,24 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Ticket' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/formularios/reservas-bus:
     post:
       tags: [delinquency]
       operationId: reservarBus
       summary: "Reservar un cupo en el bus del Entrega Fest; sin cupo ofrece otro bus o la lista de espera"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-060]
       x-estado: borrador
-      x-permiso: "ATC.FORMS.BOOK_BUS"
+      x-permiso: "ATC.PORTAL.BUS_BOOKING + crear"
+      x-roles: [CUSTOMER]
+      x-errores-negocio:
+        - { codigo: AYB-TKT-409, cuando: 'El bus no tiene cupo en ese horario: la respuesta ofrece otro bus u horario o la lista de espera (HU-060 CA-02).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       requestBody:
@@ -1720,21 +1852,23 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Reserva' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '409': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '409': { $ref: '#/components/responses/Conflicto' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
   /api/v1/formularios/reservas-bus/{reservaId}/cancelacion:
     post:
       tags: [delinquency]
       operationId: cancelarReserva
       summary: "Cancelar la reserva: libera el cupo y lo pasa al primero de la lista de espera"
+      description: 'Operación del cliente (rol `CUSTOMER`). Solo actúa sobre los tickets del cliente autenticado, filtrados por su `PartyID`; el token de Control de acceso no trae `PartyID`: cómo lo obtiene ATC lo responde Sony Montoya (P-033; supuesto S-3 de `roles-y-permisos-atc.md`). Sin notas internas ni nombre del gestor (RN-SVC-044, que está en los PDF del PO v1.3 y falta en el Excel: P-022).'
       x-historias: [HU-060]
       x-estado: borrador
-      x-permiso: "ATC.FORMS.CANCEL_BUS"
+      x-permiso: "ATC.PORTAL.BUS_BOOKING + eliminar"
+      x-roles: [CUSTOMER]
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: reservaId
@@ -1747,18 +1881,19 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Reserva' }
-        '400': { $ref: '#/components/responses/Problema' }
-        '401': { $ref: '#/components/responses/Problema' }
-        '403': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-        '429': { $ref: '#/components/responses/Problema' }
-        '500': { $ref: '#/components/responses/Problema' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
 components:
   securitySchemes:
     bearer-jwt:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: 'JWT del servidor de autorización de Control de acceso (PJ-05; DT-05). Consola y Mi Portal lo obtienen con @aybarcorp/auth (Authorization Code con PKCE); las llamadas entre servicios, con client_credentials (DT-10). Roles en realm_access.roles y company_roles; el token no trae permisos ni PartyID (P-033, P-034).'
   parameters:
     CorrelationId:
       name: X-Correlation-Id
@@ -1767,28 +1902,67 @@ components:
       description: Si falta, el servicio genera uno y lo devuelve en la respuesta.
       schema: { type: string }
   responses:
-    Problema:
-      description: Error (RFC 7807)
+    SolicitudInvalida:
+      description: 'AYB-VAL-400: cuerpo, parámetro o validación inválidos; lo emite aybar-starter-web, con `campos` cuando falla la validación.'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    NoAutenticado:
+      description: 'AYB-SEG-401: sin token, o token con firma, emisor, vencimiento o audiencia inválidos. Lo emiten aybar-starter-security y aybar-starter-web; un token sin la audiencia de la API puede cortarlo antes Azure API Management (D-44 de PJ-05). ATC no lo reinventa.'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    SinPermiso:
+      description: 'AYB-SEG-403: falta el rol que exige `@PreAuthorize` (ver `x-roles`). Lo emiten aybar-starter-security y aybar-starter-web; ATC no lo reinventa ni emite AYB-PEF-403, que es de Control de acceso (D-169 de PJ-05). El intento denegado queda en la auditoría de ATC cuando la historia lo pide.'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    NoEncontrado:
+      description: 'AYB-REC-404 (SDK): el recurso no existe. En Mi Portal, el ticket de otro cliente responde AYB-PTL-404 (ver `x-errores-negocio`).'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    Conflicto:
+      description: 'AYB-<ÁREA>-409 de negocio, con un área de `x-areas-de-error`; el caso de cada operación está en su `x-errores-negocio`. Lo lanza ATC con AybarException.'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    NoProcesable:
+      description: 'AYB-<ÁREA>-422 de negocio, con un área de `x-areas-de-error`; el caso de cada operación está en su `x-errores-negocio`. Lo lanza ATC con AybarException.'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    DemasiadasSolicitudes:
+      description: 'AYB-GEN-429: demasiadas solicitudes; lo emite el SDK o el límite del borde (Azure API Management).'
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemaAybar' }
+    ErrorInterno:
+      description: 'AYB-GEN-500: error no controlado; el detalle va al log con el `correlationId`, nunca al cliente (aybar-starter-web).'
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/ProblemaAybar' }
   schemas:
     ProblemaAybar:
       type: object
+      description: 'ProblemDetail RFC 7807 que construye aybar-starter-web (ProblemasAybar), igual al esquema que el SDK publica en /v3/api-docs.'
+      required: [type, title, status, codigo, timestamp]
       properties:
-        type: { type: string }
+        type: { type: string, format: uri-reference, default: about:blank }
         title: { type: string }
         status: { type: integer }
         detail: { type: string }
-        codigo: { type: string, pattern: '^AYB-[A-Z]{3}-[0-9]{3}$', description: 'Código público AYB-<ÁREA>-<HTTP>. Plataforma (CodigoErrorAybar del SDK): AYB-GEN-500, AYB-VAL-400, AYB-SEG-401, AYB-SEG-403, AYB-REC-404, AYB-MET-405 y AYB-MED-415. Los de negocio de ATC se lanzan con AybarException con la cadena literal (el catálogo CodigoNegocio del SDK aún no existe, skill aybar-errores) y usan áreas propias, distintas de las de Control de acceso: TKT (tickets), SLA, LRC (Libro de Reclamaciones), APL (apelaciones), GAR (garantía postventa) y PTL (Mi Portal), por ejemplo AYB-TKT-409. Los módulos sin área propia (casos legales, consulta 360, formularios, evento) la reciben cuando una historia pida un error de negocio.' }
-        correlationId: { type: string }
+        instance: { type: string, format: uri-reference }
+        codigo: { type: string, pattern: '^AYB-[A-Z]{3}-[0-9]{3}$', description: 'Código público AYB-<ÁREA>-<HTTP>. Plataforma (CodigoErrorAybar del SDK): AYB-GEN-500, AYB-VAL-400, AYB-SEG-401, AYB-SEG-403, AYB-REC-404, AYB-MET-405, AYB-MED-415, AYB-GEN-429. Negocio de ATC: solo las áreas TKT, SLA, LRC, APL, GAR y PTL (x-areas-de-error), lanzados con AybarException con la cadena literal (el catálogo CodigoNegocio del SDK no existe todavía, skill aybar-errores), por ejemplo AYB-TKT-409. Nunca un área de Control de acceso (SEG de negocio, PEF, VRS, USR, SOD...).', example: AYB-TKT-409 }
+        correlationId: { type: string, nullable: true, description: 'Del MDC de aybar-starter-logging; nulo si la petición no pasó por el filtro de correlación.' }
         timestamp: { type: string, format: date-time }
         campos:
           type: array
+          description: 'Solo en AYB-VAL-400 por validación.'
           items: { type: object, properties: { campo: { type: string }, mensaje: { type: string } } }
     TicketNuevo:
       type: object
-      description: "Cuerpo de la solicitud (campos por completar)."
+      description: "Alta de un ticket tipificado desde cualquier canal (HU-001, HU-002, HU-051): empresa y línea obligatorias y no derivables (RN-SVC-005); va `clienteId` o `interesado`."
       required: [canal, empresaId, lineaNegocioId, tipoId, prioridadId, resumen]
       properties:
         canal: { type: string }
@@ -1798,7 +1972,7 @@ components:
         prioridadId: { type: string }
         resumen: { type: string }
         clienteId: { type: string, description: 'PartyID del v7. Va este campo o `interesado`: uno de los dos (HU-051).' }
-        interesado: { type: object, description: 'Datos mínimos cuando el cliente no existe en SIGDA/TAXON o la fuente está caída; el ticket queda con la vinculación al cliente pendiente (HU-051, propuesta: sin columna en el v7).', properties: { nombre: { type: string }, documento: { type: string }, contacto: { type: string } } }
+        interesado: { type: object, description: 'Datos mínimos cuando la persona no existe en PARTY o la fuente está caída: el ticket queda sin PartyID y con la vinculación pendiente (HU-051). ATC no crea la PARTY ni guarda estos datos en columnas propias: quién crea la PARTY no verificada lo responde P-037 (ADR-003).', properties: { nombre: { type: string }, documento: { type: string }, contacto: { type: string } } }
         subtipo: { type: string, description: 'Subtipo del ticket. El v7 no trae clave de subtipo en SVC_TICKET: por confirmar.' }
         descripcion: { type: string }
         establecimientoId: { type: string, description: 'CompanyAddressID del v7.' }
@@ -1808,7 +1982,7 @@ components:
     Ticket:
       type: object
       description: "Ticket (SVC_TICKET, ENT-SVC-001). Cada propiedad cita la columna del v7 o del Excel del PO y su fuente; los ids del v7 son enteros y se exponen como cadenas opacas."
-      x-pendiente: "Tipos, largos y obligatoriedad de los atributos no clave (archivos de Drive del v7). Rayo, señal de conflicto, eje actual, vinculación pendiente, subtipo, flujo y actividades no tienen columna en el v7 (los dibuja el PLT-04 §6.5). Con DT-06, `PARTY` de la base única es la fuente viva de la clave foránea PartyID; el PO confirma la regla frente al ADR-03 («el dato del cliente no se copia», P-021)."
+      x-pendiente: "Tipos, largos y obligatoriedad de los atributos no clave (archivos de Drive del v7). Rayo, señal de conflicto, eje actual, vinculación pendiente, subtipo, flujo y actividades no tienen columna en el v7 (los dibuja el PLT-04 §6.5). Con DT-06, `PARTY` de la base única es la fuente viva de la clave foránea PartyID; el PO confirma la regla frente al ADR-03 («el dato del cliente no se copia», P-027)."
       required: [ticketId, numero, empresaId, lineaNegocioId, canal, tipoId, prioridadId, estado]
       properties:
         ticketId: { type: string, description: 'TicketID.' }
@@ -1816,7 +1990,7 @@ components:
         empresaId: { type: string, description: 'CompanyID: obligatoria y no derivable (RN-SVC-005).' }
         lineaNegocioId: { type: string, description: 'BusinessLineID: obligatoria y no derivable (RN-SVC-005).' }
         establecimientoId: { type: string, nullable: true, description: 'CompanyAddressID: vacío si el canal es remoto (HU-001 CA-02).' }
-        clienteId: { type: string, nullable: true, description: 'PartyID. Vacío mientras la vinculación al cliente está pendiente (HU-051 CA-01).', x-pendiente: 'Nulabilidad en el v7 (el ticket del interesado no tiene PartyID). Con DT-06, PARTY es la fuente viva; el PO confirma la regla frente al ADR-03 (P-021).' }
+        clienteId: { type: string, nullable: true, description: 'PartyID. Vacío mientras la vinculación al cliente está pendiente (HU-051 CA-01).', x-pendiente: 'Nulabilidad en el v7 (el ticket del interesado no tiene PartyID). Con DT-06, PARTY es la fuente viva; el PO actualiza su ADR-03 (P-027).' }
         contratoId: { type: string, nullable: true, description: 'ContractID: opcional (RN-SVC-005).' }
         unidadId: { type: string, description: 'UnitID.', x-pendiente: 'Nulabilidad (Drive v7).' }
         productoId: { type: string, description: 'ProductID.', x-pendiente: 'Nulabilidad (Drive v7).' }
@@ -2053,7 +2227,7 @@ components:
         fechaComunicacion: { type: string, format: date, description: 'ExtensionCommunicatedDate: anterior al vencimiento original (HU-013 CA-01 y CA-04).' }
     RespuestaFormal:
       type: object
-      description: "Cuerpo de la solicitud (campos por completar)."
+      description: "Respuesta formal al asiento con su cargo (HU-014): la carta con cargo va al almacén de evidencia con checksum (ADR-006) y entra al IntegrityHash del asiento (RN-SVC-010)."
       required: [cargo, firmante]
       properties:
         cargo: { type: string }
@@ -2587,3 +2761,4 @@ components:
         puntoEmbarque: { type: string }
         acompanantes: { type: string }
         estado: { type: string, description: 'Confirmada, en lista de espera o cancelada (HU-060; RN-SVC-042).' }
+# Historial: 0.4.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · ver info.x-historial. Generado por IA — Revisado por: (pendiente).

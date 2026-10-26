@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-18 Bandeja orquestadora y flujos por área"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-18", "EP-ATC-09", "HU-ATC-043", "HU-ATC-044", "HU-ATC-045", "HU-ATC-046"]
 tags: [dor, plt-05, g4]
 ---
@@ -42,7 +42,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Push o pull ·
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-16 (propuesta) | Control de acceso (PJ-05): emisor de tokens, roles y permisos de ATC, y API de líderes y gestores. Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por decisión del Líder Técnico (DT-03) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-09 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 (la de la DEP-02) | Pendiente (nueva: sin fecha comprometida) |
+| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-043 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08); HU-ATC-044 (reemplaza a la DEP-02 del PLT-03, DT-03; área y rol del gestor, CA-03); HU-ATC-045 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02); HU-ATC-046 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores, su disponibilidad y el supervisor) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -88,6 +88,7 @@ Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (Push o pull
 
 Condiciones pendientes (solo si NO READY):
 - [ ] Push o pull · quién marca el rayo (PLT-05)
+- [ ] DEP-16 Control de acceso disponible en DEV (sección 2); sin fecha comprometida (P-040)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -102,3 +103,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04 y DT-07 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-16 toma el nombre, el estado («en riesgo», sin fecha comprometida) y el emisor de pruebas local que pide el Líder Técnico (C-12); la DEP-16 entra en las condiciones pendientes. No se borra texto del PO. — Revisado por: (pendiente)

@@ -1,7 +1,7 @@
 flowchart LR
   subgraph Deps["Dependencias del producto (PLT-01 v1.3)"]
     DEP01["DEP-01 · SIGDA/TAXON<br/>21-oct · Pendiente"]
-    DEP16["DEP-16 · Control de acceso<br/>21-oct · Pendiente"]
+    DEP16["DEP-16 · Control de acceso en DEV<br/>21-oct · En riesgo"]
     DEP03["DEP-03 · Matriz SLA<br/>22-oct · Pendiente"]
     DEP04["DEP-04 · Calendario<br/>22-oct · En curso"]
     DEP05["DEP-05 · Validación legal<br/>26-oct · Pendiente"]
@@ -35,6 +35,10 @@ flowchart LR
   DEP16 --> EPATC01
   DEP16 --> EPATC02
   DEP16 --> EPATC09
+  DEP16 --> EPATC04
+  DEP16 --> EPATC06
+  DEP16 --> EPATC10
+  DEP16 --> EPATC11
   DEP03 --> EPATC02
   DEP03 --> EPATC04
   DEP04 --> EPATC02
@@ -81,3 +85,4 @@ flowchart LR
   class DEP14 eval
   class DEP15 pend
   class EPATC01,EPATC02,EPATC03,EPATC04,EPATC05,EPATC06,EPATC07,EPATC08,EPATC09,EPATC10,EPATC11 ep
+%% 0.4 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · DEP-16 «en riesgo» y sus épicas desde las 23 HU que la tienen (C-12). — Revisado por: (pendiente)

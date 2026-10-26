@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-003 | Debe | 6 h con IA | Dev 2 (Jesús) | 1 | 22-oct-2026 → 23-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-03 (matriz SLA por tipo y prioridad; PLT-03, PLT-04 y PLT-05), DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-03 y PLT-04)
+
+**La necesitan:** HU-ATC-010, HU-ATC-029
+
 **Requerimiento de origen:** El sistema debe elegir la política SLA vigente por precedencia y congelar los vencimientos de 1.ª respuesta y resolución al abrir el ticket.
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -86,3 +92,5 @@ Escenario: CA-04 · Sin política (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

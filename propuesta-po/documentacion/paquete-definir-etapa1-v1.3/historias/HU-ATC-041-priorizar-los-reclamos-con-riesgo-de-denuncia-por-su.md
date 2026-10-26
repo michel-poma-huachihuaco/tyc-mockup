@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-041 | Debe | 4 h con IA | Dev 4 (Daniel) | 2 | 27-oct-2026 → 28-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-05 (validación legal del 8 % de RN-SVC-034; PLT-05), DEP-12 (herramienta de Legal; PLT-03, PLT-04 y PLT-05)
+
+**La necesitan:** ninguna
+
 **Requerimiento de origen:** El sistema debe identificar los tickets con riesgo de escalar a denuncia o INDECOPI y calcular su exposición económica (monto reclamado + interés legal referencial del 8 %) para priorizarlos y alertar a Legal. Feedback presentación · ítem 16
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -80,3 +86,5 @@ Escenario: CA-03 · Sin monto (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

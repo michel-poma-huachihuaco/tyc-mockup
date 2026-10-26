@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-10", "EP-ATC-05"]
+relacionados: ["FT-ATC-10", "EP-ATC-05", "HU-ATC-026", "HU-ATC-035"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-036 | Debería | 3 h con IA | Dev 1 (Brayan) | 2 | 30-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-026 («reutiliza el gate de FT-ATC-07», que es el CA-02 · Gate de HU-026: notas de la ficha, PLT-04), HU-ATC-035 (RF-SVC-035 es predecesora de RF-SVC-036, PLT-03) · Dependencias externas: DEP-07 (API de Contratos y Activos; PLT-03 y PLT-05)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe escalar a Eje 3 un reclamo de garantía que derive en conflicto legal y permitir gestionar la reincorporación contractual por adenda.
 
@@ -74,3 +80,5 @@ Escenario: CA-02 · Adenda
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

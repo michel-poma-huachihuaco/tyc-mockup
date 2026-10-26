@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Diccionario de datos de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
+version: "0.2"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-22"
+fecha: "2026-10-26"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, diccionario, g3]
 ---
@@ -16,7 +16,16 @@ tags: [datos, diccionario, g3]
 
 Va en `docs/datos/`. **Revisión del 20-oct-2026: la estructura se rehízo desde el Modelo de Datos Corporativo v7** (AybarCorp SAC, CDO y Transformación Digital, 8-sep-2026), fragmento 10 SERVICE, y ya no desde el PLT-05. Del v7 se toman las entidades, sus claves (PK y FK) y sus relaciones. **Los tipos, largos y la obligatoriedad quedan pendientes**: el v7 en diapositivas solo dibuja PK y FK; el detalle de los atributos está en los archivos mermaid y en el Diccionario de atributos de Drive (Anexo C del v7). Todas las claves son `int` (Anexo A del v7).
 
-**Bloqueantes de la puerta F4 que este documento no puede cerrar** (`.agents/references/gobierno-datos.md`): entidades sin dueño de dato, clasificación de datos personales sin confirmar y atributos sin tipo. La columna «Dueño de dato» queda **POR ASIGNAR**.
+**Bloqueantes de la puerta F4** (`.agents/references/gobierno-datos.md`): entidades sin dueño de dato, clasificación de datos personales sin confirmar y atributos sin tipo. Desde el 26-oct, el dueño de dato y la clasificación de datos personales de cada tabla tienen una **propuesta** en `registro-de-tablas.md` §2 (H-01 y H-02 del acta), que confirma el Data Chief al firmar el acta. Los tipos siguen pendientes (H-04, P-015).
+
+## Dónde viven las tablas y qué no tiene ATC (DT-06, C-11, C-07)
+
+- **Base única del modelo v7** (DT-06, Jose Jara, 22-oct-2026): las tablas `SVC_*` y `MAE_*` del fragmento 10 SERVICE van en la base única, en **Azure Database for PostgreSQL**, con **FK físicas**. ATC crea las 13 tablas de SERVICE; los maestros compartidos que ya crea Control de acceso (`MAE_GENERIC_LIST`, `MAE_GENERIC_LIST_VALUE`, `MAE_CHANNEL`, `MAE_CURRENCY`, `PARTY`, `ORG_COMPANY`, `MAE_BUSINESS_LINE`, `GOV_INTEGRITY_EXCEPTION`) no los recrea. El detalle, tabla por tabla, está en `registro-de-tablas.md`.
+- **`PARTY` es la fuente viva del cliente, no una copia.** ATC guarda la referencia (`PartyID`) y no copia nombre, documento ni contacto. El dato de la persona no se lee de las tablas de personas: lo entrega enmascarado el dueño del fragmento 3 (D-119 de PJ-05; P-037). ATC no crea `PARTY`, tampoco la del interesado (P-037).
+- **Sin tablas de identidad, roles, permisos ni sesiones** (C-11): no hay `PORTAL_SESSION`, ni maestro local de usuarios, roles, áreas o líderes, ni tablas de códigos de un solo uso. Quién es el usuario y sus roles salen del token de Control de acceso (DT-03, DT-04, DT-05).
+- **`MAE_AREA` es solo la cola de atención del ticket** (C-07): no es la estructura organizacional ni guarda líderes. Su correspondencia con el área organizacional está pendiente (P-036; `registro-de-tablas.md` §7).
+- **Colaboradores en las bitácoras.** Las columnas `*PartyID` que guardan a un colaborador (`CreatedByPartyID`, `CurrentOwnerPartyID`, `ChangedByPartyID`, `AssignedToPartyID`, `AssignedByPartyID`, `AgentPartyID`, `AlertedPartyID`, `ResponderPartyID`, `ClosedByPartyID`) son FK a `PARTY`. El token trae `user_account_id` y no `PartyID`: de dónde sale la Party es la pregunta P-033.
+- **Cambios al v7 propuestos.** Lo que el v7 no trae y ATC necesita (outbox, `SVC_AI_SUGGESTION_LOG`, flujo, subtipo y versión, pausas del SLA, `shedlock` y los demás) se presenta a Gobierno de Datos como **cambio al v7 propuesto**, con su historia y su ADR (`registro-de-tablas.md` §3).
 
 ## Resumen del fragmento SERVICE (v7)
 
@@ -26,19 +35,19 @@ Va en `docs/datos/`. **Revisión del 20-oct-2026: la estructura se rehízo desde
 
 | Entidad | Clase | Descripción (v7) | Atributos (clave + no clave) | ID en el Excel | Firmada (RNF-AUD-004) | Historias | Dueño de dato |
 |---|---|---|---|---|---|---|---|
-| `MAE_AREA` | Catálogo | Áreas internas: ATC, Cobranza, Legal, Postventa, TI, Administración (códigos del Excel: ATC, COBRANZA, LEGAL, POSTVENTA, TI, ADMINISTRACION). | 8 (1 + 7) | ENT-SVC-007 | — | HU-007 | POR ASIGNAR |
-| `MAE_TICKET_TYPE` | Catálogo | Tipo de ticket: solicitud, consulta, visita técnica, queja y reclamo; la marca `RequiresComplaintBook` dice cuáles exigen asiento en el Libro (Excel). | 9 (1 + 8) | ENT-SVC-005 | — | HU-001 | POR ASIGNAR |
-| `MAE_TICKET_PRIORITY` | Catálogo | Prioridad: baja, media, alta, urgente (códigos del Excel: LOW, MEDIUM, HIGH, URGENT). | 8 (1 + 7) | ENT-SVC-006 | — | HU-001 | POR ASIGNAR |
-| `MAE_SLA_POLICY` | Catálogo | Tiempo máximo de primera respuesta y resolución por tipo y prioridad. La base de tiempo es un valor de lista (`TimeBasis`). | 15 (5 + 10) | ENT-SVC-008 | — | HU-003 | POR ASIGNAR |
-| `SVC_TICKET` | Entidad | Ticket de atención: solicitud o reclamo. El SLA se congela al abrirlo (`SLAPolicyID`). | 35 (17 + 18) | ENT-SVC-001 | — (el Excel trae su receta de hash) | HU-001, 002, 004 | POR ASIGNAR |
-| `SVC_TICKET_STATUS_LOG` | Bitácora | Historial de cambios de estado del ticket (una fila por cambio). | 10 (5 + 5) | ENT-SVC-002 | Sí | HU-004 | POR ASIGNAR |
-| `SVC_TICKET_ASSIGNMENT_LOG` | Bitácora | Historial auditable de cada derivación entre áreas. | 12 (7 + 5) | ENT-SVC-003 | Sí | HU-007, HU-008 | POR ASIGNAR |
-| `SVC_TICKET_INTERACTION` | Entidad | Cada interacción dentro de un ticket. | 14 (6 + 8) | ENT-SVC-004 | — | HU-005 | POR ASIGNAR |
-| `SVC_SLA_BREACH_ALERT` | Entidad | Alerta por incumplimiento de SLA. | 14 (7 + 7) | ENT-SVC-009 | Sí | HU-010 | POR ASIGNAR |
-| `SVC_COMPLAINT_BOOK_ENTRY` | Entidad | Extensión 1:1 del ticket que es queja o reclamo formal (Ley 29571). 15 días hábiles de respuesta, prorrogables una vez por 15 más (Ley 31435). | 33 (11 + 22) | ENT-SVC-010 | — (la carta entra al hash, RN-SVC-010) | HU-012 a 015 | POR ASIGNAR |
-| `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG` | Bitácora | Historial de cambios de estado del asiento del Libro de Reclamaciones. | 10 (5 + 5) | ENT-SVC-011 | Sí | HU-012 a 015 | POR ASIGNAR |
-| `SVC_COMPLAINT_APPEAL` | Entidad | Segunda instancia interna o intervención de INDECOPI. | 18 (6 + 12) | ENT-SVC-012 | — | HU-016 | POR ASIGNAR |
-| `SVC_COMPLAINT_APPEAL_STATUS_LOG` | Bitácora | Historial de cambios de estado de la apelación. | 10 (5 + 5) | ENT-SVC-013 | Sí | HU-016 | POR ASIGNAR |
+| `MAE_AREA` | Catálogo | Áreas internas: ATC, Cobranza, Legal, Postventa, TI, Administración (códigos del Excel: ATC, COBRANZA, LEGAL, POSTVENTA, TI, ADMINISTRACION). En ATC es solo la **cola de atención** del ticket; no guarda líderes (C-07). | 8 (1 + 7) | ENT-SVC-007 | — | HU-007 | Gerencia ATC (propuesta) |
+| `MAE_TICKET_TYPE` | Catálogo | Tipo de ticket: solicitud, consulta, visita técnica, queja y reclamo; la marca `RequiresComplaintBook` dice cuáles exigen asiento en el Libro (Excel). | 9 (1 + 8) | ENT-SVC-005 | — | HU-001 | Gerencia ATC (propuesta) |
+| `MAE_TICKET_PRIORITY` | Catálogo | Prioridad: baja, media, alta, urgente (códigos del Excel: LOW, MEDIUM, HIGH, URGENT). | 8 (1 + 7) | ENT-SVC-006 | — | HU-001 | Gerencia ATC (propuesta) |
+| `MAE_SLA_POLICY` | Catálogo | Tiempo máximo de primera respuesta y resolución por tipo y prioridad. La base de tiempo es un valor de lista (`TimeBasis`). | 15 (5 + 10) | ENT-SVC-008 | — | HU-003 | Gerencia ATC (propuesta) |
+| `SVC_TICKET` | Entidad | Ticket de atención: solicitud o reclamo. El SLA se congela al abrirlo (`SLAPolicyID`). | 35 (17 + 18) | ENT-SVC-001 | — (el Excel trae su receta de hash) | HU-001, 002, 004 | Gerencia ATC (propuesta) |
+| `SVC_TICKET_STATUS_LOG` | Bitácora | Historial de cambios de estado del ticket (una fila por cambio). | 10 (5 + 5) | ENT-SVC-002 | Sí | HU-004 | Gerencia ATC (propuesta) |
+| `SVC_TICKET_ASSIGNMENT_LOG` | Bitácora | Historial auditable de cada derivación entre áreas. | 12 (7 + 5) | ENT-SVC-003 | Sí | HU-007, HU-008 | Gerencia ATC (propuesta) |
+| `SVC_TICKET_INTERACTION` | Entidad | Cada interacción dentro de un ticket. | 14 (6 + 8) | ENT-SVC-004 | — | HU-005 | Gerencia ATC (propuesta) |
+| `SVC_SLA_BREACH_ALERT` | Entidad | Alerta por incumplimiento de SLA. | 14 (7 + 7) | ENT-SVC-009 | Sí | HU-010 | Gerencia ATC (propuesta) |
+| `SVC_COMPLAINT_BOOK_ENTRY` | Entidad | Extensión 1:1 del ticket que es queja o reclamo formal (Ley 29571). 15 días hábiles de respuesta, prorrogables una vez por 15 más (Ley 31435). | 33 (11 + 22) | ENT-SVC-010 | — (la carta entra al hash, RN-SVC-010) | HU-012 a 015 | Gerencia ATC con Gerencia Legal (propuesta) |
+| `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG` | Bitácora | Historial de cambios de estado del asiento del Libro de Reclamaciones. | 10 (5 + 5) | ENT-SVC-011 | Sí | HU-012 a 015 | Gerencia ATC con Gerencia Legal (propuesta) |
+| `SVC_COMPLAINT_APPEAL` | Entidad | Segunda instancia interna o intervención de INDECOPI. | 18 (6 + 12) | ENT-SVC-012 | — | HU-016 | Gerencia ATC con Gerencia Legal (propuesta) |
+| `SVC_COMPLAINT_APPEAL_STATUS_LOG` | Bitácora | Historial de cambios de estado de la apelación. | 10 (5 + 5) | ENT-SVC-013 | Sí | HU-016 | Gerencia ATC con Gerencia Legal (propuesta) |
 
 ## Claves y relaciones por entidad
 
@@ -46,7 +55,7 @@ Los nombres de columna son los del Anexo A del v7. Convención: PK `<Entidad>ID`
 
 ### `MAE_AREA`
 
-Áreas internas: ATC, Cobranza, Legal, Postventa, TI, Administración.
+Áreas internas: ATC, Cobranza, Legal, Postventa, TI, Administración. En ATC es la **cola de atención** a la que va el ticket (`SVC_TICKET.CurrentAreaID`, `SVC_TICKET_ASSIGNMENT_LOG.AreaID`); no es la estructura organizacional y no guarda líderes ni personas (C-07). El líder de un área se consulta a Control de acceso (P-035, P-036).
 
 | Columna | Rol | Referencia | Tipo |
 |---|---|---|---|
@@ -245,7 +254,7 @@ En todas las tablas el v7 añade las columnas de auditoría `CreatedDate`, `Upda
 
 ## Qué pasó con las entidades del PLT-05 y del Excel
 
-5 entidades del PLT-05 no tienen tabla en el v7 y 2 tienen candidata por confirmar. Las demás existen. **No se crean tablas propias fuera del v7**: lo que no existe va como propuesta al arquitecto y a Gobierno de Datos.
+5 entidades del PLT-05 no tienen tabla en el v7 y 2 tienen candidata por confirmar. Las demás existen. **No se crean tablas fuera del v7 sin aprobar**: lo que no existe va como **cambio al v7 propuesto** a Gobierno de Datos (`registro-de-tablas.md` §3).
 
 | Entidad (PLT-05 y Excel) | ID en el Excel | Equivalente en el v7 | Fragmento | Situación |
 |---|---|---|---|---|
@@ -268,19 +277,19 @@ En todas las tablas el v7 añade las columnas de auditoría `CreatedDate`, `Upda
 | `GOV_INTEGRITY_EXCEPTION` | ENT-GOV-001 | `GOV_INTEGRITY_EXCEPTION` | GOVERNANCE | Existe en otro fragmento |
 | `GOV_DOCUMENT_REPOSITORY` | ENT-GOV-004 | `GOV_DOCUMENT_REPOSITORY` | GOVERNANCE | Existe en otro fragmento (espejo de documentos probatorios con checksum y versión) |
 | `SVY_SURVEY_RESPONSE` | ENT-SVY-001 | `SVY_SURVEY_RESPONSE` | PERFORMANCE-MEASUREMENT | Existe en otro fragmento |
-| `SVC_WORKFLOW_DEFINITION` | ENT-SVC-014 | — | — | Sin equivalente en el v7: propuesta a G3 / Gobierno de Datos (ADR-008) |
-| `SVC_WORKFLOW_ACTIVITY` | — | — | — | Sin equivalente en el v7: propuesta (actividades de cada versión del flujo, ADR-008) |
-| `MAE_TICKET_SUBTYPE` | — | — | — | Sin equivalente en el v7: propuesta (catálogo de subtipos por tipo, ADR-008) |
-| `SVC_TICKET_SLA_PAUSE` | — | — | — | Sin equivalente en el v7: propuesta (pausas del SLA, ADR-008) |
-| `SVC_KNOWLEDGE_ARTICLE` | ENT-SVC-015 | — | — | Sin equivalente en el v7 (KNOWLEDGE-BASE trae legal, taxonomía y Horus, no guías de solución): propuesta |
-| `SVC_AI_SUGGESTION_LOG` | ENT-SVC-016 | — | — | Sin equivalente en el v7: propuesta |
-| `SVC_SEARCH_INDEX` | ENT-SVC-017 | — | — | Sin equivalente en el v7: propuesta (el índice es de lectura, ADR-012) |
+| `SVC_WORKFLOW_DEFINITION` | ENT-SVC-014 | — | — | Sin equivalente en el v7: cambio al v7 propuesto (ADR-008) |
+| `SVC_WORKFLOW_ACTIVITY` | — | — | — | Sin equivalente en el v7: cambio al v7 propuesto (actividades de cada versión del flujo, ADR-008) |
+| `MAE_TICKET_SUBTYPE` | — | — | — | Sin equivalente en el v7: cambio al v7 propuesto (catálogo de subtipos por tipo, ADR-008) |
+| `SVC_TICKET_SLA_PAUSE` | — | — | — | Sin equivalente en el v7: cambio al v7 propuesto (pausas del SLA, ADR-008) |
+| `SVC_KNOWLEDGE_ARTICLE` | ENT-SVC-015 | — | — | Sin equivalente en el v7 (KNOWLEDGE-BASE trae legal, taxonomía y Horus, no guías de solución): cambio al v7 propuesto |
+| `SVC_AI_SUGGESTION_LOG` | ENT-SVC-016 | — | — | Sin equivalente en el v7: cambio al v7 propuesto (ADR-007) |
+| `SVC_SEARCH_INDEX` | ENT-SVC-017 | — | — | Sin equivalente en el v7: cambio al v7 propuesto (el índice es de lectura, ADR-012) |
 | `SVC_CONTRACT_DEFAULT_ALERT` | ENT-SVC-018 | PAY_COLLECTION_ACTIVITY (candidata) | PAYMENT | Candidata por confirmar: es la bitácora de gestiones de cobranza (llamada, carta, visita); las alertas de morosidad no tienen tabla propia |
-| `SVC_SIMPLE_FORM_DEFINITION` | ENT-SVC-019 | — | — | Sin equivalente en el v7: propuesta |
+| `SVC_SIMPLE_FORM_DEFINITION` | ENT-SVC-019 | — | — | Sin equivalente en el v7: cambio al v7 propuesto |
 | `SVC_EVENT_BUS_BOOKING` | ENT-SVC-020 | EVT_ATTENDEE + EVT_TRANSPORT (candidatas) | EVENT | Candidata por confirmar: asistentes y manifiesto de vehículo del Entrega Fest; la reserva de cupo no tiene tabla propia |
 | `PORTAL_SESSION` | — (PLT-05 §3, «por modelar») | — | — | **Se retira** (DT-04, ADR-011): ATC no abre sesiones; `IDN_USER_SESSION` (IDENTITY-ACCESS) es de Control de acceso |
-| `OUTBOX_EVENT` | — (no está en el PLT-05 ni en el Excel; lo pide el ADR-013) | `INTG_OUTBOX_EVENT` | INTEGRATION-HUB | Existe en otro fragmento (outbox genérico por intento de envío). Se usa solo si cumple las cinco condiciones del ADR-013; si no, tabla propia `SVC_OUTBOX_EVENT` como cambio al v7 |
-| `shedlock` | — (DT-08, ADR-005) | — | — | Sin equivalente en el v7: tabla de ShedLock, nueva (P-031) |
+| `OUTBOX_EVENT` | — (no está en el PLT-05 ni en el Excel; lo pide el ADR-013) | `INTG_OUTBOX_EVENT` | INTEGRATION-HUB | Existe en otro fragmento (outbox genérico por intento de envío), pero nadie la crea todavía (dueño de migración: P-043). Se usa solo si cumple las condiciones del ADR-013; si no, tabla propia `SVC_OUTBOX_EVENT` como cambio al v7 propuesto |
+| `shedlock` | — (DT-08, ADR-005) | — | — | Sin equivalente en el v7: tabla técnica de ShedLock, cambio al v7 propuesto (P-031) |
 
 ## Temas que el PLT-05 dejaba «por modelar» y dónde caen en el v7
 
@@ -289,7 +298,7 @@ En todas las tablas el v7 añade las columnas de auditoría `CreatedDate`, `Upda
 | Casos sensibles y Mesa SGD (Código Único, cargos, matriz de riesgo, escalamiento, vinculación) | HU-020 a 025 | Sin equivalente en el v7 (no hay «SGD» ni «Código Único»; `IDN_SENSITIVE_ACCESS_*` es acceso a datos, no casos). El PLT-04 v1.3 §6.5 ya los esboza: ver «Esbozos del PO por modelar» |
 | EntregaFest: contención en vivo | HU-037 a 039 | Fragmento EVENT (`EVT_EVENT`, `EVT_INVITATION`, `EVT_ATTENDEE`, `EVT_TRANSPORT`, `EVT_MEAL_ORDER`) |
 | Sincronización con Legal | HU-040, HU-041 | Fragmento KNOWLEDGE-BASE (`LGL_LEGAL_CASE`, `LGL_LEGAL_CASE_DEADLINE`, `LGL_LEGAL_CASE_STATUS_LOG`) |
-| Notificaciones al gestor | HU-055 | Candidata `IDN_SYSTEM_TASK` (bandeja única de tareas, notificaciones y aprobaciones) o `NEX_NOTIFICATION_LOG`; por confirmar |
+| Notificaciones al gestor | HU-055 | El correo sale por evento (ADR-013). `IDN_SYSTEM_TASK` es del fragmento 01 de Control de acceso y ATC no la escribe (C-11). La constancia del envío: candidata `NEX_NOTIFICATION_LOG` (fragmento 12, que nadie crea en E1; P-043) o cambio al v7 propuesto |
 | Maestro de usuarios, roles, áreas y líderes (identidad, DEP-02) | ADR-009 | **Se elimina (DT-03):** la identidad la administra Control de acceso (fragmento IDENTITY-ACCESS: `IDN_USER_ACCOUNT`, `IDN_USER_ROLE`, `MAE_SYSTEM_ROLE`); ATC no crea tablas de identidad (C-11). El PO actualiza el ADR-09 y DEP-02 (P-027) |
 | Garantías de postventa | HU-033 a 036 | Fragmento CONTRACT (`CONTRACT_WARRANTY_CLAIM`, `MAE_WARRANTY_COVERAGE_PERIOD`, `CONTRACT_UNIT_HANDOVER`) |
 | Encuesta post-atención y Torre de Control | HU-019, HU-030 a 032 | Fragmento PERFORMANCE-MEASUREMENT (`SVY_SURVEY_CAMPAIGN`, `SVY_SURVEY_QUESTION`, `SVY_SURVEY_RESPONSE`, `KPI_SNAPSHOT`) |
@@ -321,7 +330,7 @@ Rama `feature/AYB-0001-propuesta-po-v1-3` de `tyc-mockup` (20-oct-2026). **Son p
 | 9 tipos de ticket: pedido simple, consulta de cuenta, visita técnica, queja, reclamo, garantía postventa, resolución de contrato, ingreso a proyecto y reserva de bus | `MAE_TICKET_TYPE` describe solicitud, consulta, visita técnica, queja y reclamo | Sembrar los que faltan; el comité decide si se hereda el catálogo de la plataforma actual |
 | Áreas: las del mockup más 7 de la plataforma actual (Back Office, Legal Formalización, Legal Corporativo, Archivos, Proyectos, Marketing y Soporte Web), sin gestores asignados | `MAE_AREA` describe 6: ATC, Cobranza, Legal, Postventa, TI y Administración | Decidir si se siembran |
 | El SLA se pausa en «pendiente del cliente» (lo fija el PO: al responder el cliente, «el SLA se reanuda», HU-066 CA-01) y, según el mockup, la actividad en curso también; al responder, los vencimientos se corren lo que duró la espera. Igual con la suspensión del caso de morosidad por un reclamo abierto. Cada pausa guarda desde, hasta, horas y motivo (HU-066 CA-01, HU-056 CA-03) | Sin tabla de pausas: el v7 solo congela la política (`SLAPolicyID`) y registra `SVC_SLA_BREACH_ALERT` | Tabla o columnas nuevas: propuesta a G3 y Gobierno de Datos |
-| Acceso a Mi Portal con DNI y código de 6 dígitos que vence a los 5 minutos y admite 3 intentos (lo fija el PO, PLT-03 FT-24), enviado al correo o al celular (HU-064 CA-01; enviarlo a los dos es propuesta del mockup); abrir un ticket ajeno se rechaza y queda en la bitácora (HU-065 CA-04) | Candidatas `PARTY_CONTACT_VERIFICATION_TOKEN` (OTP o enlace de verificación de teléfono o correo) e `IDN_USER_SESSION` (sesión de autenticación, DAC) | Confirmar cuál cubre al cliente de Mi Portal |
+| Acceso a Mi Portal con DNI y código de 6 dígitos que vence a los 5 minutos y admite 3 intentos (lo fija el PO, PLT-03 FT-24), enviado al correo o al celular (HU-064 CA-01; enviarlo a los dos es propuesta del mockup); abrir un ticket ajeno se rechaza y queda en la bitácora (HU-065 CA-04) | Sin tabla en ATC | **Se retira (DT-04):** el login de clientes, la verificación y la sesión son de Control de acceso; ATC no guarda códigos ni sesiones (C-11). El PO ajusta HU-064 CA-01 (P-027). El rechazo del ticket ajeno sigue en la bitácora de ATC, con el cliente del token (P-033) |
 | Cierre automático sin confirmación del cliente a los días hábiles configurados (lo fija el PO, HU-066 CA-04); que sean 5, configurables por el administrador funcional, es propuesta del mockup | Sin tabla de configuración | Dónde se guarda el parámetro |
 | Encuesta con CSAT (1 a 5) y CES (1 a 7), sin la pregunta NPS 0–10; informes diario (cierre a las 18:00) y quincenal generados al cierre (HU-019, HU-031) | Encuesta: calza con `SVY_SURVEY_RESPONSE`. Informes: candidatas `KPI_SNAPSHOT` y `SVY_METRIC_SNAPSHOT` | Confirmar con DEP-10 |
 | Adjuntos de hasta 10 MB (lo fija el PO: HU-064 CA-05 y el requisito de fotos de FT-10); inspección de garantía con informe y de 1 a 5 fotos o documentos, formatos JPG, PNG o PDF, y hasta 3 en Mi Portal (propuesta del mockup) (HU-035, HU-064 CA-05) | Candidata `GOV_DOCUMENT_REPOSITORY` (catálogo de documentos con versión, checksum y retención) | Confirmar y fijar los límites |
@@ -338,7 +347,7 @@ Sirve para llenar «Entidades que LEE / ESCRIBE» de las historias. Los nombres 
 | HU-004, 011 | `SVC_TICKET`, `MAE_GENERIC_LIST_VALUE` | `SVC_TICKET`, `SVC_TICKET_STATUS_LOG` | Cambio automático sin autor: nulabilidad de `ChangedByPartyID` por confirmar |
 | HU-005, 042 | `SVC_TICKET`, `MAE_CHANNEL` | `SVC_TICKET_INTERACTION`; adjuntos en `GOV_DOCUMENT_REPOSITORY` (candidata) |  |
 | HU-006 | `SVC_TICKET` | `SVC_TICKET` (hitos) | Columnas de hitos por confirmar |
-| HU-007, 008, 009, 044, 045, 046 | `SVC_TICKET`, `MAE_AREA`, `IDN_USER_ACCOUNT` (candidata) | `SVC_TICKET_ASSIGNMENT_LOG`, `SVC_TICKET` (`CurrentAreaID`, `CurrentOwnerPartyID`) | Rayo de prioridad y carga: sin columnas conocidas |
+| HU-007, 008, 009, 044, 045, 046 | `SVC_TICKET`, `MAE_AREA` (cola); el usuario y sus roles, del token (sin leer tablas de identidad, C-11) | `SVC_TICKET_ASSIGNMENT_LOG`, `SVC_TICKET` (`CurrentAreaID`, `CurrentOwnerPartyID`) | Rayo de prioridad y carga: sin columnas conocidas. Gestores que cesan, disponibilidad y líder: API de Control de acceso que aún no existe (P-035) |
 | HU-012, 013, 014, 015 | `SVC_TICKET`, `MAE_TIME`, `MAE_HOLIDAY`, `MAE_CURRENCY` | `SVC_COMPLAINT_BOOK_ENTRY`, `SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG`, `GOV_INTEGRITY_EXCEPTION`; carta y cargo en `GOV_DOCUMENT_REPOSITORY` (candidata) | Historial del plazo legal sin tabla propia |
 | HU-016 | `SVC_COMPLAINT_BOOK_ENTRY` | `SVC_COMPLAINT_APPEAL`, `SVC_COMPLAINT_APPEAL_STATUS_LOG` |  |
 | HU-019, 030, 031, 032 | `SVC_TICKET`, `SVY_SURVEY_RESPONSE`, `PARTY` | `SVY_SURVEY_RESPONSE`; informes: `KPI_SNAPSHOT` o `SVY_METRIC_SNAPSHOT` (candidatas) |  |
@@ -347,10 +356,10 @@ Sirve para llenar «Entidades que LEE / ESCRIBE» de las historias. Los nombres 
 | HU-037, 038, 039, 059, 060 | `EVT_EVENT`, `EVT_INVITATION` (candidatas) | `EVT_ATTENDEE`, `EVT_TRANSPORT` (candidatas); `SVC_TICKET` | Formularios simples sin tabla |
 | HU-040, 041 | `SVC_TICKET`, `LGL_LEGAL_CASE` (candidata) | `SVC_TICKET_ASSIGNMENT_LOG`; sincronización con Legal | Exposición económica: sin columna conocida |
 | HU-043, 047, 048, 052, 053 | `MAE_AREA`, `MAE_SLA_POLICY`, `SVC_TICKET` | — | Flujos, guías, sugerencias de IA, motor de consultas e índice: sin tablas en el v7 |
-| HU-049, 050, 051 | `PARTY`, `PARTY_SENSITIVE_DATA` (DAC), `CONTRACT`, `AST_UNIT`, `PAY_INSTALLMENT` y `PAY_ACCOUNT_STATEMENT` (candidatas) | `SVC_TICKET_INTERACTION` (rastro de la consulta, sin datos personales) | Fuente viva del cliente por confirmar (P-010) |
-| HU-054, 055 | `SVC_TICKET`, `SVC_TICKET_ASSIGNMENT_LOG` | `IDN_SYSTEM_TASK` o `NEX_NOTIFICATION_LOG` (candidatas) | El correo no lleva datos del cliente |
+| HU-049, 050, 051 | `PARTY` (referencia; el dato personal llega enmascarado del dueño del fragmento 3, D-119), `CONTRACT`, `AST_UNIT`; cobranza por API (DEP-08) | `SVC_TICKET_INTERACTION` (rastro de la consulta, sin datos personales) | `PARTY` es la fuente viva (DT-06). Cómo se lee el dato de la persona y el interesado sin `PARTY`: P-037 |
+| HU-054, 055 | `SVC_TICKET`, `SVC_TICKET_ASSIGNMENT_LOG` | Constancia del correo: candidata `NEX_NOTIFICATION_LOG` o cambio al v7 propuesto (no `IDN_SYSTEM_TASK`, que es de Control de acceso) | El correo no lleva datos del cliente. El líder del gestor: P-035, P-036 |
 | HU-056, 057, 058 | `PAY_COLLECTION_CASE`, `PAY_INSTALLMENT` (candidatas), `SVC_COMPLAINT_BOOK_ENTRY` | `SVC_TICKET`; alertas y cartas sin tabla propia | La suspensión por reclamo frena el flujo: sin columnas |
-| HU-064, 065, 066 | `SVC_TICKET`, `SVC_TICKET_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG` | `SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_TICKET_STATUS_LOG`; código de acceso y sesión (candidatas) | Sin datos de otros clientes ni notas internas (RN-SVC-044) |
+| HU-064, 065, 066 | `SVC_TICKET`, `SVC_TICKET_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG` | `SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_TICKET_STATUS_LOG` | Sin datos de otros clientes ni notas internas (RN-SVC-044). Sin código de acceso ni sesión en ATC (DT-04). El `PartyID` del cliente no viaja en el token (P-033) |
 | HU-067 | `SVC_TICKET`, `SVC_TICKET_STATUS_LOG`, `SVC_TICKET_ASSIGNMENT_LOG`, `SVC_SLA_BREACH_ALERT`, `MAE_AREA` | — | Solo lectura (vistas de lectura, ADR-012) |
 
 ## Atributos, códigos y valores que nombran las historias de Nexora
@@ -367,7 +376,7 @@ Contraste del 20-oct-2026 con las 62 historias publicadas en PJ-06 (carpeta `his
 | `SVC_TICKET` | `FirstRespondedDateTime` | Hito de primera respuesta visible al cliente | HU-005 CA-01 | Nombre en el Excel y en el PLT-04 §6.5; tipo por confirmar con Drive v7 |
 | `SVC_TICKET` | `FirstResolvedDateTime`, `ResolvedDateTime`, `ClosedDateTime` | Hitos probatorios: la primera resolución se conserva al reabrir; `ResolvedDateTime` refleja el último ciclo; `ClosedDateTime` no se modifica salvo que se reabra | HU-006 CA-01, CA-02 | Nombres en el Excel (RF-SVC-006) y en el PLT-04 §6.5; tipos por confirmar con Drive v7 |
 | `SVC_TICKET` | `ReopenedResolutionDueDateTime`, `ReopenCount` | Nuevo compromiso al reabrir sin reescribir el original; contador de reaperturas | HU-011 CA-01, CA-02 | Nombres en el Excel (RF-SVC-011, RN-SVC-007); tipos por confirmar con Drive v7 |
-| `SVC_TICKET` | Vinculación pendiente del cliente («Interesado») | Ticket creado con datos mínimos cuando el cliente no existe en SIGDA/TAXON o la fuente está caída; se vincula después y queda en la bitácora | HU-051 CA-01 a 03 | Sin columna en el v7: el PLT-04 §6.5 dibuja `VinculaciónPendiente` en `SVC_TICKET`; la clave foránea `PartyID` → `PARTY` es una referencia a la fuente viva (DT-06, resuelto en lo técnico; el PO confirma, C-1). El interesado se registra con una `PARTY` no verificada (ADR-003) |
+| `SVC_TICKET` | Vinculación pendiente del cliente («Interesado») | Ticket creado con datos mínimos cuando el cliente no existe en SIGDA/TAXON o la fuente está caída; se vincula después y queda en la bitácora | HU-051 CA-01 a 03 | Sin columna en el v7: el PLT-04 §6.5 dibuja `VinculaciónPendiente` en `SVC_TICKET`; la clave foránea `PartyID` → `PARTY` es una referencia a la fuente viva (DT-06). ATC no crea la `PARTY` del interesado: el ticket queda con la vinculación pendiente hasta que exista (R29 y A26 de PJ-05; P-037) |
 | `SVC_TICKET` | Rayo de prioridad (marca, motivo, quién) | Aparece primero en la bandeja; solo el líder lo marca; tope del 10 % de la bandeja del área | HU-045 CA-01 a 03 | Sin columnas en el v7: el PLT-04 §6.5 dibuja «Rayo · Motivo» en `SVC_TICKET` |
 | `SVC_TICKET` | Señal de conflicto (carta notarial) | Bloquea la resolución en Eje 1/2 (gate no compensable); un supervisor puede retirarla con justificación | HU-026 CA-01 a 03 | Sin columna en el v7: el PLT-04 §6.5 dibuja `ConflictFlag` y «Eje actual» en `SVC_TICKET` |
 | `SVC_TICKET_STATUS_LOG` | Marca automática en lugar de autor | El cambio hecho por el sistema se registra con marca automática | HU-004 CA-03 | Nulabilidad de `ChangedByPartyID`: Por confirmar con los archivos de Drive del v7 |
@@ -440,7 +449,7 @@ El PLT-04 dibuja estas entidades en los diagramas entidad-relación de las histo
 | `EMOTIONAL_NOTE` | `NoteID`, `TicketID`, texto sin juicios de valor | HU-028 | Sin tabla |
 | `SENSITIVE_EVENT_CASE` y `EVENT` | `CaseID`, `EventID`, riesgo y frases, etiqueta y si se derivó; el evento con proyecto, etapa y fecha | HU-037 a 039 | Candidatas del fragmento EVENT |
 | `LEGAL_SYNC` | `SyncID`, `TicketID`, `LegalCaseID`, estado y exposición | HU-040, 041 | Candidata `LGL_LEGAL_CASE` |
-| `NOTIFICATION_LOG` | `NotifID`, asignación (`LogID`), para, con copia, enviado | HU-055 | Candidatas `IDN_SYSTEM_TASK` o `NEX_NOTIFICATION_LOG` |
+| `NOTIFICATION_LOG` | `NotifID`, asignación (`LogID`), para, con copia, enviado | HU-055 | Candidata `NEX_NOTIFICATION_LOG` (nadie la crea en E1; P-043) o cambio al v7 propuesto. No `IDN_SYSTEM_TASK` (fragmento 01, de Control de acceso) |
 | `PORTAL_SESSION` | `SessionID`, DNI, OTP, expiración | HU-064 a 066 | **Se retira** (DT-04): el login de clientes es de Control de acceso |
 | `SVC_WORKFLOW_DEFINITION` | `WorkflowID`, tipo, subtipo, área, pasos, SLA y versión; el ticket guarda `WorkflowID` | HU-043, 067 | Sin tabla (ENT-SVC-014) |
 
@@ -452,7 +461,7 @@ No se resuelven en este diccionario.
 
 | # | Conflicto | Fuentes | Decide |
 |---|---|---|---|
-| C-1 | `SVC_TICKET.PartyID` es clave foránea a `PARTY` del v7 (también `ContractID` y `UnitID`). El PO fija SIGDA/TAXON como única fuente del cliente, con 0 registros paralelos, y admite tickets de «Interesado» sin cliente vinculado. Si `PARTY` es una réplica, es un registro paralelo; una clave obligatoria impide el ticket del «Interesado» | ADR-03 del PO; RN-SVC-026; RNF-INT-007; DEP-01; HU-051; P-010 | **Decidido por DT-06 (22-oct):** `PARTY` es la fuente viva. Falta que el PO confirme la regla y reescriba el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01, y que Gobierno de Datos lo confirme (P-021) |
+| C-1 | `SVC_TICKET.PartyID` es clave foránea a `PARTY` del v7 (también `ContractID` y `UnitID`). El PO fija SIGDA/TAXON como única fuente del cliente, con 0 registros paralelos, y admite tickets de «Interesado» sin cliente vinculado. Si `PARTY` es una réplica, es un registro paralelo; una clave obligatoria impide el ticket del «Interesado» | ADR-03 del PO; RN-SVC-026; RNF-INT-007; DEP-01; HU-051; P-010 | **Decidido por DT-06 (22-oct):** `PARTY` es la fuente viva (P-021 cerrada). Falta que el PO reescriba el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 (P-027) y que Gobierno de Datos lo confirme en el acta. El ticket del «Interesado»: P-037 |
 | C-2 | El v7 trae la identidad en IDENTITY-ACCESS y deja de lado un maestro local; el PO fija usuarios, roles y líderes locales en la Etapa 1 | ADR-09 del PO; DEP-02 | **Resuelto por DT-03 (22-oct):** la identidad es de Control de acceso; ATC no guarda maestro local. El PO actualiza el ADR-09 y DEP-02 (P-027) |
 | C-3 | Bitácoras firmadas: el Excel pide 5 (estado, asignación, libro, apelación y alertas) y el v7 declara 4 en SERVICE | RNF-AUD-004; v7 | Gobierno de Datos con el líder técnico |
 | C-4 | Motivos de asignación: el PLT-04 usa `REASSIGNMENT_CESE` y `REASSIGNMENT_CARGA`; el Excel, la lista `SVC_ASSIGNMENT_REASON` | HU-008, HU-046; RF-SVC-007 | PO |
@@ -460,14 +469,14 @@ No se resuelven en este diccionario.
 
 ## Datos personales
 
-El v7 declara **0 tablas DAC** en SERVICE: el dato personal vive en `PARTY_SENSITIVE_DATA` (cifrado) y el ticket apunta a `PartyID`. **Propuesta para Gobierno de Datos** (no es una clasificación del v7): el texto libre y los adjuntos de `SVC_TICKET_INTERACTION`, y los campos de reclamo y respuesta de `SVC_COMPLAINT_BOOK_ENTRY`, pueden traer datos personales aunque la tabla no sea DAC; confirmar si deben tratarse como tales.
+El v7 declara **0 tablas DAC** en SERVICE: el dato personal vive en `PARTY_SENSITIVE_DATA` (cifrado) y el ticket apunta a `PartyID`. ATC no lee las tablas de personas: el dueño del fragmento 3 entrega el dato enmascarado (D-119 de PJ-05; P-037). **Propuesta para Gobierno de Datos** (no es una clasificación del v7), tabla por tabla en `registro-de-tablas.md` §2 (H-02 del acta): el texto libre y los adjuntos de `SVC_TICKET_INTERACTION`, y la hoja del Libro en `SVC_COMPLAINT_BOOK_ENTRY` (excepción de ADR-003 que valida Legal), se tratan como dato personal aunque la tabla no sea DAC; las bitácoras no llevan datos personales (RN-SVC-012).
 
 ## Reglas de nombres y tipos (del v7)
 
 - Prefijo `MAE_` para catálogos transversales y prefijo de fragmento para lo propio (`SVC_` en SERVICE). Una sola instancia PostgreSQL.
 - Una migración Flyway por cambio (skill `aybar-modelo-a-flyway`); **nunca se renombra ni se elimina una columna existente** (se marca DEPRECADO).
 - Historial: tabla `_STATUS_LOG` con una fila por cambio. Importes cifrados: sufijo `Encrypted` más un companion `*Hash`.
-- Multiempresa: las consultas se filtran por `CompanyID` / claim `companyId`.
+- Multiempresa: las consultas se filtran por `CompanyID` según el tipo de rol del token (C-08): con rol por empresa, por la empresa activa (`companyId`); con rol global de ATC, el token llega sin `companyId` (D-178 de PJ-05) y el alcance lo resuelve P-034. En Mi Portal, por el cliente del token (P-033).
 
 ## Pendiente de los archivos fuente de Drive
 
@@ -476,9 +485,18 @@ El v7 declara **0 tablas DAC** en SERVICE: el dato personal vive en `PARTY_SENSI
 - Claves de las 11 entidades de otros fragmentos que SERVICE referencia (hoy solo se conoce el nombre de la FK en SERVICE).
 - Conciliar las 4 entidades firmadas del v7 con las 5 bitácoras de RNF-AUD-004 y escribir la receta de `IntegrityHash` de cada una (el Excel solo trae la del ticket).
 - Tablas o columnas para lo que el mockup de la Etapa 1 decide y el v7 no tiene: definición de flujo con actividades, subtipo, pausas del SLA y parámetro de cierre automático (propuesta a G3 y Gobierno de Datos).
-- Qué escribe ATC en tablas de otros fragmentos (`CONTRACT_WARRANTY_CLAIM`, `PAY_*`, `EVT_*`) y quién las mantiene.
+- Qué escribe ATC en tablas de otros fragmentos y quién las migra: propuesta en `registro-de-tablas.md` §5 y §6; lo acuerda Gobierno de Datos (P-014, P-043).
 - Valores que el Excel no da: la lista de estados del asiento (`ComplaintStatus`), el código de la instancia interna de `AppealLevel`, el ListCode de `ComplaintType`, `AppealLevel` y `TimeBasis`, y los códigos de los 8 estados de cierre de casos sensibles. Las demás listas ya están en el Excel (ver «Listas de valores que ya define el Excel»).
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: IDs del Excel, columnas no clave y códigos de las listas que ya define el Excel, 5 bitácoras firmadas (RNF-AUD-004), los 8 estados de cierre de casos sensibles, esbozos del PO por modelar y conflictos abiertos. Texto adaptado al alcance de la Etapa 1 (se omiten las frases que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-02, DT-03, DT-04 y DT-06 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
+
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías y Brayan Hurtado, con IA | Estructura desde el v7, listas del Excel, esbozos del PO y decisiones del 22-oct (versiones de Nexora hasta la v6) |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Sección «Dónde viven las tablas» (DT-06, C-11, C-07); `MAE_AREA` solo como cola; dueño de dato propuesto; las entidades sin tabla pasan a «cambio al v7 propuesto»; se retiran las candidatas de código y sesión de Mi Portal y las lecturas o escrituras en tablas de identidad (`IDN_USER_ACCOUNT`, `IDN_SYSTEM_TASK`); ATC no crea `PARTY` (P-037); filtro por empresa según C-08; enlace al registro de tablas |
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)

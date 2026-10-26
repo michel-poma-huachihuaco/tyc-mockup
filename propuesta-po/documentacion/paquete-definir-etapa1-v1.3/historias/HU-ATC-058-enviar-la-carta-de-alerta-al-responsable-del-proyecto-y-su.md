@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-22", "EP-ATC-11"]
+relacionados: ["FT-ATC-22", "EP-ATC-11", "HU-ATC-056"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-058 | Debe | 3 h con IA | Dev 4 (Daniel) | 2 | 29-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-056 (RF-SVC-056 es predecesora de RF-SVC-058, PLT-03) · Dependencias externas: DEP-05 (validación legal del texto de la carta al proyecto; PLT-05), DEP-08 (API de Cobranza; PLT-03 y PLT-05), DEP-15 (maestro de responsables de proyecto y supervisores; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: supervisor del responsable del proyecto cuando es una jefatura interna, CA-01 y CA-02; el maestro de proyectos es la DEP-15)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe generar y enviar una carta de alerta al responsable del proyecto del lote, con copia a su supervisor, indicando cliente, deuda, estado del caso y fecha prevista de resolución. Feedback 2.ª reunión · ítem 3
 
@@ -80,3 +86,5 @@ Escenario: CA-03 · Sin responsable (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

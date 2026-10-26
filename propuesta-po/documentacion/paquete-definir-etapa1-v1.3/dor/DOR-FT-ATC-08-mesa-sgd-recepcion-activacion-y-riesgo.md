@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-08 Mesa SGD: recepción, activación y riesgo"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-08", "EP-ATC-04", "HU-ATC-020", "HU-ATC-021", "HU-ATC-022"]
 tags: [dor, plt-05, g4]
 ---
@@ -31,7 +31,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Plazos de lín
 | 3 | Reglas de negocio explícitas | [ ] | FT-ATC-08 sección 4 (3 reglas) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 3 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: sin dependencias externas |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-03 (añadida el 26-oct desde PLT-03/PLT-04/PLT-05) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
 | 9 | Estimada por el equipo | [ ] | PLT-04: 11 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
@@ -40,7 +40,11 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: Plazos de lín
 
 ## 2 Dependencias
 
-Ninguna en los documentos.
+La sección de dependencias del PLT-05 no lista ninguna; las de las historias de esta funcionalidad son:
+
+| ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
+|---|---|---|---|---|---|---|
+| DEP-03 | Decisión de negocio: matriz SLA por tipo y prioridad y plazos de línea de la Mesa SGD (RNF-REN-003) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). En esta funcionalidad: HU-ATC-020 (plazos de línea de la Mesa SGD; PLT-05); HU-ATC-021 (plazos de línea de la Mesa SGD; PLT-05); HU-ATC-022 (plazos de línea de la Mesa SGD; PLT-05) | Interna | EP-ATC-02, EP-ATC-04 | Gerencia ATC · Mesa SGD | 22-oct-2026 | Pendiente |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -86,6 +90,7 @@ Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (Plazos de l
 
 Condiciones pendientes (solo si NO READY):
 - [ ] Plazos de línea SGD (DEP-03) (PLT-05)
+- [ ] DEP-03 matriz SLA y plazos de línea de la Mesa SGD (añadida el 26-oct desde PLT-03/PLT-04/PLT-05)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -100,3 +105,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-03), con la nota de origen, en el criterio 6 y en las condiciones. No se borra texto del PO. — Revisado por: (pendiente)

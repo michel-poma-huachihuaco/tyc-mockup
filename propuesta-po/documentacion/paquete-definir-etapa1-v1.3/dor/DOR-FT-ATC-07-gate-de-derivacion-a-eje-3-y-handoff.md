@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-07 Gate de derivación a Eje 3 y handoff"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-07", "EP-ATC-04", "HU-ATC-026", "HU-ATC-027", "HU-ATC-028"]
 tags: [dor, plt-05, g4]
 ---
@@ -31,7 +31,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 | 3 | Reglas de negocio explícitas | [ ] | FT-ATC-07 sección 4 (3 reglas) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 3 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-01, DEP-08 |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-01, DEP-08; y DEP-16 (añadida el 26-oct desde PLT-03/PLT-04/PLT-05) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
 | 9 | Estimada por el equipo | [ ] | PLT-04: 9 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
@@ -44,6 +44,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-01 · DEP-
 |---|---|---|---|---|---|---|
 | DEP-01 | API de SIGDA/TAXON: consulta de cliente y KYC (única fuente del dato) | Interna | EP-ATC-01, EP-ATC-04, EP-ATC-06, EP-ATC-10 | CDO / Equipo Datos | 21-oct-2026 | Pendiente |
 | DEP-08 | Cobranza: estado de cuenta, historial de pagos y cuotas vencidas por contrato (desfase ≤ 24 h) | Interna | EP-ATC-04, EP-ATC-10, EP-ATC-11 | Cobranza | 21-oct-2026 | Pendiente |
+| DEP-16 | Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-026 (rol de supervisor que retira la señal marcada por error, CA-03); HU-ATC-027 (supervisor del eje destino, CA-03) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · en riesgo: sin fecha comprometida (PJ-05 no la tiene, P-040) |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -88,6 +89,7 @@ Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-01 · D
 
 Condiciones pendientes (solo si NO READY):
 - [ ] DEP-01 · DEP-08 (PLT-05)
+- [ ] DEP-16 Control de acceso disponible en DEV (añadida el 26-oct desde PLT-03/PLT-04/PLT-05); sin fecha comprometida (P-040)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -102,3 +104,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-16), con la nota de origen, en el criterio 6 y en las condiciones. No se borra texto del PO. — Revisado por: (pendiente)

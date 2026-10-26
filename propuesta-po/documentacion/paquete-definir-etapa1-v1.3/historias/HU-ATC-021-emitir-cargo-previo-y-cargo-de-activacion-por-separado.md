@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-08", "EP-ATC-04"]
+relacionados: ["FT-ATC-08", "EP-ATC-04", "HU-ATC-020"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-021 | Debe | 3 h con IA | Dev 2 (Jesús) | 2 | 28-oct-2026 → 29-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-020 (RF-SVC-020 es predecesora de RF-SVC-021, PLT-03) · Dependencias externas: DEP-03 (plazos de línea de la Mesa SGD; PLT-05); el PLT-03 pone «modelo de datos SGD», que no es una DEP
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe emitir el cargo previo de asignación y un cargo de activación separado; el SLA de línea inicia solo con la activación.
 
@@ -77,3 +83,5 @@ Escenario: CA-03 · Limbo (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

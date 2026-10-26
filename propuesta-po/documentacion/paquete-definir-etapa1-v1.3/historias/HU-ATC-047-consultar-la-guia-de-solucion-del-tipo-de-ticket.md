@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-047 | Debería | 4 h con IA | Dev 3 (Michel) | 1 | 27-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03 y PLT-05)
+
+**La necesitan:** HU-ATC-048
+
 **Requerimiento de origen:** El sistema debe mostrar al gestor de tickets una guía de como solucionar cada tipo de ticket (pasos, plantillas de respuesta, documentos requeridos y criterios de cierre) mantenida por el administrador funcional. Feedback presentación · ítem 7
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -79,3 +85,5 @@ Escenario: CA-03 · Tipo sin guía (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

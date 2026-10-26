@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-043 | Debe | 8 h con IA | Dev 3 (Michel) | 1 | 21-oct-2026 → 22-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-16 (Control de acceso, PJ-05: reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08)
+
+**La necesitan:** HU-ATC-044, HU-ATC-064, HU-ATC-067
+
 **Requerimiento de origen:** El sistema debe permitir configurar, sin desarrollo, el flujo de trabajo de cada combinación de tipo y subtipo de ticket por área, con su responsable, sus actividades en orden y el SLA de cada actividad y del flujo completo. Feedback presentación · ítem 6
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -106,3 +112,5 @@ Escenario: CA-08 · Permiso y bitácora (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

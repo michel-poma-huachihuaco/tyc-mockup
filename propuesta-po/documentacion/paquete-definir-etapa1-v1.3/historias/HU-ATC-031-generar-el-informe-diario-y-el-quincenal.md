@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-14", "EP-ATC-07"]
+relacionados: ["FT-ATC-14", "EP-ATC-07", "HU-ATC-030"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-031 | Debería | 4 h con IA | Dev 3 (Michel) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-030 (RF-SVC-030 es predecesora de RF-SVC-031, PLT-03) · Dependencias externas: DEP-10 (KPI Engine y encuestas; PLT-03, PLT-04 y PLT-05)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe generar el informe diario operativo y el informe quincenal analítico.
 
@@ -74,3 +80,5 @@ Escenario: CA-02 · Quincenal
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

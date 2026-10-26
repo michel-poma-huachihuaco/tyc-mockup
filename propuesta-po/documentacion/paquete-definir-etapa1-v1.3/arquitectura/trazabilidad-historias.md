@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Trazabilidad de las historias de Nexora al paquete G3"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
+version: "0.2"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-22"
+fecha: "2026-10-26"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, trazabilidad, g3]
 ---
@@ -33,14 +33,14 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 
 | Historia | Título | Versión | Criterios | Contrato | Datos (v7) | Otros documentos | Falta o por confirmar |
 |---|---|---|---|---|---|---|---|
-| HU-001 | Registrar un ticket tipificado desde cualquier canal | 1.3 | 4 (2 del PO) | `registrarTicket` | `SVC_TICKET` (`CompanyID` y `BusinessLineID` obligatorios; establecimiento vacío si el canal es remoto) | ADR-003 (cliente del maestro); seguridad.md (permiso y rastro del intento) | Nulabilidad de las columnas; clave foránea `PartyID` → `PARTY` frente al ADR-03 del PO (conflicto abierto, decide el líder técnico) |
+| HU-001 | Registrar un ticket tipificado desde cualquier canal | 1.3 | 4 (2 del PO) | `registrarTicket` | `SVC_TICKET` (`CompanyID` y `BusinessLineID` obligatorios; establecimiento vacío si el canal es remoto) | ADR-003 (cliente del maestro); seguridad.md (permiso y rastro del intento) | Nulabilidad de las columnas. La clave foránea `PartyID` → `PARTY` la decidió DT-06 (`PARTY` es la fuente viva); el PO reescribe el ADR-03 (P-027). Rol de atención del token: DEP-16 (P-034) |
 | HU-002 | Entregar al cliente un número de ticket por razón social | 1.3 | 3 (1 del PO) | `registrarTicket` | Número por `CompanyID` (columna no clave) | ADR-001 | Formato visible del número (pregunta de FT-01) |
 | HU-003 | Congelar el SLA del ticket al abrirlo | 1.3 | 4 (2 del PO) | `consultarSla` | `MAE_SLA_POLICY` (precedencia, `BUSINESS_HOURS`, genérica global), `SLAPolicyID` | ADR-005 | Matriz de tiempos (DEP-03) |
 | HU-004 | Cambiar el estado del ticket con historial inmutable | 1.3 | 4 (2 del PO) | `obtenerTicket`, `cambiarEstado` | `SVC_TICKET_STATUS_LOG` (marca automática), estados | ADR-002; estados.md | Nulabilidad de `ChangedByPartyID` |
 | HU-005 | Registrar interacciones visibles o internas con evidencia | 1.3 | 4 (2 del PO) | `registrarInteraccion` | `SVC_TICKET_INTERACTION`, `FirstRespondedDateTime` | seguridad.md (DLP); ADR-006 | Tipo de las columnas |
 | HU-006 | Conservar los hitos temporales probatorios | 1.3 | 2 | `obtenerTicket` | Hitos de `SVC_TICKET` (`FirstResolvedDateTime`, `ResolvedDateTime`, `ClosedDateTime`) | estados.md | Tipos de columna (los nombres están en el Excel, RF-SVC-006, y en el PLT-04 §6.5) |
 | HU-007 | Derivar un ticket a otra área con motivo tipificado | 1.3 | 3 (1 del PO) | `derivarTicket` | `SVC_TICKET_ASSIGNMENT_LOG` (`AssignedToPartyID`, motivo), `CurrentAreaID` | ADR-002 | Lista de motivos: el Excel (`SVC_ASSIGNMENT_REASON`) y el PLT-04 usan códigos distintos; la fija el PO |
-| HU-008 | Reasignar en bloque los tickets de un colaborador que cesa | 1.3 | 3 (1 del PO) | `reasignarEnBloque` | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CESE`) | ADR-009 (el rol de supervisor viene en el token de Control de acceso); HU-055 (un correo por gestor) | Quién es supervisor (Control de acceso, DEP-16); código del motivo (el Excel usa `REASSIGNMENT_TERMINATION`, `REASSIGNMENT_RESIGNATION` y `REASSIGNMENT_ROTATION`) |
+| HU-008 | Reasignar en bloque los tickets de un colaborador que cesa | 1.3 | 3 (1 del PO) | `reasignarEnBloque` | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CESE`) | ADR-009 (el rol de supervisor viene en el token de Control de acceso); HU-055 (un correo por gestor) | Quién es supervisor (Control de acceso, DEP-16); qué gestores cesan: no hay API de Control de acceso con token de servicio (P-035); código del motivo (el Excel usa `REASSIGNMENT_TERMINATION`, `REASSIGNMENT_RESIGNATION` y `REASSIGNMENT_ROTATION`) |
 | HU-009 | Ver mi casillero de tareas por área y responsable | 1.3 | 3 (1 del PO) | `listarCasillero` | `CurrentAreaID` + `CurrentOwnerPartyID` | ADR-012 (vista de lectura) | Definición de «en riesgo» |
 | HU-010 | Recibir una sola alerta por incumplimiento de SLA | 1.3 | 3 (1 del PO) | `consultarSla` | `SVC_SLA_BREACH_ALERT` (`FIRST_RESPONSE_OVERDUE`) | ADR-005 (job y lista de controles) | Tipo de `ReopenCycleNumber` (el Excel ya nombra la columna del ciclo, RN-SVC-008) |
 | HU-011 | Reabrir un ticket con un nuevo compromiso sin borrar el original | 1.3 | 2 | `reabrirTicket` | `ReopenedResolutionDueDateTime`, `ReopenCount` | estados.md | Tipos de columna (los nombres están en el Excel, RF-SVC-011 y RN-SVC-007) |
@@ -76,22 +76,22 @@ Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecani
 | HU-043 | Configurar el flujo de trabajo de un tipo de ticket por área | 1.3 | 8 (6 del PO) | `configurarFlujo`, `listarPublicacionesFlujo`, `cerrarActividad` | Flujo, versión y actividades: sin tabla en el v7 (propuesta `SVC_WORKFLOW_DEFINITION`) | ADR-008 | Dónde viven flujos y pausas (P-016) |
 | HU-044 | Trabajar desde una bandeja única ordenada por urgencia | 1.3 | 3 (1 del PO) | `listarBandeja` | `SVC_TICKET`, `SVC_TICKET_ASSIGNMENT_LOG` | ADR-008; ADR-012 | Asignación push o pull (pregunta abierta) |
 | HU-045 | Marcar un ticket crítico con el rayo de prioridad | 1.3 | 3 (1 del PO) | `listarBandeja`, `marcarRayo` | Rayo: sin columnas conocidas | ADR-008 | Tope del 10 % y quién marca |
-| HU-046 | Reasignar automáticamente al gestor con menos carga | 1.3 | 3 (1 del PO) | Orquestador: balanceo por carga al entrar el ticket (ADR-008) | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CARGA`) | ADR-008 (orquestador); ADR-005 | Cómo se mide la carga (pregunta abierta); código del motivo (no está en la lista del Excel) |
+| HU-046 | Reasignar automáticamente al gestor con menos carga | 1.3 | 3 (1 del PO) | Orquestador: balanceo por carga al entrar el ticket (ADR-008) | `SVC_TICKET_ASSIGNMENT_LOG` (`REASSIGNMENT_CARGA`) | ADR-008 (orquestador); ADR-005 | Cómo se mide la carga (pregunta abierta); gestores del área y su disponibilidad: sin API de Control de acceso (P-035); código del motivo (no está en la lista del Excel) |
 | HU-047 | Consultar la guía de solución del tipo de ticket | 1.3 | 3 (1 del PO) | `obtenerGuia` | Guía por tipo: sin tabla en el v7 (propuesta `SVC_KNOWLEDGE_ARTICLE`) | ADR-003 | Quién redacta y aprueba las guías |
 | HU-048 | Recibir retroalimentación de IA mientras atiendo y cierro | 1.3 | 3 (1 del PO) | `pedirSugerenciaIa`, `decidirSugerenciaIa` | Registro de sugerencias de IA: sin tabla en el v7 (propuesta `SVC_AI_SUGGESTION_LOG`) | ADR-007; seguridad.md (anonimización) | Proveedor de IA aprobado (DEP-14) |
 | HU-049 | Buscar al cliente y llamarlo desde su ficha | 1.3 | 3 (1 del PO) | `buscarClientes`, `llamarCliente` | `PARTY`; `SVC_TICKET_INTERACTION` (la llamada) | ADR-003; ADR-004 | «Llamar la cuenta» (pregunta abierta); DEP-11 |
 | HU-050 | Ver la consulta 360 del cliente dentro del ticket | 1.3 | 10 (8 del PO) | `obtenerTicket`, `consulta360` | Consulta federada: `PARTY`, `CONTRACT`, `PAY_*` (candidatas); rastro en `SVC_TICKET_INTERACTION` | ADR-003 (p95 de 2 s); seguridad.md | Fuentes por sección y por rol |
-| HU-051 | Continuar la atención cuando la consulta del cliente falla | 1.3 | 3 (1 del PO) | `registrarTicket`, `consulta360` | Vinculación pendiente («Interesado»): el PLT-04 §6.5 dibuja `VinculaciónPendiente` en `SVC_TICKET`; sin columna en el v7 | ADR-003; ADR-005 (reintento) | Qué es «excepción» (pregunta abierta); clave foránea `PartyID` → `PARTY` frente al ADR-03 del PO (conflicto abierto) |
+| HU-051 | Continuar la atención cuando la consulta del cliente falla | 1.3 | 3 (1 del PO) | `registrarTicket`, `consulta360` | Vinculación pendiente («Interesado»): el PLT-04 §6.5 dibuja `VinculaciónPendiente` en `SVC_TICKET`; sin columna en el v7 | ADR-003; ADR-005 (reintento) | Qué es «excepción» (pregunta abierta). La clave foránea `PartyID` → `PARTY` la decidió DT-06; ATC no crea la `PARTY` del interesado: el ticket queda con la vinculación pendiente (P-037) |
 | HU-052 | Consultar datos específicos con el motor de José | 1.3 | 3 (1 del PO) | `consultarMotor` | Sin tabla: `SVC_SEARCH_INDEX` del PLT-05 | ADR-004 (adaptador) | Qué expone el motor de José (DEP-13) |
 | HU-053 | Buscar documentos del cliente por significado | 1.3 | 3 (1 del PO) | `buscarDocumentos` | Índice de búsqueda sin tabla; `GOV_DOCUMENT_REPOSITORY` | ADR-003; seguridad.md (permisos) | Repositorios que se indexan (DEP-06) |
 | HU-054 | Ver mi avance diario y el de mi equipo | 1.3 | 3 (1 del PO) | `verTablero` | `SVC_TICKET`, `SVY_SURVEY_RESPONSE` | ADR-012 | Metas diarias (pregunta abierta) |
-| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | 1.3 | 3 (1 del PO) | Notificación por correo al asignar (evento `ticket.assigned`) | `SVC_TICKET_ASSIGNMENT_LOG`; `IDN_SYSTEM_TASK` o `NEX_NOTIFICATION_LOG` (candidatas) | ADR-013 (evento); seguridad.md | Si el correo lleva datos del cliente (DLP) |
+| HU-055 | Recibir un correo al asignarme un ticket, con copia a mi líder | 1.3 | 3 (1 del PO) | Notificación por correo al asignar (evento `ticket.assigned`) | `SVC_TICKET_ASSIGNMENT_LOG`; constancia del correo: candidata `NEX_NOTIFICATION_LOG` o cambio al v7 propuesto (`datos/registro-de-tablas.md`) | ADR-013 (evento); seguridad.md | Si el correo lleva datos del cliente (DLP); el líder del gestor: P-035 y P-036 |
 | HU-056 | Abrir el caso de resolución por 3 meses impagos | 1.3 | 3 (1 del PO) | Job diario de evaluación de 3 cuotas vencidas (DEP-08; ADR-005) | `PAY_COLLECTION_CASE`, `PAY_INSTALLMENT` (candidatas) | ADR-005 (job diario); estados.md | Disparador: cuotas consecutivas o acumuladas |
 | HU-057 | Enviar al cliente la alerta de cancelación en paralelo | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; envío en paralelo desde el outbox (ADR-013) | Constancia sin tabla propia; `SVC_TICKET_INTERACTION` | ADR-013; estados.md | Qué significa «cancelación» y su plazo |
-| HU-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; carta desde plantilla (DEP-15) | Carta en `GOV_DOCUMENT_REPOSITORY` | ADR-013 | Maestro de responsables de proyecto (DEP-15) |
+| HU-058 | Enviar la carta de alerta al responsable del proyecto y su supervisor | 1.3 | 3 (1 del PO) | Evento al crear el ticket de resolución; carta desde plantilla (DEP-15) | Carta en `GOV_DOCUMENT_REPOSITORY` | ADR-013 | Maestro de responsables de proyecto (DEP-15); el supervisor, si es una jefatura interna: P-035 y P-036 |
 | HU-059 | Registrar el ingreso de una persona al proyecto | 1.3 | 3 (1 del PO) | `registrarIngreso` | Formulario simple sin tabla (propuesta `SVC_SIMPLE_FORM_DEFINITION`) | ADR-001 | Funcionamiento sin conexión del celular |
 | HU-060 | Reservar un cupo en el bus del Entrega Fest | 1.3 | 3 (1 del PO) | `reservarBus`, `cancelarReserva` | `EVT_ATTENDEE` + `EVT_TRANSPORT` (candidatas) | ADR-001 | Aforo y alcance de «Buses entrega fest» |
-| HU-064 | Registrar y consultar mis tickets en Mi Portal | 1.3 | 5 (5 del PO) | `listarMisTickets`, `registrarMiTicket`, `listarTiposPortal` | `SVC_TICKET` (canal Mi Portal, subtipo); adjuntos en Azure Blob (ADR-006) | ADR-011; seguridad.md (10 MB) | Tipos y subtipos del piloto; el login es de Control de acceso (DT-04) |
+| HU-064 | Registrar y consultar mis tickets en Mi Portal | 1.3 | 5 (5 del PO) | `listarMisTickets`, `registrarMiTicket`, `listarTiposPortal` | `SVC_TICKET` (canal Mi Portal, subtipo); adjuntos en Azure Blob (ADR-006) | ADR-011; seguridad.md (10 MB) | Tipos y subtipos del piloto; el login es de Control de acceso (DT-04, DEP-16); el `PartyID` del cliente no viaja en el token (P-033) |
 | HU-065 | Ver la trazabilidad de mi ticket | 1.3 | 4 (4 del PO) | `verTrazabilidad` | `SVC_TICKET_STATUS_LOG` (visibles), `SVC_TICKET_INTERACTION` (visible) | ADR-011; ADR-013 | Nombre del área o genérico (pregunta abierta) |
 | HU-066 | Responder, adjuntar y confirmar la solución de mi ticket | 1.3 | 4 (4 del PO) | `responderMiTicket`, `confirmarSolucion` | `SVC_TICKET_INTERACTION` (autor cliente), `REOPENED` | ADR-011; estados.md (cierre automático) | Días hábiles de espera |
 | HU-067 | Ver el proceso de atención en un visor 3D (operación en vivo) | 1.3 | 10 (10 del PO) | `estadoVisor` | Solo lectura: tickets, estados, asignaciones, alertas, áreas | ADR-010; ADR-012 (5 s) | Áreas de la sede del piloto |
@@ -136,39 +136,52 @@ Salen de la sección 3 de las 23 funcionalidades de Nexora (53 filas, 31 umbrale
 
 ## Estado de DoR (G4) de las funcionalidades
 
-Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalúa «con condiciones». El criterio 5 de cada DoR exige el G3 cerrado: este paquete es la parte técnica de esa condición. Las condiciones son las dependencias (DEP) y decisiones que ya figuran en el roadmap y en `decisiones.md`.
+Los 23 DoR de Nexora dicen **NO READY** en todos los casos; el PLT-05 los evalúa «con condiciones». El criterio 5 de cada DoR exige el G3 cerrado: este paquete es la parte técnica de esa condición. Las condiciones son las dependencias (DEP) y decisiones que ya figuran en el roadmap y en `decisiones.md`. **26-oct:** la sección 2 de cada DoR tiene las DEP de sus historias (bloque «Depende de» de cada HU); la DEP-16 está en los 10 DoR cuyas historias autentican, autorizan por rol o leen líderes o al cliente autenticado (FT-01, 02, 03, 07, 18, 20, 21, 22, 24 y 25).
 
 | Funcionalidad | Nombre | Resultado (PLT-05) | Condición | Decisión del DoR |
 |---|---|---|---|---|
-| FT-01 | Registro multicanal y tipificación | CON CONDICIONES | DEP-01 contrato + simulador | NO READY |
+| FT-01 | Registro multicanal y tipificación | CON CONDICIONES | DEP-01 contrato + simulador; además DEP-16 (rol de atención, HU-001) | NO READY |
 | FT-02 | Ciclo de vida, interacciones e hitos | CON CONDICIONES | DEP-16 Control de acceso (roles en el token; reemplaza a DEP-02) | NO READY |
 | FT-03 | Derivación, reasignación y casillero | CON CONDICIONES | DEP-16 Control de acceso (reemplaza a DEP-02) | NO READY |
 | FT-04 | Motor SLA y alertas | CON CONDICIONES | DEP-03 matriz provisional al 20-oct | NO READY |
 | FT-05 | Libro de Reclamaciones | CON CONDICIONES | DEP-05 textos al lun 26-oct | NO READY |
-| FT-06 | Apelaciones internas e INDECOPI | CON CONDICIONES | DEP-06 repositorio documental (Azure Blob, ADR-006) | NO READY |
-| FT-07 | Gate de derivación a Eje 3 y handoff | CON CONDICIONES | DEP-01 · DEP-08 | NO READY |
-| FT-08 | Mesa SGD: recepción, activación y riesgo | CON CONDICIONES | Plazos de línea SGD (DEP-03) | NO READY |
+| FT-06 | Apelaciones internas e INDECOPI | CON CONDICIONES | DEP-06 repositorio documental (Azure Blob, ADR-006); además DEP-05 (RN-SVC-010, HU-016) | NO READY |
+| FT-07 | Gate de derivación a Eje 3 y handoff | CON CONDICIONES | DEP-01 · DEP-08; además DEP-16 (supervisor, HU-026 y HU-027) | NO READY |
+| FT-08 | Mesa SGD: recepción, activación y riesgo | CON CONDICIONES | Plazos de línea SGD (DEP-03, ahora en la sección 2 del DoR) | NO READY |
 | FT-09 | Escalamiento, vinculación y cierre tipificado | CON CONDICIONES | Umbrales de escalamiento | NO READY |
 | FT-10 | Reclamos de garantía postventa | CON CONDICIONES | DEP-07 Contratos | NO READY |
 | FT-13 | Encuesta post-atención | CON CONDICIONES | DEP-10 KPI Engine | NO READY |
 | FT-14 | Torre de Control CX | CON CONDICIONES | DEP-10 | NO READY |
 | FT-15 | EntregaFest: contención en vivo | CON CONDICIONES | Modelo de casos del evento (día 1) | NO READY |
-| FT-16 | Integración con Legal y prevención de denuncias | CON CONDICIONES | DEP-12 herramienta de Legal · 8% | NO READY |
+| FT-16 | Integración con Legal y prevención de denuncias | CON CONDICIONES | DEP-12 herramienta de Legal · 8% (DEP-05, HU-041) | NO READY |
 | FT-17 | Integración con la plataforma del call center | CON CONDICIONES | DEP-11 call center (por evaluar) | NO READY |
 | FT-18 | Bandeja orquestadora y flujos por área | CON CONDICIONES | Push o pull · quién marca el rayo | NO READY |
 | FT-19 | Asistencia al gestor: guía e IA | CON CONDICIONES | DEP-14 proveedor de IA | NO READY |
-| FT-20 | Búsqueda y consulta 360 del cliente | CON CONDICIONES | DEP-01 · DEP-13 · «llamar la cuenta» | NO READY |
+| FT-20 | Búsqueda y consulta 360 del cliente | CON CONDICIONES | DEP-01 · DEP-13 · «llamar la cuenta»; además DEP-16 (datos por rol, HU-050, 052 y 053) | NO READY |
 | FT-21 | Productividad y notificaciones del gestor | CON CONDICIONES | DEP-16 líder de cada gestor (API de Control de acceso; reemplaza a DEP-02) | NO READY |
-| FT-22 | Resolución de contrato por morosidad | CON CONDICIONES | DEP-08 · DEP-15 · causal legal | NO READY |
+| FT-22 | Resolución de contrato por morosidad | CON CONDICIONES | DEP-08 · DEP-15 · causal legal (DEP-05); además DEP-16 (supervisor interno, HU-058) | NO READY |
 | FT-23 | Formularios simples: ingreso al proyecto y Entrega Fest | CON CONDICIONES | Alcance de «buses» · conectividad | NO READY |
-| FT-24 | Autogestión de tickets del cliente en Mi Portal | CON CONDICIONES | Acceso del cliente (ADR-11) · DEP-01 contacto · diseño de Mi Portal | NO READY |
-| FT-25 | Visor del proceso 3D (operación en vivo) | CON CONDICIONES | Áreas de la sede · eventos de HU-043/044 · ADR-10 | NO READY |
+| FT-24 | Autogestión de tickets del cliente en Mi Portal | CON CONDICIONES | Acceso del cliente (ADR-11; con DT-04, login de Control de acceso: DEP-16) · DEP-01 contacto · diseño de Mi Portal | NO READY |
+| FT-25 | Visor del proceso 3D (operación en vivo) | CON CONDICIONES | Áreas de la sede · eventos de HU-043/044 · ADR-10; además DEP-16 (permisos por área, HU-067) | NO READY |
 
 ## Qué cambió en Nexora el 20-oct-2026
 
 - Se publicaron **11 épicas, 23 funcionalidades y 23 DoR**; las 8 épicas, 18 funcionalidades y 18 DoR nuevas están en v1 y las que ya existían subieron a v2. El paquete v1.3 de 119 documentos del equipo ya está completo en Nexora.
 - Todo sigue **pendiente de aprobación**: 0 aprobados en las carpetas `analisis`, `roadmap`, `epicas`, `features`, `historias`, `dor`, `adr`, `arquitectura`, `datos` y `gates`.
 
+## Proceso de atención de prospectos (C-06)
+
+No es una historia del PLT-04 v1.3. Los casos que Control de acceso deriva a ATC (correo distinto, DNI tomado, suplantación y prospecto por validar) se proponen como tipos de ticket en `analisis/proceso-atencion-prospectos.md`, sin operaciones nuevas y sin horas en el plan de 243 h. Es alcance nuevo para el PO (P-041).
+
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías y Brayan Hurtado, con IA | Contraste de las 62 historias con el paquete G3 y decisiones del 22-oct (versiones de Nexora hasta la v3) |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | El `PartyID` → `PARTY` ya no es conflicto abierto (DT-06); dependencias de Control de acceso por historia (P-033, P-035, P-036, P-037); se retira `IDN_SYSTEM_TASK` de HU-055; condiciones de DoR con las DEP de las historias; nota del proceso de prospectos (C-06) |
+
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: columnas y listas que ya da el Excel, conflictos abiertos señalados y sin referencias a versiones anteriores. — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04, DT-07 y ADR-001 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-06, C-11 y C-12) y de las dependencias de las historias. — Revisado por: (pendiente)

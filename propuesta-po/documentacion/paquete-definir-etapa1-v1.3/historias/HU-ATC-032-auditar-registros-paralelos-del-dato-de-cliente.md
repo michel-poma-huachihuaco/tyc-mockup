@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-032 | Debería | 3 h con IA | Dev 3 (Michel) | 2 | 2-nov-2026 | Pendiente DoR |
 
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-04), DEP-10 (KPI Engine y encuestas; PLT-03 y PLT-05)
+
+**La necesitan:** ninguna
+
 **Requerimiento de origen:** El sistema debe auditar quincenalmente la existencia de registros paralelos del dato de cliente fuera de SIGDA/TAXON.
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -74,3 +80,5 @@ Escenario: CA-02 · Hallazgo
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

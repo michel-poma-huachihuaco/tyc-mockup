@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-01", "EP-ATC-01"]
+relacionados: ["FT-ATC-01", "EP-ATC-01", "HU-ATC-001"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-002 | Debe | 3 h con IA | Dev 1 (Brayan) | 1 | 21-oct-2026 → 22-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-001 (RF-SVC-001 es predecesora de RF-SVC-002, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05)
+
+**La necesitan:** HU-ATC-004
 
 **Requerimiento de origen:** El sistema debe generar un número correlativo único por razón social y entregarlo al cliente.
 
@@ -79,3 +85,5 @@ Escenario: CA-03 · Concurrencia (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

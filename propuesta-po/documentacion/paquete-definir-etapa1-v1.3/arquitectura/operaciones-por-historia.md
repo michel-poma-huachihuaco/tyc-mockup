@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.1"
+version: "0.2"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-22"
+fecha: "2026-10-26"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, api, g3]
 ---
@@ -85,6 +85,32 @@ Resumen: 49 historias con operación en el OpenAPI, 13 sin API propia (evento, j
 | HU-066 | Responder, adjuntar y confirmar la solución de mi ticket | `portal` | `POST /api/v1/portal/tickets/{ticketId}/respuestas`<br>`POST /api/v1/portal/tickets/{ticketId}/confirmacion` | en el OpenAPI |
 | HU-067 | Ver el proceso de atención en un visor 3D (operación en vivo) | `inbox` | `GET /api/v1/visor/estado` | en el OpenAPI |
 
+## Operaciones que dependen de Control de acceso (PJ-05)
+
+Las operaciones no cambian; lo que sigue es lo que cada una necesita de Control de acceso y que hoy no está resuelto (preguntas de `analisis/decisiones.md`). ATC no guarda usuarios, roles, líderes ni sesiones (DT-03, C-11).
+
+| Historias | Qué necesitan | Pregunta |
+|---|---|---|
+| Todas las operaciones del contrato | Token del emisor de Control de acceso en DEV; en local, el emisor de pruebas `herramientas/emisor-local.mjs` del repo `AybarCorp/aybar-access-control-deus` | DEP-16 (P-026, P-040) |
+| Todas las que exigen `x-permiso` | Si ATC autoriza por rol del token o consulta el permiso efectivo | P-034 |
+| HU-008, HU-046, HU-054, HU-055, HU-058 | Gestores que cesan, gestores de un área con su disponibilidad y líder de un gestor: no hay API con token de servicio | P-035 |
+| HU-044, HU-045, HU-054, HU-055, HU-023, HU-027 | Áreas y jefaturas: la tabla de áreas organizacionales no existe; `MAE_AREA` es solo la cola (C-07) | P-036 |
+| HU-001, HU-049, HU-050, HU-051 | El interesado que no está en `PARTY`: ATC no crea su Party; el ticket queda con la vinculación pendiente | P-037 |
+| HU-064, HU-065, HU-066 | El `PartyID` del cliente no viaja en el token | P-033 |
+
+## Proceso de atención de prospectos (C-06)
+
+`analisis/proceso-atencion-prospectos.md` propone atender como tipos de ticket los casos que Control de acceso deriva a ATC («correo distinto», DNI tomado, suplantación y prospecto por validar). **No agrega operaciones:** el ticket se registra con `registrarTicket` (HU-001) y sigue el flujo del tipo (HU-043); la validación y la suspensión se hacen en la consola de Control de acceso, no en la API de ATC. Es alcance nuevo para el PO (P-041).
+
+## Historial de cambios
+
+| Versión | Fecha | Autor | Cambio |
+|---|---|---|---|
+| 0.1 | 2026-10-19 a 2026-10-22 | Jesús Chávez Elías, con IA | Operaciones por historia; módulos en inglés y sin operaciones de código ni sesión en HU-064 (DT-04) |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Lo que cada operación necesita de Control de acceso, con su pregunta (P-033 a P-037; DEP-16), y el proceso de atención de prospectos (C-06), sin operaciones nuevas |
+
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-03, DT-04, DT-07 y ADR-001 de `analisis/decisiones.md` v0.3). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06, C-07, C-11 y C-12) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)

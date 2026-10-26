@@ -4,27 +4,28 @@ tipo: "adr"
 titulo: "ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-22"
-relacionados: [ADR-001, ADR-009, ADR-012, ADR-013, ADR-014]
+fecha: "2026-10-26"
+relacionados: [ADR-001, ADR-003, ADR-009, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
 
 # ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Fecha: 2026-10-22
-- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pide a Enrique Albán (Data Chief); M0 no está en el repositorio.
-- Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.3. **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
+- Ticket: AYB-0001 · Versión 0.3 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
+- Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md` v0.5. **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
 - Cambia lo que fija el PO: HU-064 CA-01 y el requisito de seguridad de FT-ATC-24 (código de 6 dígitos, vence a los 5 minutos, 3 intentos, al correo o al celular). **El PO acepta el cambio o reescribe el criterio según lo que cumpla Control de acceso** (P-027).
 
-> Las referencias a PJ-05 (D-33, D-47, D-63; ADR-014, ADR-018; R29) son las del correo del Líder Técnico del 22-oct. Quien redacta este ADR no ve ese apartado en Nexora y no las verificó.
+> Las referencias a PJ-05 se verificaron el 26-oct en la copia sellada de su paquete aprobado (`docs-roles-y-permisos/`): ADR-012, 014 y 018; D-33, D-47, D-62, D-63, D-67, D-178; R25 y R29. ⚠ `access-control.openapi.yaml` de esa copia no coincide con la huella del sello y se confirma con la versión aprobada.
 
 ## Contexto
 
-Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets; solo ve lo suyo. Control de acceso (PJ-05) ya resuelve el login de clientes: cuenta `CUSTOMER`, búsqueda por DNI con correo coincidente, verificación del contacto y niveles de autenticación. Un login propio en ATC duplicaría ese servicio y obligaría a custodiar credenciales y códigos de clientes (Ley 29733).
+Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets; solo ve lo suyo. Control de acceso (PJ-05) ya resuelve el login de clientes: la persona se encuentra por DNI con el correo coincidente (D-47, R25), entra con su cuenta `CUSTOMER`, verifica su contacto por correo o WhatsApp (ADR-018 de PJ-05) y su token lleva el nivel de autenticación calculado (`aybar_nivel`, ADR-014 de PJ-05). Quien no existe se autorregistra como `PROSPECT` con una `PARTY` no verificada (R29). Un login propio en ATC duplicaría ese servicio y obligaría a custodiar credenciales y códigos de clientes (Ley 29733).
 
 ## Opciones evaluadas
 
@@ -36,32 +37,33 @@ Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets;
 
 ## Decisión
 
-**Mi Portal hace login contra el emisor de Control de acceso** (`@aybarcorp/auth`, Authorization Code con PKCE). ATC solo valida el JWT (ADR-009, ADR-014). **ATC no abre sesiones, no emite códigos y no verifica identidades** (DT-04).
+**Mi Portal hace login contra el emisor de Control de acceso** (`@aybarcorp/auth`, Authorization Code con PKCE, token solo en memoria). ATC solo valida el JWT (ADR-009, ADR-014). **ATC no abre sesiones, no emite códigos y no verifica identidades** (DT-04).
 
-1. **Filtro por cliente:** ATC filtra todo ticket por el `PartyID` del token. El ticket de otro cliente no se muestra y el intento queda en la bitácora (HU-065 CA-04).
-2. **Niveles de autenticación:** si una acción pide un nivel más fuerte, lo exige Control de acceso con API Management (D-33 de PJ-05, según el Líder Técnico); ATC no lo implementa.
-3. **Interesado sin cliente:** si la persona no existe en `PARTY`, se crea su `PARTY` como no verificada (R29 de PJ-05, según el Líder Técnico). **Quién la escribe** (una API de Control de acceso, o ATC en otro fragmento) sigue abierto (P-014, P-031).
-4. **Lo que sigue fijando el PO** (PLT-04 v1.3, HU-064 a 066): adjuntos de hasta 10 MB y rechazo del que sea más grande o de un formato no admitido (HU-064 CA-05); el cliente confirma o rechaza la solución, y el rechazo reabre el ticket; si no responde, el ticket se cierra solo a los días hábiles configurados; cuando el cliente responde, el SLA se reanuda; las notas internas y el nombre del gestor no se muestran al cliente (HU-005 CA-03, HU-065 CA-03).
-5. **Reglas citadas:** RN-SVC-044 (visibilidad del ticket para el cliente) **no está en el Excel (3)**: viene del PLT-03/04 v1.3 y está por registrar (P-022). Este ADR cita el criterio que la origina (HU-064 CA-02 y HU-065 CA-03).
-6. **Propuestas del equipo en el mockup, que confirma el PO:** adjuntos JPG, PNG o PDF, máximo 3; 5 días hábiles de espera antes del cierre automático.
+1. **Autorización:** las operaciones de Mi Portal exigen el rol `CUSTOMER` (`x-roles` del contrato). Ese rol lo siembra Control de acceso (D-30); hoy solo D-67 lo asigna, al validar un prospecto, y la cuenta `CUSTOMER` que nace por DNI debe recibirlo para que Mi Portal pueda exigirlo: lo confirma Sony Montoya (P-033). Mi Portal **no acepta `PROSPECT`**: cada microservicio decide si acepta ese rol (D-62) y las historias hablan de clientes; si el PO quiere abrirlo a prospectos, se agrega a `x-roles` (P-027).
+2. **Filtro por cliente:** toda lectura y escritura de Mi Portal se filtra por el `PartyID` del cliente. El ticket de otro cliente responde `AYB-PTL-404` y el intento queda en la bitácora (HU-065 CA-04). El Líder Técnico pidió filtrar «por el `PartyID` del token», pero **el token no trae `PartyID`** (ADR-012 de PJ-05) y el token de un `CUSTOMER` no lleva `companyId` (D-178). Diseño: ATC obtiene el `PartyID` del cliente autenticado por un claim nuevo del contrato de PJ-05 (leído con `aybar.security.claims.adicionales`) o por una consulta con el token del usuario que resuelva `user_account_id` → `PartyID`; nunca guarda una tabla propia de correspondencias. **Cuál de las dos lo responde Sony Montoya (P-033).** Hasta entonces, HU-064 a 066 quedan bloqueadas en ese punto.
+3. **Niveles de autenticación:** si una acción pide un nivel más fuerte, lo exige Azure API Management por operación con el claim `aybar_nivel` (D-33 de PJ-05); ATC no lo implementa. Hoy ninguna historia de Mi Portal pide un nivel.
+4. **Persona que no existe en `PARTY`:** ATC **no crea su `PARTY`** (P-037). La persona se autorregistra en Control de acceso, que crea su `PARTY` no verificada y una cuenta `PROSPECT` (R29, A26), y pasa a `CUSTOMER` cuando una persona de Ventas o de ATC la valida en la consola del área (D-59; `analisis/proceso-atencion-prospectos.md`). El ticket que un gestor registra para un interesado sin `PARTY` queda con la vinculación pendiente (ADR-003).
+5. **Lo que sigue fijando el PO** (PLT-04 v1.3, HU-064 a 066): adjuntos de hasta 10 MB y rechazo del que sea más grande o de un formato no admitido (HU-064 CA-05); el cliente confirma o rechaza la solución, y el rechazo reabre el ticket; si no responde, el ticket se cierra solo a los días hábiles configurados; cuando el cliente responde, el SLA se reanuda; las notas internas y el nombre del gestor no se muestran al cliente (HU-005 CA-03, HU-065 CA-03).
+6. **Regla citada:** RN-SVC-044 (visibilidad del ticket para el cliente) **se conserva**. No está en el Excel `ATC_requerimientos (3).xlsx`, pero sí en los PDF del PO v1.3: PLT-03 (catálogo de reglas, «propuesta PO v1.3»), PLT-04 (HU-064 a 066) y PLT-05; también la citan PLT-01 (riesgo R-07) y PLT-02. La registra el PO en el Excel (P-022, P-030).
+7. **Propuestas del equipo en el mockup, que confirma el PO:** adjuntos JPG, PNG o PDF, máximo 3; 5 días hábiles de espera antes del cierre automático.
 
-**Se retira del contrato:** del OpenAPI, las operaciones `solicitarCodigo` (`/api/v1/portal/codigos`) y `abrirSesion` (`/api/v1/portal/sesiones`) y los esquemas `SolicitudCodigo`, `CodigoEnviado`, `AperturaSesion` y `Sesion`; del diccionario, `PORTAL_SESSION`.
+**Se retiró del contrato** (22-oct): las operaciones `solicitarCodigo` (`/api/v1/portal/codigos`) y `abrirSesion` (`/api/v1/portal/sesiones`) y los esquemas `SolicitudCodigo`, `CodigoEnviado`, `AperturaSesion` y `Sesion`; del diccionario, `PORTAL_SESSION`. El contrato 0.4.0-borrador no tiene ninguna operación de código ni de sesión.
 
 ## Consecuencias
 
 - Obliga a:
-  - Que Control de acceso entregue el login de clientes en DEV (P-026) y registre los clientes OAuth de Mi Portal y de la API.
+  - Que Control de acceso entregue el login de clientes en DEV (DEP-16; P-026, P-040) y registre el cliente OAuth `PUBLIC` de Mi Portal con su `redirect_uri` por ambiente (D-223) y la audiencia de la API (P-038).
   - Que el PO decida qué pasa con el código de 6 dígitos, 5 minutos y 3 intentos: si Control de acceso lo cumple, se mantiene; si no, se reescribe HU-064 CA-01 (P-027).
-  - Que la pregunta «¿con qué dato inicia sesión el cliente?» (FT-24, Q-064-2) se responda con lo que fije Control de acceso: DNI con correo coincidente (DT-04).
-  - Filtrar toda consulta por el `PartyID` del token, en la escritura y en la lectura.
+  - Que la pregunta «¿con qué dato inicia sesión el cliente?» (FT-24, Q-064-2) se responda con lo que fija Control de acceso: DNI con correo coincidente (D-47).
+  - Filtrar toda consulta por el `PartyID` del cliente, en la escritura y en la lectura, en cuanto P-033 diga de dónde sale.
 - Impide:
   - Mostrar al cliente datos de otros clientes o notas internas.
   - Que ATC guarde credenciales, códigos o sesiones de clientes.
-- Cuesta: sin costo de envío de códigos para ATC (lo asume Control de acceso). Las horas de integrar `@aybarcorp/auth` entran en P-025.
+- Cuesta: **USD 0 para ATC** en envío de códigos, login y verificación: son de Control de acceso, que usa Azure Communication Services (ADR-018 de PJ-05). **0,5 h** de integración del login con `@aybarcorp/auth` (tarea HU-ATC-064-T01), dentro de las 4 h de la HU-064 (`backlog/tareas/EP-ATC-06.json`). La nube de Mi Portal (contenedor del frontend y llamadas al borde) está en el costo del ADR-014.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- ATC no crea tablas de sesión ni de código. Se retira `PORTAL_SESSION` y las candidatas `IDN_USER_SESSION` y `PARTY_CONTACT_VERIFICATION_TOKEN`: son del área (C-11).
+- ATC no crea tablas de sesión ni de código. Se retiran `PORTAL_SESSION` y las candidatas `IDN_USER_SESSION` y `PARTY_CONTACT_VERIFICATION_TOKEN`: son del área (C-11).
 - Tipos y subtipos que ve el cliente: consulta de cuenta, pedido simple, visita técnica, garantía postventa, reclamo y queja (estos dos van al Libro). Los subtipos no tienen tabla en el v7 y el canal «Mi Portal» no figura en la descripción de `MAE_CHANNEL` (P-016, P-017).
 - PII: el DNI y el contacto los trata Control de acceso; ATC solo conoce el `PartyID`.
 
@@ -72,5 +74,6 @@ Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets;
 | 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Borrador: DNI y código de un solo uso propios |
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Reglas HU-064 a 066 y mockup de Mi Portal |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Reescrito con DT-04: login de clientes de Control de acceso, sin sesiones ni códigos propios. El nombre del archivo conserva «dni-codigo» para publicarse como versión nueva |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Referencias a PJ-05 verificadas: el token no trae `PartyID` y el diseño del filtro queda para P-033; rol `CUSTOMER` en la cuenta por DNI (P-033); sin `PROSPECT` en Mi Portal (D-62); ATC no crea la `PARTY` de quien no existe (R29); evidencia de RN-SVC-044 en los PDF del PO; costo con número y fuente |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: (pendiente) · Aprueba: TL

@@ -4,10 +4,10 @@ tipo: brd
 titulo: "BRD - Aybar Atiende (plataforma de atención al cliente) · Etapa 1"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.3"
+version: "0.4"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-22"
+fecha: "2026-10-26"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [brd, intake, plt-01]
 ---
@@ -117,7 +117,9 @@ En resumen, la Etapa 1 cubre:
 - los formularios simples (ingreso al proyecto y buses del Entrega Fest);
 - la autogestión del cliente en Mi Portal.
 
-En la Etapa 1, los usuarios, los roles y los líderes los administra Control de acceso (PJ-05) y ATC solo los consume (DEP-16 propuesta, ADR-009), según el Líder Técnico (DT-03). El plan del PO tenía un maestro local con carga de RR. HH. (DEP-02).
+En la Etapa 1, los usuarios, los roles y los líderes los administra Control de acceso (PJ-05) y ATC solo los consume (DEP-16, ADR-009), según el Líder Técnico (DT-03 y C-12). El plan del PO tenía un maestro local con carga de RR. HH. (DEP-02).
+
+**Alcance nuevo por decidir (P-041).** Control de acceso deriva a Atención al cliente los casos de identidad de los prospectos: el «correo distinto», el prospecto que la carga trae, el DNI tomado y la suplantación. El proceso propuesto está en `analisis/proceso-atencion-prospectos.md`: un tipo de ticket con cuatro subtipos que se resuelve en la consola de Control de acceso. No está en las 62 historias ni en las 243 h; lo decide el PO.
 
 **Orden de prioridad 1-3** (PLT-01 v1.3). Estas historias se construyen primero, cada una con su
 desarrollador:
@@ -172,7 +174,9 @@ la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los
 **Abierto en `decisiones.md`** que afecta a este BRD:
 
 - **DT-01**: el stack de la Etapa 1 lo decidió el Líder Técnico (Java y Angular del SDK). El PO actualiza PLT-01 y PLT-05 (P-027).
-- **P-021**: el origen del dato de cliente. El Líder Técnico fijó `PARTY` de la base única como fuente viva (DT-06); el PO confirma la regla.
+- **P-021** (cerrada por DT-06): el Líder Técnico fijó `PARTY` de la base única como fuente viva. El PO reescribe el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 (P-027).
+- **P-026**: Control de acceso en DEV (DEP-16), sin fecha comprometida.
+- **P-041**: el proceso de atención de prospectos, alcance nuevo.
 - **P-025**: las horas del CQRS y del outbox (DT-02) no están en el plan de 243 h.
 - **P-022**: las diferencias del Excel con los PDF.
 - **P-024**: ningún documento del paquete está aprobado todavía.
@@ -191,7 +195,10 @@ Solo cuenta como evidencia la aprobación registrada en Nexora o `estado: approv
 | 0.1 | 2026-10-15 | Daniel (Dev 4), con IA | Versión inicial publicada en Nexora (v1), sobre el plan v1.2 |
 | 0.2 | 2026-10-21 | Brayan (Dev 1), con IA | Actualización a la v1.3 del PO, solo Etapa 1. Pasa a 62 HU, 23 funcionalidades y 243 h de 252 h, con desarrollo del 21-oct al 03-nov y control de alcance el 29-oct. Se ajustan el alcance flexible y el fuera de alcance, las metas por épica y las rutas del roadmap |
 | 0.3 | 2026-10-22 | Jesús Chávez Elías, con IA | Cambios de la revisión del Líder Técnico: identidad y roles de Control de acceso (DEP-16 en lugar de DEP-02), plataforma Azure, y el estado de D-001, P-021 y P-025 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | La DEP-16 ya no es propuesta (C-12); P-021 cerrada por DT-06; alcance nuevo del proceso de prospectos (C-06, P-041) |
 
 Generado por IA: contenido completo. Versión base de Nexora (v1, de Daniel, 15-oct, sobre el plan v1.2), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de la revisión del Líder Técnico (DT-01 a DT-10 de `analisis/decisiones.md` v5). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06 y C-12; P-021). — Revisado por: (pendiente)

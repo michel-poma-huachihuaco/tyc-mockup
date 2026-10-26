@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-22", "EP-ATC-11"]
+relacionados: ["FT-ATC-22", "EP-ATC-11", "HU-ATC-006"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-056 | Debe | 4 h con IA | Dev 4 (Daniel) | 2 | 28-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-006 (dependencia lógica EP-ATC-01 → EP-ATC-11 del Gantt del PLT-01 y esta es la última HU de EP-ATC-01) · Dependencias externas: DEP-05 (validación legal de la causal de RN-SVC-037; PLT-05), DEP-08 (API de Cobranza; PLT-03, PLT-04 y PLT-05), DEP-15 (maestro de responsables de proyecto y supervisores; PLT-03 y PLT-05)
+
+**La necesitan:** HU-ATC-057, HU-ATC-058
 
 **Requerimiento de origen:** El sistema debe generar automáticamente un ticket de resolución de contrato cuando un cliente acumula 3 meses (cuotas) sin pagar, o cuando se registra un reclamo con 3 meses de no pago, y derivarlo al flujo de resolución con Cobranza y Legal. Feedback 2.ª reunión · ítem 1
 
@@ -80,3 +86,5 @@ Escenario: CA-03 · Reclamo abierto (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

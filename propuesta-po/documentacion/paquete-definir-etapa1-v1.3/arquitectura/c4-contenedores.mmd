@@ -1,52 +1,71 @@
 flowchart TB
-  user([Gestor / supervisor / cliente])
-  ctrl[["Control de acceso (PJ-05)<br/>emisor de tokens y login · DEP-16"]]
-  subgraph front["Presentación · Angular"]
+  gestor([Gestor · supervisor · administrador funcional])
+  cliente([Cliente])
+  personal([Personal de proyecto y del evento])
+  subgraph ca["Control de acceso (PJ-05) · DEP-16"]
+    emisor[["Emisor de tokens<br/>Spring Authorization Server"]]
+    apicat[["API de catálogo<br/>ADR-021 de PJ-05"]]
+  end
+  subgraph borde["Borde"]
+    cf["Cloudflare<br/>TLS · WAF · DDoS"]
+    apim["Azure API Management<br/>JWT, audiencia y nivel por API"]
+  end
+  subgraph front["Frontend · Angular · @aybarcorp/ui-angular · Azure Container Apps"]
     consola[Consola ATC]
     mp[Mi Portal]
     visor[Visor 3D]
     forms[Formularios PWA]
   end
-  gw["Cloudflare + Azure API Management<br/>valida la audiencia aud"]
-  subgraph app["Aybar Atiende · Java 21 · Spring Boot 3.5 · un despliegue en Azure Container Apps · monolito modular"]
+  subgraph app["aybar-atc · Java 21 Corretto · Spring Boot 3.5.6 · SDK Aybar 0.7.1 · Azure Container Apps"]
     direction TB
-    m1[tickets]
-    m2[sla]
-    m3[complaintbook]
-    m4[legalcases]
-    m5[aftersales]
-    m6[portal]
-    m7[quality]
-    m8[inbox]
-    m9[customer360]
-    m10[delinquency]
-    m11[integrations<br/>adaptador + simulador]
-    jobs["Jobs idempotentes con ShedLock<br/>SLA y plazo legal"]
-    outb[Outbox]
-    proy[Proyector<br/>único escritor del almacén de lectura]
-    ws["WebSocket /ws/visor<br/>filtra por área"]
+    rest["API REST /api/v1<br/>valida el JWT · @PreAuthorize por rol"]
+    mods["Módulos: tickets · sla · complaintbook · legalcases · aftersales<br/>portal · quality · inbox · customer360 · delinquency · integrations<br/>sin módulo identidad"]
+    jobs["Jobs con ShedLock<br/>SLA · plazo legal · vinculación"]
+    pub["Publicador del outbox<br/>cada 1 s"]
+    proy["Proyector<br/>único escritor del almacén de lectura"]
+    wsc["Consumidor del visor<br/>WebSocket /ws/visor"]
+    obs["Logs JSON y auditoría técnica<br/>aybar-starter-logging y aybar-starter-audit"]
   end
-  pg[("Azure Database for PostgreSQL<br/>se escribe · base única, tablas del v7")]
-  mg[("Azure Cosmos DB for MongoDB vCore<br/>almacén de lectura · vistas de ATC")]
-  kf{{"Azure Event Hubs<br/>protocolo Kafka"}}
-  blob[("Azure Blob Storage<br/>inmutabilidad · evidencia")]
+  subgraph datos["Datos en Azure"]
+    pg[("Azure Database for PostgreSQL<br/>base única v7 · SVC_* · MAE_*<br/>SVC_OUTBOX_EVENT · shedlock")]
+    mg[("Azure Cosmos DB for MongoDB vCore<br/>vistas de lectura")]
+    eh{{"Azure Event Hubs · protocolo Kafka<br/>aybar.service.* y colas .DLQ"}}
+    blob[("Azure Blob Storage<br/>evidencia inmutable")]
+  end
   kv[["Azure Key Vault<br/>secretos y llave HMAC"]]
-  mon[["Azure Monitor<br/>logs, trazas, métricas y alertas de jobs"]]
-  ext[Sistemas externos]
-  user --> ctrl
-  user --> front --> gw --> app
-  ctrl -. "JWT" .-> gw
-  app -. "client_credentials: líderes, gestores y catálogo" .-> ctrl
-  app -- escribe --> pg
-  app -- "evento en la misma transacción" --> outb
-  outb --> kf
-  kf --> proy
-  kf --> ws
-  proy --> mg
-  app -- lee --> mg
-  app --> blob
-  app -. secretos .-> kv
-  app -. logs .-> mon
-  m11 <--> ext
-  ws -- "WebSocket" --> visor
-%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con DT-01 a DT-08 del Líder Técnico: sin módulo identidad, emisor de Control de acceso, Azure, módulos en inglés y visor alimentado por el servicio (ADR-010). Ambientes: DEV, QA, PRE y producción (ADR-014). — Revisado por: (pendiente)
+  mon[["Azure Monitor<br/>Log Analytics · Application Insights · alertas"]]
+  acr[["Azure Container Registry<br/>una imagen por release"]]
+  ext[Sistemas externos<br/>con simulador]
+
+  gestor --> consola
+  gestor --> visor
+  cliente --> mp
+  personal --> forms
+  consola -- "login PKCE" --> emisor
+  mp -- "login PKCE" --> emisor
+  consola -- "HTTPS + JWT" --> cf
+  mp -- "HTTPS + JWT" --> cf
+  forms -- "HTTPS + JWT" --> cf
+  visor -- "WebSocket + JWT" --> cf
+  cf --> apim
+  apim --> rest
+  apim --> wsc
+  emisor -. "llaves públicas JWKS" .-> rest
+  rest --> mods
+  mods -- "escribe y guarda el evento en la misma transacción" --> pg
+  mods -- "lee" --> mg
+  jobs -- "lee y escribe" --> pg
+  pub -- "lee pendientes" --> pg
+  pub -- "publica" --> eh
+  eh --> proy
+  proy -- "escribe" --> mg
+  eh --> wsc
+  wsc -- "eventos por área" --> visor
+  mods -- "sube evidencia" --> blob
+  mods -- "registro del catálogo · client_credentials" --> apicat
+  mods <--> ext
+  app -. "identidad administrada" .-> kv
+  obs -. "logs, auditoría y métricas" .-> mon
+  acr -. "imagen" .-> app
+%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con DT-01 a DT-08 del Líder Técnico: sin módulo identidad, emisor de Control de acceso, Azure, módulos en inglés y visor alimentado por el servicio (ADR-010). Ambientes: DEV, QA, PRE y producción, con la misma topología (ADR-014; diagrama de ambientes en diagrama-arquitectura.md). — Revisado por: (pendiente)
+%% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · el visor recibe los eventos del consumidor del servicio por WebSocket, no del bus; outbox y ShedLock en PostgreSQL; publicador y proyector; Cloudflare y API Management por separado; JWKS del emisor; Key Vault con identidad administrada; logs y auditoría técnica a Azure Monitor; registro de imágenes; registro del catálogo en Control de acceso

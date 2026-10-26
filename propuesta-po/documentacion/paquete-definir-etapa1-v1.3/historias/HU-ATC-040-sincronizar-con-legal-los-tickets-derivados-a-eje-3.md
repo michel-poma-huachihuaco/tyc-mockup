@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-040 | Debe | 5 h con IA | Dev 4 (Daniel) | 1 | 26-oct-2026 → 27-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-12 (herramienta de Legal; PLT-03, PLT-04 y PLT-05)
+
+**La necesitan:** ninguna
+
 **Requerimiento de origen:** El sistema debe sincronizar los tickets derivados a Eje 3 con la herramienta que usa el equipo de Legal (responsable: Rosario), enviando el paquete mínimo y recibiendo estado y resolución. Feedback presentación · ítem 2
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -80,3 +86,5 @@ Escenario: CA-03 · Legal no disponible (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

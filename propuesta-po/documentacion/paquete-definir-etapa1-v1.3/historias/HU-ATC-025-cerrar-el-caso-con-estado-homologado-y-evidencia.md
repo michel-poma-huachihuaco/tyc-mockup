@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-09", "EP-ATC-04"]
+relacionados: ["FT-ATC-09", "EP-ATC-04", "HU-ATC-023", "HU-ATC-024"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-025 | Debe | 3 h con IA | Dev 2 (Jesús) | 2 | 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-023 (RF-SVC-023 es predecesora de RF-SVC-025, PLT-03), HU-ATC-024 (RF-SVC-024 es predecesora de RF-SVC-025, PLT-03) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03 y PLT-04)
+
+**La necesitan:** HU-ATC-037
 
 **Requerimiento de origen:** El sistema debe cerrar cada caso en uno de los 8 estados homologados, con evidencia, y referenciar la custodia en el GLI.
 
@@ -75,3 +81,5 @@ Escenario: CA-02 · Custodia
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

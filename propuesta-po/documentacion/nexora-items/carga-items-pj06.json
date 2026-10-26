@@ -1,0 +1,1868 @@
+{
+ "proyecto": "PJ-06",
+ "descripcion": "Ítems de trabajo de la Etapa 1 de Aybar Atiende (11 épicas, 23 funcionalidades, 62 historias) con responsable y dependencias, según PLT-01 a PLT-05 v1.3 (16-oct-2026) y DT-03 (DEP-16).",
+ "generado": "2026-10-26",
+ "autor": "Brayan Hurtado con IA (Claude)",
+ "revisado_por": null,
+ "columnas": [
+  "tipo",
+  "codigo",
+  "titulo",
+  "padre",
+  "responsable",
+  "horas",
+  "inicio",
+  "fin",
+  "iteracion",
+  "prioridad",
+  "depende_de",
+  "dependencias_externas",
+  "ruta_documento"
+ ],
+ "items": [
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-01",
+   "titulo": "Núcleo de tickets omnicanal",
+   "padre": "",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 22,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-01-nucleo-de-tickets-omnicanal.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-02",
+   "titulo": "Enrutamiento, SLA y alertas",
+   "padre": "",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 28,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-02-enrutamiento-sla-y-alertas.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-03",
+   "titulo": "Libro de Reclamaciones y apelaciones",
+   "padre": "",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 21,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-29",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "EP-ATC-01"
+   ],
+   "dependencias_externas": [
+    "DEP-04",
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "epicas/EP-ATC-03-libro-de-reclamaciones-y-apelaciones.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-04",
+   "titulo": "Gate legal Eje 3 y Mesa de Casos sensibles",
+   "padre": "",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 32,
+   "inicio": "2026-10-27",
+   "fin": "2026-11-02",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "EP-ATC-02"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-03",
+    "DEP-06",
+    "DEP-08",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-04-gate-legal-eje-3-y-mesa-de-casos-sensibles.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-05",
+   "titulo": "Postventa: reclamos de garantía",
+   "padre": "",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 12,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "epicas/EP-ATC-05-postventa-reclamos-de-garantia.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-06",
+   "titulo": "Autogestión del cliente y trazabilidad (Mi Portal)",
+   "padre": "",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 9,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "EP-ATC-09"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-06-autogestion-del-cliente-y-trazabilidad-mi-portal.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-07",
+   "titulo": "Calidad de atención y Torre de Control CX",
+   "padre": "",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 16,
+   "inicio": "2026-10-29",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "EP-ATC-02"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-10"
+   ],
+   "ruta_documento": "epicas/EP-ATC-07-calidad-de-atencion-y-torre-de-control-cx.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-08",
+   "titulo": "EntregaFest: contención y derivación en vivo",
+   "padre": "",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 6,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Podría",
+   "depende_de": [
+    "EP-ATC-04"
+   ],
+   "dependencias_externas": [],
+   "ruta_documento": "epicas/EP-ATC-08-entregafest-contencion-y-derivacion-en-vivo.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-09",
+   "titulo": "Bandeja orquestadora y asistencia al gestor",
+   "padre": "",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 44,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-29",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-14",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-10",
+   "titulo": "Consulta 360 e integraciones operativas",
+   "padre": "",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 36,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-28",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-05",
+    "DEP-06",
+    "DEP-08",
+    "DEP-11",
+    "DEP-12",
+    "DEP-13",
+    "DEP-14",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md"
+  },
+  {
+   "tipo": "épica",
+   "codigo": "EP-ATC-11",
+   "titulo": "Resolución por morosidad y formularios simples",
+   "padre": "",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 17,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "EP-ATC-01"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-08",
+    "DEP-15",
+    "DEP-16"
+   ],
+   "ruta_documento": "epicas/EP-ATC-11-resolucion-por-morosidad-y-formularios-simples.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-01",
+   "titulo": "Registro multicanal y tipificación",
+   "padre": "EP-ATC-01",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 9,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-01-registro-multicanal-y-tipificacion.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-02",
+   "titulo": "Ciclo de vida, interacciones e hitos",
+   "padre": "EP-ATC-01",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 13,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-01"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-03",
+   "titulo": "Derivación, reasignación y casillero",
+   "padre": "EP-ATC-02",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 11,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-03-derivacion-reasignacion-y-casillero.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-04",
+   "titulo": "Motor SLA y alertas",
+   "padre": "EP-ATC-02",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 17,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04"
+   ],
+   "ruta_documento": "features/FT-ATC-04-motor-sla-y-alertas.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-05",
+   "titulo": "Libro de Reclamaciones",
+   "padre": "EP-ATC-03",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 18,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-28",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-02"
+   ],
+   "dependencias_externas": [
+    "DEP-04",
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "features/FT-ATC-05-libro-de-reclamaciones.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-06",
+   "titulo": "Apelaciones internas e INDECOPI",
+   "padre": "EP-ATC-03",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-05"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "features/FT-ATC-06-apelaciones-internas-e-indecopi.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-07",
+   "titulo": "Gate de derivación a Eje 3 y handoff",
+   "padre": "EP-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 9,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-28",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-04"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-08",
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-08",
+   "titulo": "Mesa SGD: recepción, activación y riesgo",
+   "padre": "EP-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 11,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-07"
+   ],
+   "dependencias_externas": [
+    "DEP-03"
+   ],
+   "ruta_documento": "features/FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-09",
+   "titulo": "Escalamiento, vinculación y cierre tipificado",
+   "padre": "EP-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 12,
+   "inicio": "2026-10-29",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-08"
+   ],
+   "dependencias_externas": [
+    "DEP-06"
+   ],
+   "ruta_documento": "features/FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-10",
+   "titulo": "Reclamos de garantía postventa",
+   "padre": "EP-ATC-05",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 12,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "FT-ATC-07"
+   ],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "features/FT-ATC-10-reclamos-de-garantia-postventa.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-13",
+   "titulo": "Encuesta post-atención",
+   "padre": "EP-ATC-07",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 3,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-04"
+   ],
+   "dependencias_externas": [
+    "DEP-10"
+   ],
+   "ruta_documento": "features/FT-ATC-13-encuesta-post-atencion.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-14",
+   "titulo": "Torre de Control CX",
+   "padre": "EP-ATC-07",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 13,
+   "inicio": "2026-10-29",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "FT-ATC-13"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-10"
+   ],
+   "ruta_documento": "features/FT-ATC-14-torre-de-control-cx.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-15",
+   "titulo": "EntregaFest: contención en vivo",
+   "padre": "EP-ATC-08",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 6,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Podría",
+   "depende_de": [
+    "FT-ATC-09"
+   ],
+   "dependencias_externas": [],
+   "ruta_documento": "features/FT-ATC-15-entregafest-contencion-en-vivo.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-16",
+   "titulo": "Integración con Legal y prevención de denuncias",
+   "padre": "EP-ATC-10",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 9,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-28",
+   "iteracion": "1;2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-12"
+   ],
+   "ruta_documento": "features/FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-17",
+   "titulo": "Integración con la plataforma del call center",
+   "padre": "EP-ATC-10",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 5,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-20"
+   ],
+   "dependencias_externas": [
+    "DEP-11"
+   ],
+   "ruta_documento": "features/FT-ATC-17-integracion-con-la-plataforma-del-call-center.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-18",
+   "titulo": "Bandeja orquestadora y flujos por área",
+   "padre": "EP-ATC-09",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 19,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-19",
+   "titulo": "Asistencia al gestor: guía e IA",
+   "padre": "EP-ATC-09",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 9,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-28",
+   "iteracion": "1;2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-14"
+   ],
+   "ruta_documento": "features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-20",
+   "titulo": "Búsqueda y consulta 360 del cliente",
+   "padre": "EP-ATC-10",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 22,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-06",
+    "DEP-08",
+    "DEP-11",
+    "DEP-13",
+    "DEP-14",
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-21",
+   "titulo": "Productividad y notificaciones del gestor",
+   "padre": "EP-ATC-09",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 6,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "FT-ATC-18"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-21-productividad-y-notificaciones-del-gestor.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-22",
+   "titulo": "Resolución de contrato por morosidad",
+   "padre": "EP-ATC-11",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 10,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-02"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-08",
+    "DEP-15",
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-22-resolucion-de-contrato-por-morosidad.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-23",
+   "titulo": "Formularios simples: ingreso al proyecto y Entrega Fest",
+   "padre": "EP-ATC-11",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 7,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [],
+   "ruta_documento": "features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-24",
+   "titulo": "Autogestión de tickets del cliente en Mi Portal",
+   "padre": "EP-ATC-06",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 9,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-13",
+    "FT-ATC-18",
+    "FT-ATC-21"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md"
+  },
+  {
+   "tipo": "funcionalidad",
+   "codigo": "FT-ATC-25",
+   "titulo": "Visor del proceso 3D (operación en vivo)",
+   "padre": "EP-ATC-09",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 10,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "FT-ATC-18"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "features/FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-001",
+   "titulo": "Registrar un ticket tipificado desde cualquier canal",
+   "padre": "FT-ATC-01",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 6,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-21",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-001-registrar-un-ticket-tipificado-desde-cualquier-canal.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-002",
+   "titulo": "Entregar al cliente un número de ticket por razón social",
+   "padre": "FT-ATC-01",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-001"
+   ],
+   "dependencias_externas": [
+    "DEP-01"
+   ],
+   "ruta_documento": "historias/HU-ATC-002-entregar-al-cliente-un-numero-de-ticket-por-razon-social.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-003",
+   "titulo": "Congelar el SLA del ticket al abrirlo",
+   "padre": "FT-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 6,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04"
+   ],
+   "ruta_documento": "historias/HU-ATC-003-congelar-el-sla-del-ticket-al-abrirlo.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-004",
+   "titulo": "Cambiar el estado del ticket con historial inmutable",
+   "padre": "FT-ATC-02",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 5,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-002"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-004-cambiar-el-estado-del-ticket-con-historial-inmutable.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-005",
+   "titulo": "Registrar interacciones visibles o internas con evidencia",
+   "padre": "FT-ATC-02",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 5,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-004"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-005-registrar-interacciones-visibles-o-internas-con-evidencia.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-006",
+   "titulo": "Conservar los hitos temporales probatorios",
+   "padre": "FT-ATC-02",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-004"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-006-conservar-los-hitos-temporales-probatorios.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-007",
+   "titulo": "Derivar un ticket a otra área con motivo tipificado",
+   "padre": "FT-ATC-03",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-21",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-007-derivar-un-ticket-a-otra-area-con-motivo-tipificado.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-008",
+   "titulo": "Reasignar en bloque los tickets de un colaborador que cesa",
+   "padre": "FT-ATC-03",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-007"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-008-reasignar-en-bloque-los-tickets-de-un-colaborador-que-cesa.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-009",
+   "titulo": "Ver mi casillero de tareas por área y responsable",
+   "padre": "FT-ATC-03",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-007"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-009-ver-mi-casillero-de-tareas-por-area-y-responsable.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-010",
+   "titulo": "Recibir una sola alerta por incumplimiento de SLA",
+   "padre": "FT-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 5,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-003"
+   ],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04"
+   ],
+   "ruta_documento": "historias/HU-ATC-010-recibir-una-sola-alerta-por-incumplimiento-de-sla.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-011",
+   "titulo": "Reabrir un ticket con un nuevo compromiso sin borrar el original",
+   "padre": "FT-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-010"
+   ],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04"
+   ],
+   "ruta_documento": "historias/HU-ATC-011-reabrir-un-ticket-con-un-nuevo-compromiso-sin-borrar-el.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-012",
+   "titulo": "Registrar el asiento del Libro de Reclamaciones",
+   "padre": "FT-ATC-05",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 4,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-006"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-012-registrar-el-asiento-del-libro-de-reclamaciones.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-013",
+   "titulo": "Calcular el plazo legal y gestionar la prórroga única",
+   "padre": "FT-ATC-05",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 6,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-012"
+   ],
+   "dependencias_externas": [
+    "DEP-04",
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-013-calcular-el-plazo-legal-y-gestionar-la-prorroga-unica.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-014",
+   "titulo": "Registrar la respuesta formal con cargo",
+   "padre": "FT-ATC-05",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 4,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-012"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-014-registrar-la-respuesta-formal-con-cargo.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-015",
+   "titulo": "Vigilar el plazo legal y detectar reclamos huérfanos",
+   "padre": "FT-ATC-05",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 4,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-013"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-015-vigilar-el-plazo-legal-y-detectar-reclamos-huerfanos.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-016",
+   "titulo": "Dar seguimiento a apelaciones internas y ante INDECOPI",
+   "padre": "FT-ATC-06",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-015"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-016-dar-seguimiento-a-apelaciones-internas-y-ante-indecopi.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-019",
+   "titulo": "Disparar la encuesta al cerrar el ticket",
+   "padre": "FT-ATC-13",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 3,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-029"
+   ],
+   "dependencias_externas": [
+    "DEP-10"
+   ],
+   "ruta_documento": "historias/HU-ATC-019-disparar-la-encuesta-al-cerrar-el-ticket.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-020",
+   "titulo": "Registrar un caso sensible con Código Único",
+   "padre": "FT-ATC-08",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-028"
+   ],
+   "dependencias_externas": [
+    "DEP-03"
+   ],
+   "ruta_documento": "historias/HU-ATC-020-registrar-un-caso-sensible-con-codigo-unico.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-021",
+   "titulo": "Emitir cargo previo y cargo de activación por separado",
+   "padre": "FT-ATC-08",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-020"
+   ],
+   "dependencias_externas": [
+    "DEP-03"
+   ],
+   "ruta_documento": "historias/HU-ATC-021-emitir-cargo-previo-y-cargo-de-activacion-por-separado.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-022",
+   "titulo": "Clasificar el riesgo del caso con matriz objetiva",
+   "padre": "FT-ATC-08",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-020"
+   ],
+   "dependencias_externas": [
+    "DEP-03"
+   ],
+   "ruta_documento": "historias/HU-ATC-022-clasificar-el-riesgo-del-caso-con-matriz-objetiva.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-023",
+   "titulo": "Escalar en cadena un caso que incumple su SLA",
+   "padre": "FT-ATC-09",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 5,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-022"
+   ],
+   "dependencias_externas": [
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-023-escalar-en-cadena-un-caso-que-incumple-su-sla.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-024",
+   "titulo": "Validar casos cruzados o vinculados antes de registrar",
+   "padre": "FT-ATC-09",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-024-validar-casos-cruzados-o-vinculados-antes-de-registrar.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-025",
+   "titulo": "Cerrar el caso con estado homologado y evidencia",
+   "padre": "FT-ATC-09",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-023",
+    "HU-ATC-024"
+   ],
+   "dependencias_externas": [
+    "DEP-06"
+   ],
+   "ruta_documento": "historias/HU-ATC-025-cerrar-el-caso-con-estado-homologado-y-evidencia.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-026",
+   "titulo": "Bloquear la resolución en Eje 1/2 ante señal de conflicto",
+   "padre": "FT-ATC-07",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-029"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-08",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-026-bloquear-la-resolucion-en-eje-1-2-ante-senal-de-conflicto.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-027",
+   "titulo": "Armar el paquete mínimo de handoff y confirmar su recepción",
+   "padre": "FT-ATC-07",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 4,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-026"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-08",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-027-armar-el-paquete-minimo-de-handoff-y-confirmar-su-recepcion.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-028",
+   "titulo": "Registrar la nota de estado emocional sin juicios de valor",
+   "padre": "FT-ATC-07",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 2,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-026"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-08"
+   ],
+   "ruta_documento": "historias/HU-ATC-028-registrar-la-nota-de-estado-emocional-sin-juicios-de-valor.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-029",
+   "titulo": "Medir el cierre end-to-end de la experiencia",
+   "padre": "FT-ATC-04",
+   "responsable": "Jesus Chavez Elias",
+   "horas": 3,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-003"
+   ],
+   "dependencias_externas": [
+    "DEP-03",
+    "DEP-04"
+   ],
+   "ruta_documento": "historias/HU-ATC-029-medir-el-cierre-end-to-end-de-la-experiencia.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-030",
+   "titulo": "Monitorear en tiempo real y corregir antes del incumplimiento",
+   "padre": "FT-ATC-14",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 6,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-019"
+   ],
+   "dependencias_externas": [
+    "DEP-10"
+   ],
+   "ruta_documento": "historias/HU-ATC-030-monitorear-en-tiempo-real-y-corregir-antes-del.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-031",
+   "titulo": "Generar el informe diario y el quincenal",
+   "padre": "FT-ATC-14",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 4,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-030"
+   ],
+   "dependencias_externas": [
+    "DEP-10"
+   ],
+   "ruta_documento": "historias/HU-ATC-031-generar-el-informe-diario-y-el-quincenal.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-032",
+   "titulo": "Auditar registros paralelos del dato de cliente",
+   "padre": "FT-ATC-14",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 3,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-10"
+   ],
+   "ruta_documento": "historias/HU-ATC-032-auditar-registros-paralelos-del-dato-de-cliente.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-033",
+   "titulo": "Registrar un reclamo de garantía vinculado a la entrega",
+   "padre": "FT-ATC-10",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 4,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "historias/HU-ATC-033-registrar-un-reclamo-de-garantia-vinculado-a-la-entrega.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-034",
+   "titulo": "Validar la vigencia de la garantía contra la cobertura",
+   "padre": "FT-ATC-10",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 2,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-033"
+   ],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "historias/HU-ATC-034-validar-la-vigencia-de-la-garantia-contra-la-cobertura.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-035",
+   "titulo": "Registrar la inspección técnica antes de resolver",
+   "padre": "FT-ATC-10",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-30",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-033"
+   ],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "historias/HU-ATC-035-registrar-la-inspeccion-tecnica-antes-de-resolver.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-036",
+   "titulo": "Escalar la garantía a Eje 3 y gestionar la adenda",
+   "padre": "FT-ATC-10",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 3,
+   "inicio": "2026-10-30",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-026",
+    "HU-ATC-035"
+   ],
+   "dependencias_externas": [
+    "DEP-07"
+   ],
+   "ruta_documento": "historias/HU-ATC-036-escalar-la-garantia-a-eje-3-y-gestionar-la-adenda.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-037",
+   "titulo": "Registrar el riesgo verbal y la secuencia de Frases Ancla",
+   "padre": "FT-ATC-15",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 2,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Podría · flexible",
+   "depende_de": [
+    "HU-ATC-025"
+   ],
+   "dependencias_externas": [],
+   "ruta_documento": "historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-038",
+   "titulo": "Derivar de inmediato a la Estación 4 sin debate",
+   "padre": "FT-ATC-15",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 2,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Podría · flexible",
+   "depende_de": [
+    "HU-ATC-037"
+   ],
+   "dependencias_externas": [],
+   "ruta_documento": "historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-039",
+   "titulo": "Registrar el caso con la etiqueta estándar",
+   "padre": "FT-ATC-15",
+   "responsable": "Brayan Manuel Hurtado Paucar",
+   "horas": 2,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Podría · flexible",
+   "depende_de": [
+    "HU-ATC-038"
+   ],
+   "dependencias_externas": [],
+   "ruta_documento": "historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-040",
+   "titulo": "Sincronizar con Legal los tickets derivados a Eje 3",
+   "padre": "FT-ATC-16",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 5,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-12"
+   ],
+   "ruta_documento": "historias/HU-ATC-040-sincronizar-con-legal-los-tickets-derivados-a-eje-3.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-041",
+   "titulo": "Priorizar los reclamos con riesgo de denuncia por su exposición",
+   "padre": "FT-ATC-16",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 4,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-12"
+   ],
+   "ruta_documento": "historias/HU-ATC-041-priorizar-los-reclamos-con-riesgo-de-denuncia-por-su.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-042",
+   "titulo": "Atender la llamada con la ficha del cliente y registrarla en el ticket",
+   "padre": "FT-ATC-17",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 5,
+   "inicio": "2026-10-26",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-053"
+   ],
+   "dependencias_externas": [
+    "DEP-11"
+   ],
+   "ruta_documento": "historias/HU-ATC-042-atender-la-llamada-con-la-ficha-del-cliente-y-registrarla-en.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-043",
+   "titulo": "Configurar el flujo de trabajo de un tipo de ticket por área",
+   "padre": "FT-ATC-18",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 8,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-043-configurar-el-flujo-de-trabajo-de-un-tipo-de-ticket-por-area.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-044",
+   "titulo": "Trabajar desde una bandeja única ordenada por urgencia",
+   "padre": "FT-ATC-18",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 5,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-043"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-044-trabajar-desde-una-bandeja-unica-ordenada-por-urgencia.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-045",
+   "titulo": "Marcar un ticket crítico con el rayo de prioridad",
+   "padre": "FT-ATC-18",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 2,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-044"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-045-marcar-un-ticket-critico-con-el-rayo-de-prioridad.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-046",
+   "titulo": "Reasignar automáticamente al gestor con menos carga",
+   "padre": "FT-ATC-18",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 4,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-044"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-046-reasignar-automaticamente-al-gestor-con-menos-carga.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-047",
+   "titulo": "Consultar la guía de solución del tipo de ticket",
+   "padre": "FT-ATC-19",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 4,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-14"
+   ],
+   "ruta_documento": "historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-048",
+   "titulo": "Recibir retroalimentación de IA mientras atiendo y cierro",
+   "padre": "FT-ATC-19",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 5,
+   "inicio": "2026-10-27",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Podría · flexible",
+   "depende_de": [
+    "HU-ATC-047"
+   ],
+   "dependencias_externas": [
+    "DEP-14"
+   ],
+   "ruta_documento": "historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-049",
+   "titulo": "Buscar al cliente y llamarlo desde su ficha",
+   "padre": "FT-ATC-20",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 4,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-21",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-11",
+    "DEP-13"
+   ],
+   "ruta_documento": "historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-050",
+   "titulo": "Ver la consulta 360 del cliente dentro del ticket",
+   "padre": "FT-ATC-20",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 7,
+   "inicio": "2026-10-21",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-049"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-08",
+    "DEP-13",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-051",
+   "titulo": "Continuar la atención cuando la consulta del cliente falla",
+   "padre": "FT-ATC-20",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-10-22",
+   "fin": "2026-10-22",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-049"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-13"
+   ],
+   "ruta_documento": "historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-052",
+   "titulo": "Consultar datos específicos con el motor de José",
+   "padre": "FT-ATC-20",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-23",
+   "iteracion": "1",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-050"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-13",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-053",
+   "titulo": "Buscar documentos del cliente por significado",
+   "padre": "FT-ATC-20",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 5,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-26",
+   "iteracion": "1",
+   "prioridad": "Podría · flexible",
+   "depende_de": [
+    "HU-ATC-049"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-06",
+    "DEP-13",
+    "DEP-14",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-054",
+   "titulo": "Ver mi avance diario y el de mi equipo",
+   "padre": "FT-ATC-21",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 4,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [
+    "HU-ATC-046"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-054-ver-mi-avance-diario-y-el-de-mi-equipo.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-055",
+   "titulo": "Recibir un correo al asignarme un ticket, con copia a mi líder",
+   "padre": "FT-ATC-21",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 2,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-055-recibir-un-correo-al-asignarme-un-ticket-con-copia-a-mi.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-056",
+   "titulo": "Abrir el caso de resolución por 3 meses impagos",
+   "padre": "FT-ATC-22",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 4,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-28",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-006"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-08",
+    "DEP-15"
+   ],
+   "ruta_documento": "historias/HU-ATC-056-abrir-el-caso-de-resolucion-por-3-meses-impagos.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-057",
+   "titulo": "Enviar al cliente la alerta de cancelación en paralelo",
+   "padre": "FT-ATC-22",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-10-28",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-056"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-08",
+    "DEP-15"
+   ],
+   "ruta_documento": "historias/HU-ATC-057-enviar-al-cliente-la-alerta-de-cancelacion-en-paralelo.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-058",
+   "titulo": "Enviar la carta de alerta al responsable del proyecto y su supervisor",
+   "padre": "FT-ATC-22",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-29",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-056"
+   ],
+   "dependencias_externas": [
+    "DEP-05",
+    "DEP-08",
+    "DEP-15",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-058-enviar-la-carta-de-alerta-al-responsable-del-proyecto-y-su.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-059",
+   "titulo": "Registrar el ingreso de una persona al proyecto",
+   "padre": "FT-ATC-23",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 4,
+   "inicio": "2026-10-29",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [],
+   "ruta_documento": "historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-060",
+   "titulo": "Reservar un cupo en el bus del Entrega Fest",
+   "padre": "FT-ATC-23",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-10-30",
+   "fin": "2026-10-30",
+   "iteracion": "2",
+   "prioridad": "Debería",
+   "depende_de": [],
+   "dependencias_externas": [],
+   "ruta_documento": "historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-064",
+   "titulo": "Registrar y consultar mis tickets en Mi Portal",
+   "padre": "FT-ATC-24",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 4,
+   "inicio": "2026-10-30",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-043",
+    "HU-ATC-055"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-064-registrar-y-consultar-mis-tickets-en-mi-portal.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-065",
+   "titulo": "Ver la trazabilidad de mi ticket",
+   "padre": "FT-ATC-24",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 3,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-064"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-065-ver-la-trazabilidad-de-mi-ticket.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-066",
+   "titulo": "Responder, adjuntar y confirmar la solución de mi ticket",
+   "padre": "FT-ATC-24",
+   "responsable": "Daniel David Lorenzo Ramos",
+   "horas": 2,
+   "inicio": "2026-11-02",
+   "fin": "2026-11-02",
+   "iteracion": "2",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-019",
+    "HU-ATC-065"
+   ],
+   "dependencias_externas": [
+    "DEP-01",
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-066-responder-adjuntar-y-confirmar-la-solucion-de-mi-ticket.md"
+  },
+  {
+   "tipo": "historia",
+   "codigo": "HU-ATC-067",
+   "titulo": "Ver el proceso de atención en un visor 3D (operación en vivo)",
+   "padre": "FT-ATC-25",
+   "responsable": "Michel Poma Huachihuaco",
+   "horas": 10,
+   "inicio": "2026-10-23",
+   "fin": "2026-10-27",
+   "iteracion": "1",
+   "prioridad": "Debe",
+   "depende_de": [
+    "HU-ATC-043",
+    "HU-ATC-044",
+    "HU-ATC-046"
+   ],
+   "dependencias_externas": [
+    "DEP-16"
+   ],
+   "ruta_documento": "historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md"
+  }
+ ]
+}

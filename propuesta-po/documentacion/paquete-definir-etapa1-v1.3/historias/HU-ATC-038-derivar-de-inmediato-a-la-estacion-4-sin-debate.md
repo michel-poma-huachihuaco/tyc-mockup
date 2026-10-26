@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-15", "EP-ATC-08"]
+relacionados: ["FT-ATC-15", "EP-ATC-08", "HU-ATC-037"]
 tags: [hu, plt-04, flexible]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-038 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-037 (RF-SVC-037 es predecesora de RF-SVC-038, PLT-03) · Dependencias externas: ninguna (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)
+
+**La necesitan:** HU-ATC-039
 
 **Requerimiento de origen:** El sistema debe registrar la derivación inmediata a la Estación 4 de todo caso sensible o imputación penal en vivo.
 
@@ -73,3 +79,5 @@ Escenario: CA-02 · Sin reapertura
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

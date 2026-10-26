@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-25", "EP-ATC-09"]
+relacionados: ["FT-ATC-25", "EP-ATC-09", "HU-ATC-043", "HU-ATC-044", "HU-ATC-046"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-067 | Debe | 10 h con IA | Dev 3 (Michel) | 1 | 23-oct-2026 → 27-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-043 (áreas de los flujos y eventos de la bandeja: PLT-03 en FT-ATC-25; PLT-04 en la ficha de HU-043 y el CA-01), HU-ATC-044 (eventos de la bandeja orquestadora: PLT-03 en FT-ATC-25 y PLT-05), HU-ATC-046 (FT-ATC-18 es predecesora de FT-ATC-25 y esta es su última HU, PLT-02; reasignación por carga en el panel del área, CA-04, PLT-04) · Dependencias externas: DEP-16 (Control de acceso, PJ-05: permisos por área, CA-07)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe mostrar en un visor 3D isométrico la sede de atención con sus áreas, los tickets entrando por los canales, pasando por la bandeja orquestadora y moviéndose al área de su flujo con su color de SLA, y el detalle de cada área y de cada ticket. Propuesta PO v1.3 · prototipo «visor del proceso 3d» (Operación en vivo)
 
@@ -117,3 +123,5 @@ Escenario: CA-10 · Equipo, no individuos (agregado por PO · prototipo «visor 
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-09", "EP-ATC-04"]
+relacionados: ["FT-ATC-09", "EP-ATC-04", "HU-ATC-022"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-023 | Debe | 5 h con IA | Dev 2 (Jesús) | 2 | 29-oct-2026 → 30-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-022 (FT-ATC-08 es predecesora de FT-ATC-09 y esta es su última HU, PLT-02) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03)
+
+**La necesitan:** HU-ATC-025
 
 **Requerimiento de origen:** El sistema debe escalar automáticamente, sin saltar niveles: alerta temprana, memorándum a jefatura, Comité y Directorio.
 
@@ -79,3 +85,5 @@ Escenario: CA-03 · Resolución (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

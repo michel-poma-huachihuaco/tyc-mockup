@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-06 Apelaciones internas e INDECOPI"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-26"
 relacionados: ["FT-ATC-06", "EP-ATC-03", "HU-ATC-016"]
 tags: [dor, plt-05, g4]
 ---
@@ -20,7 +20,7 @@ tags: [dor, plt-05, g4]
 | **Fecha de revisión** | **Sprint / release destino** | **Resultado** |
 | 2026-10-20 (comité DoR · cierre de la etapa de diseño) | v1.0 · Etapa 1 · 03-nov-2026 · Dev 1 · mié 28-oct | READY / NO READY: lo decide quien aprueba el DoR |
 
-Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-06 S3.
+Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-06 S3 (con DT-07, Azure Blob Storage con inmutabilidad).
 
 ## 1 Checklist de G4
 
@@ -31,7 +31,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-06 S3.
 | 3 | Reglas de negocio explícitas | [ ] | FT-ATC-06 sección 4 (1 regla) |
 | 4 | Diseño UX aprobado si hay UI (G2 cerrado) | [ ] | 1 HU con `ui: true`: `docs/gates/<AYB>/G2.md` pendiente |
 | 5 | ADR aprobado si aplica (G3 cerrado) | [ ] | Pendiente: `docs/gates/<AYB>/G3.md` (líder técnico) |
-| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-06 |
+| 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-06; y DEP-05 (añadida el 26-oct desde PLT-03/PLT-04/PLT-05) |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (pendiente `docs/datos/` y `docs/arquitectura/`) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
 | 9 | Estimada por el equipo | [ ] | PLT-04: 3 h estimadas por el PO, a confirmar en el cierre funcional del 19-oct (PLT-05, acuerdo 1; `docs/backlog/tareas/` pendiente) |
@@ -42,7 +42,8 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-06 S3.
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-06 | Repositorio documental S3 + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
+| DEP-06 | Repositorio documental S3 (con DT-07, Azure Blob Storage con inmutabilidad, ADR-006) + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
+| DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). En esta funcionalidad: HU-ATC-016 (validación legal de RN-SVC-010; PLT-05) | Legal | EP-ATC-03, EP-ATC-11 | Gerencia Legal | 26-oct-2026 | Pendiente |
 
 Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 sin cumplir.
 
@@ -83,10 +84,11 @@ Una dependencia sin fecha comprometida, o sin desbloquear, deja el criterio 6 si
 
 Decision: NO READY
 
-Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-06 S3). El marco solo admite READY o NO READY: lo decide quien aprueba el DoR.
+Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (DEP-06 S3; con DT-07, Azure Blob Storage con inmutabilidad). El marco solo admite READY o NO READY: lo decide quien aprueba el DoR.
 
 Condiciones pendientes (solo si NO READY):
-- [ ] DEP-06 S3 (PLT-05)
+- [ ] DEP-06 S3, con DT-07 Azure Blob Storage con inmutabilidad (PLT-05)
+- [ ] DEP-05 validación legal (añadida el 26-oct desde PLT-03/PLT-04/PLT-05)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |
@@ -101,3 +103,5 @@ El DoR cuenta como READY solo con `Decision: READY` y `estado: approved` en `ori
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-05 y PLT-01/03/04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Actualizado el 23-oct-2026 por Brayan Hurtado con IA (Claude): se añade la nota de la revisión del Líder Técnico (DT-01, DT-03, DT-04 y DT-07 de `analisis/decisiones.md`), igual a la de los DoR de FT-ATC-02, 03, 18 y 21. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Añade a la sección 2 las DEP de sus historias que faltaban (DEP-05), con la nota de origen, en el criterio 6 y en las condiciones; la DEP-06 anota Azure Blob Storage (DT-07). No se borra texto del PO. — Revisado por: (pendiente)

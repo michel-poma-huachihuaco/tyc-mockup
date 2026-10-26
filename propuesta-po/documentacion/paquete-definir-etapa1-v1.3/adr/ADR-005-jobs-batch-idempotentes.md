@@ -4,22 +4,23 @@ tipo: "adr"
 titulo: "ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.2"
+version: "0.3"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-22"
-relacionados: [ADR-001, ADR-008, ADR-012, ADR-013, ADR-014]
+fecha: "2026-10-26"
+relacionados: [ADR-001, ADR-002, ADR-004, ADR-008, ADR-009, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
 
 # ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Fecha: 2026-10-22
-- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pide a Enrique Albán (Data Chief); M0 no está en el repositorio.
-- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL. Cierra P-006.
+- Ticket: AYB-0001 · Versión 0.3 · Fecha: 2026-10-26 (historial al final)
+- Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: (pendiente)
+- Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora (P-005).
+- Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md` v0.5. Cierra P-006.
 
-> Las frecuencias, los reintentos y la alerta de la sección «Decisión» son **propuesta del equipo** (el Líder Técnico pidió que el ADR los fije). Los confirman el Líder Técnico y, para los plazos de negocio, el PO.
+> Las frecuencias, los reintentos y la alerta de la sección «Decisión» son la **propuesta del equipo** que este ADR fija, como pidió el Líder Técnico. Los aprueba el Líder Técnico y, para los plazos de negocio, el PO.
 
 ## Contexto
 
@@ -37,13 +38,14 @@ Los plazos de SLA y el plazo legal del Libro de Reclamaciones corren en días h�
 
 Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempotentes** dentro del servicio, con **ShedLock sobre PostgreSQL** para que corra una sola réplica (DT-08).
 
-1. **Mecanismo:** `@Scheduled` con `@SchedulerLock` y proveedor JDBC sobre la base única; `usingDbTime()` para no depender del reloj de cada réplica. Cada job fija `lockAtMostFor` (propuesta: 2 veces su duración esperada) y `lockAtLeastFor`. Dependencia nueva (no está en el SDK ni en el BOM) y tabla `shedlock` a registrar con Gobierno de Datos (P-031).
+1. **Mecanismo:** `@Scheduled` con `@SchedulerLock` (ShedLock con su proveedor JDBC) sobre la base única; `usingDbTime()` para no depender del reloj de cada réplica. Cada job fija `lockAtMostFor` (propuesta: 2 veces su duración esperada) y `lockAtLeastFor`. Dependencia nueva, con versión fija porque el BOM del SDK 0.7.1 no la gobierna, y tabla `shedlock` a registrar con Gobierno de Datos (P-031).
 2. **Idempotencia:** ShedLock evita la ejecución simultánea, no la repetición tras una caída. Cada job es idempotente por la clave del hecho (ticket + ciclo + tipo de incumplimiento): repetirlo no duplica alertas ni asientos.
 3. **Calendario:** días hábiles y feriados por geografía desde `MAE_TIME` y `MAE_HOLIDAY` de la base única (DEP-04 define su carga). Cálculo de plazos siempre en días hábiles, nunca en horas corridas.
 4. **Fuente de lectura:** **los jobs del SLA y del plazo legal leen PostgreSQL, no el almacén de lectura** (que puede ir hasta 5 s atrás, ADR-012).
 5. **Reintento:** si un job falla, la siguiente ejecución lo recoge, porque es idempotente. Dentro de una ejecución, cada llamada a un externo reintenta 3 veces con espera creciente (Resilience4j, ADR-004); si sigue fallando, el ítem queda «pendiente de sincronizar» y se reintenta en la siguiente ejecución.
-6. **Alerta ante fallo:** cada job registra en el log (con `correlationId`) su inicio, fin y cantidad procesada, y publica una métrica con la hora de su último éxito. Una regla de Azure Monitor avisa al equipo de ATC y a TI si un job no tuvo éxito en 2 veces su frecuencia, o si termina en error. Destinatarios de la alerta: por definir (P-025).
+6. **Alerta ante fallo:** cada job registra en el log (con `correlationId`) su inicio, fin y cantidad procesada, y publica una métrica con la hora de su último éxito. Una regla de alerta de Azure Monitor (ADR-014) avisa si un job no tuvo éxito en 2 veces su frecuencia, o si termina en error. **Destinatarios (propuesta):** un grupo de acción con el correo del equipo de ATC (equipo Tiketes) y la mesa de ayuda de TI; severidad S2, y S1 si el job es del plazo legal (HU-013, HU-015). Lo confirma el Líder Técnico. La misma regla vigila la antigüedad del outbox (ADR-013, Q-007).
 7. **Eventos, no jobs:** lo que se dispara por un cambio (correo al asignar, alerta de cancelación al cliente, aviso de estado en Mi Portal) va por el outbox (ADR-013), no por un job.
+8. **Datos de otros dueños:** el job de reasignación por menor carga (HU-046) pide los gestores del área y su disponibilidad al puerto `GestoresPort`, hoy contra su simulador, porque Control de acceso no tiene esa consulta con token de servicio (ADR-009, P-035); sin candidatos, el ticket queda en la cola del área y se alerta al supervisor. El responsable del proyecto de HU-058 sale de la DEP-15.
 
 **Frecuencias propuestas** (la unidad de plazo siempre son días hábiles; la frecuencia es cada cuánto el job mira):
 
@@ -61,6 +63,9 @@ Los cálculos de SLA y de plazo legal se ejecutan en **jobs programados e idempo
 | Evaluación de 3 cuotas vencidas e impagas | HU-056 | diario | Según Cobranza (DEP-08) |
 | Control de la carta de alerta sin acción | HU-058 | diario | Plazo definido por el PO (pregunta abierta) |
 | Cierre automático del ticket resuelto sin respuesta | HU-066 | diario | Días hábiles configurables |
+| Publicador del outbox | todas las que publican eventos | cada 1 s | Retraso máximo de 5 s del almacén de lectura (ADR-012, ADR-013) |
+| Purga de eventos publicados (más de 7 días) | — | diario | Retención del outbox (ADR-013) |
+| Verificación del `IntegrityHash` de las bitácoras | RNF-AUD-004 | diario, fuera de la jornada | `hash_mismatch` = 0 (ADR-002, Q-003) |
 
 ## Controles programados, plazos y reintentos que piden las historias
 
@@ -77,27 +82,27 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | HU-031 | Informe diario (cierre de jornada) e informe quincenal | Informe programado |
 | HU-032 | Corte quincenal: registros paralelos del dato de cliente = 0; un hallazgo es gate no compensable | Auditoría programada |
 | HU-040 | Si la herramienta de Legal no responde: cola con reintento y «pendiente de sincronizar» | Adaptador con reintento (ADR-004) |
-| HU-046 | Balanceo por carga al entrar un ticket; excluye rayo, Eje 3 e interacción en curso; sin gestor disponible: cola del área y alerta al supervisor | Orquestador (ADR-008) |
+| HU-046 | Balanceo por carga al entrar un ticket; excluye rayo, Eje 3 e interacción en curso; sin gestor disponible: cola del área y alerta al supervisor | Orquestador (ADR-008), con `GestoresPort` (ADR-009, P-035) |
 | HU-051 | Reintento automático de la vinculación del cliente cuando SIGDA/TAXON vuelve | Job de reintento |
-| HU-055 | Correo al asignar en 1 min o menos con copia al líder; un solo correo de resumen por gestor en una reasignación masiva | Evento `ticket.assigned` (outbox) |
+| HU-055 | Correo al asignar en 1 min o menos con copia al líder; un solo correo de resumen por gestor en una reasignación masiva | Evento `aybar.service.ticket_assigned` (outbox); el líder, por `GestoresPort` (P-035) |
 | HU-056 | Evaluación diaria: contrato con 3 cuotas vencidas e impagas según Cobranza (DEP-08) | Job diario |
 | HU-057 | Alerta de cancelación al cliente en el mismo momento de crear el ticket; reintento por WhatsApp y Mi Portal si el correo rebota | Evento desde el outbox (ADR-013) |
 | HU-058 | Carta de alerta al responsable del proyecto con copia al supervisor; sin acción en el plazo definido, escalamiento | Evento + control programado |
-| HU-065 | Aviso por correo y WhatsApp al cliente en cada cambio de estado de su ticket | Evento `ticket.status_changed` (outbox) |
+| HU-065 | Aviso por correo y WhatsApp al cliente en cada cambio de estado de su ticket | Evento `aybar.service.ticket_status_changed` (outbox) |
 | HU-066 | Cierre automático del ticket resuelto sin respuesta del cliente a los días hábiles configurados, con aviso | Job de cierre |
 
 ## Consecuencias
 
 - Obliga a:
-  - Construir la lógica de días hábiles sobre `MAE_TIME` y `MAE_HOLIDAY`: el v7 ya trae las tablas (fragmento REFERENCE); DEP-04 define su carga.
-  - Declarar la dependencia de ShedLock y crear su tabla (P-031).
+  - Construir la lógica de días hábiles sobre `MAE_TIME` y `MAE_HOLIDAY`: el v7 ya trae las tablas (fragmento REFERENCE); DEP-04 define su carga, y quién corre su migración en la base única se acuerda con Gobierno de Datos (P-043; `datos/registro-de-tablas.md`).
+  - Declarar la dependencia de ShedLock (con versión fija) y crear su tabla (P-031).
   - Idempotencia por clave del hecho (ticket + ciclo + tipo de incumplimiento).
-  - Publicar `sla.breached` por el outbox (ADR-013).
-  - La regla de Azure Monitor para jobs sin éxito y la lista de destinatarios (P-025).
+  - Publicar `aybar.service.sla_breached` por el outbox (ADR-013).
+  - La regla de Azure Monitor para jobs sin éxito y su grupo de acción (punto 6).
 - Impide:
   - Cálculos de plazo en horas corridas.
   - Que un job lea el almacén de lectura para decidir un plazo legal.
-- Cuesta: horas de desarrollo **por estimar por el equipo (P-025)**, junto con el resto de lo que el SDK no trae (ADR-012); costo cloud sin impacto propio.
+- Cuesta: **8 h**: 6 h del calendario de días hábiles y 2 h de ShedLock (tabla del ADR-012; P-025). **USD 0 de nube propio**: ShedLock usa una tabla de la base de PostgreSQL (`arquitectura/costo-cloud.md` v0.3 (API de precios de Azure del 26-oct-2026, USD por mes, región base Brazil South; supuestos de región, volumen y tamaño en P-044), §1.4); los logs y la alerta de los jobs van en Azure Monitor, USD 46,00 al mes en producción (§1.1).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -111,5 +116,6 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Borrador con el mecanismo «por definir» |
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-05 y clave única de la alerta (RN-SVC-008) |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-08: ShedLock, idempotencia, fuente de lectura, reintento, alerta ante fallo y frecuencias por job (propuesta) |
+| 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Destinatarios y severidad de la alerta (antes «por definir»); jobs del publicador y la purga del outbox y de la verificación del hash; `GestoresPort` para HU-046 y HU-055 (P-035); tópicos con el formato del SDK; ShedLock con versión fija; costo con número y fuente |
 
-Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
+Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: (pendiente) · Aprueba: TL

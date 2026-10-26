@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-024 | Debe | 4 h con IA | Dev 2 (Jesús) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |
 
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-06 (repositorio documental y GLI; PLT-03)
+
+**La necesitan:** HU-ATC-025
+
 **Requerimiento de origen:** El sistema debe validar si un caso nuevo está vinculado a uno existente antes de registrarlo como independiente.
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -72,3 +78,5 @@ Escenario: CA-02 · Hilo único
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
