@@ -1155,18 +1155,18 @@ interface ItemMenuAtc {
       }
     </ay-modal>
 
-    <!-- Modal de consulta de catálogo funcional de 60 HUs -->
+    <!-- Modal de consulta de catálogo funcional -->
     <ay-modal
       size="lg"
       [abierto]="modalCatalogoHuAbierto()"
       (abiertoChange)="modalCatalogoHuAbierto.set($event)"
-      titulo="Catálogo Funcional del Sistema (60 Historias de Usuario)"
+      titulo="Catálogo Funcional del Sistema"
     >
       <div ayStack gap="4">
         <app-barra-filtros [filtros]="filtrosHu" />
 
         <ay-table
-          leyenda="Catálogo de 60 Historias de Usuario"
+          leyenda="Catálogo de Historias de Usuario"
           [columnas]="columnasCatalogoHu"
           [filas]="filtrosHu.filtradas()"
           [filtrosTabla]="filtrosHu"
@@ -1185,12 +1185,15 @@ interface ItemMenuAtc {
             <div ayStack gap="1">
               <span>{{ hu.titulo }}</span>
               <span ayText="body" size="xs">Módulo: {{ hu.pantalla }}</span>
+              @if (hu.etapaNota) {
+                <span ayText="body" size="xs">{{ hu.etapaNota }}</span>
+              }
             </div>
           </ng-template>
           <ng-template ayCelda="etapa" let-fila>
             @let hu = comoHu(fila);
-            <ay-badge size="sm" [tono]="hu.etapa === 'Etapa 2' ? 'warning' : 'success'">
-              {{ hu.etapa ?? 'Etapa 1' }}
+            <ay-badge size="sm" [tono]="hu.etapaNota ? 'neutral' : hu.etapa === 'Etapa 2' ? 'warning' : 'success'">
+              {{ hu.etapaNota ? 'Fuera de alcance' : (hu.etapa ?? 'Etapa 1') }}
             </ay-badge>
           </ng-template>
           <ng-template ayCelda="accion" let-fila>
@@ -1199,10 +1202,10 @@ interface ItemMenuAtc {
               <ay-button
                 tamano="sm"
                 variante="secondary"
-                [disabled]="!hu.vista"
+                [disabled]="!hu.vista || !!hu.etapaNota"
                 (click)="irAVistaDeHu(hu.vista)"
               >
-                Ir a vista →
+                {{ hu.etapaNota ? 'Fuera de alcance' : 'Ir a vista →' }}
               </ay-button>
             </div>
           </ng-template>
@@ -1364,9 +1367,6 @@ export class ConsolaAtcComponent {
       ],
       workflow: [
         'Workflow: Flujos por tipo (vista por área y tabla), Guías de solución versionadas y Alertas. Publicar una versión impacta en Nuevo Ticket y Detalle.',
-      ],
-      urbemind: [
-        'Integración CTI UrbeMind con webhook HMAC-SHA256 e idempotencia por callId.',
       ],
       evento: [
         'Control de padrón EntregaFest por QR/DNI y reserva de cupos en buses con validación de titularidad y estado de pago.',
@@ -1582,7 +1582,7 @@ export class ConsolaAtcComponent {
     const listables = this.todosLosMenus.filter((m) => !m.oculto);
     if (!this.filtrarSidebarPorRol()) return listables;
     const permitidos = this.estadoProto.vistasPermitidasParaRol(this.perspectivaId());
-    return listables.filter((m) => m.grupo === 'ESTRELLA' || permitidos.includes(m.id));
+    return listables.filter((m) => permitidos.includes(m.id));
   });
 
   /** FAV-01: el grupo «Favoritos» aparece arriba del menú en cuanto la persona marca uno y retira esas vistas de su grupo original para evitar duplicación. */
@@ -1620,32 +1620,27 @@ export class ConsolaAtcComponent {
     if (rol === 'CLIENTE') {
       return [
         {
-          etiqueta: 'Núcleo 360 y Planta',
-          plegable: true,
-          abiertoInicial: true,
-          elementos: this.menuEstrella.map((m) => ({
-            href: `#vista:${m.id}`,
-            icono: m.id,
-            etiqueta: m.titulo,
-            actual: activa === m.id,
-          })),
-        },
-        {
-          etiqueta: 'Mi Portal',
+          etiqueta: 'Mi Portal (Autogestión)',
           plegable: true,
           abiertoInicial: true,
           elementos: [
             {
-              href: '#vista:evento',
-              icono: 'evento',
-              etiqueta: 'EntregaFest en vivo',
-              actual: activa === 'evento' || activa === 'buses',
+              href: '#vista:bandeja',
+              icono: 'bandeja',
+              etiqueta: 'Mis tickets y trazabilidad',
+              actual: activa === 'bandeja' || activa === 'detalle',
             },
             {
               href: '#vista:nuevo',
               icono: 'nuevo',
-              etiqueta: 'Mis solicitudes y nueva solicitud',
+              etiqueta: 'Registrar nueva solicitud',
               actual: activa === 'nuevo',
+            },
+            {
+              href: '#vista:evento',
+              icono: 'evento',
+              etiqueta: 'EntregaFest y reserva de bus',
+              actual: activa === 'evento' || activa === 'buses',
             },
             {
               href: '#vista:libro',
@@ -1851,16 +1846,35 @@ export class ConsolaAtcComponent {
       const uid = this.acceso.sesion()?.usuarioId;
       if (!uid) return;
       const mapaUidRol: Record<string, RolPrototipoAtc> = {
-        admin: 'SUPERVISOR',
-        supervisor: 'SUPERVISOR',
         gestor: 'GESTOR',
+        supervisor: 'SUPERVISOR',
         legal: 'LEGAL_RECLAMOS',
+        sgd: 'MESA_SGD',
         cx: 'COORDINADOR_CX',
-        postventa: 'COLABORADOR',
+        postventa: 'GESTOR_POSTVENTA',
+        cliente: 'CLIENTE',
+        usuario: 'CLIENTE',
+        lider: 'LIDER_EQUIPO',
+        colaborador: 'COLABORADOR',
+        moderador: 'MODERADOR_EVENTO',
+        cobranza: 'ANALISTA_COBRANZA',
+        cdo: 'CDO',
+        'apoyo-cx': 'APOYO_CX',
+        proyecto: 'RESPONSABLE_PROYECTO',
+        referente: 'REFERENTE_ATENCION',
+        garita: 'CONTROL_ACCESO',
+        admin: 'ADMIN_FUNCIONAL',
       };
       const rol = mapaUidRol[uid];
       if (rol && rol !== this.estadoProto.rolActivo()) {
         this.estadoProto.rolActivo.set(rol);
+        const permitidas = this.estadoProto.vistasPermitidasParaRol(rol);
+        if (this.filtrarSidebarPorRol() && permitidas.length > 0 && !permitidas.includes(this.vistaActiva())) {
+          const perfil = ROLES_PROTOTIPO_ATC.find((r) => r.id === rol);
+          if (perfil) {
+            this.vistaActiva.set(perfil.vistaPrincipal);
+          }
+        }
       }
     });
 

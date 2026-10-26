@@ -377,8 +377,8 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
         </ay-page-header>
 
         @if (estadoProto.rolActivo() === 'ADMIN_FUNCIONAL') {
-          <ay-alert tono="warning" size="sm" titulo="Sin líder en NEXUS (HU-ATC-055)">
-            No tienes líder inmediato registrado en NEXUS: los correos de asignación se te envían sin copia (CC) hasta que RRHH complete tu estructura organizacional.
+          <ay-alert tono="warning" size="sm" titulo="Sin líder inmediato en directorio organizacional (HU-ATC-055)">
+            No tienes líder inmediato registrado en el directorio organizacional: los correos de asignación se te envían sin copia (CC) hasta que RRHH complete tu jerarquía.
           </ay-alert>
         }
 
@@ -726,7 +726,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           <div ayStack gap="2">
             <div ayStack gap="1">
               <ay-heading [nivel]="2" size="sm">
-                Correos de asignación enviados hoy (con CC a líder NEXUS)
+                Correos de asignación enviados hoy (con CC a líder de área)
               </ay-heading>
               <span ayText="subtitle" size="xs">
                 Trazabilidad de notificaciones automáticas disparadas hoy al asignar o derivar tickets.
