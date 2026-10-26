@@ -68,6 +68,20 @@ iguales: las 11 épicas, las 23 funcionalidades, 7 DoR en 1.3, la ficha de intak
 publican como versiones nuevas, pendientes de aprobación, con el `dry_run` primero y la luz verde de Brayan; nadie las aprueba al publicarlas.
 G3 y G4 suben como versión nueva de los de Jesús (v2 en Nexora), con su texto.
 
+## Publicado el 26-oct por la tarde: cierre de la revisión del Líder Técnico
+
+Brayan publicó **131 versiones nuevas y 2 documentos nuevos** (`analisis/proceso-atencion-prospectos.md` y
+`datos/registro-de-tablas.md`), todos pendientes de aprobación. Antes se hizo el `dry_run` y se comprobó que nadie había publicado
+desde la exportación de la mañana. Incluye las 62 HU con responsable y dependencias, las 14 ADR, seguridad, catálogo de roles, OpenAPI,
+diagramas, datos, costo, migración, decisiones 0.6, roadmap, DoR, backlog y los gates G0 a G4 de AYB-0001, después de dos revisiones
+independientes con los criterios del Líder Técnico.
+
+Después se volvió a traer Nexora a `/Users/lorem/Documents/aybar-atiende/docs-atiende/`: **182 documentos**, que son los 177 de esta
+carpeta, idénticos, más los 5 sobrantes de Nexora (la HU-001 duplicada y los 4 gates sueltos de la v1.2).
+
+Faltan los pasos de personas: firmar «Revisado por», enviar los correos de `../correos-revision-tl-26-oct.md` y crear los ítems con
+`../nexora-items/carga-items-pj06.csv`.
+
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
 Estado al 26-oct (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
