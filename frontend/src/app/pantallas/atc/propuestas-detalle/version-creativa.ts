@@ -7,6 +7,7 @@ import {
   AyCardBody,
   AyCardHeader,
   AyCardPairs,
+  AyPageHeader,
   AyStack,
   AyStatGroup,
   AyTabs,
@@ -58,6 +59,7 @@ import {
     AyCardBody,
     AyCardHeader,
     AyCardPairs,
+    AyPageHeader,
         AyStack,
     AyStatGroup,
     AyTabs,
@@ -68,33 +70,25 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let t = ticket();
-    @let sla = d.sla();
     <div ayStack gap="4">
-      <div>
+      <div class="c3-volver">
         <ay-button tamano="sm" variante="ghost" (click)="volver.emit()">← Volver a {{ volverA() }}</ay-button>
       </div>
 
-      <section class="c3-hb c3-mando--{{ sla.tono }}" aria-label="Centro de mando del ticket">
-        <div class="c3-hb__cab">
-          <div class="c3-mando__info">
-            <h1 class="c3-hb__id">{{ t.num }}</h1>
-            <p class="c3-resumen">{{ t.summary }}</p>
-          </div>
-          <div class="c3-mando__acciones">
-            @if (t.contract; as contrato) {
-              <ay-button tamano="sm" variante="ghost" (click)="verContrato.emit(contrato)">Ver contrato {{ contrato }}</ay-button>
-            }
-            <app-derivar-ticket [ticket]="t" [area]="d.area()" [conSenal]="d.senalActiva()" (derivado)="derivar($event)" />
-            @if (t.state === 'ESCALATED' && !d.cerrado()) {
-              <ay-button tamano="sm" variante="secondary" (click)="elevarAComite.emit()">Elevar a comité</ay-button>
-            }
-            @if (d.cerrado()) {
-              <ay-button tamano="sm" variante="secondary" (click)="reabrirTicket()">Reabrir con nuevo SLA</ay-button>
-            }
-          </div>
-        </div>
-        <ay-stat-group size="md" [filete]="true" [elementos]="cifrasMando()" />
-      </section>
+      <ay-page-header [titulo]="t.num" [descripcion]="t.summary">
+        @if (t.contract; as contrato) {
+          <ay-button ayAcciones tamano="sm" variante="ghost" (click)="verContrato.emit(contrato)">Ver contrato {{ contrato }}</ay-button>
+        }
+        <app-derivar-ticket ayAcciones [ticket]="t" [area]="d.area()" [conSenal]="d.senalActiva()" (derivado)="derivar($event)" />
+        @if (t.state === 'ESCALATED' && !d.cerrado()) {
+          <ay-button ayAcciones tamano="sm" variante="secondary" (click)="elevarAComite.emit()">Elevar a comité</ay-button>
+        }
+        @if (d.cerrado()) {
+          <ay-button ayAcciones tamano="sm" variante="secondary" (click)="reabrirTicket()">Reabrir con nuevo SLA</ay-button>
+        }
+      </ay-page-header>
+
+      <ay-stat-group size="md" [filete]="true" [elementos]="cifrasMando()" />
 
       <app-recorrido-flujo [d]="d" [conAccion]="true" (completar)="completarActividad()" />
 
@@ -189,15 +183,7 @@ import {
     </div>
   `,
   styles: `
-    .c3-mando--danger { border-left-color: var(--aybar-color-feedback-danger-border); }
-    .c3-mando--warning { border-left-color: var(--aybar-color-feedback-warning-border); }
-    .c3-mando--success { border-left-color: var(--aybar-color-feedback-success-border); }
-    .c3-mando__info { min-width: 0; }
-    .c3-resumen { margin: 0; color: var(--aybar-color-fg-muted); }
-    .c3-mando__acciones { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--aybar-space-2); }
-    .c3-hb { display: flex; flex-direction: column; gap: var(--aybar-space-4); padding: var(--aybar-space-5) var(--aybar-space-6); border-radius: var(--aybar-radius-xl); border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); border-left-width: 6px; background: var(--aybar-color-bg-surface); }
-    .c3-hb__id { margin: 0 0 var(--aybar-space-2); font-family: var(--aybar-family-mono); font-size: var(--aybar-font-size-3xl); font-weight: var(--aybar-font-weight-bold); line-height: 1.1; }
-    .c3-hb__cab { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--aybar-space-4); }
+    .c3-volver { margin-inline-start: calc(var(--aybar-space-3) * -1); }
     .c3-principal { min-width: 0; }
     .c3-panel { padding-top: var(--aybar-space-4); }
     .c3-contexto { position: sticky; top: var(--aybar-space-4); }
@@ -212,8 +198,7 @@ import {
     .c3-identidad__nombre { font-size: var(--aybar-font-size-lg); font-weight: var(--aybar-font-weight-bold); }
     .c3-lista { margin: 0; padding-left: var(--aybar-space-5); display: flex; flex-direction: column; gap: var(--aybar-space-2); font-size: var(--aybar-font-size-sm); }
     @media (max-width: 70rem) {
-        .c3-mando__acciones { flex-direction: row; flex-wrap: wrap; }
-      .c3-cuerpo { grid-template-columns: minmax(0, 1fr); }
+          .c3-cuerpo { grid-template-columns: minmax(0, 1fr); }
       .c3-contexto { position: static; }
     }
   `,
