@@ -19,7 +19,6 @@ import {
   AyCardPairs,
   AyCelda,
   AyCheckbox,
-  AyDivider,
   AyEmptyState,
   AyForm,
   AyFormField,
@@ -27,8 +26,6 @@ import {
   AyGrid,
   AyHeading,
   AyInput,
-  AyList,
-  AyListItem,
   AyModal,
   AyPageHeader,
   AyPagination,
@@ -71,12 +68,15 @@ import { AREA_ES, MOTIVO_ES, etiqueta, opcionesDe, traducirCodigos } from './eti
 import { BarraFiltrosComponent } from './barra-filtros';
 import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
+import type { DerivacionEvento } from './propuestas-detalle/derivar-ticket';
+import { DetalleCreativa } from './propuestas-detalle/version-creativa';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 @Component({
   selector: 'app-vista-operacion',
   standalone: true,
   imports: [
+    DetalleCreativa,
     BarraFiltrosComponent,
     FiltroColumnasTablaDirective,
     VacioFiltrosComponent,
@@ -89,17 +89,14 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
     AyCardPairs,
     AyCelda,
     AyCheckbox,
-    AyDivider,
-    AyEmptyState,
+      AyEmptyState,
     AyForm,
     AyFormField,
     AyFormGroup,
     AyGrid,
     AyHeading,
     AyInput,
-    AyList,
-    AyListItem,
-    AyModal,
+        AyModal,
     AyPageHeader,
     AyPagination,
     AyProgressBar,
@@ -969,330 +966,20 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
     }
 
     <!-- ====================================================================== -->
-    <!-- VISTA 3: DETALLE DE TICKET + COPILOTO IA + HANDOFF 6/6 EJE 3           -->
+    <!-- VISTA 3: DETALLE DE TICKET (centro de mando: cifras, workflow, pestañas) -->
     <!-- ====================================================================== -->
     @if (subvista() === 'detalle') {
-      @if (ticketActual(); as t) {
-        <div ayStack gap="6">
-          <ay-page-header
-            [titulo]="t.num + ' · ' + (estadoEs[t.state] ?? t.state)"
-            [descripcion]="t.summary"
-          >
-            <ay-button ayAcciones tamano="sm" variante="ghost" (click)="volver.emit()">
-              ← Volver a {{ volverA() }}
-            </ay-button>
-            @if (t.contract) {
-              <ay-button ayAcciones tamano="sm" variante="ghost" (click)="verContrato.emit(t.contract)">
-                Ver contrato {{ t.contract }}
-              </ay-button>
-            }
-            <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalDerivarAbierto.set(true)">
-              Derivar / Paquete Legal 6/6
-            </ay-button>
-            @if (t.state === 'ESCALATED') {
-              <ay-button ayAcciones tamano="sm" variante="secondary" (click)="elevarAComite(t)">
-                Elevar a comité
-              </ay-button>
-            }
-            @if (t.state !== 'RESOLVED' && t.state !== 'CLOSED') {
-              <ay-button
-                ayAcciones
-                tamano="sm"
-                variante="primary"
-                [disabled]="t.conflict && t.area !== 'LEGAL'"
-                (click)="resolverTicket(t)"
-              >
-                Marcar Resuelto
-              </ay-button>
-            } @else {
-              <ay-button ayAcciones tamano="sm" variante="secondary" (click)="reabrirTicket(t)">
-                Reabrir con nuevo SLA
-              </ay-button>
-            }
-          </ay-page-header>
-
-          @if (t.conflict || t.eje === 3) {
-            <ay-alert
-              tono="danger"
-              titulo="Derivación Obligatoria a Eje 3 Legal activa"
-            >
-              Este caso presenta señal de conflicto legal o amenaza de denuncia. Primera línea tiene bloqueado el cierre directo
-              y debe transferir el expediente con el <strong>Paquete Documental Completo 6/6</strong> sincronizado con la
-              bandeja de Gerencia Legal.
-            </ay-alert>
-          }
-
-          <div ayGrid [columnas]="2" gap="md">
-            <div ayStack gap="4">
-              <div ayStack gap="2">
-                <ay-card variante="elevated" superficie="solid">
-                  <ay-card-body padding="md" gap="md">
-                    <ay-card-pairs [pares]="paresDetalleTicket(t)" />
-                    <ay-alert tono="info" size="sm" titulo="Nota de contexto del cliente">
-                      {{ t.emotion }}
-                    </ay-alert>
-                  </ay-card-body>
-                </ay-card>
-              </div>
-
-              <!-- Interacciones con visibilidad controlada (título fuera del componente) -->
-              <div ayStack gap="2">
-                <div ayStack gap="1">
-                  <ay-heading [nivel]="2" size="sm">Hilo de interacciones y comunicaciones</ay-heading>
-                  <span ayText="subtitle" size="xs">
-                    Las notas internas son exclusivas para el equipo y nunca se exponen en Mi Portal
-                  </span>
-                </div>
-                <ay-card superficie="solid">
-                  <ay-card-body padding="md" gap="md">
-                    <div ayStack gap="3">
-                      @for (it of t.interactions; track $index) {
-                        <ay-card superficie="solid">
-                          <ay-card-header
-                            [titulo]="it.autor ?? 'Sistema'"
-                            [subtitulo]="fmtHora(it.fecha)"
-                            nivel="h4"
-                            [separador]="true"
-                          >
-                            <div ayAcciones>
-                              <ay-badge
-                                size="sm"
-                                [tono]="it.tipo === 'int' ? 'warning' : it.tipo === 'agt' ? 'info' : 'neutral'"
-                              >
-                                {{
-                                  it.tipo === 'int'
-                                    ? 'Nota interna (Oculta al cliente)'
-                                    : it.tipo === 'agt'
-                                      ? 'Respuesta visible en Mi Portal'
-                                      : 'Mensaje del cliente'
-                                }}
-                              </ay-badge>
-                            </div>
-                          </ay-card-header>
-                          <ay-card-body padding="sm">
-                            <p ayText="body" size="sm">{{ traducir(it.texto) }}</p>
-                          </ay-card-body>
-                        </ay-card>
-                      }
-                    </div>
-
-                    <ay-divider espaciado="sm" />
-
-                    <div ayStack gap="3">
-                      <div ayRow gap="2" justificar="between" [ajuste]="true">
-                        <strong ayText="label">Registrar nueva interacción</strong>
-                        <ay-checkbox
-                          [marcado]="notaInterna()"
-                          (marcadoChange)="notaInterna.set($event)"
-                        >
-                          Nota interna (no visible en Mi Portal)
-                        </ay-checkbox>
-                      </div>
-                      <ay-form-field etiqueta="Respuesta o nota de seguimiento">
-                        <ay-textarea nombre="texto-respuesta"
-                          [filas]="3"
-                          [valor]="textoRespuesta()"
-                          (valorChange)="textoRespuesta.set($event)"
-                          placeholder="Escribe la respuesta al cliente o inserta la plantilla sugerida por el Copiloto IA..."
-                        />
-                      </ay-form-field>
-                      <div ayRow gap="2" [ajuste]="true">
-                        <ay-button tamano="sm" variante="primary" (click)="agregarInteraccion(t)">
-                          Registrar interacción
-                        </ay-button>
-                        <ay-button tamano="sm" variante="secondary" (click)="usarPlantillaIa(t)">
-                          Autocompletar con Copiloto IA
-                        </ay-button>
-                      </div>
-                    </div>
-                  </ay-card-body>
-                </ay-card>
-              </div>
-            </div>
-
-            <!-- Columna derecha: Guía de solución (conectada a Workflow), Asistente IA y Timeline -->
-            <div ayStack gap="4">
-              <div ayStack gap="2">
-                <ay-card superficie="solid">
-                  <ay-card-header
-                    titulo="Guía de solución"
-                    [subtitulo]="'Flujo con el que nació / opera este tipo: v' + flujoDeTicket(t.type).versionActual + ' (' + flujoDeTicket(t.type).area + ')'"
-                    nivel="h2"
-                    [separador]="true"
-                  >
-                    <div ayAcciones>
-                      @if (guiaConfigDeTicket(t.type)?.versionActual; as ver) {
-                        <ay-badge size="sm" tono="info">Versión v{{ ver }}</ay-badge>
-                      } @else {
-                        <ay-badge size="sm" tono="danger">Sin guía</ay-badge>
-                      }
-                    </div>
-                  </ay-card-header>
-                  <ay-card-body padding="md" gap="md">
-                    @if (guiaConfigDeTicket(t.type); as guiaCfg) {
-                      @if (guiaCfg.versionActual !== null) {
-                        <div ayStack gap="2">
-                          <strong ayText="label" size="xs">Pasos publicados en Workflow</strong>
-                          <ay-list
-                            etiqueta="Pasos recomendados"
-                            [ordenada]="true"
-                            [separadores]="true"
-                            [elementos]="guiaCfg.pasos"
-                          >
-                            <ng-template #elemento let-paso>
-                              <ay-list-item [titulo]="paso" />
-                            </ng-template>
-                          </ay-list>
-                        </div>
-
-                        @if (guiaCfg.criterios.length > 0) {
-                          <div ayStack gap="2">
-                            <strong ayText="label" size="xs">Criterios de cierre exigidos</strong>
-                            <ay-list
-                              etiqueta="Criterios de cierre"
-                              [ordenada]="false"
-                              [separadores]="true"
-                              [elementos]="guiaCfg.criterios"
-                            >
-                              <ng-template #elemento let-crit>
-                                <ay-list-item [titulo]="crit" />
-                              </ng-template>
-                            </ay-list>
-                          </div>
-                        }
-                      } @else {
-                        <ay-alert tono="warning" size="sm" titulo="Sin guía publicada">
-                          Este tipo de ticket («{{ nombreTipo(t.type) }}») no tiene guía publicada. Ya se avisó al Administrador Funcional en Workflow › Alertas.
-                        </ay-alert>
-                      }
-                    }
-
-                    <ay-divider espaciado="sm" />
-
-                    <div ayStack gap="2">
-                      <strong ayText="label" size="sm">Asistente de IA (con anonimización previa de DNI/tarjetas)</strong>
-                      <ay-alert tono="info" size="sm" titulo="Revisión del Copiloto IA sobre tu borrador">
-                        {{ evaluarBorradorIa() }}
-                      </ay-alert>
-                      <div ayRow gap="2" [ajuste]="true">
-                        <ay-button tamano="sm" variante="primary" (click)="registrarDecisionIa(t, 'ACEPTADA')">
-                          Aceptar sugerencia IA
-                        </ay-button>
-                        <ay-button tamano="sm" variante="secondary" (click)="registrarDecisionIa(t, 'EDITADA')">
-                          Usar mi versión editada
-                        </ay-button>
-                        <ay-button tamano="sm" variante="ghost" (click)="registrarDecisionIa(t, 'DESCARTADA')">
-                          Descartar
-                        </ay-button>
-                      </div>
-                    </div>
-                  </ay-card-body>
-                </ay-card>
-              </div>
-
-              <div ayStack gap="2">
-                <ay-card superficie="solid">
-                  <ay-card-header
-                    titulo="Recorrido del workflow"
-                    [subtitulo]="'Actividades y responsable del flujo v' + flujoDeTicket(t.type).versionActual + ' (' + flujoDeTicket(t.type).area + ')'"
-                    nivel="h2"
-                    [separador]="true"
-                  />
-                  <ay-card-body padding="md" gap="sm">
-                    <ay-list etiqueta="Recorrido del workflow" [ordenada]="false" [separadores]="true" [elementos]="recorridoFlujo(t)">
-                      <ng-template #elemento let-paso>
-                        <ay-list-item [titulo]="paso" />
-                      </ng-template>
-                    </ay-list>
-                    <span ayText="body" size="xs">
-                      Avance por actividad (actividad actual y completadas): definición pendiente, el modelo del prototipo no lo registra.
-                    </span>
-                  </ay-card-body>
-                </ay-card>
-              </div>
-
-              <div ayStack gap="2">
-                <div ayStack gap="1">
-                  <ay-heading [nivel]="2" size="sm">Bitácora inmutable de asignaciones</ay-heading>
-                  <span ayText="subtitle" size="xs">Trazabilidad cronológica con AyTimeline</span>
-                </div>
-                <ay-card superficie="solid">
-                  <ay-card-body padding="md">
-                    <ay-timeline
-                      etiqueta="Bitácora de asignaciones del ticket"
-                      [hitos]="hitosBitacoraTicket(t)"
-                    />
-                  </ay-card-body>
-                </ay-card>
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal Derivar / Paquete Mínimo 6/6 de Handoff a Eje 3 Legal -->
-          <ay-modal
-            [abierto]="modalDerivarAbierto()"
-            (abiertoChange)="modalDerivarAbierto.set($event)"
-            titulo="Derivación de área y Paquete Documental 6/6 Eje 3 Legal"
-          >
-            <ay-form (enviar)="confirmarDerivacion(t)">
-              <div ayStack gap="3">
-                <ay-form-field etiqueta="Área destino" obligatorio>
-                  <ay-select nombre="derivar-area"
-                    [opciones]="opcionesAreasForm"
-                    [valor]="derivarArea()"
-                    (valorChange)="derivarArea.set($event)"
-                  />
-                </ay-form-field>
-                <ay-form-field etiqueta="Motivo de derivación" obligatorio>
-                  <ay-select nombre="derivar-motivo"
-                    [opciones]="opcionesMotivosForm"
-                    [valor]="derivarMotivo()"
-                    (valorChange)="derivarMotivo.set($event)"
-                  />
-                </ay-form-field>
-
-                @if (derivarArea() === 'LEGAL' || derivarMotivo() === 'DERIVACION_CONFLICTO_EJE3') {
-                  <ay-form-group
-                    leyenda="Checklist obligatorio 6/6 para transferencia a Eje 3 Legal"
-                    [descripcion]="'Completados ' + conteoPaquete6() + '/6 requisitos para sincronización con Legal.'"
-                    variante="card"
-                  >
-                    @for (item of itemsPaquete6; track item.k) {
-                      <ay-checkbox
-                        [marcado]="paquete6()[item.k]"
-                        (marcadoChange)="alternarItemPaquete6(item.k, $event)"
-                      >
-                        {{ item.label }}
-                      </ay-checkbox>
-                    }
-                  </ay-form-group>
-                }
-
-                <ay-form-field etiqueta="Nota de derivación" obligatorio>
-                  <ay-textarea nombre="derivar-nota"
-                    [filas]="2"
-                    [valor]="derivarNota()"
-                    (valorChange)="derivarNota.set($event)"
-                  />
-                </ay-form-field>
-
-                <div ayRow gap="2" justificar="end">
-                  <ay-button variante="ghost" (click)="modalDerivarAbierto.set(false)">Cancelar</ay-button>
-                  <ay-button
-                    tipo="submit"
-                    variante="primary"
-                    [disabled]="
-                      (derivarArea() === 'LEGAL' || derivarMotivo() === 'DERIVACION_CONFLICTO_EJE3') &&
-                      conteoPaquete6() < 6
-                    "
-                  >
-                    Confirmar derivación y sincronizar
-                  </ay-button>
-                </div>
-              </div>
-            </ay-form>
-          </ay-modal>
-        </div>
+      @for (t of ticketVista(); track t.num) {
+        <app-detalle-creativa
+          [ticket]="t"
+          [volverA]="volverA()"
+          (volver)="volver.emit()"
+          (verContrato)="verContrato.emit($event)"
+          (resolver)="resolverTicket(ticketActual()!)"
+          (reabrir)="reabrirTicket(ticketActual()!)"
+          (elevarAComite)="elevarAComite(ticketActual()!)"
+          (derivado)="derivarDesdeDetalle($event)"
+        />
       }
     }
 
@@ -1988,6 +1675,15 @@ export class VistaOperacionComponent {
     });
   });
 
+  /** El ticket se edita en sitio (como el resto del prototipo): este contador avisa a la vista de que cambió. */
+  private readonly revision = signal(0);
+  /** Copia superficial del ticket abierto, nueva con cada cambio, para que la vista del detalle se actualice. */
+  readonly ticketVista = computed<TicketAtc[]>(() => {
+    this.revision();
+    const t = this.ticketActual();
+    return t ? [{ ...t }] : [];
+  });
+
   readonly ticketActual = computed<TicketAtc | undefined>(() => {
     const num = this.ticketSeleccionadoNum();
     return this.tickets().find((t) => t.num === num) ?? this.tickets()[0];
@@ -2326,8 +2022,9 @@ export class VistaOperacionComponent {
     t.interactions.push({
       tipo: 'sys',
       fecha: AHORA_BASE,
-      texto: 'Ticket resuelto · Encuesta CSAT/CES enviada automáticamente a Mi Portal.',
+      texto: 'Ticket resuelto al completarse el workflow · Encuesta CSAT/CES enviada automáticamente a Mi Portal.',
     });
+    this.revision.update((n) => n + 1);
   }
 
   /** Escalado → comité, como la cadena sin saltos de docs/datos/estados.md (EN_ESCALAMIENTO → EN_COMITE). */
@@ -2335,6 +2032,7 @@ export class VistaOperacionComponent {
     t.state = 'IN_COMMITTEE';
     t.status.push({ fecha: AHORA_BASE, estado: 'IN_COMMITTEE', autor: this.estadoProto.perfilActivo().nombre });
     t.interactions.push({ tipo: 'sys', fecha: AHORA_BASE, texto: 'Ticket elevado a comité.' });
+    this.revision.update((n) => n + 1);
   }
 
   reabrirTicket(t: TicketAtc): void {
@@ -2352,6 +2050,20 @@ export class VistaOperacionComponent {
       fecha: AHORA_BASE,
       texto: `Ticket reabierto con política vigente ${calc.politica.id} v${calc.politica.version} · Se conserva el hito original de cierre y se abre nuevo compromiso hasta ${fmtFechaHora(t.resDue)}.`,
     });
+    this.revision.update((n) => n + 1);
+  }
+
+  /** Derivación hecha en el detalle: el ticket pasa al área destino; a Legal llega como Eje 3 escalado. */
+  derivarDesdeDetalle(e: DerivacionEvento): void {
+    const t = this.ticketActual();
+    if (!t) return;
+    t.area = e.area;
+    if (e.persona) t.owner = e.persona;
+    if (e.area === 'LEGAL') {
+      t.eje = 3;
+      t.state = 'ESCALATED';
+    }
+    this.revision.update((n) => n + 1);
   }
 
   alternarItemPaquete6(k: string, val: boolean): void {
