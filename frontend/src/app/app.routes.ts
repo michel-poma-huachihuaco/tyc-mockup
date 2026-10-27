@@ -38,6 +38,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pantallas/atc/consola-atc').then((m) => m.ConsolaAtcComponent),
   },
   {
+    path: 'detalle-propuestas',
+    title: `Propuestas del detalle de ticket · ${NOMBRE_PROYECTO} · Aybar`,
+    loadComponent: () =>
+      import('./pantallas/atc/propuestas-detalle/vista-propuestas-detalle').then((m) => m.VistaPropuestasDetalle),
+  },
+  {
     path: 'bienvenida',
     title: `Portada SDK · ${NOMBRE_PROYECTO} · Aybar`,
     loadComponent: () => import('./pantallas/bienvenida').then((m) => m.Bienvenida),
