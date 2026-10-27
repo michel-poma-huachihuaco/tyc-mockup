@@ -183,7 +183,7 @@ import {
     </div>
   `,
   styles: `
-    .c3-volver { margin-inline-start: calc(var(--aybar-space-3) * -1); }
+    .c3-volver { margin-inline-start: calc(var(--aybar-space-3) * -1); padding-top: var(--aybar-space-4); }
     .c3-principal { min-width: 0; }
     .c3-panel { padding-top: var(--aybar-space-4); }
     .c3-contexto { position: sticky; top: var(--aybar-space-4); }
