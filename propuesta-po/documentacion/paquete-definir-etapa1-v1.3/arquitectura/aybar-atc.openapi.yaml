@@ -160,7 +160,8 @@ paths:
       x-permiso: "ATC.TICKETS + editar"
       x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
       x-errores-negocio:
-        - { codigo: AYB-TKT-422, cuando: 'Adjunto de más de 10 MB o de formato no admitido (HU-064 CA-05), o texto con DNI o número de tarjeta en una nota (HU-005 CA-04; RN-SVC-012).' }
+        - { codigo: AYB-VAL-400, cuando: 'Adjunto de más de 10 MB, de formato no admitido o más de 3 por envío (HU-064 CA-05; ED-26), con el tamaño y los formatos permitidos: el mismo código en la consola, en Mi Portal y en la inspección.' }
+        - { codigo: AYB-TKT-422, cuando: 'Texto con DNI o número de tarjeta en una nota (HU-005 CA-04; RN-SVC-012).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: ticketId
@@ -2402,7 +2403,7 @@ components:
         texto: { type: string, description: 'El sistema advierte si una nota trae un DNI o una tarjeta (HU-005 CA-04; RN-SVC-012).' }
         canal: { type: string, description: 'ChannelID.' }
         autor: { type: string, readOnly: true, description: 'Cliente o gestor (PLT-04 HU-064 a 066 §6.5); el gestor es AgentPartyID.' }
-        adjuntos: { type: array, maxItems: 3, items: { type: string }, description: 'La evidencia va dentro de la interacción, sin tabla de adjuntos aparte (HU-005 CA-02); máximo 10 MB y formatos admitidos (HU-064 CA-05).', x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío (interacción), el mismo límite en la consola, en Mi Portal y en la inspección (ED-26; parámetro configurable).' }
+        adjuntos: { type: array, maxItems: 3, items: { type: string }, description: 'La evidencia va dentro de la interacción, sin tabla de adjuntos aparte (HU-005 CA-02); máximo 10 MB y formatos admitidos (HU-064 CA-05); si no, AYB-VAL-400.', x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío (interacción), el mismo límite en la consola, en Mi Portal y en la inspección (ED-26; parámetro configurable).' }
         duracionSegundos: { type: integer, description: 'Para la llamada registrada como interacción (HU-042 CA-02).' }
         enlaceGrabacion: { type: string }
     Derivacion:

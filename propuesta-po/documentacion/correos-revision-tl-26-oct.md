@@ -33,7 +33,7 @@ comprometida para **DEV, QA y PRE** (la UAT del 03-nov es en PRE):
 6. Opcional: que la cuenta que nace por DNI reciba el rol `CUSTOMER`. Mientras no, Mi Portal admite la cuenta `CUSTOMER` activa sin el rol.
 
 Si Control de acceso no está en PRE el lunes 02-nov a mediodía, la UAT corre con el emisor de pruebas de Control de acceso desplegado en PRE y el PO
-decide el Go/No-Go.
+decide el Go/No-Go. Mientras Control de acceso no esté en QA, los E2E de QA usan ese mismo emisor de pruebas.
 
 Para tu información, estas son las decisiones de ATC (ED-01 a ED-09). Si no hay objeción en 48 h hábiles, se aplican:
 

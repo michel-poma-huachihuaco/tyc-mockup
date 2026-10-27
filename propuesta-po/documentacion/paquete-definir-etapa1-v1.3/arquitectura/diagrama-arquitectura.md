@@ -14,7 +14,7 @@ tags: [arquitectura, c4, g3]
 
 # Diagrama de arquitectura · C4
 
-Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión 0.6 del 26-oct-2026 (la 0.6 marca Azure OpenAI sin consumo en la Etapa 1, P-025): dibuja las decisiones DT-01 a DT-10 del Líder Técnico y las del equipo que tocan el diagrama (ED-01, ED-03, ED-06, ED-08, ED-17 y ED-24; `analisis/decisiones.md`) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
+Va en `docs/arquitectura/` y se enlaza desde el envío de G3 y desde la sección 4 del DoR. Fuentes: `c4-contexto.mmd`, `c4-contenedores.mmd` y `modulos.mmd` (Mermaid; cualquier visor de Mermaid o `mmdc` los dibuja); los diagramas de ambientes y de logs y auditoría están solo en este documento. Versión del 26-oct-2026 (marca Azure OpenAI sin consumo en la Etapa 1, P-025): dibuja las decisiones DT-01 a DT-10 del Líder Técnico y las del equipo que tocan el diagrama (ED-01, ED-03, ED-06, ED-08, ED-17 y ED-24; `analisis/decisiones.md`) y responde a la evidencia «Diagramas» de su revisión del 22-oct (§4): emisor de Control de acceso, Azure, sin módulo `identidad`, visor alimentado por el servicio, logs y auditoría, y ambientes. La v0.4 aplica su segunda revisión: el WebSocket del visor se autentica en el *handshake* y no pasa por API Management, la UAT va en PRE (PLT-05 §4.2) y hay un job de migraciones aparte. Los cinco diagramas se validaron con `mmdc` (Mermaid CLI) el 26-oct.
 
 | DT | Dónde se ve |
 |---|---|
@@ -304,7 +304,7 @@ Qué va a cada lado:
 
 Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técnico en este envío (`analisis/decisiones.md`):
 
-- Control de acceso en DEV (DEP-16): riesgo aceptado con mitigación; en local y DEV, el emisor de pruebas (ED-08).
+- Control de acceso en DEV, QA y PRE (DEP-16): riesgo aceptado con mitigación; en local, DEV y QA, el emisor de pruebas y el simulador de `CuentaPersonaPort` (R-11); en PRE, el criterio de corte de la UAT (R-12; ED-08).
 - Gestores y líderes: datos de la cola de ATC y rol del token; la flecha punteada del contexto es la evolución (ED-03).
 - Audiencia: `aud` = `aybar-atc`, validada en API Management y en el servicio (ED-06).
 - Event Hubs: `SASL_SSL` con la cadena de conexión en Key Vault (ED-24).

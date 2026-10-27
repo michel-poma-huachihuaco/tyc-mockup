@@ -44,7 +44,7 @@ La sección de dependencias del PLT-05 no lista ninguna; las de las historias de
 
 | ID | Dependencia | Tipo | Bloquea a | Responsable | Fecha requerida (PLT-01) | Estado (PLT-01) |
 |---|---|---|---|---|---|---|
-| DEP-16 | Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-067 (permisos por área, CA-07) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de `analisis/decisiones.md`): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12) |
+| DEP-16 | Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-067 (permisos por área, CA-07) | Interna | EP-ATC-01, EP-ATC-02, EP-ATC-04, EP-ATC-06, EP-ATC-09, EP-ATC-10, EP-ATC-11 | Área de Roles y Permisos (Sony Montoya) | 21-oct-2026 | Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de `analisis/decisiones.md`): emisor de pruebas en local, DEV y QA, tokens de prueba, simulador de `CuentaPersonaPort` y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12) |
 
 Una dependencia sin desbloquear deja el criterio 6 sin cumplir. Si su responsable no compromete fecha, se registra como riesgo con su mitigación (R-02: contrato de interfaz y simulador; R-11 y R-12 para la DEP-16), según `analisis/decisiones.md` (ED-08).
 
@@ -90,7 +90,7 @@ Propuesta IA: el PLT-05 (v1.3) la evalúa «Listo con condiciones» (Áreas de l
 
 Condiciones pendientes (solo si NO READY):
 - [ ] Áreas de la sede · eventos de HU-043/044 · ADR-10 (PLT-05) — decisión del equipo: áreas del CA-01 con su posición en `MAE_AREA` (Q-067-1); eventos del outbox (ADR-013); visor según ADR-010
-- [ ] DEP-16 Control de acceso disponible en DEV, QA y PRE (añadida el 26-oct desde PLT-03/PLT-04/PLT-05): riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de `analisis/decisiones.md`): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)
+- [ ] DEP-16 Control de acceso disponible en DEV, QA y PRE (añadida el 26-oct desde PLT-03/PLT-04/PLT-05): riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de `analisis/decisiones.md`): emisor de pruebas en local, DEV y QA, tokens de prueba, simulador de `CuentaPersonaPort` y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)
 - [ ] Criterios 4, 5, 7, 8 y 9 de la sección 1
 
 | Rol | Nombre | Fecha | Firma |

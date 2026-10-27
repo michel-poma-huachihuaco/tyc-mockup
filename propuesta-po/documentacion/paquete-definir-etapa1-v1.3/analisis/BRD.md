@@ -131,7 +131,7 @@ En resumen, la Etapa 1 cubre:
 - los formularios simples (ingreso al proyecto y buses del Entrega Fest);
 - la autogestión del cliente en Mi Portal.
 
-En la Etapa 1, los usuarios, los roles y los líderes los administra Control de acceso (PJ-05) y ATC solo los consume (DEP-16, ADR-009), según el Líder Técnico (DT-03 y C-12). La DEP-16 es un riesgo aceptado con mitigación (R-11 en local y DEV; R-12, corte de la UAT en PRE; ED-08 de `analisis/decisiones.md`). El plan del PO tenía un maestro local con carga de RR. HH. (DEP-02).
+En la Etapa 1, los usuarios, los roles y los líderes los administra Control de acceso (PJ-05) y ATC solo los consume (DEP-16, ADR-009), según el Líder Técnico (DT-03 y C-12). La DEP-16 es un riesgo aceptado con mitigación (R-11 en local, DEV y QA; R-12, corte de la UAT en PRE; ED-08 de `analisis/decisiones.md`). El plan del PO tenía un maestro local con carga de RR. HH. (DEP-02).
 
 **Prospectos, en la Etapa 1 (P-041, ED-09; decisión del coordinador, 26-oct).** Control de acceso deriva a Atención al cliente los casos de identidad de los prospectos. Entran como el tipo de ticket «Validación de identidad (prospecto)», con 4 subtipos («Correo distinto», «DNI ya registrado por otra persona», «Posible suplantación» y «Otro caso de identidad»), en el área ATC, y se resuelven en la consola de Control de acceso: valida un supervisor de la cola `ATC` con `PROSPECT_VALIDATOR` y suspende al impostor `IT_ADMIN` (ED-20). Es semilla del catálogo (tipificación de HU-001 y flujos de HU-043): sin historias ni horas nuevas. El proceso está en `analisis/proceso-atencion-prospectos.md`.
 
