@@ -34,6 +34,7 @@ import type { AsistenteProyecto } from './datos-atc';
               <div class="ih__chips">
                 <ay-badge size="sm" tono="info">{{ a.proyecto }}</ay-badge>
                 <ay-badge size="sm" tono="neutral">Lote {{ a.lote }}</ay-badge>
+                <ay-badge size="sm" [tono]="a.placa ? 'success' : 'neutral'">{{ a.placa ? 'Vehículo ' + a.placa : 'A pie' }}</ay-badge>
                 @if (a.acompanantes > 0) {
                   <ay-badge size="sm" tono="warning">+{{ a.acompanantes }} acomp.</ay-badge>
                 }

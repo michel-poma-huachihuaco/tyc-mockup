@@ -98,7 +98,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
 interface ItemMenuAtc {
   readonly id: VistaAtc;
-  readonly grupo: 'ESTRELLA' | 'OPERACION' | 'SUPERVISION' | 'GESTION';
+  readonly grupo: 'ESTRELLA' | 'OPERACION' | 'MESAS' | 'SUPERVISION' | 'GESTION';
   readonly titulo: string;
   readonly subtitulo: string;
   readonly icono: string;
@@ -1448,13 +1448,6 @@ export class ConsolaAtcComponent {
       icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
     },
     {
-      id: 'morosidad',
-      grupo: 'OPERACION',
-      titulo: 'Morosidad 3 meses',
-      subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
-      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
-    },
-    {
       id: 'buses',
       grupo: 'OPERACION',
       titulo: 'Buses del Entrega Fest',
@@ -1465,7 +1458,7 @@ export class ConsolaAtcComponent {
     },
     {
       id: 'libro',
-      grupo: 'OPERACION',
+      grupo: 'MESAS',
       titulo: 'Libro de reclamaciones',
       subtitulo: 'Gestión de quejas, reclamos y plazos legales INDECOPI',
       icono:
@@ -1473,14 +1466,21 @@ export class ConsolaAtcComponent {
     },
     {
       id: 'garantias',
-      grupo: 'OPERACION',
+      grupo: 'MESAS',
       titulo: 'Garantías postventa',
       subtitulo: 'Reclamos de garantía con vigencia automática desde Acta de Entrega',
       icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
     },
     {
+      id: 'morosidad',
+      grupo: 'MESAS',
+      titulo: 'Morosidad 3 meses',
+      subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
+      icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
+    },
+    {
       id: 'sgd',
-      grupo: 'OPERACION',
+      grupo: 'MESAS',
       titulo: 'Mesa SGD',
       subtitulo: 'Casos documentales con control de paquete 6/6 y Comité SGD',
       icono: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6',
@@ -1529,8 +1529,8 @@ export class ConsolaAtcComponent {
     {
       id: 'workflow',
       grupo: 'GESTION',
-      titulo: 'Workflow',
-      subtitulo: 'Flujos por tipo y área resolutora, guías de solución versionadas y alertas',
+      titulo: 'Mantenimiento',
+      subtitulo: 'Tipos y subtipos de ticket, flujos por tipo y área, guías de solución versionadas y alertas',
       icono: 'M6 3v6 M6 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M18 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6 M6 15v3a3 3 0 0 0 3 3h6 M18 15v-3',
     },
   ];
@@ -1678,6 +1678,7 @@ export class ConsolaAtcComponent {
     const definiciones: readonly { grupo: ItemMenuAtc['grupo']; etiqueta: string }[] = [
       { grupo: 'ESTRELLA', etiqueta: 'Núcleo 360 y Planta' },
       { grupo: 'OPERACION', etiqueta: 'Operación' },
+      { grupo: 'MESAS', etiqueta: 'Mesas especializadas' },
       { grupo: 'SUPERVISION', etiqueta: 'Supervisión' },
       { grupo: 'GESTION', etiqueta: 'Gestión y configuración' },
     ];

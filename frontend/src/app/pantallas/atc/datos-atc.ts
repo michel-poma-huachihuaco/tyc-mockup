@@ -75,6 +75,8 @@ export interface TicketAtc {
   dni: string;
   proj: string;
   type: string;
+  /** Id del subtipo (SubtipoTicketCfg.id); opcional: tipos sin subtipos activos no lo llevan. */
+  subtipo?: string;
   prio: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
   state: 'OPEN' | 'IN_PROGRESS' | 'PENDING_CUSTOMER' | 'ESCALATED' | 'IN_COMMITTEE' | 'RESOLVED' | 'CLOSED' | 'REOPENED';
   area: string;
@@ -260,6 +262,7 @@ export interface AsistenteProyecto {
   readonly lote: string;
   readonly acompanantes: number;
   readonly hora: string;
+  readonly placa?: string;
 }
 
 export interface BusEntregaFest {

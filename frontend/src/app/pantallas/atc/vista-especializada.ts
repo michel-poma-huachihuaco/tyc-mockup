@@ -94,8 +94,10 @@ import {
   type ReservaBusFestItem,
 } from './estado-prototipo-atc';
 import { IngresosHoyComponent } from './ingresos-hoy';
+import { normalizarPlaca, placaValida } from './placa-vehicular';
 import { ProtocoloFrasesComponent } from './protocolo-frases';
 import { BarraFiltrosComponent } from './barra-filtros';
+import { MantenimientoCatalogoComponent } from './mantenimiento-catalogo';
 import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
@@ -129,6 +131,7 @@ export type SubvistaEspecializadaAtc =
     IngresosHoyComponent,
     ProtocoloFrasesComponent,
     BarraFiltrosComponent,
+    MantenimientoCatalogoComponent,
     FiltroColumnasTablaDirective,
     VacioFiltrosComponent,
     AyAlert,
@@ -185,15 +188,13 @@ export type SubvistaEspecializadaAtc =
     @if (subvista() === 'workflow') {
       <div ayStack gap="6">
         <ay-page-header
-          titulo="Workflow"
-          [descripcion]="puedeEditarWorkflow()
-            ? 'Flujos de atención y guías de solución por tipo de ticket. Publicar una versión nueva afecta inmediatamente a los nuevos tickets y al detalle del ticket.'
-            : 'Flujos de atención activos por área resolutora. Solo lectura: los cambios los publica el Administrador Funcional.'"
-          [conPestanas]="puedeEditarWorkflow()">
-          @if (puedeEditarWorkflow()) {
+          titulo="Mantenimiento"
+          descripcion="Catálogo de tipos y subtipos de ticket, flujos por tipo y área, guías de solución versionadas y alertas"
+          [conPestanas]="puedeVerWorkflow()">
+          @if (puedeVerWorkflow()) {
             <ay-tabs
               ayPestanas
-              etiqueta="Secciones de workflow"
+              etiqueta="Secciones de mantenimiento"
               variante="underline"
               [items]="tabsWorkflow()"
               [valor]="tabConfig()"
@@ -212,6 +213,14 @@ export type SubvistaEspecializadaAtc =
             </ay-card-body>
           </ay-card>
         } @else {
+          @if (tabConfig() === 'tipos' || tabConfig() === 'subtipos') {
+            <app-mantenimiento-catalogo
+              [pestana]="tabConfig() === 'tipos' ? 'tipos' : 'subtipos'"
+              [puedeEditar]="puedeEditarWorkflow()"
+              [tickets]="tickets()"
+            />
+          }
+
           @if (tabConfig() === 'flujos') {
             <ay-segmented-control
               etiqueta="Vista de los flujos"
@@ -1261,13 +1270,13 @@ export type SubvistaEspecializadaAtc =
           <div ayGrid [columnas]="2" gap="md">
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
-                titulo="Formulario de control de acceso (6 campos)"
+                titulo="Formulario de control de acceso (7 campos, el último opcional)"
                 subtitulo="Si el visitante ya es cliente en SIGDA/TAXON se vincula a su lote; si no, entra como Interesado."
                 nivel="h2"
                 [separador]="true"
               />
               <ay-card-body padding="md" gap="md">
-                <ay-form class="pl-atc-form-ancho" (enviar)="registrarIngresoProyecto()">
+                <ay-form class="pl-atc-form-ancho" (enviar)="solicitarIngresoProyecto()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="1. Nombre completo" obligatorio>
                       <ay-input nombre="nuevo-asistente-nombre"
@@ -1315,11 +1324,46 @@ export type SubvistaEspecializadaAtc =
                         placeholder="Ej. Mz. C Lt. 07"
                       />
                     </ay-form-field>
+                    <ay-form-field
+                      etiqueta="7. Placa del vehículo (opcional, si ingresa en vehículo propio)"
+                      ayuda="Déjalo vacío si ingresa a pie. Ejemplo: ABC-123"
+                      [error]="errorPlaca()"
+                    >
+                      <ay-input nombre="nuevo-asistente-placa"
+                        [valor]="nuevoAsistentePlaca()"
+                        (valorChange)="nuevoAsistentePlaca.set($event.toUpperCase())"
+                        placeholder="ABC-123"
+                      />
+                    </ay-form-field>
                     <div ayRow gap="2" justificar="end">
                       <ay-button tipo="submit" variante="primary">Registrar ingreso</ay-button>
                     </div>
                   </div>
                 </ay-form>
+                <ay-modal
+                  [abierto]="confirmandoIngreso()"
+                  (abiertoChange)="!$event && confirmandoIngreso.set(false)"
+                  titulo="Confirmar ingreso en vehículo propio"
+                >
+                  <div ayStack gap="3">
+                    <p ayText="body">
+                      <strong>{{ nuevoAsistenteNombre().trim() }}</strong> · DNI {{ nuevoAsistenteDni().trim() || 'sin DNI' }} ·
+                      {{ nuevoAsistenteProyecto() }} · Placa <strong>{{ placaNormalizada() }}</strong>
+                    </p>
+                    <p ayText="body" size="xs">
+                      Se notificará en línea al responsable del proyecto el ingreso en vehículo propio.
+                    </p>
+                    @if (placaRepetidaHoy()) {
+                      <ay-alert tono="warning" size="sm" titulo="Placa ya registrada hoy">
+                        Esta placa ya tiene un ingreso hoy. Puedes confirmar igualmente si es correcto.
+                      </ay-alert>
+                    }
+                    <div ayRow gap="2" justificar="end">
+                      <ay-button variante="ghost" (click)="confirmandoIngreso.set(false)">Volver a editar</ay-button>
+                      <ay-button variante="primary" (click)="registrarIngresoProyecto()">Confirmar ingreso</ay-button>
+                    </div>
+                  </div>
+                </ay-modal>
               </ay-card-body>
             </ay-card>
 
@@ -2135,7 +2179,7 @@ export class VistaEspecializadaComponent {
   readonly avisoOperacion = signal<string | null>(null);
 
   /* ── Pestañas de cada vista 5181 ── */
-  readonly tabConfig = signal<string>('flujos');
+  readonly tabConfig = signal<string>('tipos');
   /** Coordinador CX consulta los flujos; el resto de pestañas y la edición son del Admin Funcional y el Supervisor. */
   readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.estadoProto.rolActivo()));
   readonly puedeVerWorkflow = computed(() => this.puedeEditarWorkflow() || this.estadoProto.rolActivo() === 'COORDINADOR_CX');
@@ -2150,9 +2194,15 @@ export class VistaEspecializadaComponent {
     { valor: 'tabla', etiqueta: 'Tabla' },
   ];
   readonly tabsWorkflow = computed<AyTabsElemento[]>(() => [
-    { value: 'flujos', label: 'Flujos', contador: this.estadoProto.flujosPorTipo().length },
-    { value: 'guias', label: 'Guías', contador: this.estadoProto.guiasPorTipo().length },
-    { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
+    { value: 'tipos', label: 'Tipos de ticket', contador: this.estadoProto.tiposTicket().length },
+    { value: 'subtipos', label: 'Subtipos de ticket', contador: this.estadoProto.subtiposTicket().length },
+    { value: 'flujos', label: 'Configuración de flujo', contador: this.estadoProto.flujosPorTipo().length },
+    ...(this.puedeEditarWorkflow()
+      ? [
+          { value: 'guias', label: 'Guías', contador: this.estadoProto.guiasPorTipo().length },
+          { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
+        ]
+      : []),
   ]);
 
   readonly tabUrbeMind = signal<string>('api');
@@ -2489,6 +2539,16 @@ export class VistaEspecializadaComponent {
   readonly nuevoAsistenteMotivo = signal<string>('Conocer mi lote / Visita de propietario');
   readonly nuevoAsistenteProyecto = signal<string>('Villa Sol · Etapa II');
   readonly nuevoAsistenteLote = signal<string>('');
+  readonly nuevoAsistentePlaca = signal<string>('');
+  readonly confirmandoIngreso = signal(false);
+  readonly placaNormalizada = computed(() => normalizarPlaca(this.nuevoAsistentePlaca()));
+  readonly errorPlaca = computed(() =>
+    placaValida(this.nuevoAsistentePlaca()) ? undefined : 'Formato de placa no válido. Ejemplo: ABC-123',
+  );
+  readonly placaRepetidaHoy = computed(() => {
+    const p = this.placaNormalizada();
+    return !!p && this.asistentes().some((a) => a.placa === p);
+  });
 
   readonly opcionesMotivoVisita: AyOpcionSelect[] = [
     { value: 'Conocer mi lote / Visita de propietario', label: 'Conocer mi lote / Visita de propietario' },
@@ -2864,9 +2924,17 @@ export class VistaEspecializadaComponent {
   }
 
   /* ── Acciones de Ingreso a proyecto ── */
+  /** Con placa informada abre la confirmación; sin placa registra de inmediato. */
+  solicitarIngresoProyecto(): void {
+    if (!this.nuevoAsistenteNombre().trim() || this.errorPlaca()) return;
+    if (this.placaNormalizada()) this.confirmandoIngreso.set(true);
+    else this.registrarIngresoProyecto();
+  }
+
   registrarIngresoProyecto(): void {
     const nombre = this.nuevoAsistenteNombre().trim();
-    if (!nombre) return;
+    if (!nombre || this.errorPlaca()) return;
+    const placa = this.placaNormalizada() || undefined;
     const proy = this.nuevoAsistenteProyecto();
     if (proy.includes('sin responsable')) {
       this.estadoProto.alertasAdmin.update((prev) => [
@@ -2889,11 +2957,18 @@ export class VistaEspecializadaComponent {
       lote: this.nuevoAsistenteLote().trim() || 'Visita general',
       acompanantes: 1,
       hora: '10:40',
+      placa,
     });
     this.nuevoAsistenteNombre.set('');
     this.nuevoAsistenteDni.set('');
     this.nuevoAsistenteLote.set('');
-    this.avisoOperacion.set(`Ingreso de ${nombre} registrado y notificado al responsable del proyecto.`);
+    this.nuevoAsistentePlaca.set('');
+    this.confirmandoIngreso.set(false);
+    this.avisoOperacion.set(
+      placa
+        ? `Ingreso de ${nombre} registrado. Se notificó en línea al responsable del proyecto el ingreso en vehículo propio (${placa}).`
+        : `Ingreso de ${nombre} registrado y notificado al responsable del proyecto.`,
+    );
   }
 
   /* ── Acciones de Buses del Entrega Fest ── */

@@ -1094,11 +1094,11 @@ export class VistaVivoComponent {
   readonly salas = SALAS_OFICINA;
   readonly metaXpNivel = 150;
 
-  readonly vistaModo = signal<'responsables' | 'comando'>('responsables');
+  readonly vistaModo = signal<'responsables' | 'comando'>('comando');
   readonly areaResponsables = signal<string>('');
   readonly tabsOperacionVivo: AyTabsElemento[] = [
-    { value: 'responsables', label: 'Responsables' },
     { value: 'comando', label: 'Planta' },
+    { value: 'responsables', label: 'Responsables' },
   ];
 
   readonly modoTvActivo = signal<boolean>(false);

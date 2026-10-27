@@ -696,8 +696,64 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
   },
 ];
 
+export interface TipoTicketCfg { id: string; nombre: string; libro: boolean; activo: boolean }
+export interface SubtipoTicketCfg { id: string; tipoId: string; nombre: string; activo: boolean; provisional: boolean }
+
+const sub = (id: string, tipoId: string, nombre: string): SubtipoTicketCfg => ({ id, tipoId, nombre, activo: true, provisional: true });
+
 @Injectable({ providedIn: 'root' })
 export class EstadoPrototipoAtcService {
+  /** Catálogo editable de tipos de ticket (Mantenimiento). */
+  readonly tiposTicket = signal<TipoTicketCfg[]>(TIPOS_TICKET.map((t) => ({ ...t, activo: true })));
+  /** Subtipos de ejemplo del prototipo (provisionales hasta que el negocio los confirme). */
+  readonly subtiposTicket = signal<SubtipoTicketCfg[]>([
+    sub('PED-CONSTANCIA', 'PED', 'Constancia o certificado'),
+    sub('PED-COPIA-DOC', 'PED', 'Copia de documento'),
+    sub('PED-ACTUALIZAR-DATOS', 'PED', 'Actualización de datos'),
+    sub('CTA-ESTADO-CUENTA', 'CTA', 'Estado de cuenta'),
+    sub('CTA-CRONOGRAMA', 'CTA', 'Cronograma de pagos'),
+    sub('CTA-CONFIRMA-ABONO', 'CTA', 'Confirmación de abono'),
+    sub('VIS-INSPECCION-LOTE', 'VIS', 'Inspección de lote'),
+    sub('VIS-LINDEROS', 'VIS', 'Verificación de linderos'),
+    sub('VIS-AVANCE-OBRA', 'VIS', 'Avance de obra'),
+    sub('QUE-ATENCION', 'QUE', 'Atención al cliente'),
+    sub('QUE-DEMORA', 'QUE', 'Demora en trámite'),
+    sub('REC-COBRO', 'REC', 'Cobro o facturación'),
+    sub('REC-SERVICIO', 'REC', 'Servicio recibido'),
+    sub('CIT-ALUMBRADO', 'CIT', 'Alumbrado público'),
+    sub('CIT-LIMPIEZA', 'CIT', 'Limpieza y áreas comunes'),
+    sub('CIT-VIAS', 'CIT', 'Vías y veredas'),
+    sub('GAR-ACABADOS', 'GAR', 'Acabados'),
+    sub('GAR-ESTRUCTURA', 'GAR', 'Estructura'),
+    sub('GAR-INSTALACIONES', 'GAR', 'Instalaciones'),
+  ]);
+
+  subtiposActivosDe(tipoId: string): SubtipoTicketCfg[] {
+    return this.subtiposTicket().filter((s) => s.tipoId === tipoId && s.activo);
+  }
+
+  /* Mantenimiento del catálogo: un tipo no se elimina, se desactiva. */
+  crearTipo(id: string, nombre: string, libro: boolean): void {
+    this.tiposTicket.update((l) => [...l, { id, nombre: nombre.trim(), libro, activo: true }]);
+  }
+  actualizarTipo(id: string, nombre: string, libro: boolean): void {
+    this.tiposTicket.update((l) => l.map((t) => (t.id === id ? { ...t, nombre: nombre.trim(), libro } : t)));
+  }
+  alternarTipo(id: string): void {
+    this.tiposTicket.update((l) => l.map((t) => (t.id === id ? { ...t, activo: !t.activo } : t)));
+  }
+  crearSubtipo(id: string, tipoId: string, nombre: string): void {
+    this.subtiposTicket.update((l) => [...l, { id, tipoId, nombre: nombre.trim(), activo: true, provisional: false }]);
+  }
+  actualizarSubtipo(id: string, tipoId: string, nombre: string): void {
+    this.subtiposTicket.update((l) =>
+      l.map((s) => (s.id === id ? { ...s, tipoId, nombre: nombre.trim(), provisional: false } : s)),
+    );
+  }
+  alternarSubtipo(id: string): void {
+    this.subtiposTicket.update((l) => l.map((s) => (s.id === id ? { ...s, activo: !s.activo } : s)));
+  }
+
   readonly rolActivo = signal<RolPrototipoAtc>('GESTOR');
   /** Razón social que filtra toda la operación (panel de Simulación). Cada tabla afectada la muestra como chip. */
   readonly empresaFiltro = signal<string>('');

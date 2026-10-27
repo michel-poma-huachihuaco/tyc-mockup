@@ -822,7 +822,22 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                           <ay-select nombre="form-tipo"
                             [opciones]="opcionesTiposForm"
                             [valor]="formTipo()"
-                            (valorChange)="formTipo.set($event)"
+                            (valorChange)="cambiarTipoForm($event)"
+                          />
+                        </ay-form-field>
+                        <ay-form-field
+                          etiqueta="Subtipo de ticket"
+                          [obligatorio]="subtiposForm().length > 0"
+                          [ayuda]="avisoSubtiposProvisionales()"
+                          [error]="subtipoInvalido() ? 'Elige un subtipo.' : undefined"
+                        >
+                          <ay-select nombre="form-subtipo"
+                            [opciones]="opcionesSubtiposForm()"
+                            [valor]="formSubtipo()"
+                            [disabled]="subtiposForm().length === 0"
+                            [invalido]="subtipoInvalido()"
+                            [placeholder]="subtiposForm().length === 0 ? 'Este tipo no tiene subtipos' : 'Selecciona un subtipo'"
+                            (valorChange)="formSubtipo.set($event)"
                           />
                         </ay-form-field>
                         <ay-form-field etiqueta="Prioridad" obligatorio>
@@ -910,7 +925,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         <ay-button
                           tipo="submit"
                           variante="primary"
-                          [disabled]="emocionInvalida()"
+                          [disabled]="emocionInvalida() || subtipoInvalido()"
                         >
                           Registrar ticket
                         </ay-button>
@@ -1371,6 +1386,20 @@ export class VistaOperacionComponent {
   readonly formLinea = signal<string>('Lotes urbanos');
   readonly formCanal = signal<string>('WhatsApp');
   readonly formTipo = signal<string>('CTA');
+  readonly formSubtipo = signal<string>('');
+  readonly subtiposForm = computed(() => this.estadoProto.subtiposActivosDe(this.formTipo()));
+  readonly opcionesSubtiposForm = computed<AyOpcionSelect[]>(() =>
+    this.subtiposForm().map((x) => ({ value: x.id, label: x.nombre })),
+  );
+  readonly subtipoInvalido = computed(() => this.subtiposForm().length > 0 && !this.formSubtipo());
+  readonly avisoSubtiposProvisionales = computed(() =>
+    this.subtiposForm().some((x) => x.provisional) ? 'Subtipos provisionales del prototipo' : undefined,
+  );
+
+  cambiarTipoForm(tipo: string): void {
+    this.formTipo.set(tipo);
+    this.formSubtipo.set('');
+  }
   readonly formPrioridad = signal<'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'>('HIGH');
   readonly formCliente = signal<string>('Eddie Huamaní');
   readonly formDni = signal<string>('7228••••');
@@ -1871,7 +1900,7 @@ export class VistaOperacionComponent {
   }
 
   guardarNuevoTicket(): void {
-    if (this.emocionInvalida()) return;
+    if (this.emocionInvalida() || this.subtipoInvalido()) return;
     const emp = this.empresas.find((e) => e.id === this.formEmpresa()) ?? this.empresas[0];
     const calcSla = this.previewPoliticaSla();
     const flujo = this.previewFlujoConfig();
@@ -1896,6 +1925,7 @@ export class VistaOperacionComponent {
       dni: this.formDni(),
       proj: this.formProyecto(),
       type: this.formTipo(),
+      subtipo: this.formSubtipo() || undefined,
       prio: this.formPrioridad(),
       state: esConflicto ? 'ESCALATED' : 'OPEN',
       area: areaInicial,
