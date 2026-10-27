@@ -83,37 +83,53 @@ carpeta, idénticos, más los 5 sobrantes de Nexora (la HU-001 duplicada y los 4
 Faltan los pasos de personas: firmar «Revisado por», enviar los correos de `../correos-revision-tl-26-oct.md` y crear los ítems con
 `../nexora-items/carga-items-pj06.csv`.
 
-## Por publicar (26-oct, noche): P-025
+## Publicado el 26-oct por la noche: P-025 y cierre de la revisión del Líder Técnico
 
-El equipo decidió P-025 (Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md` 0.8): las 28 h de DT-02 entran como trabajo
-técnico de la fundación y salen de la Etapa 1 las 5 historias de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053).
-Los cambios son **locales** y se publican como versiones nuevas, pendientes de aprobación, con el `dry_run` primero y la luz
-verde de Brayan:
+Brayan publicó **102 versiones nuevas, 1 documento nuevo (`roadmap/alcance-diferido.md`) y 5 versiones «RETIRADO»**, todas
+pendientes de aprobación; 80 documentos ya estaban iguales. Antes se hizo el `dry_run` y se comprobó que nadie había publicado
+desde la exportación de la tarde: las 102 huellas de Nexora eran las de esa exportación. Incluye P-025 con la opción A, las
+decisiones del equipo (ED-01 a ED-28), las 14 ADR con «Revisado por» de Brayan y la revisión final con los criterios del Líder
+Técnico, verificada por un revisor independiente.
 
-- **Backlog:** los 11 archivos de `backlog/tareas/` (308 tareas, 255 h: 227 h de las 57 historias de la Etapa 1, 28 h técnicas
-  de DT-02 en `EP-ATC-01.json` y 5 tareas de 0 h que dejan constancia de las historias fuera) y **3 archivos nuevos** en
-  `roadmap/alcance-diferido.md` (`EP-ATC-08.json`, `EP-ATC-09.json` y `EP-ATC-10.json`: el desglose sin cambios de las 5 historias, 24 tareas
-  y 16 h). `aybar paquete validar` no lee `roadmap/alcance-diferido.md`; si Nexora no admite esa carpeta, se guarda fuera de la publicación
-  y la tarea de 0 h de cada historia dice dónde está.
-- **Documentos** que cambian por P-025: `analisis/decisiones.md` (0.8), BRD, cobertura de requisitos y ficha de intake; las ADR
-  que la citan (al menos ADR-007, 012 y 013) y los documentos de `arquitectura/` y `datos/` que hablaban del proveedor de IA o de
-  las 5 historias; el costo cloud; el roadmap, el análisis de dependencias y sus dos diagramas; las 5 historias fuera y las que
-  dependían de ellas; EP-ATC-08, 09 y 10; FT-ATC-15, 19 y 20; los 23 DoR (criterio 9) y los gates G0 a G4. La lista exacta sale
-  del `dry_run` contra Nexora.
-- **Carga de ítems** (`../nexora-items/`): suma la columna `etapa` («E1» o «fuera de E1 (P-025)»). La carga la hace el PO o el
-  admin.
+| Carpeta | Versión nueva | Documento nuevo | Ya estaba igual |
+|---|---|---|---|
+| `adr/` | 14 | 0 | 0 |
+| `analisis/` | 5 | 0 | 0 |
+| `arquitectura/` | 11 | 0 | 0 |
+| `datos/` | 7 | 0 | 1 |
+| `roadmap/` | 4 | 1 | 0 |
+| `backlog/tareas/` | 11 | 0 | 0 |
+| `dor/` | 23 | 0 | 0 |
+| `epicas/` | 3 | 0 | 8 |
+| `features/` | 3 | 0 | 20 |
+| `historias/` | 11 | 0 | 51 |
+| `gates/AYB-0001/` | 5 | 0 | 0 |
+| Versiones «RETIRADO» (`gates/G0.md`, `G1.md`, `G3.md`, `G4.md` y `historias/HU-DOC-001 …`) | 5 | 0 | 0 |
+| **Total** | **102** | **1** | **80** |
+
+- **Etapa 1 tras P-025:** 57 HU, 22 funcionalidades y 10 épicas; 227 h de historias y 28 h técnicas de DT-02, 255 h en total,
+  en 308 tareas. Las 5 historias de alcance flexible (HU-ATC-037, 038, 039, 048 y 053; 16 h) están en `roadmap/alcance-diferido.md`,
+  porque Nexora no admite la carpeta `backlog/diferidas`. La capacidad es de 252 h y el sobrecosto real, de 7 h (P-025, punto 7).
+- **Versiones «RETIRADO»:** los 4 gates sueltos de la v1.2 y la HU-001 duplicada tienen ahora otro identificador
+  (`RETIRADO-GATE-Gx` y `RETIRADO-HU-DOC-001`) y apuntan al documento vigente (ED-21, P-019 y P-029). Borrarlos solo lo puede
+  hacer el PO o el administrador de Nexora.
+- **Verificación:** se volvió a exportar Nexora. Hay 183 documentos, todos pendientes, y cada huella coincide con lo publicado.
+  La copia sellada `/Users/lorem/Documents/aybar-atiende/docs-atiende/` tiene los 178 documentos de esta carpeta, idénticos, y
+  los 5 retirados. `aybar paquete validar` da 0 errores y 6 advertencias de ruta (`gate-ruta` ×4, `hu-sin-feature` y
+  `hu-sin-tareas`), todas de los retirados; desaparecen cuando se borren. Esta carpeta da 0 errores y 0 advertencias.
+- **Carga de ítems** (`../nexora-items/`): 96 ítems con la columna `etapa`. La carga la hace el PO o el administrador.
 
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
-Estado al 26-oct (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
+Estado al 26-oct por la noche (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
 
 - **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO; 57, 10 y 22 en la Etapa 1), los 23 DoR (el líder técnico y el project manager),
   el análisis, el roadmap y el backlog (el PO), los ADR, la arquitectura y los datos (el líder técnico; el acta F4 la firma el Data
   Chief) y los gates (quien aprueba cada uno).
-- **Retirar el duplicado de Daniel**, `historias/HU-DOC-001 HU-ATC-001-registrar-tickets-multicanal-tipificados.md.md` (v1
-  pendiente). Lo puede rechazar el PO.
+- **Borrar el duplicado de Daniel**, `historias/HU-DOC-001 HU-ATC-001-registrar-tickets-multicanal-tipificados.md.md`. Desde
+  el 26-oct tiene una versión «RETIRADO» que apunta a la HU vigente. Lo borra o lo rechaza el PO.
 - **Ítems y gates:** el proyecto tiene 0 ítems (ni ticket ni backlog; la carga está en `../nexora-items/`). Los 5 gates de
-  `gates/AYB-0001/` están en Nexora, pendientes; sobran los 4 sueltos de `gates/` (P-029).
+  `gates/AYB-0001/` están en Nexora, pendientes; los 4 sueltos de `gates/` tienen desde el 26-oct una versión «RETIRADO» y falta borrarlos (P-029).
 
 El 20-oct solo se subieron las carpetas `epicas/`, `features/`, `historias/` y `dor/`; el resto, el 21 y el 26-oct. `README.md`,
 `explorador.html`, este documento y `NEXORA-BRAYAN-v1.3.md` son material de consulta y no van a Nexora.
