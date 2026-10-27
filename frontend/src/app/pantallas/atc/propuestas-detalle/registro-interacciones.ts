@@ -1,23 +1,28 @@
-import { ChangeDetectionStrategy, Component, type OnInit, computed, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  type ElementRef,
+  type OnInit,
+  computed,
+  effect,
+  input,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   AyAlert,
   AyAvatar,
   AyBadge,
   AyButton,
-  AyCard,
-  AyCardBody,
-  AyCardHeader,
   AyFormField,
   AyIcon,
   AySegmentedControl,
-  AySelect,
   AyTag,
   AyText,
   AyTextarea,
-  type AyOpcionSelect,
   type AySegmentoOpcion,
 } from '@aybarcorp/ui-angular';
-import { CANALES_ATC, type TicketAtc } from '../datos-atc';
+import type { TicketAtc } from '../datos-atc';
 import { fmt } from './base';
 import { crearInteraccionesMock, type InteraccionMock } from './mock-interacciones';
 
@@ -28,30 +33,16 @@ type TipoNuevo = 'respuesta_agente' | 'nota_interna';
 const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
 
 /**
- * Sección de interacciones del ticket con datos de prueba, como la ve el equipo (gestor o supervisor): el
- * registro completo —mensajes, notas internas, llamadas y marcas automáticas— y el formulario
- * «Registrar interacción» (HU-005).
+ * Registro de interacciones del ticket con datos de prueba, presentado como un hilo de chat para el equipo
+ * (gestor o supervisor): el cliente a la izquierda, el equipo a la derecha, las notas internas marcadas y las
+ * marcas automáticas del sistema al centro, de la más antigua a la más reciente, con el compositor abajo (HU-005).
+ * Es solo la presentación: no hay chat en vivo (fuera de alcance, HU-005 y HU-065).
  * Solo componentes de @aybarcorp/ui-angular y tokens `--aybar-*`.
  */
 @Component({
   selector: 'app-registro-interacciones',
   standalone: true,
-  imports: [
-    AyAlert,
-    AyAvatar,
-    AyBadge,
-    AyButton,
-    AyCard,
-    AyCardBody,
-    AyCardHeader,
-    AyFormField,
-    AyIcon,
-    AySegmentedControl,
-    AySelect,
-    AyTag,
-    AyText,
-    AyTextarea,
-  ],
+  imports: [AyAlert, AyAvatar, AyBadge, AyButton, AyFormField, AyIcon, AySegmentedControl, AyTag, AyText, AyTextarea],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="ri" aria-label="Registro de interacciones del ticket">
@@ -62,37 +53,33 @@ const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
             Historial inmutable del caso: lo que escribe el equipo, lo que escribe el cliente y lo que registra el sistema.
           </span>
         </div>
+        <ay-segmented-control etiqueta="Filtrar el registro" size="sm" [opciones]="filtros()" [valor]="filtro()" (valorChange)="elegirFiltro($event)" />
       </header>
 
-      <div class="ri-cuerpo">
-        <ay-segmented-control etiqueta="Filtrar el registro" size="sm" [opciones]="filtros()" [valor]="filtro()" (valorChange)="elegirFiltro($event)" />
-
-        <ol class="ri-lista" aria-label="Interacciones del ticket, de la más reciente a la más antigua">
-          @for (e of visibles(); track e.id) {
-            <li>
-              <article class="ri-entrada ri-entrada--{{ e.origen }}" [class.ri-entrada--interna]="!e.visible">
-                <header class="ri-entrada__cab">
-                  <ay-avatar [nombre]="e.autor" size="sm" decorativo />
-                  <div class="ri-entrada__quien">
-                    <strong>{{ e.autor }}</strong>
-                    <span>{{ e.area }} · Canal: {{ e.canal }}</span>
-                  </div>
-                  <time class="ri-entrada__fecha">{{ fmt(e.fecha) }}</time>
+      <div #hilo class="ri-hilo" role="log" aria-live="polite" aria-label="Conversación del ticket, de la más antigua a la más reciente">
+        @for (e of visibles(); track e.id) {
+          @if (e.origen === 'sistema') {
+            <p class="ri-sistema">
+              <span>{{ e.texto }}</span>
+              <time>{{ fmt(e.fecha) }}</time>
+            </p>
+          } @else {
+            <article class="ri-msg" [class.ri-msg--equipo]="e.origen === 'gestor'">
+              <ay-avatar [nombre]="e.autor" size="sm" decorativo />
+              <div class="ri-burbuja" [class.ri-burbuja--equipo]="e.origen === 'gestor' && e.visible" [class.ri-burbuja--nota]="!e.visible">
+                <header class="ri-burbuja__cab">
+                  <strong>{{ e.autor }}</strong>
+                  <span>{{ e.area }} · {{ e.canal }}</span>
                 </header>
-
-                <div class="ri-etiquetas">
-                  <ay-badge size="sm" [tono]="tonoTipo(e)">{{ textoTipo(e) }}</ay-badge>
-                  <ay-badge size="sm" [tono]="e.visible ? 'info' : 'warning'">
-                    @if (!e.visible) {
-                      <ay-icon nombre="lock" size="16" />
-                    }
-                    {{ e.visible ? 'Visible al cliente' : 'Interna · oculta al cliente' }}
+                @if (!e.visible) {
+                  <ay-badge size="sm" tono="warning">
+                    <ay-icon nombre="lock" size="16" />
+                    {{ e.subtipo ?? 'Nota interna' }} · oculta al cliente
                   </ay-badge>
-                  <ay-badge size="sm" tono="neutral">{{ textoOrigen(e) }}</ay-badge>
-                </div>
-
-                <p class="ri-entrada__texto">{{ e.texto }}</p>
-
+                } @else if (e.tipo === 'llamada') {
+                  <ay-badge size="sm" tono="neutral">Llamada</ay-badge>
+                }
+                <p class="ri-burbuja__texto">{{ e.texto }}</p>
                 @if (e.llamada; as ll) {
                   <span class="ri-meta">Duración {{ ll.duracion }} · {{ ll.grabacion ? 'Grabación disponible' : 'Sin grabación' }}</span>
                 }
@@ -103,60 +90,56 @@ const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
                     }
                   </div>
                 }
-              </article>
-            </li>
-          } @empty {
-            <li class="ri-vacio">No hay entradas de este tipo en el registro.</li>
-          }
-        </ol>
-
-        <ay-card variante="elevated" superficie="solid">
-          <ay-card-header titulo="Registrar interacción" subtitulo="Queda como una entrada inmutable del caso: no se puede editar ni borrar." nivel="h3" [separador]="true" />
-          <ay-card-body padding="md" gap="md">
-            <div class="ri-form">
-              <ay-segmented-control etiqueta="Tipo de interacción" size="sm" [opciones]="tipos" [valor]="tipoNuevo()" (valorChange)="elegirTipo($event)" />
-              <ay-form-field etiqueta="Canal">
-                <ay-select nombre="canal-interaccion" size="sm" [opciones]="canales" [valor]="canal()" (valorChange)="canal.set($event)" />
-              </ay-form-field>
-            </div>
-
-            @if (sugerenciaIa() && tipoNuevo() === 'respuesta_agente') {
-              <ay-alert tono="info" size="sm" titulo="Sugerencia del Copiloto IA (HU-048, fuera de la Etapa 1)">
-                {{ sugerenciaIa() }}
-                <div ayAcciones class="ri-fila">
-                  <ay-button tamano="sm" variante="primary" (click)="texto.set(sugerenciaIa()!)">Usar sugerencia</ay-button>
-                </div>
-              </ay-alert>
-            }
-
-            <ay-form-field [etiqueta]="tipoNuevo() === 'nota_interna' ? 'Nota interna' : 'Mensaje al cliente'">
-              <ay-textarea
-                nombre="texto-interaccion"
-                [filas]="3"
-                [valor]="texto()"
-                (valorChange)="texto.set($event)"
-                [placeholder]="tipoNuevo() === 'nota_interna' ? 'Texto solo para el equipo…' : 'Texto del mensaje al cliente…'"
-              />
-            </ay-form-field>
-
-            @if (conPii()) {
-              <ay-alert tono="warning" size="sm" titulo="No se permite PII en este campo">
-                Detectamos un posible DNI o número de tarjeta. Quítalo para poder registrar la interacción (RN-SVC-012).
-              </ay-alert>
-            }
-
-            <div class="ri-fila ri-fila--entre">
-              <span ayText="body" size="xs">
-                {{ tipoNuevo() === 'nota_interna' ? 'Visibilidad: interna, oculta al cliente.' : 'Visibilidad: visible al cliente.' }}
-              </span>
-              <div class="ri-fila">
-                <ay-button tamano="sm" variante="secondary">Adjuntar archivo</ay-button>
-                <ay-button tamano="sm" variante="primary" [disabled]="!puedeRegistrar()" (click)="registrar()">Registrar interacción</ay-button>
+                <time class="ri-burbuja__hora">{{ fmt(e.fecha) }}</time>
               </div>
-            </div>
-          </ay-card-body>
-        </ay-card>
+            </article>
+          }
+        } @empty {
+          <p class="ri-vacio">No hay entradas de este tipo en el registro.</p>
+        }
       </div>
+
+      <footer class="ri-compositor">
+        <ay-segmented-control etiqueta="Tipo de interacción" size="sm" [opciones]="tipos" [valor]="tipoNuevo()" (valorChange)="elegirTipo($event)" />
+
+        @if (sugerenciaIa() && tipoNuevo() === 'respuesta_agente') {
+          <ay-alert tono="info" size="sm" titulo="Sugerencia del Copiloto IA (HU-048, fuera de la Etapa 1)">
+            {{ sugerenciaIa() }}
+            <div ayAcciones class="ri-fila">
+              <ay-button tamano="sm" variante="primary" (click)="texto.set(sugerenciaIa()!)">Usar sugerencia</ay-button>
+            </div>
+          </ay-alert>
+        }
+
+        <ay-form-field [etiqueta]="tipoNuevo() === 'nota_interna' ? 'Nota interna' : 'Mensaje al cliente'">
+          <ay-textarea
+            nombre="texto-interaccion"
+            [filas]="2"
+            [valor]="texto()"
+            (valorChange)="texto.set($event)"
+            [placeholder]="tipoNuevo() === 'nota_interna' ? 'Escribe una nota solo para el equipo…' : 'Escribe un mensaje para el cliente…'"
+          />
+        </ay-form-field>
+
+        @if (conPii()) {
+          <ay-alert tono="warning" size="sm" titulo="No se permite PII en este campo">
+            Detectamos un posible DNI o número de tarjeta. Quítalo para poder registrar la interacción (RN-SVC-012).
+          </ay-alert>
+        }
+
+        <div class="ri-fila ri-fila--entre">
+          <span ayText="body" size="xs">
+            {{ tipoNuevo() === 'nota_interna' ? 'Visibilidad: interna, oculta al cliente.' : 'Visibilidad: visible al cliente.' }}
+            Queda como entrada inmutable.
+          </span>
+          <div class="ri-fila">
+            <ay-button tamano="sm" variante="secondary">Adjuntar archivo</ay-button>
+            <ay-button tamano="sm" variante="primary" [disabled]="!puedeRegistrar()" (click)="registrar()">
+              {{ tipoNuevo() === 'nota_interna' ? 'Guardar nota' : 'Enviar' }}
+            </ay-button>
+          </div>
+        </div>
+      </footer>
     </section>
   `,
   styles: `
@@ -164,26 +147,26 @@ const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
     .ri-cab { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--aybar-space-3); padding: var(--aybar-space-4); border-bottom: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); }
     .ri-cab__txt { display: flex; flex-direction: column; gap: var(--aybar-space-1); min-width: 0; }
     .ri-cab__titulo { font-size: var(--aybar-font-size-lg); }
-    .ri-cuerpo { display: flex; flex-direction: column; gap: var(--aybar-space-4); padding: var(--aybar-space-4); background: var(--aybar-color-bg-surface-sunken); }
-    .ri-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--aybar-space-3); }
-    .ri-entrada { display: flex; flex-direction: column; gap: var(--aybar-space-2); padding: var(--aybar-space-3) var(--aybar-space-4); border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); border-left-width: 4px; border-radius: var(--aybar-radius-md); background: var(--aybar-color-bg-surface); }
-    .ri-entrada--cliente { border-left-color: var(--aybar-color-border-strong); }
-    .ri-entrada--gestor { border-left-color: var(--aybar-color-feedback-info-border); }
-    .ri-entrada--sistema { border-left-color: var(--aybar-color-border-subtle); background: var(--aybar-color-bg-surface-sunken); }
-    .ri-entrada--interna { border-left-color: var(--aybar-color-feedback-warning-border); border-style: dashed; border-left-style: solid; background: var(--aybar-color-feedback-warning-bg); }
-    .ri-entrada__cab { display: flex; align-items: center; gap: var(--aybar-space-3); }
-    .ri-entrada__quien { display: flex; flex-direction: column; min-width: 0; flex: 1; font-size: var(--aybar-font-size-sm); }
-    .ri-entrada__quien span { font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
-    .ri-entrada__fecha { font-family: var(--aybar-family-mono); font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
-    .ri-entrada__texto { margin: 0; font-size: var(--aybar-font-size-sm); }
-    .ri-etiquetas { display: flex; flex-wrap: wrap; gap: var(--aybar-space-2); }
+    .ri-hilo { display: flex; flex-direction: column; gap: var(--aybar-space-3); max-height: 34rem; overflow-y: auto; padding: var(--aybar-space-4); background: var(--aybar-color-bg-surface-sunken); }
+    .ri-msg { display: flex; align-items: flex-end; gap: var(--aybar-space-2); }
+    .ri-msg--equipo { flex-direction: row-reverse; }
+    .ri-burbuja { display: flex; flex-direction: column; gap: var(--aybar-space-1); max-width: min(34rem, 80%); padding: var(--aybar-space-2) var(--aybar-space-3); border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); border-radius: var(--aybar-radius-lg); border-end-start-radius: var(--aybar-radius-sm); background: var(--aybar-color-bg-surface); }
+    .ri-msg--equipo .ri-burbuja { border-end-start-radius: var(--aybar-radius-lg); border-end-end-radius: var(--aybar-radius-sm); }
+    .ri-burbuja--equipo { background: var(--aybar-color-bg-brand-subtle); border-color: var(--aybar-color-bg-brand); }
+    .ri-burbuja--nota { background: var(--aybar-color-feedback-warning-bg); border-color: var(--aybar-color-feedback-warning-border); border-style: dashed; }
+    .ri-burbuja__cab { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--aybar-space-2); font-size: var(--aybar-font-size-sm); }
+    .ri-burbuja__cab span { font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
+    .ri-burbuja__texto { margin: 0; font-size: var(--aybar-font-size-sm); white-space: pre-wrap; }
+    .ri-burbuja__hora { align-self: flex-end; font-family: var(--aybar-family-mono); font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
+    .ri-sistema { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--aybar-space-2); margin: 0; font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); text-align: center; }
+    .ri-sistema span { padding: var(--aybar-space-1) var(--aybar-space-3); border-radius: var(--aybar-radius-full); background: var(--aybar-color-bg-surface); border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); }
+    .ri-sistema time { align-self: center; font-family: var(--aybar-family-mono); }
     .ri-adjuntos { display: flex; flex-wrap: wrap; gap: var(--aybar-space-2); }
     .ri-meta { font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
-    .ri-vacio { font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-muted); }
-    .ri-form { display: grid; grid-template-columns: auto minmax(10rem, 14rem); gap: var(--aybar-space-3); align-items: end; }
+    .ri-vacio { margin: 0; font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-muted); text-align: center; }
+    .ri-compositor { display: flex; flex-direction: column; gap: var(--aybar-space-3); padding: var(--aybar-space-4); border-top: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle); background: var(--aybar-color-bg-surface); }
     .ri-fila { display: flex; flex-wrap: wrap; gap: var(--aybar-space-2); }
     .ri-fila--entre { justify-content: space-between; align-items: center; }
-    @media (max-width: 40rem) { .ri-form { grid-template-columns: minmax(0, 1fr); } }
   `,
 })
 export class RegistroInteracciones implements OnInit {
@@ -191,9 +174,9 @@ export class RegistroInteracciones implements OnInit {
   /** Borrador del Copiloto IA para un mensaje al cliente; si falta, no se ofrece. */
   readonly sugerenciaIa = input<string | null>(null);
 
+  private readonly hilo = viewChild<ElementRef<HTMLElement>>('hilo');
   protected readonly filtro = signal<Filtro>('todo');
   protected readonly tipoNuevo = signal<TipoNuevo>('respuesta_agente');
-  protected readonly canal = signal<string>(CANALES_ATC[0]);
   protected readonly texto = signal('');
 
   /** Registro del caso. Es de prueba: lo que se registre aquí no se guarda en ningún sitio. */
@@ -203,12 +186,22 @@ export class RegistroInteracciones implements OnInit {
     { valor: 'respuesta_agente', etiqueta: 'Mensaje al cliente' },
     { valor: 'nota_interna', etiqueta: 'Nota interna' },
   ];
-  protected readonly canales: AyOpcionSelect[] = CANALES_ATC.map((c) => ({ value: c, label: c }));
 
-  /** Entradas del ticket, de la más reciente a la más antigua. */
+  /** Entradas del ticket como en un chat: de la más antigua a la más reciente. */
   private readonly ordenadas = computed(() =>
-    [...this.entradas()].sort((a, b) => b.fecha.getTime() - a.fecha.getTime()),
+    [...this.entradas()].sort((a, b) => a.fecha.getTime() - b.fecha.getTime()),
   );
+
+  constructor() {
+    // el hilo se abre en lo último, como un chat, y baja solo cuando llega una entrada nueva
+    effect(() => {
+      this.visibles();
+      setTimeout(() => {
+        const el = this.hilo()?.nativeElement;
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    });
+  }
 
   ngOnInit(): void {
     this.entradas.set(crearInteraccionesMock(this.ticket()));
@@ -253,7 +246,7 @@ export class RegistroInteracciones implements OnInit {
       id: `n${Date.now()}`,
       tipo: this.tipoNuevo(),
       origen: 'gestor',
-      canal: this.canal(),
+      canal: this.ticket().ch,
       visible: !interna,
       autor: 'Tú (prueba)',
       area: this.ticket().area,
@@ -265,22 +258,6 @@ export class RegistroInteracciones implements OnInit {
 
   private agregar(e: InteraccionMock): void {
     this.entradas.update((l) => [...l, e]);
-  }
-
-  protected textoTipo(e: InteraccionMock): string {
-    switch (e.tipo) {
-      case 'mensaje_cliente': return 'Mensaje del cliente';
-      case 'respuesta_agente': return 'Respuesta al cliente';
-      case 'nota_interna': return e.subtipo ?? 'Nota interna';
-      case 'cambio_estado': return 'Cambio de estado';
-      case 'llamada': return 'Llamada';
-    }
-  }
-  protected tonoTipo(e: InteraccionMock): 'info' | 'warning' | 'neutral' | 'success' {
-    return e.tipo === 'respuesta_agente' ? 'info' : e.tipo === 'nota_interna' ? 'warning' : e.tipo === 'mensaje_cliente' ? 'success' : 'neutral';
-  }
-  protected textoOrigen(e: InteraccionMock): string {
-    return e.origen === 'sistema' ? 'Automático' : e.origen === 'cliente' ? 'Escrito por el cliente' : 'Registrado por el equipo';
   }
 
   protected readonly fmt = fmt;
