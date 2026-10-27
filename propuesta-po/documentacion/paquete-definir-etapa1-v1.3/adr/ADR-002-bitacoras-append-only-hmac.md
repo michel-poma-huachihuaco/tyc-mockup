@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-002: Bitácoras append-only con IntegrityHash HMAC-SHA256"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,10 +15,10 @@ tags: [adr, arquitectura, g3]
 # ADR-002: Bitácoras append-only con IntegrityHash HMAC-SHA256
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.5 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
-- Origen: convierte a la plantilla del marco el ADR-02 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: llave en Key Vault con política de rotación (DT-07), receta del hash por tabla según el v7, hash encadenado, y solo inserción garantizada por la base. Registrado en `analisis/decisiones.md` v0.7. El encadenado es condición del Líder Técnico y queda como decisión del equipo (P-007, ED-13).
+- Origen: convierte a la plantilla del marco el ADR-02 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: llave en Key Vault con política de rotación (DT-07), receta del hash por tabla según el v7, hash encadenado, y solo inserción garantizada por la base. Registrado en `analisis/decisiones.md`. El encadenado es condición del Líder Técnico y queda como decisión del equipo (P-007, ED-13).
 - Alineado con el modelo de datos corporativo v7: las bitácoras son las del fragmento SERVICE (con PK propia y una fila por cambio), el estado es un par de columnas contra `MAE_GENERIC_LIST_VALUE` y el hash es el del modelo corporativo (HMAC-SHA256, llave en el gestor de llaves, receta por tabla).
 - Según el Excel del PO (RNF-AUD-004, hoja `03_RNF`, fila 17; también en el PLT-03 v1.3), las bitácoras append-only firmadas son **5**: estado y asignación del ticket, libro, apelación y alertas de SLA.
 
@@ -41,7 +41,7 @@ Los cambios de estado y las asignaciones de un ticket son evidencia ante INDECOP
    - un **usuario de aplicación que no es dueño de las tablas** (`app_atc_servicio`): solo tiene `INSERT` y `SELECT` sobre ellas. Las migraciones Flyway corren en un job aparte con el rol dueño (`app_atc_migracion`), que la aplicación no usa en ejecución (ADR-001, punto 5);
    - una corrección es una fila nueva, nunca un `UPDATE`.
 2. **Estado:** par `<Campo>ListID` + `<Campo>ID` contra `MAE_GENERIC_LIST_VALUE`, no un CHECK.
-3. **Qué se firma: 9 tablas.** Las 4 que firma el v7 (`SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_COMPLAINT_BOOK_ENTRY`, `SVC_COMPLAINT_APPEAL`) y las 5 bitácoras que pide RNF-AUD-004 (estado y asignación del ticket, estados del libro y de la apelación, y alertas de SLA). A las 5 bitácoras se les **agrega** la columna `IntegrityHash`: el v7 solo admite agregar columnas, y va como cambio al v7 en el acta F4 v0.4, lista para la firma del Data Chief (P-031, ED-23). El hash es **HMAC-SHA256**, calculado solo en la capa de aplicación, y se guarda como el v7: 64 caracteres hexadecimales en `IntegrityHash`.
+3. **Qué se firma: 9 tablas.** Las 4 que firma el v7 (`SVC_TICKET`, `SVC_TICKET_INTERACTION`, `SVC_COMPLAINT_BOOK_ENTRY`, `SVC_COMPLAINT_APPEAL`) y las 5 bitácoras que pide RNF-AUD-004 (estado y asignación del ticket, estados del libro y de la apelación, y alertas de SLA). A las 5 bitácoras se les **agrega** la columna `IntegrityHash`: el v7 solo admite agregar columnas, y va como cambio al v7 en el acta F4, lista para la firma del Data Chief (P-031, ED-23). El hash es **HMAC-SHA256**, calculado solo en la capa de aplicación, y se guarda como el v7: 64 caracteres hexadecimales en `IntegrityHash`.
 4. **Cómo se arma el texto que se firma (igual en las 9 tablas).** La lista ordenada de campos de cada tabla va en el comentario de su columna `IntegrityHash` y es contrato (regla del v7):
    - los campos van en el orden de la receta, separados por `|`, y un valor nulo se escribe vacío;
    - un catálogo entra por su **código** (`…Code`, el de `MAE_GENERIC_LIST_VALUE` o el del maestro), nunca por su ID, y la empresa por `CompanyCode`, nunca por `CompanyID`, como manda el contrato de hash del v7 (libro del v7, hoja «Entidades», fila de `ORG_COMPANY`); las entidades entran por su ID, como `PartyID` en la receta del v7 de `SVC_TICKET`;
@@ -84,7 +84,7 @@ Los cambios de estado y las asignaciones de un ticket son evidencia ante INDECOP
 - Impide:
   - Corregir una fila existente: una corrección es una fila nueva.
   - Que la aplicación pueda actualizar o borrar una bitácora aunque tenga un fallo de código.
-- Cuesta: **0 h fuera del plan del PO**: bitácoras, hash encadenado, bloqueo de la fila padre, triggers, roles de base y verificación con punto de control van dentro de las horas que el PO estimó para HU-004, HU-006 y HU-012 (ADR-02 del PO; tarea HU-ATC-004-T01; tabla del ADR-012). **USD 0,15 al mes por ambiente** de Azure Key Vault, USD 0,60 en los 4 ambientes (50.000 operaciones al mes con caché; `arquitectura/costo-cloud.md` v0.5, §1.1 y §2.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Los puntos de control diarios pesan kilobytes en el Blob Storage ya costeado (ADR-006). Más la operación de la rotación anual de la llave.
+- Cuesta: **0 h fuera del plan del PO**: bitácoras, hash encadenado, bloqueo de la fila padre, triggers, roles de base y verificación con punto de control van dentro de las horas que el PO estimó para HU-004, HU-006 y HU-012 (ADR-02 del PO; tarea HU-ATC-004-T01; tabla del ADR-012). **USD 0,15 al mes por ambiente** de Azure Key Vault, USD 0,60 en los 4 ambientes (50.000 operaciones al mes con caché; `arquitectura/costo-cloud.md`, §1.1 y §2.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Los puntos de control diarios pesan kilobytes en el Blob Storage ya costeado (ADR-006). Más la operación de la rotación anual de la llave.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -103,5 +103,6 @@ Los cambios de estado y las asignaciones de un ticket son evidencia ante INDECOP
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: receta completa de las 9 tablas, sin columnas sin nombre, con reglas comunes de serialización (fecha de `CreatedDate`, texto y documentos por SHA-256); dueño y momento para contrastar con la literal del v7 (P-015); `SELECT … FOR UPDATE` sobre la fila padre para que la cadena no se bifurque; ancla del final de la cadena (estado firmado de la entidad y punto de control diario en Blob Storage); `IntegrityHash` sin cambio de formato (la verificación prueba las versiones de la llave); roles de base de ADR-001; dueño de dato remitido al registro; costo de los 4 ambientes |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): encadenado como decisión (ED-13); las recetas de las 3 entidades del v7 que no son `SVC_TICKET` son las de este ADR, sin contraste pendiente (ED-16); `IntegrityHash` `varchar(64)`; autor por `CuentaPersonaPort` (ED-01); rotación anual decidida; lectura de versiones de la llave (ED-24); columna nueva en el acta F4 (ED-23); horas dentro de HU-004, 006 y 012; supuestos del costo en ED-12 |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: sin cambio de decisión. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Diagrama entidad-relación de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -14,7 +14,7 @@ tags: [datos, er, g3]
 
 # Diagrama entidad-relación
 
-**Revisión del 20-oct-2026, desde el Modelo de Datos Corporativo v7 (fragmento 10 SERVICE, diapositivas 115 a 117).** Se dibujan las 13 entidades de SERVICE con sus claves (`int`) y una línea por clave foránea, más el outbox `SVC_OUTBOX_EVENT`, que no está en el v7: es cambio al v7 de ATC (ADR-013 v0.5; ED-23). Los pares `<Campo>ListID` y `<Campo>ID` se dibujan como una sola relación hacia `MAE_GENERIC_LIST_VALUE` (la columna `ListID` apunta a `MAE_GENERIC_LIST`). Las entidades de otros fragmentos aparecen sin atributos: sus claves no están transcritas en el Anexo A. Fuente del diagrama: `er-diagrama.mmd`.
+**Revisión del 20-oct-2026, desde el Modelo de Datos Corporativo v7 (fragmento 10 SERVICE, diapositivas 115 a 117).** Se dibujan las 13 entidades de SERVICE con sus claves (`int`) y una línea por clave foránea, más el outbox `SVC_OUTBOX_EVENT`, que no está en el v7: es cambio al v7 de ATC (ADR-013; ED-23). Los pares `<Campo>ListID` y `<Campo>ID` se dibujan como una sola relación hacia `MAE_GENERIC_LIST_VALUE` (la columna `ListID` apunta a `MAE_GENERIC_LIST`). Las entidades de otros fragmentos aparecen sin atributos: sus claves no están transcritas en el Anexo A. Fuente del diagrama: `er-diagrama.mmd`.
 
 **Dónde viven (DT-06):** en la base única del modelo v7, en Azure Database for PostgreSQL, con las relaciones como FK físicas. Las 13 tablas de SERVICE las crea ATC; las de otros fragmentos (`PARTY`, `ORG_COMPANY`, `MAE_CHANNEL`, `MAE_GENERIC_LIST_VALUE`…) no las crea ni las recrea: quién las migra está en `registro-de-tablas.md` (C-11). `MAE_AREA` es solo la cola de atención del ticket (C-07).
 
@@ -198,7 +198,7 @@ erDiagram
 - `SVC_COMPLAINT_APPEAL` es 1 a N por asiento: así lo dibuja el PLT-04 v1.3 (HU-016 §6.5) y lo permite el esquema de claves del v7.
 - **`PARTY` es la fuente viva del cliente (DT-06, 22-oct).** `SVC_TICKET.PartyID` es clave foránea física a `PARTY` del v7: es una referencia, no una copia. La diferencia con el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 del PO está listada en ED-19. ATC no crea la `PARTY` del «Interesado» (HU-051): en PJ-05 la Party no verificada solo la crea el autorregistro de Control de acceso (R29, A26); el ticket se registra «sin cliente vinculado» (`PartyID` nulo), con sus datos mínimos en `SVC_TICKET_PROSPECT`, hasta que el job de vinculación complete el `PartyID` (ED-05). Ver el diccionario, C-1.
 - Las líneas desde `PARTY` hacia las bitácoras (`ChangedByPartyID`, `AssignedToPartyID`, `AgentPartyID`…) son colaboradores. El token trae `user_account_id`, no `PartyID`: ATC lo traduce con el vínculo de la cuenta en `IDN_USER_ACCOUNT`, leído por columna y sin copia (ED-01).
-- **El outbox es `SVC_OUTBOX_EVENT`** (ADR-013 v0.5), en el fragmento SERVICE, como cambio al v7 (`registro-de-tablas.md` §3; ED-23). Se dibuja con sus claves (el ticket del evento, la empresa y los pares de lista del tipo de evento, `SVC_OUTBOX_EVENT_TYPE`, y del estado de publicación) y con `UserAccountID`, el `user_account_id` del token de quien hizo el cambio (nulo en los jobs; sin FK: es una tabla técnica que se purga a los 7 días; ADR-013 v0.5). Las demás columnas están en el diccionario. `INTG_OUTBOX_EVENT` (INTEGRATION-HUB) no se usa: es para envíos a sistemas externos. La identidad (Control de acceso; ATC no crea tablas de identidad, C-11) vive fuera de SERVICE y no se dibuja.
+- **El outbox es `SVC_OUTBOX_EVENT`** (ADR-013), en el fragmento SERVICE, como cambio al v7 (`registro-de-tablas.md` §3; ED-23). Se dibuja con sus claves (el ticket del evento, la empresa y los pares de lista del tipo de evento, `SVC_OUTBOX_EVENT_TYPE`, y del estado de publicación) y con `UserAccountID`, el `user_account_id` del token de quien hizo el cambio (nulo en los jobs; sin FK: es una tabla técnica que se purga a los 7 días; ADR-013). Las demás columnas están en el diccionario. `INTG_OUTBOX_EVENT` (INTEGRATION-HUB) no se usa: es para envíos a sistemas externos. La identidad (Control de acceso; ATC no crea tablas de identidad, C-11) vive fuera de SERVICE y no se dibuja.
 - Las demás tablas y columnas nuevas de ATC (`SVC_TICKET_PROSPECT`, `SVC_TICKET_ACTIVITY`, flujos, subtipos, pausas del SLA, `SVC_NOTIFICATION_LOG` y las del registro §3) no se dibujan aquí: sus columnas, tipos y nulabilidad están en el diccionario (ED-15, ED-16).
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: 5 bitácoras firmadas (RNF-AUD-004), cardinalidad de la apelación del PLT-04 y conflicto abierto por la clave a PARTY. — Revisado por: (pendiente)
@@ -214,9 +214,12 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | El outbox es `SVC_OUTBOX_EVENT` (ADR-013 v0.3 y v0.4) y se dibuja como cambio al v7 propuesto, con 4 relaciones y la columna `UserAccountID` (sin FK); las 9 tablas firmadas de ADR-002 |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): interesado «sin cliente vinculado» con `SVC_TICKET_PROSPECT` (ED-05); `PartyID` del colaborador por el vínculo de la cuenta (ED-01); outbox y columna `IntegrityHash` como cambios al v7 (ED-23); tablas nuevas remitidas al diccionario (ED-15, ED-16); diferencias con el PO en ED-19. El diagrama solo cambia la etiqueta del outbox |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22); sin cambio del modelo. Desde esta versión cada cambio de texto sube la versión (O-26) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (outbox de ADR-013 v0.3 y tablas firmadas de ADR-002). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-05, ED-15, ED-16, ED-19 y ED-23 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-22). — Revisado por: (pendiente)

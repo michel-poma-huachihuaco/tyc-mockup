@@ -4,7 +4,7 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-05 Libro de Reclamaciones"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.3"
+version: "1.3.4"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-26"
@@ -34,7 +34,7 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-05 textos 
 | 6 | Dependencias identificadas y desbloqueadas | [ ] | Sección 2: DEP-04, DEP-05, DEP-06 |
 | 7 | Consideraciones técnicas y de datos | [ ] | Secciones 3 y 4 (`datos/` y `arquitectura/` del paquete, listos para la firma del Líder Técnico y del Data Chief) |
 | 8 | Casos de prueba iniciales definidos por QA | [ ] | Pendiente: `docs/pruebas/test-plan.md`, un TC por criterio |
-| 9 | Estimada por el equipo | [ ] | PLT-04: 18 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y las horas quedan cerradas por P-025 (decidida por el equipo el 26-oct-2026, `analisis/decisiones.md` v0.8) |
+| 9 | Estimada por el equipo | [ ] | PLT-04: 18 h estimadas por el PO (PLT-05, acuerdo 1); las tareas están en `docs/backlog/tareas/` y las horas quedan cerradas por P-025 (decidida por el equipo el 26-oct-2026, `analisis/decisiones.md`) |
 | 10 | Cabe en un sprint | [ ] | 18 h dentro de la ventana 26-oct-2026 → 28-oct-2026 (PLT-01) |
 | IA | Si hubo IA: revisión humana registrada | [ ] | Línea «Revisado por» de cada documento: pendiente |
 
@@ -46,18 +46,20 @@ Resultado en el PLT-05 (v1.3): **CON CONDICIONES** · condición: DEP-05 textos 
 | DEP-05 | Validación legal: formato del asiento, textos y plazos del Libro | Legal | EP-ATC-03, EP-ATC-11 | Gerencia Legal | 26-oct-2026 | Pendiente |
 | DEP-06 | Repositorio documental S3 (con DT-07, Azure Blob Storage con inmutabilidad, ADR-006) + GOV_DOCUMENT_REPOSITORY y GLI | Técnica | EP-ATC-01, EP-ATC-03, EP-ATC-04, EP-ATC-10 | Arquitectura / Legal | 23-oct-2026 | En curso |
 
-Una dependencia sin desbloquear deja el criterio 6 sin cumplir. Si su responsable no compromete fecha, se registra como riesgo con su mitigación (R-02: contrato de interfaz y simulador; R-11 para la DEP-16), según `analisis/decisiones.md` v0.7 (ED-08).
+**Nota del equipo (26-oct-2026, ED-28):** el plazo de respuesta del Libro es de **15 días hábiles improrrogables** (Ley 31435; D.S. 101-2022-PCM): la parte de «plazos» de la DEP-05 la fija la ley. La prórroga única de HU-013 no se aplica y queda deshabilitada por parámetro (nota en HU-013; diferencia con el PO en ED-19). No cambia horas ni texto del PO.
+
+Una dependencia sin desbloquear deja el criterio 6 sin cumplir. Si su responsable no compromete fecha, se registra como riesgo con su mitigación (R-02: contrato de interfaz y simulador; R-11 y R-12 para la DEP-16), según `analisis/decisiones.md` (ED-08).
 
 ## 3 Modelado (datos y proceso)
 
 - Entidades citadas en el PLT-04: ENT-SVC-010, GOV_INTEGRITY_EXCEPTION, MAE_TIME, SVC_COMPLAINT_BOOK_ENTRY, SVC_SLA_BREACH_ALERT
 - ER, estados y diccionario: `datos/er.md`, `datos/estados.md` y `datos/diccionario.md` (tipos y tablas de ATC decididos por el equipo, ED-15 y ED-16)
-- Puerta F4 de Gobierno de Datos: `datos/acta-validacion-arquitectura-datos.md` v0.4 y `datos/registro-de-tablas.md` v0.3, listos para la firma del Data Chief
+- Puerta F4 de Gobierno de Datos: `datos/acta-validacion-arquitectura-datos.md` y `datos/registro-de-tablas.md`, listos para la firma del Data Chief
 
 ## 4 Arquitectura
 
-- Diagrama C4 y contrato: `arquitectura/c4-contenedores.mmd` y `arquitectura/aybar-atc.openapi.yaml` (`0.6.0-borrador`)
-- Registro de ADR de la Etapa 1 (PLT-01 §1 y PLT-05 §4.4; se aprueban en el comité del 20-oct). Las que aplican a esta funcionalidad son las de `adr/` (v0.5), listas para la firma del líder técnico:
+- Diagrama C4 y contrato: `arquitectura/c4-contenedores.mmd` y `arquitectura/aybar-atc.openapi.yaml`
+- Registro de ADR de la Etapa 1 (PLT-01 §1 y PLT-05 §4.4; se aprueban en el comité del 20-oct). Las que aplican a esta funcionalidad son las de `adr/`, listas para la firma del líder técnico:
 
 | ID | Decisión | Motivo / historias | Alcance | Estado (PLT-05) |
 |---|---|---|---|---|
@@ -109,3 +111,5 @@ Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · La DEP-06 anota Azur
 Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo de `analisis/decisiones.md` v0.7: el criterio 9 remite el cierre de horas al coordinador (P-025); ADR aplicables: las de `adr/` v0.5; regla del criterio 6 con riesgos mitigados; condiciones del PLT-05 anotadas con la decisión del equipo, sin borrar su texto. Modelado y arquitectura (secciones 3 y 4, criterio 7) citan los documentos de `datos/` y `arquitectura/` del paquete. No se borra texto del PO. — Revisado por: (pendiente)
 
 Historial: 1.3.3 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el criterio 9 ya no remite el cierre de horas al coordinador. No se borra texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.4 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: citas sin versión (la fija Nexora); DEP-16 en DEV, QA y PRE con el criterio de corte de la UAT (R-12); nota del plazo del Libro: 15 días hábiles improrrogables (ED-28). No se borra texto del PO. — Revisado por: (pendiente)

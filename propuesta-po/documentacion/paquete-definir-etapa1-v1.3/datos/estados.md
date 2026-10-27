@@ -4,7 +4,7 @@ tipo: "spec"
 titulo: "Estados y transiciones del ticket"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.4"
+version: "0.5"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -82,7 +82,7 @@ stateDiagram-v2
 
 ## Asiento del Libro de Reclamaciones
 
-El PLT-04 v1.3 (HU-012 a 015 §6.1) dibuja los estados del asiento sin códigos: registrado (15 días hábiles), prorrogado (+15, una sola vez), respondido con cargo, plazo vencido y en apelación. El Excel no trae la lista: el equipo la fija como `SVC_COMPLAINT_STATUS` con `REGISTERED`, `EXTENDED`, `RESPONDED` y `CLOSED`; «plazo vencido» es la alerta `LEGAL_RESPONSE_OVERDUE` y «en apelación», una apelación abierta en `SVC_COMPLAINT_APPEAL` (ED-26). La hoja, la carta y los cargos se conservan 2 años desde el registro (ED-13). Una sola prórroga, comunicada antes del vencimiento original; el vencimiento prorrogado no se reescribe y manda sobre el original (HU-013, HU-015 CA-03; RN-SVC-009).
+El PLT-04 v1.3 (HU-012 a 015 §6.1) dibuja los estados del asiento sin códigos: registrado (15 días hábiles), prorrogado (+15, una sola vez), respondido con cargo, plazo vencido y en apelación. El Excel no trae la lista: el equipo la fija como `SVC_COMPLAINT_STATUS` con `REGISTERED`, `EXTENDED`, `RESPONDED` y `CLOSED`; «plazo vencido» es la alerta `LEGAL_RESPONSE_OVERDUE` y «en apelación», una apelación abierta en `SVC_COMPLAINT_APPEAL` (ED-26). La hoja, la carta y los cargos se conservan 2 años desde el registro (ED-13). Una sola prórroga, comunicada antes del vencimiento original; el vencimiento prorrogado no se reescribe y manda sobre el original (HU-013, HU-015 CA-03; RN-SVC-009). **Con la Ley 31435 el plazo es de 15 días hábiles improrrogables** (art. 24.1 del Código de Protección y Defensa del Consumidor; El Peruano, 22-mar-2022): ATC deshabilita la prórroga por parámetro, `EXTENDED` y el paso «prorrogado» quedan sin uso y el parámetro existe solo si una norma futura la permite (ED-28; la diferencia con HU-013 y RN-SVC-009 está listada en ED-19).
 
 ## Reclamo de garantía (fragmento CONTRACT)
 
@@ -105,12 +105,12 @@ Contraste del 20-oct-2026 con las 62 historias de PJ-06. Lo que sigue sale de su
 | Ticket | El cambio de estado hecho por el sistema se registra con marca automática, sin autor | HU-004 CA-03 |
 | Ticket | Al reabrir se calcula un nuevo compromiso; el original no se reescribe; `ReopenCount` cuenta los ciclos y cada ciclo tiene sus alertas | HU-011 CA-01, CA-02 |
 | Ticket | `PENDING_CUSTOMER`: la respuesta del cliente en Mi Portal lo devuelve a atención y reanuda el SLA; rechazar la solución lo reabre y lo devuelve al área responsable; sin respuesta se cierra solo a los días hábiles configurados | HU-066 CA-01, 03, 04 |
-| Ticket | «Sin cliente vinculado» («Interesado»): datos mínimos en `SVC_TICKET_PROSPECT`, reintento automático de la vinculación, vínculo posterior en la bitácora y borrado de los datos mínimos (ED-05) | HU-051 CA-01 a 03 |
+| Ticket | «Sin cliente vinculado» («Interesado»): datos mínimos en `SVC_TICKET_PROSPECT`, reintento automático de la vinculación, vínculo posterior en la bitácora y borrado de los datos mínimos; si nunca se vincula, purga a los 30 días hábiles del cierre (2 años si hay asiento del Libro) (ED-05; O-11) | HU-051 CA-01 a 03 |
 | Ticket | Envío a Legal en cola: si la herramienta de Legal no responde, el envío queda en el outbox, se reintenta y el ticket lo muestra | HU-040 CA-03 |
 | Ticket | Rayo de prioridad: marca con motivo y bitácora; solo el líder (`ATC_SUPERVISOR`); aviso al superar el 10 % de la bandeja del área | HU-045 CA-01 a 03 |
 | Ticket | Señal de conflicto: bloquea resolver o cerrar en Eje 1/2 (gate no compensable) y exige derivar a Eje 3; un supervisor la retira con justificación y queda en el historial | HU-026 CA-01 a 03 |
 | Ticket | Hitos: la primera fecha de resolución se conserva; `ClosedDateTime` no cambia salvo reapertura | HU-006 CA-01, CA-02 |
-| Asiento del Libro | Una sola prórroga, comunicada antes del vencimiento original: la segunda se bloquea (409) y fuera de plazo se impide (422); el plazo prorrogado manda sobre el original | HU-013 CA-02 a 04, HU-015 CA-03 |
+| Asiento del Libro | Prórroga deshabilitada por la Ley 31435 (15 días hábiles improrrogables): `prorrogarPlazo` responde 422 (ED-28). Solo si una norma futura la habilita: una sola, comunicada antes del vencimiento original; la segunda se bloquea (409) y fuera de plazo se impide (422); el plazo prorrogado manda sobre el original | HU-013 CA-02 a 04, HU-015 CA-03 |
 | Asiento del Libro | La respuesta formal solo es válida con el cargo adjunto | HU-014 CA-03 |
 | Apelación | `WITHDRAWN`: cierra la apelación y el ticket no puede volver a apelarse por la misma respuesta | HU-016 CA-03 |
 | Caso sensible | Cargo previo (el SLA de línea no corre) → cargo de activación (el reloj arranca); más de 2 días hábiles sin activar: caso en limbo | HU-021 CA-01 a 03 |
@@ -118,7 +118,7 @@ Contraste del 20-oct-2026 con las 62 historias de PJ-06. Lo que sigue sale de su
 | Caso sensible | Cierre con uno de los 8 estados homologados y evidencia (los nombres los da el Excel, RN-SVC-019; ver arriba) | HU-025 CA-01 |
 | Caso sensible | Handoff a Eje 3 completo (6 elementos) antes de enviar; sin confirmar tras 1 día hábil se alerta al supervisor del eje destino | HU-027 CA-01 a 03 |
 | Reclamo de garantía | `APPROVED`, `REJECTED` o `RESOLVED` con fecha y descripción (la lista del Excel suma `REPORTED` y `UNDER_REVIEW`); «no procedente por vigencia» si la fecha cae fuera de la cobertura; la inspección va antes de resolver | HU-034 CA-02, HU-035 CA-01, CA-02 |
-| Morosidad | Ticket «Resolución de contrato»: se cierra «Regularizado» si el cliente paga antes; queda «suspendido por reclamo» mientras haya un reclamo abierto en el Libro (Q-056-3) | HU-056 CA-02, CA-03 |
+| Morosidad | Ticket «Resolución de contrato»: se cierra «Regularizado» si el cliente paga antes; queda «suspendido por reclamo» mientras haya un reclamo abierto en el Libro (Q-056-3). Códigos del caso: lista `SVC_DEFAULT_CASE_STATUS` (`OPEN`, `SUSPENDED_BY_COMPLAINT`, `REGULARIZED`, `RESOLVED`; diccionario) | HU-056 CA-02, CA-03 |
 | Flujo | Cada publicación crea una versión; solo aplica a tickets nuevos; los abiertos conservan su flujo y SLA congelado; sin flujo publicado se usa el del área y se avisa al rol `ATC_ADMIN_FUNCIONAL` (aviso por rol, ED-03) | HU-043 CA-02, CA-07 |
 | Reserva de bus | Confirmada, en lista de espera o cancelada (la cancelación libera el cupo y lo pasa al primero de la lista) | HU-060 CA-01 a 03 |
 | EntregaFest | Caso derivado a la Estación 4: el moderador no puede reabrirlo | HU-038 CA-02 · fuera de la Etapa 1 (P-025): se aplica cuando se retome |
@@ -133,9 +133,12 @@ Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jes
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Frontmatter completo para el acta F4, de la que es evidencia: owner (Jesús Chávez Elías, autor de la versión base), aprobador (Líder Técnico, como el resto de `datos/`), versión, fecha, relacionados e historial. Los estados no cambian |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): salida de `ESCALATED` y validación de transiciones (ED-26); pausas en `SVC_TICKET_SLA_PAUSE` y cierre automático a los 5 días hábiles (ED-15); códigos del asiento, de la instancia de apelación y de los 8 cierres de casos sensibles, y plazos de la Mesa SGD (ED-26); retención de la evidencia del Libro (ED-13); interesado «sin cliente vinculado» (ED-05). Los estados del ticket no cambian |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): la regla de EntregaFest (HU-038) queda marcada «fuera de la Etapa 1» |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: asiento con 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); purga de los datos mínimos del interesado (O-11); códigos del caso de resolución. Desde esta versión cada cambio de texto sube la versión (O-26) |
 
 Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-03, ED-05, ED-13, ED-15 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01 y O-11). — Revisado por: (pendiente)

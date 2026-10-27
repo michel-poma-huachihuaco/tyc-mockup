@@ -1,18 +1,18 @@
 openapi: 3.0.3
 info:
   title: Aybar Atiende · Plataforma ATC
-  version: 0.6.0-borrador
+  version: 0.7.0-borrador
   license:
     name: Uso interno de Aybar (propietario)
   description: |
     BORRADOR del contrato de API (criterio de G3). Estado: draft. Generado el 2026-10-19 a partir de las 62 historias del PLT-04 v1.3; revisado el 20, 21, 22 y 26-oct.
-    Campos: los de clave siguen los nombres del Modelo de Datos Corporativo v7 (cada propiedad dice cuál; los ids del v7 son enteros y el contrato los expone como cadenas opacas). Los demás salen del PO (PLT-03, PLT-04 y PLT-05 v1.3), del Excel del PO (02_RF_Micro, 03_RNF y 05_Catalogos) y del diccionario de datos, con su fuente. Lo que las fuentes no definían lo decidió el equipo el 26-oct (`analisis/decisiones.md` v0.7, ED-01 a ED-27) y va en `x-decision`, con la decisión y su fuente; el contrato ya no tiene `x-pendiente`. Tipos, largos y nulabilidad de los atributos no clave: ED-16 (`datos/diccionario.md`). Todos los esquemas tienen sus propiedades.
+    Campos: los de clave siguen los nombres del Modelo de Datos Corporativo v7 (cada propiedad dice cuál; los ids del v7 son enteros y el contrato los expone como cadenas opacas). Los demás salen del PO (PLT-03, PLT-04 y PLT-05 v1.3), del Excel del PO (02_RF_Micro, 03_RNF y 05_Catalogos) y del diccionario de datos, con su fuente. Lo que las fuentes no definían lo decidió el equipo el 26-oct (`analisis/decisiones.md`, ED-01 a ED-28) y va en `x-decision`, con la decisión y su fuente; el contrato ya no tiene `x-pendiente`. Tipos, largos y nulabilidad de los atributos no clave: ED-16 (`datos/diccionario.md`). Todos los esquemas tienen sus propiedades.
     Seguridad (ADR-009, ADR-014; `arquitectura/seguridad.md`): JWT del servidor de autorización de Control de acceso (PJ-05). ATC valida firma, emisor, vencimiento y audiencia con `aybar-starter-security`; Azure API Management también valida la audiencia en el borde (D-44 de PJ-05). La audiencia es `aybar-atc` (`AYBAR_JWT_AUDIENCE`; ED-06). ATC no tiene login, no emite códigos y no abre sesiones: no hay operaciones de código ni de sesión de Mi Portal (DT-04; se retiraron `solicitarCodigo` y `abrirSesion` el 22-oct).
-    Permisos (C-02; `arquitectura/roles-y-permisos-atc.md`): cada operación declara `x-permiso`, el permiso del catálogo que ATC entrega a Control de acceso, con la forma `<opción> + <acción>` que usa PJ-05 (acciones ver, crear, editar, eliminar y aprobar), y `x-roles`, los roles que exige `@PreAuthorize(hasAnyRole(...))`. El token trae roles, no permisos (ADR-012 y ADR-007 de PJ-05): ATC autoriza por rol con `@PreAuthorize` y no consulta el permiso efectivo en cada operación; la consola usa `GET /api/v1/mi/permisos/{codigoOpcion}` de Control de acceso solo para mostrar u ocultar acciones (ED-02). El catálogo lo aprueba Control de acceso (firma del área; ED-07). El tablero declara además `x-permiso-adicional` y `x-roles-adicional` para la parte del equipo.
+    Permisos (C-02; `arquitectura/roles-y-permisos-atc.md`): cada operación declara `x-permiso`, el permiso del catálogo que ATC entrega a Control de acceso, con la forma `<opción> + <acción>` que usa PJ-05 (acciones ver, crear, editar, eliminar y aprobar), y `x-roles`, los roles que exige `@PreAuthorize(hasAnyRole(...))`. Las 8 operaciones de Mi Portal no se autorizan por rol: declaran `x-roles: []` y su regla en `x-autorizacion` (cuenta de tipo `CUSTOMER` activa; ED-01). El token trae roles, no permisos (ADR-012 y ADR-007 de PJ-05): ATC autoriza por rol con `@PreAuthorize` y no consulta el permiso efectivo en cada operación; la consola usa `GET /api/v1/mi/permisos/{codigoOpcion}` de Control de acceso solo para mostrar u ocultar acciones (ED-02). El catálogo lo aprueba Control de acceso (firma del área; ED-07). El tablero declara además `x-permiso-adicional` y `x-roles-adicional` para la parte del equipo.
     Errores (DT-09, C-10): ProblemDetail RFC 7807 de `aybar-starter-web` (esquema `ProblemaAybar`: `codigo` con el formato `AYB-<ÁREA>-<HTTP>`, `correlationId`, `timestamp` y `campos`). Los de plataforma los emite el SDK (`AYB-VAL-400`, `AYB-SEG-401`, `AYB-SEG-403`, `AYB-REC-404`, `AYB-GEN-429`, `AYB-GEN-500`); los de seguridad (401, 403, falta de rol) los emiten el SDK y Control de acceso con sus códigos y ATC no los reinventa ni emite `AYB-PEF-403` (área de Control de acceso, D-169). Los de negocio de ATC se lanzan con `AybarException` y usan solo las áreas `TKT`, `SLA`, `LRC`, `APL`, `GAR` y `PTL` (`x-areas-de-error`); cada operación que tiene uno lo lista en `x-errores-negocio`.
     Versionado y compatibilidad: la versión mayor va en la ruta (`/api/v1`). Mientras el contrato es borrador, `info.version` es `0.MENOR.PARCHE-borrador`; al aprobarse en G3 pasa a `1.0.0`, y desde ahí su MAYOR es la de la ruta. Dentro de `/api/v1` solo se agregan operaciones y campos opcionales (sube la MENOR) o se corrigen descripciones (sube el PARCHE). Quitar o renombrar una operación o un campo, cambiar un tipo o volver obligatorio un campo es incompatible: crea `/api/v2` (sube la MAYOR) y vuelve a G3. `/api/v1` y `/api/v2` conviven en el mismo despliegue; la operación de v1 que tiene reemplazo se marca `deprecated: true` y se retira cuando sus clientes migraron (consola ATC, Mi Portal y formularios, que son de ATC) y no antes de 90 días (decisión del equipo, propuesta al Líder Técnico en este envío).
     Estados: el del ticket y el de la apelación usan los códigos de las listas del Excel (`SVC_TICKET_STATUS` y `SVC_COMPLAINT_APPEAL_STATUS`). Cliente: `PARTY` de la base única es la fuente viva y la clave foránea del ticket no es una copia (DT-06); la diferencia con el ADR-03 del PO está listada en ED-19. La consulta del cliente devuelve su `PartyID` (contrato de ATC con SIGDA/TAXON, ED-05).
-    Mi Portal (ADR-011, decisión 8): sus operaciones usan esquemas propios (`PortalTicketNuevo`, `PortalRespuesta`, `PortalTicket`, `PortalTicketResumen`, `PortalPaginaTickets`, `PortalTrazabilidad` y `PortalInteraccion`). La identidad del cliente sale solo de su token: ATC obtiene su `PartyID` del vínculo de la cuenta en la base única (`IDN_USER_ACCOUNT`, en solo lectura y por columna; `CuentaPersonaPort`, ED-01). `@PreAuthorize` exige un usuario autenticado sin el rol `PROSPECT`, y el caso de uso admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER`. Ninguna operación de Mi Portal recibe un identificador de cliente, y los esquemas de entrada declaran `additionalProperties: false` (un campo de más responde AYB-VAL-400). Las respuestas no llevan `PartyID`, prioridad, responsable, creador, conflicto, eje, rayo, flujo ni notas internas. Los esquemas de la consola (`TicketNuevo`, `Ticket`, `TicketResumen`, `Interaccion`) no se usan en Mi Portal.
+    Mi Portal (ADR-011, decisión 8): sus operaciones usan esquemas propios (`PortalTicketNuevo`, `PortalRespuesta`, `PortalTicket`, `PortalTicketResumen`, `PortalPaginaTickets`, `PortalTrazabilidad` y `PortalInteraccion`). La identidad del cliente sale solo de su token: ATC obtiene su `PartyID` del vínculo de la cuenta en la base única (`IDN_USER_ACCOUNT`, en solo lectura y por columna; `CuentaPersonaPort`, ED-01). No se autoriza por rol: `@PreAuthorize` usa un bean de ATC que exige una cuenta de tipo `CUSTOMER` activa (`AccountTypeID` y `AccountStatusID` de `IDN_USER_ACCOUNT`, por `CuentaPersonaPort`), porque la cuenta que nace por DNI no recibe el rol `CUSTOMER` (HU-IDN-045 CA-3 de PJ-05) y la del prospecto validado sí, y las dos son de tipo `CUSTOMER` (D-67; HU-IDN-059 CA-1). `PROSPECT` y cualquier otro tipo de cuenta reciben 403 (AYB-SEG-403). Ninguna operación de Mi Portal recibe un identificador de cliente, y los esquemas de entrada declaran `additionalProperties: false` (un campo de más responde AYB-VAL-400). Las respuestas no llevan `PartyID`, prioridad, responsable, creador, conflicto, eje, rayo, flujo ni notas internas. Los esquemas de la consola (`TicketNuevo`, `Ticket`, `TicketResumen`, `Interaccion`) no se usan en Mi Portal.
     Identificadores de colaborador: `colaboradorId`, `gestorId`, `responsableId` y `destinatarioId` son el `PartyID` del colaborador, como las columnas `*PartyID` del v7 (no el `user_account_id` del token: ATC lo traduce con `CuentaPersonaPort`, ED-01). Los gestores que se ofrecen para elegir son los de la cola (ED-03).
     No incluye WebSocket: el visor 3D recibe los eventos del servicio por `/ws/visor` (ADR-010), que OpenAPI no describe. Exige el mismo permiso que `estadoVisor`. El JWT va en la cabecera `Sec-WebSocket-Protocol` (`aybar.visor.v1`, <jwt>), nunca en la URL, y el servicio lo valida en el handshake con `aybar-starter-security` (firma, emisor, vencimiento y audiencia). Al vencer el token, el servidor cierra con el código 4401 y el visor se reconecta. Entra por Cloudflare al ingreso de Container Apps, sin API Management.
     Generado por IA — Revisado por: (pendiente).
@@ -25,10 +25,11 @@ info:
     - '0.4.0 · 2026-10-26 · Brayan Hurtado, con IA · x-permiso con la forma de PJ-05 (opción + acción) y x-roles por operación; respuestas de error del SDK por código; x-errores-negocio con las áreas TKT, SLA, LRC, APL, GAR y PTL; ProblemaAybar igual al del SDK; política de compatibilidad con convivencia v1/v2; Mi Portal sin PartyID en el token (P-033); sin descripciones «por completar».'
     - '0.6.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equipo (ED-01 a ED-27 de `analisis/decisiones.md` v0.7): PartyID del cliente y del colaborador por `CuentaPersonaPort` (ED-01); autorización por rol (ED-02); audiencia `aybar-atc` (ED-06); interesado «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT` (ED-05); gestores de la cola (ED-03). Los `x-pendiente` pasan a `x-decision` con su decisión y fuente: listas de SERVICE (estado del asiento, instancia de apelación, motivos `REASSIGNMENT_TERMINATION` y `REASSIGNMENT_WORKLOAD`, `CALL`), columnas nuevas (prórroga, resolución de la apelación, eje, actividades del ticket), valores del mockup (adjuntos, Mesa SGD, buses) y `sinGuia` en la guía.'
     - '0.6.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8), misma versión: nota «fuera de la Etapa 1» en la descripción de las 6 operaciones de HU-037, 038, 039, 048 y 053 (registrarFraseAncla, registrarCasoEvento, listarCasosEvento, pedirSugerenciaIa, decidirSugerenciaIa y buscarDocumentos). No cambia ninguna operación, campo ni respuesta: el contrato documenta las 59 y en la Etapa 1 se construyen 53.'
+    - '0.7.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · Revisión final del Líder Técnico (O-02, O-01, O-07 y O-15) y decisión del coordinador sobre C-06. Diez operaciones nuevas (cambio MENOR compatible) para que las 57 historias de la Etapa 1 tengan operación: consultarVigilanciaLibro (HU-013 y HU-015), consultarCsatCes (HU-019), listarInformes (HU-031), consultarAuditoriaRegistrosParalelos (HU-032), consultarSincronizacionLegal (HU-040), listarRiesgoDenuncia (HU-041), obtenerFichaLlamada (HU-042), consultarCargaGestores (HU-046), listarAvisos (HU-046 y HU-055) y listarCasosResolucion (HU-056 a 058); verTablero suma el cierre de extremo a extremo (HU-029) y obtenerTicket el historial de estados, las interacciones y la exposición (HU-004, 005 y 041); registrarInteraccion cubre la llamada de HU-042. Etiqueta `quality`. Mi Portal sin rol: `x-roles: []` y `x-autorizacion` (cuenta CUSTOMER activa; ED-01). prorrogarPlazo deshabilitada por la Ley 31435 (15 días hábiles improrrogables; ED-28) con AYB-LRC-422. Adjuntos: máximo 3 por envío en la consola, Mi Portal y la inspección. Tipo de ticket «Validación de identidad (prospecto)» en la descripción del tipo (C-06). 69 operaciones (63 en la Etapa 1).'
 x-areas-de-error:
   - { area: TKT, alcance: 'Tickets y todo lo que se registra como ticket o actúa sobre uno: bandeja, flujos, rayo, actividades, Mesa de casos sensibles (SGD), señal de conflicto y handoff, notas de estado, Entrega Fest y formularios simples (ingreso y reserva de bus son tipos de ticket del catálogo)' }
   - { area: SLA, alcance: 'Políticas y alertas de SLA; hoy ninguna operación del contrato la usa' }
-  - { area: LRC, alcance: 'Libro de Reclamaciones: asiento, prórroga y respuesta formal' }
+  - { area: LRC, alcance: 'Libro de Reclamaciones: asiento, plazo legal y huérfanos, prórroga (deshabilitada, ED-28) y respuesta formal' }
   - { area: APL, alcance: 'Apelaciones internas y ante INDECOPI' }
   - { area: GAR, alcance: 'Reclamos de garantía postventa' }
   - { area: PTL, alcance: 'Mi Portal (operaciones del cliente)' }
@@ -54,6 +55,8 @@ tags:
     description: 'Módulo `legalcases` (ADR-001): Mesa de casos sensibles SGD y gate a Eje 3: señal de conflicto, handoff y nota de estado (EP-ATC-04).'
   - name: aftersales
     description: 'Módulo `aftersales` (ADR-001): reclamos de garantía postventa (EP-ATC-05).'
+  - name: quality
+    description: 'Módulo `quality` (ADR-001): encuesta, Torre de Control CX e informes (EP-ATC-07): CSAT y CES, informes diario y quincenal y auditoría de registros paralelos.'
   - name: delinquency
     description: 'Módulo `delinquency` (ADR-001): resolución por morosidad (jobs, ADR-005) y formularios simples de ingreso al proyecto y reserva de bus (EP-ATC-11).'
 paths:
@@ -89,8 +92,8 @@ paths:
     get:
       tags: [tickets]
       operationId: obtenerTicket
-      summary: "Obtener un ticket con sus hitos probatorios"
-      x-historias: [HU-004, HU-006, HU-050]
+      summary: "Obtener un ticket con sus hitos probatorios, su historial de estados y sus interacciones"
+      x-historias: [HU-004, HU-005, HU-006, HU-041, HU-050]
       x-estado: borrador
       x-permiso: "ATC.TICKETS + ver"
       x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CASES_DESK, ATC_CX]
@@ -152,7 +155,7 @@ paths:
       tags: [tickets]
       operationId: registrarInteraccion
       summary: "Registrar una interacción visible o una nota interna, con adjuntos"
-      x-historias: [HU-005]
+      x-historias: [HU-005, HU-042]
       x-estado: borrador
       x-permiso: "ATC.TICKETS + editar"
       x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
@@ -434,13 +437,15 @@ paths:
       tags: [complaintbook]
       operationId: prorrogarPlazo
       summary: "Calcular el plazo legal y gestionar la prórroga única"
+      description: 'Deshabilitada (ED-28). La Ley 31435 (El Peruano, 22-mar-2022) modificó el art. 24.1 del Código de Protección y Defensa del Consumidor (Ley 29571): el proveedor responde «en un plazo no mayor de quince (15) días hábiles improrrogables». ATC calcula 15 días hábiles desde el registro, sin prórroga (`consultarVigilanciaLibro`), y esta operación responde AYB-LRC-422 mientras `atc.libro.prorroga-habilitada` sea `false`, su valor por defecto. El parámetro existe solo por si una norma futura la permite; entonces aplican HU-013 CA-01 a CA-04. La diferencia con HU-013 y RN-SVC-009 (15 + 15) está listada en ED-19.'
       x-historias: [HU-013]
       x-estado: borrador
       x-permiso: "ATC.COMPLAINT_BOOK + editar"
       x-roles: [ATC_LEGAL]
       x-errores-negocio:
-        - { codigo: AYB-LRC-409, cuando: 'El asiento ya tiene su prórroga única (HU-013 CA-03).' }
-        - { codigo: AYB-LRC-422, cuando: 'La comunicación al consumidor es posterior al vencimiento original (HU-013 CA-04).' }
+        - { codigo: AYB-LRC-422, cuando: 'La prórroga no está habilitada (`atc.libro.prorroga-habilitada=false`, valor por defecto): el plazo es de 15 días hábiles improrrogables (Ley 31435; ED-28). Es la respuesta de la Etapa 1.' }
+        - { codigo: AYB-LRC-409, cuando: 'Solo si una norma futura habilita la prórroga: el asiento ya tiene su prórroga única (HU-013 CA-03).' }
+        - { codigo: AYB-LRC-422, cuando: 'Solo si una norma futura habilita la prórroga: la comunicación al consumidor es posterior al vencimiento original (HU-013 CA-04).' }
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - name: asientoId
@@ -587,11 +592,12 @@ paths:
       tags: [portal]
       operationId: listarMisTickets
       summary: "Consultar mis tickets"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Devuelve solo los tickets de ese cliente, del más reciente al más antiguo, con número, tipo, estado, área y fecha de compromiso (HU-064 CA-02), en el esquema propio `PortalTicketResumen`: sin responsable, prioridad, notas internas ni datos internos del ticket.'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Devuelve solo los tickets de ese cliente, del más reciente al más antiguo, con número, tipo, estado, área y fecha de compromiso (HU-064 CA-02), en el esquema propio `PortalTicketResumen`: sin responsable, prioridad, notas internas ni datos internos del ticket.'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
         - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
@@ -612,11 +618,12 @@ paths:
       tags: [portal]
       operationId: registrarMiTicket
       summary: "Registrar un ticket desde Mi Portal"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo es `PortalTicketNuevo` (`additionalProperties: false`): un campo que no está en el esquema, por ejemplo `clienteId`, `partyId`, `prioridadId`, `canal` o `visible`, se rechaza con AYB-VAL-400. El servidor fija el `PartyID` del token, el canal `MI_PORTAL`, la empresa y la línea de negocio del contrato del cliente (RN-SVC-005) y la prioridad (la del flujo o la del tipo). Responde `PortalTicket` con el número y la fecha de compromiso (HU-064 CA-01). Un adjunto de más de 10 MB o de un formato no admitido responde AYB-VAL-400 con el tamaño y los formatos permitidos (HU-064 CA-05).'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo es `PortalTicketNuevo` (`additionalProperties: false`): un campo que no está en el esquema, por ejemplo `clienteId`, `partyId`, `prioridadId`, `canal` o `visible`, se rechaza con AYB-VAL-400. El servidor fija el `PartyID` del token, el canal `MI_PORTAL`, la empresa y la línea de negocio del contrato del cliente (RN-SVC-005) y la prioridad (la del flujo o la del tipo). Responde `PortalTicket` con el número y la fecha de compromiso (HU-064 CA-01). Un adjunto de más de 10 MB o de un formato no admitido responde AYB-VAL-400 con el tamaño y los formatos permitidos (HU-064 CA-05).'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + crear"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-PTL-422, cuando: 'El tipo elegido va al Libro de Reclamaciones (reclamo o queja): se responde con el aviso legal y no se crea un ticket común (HU-064 CA-04). También cuando el cliente tiene varios contratos y no eligió `contratoId`, o el subtipo no está habilitado para Mi Portal.' }
         - { codigo: AYB-PTL-404, cuando: 'El `contratoId` no es de un contrato del cliente autenticado.' }
@@ -645,11 +652,12 @@ paths:
       tags: [portal]
       operationId: verTrazabilidad
       summary: "Ver la trazabilidad de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente: el de otro cliente responde AYB-PTL-404, como si no existiera, y el intento queda en la auditoría (HU-065 CA-04). Devuelve `PortalTrazabilidad`: pasos con fecha y hora, área y fecha de compromiso, e interacciones visibles sin el nombre ni el ID del gestor ni notas internas (HU-065 CA-01 y CA-03).'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente: el de otro cliente responde AYB-PTL-404, como si no existiera, y el intento queda en la auditoría (HU-065 CA-04). Devuelve `PortalTrazabilidad`: pasos con fecha y hora, área y fecha de compromiso, e interacciones visibles sin el nombre ni el ID del gestor ni notas internas (HU-065 CA-01 y CA-03).'
       x-historias: [HU-065]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la bitácora (HU-065 CA-04).' }
       parameters:
@@ -675,11 +683,12 @@ paths:
       tags: [portal]
       operationId: responderMiTicket
       summary: "Responder, adjuntar y confirmar la solución de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). El cuerpo es `PortalRespuesta` (texto y adjuntos, `additionalProperties: false`): el servidor fija el tipo `CUSTOMER_MESSAGE`, la visibilidad (`IsVisibleToCustomer = true`) y el canal `MI_PORTAL`; un campo de más responde AYB-VAL-400. Si el ticket estaba en PENDING_CUSTOMER, vuelve a IN_PROGRESS y el SLA se reanuda (HU-066 CA-01).'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). El cuerpo es `PortalRespuesta` (texto y adjuntos, `additionalProperties: false`): el servidor fija el tipo `CUSTOMER_MESSAGE`, la visibilidad (`IsVisibleToCustomer = true`) y el canal `MI_PORTAL`; un campo de más responde AYB-VAL-400. Si el ticket estaba en PENDING_CUSTOMER, vuelve a IN_PROGRESS y el SLA se reanuda (HU-066 CA-01).'
       x-historias: [HU-066]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + editar"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría (HU-064 CA-02; HU-065 CA-04).' }
       parameters:
@@ -733,11 +742,12 @@ paths:
       tags: [portal]
       operationId: listarTiposPortal
       summary: "Tipos y subtipos que ve el cliente al registrar un ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). Devuelve el catálogo de tipos y subtipos que el cliente puede elegir al registrar un ticket; no lee ni devuelve datos de ningún cliente. Reclamo y queja van marcados `libro: true`: Mi Portal no los registra como ticket común (HU-064 CA-04).'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). Devuelve el catálogo de tipos y subtipos que el cliente puede elegir al registrar un ticket; no lee ni devuelve datos de ningún cliente. Reclamo y queja van marcados `libro: true`: Mi Portal no los registra como ticket común (HU-064 CA-04).'
       x-historias: [HU-064]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + ver"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       parameters:
         - $ref: '#/components/parameters/CorrelationId'
       responses:
@@ -757,11 +767,12 @@ paths:
       tags: [portal]
       operationId: confirmarSolucion
       summary: "Confirmar o rechazar la solución de mi ticket"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). Confirmar cierra el ticket con cierre formal en Mi Portal (RN-SVC-023) y dispara la encuesta (HU-066 CA-02); rechazar exige un motivo y reabre el ticket hacia el área responsable (HU-066 CA-03). El cuerpo (`ConfirmacionSolucion`) no admite otros campos; responde `PortalTicket`.'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre un ticket de ese cliente (si no, AYB-PTL-404). Confirmar cierra el ticket con cierre formal en Mi Portal (RN-SVC-023) y dispara la encuesta (HU-066 CA-02); rechazar exige un motivo y reabre el ticket hacia el área responsable (HU-066 CA-03). El cuerpo (`ConfirmacionSolucion`) no admite otros campos; responde `PortalTicket`.'
       x-historias: [HU-066]
       x-estado: borrador
       x-permiso: "ATC.PORTAL + aprobar"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-PTL-409, cuando: 'El ticket no está RESOLVED: ya se cerró o todavía no tiene solución (HU-066).' }
         - { codigo: AYB-PTL-404, cuando: 'El ticket no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría (HU-065 CA-04).' }
@@ -986,8 +997,8 @@ paths:
     get:
       tags: [inbox]
       operationId: verTablero
-      summary: "Avance diario del gestor y, para el líder, el de su equipo; casos en riesgo"
-      x-historias: [HU-030, HU-054]
+      summary: "Avance diario del gestor y, para el líder, el de su equipo; casos en riesgo y cierre de extremo a extremo (Torre de Control)"
+      x-historias: [HU-029, HU-030, HU-054]
       x-estado: borrador
       x-permiso: "ATC.DASHBOARD + ver"
       x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_CX]
@@ -1851,11 +1862,12 @@ paths:
       tags: [delinquency]
       operationId: reservarBus
       summary: "Reservar un cupo en el bus del Entrega Fest; sin cupo ofrece otro bus o la lista de espera"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo `ReservaBus` (`additionalProperties: false`) no admite identificadores de cliente: un campo de más responde AYB-VAL-400. La reserva crea un ticket del cliente del token (HU-060 CA-01; RN-SVC-041) y la respuesta (`Reserva`) no devuelve el `PartyID`.'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. El cuerpo `ReservaBus` (`additionalProperties: false`) no admite identificadores de cliente: un campo de más responde AYB-VAL-400. La reserva crea un ticket del cliente del token (HU-060 CA-01; RN-SVC-041) y la respuesta (`Reserva`) no devuelve el `PartyID`.'
       x-historias: [HU-060]
       x-estado: borrador
       x-permiso: "ATC.PORTAL.BUS_BOOKING + crear"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-TKT-409, cuando: 'El bus no tiene cupo en ese horario: la respuesta ofrece otro bus u horario o la lista de espera (HU-060 CA-02).' }
       parameters:
@@ -1883,11 +1895,12 @@ paths:
       tags: [delinquency]
       operationId: cancelarReserva
       summary: "Cancelar la reserva: libera el cupo y lo pasa al primero de la lista de espera"
-      description: 'Operación del cliente (rol `CUSTOMER`, ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite la cuenta de tipo `CUSTOMER` o el rol `CUSTOMER` y rechaza `PROSPECT`. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre una reserva de ese cliente: la de otro cliente responde AYB-PTL-404 y el intento queda en la auditoría.'
+      description: 'Operación del cliente de Mi Portal (cuenta de tipo `CUSTOMER` activa, sin exigir rol: `x-autorizacion`; ADR-011). La identidad del cliente sale solo de su token: es el `PartyID` del cliente autenticado (el token no lo trae: ATC lo obtiene del vínculo de la cuenta en la base única con `CuentaPersonaPort`, ED-01). Admite solo una cuenta de tipo `CUSTOMER` activa: `PROSPECT` y cualquier otro tipo de cuenta responden 403. Ningún identificador de cliente viaja en el cuerpo, la ruta ni la consulta. Solo actúa sobre una reserva de ese cliente: la de otro cliente responde AYB-PTL-404 y el intento queda en la auditoría.'
       x-historias: [HU-060]
       x-estado: borrador
       x-permiso: "ATC.PORTAL.BUS_BOOKING + eliminar"
-      x-roles: [CUSTOMER]
+      x-roles: []
+      x-autorizacion: "Cuenta de tipo CUSTOMER activa, sin exigir rol (ED-01): `@PreAuthorize` con un bean de ATC que consulta `CuentaPersonaPort` (`AccountTypeID = CUSTOMER` y `AccountStatusID = ACTIVE` en `IDN_USER_ACCOUNT`). La cuenta que nace por DNI no lleva el rol CUSTOMER (HU-IDN-045 CA-3 de PJ-05); la del prospecto validado sí (D-67); las dos son de tipo CUSTOMER (HU-IDN-059 CA-1). PROSPECT y cualquier otro tipo: 403 (AYB-SEG-403)."
       x-errores-negocio:
         - { codigo: AYB-PTL-404, cuando: 'La reserva no es del cliente autenticado: se responde como inexistente y el intento queda en la auditoría.' }
       parameters:
@@ -1902,6 +1915,278 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Reserva' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/libro/vigilancia:
+    get:
+      tags: [complaintbook]
+      operationId: consultarVigilanciaLibro
+      summary: "Plazo legal de cada asiento, alertas por vencer y reclamos huérfanos del día"
+      description: 'Vista del Libro de Reclamaciones para el responsable legal: el plazo legal de cada asiento (HU-013: 15 días hábiles improrrogables desde el registro, Ley 31435; ED-28), su alerta a 3 días hábiles del vencimiento o vencido (HU-015 CA-01) y los tickets activos de un tipo con RequiresComplaintBook sin asiento que detectó el control diario (HU-015 CA-02, indicador «Tickets huérfanos hoy»). Lee PostgreSQL, como los jobs del plazo legal (ADR-005).'
+      x-historias: [HU-013, HU-015]
+      x-estado: borrador
+      x-permiso: "ATC.COMPLAINT_BOOK + ver"
+      x-roles: [ATC_LEGAL]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: empresaId, in: query, required: false, schema: { type: string }, description: 'CompanyID; sin él, las empresas que permite el rol (regla de alcance por operación).' }
+        - { name: porVencer, in: query, required: false, schema: { type: boolean, default: false }, description: 'Solo los asientos con alerta (por vencer o vencidos).' }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VigilanciaLibro' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/metricas/csat-ces:
+    get:
+      tags: [quality]
+      operationId: consultarCsatCes
+      summary: "CSAT y CES de las encuestas por tipo de ticket, área y gestor"
+      description: 'Resultados de la encuesta POST_TRANSACTION que dispara el cierre del ticket (HU-019 CA-01 y CA-03), agrupados por tipo de ticket, área o gestor (HU-019 CA-02). Fuente: SVY_SURVEY_RESPONSE por el KPI Engine (DEP-10), con su simulador mientras no esté.'
+      x-historias: [HU-019]
+      x-estado: borrador
+      x-permiso: "ATC.DASHBOARD.TEAM + ver"
+      x-roles: [ATC_SUPERVISOR, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: agruparPor, in: query, required: true, schema: { type: string, enum: [TIPO, AREA, GESTOR] } }
+        - { name: desde, in: query, required: false, schema: { type: string, format: date } }
+        - { name: hasta, in: query, required: false, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ResultadoCsatCes' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/torre-control/informes:
+    get:
+      tags: [quality]
+      operationId: listarInformes
+      summary: "Informes diario operativo y quincenal analítico de la Torre de Control"
+      description: 'Informe diario al cierre de la jornada (tickets por eje, NPS preliminar, derivaciones y cumplimiento de SLA; HU-031 CA-01) e informe quincenal (tendencias de KPI y adopción de Mi Portal; HU-031 CA-02), con el enlace al documento exportable. Los genera el informe programado de ADR-005.'
+      x-historias: [HU-031]
+      x-estado: borrador
+      x-permiso: "ATC.DASHBOARD.TEAM + ver"
+      x-roles: [ATC_SUPERVISOR, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: tipo, in: query, required: false, schema: { type: string, enum: [DIARIO, QUINCENAL] } }
+        - { name: desde, in: query, required: false, schema: { type: string, format: date } }
+        - { name: hasta, in: query, required: false, schema: { type: string, format: date } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaInformes' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/torre-control/auditoria-registros-paralelos:
+    get:
+      tags: [quality]
+      operationId: consultarAuditoriaRegistrosParalelos
+      summary: "Resultado de los cortes quincenales de la auditoría de registros paralelos del dato de cliente"
+      description: 'Cada corte quincenal debe dar 0 registros paralelos (HU-032 CA-01; RNF-INT-007); un hallazgo se eleva como gate no compensable (CA-02). Registro paralelo = dato de cliente en una tabla de ATC fuera de las dos excepciones decididas (SVC_TICKET_PROSPECT y la hoja del Libro; ED-05, ED-13).'
+      x-historias: [HU-032]
+      x-estado: borrador
+      x-permiso: "ATC.DASHBOARD.TEAM + ver"
+      x-roles: [ATC_SUPERVISOR, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: desde, in: query, required: false, schema: { type: string, format: date } }
+        - { name: hasta, in: query, required: false, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuditoriaRegistrosParalelos' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/tickets/{ticketId}/legal:
+    get:
+      tags: [legalcases]
+      operationId: consultarSincronizacionLegal
+      summary: "Estado de la sincronización del ticket con la herramienta de Legal (pestaña Legal)"
+      description: 'Pestaña Legal del ticket derivado a Eje 3: el caso llega a Legal con el paquete mínimo y el número de ticket (HU-040 CA-01), el ticket refleja el estado y la resolución que devuelve Legal (CA-02) y, si Legal no responde, muestra «pendiente de sincronizar» mientras el adaptador reintenta (CA-03; ADR-004).'
+      x-historias: [HU-040]
+      x-estado: borrador
+      x-permiso: "ATC.TICKETS + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CASES_DESK, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: ticketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SincronizacionLegal' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/torre-control/riesgo-denuncia:
+    get:
+      tags: [legalcases]
+      operationId: listarRiesgoDenuncia
+      summary: "Reclamos con riesgo de denuncia priorizados por su exposición económica"
+      description: 'Exposición = monto reclamado + interés legal al día (HU-041 CA-01; RN-SVC-034); sin monto, «por estimar» y no se descarta (CA-03); sobre el umbral, prioritario y con alerta a Legal antes del vencimiento (CA-02).'
+      x-historias: [HU-041]
+      x-estado: borrador
+      x-permiso: "ATC.DASHBOARD.TEAM + ver"
+      x-roles: [ATC_SUPERVISOR, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: soloPrioritarios, in: query, required: false, schema: { type: boolean, default: false } }
+        - { name: empresaId, in: query, required: false, schema: { type: string } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaRiesgoDenuncia' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/call-center/screen-pop:
+    get:
+      tags: [customer360]
+      operationId: obtenerFichaLlamada
+      summary: "Ficha del cliente y sus tickets abiertos al contestar una llamada (screen pop)"
+      description: 'Al contestar, el gestor ve la ficha del cliente y sus tickets abiertos en 2 s o menos (HU-042 CA-01); con un número no registrado, `identificado: false` y la consola abre la búsqueda del cliente (`buscarClientes`) para identificarlo o registrarlo como interesado (CA-03). La llamada finalizada se registra con `registrarInteraccion` como tipo CALL, con duración y enlace a la grabación (CA-02). El dato del cliente llega en línea y no se guarda (ADR-003).'
+      x-historias: [HU-042]
+      x-estado: borrador
+      x-permiso: "ATC.CUSTOMER360 + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_CASES_DESK]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: telefono, in: query, required: true, schema: { type: string }, description: 'Número que llama, como lo entrega la plataforma del call center (DEP-11).' }
+        - { name: llamadaId, in: query, required: false, schema: { type: string }, description: 'Identificador de la llamada en la plataforma del call center.' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FichaLlamada' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/bandeja/carga:
+    get:
+      tags: [inbox]
+      operationId: consultarCargaGestores
+      summary: "Carga por gestor de la cola y reasignaciones por menor carga (vista del supervisor)"
+      description: 'Vista del supervisor en la bandeja (HU-046): carga de cada gestor de la cola en puntos por prioridad de sus tickets activos (Baja 1, Media 2, Alta 3, Urgente 4; límite inicial 12, Q-046-1), las reasignaciones REASSIGNMENT_WORKLOAD que hizo el orquestador (CA-01) y los tickets que quedaron en la cola porque nadie estaba disponible (CA-03). Gestores de la cola según ED-03.'
+      x-historias: [HU-046]
+      x-estado: borrador
+      x-permiso: "ATC.DASHBOARD.TEAM + ver"
+      x-roles: [ATC_SUPERVISOR, ATC_CX]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: areaId, in: query, required: true, schema: { type: string }, description: 'Cola (MAE_AREA) que supervisa.' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CargaGestores' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/avisos:
+    get:
+      tags: [inbox]
+      operationId: listarAvisos
+      summary: "Avisos dirigidos a un rol y una cola (sin gestor disponible, copia de la asignación al líder, sin flujo, sin guía)"
+      description: 'Los avisos «al líder», «al supervisor» o «al administrador funcional» se dirigen a un rol y una cola, no a una persona (ED-03): el proyector los deja en la vista de avisos y cada usuario ve los de sus roles y las colas que su rol alcanza. Tipos: SIN_GESTOR_DISPONIBLE (HU-046 CA-03), COPIA_ASIGNACION, la copia al líder del correo de asignación (HU-055 CA-01; la diferencia con el PO está listada en ED-19), SIN_FLUJO_EN_AREA (HU-043 CA-07) y SIN_GUIA (HU-047 CA-03).'
+      x-historias: [HU-046, HU-055, HU-043, HU-047]
+      x-estado: borrador
+      x-permiso: "ATC + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA, ATC_ADMIN_FUNCIONAL, ATC_CASES_DESK, ATC_CX, ATC_SITE_ACCESS]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: tipo, in: query, required: false, schema: { type: string, enum: [SIN_GESTOR_DISPONIBLE, COPIA_ASIGNACION, SIN_FLUJO_EN_AREA, SIN_GUIA] } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaAvisos' }
+        '400': { $ref: '#/components/responses/SolicitudInvalida' }
+        '401': { $ref: '#/components/responses/NoAutenticado' }
+        '403': { $ref: '#/components/responses/SinPermiso' }
+        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '429': { $ref: '#/components/responses/DemasiadasSolicitudes' }
+        '500': { $ref: '#/components/responses/ErrorInterno' }
+  /api/v1/casos-resolucion:
+    get:
+      tags: [delinquency]
+      operationId: listarCasosResolucion
+      summary: "Casos de resolución de contrato por morosidad, con la constancia de la alerta al cliente y de la carta al proyecto"
+      description: 'Tickets «Resolución de contrato» que abre el job diario con 3 cuotas vencidas e impagas (HU-056 CA-01), su estado (regularizado, CA-02; suspendido por reclamo, CA-03), la constancia de cada alerta de cancelación al cliente con fecha, hora, canal, destinatario y estado de entrega, y cada intento por canal (HU-057 CA-02 y CA-03), y la de la carta al responsable del proyecto con copia a su supervisor y su escalamiento (HU-058 CA-01 a CA-03). Fuente: SVC_CONTRACT_DEFAULT_ALERT (ED-23).'
+      x-historias: [HU-056, HU-057, HU-058]
+      x-estado: borrador
+      x-permiso: "ATC.INBOX + ver"
+      x-roles: [ATC_AGENT, ATC_SUPERVISOR, ATC_LEGAL, ATC_POSTVENTA]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - { name: estado, in: query, required: false, schema: { type: string, enum: [OPEN, SUSPENDED_BY_COMPLAINT, REGULARIZED, RESOLVED] } }
+        - { name: empresaId, in: query, required: false, schema: { type: string } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaCasosResolucion' }
         '400': { $ref: '#/components/responses/SolicitudInvalida' }
         '401': { $ref: '#/components/responses/NoAutenticado' }
         '403': { $ref: '#/components/responses/SinPermiso' }
@@ -1934,7 +2219,7 @@ components:
         application/problem+json:
           schema: { $ref: '#/components/schemas/ProblemaAybar' }
     SinPermiso:
-      description: 'AYB-SEG-403: falta el rol que exige `@PreAuthorize` (ver `x-roles`). Lo emiten aybar-starter-security y aybar-starter-web; ATC no lo reinventa ni emite AYB-PEF-403, que es de Control de acceso (D-169 de PJ-05). El intento denegado queda en la auditoría de ATC cuando la historia lo pide.'
+      description: 'AYB-SEG-403: falta el rol que exige `@PreAuthorize` (ver `x-roles`) o, en Mi Portal, la cuenta no es de tipo CUSTOMER activa (ver `x-autorizacion`). Lo emiten aybar-starter-security y aybar-starter-web; ATC no lo reinventa ni emite AYB-PEF-403, que es de Control de acceso (D-169 de PJ-05). El intento denegado queda en la auditoría de ATC cuando la historia lo pide.'
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/ProblemaAybar' }
@@ -1989,7 +2274,7 @@ components:
         canal: { type: string }
         empresaId: { type: string }
         lineaNegocioId: { type: string }
-        tipoId: { type: string }
+        tipoId: { type: string, description: 'TicketTypeID del catálogo del piloto (ADR-008; códigos en `datos/diccionario.md`), entre ellos «Validación de identidad (prospecto)» (IDENTITY_VALIDATION; C-06): el gestor solo registra, deriva y cierra; la validación la hace en la consola de Control de acceso quien tiene PROSPECT_VALIDATOR.' }
         prioridadId: { type: string }
         resumen: { type: string }
         clienteId: { type: string, description: 'PartyID del v7. Va este campo o `interesado`: uno de los dos (HU-051).' }
@@ -2041,6 +2326,28 @@ components:
         conflicto: { type: boolean, description: 'Señal de conflicto que bloquea la resolución en Eje 1/2 (HU-026; PLT-04 §6.5 «ConflictFlag»).', x-decision: 'Columna nueva de SVC_TICKET (cambio al v7; `datos/registro-de-tablas.md` §3).' }
         ejeActual: { type: string, description: 'Eje actual del ticket (PLT-04 HU-026 §6.5).', x-decision: 'Columna nueva CurrentAxisCode de SVC_TICKET con los códigos AXIS_1, AXIS_2 y AXIS_3 (cambio al v7; ED-26).' }
         vinculacionPendiente: { type: boolean, description: 'Ticket de «Interesado» registrado sin cliente vinculado (HU-051; PLT-04 §6.5 «VinculaciónPendiente»; ED-05).', x-decision: 'Columna nueva de SVC_TICKET (cambio al v7; `datos/registro-de-tablas.md` §3).' }
+        historialEstados:
+          type: array
+          description: 'Historial de estados de la bitácora firmada SVC_TICKET_STATUS_LOG, en orden (HU-004 CA-01 a CA-03); un cambio automático va sin autor. Solo en `obtenerTicket`.'
+          items:
+            type: object
+            properties:
+              estado: { $ref: '#/components/schemas/EstadoTicket' }
+              fechaHora: { type: string, format: date-time }
+              autorId: { type: string, nullable: true, description: 'ChangedByPartyID; vacío en el cambio automático (HU-004 CA-03).' }
+        interacciones:
+          type: array
+          description: 'Interacciones del ticket, visibles e internas, con su evidencia (HU-005 CA-01 a CA-03), incluida la llamada (CALL, HU-042 CA-02). Solo en `obtenerTicket`; Mi Portal ve las visibles con `verTrazabilidad`.'
+          items: { $ref: '#/components/schemas/Interaccion' }
+        exposicion:
+          type: object
+          nullable: true
+          description: 'Exposición económica del reclamo con riesgo de denuncia (HU-041 CA-01 y CA-03): la misma que lista `listarRiesgoDenuncia`; se calcula al vuelo, sin columna propia.'
+          properties:
+            monto: { type: number, nullable: true }
+            interesAlDia: { type: number, nullable: true }
+            exposicion: { type: number, nullable: true, description: 'Vacía es «por estimar» (HU-041 CA-03).' }
+            prioritario: { type: boolean }
         flujoId: { type: string, nullable: true, description: 'Flujo (versión) congelado al abrir el ticket (HU-043 CA-02; PLT-04 §6.5 «FK WorkflowID»).', x-decision: 'Columna nueva WorkflowID hacia SVC_WORKFLOW_DEFINITION, tabla de ATC (cambio al v7; ED-15).' }
         actividades:
           type: array
@@ -2095,7 +2402,7 @@ components:
         texto: { type: string, description: 'El sistema advierte si una nota trae un DNI o una tarjeta (HU-005 CA-04; RN-SVC-012).' }
         canal: { type: string, description: 'ChannelID.' }
         autor: { type: string, readOnly: true, description: 'Cliente o gestor (PLT-04 HU-064 a 066 §6.5); el gestor es AgentPartyID.' }
-        adjuntos: { type: array, items: { type: string }, description: 'La evidencia va dentro de la interacción, sin tabla de adjuntos aparte (HU-005 CA-02); máximo 10 MB y formatos admitidos (HU-064 CA-05).' }
+        adjuntos: { type: array, maxItems: 3, items: { type: string }, description: 'La evidencia va dentro de la interacción, sin tabla de adjuntos aparte (HU-005 CA-02); máximo 10 MB y formatos admitidos (HU-064 CA-05).', x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío (interacción), el mismo límite en la consola, en Mi Portal y en la inspección (ED-26; parámetro configurable).' }
         duracionSegundos: { type: integer, description: 'Para la llamada registrada como interacción (HU-042 CA-02).' }
         enlaceGrabacion: { type: string }
     Derivacion:
@@ -2215,8 +2522,8 @@ components:
         moneda: { type: string, nullable: true, description: 'CurrencyID del v7.' }
     Asiento:
       type: object
-      description: "Asiento del Libro (SVC_COMPLAINT_BOOK_ENTRY, ENT-SVC-010). Plazo legal de 15 días hábiles, prorrogable una sola vez por 15 (Ley 29571, art. 24; Ley 31435; RN-SVC-009)."
-      x-decision: "Estados del asiento: lista SVC_COMPLAINT_STATUS con REGISTERED, EXTENDED, RESPONDED y CLOSED (ED-26). Prórroga: columnas nuevas ExtensionJustification (varchar(1000)) y ExtensionChargeDocumentPath (varchar(2048)) de SVC_COMPLAINT_BOOK_ENTRY (cambio al v7). Tipos y largos: ED-16. La hoja, la carta y los cargos se conservan 2 años desde el registro (ED-13)."
+      description: "Asiento del Libro (SVC_COMPLAINT_BOOK_ENTRY, ENT-SVC-010). Plazo legal de 15 días hábiles improrrogables desde el registro (Ley 29571, art. 24.1, modificado por la Ley 31435; ED-28). La prórroga de RN-SVC-009 y HU-013 queda deshabilitada (`prorrogarPlazo`); sus columnas quedan vacías."
+      x-decision: "Estados del asiento: lista SVC_COMPLAINT_STATUS con REGISTERED, EXTENDED, RESPONDED y CLOSED (ED-26). Prórroga: deshabilitada por la Ley 31435 (ED-28); las columnas del Excel y las nuevas ExtensionJustification (varchar(1000)) y ExtensionChargeDocumentPath (varchar(2048)) de SVC_COMPLAINT_BOOK_ENTRY (cambio al v7) quedan vacías mientras ninguna norma la permita. Tipos y largos: ED-16. La hoja, la carta y los cargos se conservan 2 años desde el registro (ED-13)."
       properties:
         ticketId: { type: string, description: 'TicketID: PK del asiento (extensión 1:1); es el `asientoId` de las rutas.' }
         empresaId: { type: string, description: 'CompanyID (RN-SVC-013).' }
@@ -2230,7 +2537,7 @@ components:
         moneda: { type: string, nullable: true, description: 'CurrencyID.' }
         registradoEn: { type: string, format: date, description: 'ComplaintRegistrationDate: desde aquí corren los 15 días hábiles (RF-SVC-013).' }
         vencimientoLegal: { type: string, format: date, description: 'LegalResponseDueDate.' }
-        prorrogado: { type: boolean, description: 'IsResponseExtended: una sola prórroga (HU-013 CA-03).' }
+        prorrogado: { type: boolean, description: 'IsResponseExtended: siempre false mientras la prórroga esté deshabilitada (ED-28); si una norma futura la habilita, una sola (HU-013 CA-03).' }
         vencimientoProrrogado: { type: string, format: date, nullable: true, description: 'ExtendedResponseDueDate: una vez poblado no se reescribe (HU-013 CA-02).' }
         prorrogaComunicadaEn: { type: string, format: date, nullable: true, description: 'ExtensionCommunicatedDate: anterior o igual a LegalResponseDueDate (HU-013 CA-04).' }
         canalProrroga: { type: string, nullable: true, description: 'ExtensionCommunicationChannelID.' }
@@ -2243,7 +2550,7 @@ components:
         cerradoPorId: { type: string, nullable: true, description: 'ClosedByPartyID.' }
     Prorroga:
       type: object
-      description: "Prórroga única de 15 días hábiles (HU-013). Una segunda prórroga devuelve 409; fuera de la ventana, 422."
+      description: "Prórroga de HU-013, deshabilitada por la Ley 31435 (15 días hábiles improrrogables; ED-28): `prorrogarPlazo` responde AYB-LRC-422. Si una norma futura la habilita: única, una segunda devuelve 409 y fuera de la ventana, 422."
       required: [justificacion, cargo, canal, fechaComunicacion]
       properties:
         justificacion: { type: string }
@@ -2401,7 +2708,7 @@ components:
         adjuntos:
           type: array
           description: 'Referencias de los archivos ya subidos. Hasta 10 MB cada uno y formatos admitidos; si no, AYB-VAL-400 con el tamaño y los formatos permitidos (HU-064 CA-05).'
-          x-decision: 'JPG, PNG o PDF de hasta 10 MB, máximo 3 por ticket (ADR-011, decisión 7; ED-26).'
+          x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío (cada registro o respuesta), el mismo límite que en la consola (ADR-011, decisión 7; ED-26; parámetro configurable).'
           maxItems: 3
           items: { type: string }
     PortalTicketResumen:
@@ -2484,6 +2791,8 @@ components:
         adjuntos:
           type: array
           description: 'Referencias de los archivos ya subidos; hasta 10 MB y formatos admitidos (HU-064 CA-05).'
+          maxItems: 3
+          x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío (ADR-011, decisión 7; ED-26).'
           items: { type: string }
     TiposPortal:
       type: object
@@ -2567,7 +2876,7 @@ components:
         decision: { type: string, enum: [ACEPTADA, EDITADA, DESCARTADA], description: 'Sin datos personales en el registro (HU-048 CA-02).' }
     Tablero:
       type: object
-      description: "Tablero de avance (HU-054) y Torre de Control (HU-030). El gestor ve solo el suyo; el del equipo, su líder (HU-054 CA-03)."
+      description: "Tablero de avance (HU-054) y Torre de Control (HU-030 y el cierre de extremo a extremo de HU-029). El gestor ve solo el suyo; el del equipo, su líder (HU-054 CA-03)."
       x-decision: "Sin meta diaria numérica en la Etapa 1 (Q-054-1). El NPS es el «NPS preliminar» derivado del CSAT de la encuesta (DECISIONES.md §5.9, respuesta 24). El tiempo medio va en horas hábiles (ED-26)."
       properties:
         avance:
@@ -2590,6 +2899,20 @@ components:
         ticketsActivos: { type: integer, description: 'HU-030.' }
         nps: { type: number, nullable: true, description: 'HU-030.' }
         derivacionesEnCurso: { type: integer, description: 'HU-030.' }
+        cierreE2e:
+          type: array
+          description: 'Cierre de extremo a extremo por ticket (HU-029; RN-SVC-025; RNF-REN-005): en Eje 2 sin escalar, en riesgo a las 72 horas hábiles sin cierre (CA-01); escalado a Eje 3, contra el plazo del eje (CA-02). Solo con `ambito=EQUIPO`.'
+          x-decision: 'Plazo del Eje 3 = SLA de la línea de la Mesa SGD que corresponde (FT-08; ED-26). Horas hábiles contra el calendario de ADR-005.'
+          items:
+            type: object
+            properties:
+              ticketId: { type: string }
+              numero: { type: string }
+              eje: { type: string, enum: [AXIS_1, AXIS_2, AXIS_3] }
+              escalado: { type: boolean }
+              horasHabilesTranscurridas: { type: number }
+              plazoHorasHabiles: { type: number, description: '72 sin escalamiento; el del eje con escalamiento.' }
+              enRiesgo: { type: boolean }
     CambioEstadoApelacion:
       type: object
       description: "Admisión, resolución de INDECOPI o desistimiento de la apelación (HU-016 CA-01 a CA-03). WITHDRAWN cierra la apelación y el ticket no puede volver a apelarse por la misma respuesta (409)."
@@ -2784,7 +3107,7 @@ components:
       properties:
         fecha: { type: string }
         informe: { type: string }
-        fotos: { type: array, items: { type: string } }
+        fotos: { type: array, maxItems: 3, items: { type: string }, description: 'Fotos o documentos de la inspección (HU-035 CA-01).', x-decision: 'JPG, PNG o PDF de hasta 10 MB cada uno, máximo 3 por envío, el mismo límite de los adjuntos (ED-26).' }
     ResolucionReclamo:
       type: object
       description: "Resolución del reclamo de garantía (HU-035 CA-02)."
@@ -2864,4 +3187,267 @@ components:
         puntoEmbarque: { type: string }
         acompanantes: { type: integer, minimum: 0, maximum: 3 }
         estado: { type: string, enum: [CONFIRMED, WAITLISTED, CANCELLED], description: 'Confirmada, en lista de espera o cancelada (HU-060; RN-SVC-042).' }
-# Historial: 0.6.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · ver info.x-historial. Generado por IA — Revisado por: (pendiente).
+    VigilanciaLibro:
+      type: object
+      description: "Vista de vigilancia del Libro de Reclamaciones (HU-013 y HU-015)."
+      x-decision: "Plazo de 15 días hábiles improrrogables (Ley 31435; ED-28). Alerta LEGAL_EXTENSION_WINDOW_CLOSING a 3 días hábiles del vencimiento y LEGAL_RESPONSE_OVERDUE al vencer (lista SVC_SLA_BREACH_TYPE del Excel); los huérfanos son las excepciones ORPHAN_REFERENCE del control diario en GOV_INTEGRITY_EXCEPTION (ADR-005)."
+      properties:
+        fecha: { type: string, format: date, description: 'Día del control.' }
+        huerfanosHoy: { type: integer, minimum: 0, description: 'Indicador «Tickets huérfanos hoy» (HU-015 CA-02).' }
+        huerfanos:
+          type: array
+          items:
+            type: object
+            properties:
+              ticketId: { type: string }
+              numero: { type: string }
+              tipoId: { type: string }
+              empresaId: { type: string }
+              abiertoEn: { type: string, format: date-time }
+              detectadoEn: { type: string, format: date-time }
+        asientos:
+          type: array
+          items:
+            type: object
+            properties:
+              ticketId: { type: string, description: 'Es el `asientoId` de las rutas del Libro.' }
+              numero: { type: string, description: 'ComplaintBookNumber.' }
+              empresaId: { type: string }
+              establecimientoId: { type: string }
+              tipo: { type: string, enum: [QUEJA, RECLAMO] }
+              estado: { type: string, enum: [REGISTERED, EXTENDED, RESPONDED, CLOSED], description: 'EXTENDED no se usa mientras la prórroga esté deshabilitada (ED-28).' }
+              registradoEn: { type: string, format: date }
+              vencimientoLegal: { type: string, format: date, description: 'LegalResponseDueDate: 15 días hábiles desde el registro (HU-013).' }
+              diasHabilesRestantes: { type: integer, description: 'Negativo si ya venció.' }
+              alerta: { type: string, nullable: true, enum: [LEGAL_EXTENSION_WINDOW_CLOSING, LEGAL_RESPONSE_OVERDUE, null], description: 'Vacía si el asiento no tiene alerta.' }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    ResultadoCsatCes:
+      type: object
+      description: "CSAT (1 a 5) y CES (1 a 7) de la encuesta POST_TRANSACTION por tipo de ticket, área o gestor (HU-019 CA-02)."
+      x-decision: "Encuesta CSAT y CES sin la pregunta NPS (mockup; ED-26); fuente SVY_SURVEY_RESPONSE, que migra el dueño del KPI Engine (DEP-10; ED-11)."
+      properties:
+        agruparPor: { type: string, enum: [TIPO, AREA, GESTOR] }
+        desde: { type: string, format: date }
+        hasta: { type: string, format: date }
+        filas:
+          type: array
+          items:
+            type: object
+            properties:
+              clave: { type: string, description: 'TicketTypeID, AreaID o PartyID del gestor.' }
+              nombre: { type: string }
+              encuestasEnviadas: { type: integer }
+              respuestas: { type: integer }
+              csat: { type: number, nullable: true }
+              ces: { type: number, nullable: true }
+    Informe:
+      type: object
+      description: "Informe de la Torre de Control (HU-031)."
+      x-decision: "Diario al cierre de la jornada y quincenal al cierre de la quincena; son vistas del almacén de lectura, no tablas (diccionario; ADR-012). NPS preliminar derivado del CSAT (DECISIONES.md §5.9, respuesta 24)."
+      properties:
+        informeId: { type: string }
+        tipo: { type: string, enum: [DIARIO, QUINCENAL] }
+        periodoDesde: { type: string, format: date }
+        periodoHasta: { type: string, format: date }
+        generadoEn: { type: string, format: date-time }
+        ticketsPorEje:
+          type: object
+          description: 'HU-031 CA-01.'
+          properties:
+            eje1: { type: integer }
+            eje2: { type: integer }
+            eje3: { type: integer }
+        npsPreliminar: { type: number, nullable: true }
+        derivaciones: { type: integer }
+        cumplimientoSla: { type: number, description: 'Porcentaje de tickets resueltos dentro del SLA.' }
+        tendenciasKpi:
+          type: array
+          description: 'Solo en el quincenal (HU-031 CA-02).'
+          items:
+            type: object
+            properties:
+              indicador: { type: string }
+              valor: { type: number }
+              variacion: { type: number, nullable: true }
+        adopcionMiPortal: { type: number, nullable: true, description: 'Porcentaje de tickets registrados por Mi Portal en la quincena (HU-031 CA-02).' }
+        documento: { type: string, description: 'Enlace al informe exportable.' }
+    PaginaInformes:
+      type: object
+      description: "Página de informes (HU-031)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/Informe' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    AuditoriaRegistrosParalelos:
+      type: object
+      description: "Cortes quincenales de la auditoría de registros paralelos del dato de cliente (HU-032)."
+      x-decision: "Cada hallazgo lo registra el job quincenal (ADR-005) en GOV_INTEGRITY_EXCEPTION con el tipo PARALLEL_RECORD, valor que ATC agrega en su semilla porque la lista del Excel no lo trae (ED-11; `datos/registro-de-tablas.md` §5); un corte sin hallazgos da 0."
+      properties:
+        cortes:
+          type: array
+          items:
+            type: object
+            properties:
+              corte: { type: string, format: date }
+              ejecutadoEn: { type: string, format: date-time }
+              registrosParalelos: { type: integer, minimum: 0, description: 'Debe ser 0 (HU-032 CA-01).' }
+              gateNoCompensable: { type: boolean, description: 'true si hubo un hallazgo (HU-032 CA-02).' }
+              hallazgos:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tabla: { type: string }
+                    columna: { type: string }
+                    cantidad: { type: integer }
+    SincronizacionLegal:
+      type: object
+      description: "Estado de la sincronización del ticket derivado a Eje 3 con la herramienta de Legal (HU-040)."
+      x-decision: "Sin tabla propia (diccionario, esbozo LEGAL_SYNC): el envío va por el evento del ticket y el adaptador de Legal con reintento (ADR-004, ADR-013), y lo que pasa (envío pendiente, enviado y estado que devuelve Legal) queda como interacción interna del ticket; esta vista lo reúne. Sincronización en línea por evento (Q-040-3)."
+      properties:
+        ticketId: { type: string }
+        estadoSincronizacion: { type: string, enum: [NO_APLICA, PENDIENTE_SINCRONIZAR, ENVIADO, SINCRONIZADO], description: 'NO_APLICA si el ticket no está en Eje 3; PENDIENTE_SINCRONIZAR mientras Legal no responde (HU-040 CA-03).' }
+        casoLegalId: { type: string, nullable: true, description: 'Identificador del caso en la herramienta de Legal.' }
+        estadoLegal: { type: string, nullable: true, description: 'Estado que devolvió Legal (HU-040 CA-02).' }
+        resolucion: { type: string, nullable: true }
+        actualizadoEn: { type: string, format: date-time, nullable: true }
+    RiesgoDenuncia:
+      type: object
+      description: "Reclamo con riesgo de denuncia y su exposición económica (HU-041)."
+      x-decision: "Tasa referencial configurable con 8 % inicial; umbral de alerta S/ 500 o una señal de riesgo, configurable (Q-041-1 a Q-041-3). Se calcula al vuelo, sin columna propia (diccionario)."
+      properties:
+        ticketId: { type: string }
+        numero: { type: string }
+        empresaId: { type: string }
+        monto: { type: number, nullable: true, description: 'ClaimedAmount del asiento.' }
+        moneda: { type: string, nullable: true }
+        tasaReferencial: { type: number, description: 'Interés legal referencial anual, en porcentaje (RN-SVC-034).' }
+        interesAlDia: { type: number, nullable: true }
+        exposicion: { type: number, nullable: true, description: 'Monto + interés al día; vacía es «por estimar» (HU-041 CA-03).' }
+        porEstimar: { type: boolean }
+        senales: { type: array, items: { type: string }, description: 'Señales de riesgo que lo marcaron.' }
+        prioritario: { type: boolean }
+        alertadoLegalEn: { type: string, format: date-time, nullable: true, description: 'Alerta a Legal antes del vencimiento (HU-041 CA-02).' }
+        vencimientoLegal: { type: string, format: date, nullable: true }
+    PaginaRiesgoDenuncia:
+      type: object
+      description: "Página de reclamos con riesgo de denuncia, del más expuesto al menos (HU-041)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/RiesgoDenuncia' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    FichaLlamada:
+      type: object
+      description: "Screen pop al contestar una llamada (HU-042)."
+      x-decision: "Contrato de ATC con la plataforma del call center, con simulador mientras la DEP-11 no esté (Q-042-1 y Q-042-2). Objetivo de 2 s (HU-042 CA-01)."
+      properties:
+        llamadaId: { type: string, nullable: true }
+        identificado: { type: boolean, description: 'false: número no registrado; la consola abre la búsqueda del cliente (HU-042 CA-03).' }
+        cliente:
+          type: object
+          nullable: true
+          description: 'Ficha del cliente, consultada en línea y sin guardar (ADR-003).'
+          properties:
+            clienteId: { type: string, description: 'PartyID.' }
+            nombres: { type: string }
+            documentoParcial: { type: string }
+            lotes: { type: array, items: { type: string } }
+        ticketsAbiertos: { type: array, items: { $ref: '#/components/schemas/TicketResumen' } }
+        tiempoRespuestaMs: { type: integer }
+    CargaGestores:
+      type: object
+      description: "Carga de los gestores de una cola y reasignaciones por menor carga (HU-046)."
+      x-decision: "Candidatos = gestores de la cola según la bitácora de asignaciones de ATC, con cuenta EMPLOYEE activa (ED-03); carga por puntos con límite inicial de 12 (Q-046-1); sin turnos ni vacaciones (fuera de alcance de la HU)."
+      properties:
+        areaId: { type: string }
+        limitePuntos: { type: integer, example: 12 }
+        gestores:
+          type: array
+          items:
+            type: object
+            properties:
+              gestorId: { type: string, description: 'PartyID del gestor.' }
+              puntos: { type: integer }
+              ticketsActivos: { type: integer }
+              sobreLimite: { type: boolean }
+        reasignaciones:
+          type: array
+          description: 'Reasignaciones por carga, con el motivo REASSIGNMENT_WORKLOAD (HU-046 CA-01; ED-19).'
+          items:
+            type: object
+            properties:
+              ticketId: { type: string }
+              numero: { type: string }
+              desdeId: { type: string, nullable: true }
+              haciaId: { type: string }
+              fecha: { type: string, format: date-time }
+        sinGestorDisponible:
+          type: array
+          description: 'Tickets que quedaron en la cola del área (HU-046 CA-03).'
+          items: { type: string }
+    Aviso:
+      type: object
+      description: "Aviso a un rol y una cola (ED-03)."
+      properties:
+        avisoId: { type: string }
+        tipo: { type: string, enum: [SIN_GESTOR_DISPONIBLE, COPIA_ASIGNACION, SIN_FLUJO_EN_AREA, SIN_GUIA] }
+        rol: { type: string, description: 'Rol destinatario: ATC_SUPERVISOR o ATC_ADMIN_FUNCIONAL.' }
+        areaId: { type: string, nullable: true, description: 'Cola del aviso.' }
+        ticketId: { type: string, nullable: true }
+        numero: { type: string, nullable: true }
+        creadoEn: { type: string, format: date-time }
+    PaginaAvisos:
+      type: object
+      description: "Página de avisos del usuario según sus roles y sus colas."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/Aviso' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+    ConstanciaEnvio:
+      type: object
+      description: "Constancia de un intento de envío de la alerta de cancelación (HU-057 CA-02 y CA-03)."
+      properties:
+        canal: { type: string, description: 'Correo, WhatsApp o Mi Portal (MAE_CHANNEL).' }
+        destinatario: { type: string, description: 'Dirección o número enmascarado; sin datos personales completos (RN-SVC-012).' }
+        fechaHora: { type: string, format: date-time }
+        estadoEntrega: { type: string, enum: [SENT, DELIVERED, BOUNCED, FAILED] }
+        intento: { type: integer }
+    ConstanciaCarta:
+      type: object
+      description: "Constancia de la carta de alerta al responsable del proyecto (HU-058)."
+      properties:
+        destinatario: { type: string, enum: [PROJECT_OWNER, PROJECT_SUPERVISOR, COMMERCIAL_SUPERVISOR], description: 'Responsable del proyecto, su supervisor (copia, CA-01) o el supervisor del área comercial si el proyecto no tiene responsable (CA-03); salen de la DEP-15.' }
+        fechaHora: { type: string, format: date-time }
+        estadoEntrega: { type: string, enum: [SENT, DELIVERED, BOUNCED, FAILED] }
+        documento: { type: string, description: 'Carta en el almacén de evidencia, con espejo en GOV_DOCUMENT_REPOSITORY.' }
+        accionRegistradaEn: { type: string, format: date-time, nullable: true }
+        escaladaEn: { type: string, format: date-time, nullable: true, description: 'Escalamiento al supervisor sin acción en el plazo (HU-058 CA-02; 2 días hábiles, Q-058-3).' }
+    CasoResolucion:
+      type: object
+      description: "Caso de resolución de contrato por 3 cuotas vencidas e impagas (HU-056 a 058; SVC_CONTRACT_DEFAULT_ALERT, tabla de ATC)."
+      x-decision: "Estados del caso: OPEN (abierto y derivado a Cobranza y Legal), SUSPENDED_BY_COMPLAINT (reclamo abierto en el Libro, HU-056 CA-03), REGULARIZED (cierre «Regularizado», CA-02) y RESOLVED; lista de SERVICE de ATC (ED-26). Tres cuotas vencidas, sucesivas o no (Q-056-1)."
+      properties:
+        ticketId: { type: string }
+        numero: { type: string }
+        empresaId: { type: string }
+        contratoId: { type: string }
+        unidadId: { type: string, nullable: true }
+        cuotasVencidas: { type: integer }
+        estado: { type: string, enum: [OPEN, SUSPENDED_BY_COMPLAINT, REGULARIZED, RESOLVED] }
+        abiertoEn: { type: string, format: date-time }
+        alertasCancelacion: { type: array, items: { $ref: '#/components/schemas/ConstanciaEnvio' } }
+        cartasProyecto: { type: array, items: { $ref: '#/components/schemas/ConstanciaCarta' } }
+    PaginaCasosResolucion:
+      type: object
+      description: "Página de casos de resolución (HU-056)."
+      properties:
+        elementos: { type: array, items: { $ref: '#/components/schemas/CasoResolucion' } }
+        pagina: { type: integer }
+        tamano: { type: integer }
+        total: { type: integer }
+# Historial: 0.7.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · ver info.x-historial. Generado por IA — Revisado por: (pendiente).

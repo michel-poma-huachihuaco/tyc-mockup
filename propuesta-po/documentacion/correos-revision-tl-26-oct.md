@@ -1,159 +1,177 @@
-# Correos para cerrar la revisión del Líder Técnico (26-oct-2026)
+# Correos para cerrar la segunda revisión del Líder Técnico (26-oct-2026)
 
-Borradores listos para enviar. **No se envió ninguno.** Los envía Brayan Hurtado (o Jesús Chávez) por el canal del equipo.
-Al enviarlos, anotar la fecha y el canal en `paquete-definir-etapa1-v1.3/analisis/decisiones.md`, sección «Pedidos al área de Roles y
-Permisos». Todas las referencias (P-0xx, ADR, DEP) están en ese paquete y en Nexora (PJ-06).
+Borradores listos para enviar. **No se envió ninguno.** Los envía Brayan Hurtado. Todas las referencias (ED, P, DEP, R) están en
+`paquete-definir-etapa1-v1.3/analisis/decisiones.md` (0.9). El correo de formalización de G3 no va aquí: lo envía el Líder Técnico
+al aprobar (revisión del 22-oct, §4).
+
+Orden: (1) publicar en Nexora con `dry_run` primero; (2) completar la tabla del correo 2 con la versión y la huella que devuelva
+Nexora y enviarlo; (3) enviar el 1, el 3, el 4 y el 5 el mismo día y anotar la hora del 1 en `decisiones.md`, sección «Entregables
+de Control de acceso para ATC».
 
 ---
 
-## 1. A Sony Montoya (Roles y Permisos, PJ-05) · copia: Jose Jara
+## 1. A Sony Montoya (Roles y Permisos, PJ-05) · copia: Jose Jara, Eddie Huamaní
 
-**Asunto:** ATC (PJ-06): pedidos y preguntas para integrar con Control de acceso
+**Asunto:** ATC (PJ-06): solicitud de entregables de la DEP-16 e información de decisiones de ATC
 
 Hola, Sony:
 
-El Líder Técnico decidió el 22-oct que ATC consume la identidad y los permisos de Control de acceso (DT-03 a DT-05). Para cumplirlo
-necesitamos del área:
+ATC consume la identidad y los permisos de Control de acceso (decisiones DT-03 a DT-05 del Líder Técnico). Te pedimos, con fecha
+comprometida para **DEV, QA y PRE** (la UAT del 03-nov es en PRE):
 
-1. El cliente con `CATALOG_REGISTRAR` para registrar el catálogo de ATC por el ADR-021 de PJ-05 (catálogo en
-   `arquitectura/roles-y-permisos-atc.md`: 9 roles, 31 opciones, 75 permisos). P-039.
-2. Los clientes OAuth de la consola de ATC, de Mi Portal y de la API, y la política de API Management con su `aud`. P-038, P-039.
-3. La aprobación del catálogo de ATC, para que los roles `ATC_*` lleguen en el token. P-028, P-034.
-4. La invitación de los gestores de ATC como cuentas `EMPLOYEE` con sus roles, y `PROSPECT_VALIDATOR` para los que nombra
-   `analisis/proceso-atencion-prospectos.md`. P-040, P-041.
-5. **La fecha comprometida de Control de acceso en DEV (DEP-16).** ATC la necesita desde el 21-oct (HU-ATC-001). P-026, P-040.
+1. **Cliente `CONFIDENTIAL` de ATC** creado con el script de TI (D-223) y con el rol de cliente `CATALOG_REGISTRAR` ya otorgado
+   (su fila en `IDN_OAUTH_CLIENT_SCOPE`), porque la ruta para otorgarlo sigue en propuesta (D-171). Con él cargamos el catálogo por
+   las rutas del ADR-021: 27 opciones, 8 roles, 65 permisos y 3 incompatibilidades. `ATC_EVENT` y 4 opciones sin operación en la
+   Etapa 1 irán en una solicitud posterior.
+2. **Clientes `PUBLIC`** de la consola y de Mi Portal con su `redirect_uri` por ambiente, y `aybar-atc` en
+   `AYBAR_EMISOR_SERVICIOS_DESTINO` del emisor de cada ambiente.
+3. **Aprobación del catálogo:** 103 tareas de `ROLE_IT_ADMIN`.
+4. **Invitación de los gestores** como cuentas `EMPLOYEE` con sus roles, y `PROSPECT_VALIDATOR` para los supervisores de la cola `ATC`.
+5. **Permiso de lectura por columna sobre `IDN_USER_ACCOUNT`** (`UserAccountID`, `PartyID`, `AccountTypeID`, `AccountStatusID` y
+   `Username`) para el rol `app_atc_servicio`, con el visto bueno del dueño de la tabla. Como salida definitiva, un claim `party_id`
+   en el token.
+6. Opcional: que la cuenta que nace por DNI reciba el rol `CUSTOMER`. Mientras no, Mi Portal admite la cuenta `CUSTOMER` activa sin el rol.
 
-Y estas preguntas, que salen del paquete aprobado de PJ-05 (cada una tiene su cita en `decisiones.md`):
+Si Control de acceso no está en PRE el lunes 02-nov a mediodía, la UAT corre con el emisor de pruebas de Control de acceso desplegado en PRE y el PO
+decide el Go/No-Go.
 
-- **P-033:** el token no trae `PartyID`. ¿Lo pueden agregar como claim, o hay una consulta para saber el cliente del usuario autenticado?
-- **P-034:** el token trae roles, no permisos. ¿Autorizamos por rol o consultamos `GET /api/v1/mi/permisos/{codigoOpcion}`?
-- **P-035:** no hay API con `client_credentials` para obtener el líder de un área ni los gestores por rol (hoy exigen `ROLE_IT_ADMIN`).
-  ¿La pueden exponer, y para cuándo?
-- **P-036:** ¿confirman que la tabla de áreas (`NEX_COMPANY_AREA`) no existe y que Control de acceso no administra jefaturas?
-- **P-037:** ¿confirman que ATC no crea la `PARTY` del interesado y que la autoregistra Control de acceso?
-- **P-038:** D-44 y D-224 dan valores distintos para la audiencia. ¿Cuál es el `aud` de ATC?
-- **P-039:** la ruta para otorgar `CATALOG_REGISTRAR` está «propuesta». ¿Cómo la recibimos mientras tanto?
-- **P-041:** los casos manuales de prospectos (D-84 y D-291): ¿cómo los deriva el área a ATC?
+Para tu información, estas son las decisiones de ATC (ED-01 a ED-09). Si no hay objeción en 48 h hábiles, se aplican:
+
+- ED-01: la persona del token sale de `IDN_USER_ACCOUNT` (punto 5).
+- ED-02: autorizamos por rol del token; `GET /api/v1/mi/permisos/{codigoOpcion}` solo en la consola, para mostrar u ocultar acciones.
+- ED-03: los gestores y líderes salen de datos de ATC y de `ATC_SUPERVISOR`; no pedimos una API de líderes.
+- ED-04: `MAE_AREA` es solo la cola de atención.
+- ED-05: ATC no crea `PARTY`; el interesado queda «sin cliente vinculado» hasta que se autorregistra.
+- ED-06: `aud` = `aybar-atc`.
+- ED-07: catálogo en los lotes del ADR-021 (punto 1).
+- ED-08: mientras tanto, emisor de pruebas en local y DEV.
+- ED-09: los casos de identidad de prospectos entran como ticket «Validación de identidad (prospecto)» en la cola `ATC` y se
+  resuelven en la consola de Control de acceso (valida `PROSPECT_VALIDATOR`; suspende `IT_ADMIN`).
 
 Gracias.
+
+Brayan
 
 ---
 
-## 2. A Jose Jara (Líder Técnico) · copia: Jesús Chávez, Michel Poma, Eddie Huamaní
+## 2. A Jose Jara (Líder Técnico) · copia: Eddie Huamaní, Jesús Chávez, Michel Poma, Daniel David Lorenzo Ramos
 
-**Asunto:** ATC (PJ-06): corrección de la revisión del 22-oct, lista para su revisión en Nexora
+**Asunto:** ATC (PJ-06): segunda revisión corregida y publicada en Nexora
 
 Hola, Jose:
 
-Publicamos en Nexora las versiones nuevas que atienden su revisión del 22-oct. Todo queda pendiente de su firma.
+Publicamos en Nexora, pendientes de firma, las versiones que corrigen su revisión del 26-oct:
 
-- **Decisiones:** DT-01 a DT-10 están registradas con su nombre y fecha en `analisis/decisiones.md`, y quedan cerradas D-001, D-003,
-  P-001 a P-004, P-006, P-008 a P-010 y P-021.
-- **Las 14 ADR:** las 6 que no pasaban están reescritas. Las 8 con condiciones las cumplen. Las 14 tienen los 6 puntos que usted pidió:
-  dispensa M0 solicitada, owner y `aprobadores: [tech_lead]`, historial, costo con número y fuente (USD 2.592,53 al mes con PRE) y
-  las reglas con su evidencia.
-- **Colisiones C-01 a C-12:** atendidas. Hay documentos nuevos para el catálogo de roles de ATC, el registro de tablas y el proceso de
-  prospectos.
-- **Evidencias del G3:** diagramas, contrato de API (Mi Portal sin login ni sesión propios, con `x-permiso` y errores `AYB-<ÁREA>-<HTTP>`),
-  seguridad, costo por ambiente, migración y acta F4 lista para el Data Chief.
+| Documento | Local | Nexora (versión · huella) |
+|---|---|---|
+| `analisis/decisiones.md` | 0.9 | [al publicar] |
+| `adr/ADR-001` a `ADR-014` | [al publicar] | [al publicar] |
+| `arquitectura/aybar-atc.openapi.yaml` | `0.7.0-borrador` | [al publicar] |
+| `arquitectura/` y `datos/` (acta F4 y registro de tablas) | [al publicar] | [al publicar] |
+| `gates/AYB-0001/G3.md` y `G4.md` | 0.8 | [al publicar] |
+| `roadmap/RMP-001-roadmap-aybar-atiende.md` y `roadmap/alcance-diferido.md` | 0.8 y 0.2 | [al publicar] |
+| `historias/HU-ATC-013-…`, 23 DoR y `backlog/tareas/` | 1.3.1, 1.3.3 a 1.3.5 | [al publicar] |
+| «RETIRADO» de `gates/G0.md`, `G1.md`, `G3.md`, `G4.md` y `historias/HU-DOC-001 …md.md` | 0.2 (id cambiado) | [al publicar] |
 
-Le pedimos decidir cuatro puntos donde el paquete aprobado de Control de acceso no respalda lo que se pidió. Dejamos el diseño posible
-y las preguntas a Sony:
+Lo principal:
 
-1. **P-033:** el token de PJ-05 no trae `PartyID`.
-2. **P-034:** el token trae roles, no permisos.
-3. **P-035:** no hay API de servicio para obtener líderes ni gestores.
-4. **P-037:** ATC no puede crear la `PARTY` del interesado.
-
-Además le toca decidir:
-
-- **P-025:** 63 h de lo que el SDK no trae frente a 9 h de holgura. Proponemos sacar primero las 16 h flexibles (HU-037, 038, 039,
-  048 y 053) y decidir las 38 h restantes con el PO en el control de alcance del 29-oct.
-- **P-044:** región, SKU y ambientes del costo.
-- **P-005:** la dispensa M0.
-- **P-042:** una observación respetuosa. PJ-05 se aprobó con M0 «no bloquea» (D-123), costo «no bloquea» (D-98) y `aprobadores: []`.
-  ¿Aplica el mismo criterio a ATC?
-
-Dos datos de su revisión que no coinciden con los documentos:
-
-- RNF-SEC-009 y RNF-SEC-010 **sí están en el Excel** del PO (hoja 03_RNF, filas 30 y 31).
-- RN-SVC-044 y RN-SVC-045 están en los PDF del PO v1.3. Faltan en el Excel y las registra el PO (P-022).
-
-Quedan en Nexora 4 gates sueltos de la v1.2 y una HU duplicada que dan error de identificador duplicado (P-029). Los tiene que retirar
-el PO o el admin.
+- **Decisiones:** el equipo decidió ED-01 a ED-28 y se las propone; ninguna cambia una DT. Se apartan de lo que usted pidió: ED-01
+  (leemos `IDN_USER_ACCOUNT`; el permiso se pide a su dueño), ED-02 (por rol, no por permiso), ED-03 (gestores desde la bitácora de
+  ATC), ED-05 (no se crea `PARTY`) y ED-13 (la norma en lugar de Legal).
+- **Plazo del Libro (O-01):** la Ley 31435 fija 15 días hábiles improrrogables (verificado en El Peruano y en el Archivo Digital del
+  Congreso). La prórroga de HU-013 queda deshabilitada por parámetro, con una nota en la historia (ED-28).
+- **Prospectos (C-06):** entra en la Etapa 1 el tipo «Validación de identidad (prospecto)» con 4 subtipos, sin HU ni horas (ED-09).
+- **Contrato (O-02):** 10 operaciones nuevas (69; 63 en la Etapa 1): las 57 HU de la Etapa 1 tienen operación.
+- **UAT (O-04):** si Control de acceso no está en PRE el 02-nov a mediodía, la UAT corre con el emisor de pruebas en PRE y el PO
+  decide el Go/No-Go (R-12).
+- **P-025 (O-05):** 28 h técnicas (DT02-T01 a T06: Brayan 9, Jesús 4, Michel 9 y Daniel 6); salen HU-037, 038, 039, 048 y 053
+  (16 h), el R-01 del PO, que puede revertirlo. Etapa 1: 57 HU, 227 h + 28 h = 255 h. **Sobrecosto real: 7 h** sobre 252 h de
+  capacidad (con las 4 h de la reestimación de ADR-009), no 3 h; el PO lo acepta al firmar G4.
+- **Duplicados:** publicamos versiones «RETIRADO» (id cambiado) de los 4 gates sueltos y de `HU-DOC-001`; el borrado lo hace el PO o
+  el administrador.
+- **«Revisado por»:** las 14 ADR lo tienen; faltan 145 documentos y las 308 tareas.
+- Diferencias con el PO: ED-19. RN-SVC-044 y 045 se citan por su criterio de origen (ED-18).
 
 Gracias.
+
+Brayan
 
 ---
 
 ## 3. A Eddie Huamaní (PO) · copia: Jose Jara
 
-**Asunto:** ATC (PJ-06): decisiones que le tocan tras la revisión técnica del 22-oct
+**Asunto:** ATC (PJ-06): lo que le toca aceptar al firmar G4
 
 Hola, Eddie:
 
-Tras la revisión del Líder Técnico, estas decisiones le corresponden:
-
-1. **P-027, cambios a sus documentos por decisión del Líder Técnico:**
-   - stack Java + Angular en lugar de NestJS (PLT-01 §1 y PLT-05 §4.1);
-   - sin usuarios, roles ni líderes locales (regla RN-SVC-043 y leyenda del Excel; DEP-02);
-   - Mi Portal entra con el login de Control de acceso (HU-064 CA-01).
-2. **P-025, horas:** lo que el SDK no trae suma unas 63 h y el plan tiene 9 h de holgura. Proponemos sacar primero las 16 h
-   flexibles (HU-037, 038, 039, 048 y 053) y decidir las 38 h restantes en el control de alcance del 29-oct.
-3. **P-022, Excel:** faltan RF-SVC-064 a 067 y RN-SVC-044/045; la salida dice 30-oct y los PDF dicen 03-nov; RF-001 a 039 no tienen
-   prioridad. La lista celda por celda está en `correcciones-excel-v1.3.md`.
-4. **P-041, alcance nuevo:** Control de acceso deriva a ATC casos manuales de prospectos (DNI tomado, impostor, correo distinto).
-   Proponemos un tipo de ticket con 4 subtipos. ¿Entra en la Etapa 1?
-5. **P-017:** las 9 combinaciones tipo · subtipo · área del piloto que propone ADR-008.
-6. **La D-12** de la rama de Daniel (sacar HU-048 y 053 de la Etapa 1) sigue sin decidir.
-7. **P-029 y P-023, Nexora:** crear los ítems de trabajo de PJ-06 (la carga lista está en `nexora-items/carga-items-pj06.csv`, con
-   responsable y dependencias de cada HU), y retirar los 4 gates sueltos y la HU duplicada `HU-DOC-001`.
+1. **P-025, su R-01:** para dar cabida a las 28 h técnicas que pidió el Líder Técnico, el equipo activó el recorte flexible que usted
+   previó (salen HU-037, 038, 039, 048 y 053; 16 h). Usted conserva la decisión de revertirlo. **Sobrecosto real: 7 h** (cálculo en
+   `roadmap/RMP-001` §1); le pedimos aceptarlo al firmar G4 o decidir qué más sale en el control del 29-oct.
+2. **ED-26 y ED-19:** las respuestas a sus 58 + 23 preguntas y las diferencias con sus textos son propuestas que usted acepta o cambia
+   con su firma de G4.
+3. **Plazo legal (HU-013):** la Ley 31435 fija 15 días hábiles improrrogables; la prórroga queda deshabilitada (ED-28). Su texto no
+   cambia: la historia lleva una nota.
+4. **Prospectos:** el tipo «Validación de identidad (prospecto)» entra en la Etapa 1, sin horas (ED-09).
+5. **UAT del 03-nov:** si Control de acceso no está en PRE el 02-nov a mediodía, corre con el emisor de pruebas y usted decide el
+   Go/No-Go (R-12).
+6. **Nexora:** crear los ítems de PJ-06 (P-023) y borrar los 5 documentos retirados.
 
 Gracias.
+
+Brayan
 
 ---
 
 ## 4. A Legal · copia: Jose Jara
 
-**Asunto:** ATC (PJ-06): retención del Libro de Reclamaciones y excepción de la hoja
+**Asunto:** ATC (PJ-06): Libro de Reclamaciones, lo que aplicamos (informativo)
 
 Hola:
 
-Para cerrar las ADR-006 y ADR-003 de ATC necesitamos su confirmación (DEP-05):
+Para su conocimiento; solo responda si ve una objeción:
 
-1. El plazo de retención de la evidencia del Libro de Reclamaciones. Proponemos al menos 2 años, con almacenamiento inmutable (Azure
-   Blob Storage).
-2. La excepción de la hoja del Libro de Reclamaciones: los datos del consumidor se guardan en la hoja aunque el resto del cliente no se
-   copie.
+1. **Plazo:** 15 días hábiles improrrogables desde el registro (Ley 31435, art. 24.1 del Código; D.S. 101-2022-PCM, arts. 6 y 6-B).
+   El plan pedía una prórroga única de 15 días (HU-013): no se aplica y queda deshabilitada. Si conocen un supuesto en que la ley
+   permita ampliar, avísennos.
+2. **Retención:** 2 años desde el registro (art. 12 del Reglamento), en almacenamiento inmutable, y retención legal mientras el caso
+   siga en apelación, ante INDECOPI o en la Mesa SGD.
+3. **Hoja:** los datos del Anexo I del Reglamento.
 
 Gracias.
+
+Brayan
 
 ---
 
 ## 5. A Enrique Albán (Data Chief) · copia: Jose Jara, Jesús Chávez
 
-**Asunto:** ATC (PJ-06): acta F4 lista para su firma y tablas nuevas en la base única
+**Asunto:** ATC (PJ-06): acta F4 y dispensa M0, listas para su firma
 
 Hola, Enrique:
 
-- El acta `datos/acta-validacion-arquitectura-datos.md` está lista para su firma, con los hallazgos H-01, H-02, H-03, H-05 y H-08
-  resueltos según DT-06.
-- **P-031:** tablas y accesos nuevos que ATC propone como cambio al v7 en la base única:
-  - `shedlock` y el outbox propio `SVC_OUTBOX_EVENT`;
-  - `SVC_AI_SUGGESTION_LOG`;
-  - las tablas de flujo y subtipo;
-  - la tabla de historial de Flyway `flyway_schema_history_atc`.
-- **P-043:** necesitamos un dueño único de migración para los maestros compartidos y una fecha. Sin ella, la primera migración de ATC
-  no corre en DEV.
-- **P-015:** contrastar con el fragmento 10 del v7 las recetas de hash que propone ADR-002.
+- **Acta F4** (`datos/acta-validacion-arquitectura-datos.md`): lista para su firma, con los hallazgos resueltos.
+- **Cambios al v7** (ED-23): `shedlock`, `SVC_OUTBOX_EVENT`, `IntegrityHash` en las 5 bitácoras, `flyway_schema_history_atc`, las
+  tablas del flujo y `SVC_TICKET_PROSPECT` (se borra al vincular o a los 30 días hábiles del cierre; ED-05). `SVC_AI_SUGGESTION_LOG`
+  no se crea en la Etapa 1.
+- **Acceso entre dominios:** lectura por columna de `IDN_USER_ACCOUNT` (ED-01), que pedimos a su dueño.
+- **Custodia de ATC:** `ORG_COMPANY_ADDRESS`, `ORG_PRODUCT` y `GOV_DOCUMENT_REPOSITORY` (ED-11).
+- **Deuda registrada (DEU-01):** la FK diferida en QA, PRE y producción mientras falte la tabla ajena; se cierra a más tardar el
+  30-nov (ED-11).
+- **Decididas:** dueño de migración (P-043, ED-11) y tipos y largos (P-015, ED-16).
+- **Dispensa M0:** la pidió el Líder Técnico el 22-oct; las 14 ADR dicen «requiere dispensa (solicitada)».
 
-El detalle está en `datos/registro-de-tablas.md`. Gracias.
+Gracias.
+
+Brayan
 
 ---
 
-## Lo que tiene que hacer Brayan antes de que el Líder Técnico revise
+## Lo que tiene que hacer Brayan
 
-- **«Revisado por»:** en cada documento que publicamos, el Líder Técnico pide el nombre y la fecha de quien revisó el texto generado
-  por IA. Solo puede ponerlo quien lo leyó. Cuando revises cada documento, se cambia «Revisado por: (pendiente)» por tu nombre y la
-  fecha, y se publica la versión nueva.
-- **Las 63 h de P-025:** confirmarlas con Jesús, Michel y Daniel.
+- Publicar en Nexora con `dry_run` primero (`PLAN-NEXORA.md`), incluidas las 5 versiones «RETIRADO»; fijar la versión y la huella en
+  G3 §3, G4 §3.1 y la tabla del correo 2, y enviarlo.
+- Enviar el 1, el 3, el 4 y el 5; anotar la hora del 1 en `decisiones.md`.
+- «Revisado por»: las 14 ADR ya lo tienen; faltan 145 documentos y las 308 tareas. Lo pone quien lea cada uno; se propone a Jesús
+  como segundo revisor de lo que escribió Brayan.
+
+Historial: 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Rehechos tras la segunda revisión del Líder Técnico: horas de P-025 (28 h, opción A, sobrecosto real de 7 h), todas las P como decisiones del equipo, permiso sobre `IDN_USER_ACCOUNT`, Ley 31435, tipo de ticket de prospectos, criterio de la UAT, Daniel Lorenzo en copia y aviso de publicación con lo publicado.

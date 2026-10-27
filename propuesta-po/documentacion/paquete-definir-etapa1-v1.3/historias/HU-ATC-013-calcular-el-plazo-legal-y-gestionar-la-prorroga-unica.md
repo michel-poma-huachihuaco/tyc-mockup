@@ -4,7 +4,7 @@ tipo: hu
 titulo: "Calcular el plazo legal y gestionar la prórroga única"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -27,6 +27,8 @@ ui: true
 **Depende de:** HU-ATC-012 (RF-SVC-012 es predecesora de RF-SVC-013, PLT-03) · Dependencias externas: DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-04), DEP-05 (validación legal del Libro: asiento, textos y plazos; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-03)
 
 **La necesitan:** HU-ATC-015
+
+> **Nota del equipo (26-oct-2026; ED-28 de `analisis/decisiones.md`). No cambia el texto del PO.** La Ley 31435 (El Peruano, 22-mar-2022) dejó el art. 24.1 del Código de Protección y Defensa del Consumidor en un plazo de respuesta de **15 días hábiles improrrogables**, y el D.S. 101-2022-PCM dejó el art. 6 del Reglamento del Libro de Reclamaciones en 15 días hábiles, sin ampliación. ATC calcula el vencimiento en 15 días hábiles desde el registro, **sin prórroga**: la prórroga única de esta historia (CA-01, CA-03 y CA-04, y RN-SVC-009 «15+15») no se aplica porque la ley vigente no la permite, y queda deshabilitada por el parámetro `atc.libro.prorroga-habilitada=false`. CA-02 sigue valiendo para el vencimiento original: no se reescribe y todo cambio queda como fila nueva. Las horas no cambian (6 h, PLT-04). Es una diferencia con el PO listada en ED-19.
 
 **Requerimiento de origen:** El sistema debe calcular 15 días hábiles desde el registro y gestionar una prórroga única de 15 días con justificación, cargo y canal, bloqueando una segunda.
 
@@ -93,3 +95,5 @@ Escenario: CA-04 · Fuera de ventana (agregado por el PO)
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota del equipo debajo del bloque «Responsable / Depende de / La necesitan»: plazo de 15 días hábiles improrrogables (Ley 31435; ED-28); la prórroga queda deshabilitada por parámetro. No cambia el texto del PO. — Revisado por: (pendiente)

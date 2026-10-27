@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="generator" content="aybar paquete explorador">
-<meta name="aybar-huella" content="sha256:6fadad443ba227e1253dca07f2d4d1b7e736c924ae1981d675c4c0c9cf18cdaf">
+<meta name="aybar-huella" content="sha256:fc2ba369681a6638179267fac7b43299b290f3f2dd101dbe6e64cb50da1e077b">
 <title>Explorador del paquete</title>
 <!--
   Generado por `aybar paquete explorador` desde el docs/ del servicio. No se
@@ -327,11 +327,11 @@ const D = {
           },
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-001 (usuarios y roles de ATC que el PLT-01 §0 y el PLT-04 tenían locales; rol de atención, CA-04)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-001 (usuarios y roles de ATC que el PLT-01 §0 y el PLT-04 tenían locales; rol de atención, CA-04)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -400,11 +400,11 @@ const D = {
         "bloqueantes": [
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-004 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-005 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-006 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-004 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-005 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-006 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -415,8 +415,9 @@ const D = {
         "SVC_TICKET_STATUS_LOG"
       ],
       "endpoints": [
-        "PATCH /api/v1/tickets/{id}/estado",
-        "POST /api/v1/tickets/{id}/interacciones"
+        "GET /api/v1/tickets/{ticketId}",
+        "POST /api/v1/tickets/{ticketId}/estado",
+        "POST /api/v1/tickets/{ticketId}/interacciones"
       ],
       "secciones": [
         {
@@ -474,11 +475,11 @@ const D = {
         "bloqueantes": [
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-007 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-008 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores que cesan y rol de supervisor, CA-03); HU-ATC-009 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-007 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03); HU-ATC-008 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores que cesan y rol de supervisor, CA-03); HU-ATC-009 (reemplaza a la DEP-02 de la traza del PLT-03, DT-03)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -488,9 +489,9 @@ const D = {
         "SVC_TICKET_ASSIGNMENT_LOG"
       ],
       "endpoints": [
-        "GET /api/v1/tickets/casillero",
-        "POST /api/v1/tickets/reasignacion-masiva",
-        "POST /api/v1/tickets/{id}/derivaciones"
+        "GET /api/v1/casillero",
+        "POST /api/v1/colaboradores/{colaboradorId}/reasignaciones",
+        "POST /api/v1/tickets/{ticketId}/derivaciones"
       ],
       "secciones": [
         {
@@ -578,7 +579,8 @@ const D = {
         "SVC_TICKET"
       ],
       "endpoints": [
-        "PATCH /api/v1/tickets/{id}/reapertura"
+        "GET /api/v1/tablero",
+        "POST /api/v1/tickets/{ticketId}/reaperturas"
       ],
       "secciones": [
         {
@@ -674,9 +676,10 @@ const D = {
         "SVC_SLA_BREACH_ALERT"
       ],
       "endpoints": [
-        "POST /api/v1/libro-reclamaciones/{id}/prorroga",
-        "POST /api/v1/libro-reclamaciones/{id}/respuesta",
-        "POST /api/v1/tickets/{id}/libro-reclamaciones"
+        "GET /api/v1/libro/vigilancia",
+        "POST /api/v1/libro/asientos",
+        "POST /api/v1/libro/asientos/{asientoId}/prorroga",
+        "POST /api/v1/libro/asientos/{asientoId}/respuesta"
       ],
       "secciones": [
         {
@@ -752,7 +755,8 @@ const D = {
         "SVC_COMPLAINT_APPEAL"
       ],
       "endpoints": [
-        "POST /api/v1/libro-reclamaciones/{id}/apelaciones"
+        "POST /api/v1/libro/asientos/{asientoId}/apelaciones",
+        "POST /api/v1/libro/asientos/{asientoId}/apelaciones/{apelacionId}/estado"
       ],
       "secciones": [
         {
@@ -826,11 +830,11 @@ const D = {
           },
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-026 (rol de supervisor que retira la señal marcada por error, CA-03); HU-ATC-027 (supervisor del eje destino, CA-03)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-026 (rol de supervisor que retira la señal marcada por error, CA-03); HU-ATC-027 (supervisor del eje destino, CA-03)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -838,8 +842,9 @@ const D = {
         "SVC_TICKET"
       ],
       "endpoints": [
-        "POST /api/v1/tickets/{id}/estado-emocional",
-        "POST /api/v1/tickets/{id}/handoff"
+        "POST /api/v1/tickets/{ticketId}/handoff",
+        "POST /api/v1/tickets/{ticketId}/handoff/confirmacion",
+        "POST /api/v1/tickets/{ticketId}/notas-estado"
       ],
       "secciones": [
         {
@@ -906,9 +911,10 @@ const D = {
         ]
       },
       "endpoints": [
-        "PATCH /api/v1/casos-sensibles/{id}/riesgo",
         "POST /api/v1/casos-sensibles",
-        "POST /api/v1/casos-sensibles/{id}/activacion"
+        "POST /api/v1/casos-sensibles/{casoId}/cargos",
+        "POST /api/v1/casos-sensibles/{casoId}/reclasificacion",
+        "PUT /api/v1/casos-sensibles/{casoId}/riesgo"
       ],
       "secciones": [
         {
@@ -975,8 +981,9 @@ const D = {
         ]
       },
       "endpoints": [
-        "POST /api/v1/casos-sensibles/{id}/cierre",
-        "POST /api/v1/casos-sensibles/{id}/vinculacion"
+        "GET /api/v1/casos-sensibles/coincidencias",
+        "POST /api/v1/casos-sensibles/{casoId}/cierre",
+        "POST /api/v1/casos-sensibles/{casoId}/vinculos"
       ],
       "secciones": [
         {
@@ -1049,9 +1056,11 @@ const D = {
         "MAE_WARRANTY_COVERAGE_PERIOD"
       ],
       "endpoints": [
-        "POST /api/v1/reclamos-garantia",
-        "POST /api/v1/reclamos-garantia/{id}/escalamiento",
-        "POST /api/v1/reclamos-garantia/{id}/inspeccion"
+        "POST /api/v1/postventa/reclamos",
+        "POST /api/v1/postventa/reclamos/{reclamoId}/adenda",
+        "POST /api/v1/postventa/reclamos/{reclamoId}/escalamiento",
+        "POST /api/v1/postventa/reclamos/{reclamoId}/inspecciones",
+        "POST /api/v1/postventa/reclamos/{reclamoId}/resolucion"
       ],
       "secciones": [
         {
@@ -1199,9 +1208,9 @@ const D = {
         "SVC_TICKET"
       ],
       "endpoints": [
+        "GET /api/v1/tablero",
         "GET /api/v1/torre-control/auditoria-registros-paralelos",
-        "GET /api/v1/torre-control/informes",
-        "GET /api/v1/torre-control/tiempo-real"
+        "GET /api/v1/torre-control/informes"
       ],
       "secciones": [
         {
@@ -1334,8 +1343,8 @@ const D = {
         "SVC_TICKET_ASSIGNMENT_LOG"
       ],
       "endpoints": [
-        "GET /api/v1/tickets/riesgo-denuncia",
-        "GET /api/v1/tickets/{id}/legal"
+        "GET /api/v1/tickets/{ticketId}/legal",
+        "GET /api/v1/torre-control/riesgo-denuncia"
       ],
       "secciones": [
         {
@@ -1405,7 +1414,8 @@ const D = {
         "SVC_TICKET_INTERACTION"
       ],
       "endpoints": [
-        "GET /api/v1/call-center/screen-pop"
+        "GET /api/v1/call-center/screen-pop",
+        "POST /api/v1/tickets/{ticketId}/interacciones"
       ],
       "secciones": [
         {
@@ -1464,11 +1474,11 @@ const D = {
         "bloqueantes": [
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-043 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08); HU-ATC-044 (reemplaza a la DEP-02 del PLT-03, DT-03; área y rol del gestor, CA-03); HU-ATC-045 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02); HU-ATC-046 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores, su disponibilidad y el supervisor)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-043 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de administrador funcional, CA-08); HU-ATC-044 (reemplaza a la DEP-02 del PLT-03, DT-03; área y rol del gestor, CA-03); HU-ATC-045 (reemplaza a la DEP-02 del PLT-03, DT-03; rol de líder, CA-02); HU-ATC-046 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; gestores, su disponibilidad y el supervisor)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -1481,12 +1491,16 @@ const D = {
         "SVC_WORKFLOW_DEFINITION"
       ],
       "endpoints": [
+        "GET /api/v1/avisos",
+        "GET /api/v1/bandeja",
+        "GET /api/v1/bandeja/carga",
         "GET /api/v1/catalogo/registros",
-        "GET /api/v1/tickets/bandeja",
+        "GET /api/v1/flujos/publicaciones",
         "POST /api/v1/catalogo/opciones-de-menu",
         "POST /api/v1/catalogo/roles",
-        "POST /api/v1/flujos",
-        "POST /api/v1/tickets/{id}/rayo"
+        "POST /api/v1/tickets/{ticketId}/actividades/{numero}/cierre",
+        "POST /api/v1/tickets/{ticketId}/rayo",
+        "PUT /api/v1/flujos/{tipoId}/{subtipoId}/{areaId}"
       ],
       "secciones": [
         {
@@ -1558,7 +1572,7 @@ const D = {
         "SVC_TICKET_INTERACTION"
       ],
       "endpoints": [
-        "GET /api/v1/guias-solucion/{tipoTicket}"
+        "GET /api/v1/tickets/{ticketId}/guia"
       ],
       "secciones": [
         {
@@ -1666,11 +1680,11 @@ const D = {
           },
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-049 (la búsqueda respeta los permisos del rol, RN-SVC-036; P-034); HU-ATC-050 (datos por rol, CA-02 y CA-07, RN-SVC-036); HU-ATC-052 (datos según el rol, CA-03); HU-ATC-053 (documentos según el rol del gestor, CA-02)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-049 (la búsqueda respeta los permisos del rol, RN-SVC-036; P-034); HU-ATC-050 (datos por rol, CA-02 y CA-07, RN-SVC-036); HU-ATC-052 (datos según el rol, CA-03); HU-ATC-053 (documentos según el rol del gestor, CA-02)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -1681,8 +1695,9 @@ const D = {
         "SVC_TICKET_INTERACTION"
       ],
       "endpoints": [
-        "GET /api/v1/clientes/buscar",
-        "GET /api/v1/tickets/{id}/consulta-360",
+        "GET /api/v1/clientes",
+        "GET /api/v1/clientes/{partyId}/consulta-360",
+        "POST /api/v1/clientes/{partyId}/llamadas",
         "POST /api/v1/tickets"
       ],
       "secciones": [
@@ -1740,11 +1755,11 @@ const D = {
         "bloqueantes": [
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-054 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; líder de cada gestor, CA-02); HU-ATC-055 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; copia al líder del gestor, CA-01 y CA-03)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-054 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; líder de cada gestor, CA-02); HU-ATC-055 (reemplaza a la DEP-02 del PLT-03 y del PLT-04, DT-03; copia al líder del gestor, CA-01 y CA-03)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -1754,7 +1769,8 @@ const D = {
         "SVY_SURVEY_RESPONSE"
       ],
       "endpoints": [
-        "GET /api/v1/gestores/{id}/avance-diario"
+        "GET /api/v1/avisos",
+        "GET /api/v1/tablero"
       ],
       "secciones": [
         {
@@ -1836,11 +1852,11 @@ const D = {
           },
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-058 (supervisor del responsable del proyecto cuando es una jefatura interna, CA-01 y CA-02; el maestro de proyectos es la DEP-15)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-058 (supervisor del responsable del proyecto cuando es una jefatura interna, CA-01 y CA-02; el maestro de proyectos es la DEP-15)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -1914,8 +1930,9 @@ const D = {
         "SVC_TICKET"
       ],
       "endpoints": [
-        "POST /api/v1/formularios/entregafest-bus",
-        "POST /api/v1/formularios/ingreso-proyecto"
+        "POST /api/v1/formularios/ingresos",
+        "POST /api/v1/formularios/reservas-bus",
+        "POST /api/v1/formularios/reservas-bus/{reservaId}/cancelacion"
       ],
       "secciones": [
         {
@@ -1981,11 +1998,11 @@ const D = {
           },
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-064 (login del cliente en Mi Portal, DT-04; solo sus tickets, CA-02); HU-ATC-065 (cliente autenticado de Mi Portal, DT-04; ticket de otro cliente, CA-04 y RN-SVC-044); HU-ATC-066 (cliente autenticado de Mi Portal, DT-04; solo sus tickets, RN-SVC-044)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-064 (login del cliente en Mi Portal, DT-04; solo sus tickets, CA-02); HU-ATC-065 (cliente autenticado de Mi Portal, DT-04; ticket de otro cliente, CA-04 y RN-SVC-044); HU-ATC-066 (cliente autenticado de Mi Portal, DT-04; solo sus tickets, RN-SVC-044)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -1997,8 +2014,11 @@ const D = {
       ],
       "endpoints": [
         "GET /api/v1/portal/tickets",
-        "GET /api/v1/portal/tickets/{id}/trazabilidad",
-        "POST /api/v1/portal/tickets/{id}/respuestas"
+        "GET /api/v1/portal/tickets/{ticketId}/trazabilidad",
+        "GET /api/v1/portal/tipos",
+        "POST /api/v1/portal/tickets",
+        "POST /api/v1/portal/tickets/{ticketId}/confirmacion",
+        "POST /api/v1/portal/tickets/{ticketId}/respuestas"
       ],
       "secciones": [
         {
@@ -2054,11 +2074,11 @@ const D = {
         "bloqueantes": [
           {
             "id": "DEP-16",
-            "que": "Control de acceso disponible en DEV: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-067 (permisos por área, CA-07)",
+            "que": "Control de acceso disponible en DEV, QA y PRE: emisor, clientes OAuth de ATC, catálogo de ATC aprobado y gestores invitados (C-12 del Líder Técnico) (añadida el 26-oct desde PLT-03/PLT-04/PLT-05). Reemplaza a la DEP-02 (maestro local con carga de RR. HH.) por DT-03. En local, el emisor de pruebas `herramientas/emisor-local.mjs` del repositorio `AybarCorp/aybar-access-control-deus`. En esta funcionalidad: HU-ATC-067 (permisos por área, CA-07)",
             "tipo": "Interna",
             "dueno": "Área de Roles y Permisos (Sony Montoya)",
             "fecha": "21-oct-2026",
-            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 del roadmap; ED-08 de analisis/decisiones.md v0.7): emisor de pruebas local, tokens de prueba y personas sintéticas"
+            "estado": "Pendiente · riesgo aceptado con mitigación (R-11 y R-12 del roadmap; ED-08 de analisis/decisiones.md): emisor de pruebas en local y DEV, tokens de prueba y personas sintéticas; para la UAT en PRE, criterio de corte del lun 02-nov a mediodía (R-12)"
           }
         ]
       },
@@ -2067,7 +2087,7 @@ const D = {
         "SVC_WORKFLOW_DEFINITION"
       ],
       "endpoints": [
-        "GET /api/v1/operacion-en-vivo"
+        "GET /api/v1/visor/estado"
       ],
       "adrs": [
         "ADR-10"
@@ -2666,7 +2686,7 @@ const D = {
       "secciones": [
         {
           "titulo": "Resumen",
-          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-03 / FT-ATC-05\n- Como responsable legal de reclamos quiero ver el plazo legal de cada reclamo y registrar una única prórroga justificada para responder dentro del plazo y acreditar la prórroga ante una fiscalización.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-013 | Debe | 6 h con IA | Dev 1 (Brayan) | 1 | 26-oct-2026 → 27-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-012 (RF-SVC-012 es predecesora de RF-SVC-013, PLT-03) · Dependencias externas: DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-04), DEP-05 (validación legal del Libro: asiento, textos y plazos; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-03)\n\n**La necesitan:** HU-ATC-015\n\n**Requerimiento de origen:** El sistema debe calcular 15 días hábiles desde el registro y gestionar una prórroga única de 15 días con justificación, cargo y canal, bloqueando una segunda."
+          "md": "- Ticket: (pendiente: AYB-NNNN del proyecto) - Tipo: (pendiente: T1/T2/T3) - Épica/feature: EP-ATC-03 / FT-ATC-05\n- Como responsable legal de reclamos quiero ver el plazo legal de cada reclamo y registrar una única prórroga justificada para responder dentro del plazo y acreditar la prórroga ante una fiscalización.\n\n| Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |\n|---|---|---|---|---|---|---|\n| RF-SVC-013 | Debe | 6 h con IA | Dev 1 (Brayan) | 1 | 26-oct-2026 → 27-oct-2026 | Pendiente DoR |\n\n**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)\n\n**Depende de:** HU-ATC-012 (RF-SVC-012 es predecesora de RF-SVC-013, PLT-03) · Dependencias externas: DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-04), DEP-05 (validación legal del Libro: asiento, textos y plazos; PLT-03 y PLT-05), DEP-06 (repositorio documental y GLI; PLT-03)\n\n**La necesitan:** HU-ATC-015\n\n> **Nota del equipo (26-oct-2026; ED-28 de `analisis/decisiones.md`). No cambia el texto del PO.** La Ley 31435 (El Peruano, 22-mar-2022) dejó el art. 24.1 del Código de Protección y Defensa del Consumidor en un plazo de respuesta de **15 días hábiles improrrogables**, y el D.S. 101-2022-PCM dejó el art. 6 del Reglamento del Libro de Reclamaciones en 15 días hábiles, sin ampliación. ATC calcula el vencimiento en 15 días hábiles desde el registro, **sin prórroga**: la prórroga única de esta historia (CA-01, CA-03 y CA-04, y RN-SVC-009 «15+15») no se aplica porque la ley vigente no la permite, y queda deshabilitada por el parámetro `atc.libro.prorroga-habilitada=false`. CA-02 sigue valiendo para el vencimiento original: no se reescribe y todo cambio queda como fila nueva. Las horas no cambian (6 h, PLT-04). Es una diferencia con el PO listada en ED-19.\n\n**Requerimiento de origen:** El sistema debe calcular 15 días hábiles desde el registro y gestionar una prórroga única de 15 días con justificación, cargo y canal, bloqueando una segunda."
         },
         {
           "titulo": "Criterios de aceptación (Gherkin, verificables)",
@@ -2690,7 +2710,7 @@ const D = {
         },
         {
           "titulo": "DoR (G4) - no entra al sprint sin esto",
-          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)"
+          "md": "- [ ] Valor claro - [ ] Gherkin verificable - [ ] Reglas explícitas\n- [ ] G2 cerrado si `ui: true` - [ ] G3 cerrado si aplica\n- [ ] Dependencias desbloqueadas - [ ] Casos iniciales de QA\n- [ ] Estimada por el equipo - [ ] Cabe en un sprint\n\nGenerado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)\n\nActualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)\n\nHistorial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota del equipo debajo del bloque «Responsable / Depende de / La necesitan»: plazo de 15 días hábiles improrrogables (Ley 31435; ED-28); la prórroga queda deshabilitada por parámetro. No cambia el texto del PO. — Revisado por: (pendiente)"
         }
       ]
     },

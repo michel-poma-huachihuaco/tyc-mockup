@@ -2,7 +2,7 @@
   "epica": "EP-ATC-07",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene queda pendiente: P-033 a P-039); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Tareas de migracion alineadas con el registro de tablas (C-11): ATC no crea ni altera tablas de otros dominios (MAE_CHANNEL, GOV_INTEGRITY_EXCEPTION, SVY_SURVEY_RESPONSE, CONTRACT_WARRANTY_CLAIM); siembra filas con semilla versionada (P-043). Mismas horas por HU (PLT-04, 243 h). 0.3 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-019-T01 <- HU-ATC-029-T04 (PO: HU-ATC-029 -> HU-ATC-019); HU-ATC-019-T02 ya no lleva en depende_de HU-ATC-004-T03. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Sin cambios de tareas en este archivo. — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Tareas de migracion alineadas con el registro de tablas (C-11): ATC no crea ni altera tablas de otros dominios (MAE_CHANNEL, GOV_INTEGRITY_EXCEPTION, SVY_SURVEY_RESPONSE, CONTRACT_WARRANTY_CLAIM); siembra filas con semilla versionada (P-043). Mismas horas por HU (PLT-04, 243 h). 0.3 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-019-T01 <- HU-ATC-029-T04 (PO: HU-ATC-029 -> HU-ATC-019); HU-ATC-019-T02 ya no lleva en depende_de HU-ATC-004-T03. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Sin cambios de tareas en este archivo. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision final del Lider Tecnico del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28). Mismas horas por HU. Cambios en este archivo: HU-ATC-019-T02, HU-ATC-019-T03, HU-ATC-030-T02, HU-ATC-030-T04, HU-ATC-031-T02, HU-ATC-032-T02, HU-ATC-032-T04. — Revisado por: (pendiente)",
   "titulo": "Calidad de atención y Torre de Control CX",
   "responsable": "Michel Poma Huachihuaco",
   "horas": 16,
@@ -34,7 +34,7 @@
         },
         {
           "id": "HU-ATC-019-T02",
-          "titulo": "[quality] Escritura de la encuesta en SVY_SURVEY_RESPONSE por puntero polimorfico (SubjectEntityName = SVC_TICKET, RNF-INT-004) y listener de cierre de ticket que dispara la encuesta POST_TRANSACTION. La tabla es del fragmento PERFORMANCE-MEASUREMENT: ATC no la migra salvo que Gobierno de Datos se lo asigne (registro de tablas, P-043). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa CambiarEstadoTicketUseCase de HU-ATC-004-T03 (el calendario del PO termina HU-ATC-004 el 22-oct, antes de que empiece esta HU)",
+          "titulo": "[quality] Escritura de la encuesta en SVY_SURVEY_RESPONSE por puntero polimorfico (SubjectEntityName = SVC_TICKET, RNF-INT-004) y listener de cierre de ticket que dispara la encuesta POST_TRANSACTION. La tabla es del fragmento PERFORMANCE-MEASUREMENT: ATC no la migra: la migra el dueno del KPI Engine (DEP-10; ED-11). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa CambiarEstadoTicketUseCase de HU-ATC-004-T03 (el calendario del PO termina HU-ATC-004 el 22-oct, antes de que empiece esta HU)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -45,7 +45,7 @@
         },
         {
           "id": "HU-ATC-019-T03",
-          "titulo": "[quality] Caso de uso MedirCsatCesUseCase (KPI Engine DEP-10, contract-first con simulador ADR-004) y endpoint GET /api/v1/metricas/csat-ces (por tipo de ticket, area y gestor); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
+          "titulo": "[quality] Caso de uso MedirCsatCesUseCase (KPI Engine DEP-10, contract-first con simulador ADR-004) y endpoint GET /api/v1/metricas/csat-ces (consultarCsatCes: por tipo de ticket, area y gestor); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "application",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -102,7 +102,7 @@
         },
         {
           "id": "HU-ATC-030-T02",
-          "titulo": "[quality] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector de DT-02, fuera de esta HU: P-025) agregando SVC_TICKET, SVC_SLA_BREACH_ALERT y SVC_TICKET_ASSIGNMENT_LOG en tiempo real",
+          "titulo": "[quality] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector DT02-T05, del que depende) agregando SVC_TICKET, SVC_SLA_BREACH_ALERT y SVC_TICKET_ASSIGNMENT_LOG en tiempo real",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -110,7 +110,8 @@
           "depende_de": [
             "HU-ATC-030-T01",
             "HU-ATC-010-T02",
-            "HU-ATC-019-T03"
+            "HU-ATC-019-T03",
+            "DT02-T05"
           ]
         },
         {
@@ -126,7 +127,7 @@
         },
         {
           "id": "HU-ATC-030-T04",
-          "titulo": "[quality] Endpoint GET /api/v1/torre-control/tiempo-real; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
+          "titulo": "[quality] Endpoint GET /api/v1/tablero (verTablero con ambito EQUIPO: Torre de Control en tiempo real y el cierre E2E de HU-ATC-029; lo empieza HU-ATC-054-T03); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -183,7 +184,7 @@
         },
         {
           "id": "HU-ATC-031-T02",
-          "titulo": "[quality] Endpoint GET /api/v1/torre-control/informes con generacion de reporte exportable; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
+          "titulo": "[quality] Endpoint GET /api/v1/torre-control/informes (listarInformes) con generacion de reporte exportable; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -240,7 +241,7 @@
         },
         {
           "id": "HU-ATC-032-T02",
-          "titulo": "[quality] Job batch quincenal idempotente (ADR-005; ShedLock, DT-08) que invoca AuditarRegistrosParalelosUseCase",
+          "titulo": "[quality] Job batch quincenal idempotente (ADR-005; ShedLock, DT-08) que invoca AuditarRegistrosParalelosUseCase; cada hallazgo queda en GOV_INTEGRITY_EXCEPTION con el tipo PARALLEL_RECORD (semilla de ATC, ED-11)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
@@ -263,7 +264,7 @@
         },
         {
           "id": "HU-ATC-032-T04",
-          "titulo": "[quality] Endpoint GET /api/v1/torre-control/auditoria-registros-paralelos segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (P-034)",
+          "titulo": "[quality] Endpoint GET /api/v1/torre-control/auditoria-registros-paralelos (consultarAuditoriaRegistrosParalelos) segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",

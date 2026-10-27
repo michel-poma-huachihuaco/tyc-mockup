@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-013: Outbox transaccional para publicar eventos sin perderlos"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,10 +15,10 @@ tags: [adr, arquitectura, g3]
 # ADR-013: Outbox transaccional para publicar eventos sin perderlos
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
-- Origen: decisión DT-02 del Líder Técnico (Jose Jara, 22-oct-2026): CQRS completo desde la Etapa 1, con el outbox construido en el servicio porque el SDK no lo trae; el proyector del servicio es el único que escribe en el almacén de lectura. Registrada en `analisis/decisiones.md` v0.8.
+- Origen: decisión DT-02 del Líder Técnico (Jose Jara, 22-oct-2026): CQRS completo desde la Etapa 1, con el outbox construido en el servicio porque el SDK no lo trae; el proyector del servicio es el único que escribe en el almacén de lectura. Registrada en `analisis/decisiones.md`.
 
 > Las condiciones de la revisión del 22-oct para este ADR son tres: usar `INTG_OUTBOX_EVENT` del v7 y, si no sirve, presentar la tabla propia como cambio al v7; estimar las horas; nombrar los eventos con el formato de tópico del SDK. Las tres se resuelven en la sección «Decisión» (puntos 6, 7 y 9).
 
@@ -56,8 +56,8 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
    | ATC la escribe dentro de su transacción | Es de otro fragmento (P-014) y cada fila exige `ExternalSystemID` → `MAE_EXTERNAL_SYSTEM_INTEGRATION`: es para envíos a un sistema **externo**, y el bus interno de ATC no lo es | No |
    | No se comparte de forma que el volumen de ATC la sature | «Alto volumen», compartida por todas las integraciones y firmada fila a fila (`IntegrityHash`) | No |
 
-   **`SVC_OUTBOX_EVENT`** (decisión del equipo, en el fragmento SERVICE, con las convenciones del v7): `OutboxEventID` (PK, entero), `TicketID` (FK a `SVC_TICKET`; los 5 eventos son de un ticket), `CompanyID` (FK a `ORG_COMPANY`), `EventTypeListID` + `EventTypeID` (contra `MAE_GENERIC_LIST_VALUE`, lista nueva `SVC_OUTBOX_EVENT_TYPE` con los 5 tipos del punto 9), `PayloadJson` (solo referencias), `CorrelationID`, `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo cuando el evento lo origina un job), `PublishStatusListID` + `PublishStatusID` (`PENDING`, `PUBLISHED`, `FAILED`), `AttemptCount`, `CreatedDateTime` y `PublishedDateTime`; índice parcial por (`CreatedDateTime`) sobre las filas `PENDING`. Es una tabla técnica sin datos personales y sin `IntegrityHash` (se purga a los 7 días); `UserAccountID` va sin FK por eso. Va como cambio al v7 en el acta F4 v0.4, lista para la firma del Data Chief (P-031, ED-23; hallazgo H-12).
-7. **Horas** (tabla del ADR-012): outbox 6 h, publicador 6 h, configuración del bus 6 h; con el proyector (10 h), **28 h**, que es todo lo nuevo que DT-02 suma al plan del PO. Con 9 h de holgura, la brecha es de 19 h. **P-025 (decidida por el equipo, 26-oct-2026)** la cierra: las 28 h son tareas técnicas de la fundación en `backlog/tareas/EP-ATC-01.json` (outbox, DT02-T01, Brayan 6 h; bus, DT02-T02, Daniel 6 h; publicador, DT02-T03, Jesús 4 h; purga y métrica, DT02-T04, Michel 2 h; proyector, DT02-T05, Michel 7 h; re-proyección, DT02-T06, Brayan 3 h) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (16 h); las 3 h restantes las absorbe el equipo.
+   **`SVC_OUTBOX_EVENT`** (decisión del equipo, en el fragmento SERVICE, con las convenciones del v7): `OutboxEventID` (PK, entero), `TicketID` (FK a `SVC_TICKET`; los 5 eventos son de un ticket), `CompanyID` (FK a `ORG_COMPANY`), `EventTypeListID` + `EventTypeID` (contra `MAE_GENERIC_LIST_VALUE`, lista nueva `SVC_OUTBOX_EVENT_TYPE` con los 5 tipos del punto 9), `PayloadJson` (solo referencias), `CorrelationID`, `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo cuando el evento lo origina un job), `PublishStatusListID` + `PublishStatusID` (`PENDING`, `PUBLISHED`, `FAILED`), `AttemptCount`, `CreatedDateTime` y `PublishedDateTime`; índice parcial por (`CreatedDateTime`) sobre las filas `PENDING`. Es una tabla técnica sin datos personales y sin `IntegrityHash` (se purga a los 7 días); `UserAccountID` va sin FK por eso. Va como cambio al v7 en el acta F4, lista para la firma del Data Chief (P-031, ED-23; hallazgo H-12).
+7. **Horas** (tabla del ADR-012): outbox 6 h, publicador 6 h, configuración del bus 6 h; con el proyector (10 h), **28 h**, que es todo lo nuevo que DT-02 suma al plan del PO. Con 9 h de holgura, la brecha es de 19 h. **P-025 (decidida por el equipo, 26-oct-2026)** la cierra: las 28 h son tareas técnicas de la fundación en `backlog/tareas/EP-ATC-01.json` (outbox, DT02-T01, Brayan 6 h; bus, DT02-T02, Daniel 6 h; publicador, DT02-T03, Jesús 4 h; purga y métrica, DT02-T04, Michel 2 h; proyector, DT02-T05, Michel 7 h; re-proyección, DT02-T06, Brayan 3 h) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (16 h). Las 6 tareas van en la iteración 1, con fechas, y de DT02-T05 dependen las tareas de lectura; el sobrecosto real es de 7 h (ADR-012).
 8. **Retención:** las filas publicadas se conservan 7 días y se purgan con un job (decisión del equipo).
 9. **Tópicos con el formato del SDK.** `aybar-starter-messaging` exige `aybar.<fragmento>.<evento>` en minúsculas y lo valida al publicar (`MessagingValidations`: `aybar\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*`). El fragmento es `service` (SERVICE del v7); el evento va en inglés, como los módulos (ADR-001):
 
@@ -82,11 +82,11 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
 - Impide:
   - Confiar en que «se publicó» solo porque el commit terminó.
   - Eventos con texto libre o datos personales, y tópicos fuera del formato del SDK.
-- Cuesta: **28 h** nuevas con el proyector y el bus (punto 7; tareas técnicas de la fundación, P-025 decidida) y **USD 87,60 al mes por ambiente** de Azure Event Hubs Standard (una unidad de rendimiento y el medidor «Standard Kafka Endpoint» de la lista de precios), **USD 350,40 en los 4 ambientes** (`arquitectura/costo-cloud.md` v0.5, §1.1 y §3: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). La tabla del outbox vive en la base ya costeada.
+- Cuesta: **28 h** nuevas con el proyector y el bus (punto 7; tareas técnicas de la fundación, P-025 decidida) y **USD 87,60 al mes por ambiente** de Azure Event Hubs Standard (una unidad de rendimiento y el medidor «Standard Kafka Endpoint» de la lista de precios), **USD 350,40 en los 4 ambientes** (`arquitectura/costo-cloud.md`, §1.1 y §3: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). La tabla del outbox vive en la base ya costeada.
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
-- Tabla de outbox: `SVC_OUTBOX_EVENT`, cambio al v7 (P-031, ED-23); `INTG_OUTBOX_EVENT` no se usa (punto 6). Es una tabla técnica: su dueño de dato es el de las tablas de ATC, el rol que fija `datos/registro-de-tablas.md` v0.3 §2 (Gerente de ATC); el acta F4 queda lista para la firma del Data Chief (H-01).
+- Tabla de outbox: `SVC_OUTBOX_EVENT`, cambio al v7 (P-031, ED-23); `INTG_OUTBOX_EVENT` no se usa (punto 6). Es una tabla técnica: su dueño de dato es el de las tablas de ATC, el rol que fija `datos/registro-de-tablas.md` §2 (Gerente de ATC); el acta F4 queda lista para la firma del Data Chief (H-01).
 - Linaje: cambio de negocio → fila de outbox → bus de eventos → proyector → almacén de lectura.
 - PII: solo referencias.
 - Reglas de calidad (F10, Q-007): eventos pendientes de publicar y antigüedad del más viejo. **Umbral (decisión del equipo):** atención cuando el más viejo supere 5 s y crítico a 10 s, igual que el retraso máximo del almacén de lectura (ADR-012, Q-006).
@@ -103,5 +103,6 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): las 28 h de outbox, publicador, proyector y bus son todo lo nuevo de DT-02 (brecha de 19 h, P-025 del coordinador); autenticación con Event Hubs por `SASL_SSL` y `PLAIN` con la cadena en Key Vault (ED-24); tabla y lista en el acta F4 (ED-23); umbral de antigüedad y dueño de dato decididos; supuestos del costo en ED-12 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las horas del punto 7 son las tareas DT02-T01 a T06 de la fundación, con su responsable, y la brecha se cubre con el alcance flexible del PO (5 HU, 16 h) y 3 h que absorbe el equipo; «Obliga a» y «Cuesta» ya no remiten la brecha al coordinador |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: tareas DT-02 con fechas en la iteración 1 y sobrecosto real de 7 h (O-05, O-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

@@ -4,7 +4,7 @@ tipo: "adr"
 titulo: "ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
 fecha: "2026-10-26"
@@ -15,10 +15,10 @@ tags: [adr, arquitectura, g3]
 # ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
-- Origen: convierte a la plantilla del marco el ADR-03 del PLT-05 v1.3, con la decisión DT-06 del Líder Técnico (Jose Jara, 22-oct-2026): las tablas de ATC van en la base única del v7 con FK físicas y **`PARTY` es la fuente viva del cliente, no una copia**. Registrada en `analisis/decisiones.md` v0.7. Cierra P-010 en lo técnico; el interesado sin `PARTY` y la relación con SIGDA/TAXON los decide el equipo (P-037 y P-027, ED-05).
+- Origen: convierte a la plantilla del marco el ADR-03 del PLT-05 v1.3, con la decisión DT-06 del Líder Técnico (Jose Jara, 22-oct-2026): las tablas de ATC van en la base única del v7 con FK físicas y **`PARTY` es la fuente viva del cliente, no una copia**. Registrada en `analisis/decisiones.md`. Cierra P-010 en lo técnico; el interesado sin `PARTY` y la relación con SIGDA/TAXON los decide el equipo (P-037 y P-027, ED-05).
 - Las referencias a Control de acceso (PJ-05: R29, A26, D-119 y ADR-019) se verificaron el 26-oct en la copia sellada de su paquete aprobado (`docs-roles-y-permisos/`).
 - Cambia lo que fija el PO: el ADR-03 del PO, RN-SVC-026, RNF-INT-007 y DEP-01 dicen «SIGDA/TAXON única fuente, 0 registros paralelos fuera de SIGDA/TAXON». Es una diferencia listada en ED-19 de `analisis/decisiones.md` (P-027; P-021 quedó cerrada por DT-06); los documentos del PO no se editan. La relación de `PARTY` con SIGDA/TAXON la fija el punto 3 (ED-05).
 
@@ -44,7 +44,8 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
    - el ticket se registra **«sin cliente vinculado»**: `SVC_TICKET.PartyID` nulo (HU-051 CA-01; el contrato lo admite);
    - los **datos mínimos** del interesado (tipo y número de documento, nombre, teléfono y correo) van a `SVC_TICKET_PROSPECT`, tabla de ATC 1:1 con el ticket (cambio al v7 del fragmento SERVICE, en el acta F4), clasificada como dato personal (Ley 29733) y visible solo para los roles de atención;
    - la `PARTY` la crea **Control de acceso** cuando la persona se autorregistra (R29) o llega por la carga de personas (D-60);
-   - entonces el job de vinculación (ADR-005, cada 5 min) consulta al cliente por el documento con el puerto de la consulta del cliente (punto 3), completa el `PartyID`, deja el cambio en la bitácora (HU-051 CA-02 y CA-03) y **borra en la misma transacción** la fila de datos mínimos. Guardarlos solo hasta la vinculación es lo mínimo que pide el criterio (principio de proporcionalidad).
+   - entonces el job de vinculación (ADR-005, cada 5 min) consulta al cliente por el documento con el puerto de la consulta del cliente (punto 3), completa el `PartyID`, deja el cambio en la bitácora (HU-051 CA-02 y CA-03) y **borra en la misma transacción** la fila de datos mínimos. Guardarlos solo hasta la vinculación es lo mínimo que pide el criterio (principio de proporcionalidad);
+   - **si nunca se vincula, la fila se purga** (decisión del equipo, revisión final del Líder Técnico, O-11): a los **30 días hábiles del cierre del ticket**, o a los **2 años del registro** si el ticket tiene asiento en el Libro de Reclamaciones, la misma retención de la hoja (punto 6). La borra un job diario (ADR-005) y la vigila la regla de calidad Q-012 del acta F4. Así `SVC_TICKET_PROSPECT` no queda como un registro paralelo sin plazo; el ticket conserva su historia y queda «sin cliente vinculado».
 3. **Consulta 360 federada en línea** para lo que `PARTY` no tiene (contratos, cobranza, documentos), con **caché corta** y **degradación por fuente**: si una fuente falla, la consulta responde con el resto y el ticket sigue (ticket mínimo y reintento de vinculación, RF-051). **Relación de `PARTY` con SIGDA/TAXON (ED-05):** el contrato de la consulta del cliente que define ATC (ADR-004) devuelve, junto con los datos de pantalla, el `PartyID` de la base única; lo implementa el adaptador de la DEP-01 y, mientras no esté, su simulador.
 4. **Dato sensible:** llega por la consulta en línea con los permisos del origen (RNF-SEC-010) y, cuando exista, enmascarado desde su dueño según `MAE_FIELD_MASKING_POLICY`, que publica Control de acceso (D-119 de PJ-05, de su Etapa 2); el acceso excepcional pasa por `IDN_SENSITIVE_ACCESS_REQUEST`, también de Control de acceso.
 5. **El almacén de lectura** guarda lo de ATC, no el dato del cliente (ADR-012).
@@ -55,18 +56,19 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 - Obliga a:
   - Un adaptador y un simulador de SIGDA/TAXON (cuyo contrato devuelve el `PartyID`) y de las demás fuentes de la consulta 360 (ADR-004).
   - Una caché: el SDK no trae Redis (`aybar-redis`, NO IMPLEMENTADO); empezar con caché local por fuente y registrarlo como deuda.
-  - Una regla de auditoría que cuente registros paralelos (debe dar 0) sobre `PARTY`; las filas de `SVC_TICKET_PROSPECT` no cuentan como registro paralelo porque se borran al vincular (ED-05).
-  - La tabla `SVC_TICKET_PROSPECT` y su borrado en el job de vinculación (punto 2; acta F4).
+  - Una regla de auditoría que cuente registros paralelos (debe dar 0) sobre `PARTY`; las filas de `SVC_TICKET_PROSPECT` no cuentan como registro paralelo porque se borran al vincular o al vencer su plazo (punto 2; ED-05).
+  - La tabla `SVC_TICKET_PROSPECT`, su borrado en el job de vinculación y su purga al vencer el plazo (punto 2; acta F4, Q-012).
   - La plantilla de la hoja con el Anexo I del Reglamento (punto 6).
 - Impide:
   - Persistir nombre, DNI o contacto de un cliente vinculado en columnas de ATC, y crear o escribir `PARTY` desde ATC.
-- Cuesta: **0 h fuera del plan**: la caché corta de la consulta 360 va dentro de las horas que el PO estimó para HU-050 (tarea HU-ATC-050-T02; tabla del ADR-012), y `SVC_TICKET_PROSPECT` y su borrado van en HU-051 (tarea HU-ATC-051-T01, con las horas del PLT-04: P-025, decidida por el equipo el 26-oct-2026, no las reestima y lo que exceda es parte de su riesgo aceptado). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md` v0.5, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
+- Cuesta: **0 h fuera del plan**: la caché corta de la consulta 360 va dentro de las horas que el PO estimó para HU-050 (tarea HU-ATC-050-T02; tabla del ADR-012), y `SVC_TICKET_PROSPECT`, su borrado y su purga van en HU-051 (tarea HU-ATC-051-T01, con las horas del PLT-04: P-025, decidida por el equipo el 26-oct-2026, no las reestima y lo que exceda es parte de su riesgo aceptado). **USD 0 de nube propio**: la consulta en línea corre en el contenedor del servicio (Azure Container Apps, 197,70 al mes en producción) y no guarda datos (`arquitectura/costo-cloud.md`, §1.1: API pública de precios de Azure del 26-oct-2026, USD por mes, Brazil South; supuestos fijados en ED-12). Latencia objetivo: 2 s en p95 (HU-050 CA-09).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
 - Sin tabla de cliente propia: `SVC_TICKET` guarda las claves (`PartyID`, `CompanyID`, `ContractID`, `UnitID`) y el dato sensible vive en `PARTY_SENSITIVE_DATA` (DAC, fuera de ATC). Única excepción: `SVC_TICKET_PROSPECT`, con los datos mínimos del interesado sin `PARTY` hasta su vinculación (punto 2; cambio al v7, ED-05). `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05) no existe en el v7 y **no es una tabla**: es una colección del almacén de lectura con identificadores y metadatos de permisos, que escribe el proyector (ADR-012, punto «Búsqueda»). No es un cambio al v7.
 - Linaje: `PARTY` y las demás fuentes → consulta en línea → pantalla; no se persiste.
-- PII: el dato de un cliente vinculado no se guarda en columnas de ATC; permisos del origen en cada consulta (RNF-SEC-010: está en el Excel `ATC_requerimientos (3).xlsx`, hoja `03_RNF`, fila 31). Excepciones decididas: la hoja del Libro, como documento probatorio (punto 6, ED-13), y los datos mínimos del interesado en `SVC_TICKET_PROSPECT`, que se borran al vincular (punto 2, ED-05). El registro de lo que ATC crea, lee y escribe está en `datos/registro-de-tablas.md` v0.3.
+- De Control de acceso, ATC solo lee por columna el vínculo `IDN_USER_ACCOUNT` (ADR-009, punto 2; ED-01). **Ese `SELECT` lo otorga el dueño de la tabla, Control de acceso:** se pide al área en el correo de solicitud, como entregable de la DEP-16; mientras, en local y DEV se trabaja con el emisor de pruebas y los datos de prueba (simulador de `CuentaPersonaPort`, ED-08). Detalle en `datos/registro-de-tablas.md` §4.
+- PII: el dato de un cliente vinculado no se guarda en columnas de ATC; permisos del origen en cada consulta (RNF-SEC-010: está en el Excel `ATC_requerimientos (3).xlsx`, hoja `03_RNF`, fila 31). Excepciones decididas: la hoja del Libro, como documento probatorio (punto 6, ED-13), y los datos mínimos del interesado en `SVC_TICKET_PROSPECT`, que se borran al vincular o al vencer su plazo (punto 2, ED-05). El registro de lo que ATC crea, lee y escribe está en `datos/registro-de-tablas.md`.
 - H-11 del acta F4 (FK a `PARTY` frente al ADR-03 del PO): resuelto por DT-06; la diferencia con el PO está listada en ED-19.
 
 ## Historial de cambios
@@ -81,5 +83,6 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): interesado «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT`, que se borran al vincular cuando Control de acceso crea su `PARTY` (ED-05); la consulta del cliente devuelve el `PartyID` (relación con SIGDA/TAXON); sin JOIN a las tablas de personas; hoja del Libro con el Anexo I del Reglamento y 2 años de retención (ED-13); caché dentro de HU-050; diferencias con el PO en ED-19 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_TICKET_PROSPECT` y su borrado se hacen en HU-ATC-051-T01 con las horas del PLT-04; lo que exceda es parte del riesgo aceptado (la v0.5 lo dejaba pendiente de P-025) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: purga de `SVC_TICKET_PROSPECT` a los 30 días hábiles del cierre o a los 2 años si hay asiento del Libro (O-11); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga el dueño de la tabla y se pide en el correo de solicitud (O-03). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL
