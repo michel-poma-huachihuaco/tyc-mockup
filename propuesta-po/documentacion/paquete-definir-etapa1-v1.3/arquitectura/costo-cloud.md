@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Impacto en costo cloud por ambiente (Azure, DT-07)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-014, ADR-012, ADR-006, ADR-013, ADR-005]
 tags: [arquitectura, costo, g3]
 ---
@@ -155,7 +155,7 @@ Notas sobre los medidores:
 
 ## 4 Horas de desarrollo
 
-El costo de construir lo que el SDK no trae no es costo cloud. Lo nuevo que exige DT-02 y no está en el plan del PO son **28 h** (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012). Las demás piezas (bitácoras HMAC, calendario, caché, reintentos, ShedLock, ArchUnit y WebSocket) ya están dentro de las horas que el PO estimó para sus historias (HU-003, 004, 006, 012, 050 y 067; ADR-02 y ADR-05 del PO) o vienen en la plantilla del SDK (ArchUnit). Con 9 h de holgura (243 h de 252 h), la brecha es 28 h − 9 h = **19 h**. **P-025, decidida por el equipo (Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md`):** las 28 h van como tareas técnicas de la fundación (`backlog/tareas/EP-ATC-01.json`, DT02-T01 a DT02-T06, con su responsable) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053; 16 h; R-01); la Etapa 1 queda en 227 h de historias más 28 h técnicas: 255 h. Con las 4 h de integración que reconoce ADR-009, son 259 h sobre 252 h de capacidad: **sobrecosto real de 7 h**, no 3 h, y en la iteración 1 (35 h por persona), 19 h netas, porque las 28 h técnicas van en ella (revisión final del Líder Técnico, O-05 y O-06; ADR-012; cálculo por desarrollador e iteración en la nota de las tareas técnicas de `backlog/tareas/EP-ATC-01.json`). Lo acepta el PO al firmar G4. Ninguna cifra de costo cloud cambia: la IA no sumaba a los totales y en la Etapa 1 es USD 0 (§1.4).
+El costo de construir lo que el SDK no trae no es costo cloud. Lo nuevo que exige DT-02 y no está en el plan del PO son **28 h** (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012). Las demás piezas (bitácoras HMAC, calendario, caché, reintentos, ShedLock, ArchUnit y WebSocket) ya están dentro de las horas que el PO estimó para sus historias (HU-003, 004, 006, 012, 050 y 067; ADR-02 y ADR-05 del PO) o vienen en la plantilla del SDK (ArchUnit). Con 9 h de holgura (243 h de 252 h), la brecha es 28 h − 9 h = **19 h**. **P-025, decidida por el equipo (Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md`):** las 28 h van como tareas técnicas de la fundación (`backlog/tareas/EP-ATC-01.json`, DT02-T01 a DT02-T06, con su responsable) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053; 16 h; R-01); la Etapa 1 queda en 227 h de historias más 28 h técnicas: 255 h. Con las 4 h de integración que reconoce ADR-009, son 259 h sobre 252 h de capacidad: **sobrecosto real de 7 h**, no 3 h, y en la iteración 1 (35 h por persona), 19 h netas, porque las 28 h técnicas van en ella (revisión interna del equipo, O-05 y O-06; ADR-012; cálculo por desarrollador e iteración en la nota de las tareas técnicas de `backlog/tareas/EP-ATC-01.json`). Lo acepta el PO al firmar G4. Ninguna cifra de costo cloud cambia: la IA no sumaba a los totales y en la Etapa 1 es USD 0 (§1.4).
 
 ## Historial de cambios
 
@@ -164,10 +164,11 @@ El costo de construir lo que el SDK no trae no es costo cloud. Lo nuevo que exig
 | 0.1 | 2026-10-19 | Jesús Chávez Elías, con IA | Estructura con servicios «por decidir» |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Servicios de Azure (DT-07), sin cifras; volúmenes que faltan; qué ya no cuesta a ATC |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Costo mensual por ambiente (DEV, QA/UAT y PROD, y PRE si se levanta) para cada servicio de DT-07, con precios de la API pública de Azure del 26-oct-2026 en USD, en Brazil South y East US 2; supuestos de volumen y tamaño por confirmar (P-044); sensibilidad al volumen; lo compartido con Control de acceso; precios unitarios con su medidor |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: PRE (UAT del 03-nov) entra en el costo base como dice el PLT-05 §4.2: USD 2.592,53 en Brazil South y 1.770,59 en East US 2 (precios consultados de nuevo en la API el 26-oct, sin cambios); el WebSocket no pasa por API Management de consumo (verificado en Microsoft Learn); Event Hubs con espacio de nombres exclusivo y su límite de 10 event hubs; niveles M10, M20 y M30 de Azure DocumentDB verificados en Microsoft Learn y una sola cifra para Cosmos DB y Event Hubs; job de migraciones y WebSocket sin costo propio |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: PRE (UAT del 03-nov) entra en el costo base como dice el PLT-05 §4.2: USD 2.592,53 en Brazil South y 1.770,59 en East US 2 (precios consultados de nuevo en la API el 26-oct, sin cambios); el WebSocket no pasa por API Management de consumo (verificado en Microsoft Learn); Event Hubs con espacio de nombres exclusivo y su límite de 10 event hubs; niveles M10, M20 y M30 de Azure DocumentDB verificados en Microsoft Learn y una sola cifra para Cosmos DB y Event Hubs; job de migraciones y WebSocket sin costo propio |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: región Brazil South, SKU, volúmenes, correo y reparto fijados por el equipo (ED-12); retención de 2 años por la norma (ED-13); proveedor de IA con cifra (ED-17: USD 0,45 al mes en PROD, medidores de Azure OpenAI en §3); §4 con la corrección de horas: 28 h nuevas y brecha de 19 h, que cierra el coordinador (P-025) |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): §4 sin brecha abierta (28 h técnicas en la fundación; 5 HU de alcance flexible fuera de la Etapa 1; 3 h que absorbe el equipo). §1.4: el proveedor de IA queda sin consumo en la Etapa 1 (USD 0; USD 0,45 al mes en PROD cuando entren HU-048 y HU-053) y fuera de los totales solo queda el correo (USD 0,63). Los totales no cambian (USD 2.592,53 en Brazil South) |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: §4 con el sobrecosto real de 7 h (no 3 h) y 19 h netas en la iteración 1 (O-05, O-06). Los totales de costo cloud no cambian. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: §4 con el sobrecosto real de 7 h (no 3 h) y 19 h netas en la iteración 1 (O-05, O-06). Los totales de costo cloud no cambian. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19); actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
 
@@ -177,4 +178,4 @@ Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): supuestos 
 
 Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo; IA sin consumo en la Etapa 1 (USD 0) y §4 sin brecha abierta. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-05, O-06 y O-22). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-05, O-06 y O-22). — Revisado por: (pendiente)

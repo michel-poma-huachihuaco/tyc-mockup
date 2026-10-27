@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Linaje de datos de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, linaje, g3]
 ---
@@ -109,14 +109,15 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): la consulta del cliente devuelve el `PartyID` (ED-05); Party del colaborador por el vínculo de la cuenta (ED-01); filas nuevas del interesado sin `PARTY` (ED-05) y del correo de asignación (ED-01, ED-03, ED-23); entrega del catálogo (ED-07); retención de la evidencia (ED-13); repositorios indexados y proveedor de vectores (ED-17, Q-053-1) |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): eventos de HU-037, 038, 048 y 053 y la indexación por significado marcados «fuera de la Etapa 1»; en la Etapa 1, 50 eventos o métricas en 57 historias |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: catálogo registrado como lo documenta PJ-05, sin «una sola vez» ni script de TI (O-08, O-09); plazo legal de 15 días hábiles improrrogables (O-01); purga del interesado (O-11). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: catálogo registrado como lo documenta PJ-05, sin «una sola vez» ni script de TI (O-08, O-09); plazo legal de 15 días hábiles improrrogables (O-01); purga del interesado (O-11). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-03, DT-06 y C-11). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (outbox de ADR-013 v0.3). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (outbox de ADR-013 v0.3). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-03, ED-05, ED-07, ED-13, ED-17 y ED-23 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01, O-08, O-09, O-11 y O-22). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-01, O-08, O-09, O-11 y O-22). — Revisado por: (pendiente)

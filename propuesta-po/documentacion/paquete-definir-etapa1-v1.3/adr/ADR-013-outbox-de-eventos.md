@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-013: Outbox transaccional para publicar eventos sin perderlos"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-005, ADR-010, ADR-012, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-013: Outbox transaccional para publicar eventos sin perderlos
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.8 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: decisión DT-02 del Líder Técnico (Jose Jara, 22-oct-2026): CQRS completo desde la Etapa 1, con el outbox construido en el servicio porque el SDK no lo trae; el proyector del servicio es el único que escribe en el almacén de lectura. Registrada en `analisis/decisiones.md`.
@@ -99,10 +99,11 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | Línea de conflicto abierto con el ADR-01 del PO |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Alineado con DT-02: publicador con ShedLock, entrega al menos una vez, condiciones para usar `INTG_OUTBOX_EVENT` o una tabla propia, umbrales propuestos. Los nombres de tópico quedan pendientes del formato del SDK |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | `INTG_OUTBOX_EVENT` verificada en el libro del v7: no sirve; `SVC_OUTBOX_EVENT` como cambio al v7 con sus columnas; horas (28 h con proyector y bus); los 5 tópicos con el formato del SDK `aybar.<fragmento>.<evento>` (estaba en `aybar-starter-messaging`), colas `.DLQ`, clave y cabeceras; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: la fila se marca publicada solo cuando el broker confirma (`CompletableFuture`), con reintento y `FAILED`; columna `UserAccountID` y cabeceras desde la fila por el MDC; clave del mensaje que cumple la regla del SDK con cualquier `TicketID` (ya no remite a P-032); capacidad del bus verificada en Microsoft Learn (10 event hubs por espacio de nombres Standard: espacio exclusivo de ATC por ambiente); una sola cifra de costo, con los 4 ambientes |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: la fila se marca publicada solo cuando el broker confirma (`CompletableFuture`), con reintento y `FAILED`; columna `UserAccountID` y cabeceras desde la fila por el MDC; clave del mensaje que cumple la regla del SDK con cualquier `TicketID` (ya no remite a P-032); capacidad del bus verificada en Microsoft Learn (10 event hubs por espacio de nombres Standard: espacio exclusivo de ATC por ambiente); una sola cifra de costo, con los 4 ambientes |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): las 28 h de outbox, publicador, proyector y bus son todo lo nuevo de DT-02 (brecha de 19 h, P-025 del coordinador); autenticación con Event Hubs por `SASL_SSL` y `PLAIN` con la cadena en Key Vault (ED-24); tabla y lista en el acta F4 (ED-23); umbral de antigüedad y dueño de dato decididos; supuestos del costo en ED-12 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las horas del punto 7 son las tareas DT02-T01 a T06 de la fundación, con su responsable, y la brecha se cubre con el alcance flexible del PO (5 HU, 16 h) y 3 h que absorbe el equipo; «Obliga a» y «Cuesta» ya no remiten la brecha al coordinador |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: tareas DT-02 con fechas en la iteración 1 y sobrecosto real de 7 h (O-05, O-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: tareas DT-02 con fechas en la iteración 1 y sobrecosto real de 7 h (O-05, O-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

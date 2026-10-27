@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Diagrama entidad-relación de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, er, g3]
 ---
@@ -214,12 +214,13 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | El outbox es `SVC_OUTBOX_EVENT` (ADR-013 v0.3 y v0.4) y se dibuja como cambio al v7 propuesto, con 4 relaciones y la columna `UserAccountID` (sin FK); las 9 tablas firmadas de ADR-002 |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): interesado «sin cliente vinculado» con `SVC_TICKET_PROSPECT` (ED-05); `PartyID` del colaborador por el vínculo de la cuenta (ED-01); outbox y columna `IntegrityHash` como cambios al v7 (ED-23); tablas nuevas remitidas al diccionario (ED-15, ED-16); diferencias con el PO en ED-19. El diagrama solo cambia la etiqueta del outbox |
-| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22); sin cambio del modelo. Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22); sin cambio del modelo. Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (outbox de ADR-013 v0.3 y tablas firmadas de ADR-002). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (outbox de ADR-013 v0.3 y tablas firmadas de ADR-002). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-05, ED-15, ED-16, ED-19 y ED-23 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-22). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-22). — Revisado por: (pendiente)

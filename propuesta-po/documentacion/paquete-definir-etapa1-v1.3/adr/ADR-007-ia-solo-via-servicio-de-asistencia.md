@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-007: IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-004, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-007: IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.8 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-07 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: proveedor con fecha (DEP-14), lista de campos que se anonimizan y `SVC_AI_SUGGESTION_LOG` como cambio al v7. Registrado en `analisis/decisiones.md`; el proveedor lo decide el equipo (DEP-14, ED-17). **Alcance en la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026):** HU-048 y HU-053, las dos historias que usan IA, salen de la Etapa 1 como alcance flexible del PO (R-01). Este ADR y su proveedor quedan decididos y **se usan cuando entren HU-048 y HU-053**; en la Etapa 1 no hay consumo de IA.
@@ -71,10 +71,11 @@ La IA solo se usa a través de un **servicio de asistencia** que anonimiza antes
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-07 |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Proveedor pendiente con su fecha requerida (DEP-14), lista de campos anonimizados (propuesta), `SVC_AI_SUGGESTION_LOG` como cambio al v7 con columnas propuestas |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Estado de DEP-14 al 26-oct; evidencia de RNF-SEC-009 en el Excel (hoja `03_RNF`, fila 30); costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: fecha de corte propuesta para DEP-14 (29-oct, control de alcance H-06) y su consecuencia: sin proveedor, HU-048 y HU-053 salen de la Etapa 1 por R-01; la deciden el PO y el Líder Técnico |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: fecha de corte propuesta para DEP-14 (29-oct, control de alcance H-06) y su consecuencia: sin proveedor, HU-048 y HU-053 salen de la Etapa 1 por R-01; la deciden el PO y el Líder Técnico |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): proveedor decidido, Azure OpenAI Service con `gpt-4o-mini` y `text-embedding-3-small` en despliegue estándar global, con precios de la API pública de Azure (ED-17); se retira el corte del 29-oct y HU-048 y HU-053 siguen en la Etapa 1 (P-020); la habilitación de TI y Seguridad es una aprobación, con el simulador mientras tanto; lista de campos anonimizados y Q-048-2 decididas; `SVC_AI_SUGGESTION_LOG` en el acta F4 (ED-23); costo USD 0,45 al mes en producción |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): HU-048 y HU-053 salen de la Etapa 1 (alcance flexible, R-01). El proveedor (ED-17) queda decidido, sin consumo en la Etapa 1, y se usa cuando entren HU-048 y HU-053; DEP-14 deja de aplicar en la Etapa 1; costo de IA en la Etapa 1: USD 0 (USD 0,45 al mes en PROD cuando entren); `SVC_AI_SUGGESTION_LOG` no se crea en la Etapa 1; tareas en `roadmap/alcance-diferido.md` |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: sin cambio de decisión. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: sin cambio de decisión. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

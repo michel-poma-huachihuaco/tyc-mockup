@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-004: Integraciones contract-first: adaptador + simulador; la API real se activa cuando existe"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-003, ADR-005, ADR-009, ADR-012, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-004: Integraciones contract-first: adaptador + simulador; la API real se activa cuando existe
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.8 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-04 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: reintento y circuit breaker con Resilience4j (BOM), token de servicio `client_credentials` (DT-10), y dueño y fecha de cada API externa. Registrado en `analisis/decisiones.md`, con las decisiones del equipo del 26-oct (ED-03, ED-05, ED-08, ED-17 y ED-24).
@@ -64,7 +64,7 @@ Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2
 
 **Qué pasa con la fecha vencida** (regla del PLT-01 §3 y del PLT-05 §2, con la decisión del equipo): la historia se construye y se prueba contra el simulador (punto 3), que no depende del externo, y su DoR registra la dependencia como riesgo aceptado con esa mitigación. La conexión a la API real es un cambio de adaptador y de configuración, sin cambiar el dominio. Cuando el responsable entregue su API, se anota en esta tabla y en el roadmap por control de cambio.
 
-**Simuladores por ambiente (decisión del equipo; revisión final del Líder Técnico, O-18).** El R-02 del PLT-01 condiciona «el pase a producción de cada integración» a su API real. Por eso: en local, DEV y QA cada adaptador puede correr con su simulador; en PRE (UAT), solo si el plan de UAT lo dice por integración, para que el PO decida el Go/No-Go con ese dato, como con Control de acceso (ADR-014, punto 8); y **en producción ningún adaptador corre con simulador**: una verificación al arrancar con el perfil `prod` (no con `preprod`) impide activar un simulador. Sin la API real, la sección de la consulta 360 degrada (ADR-003) o la funcionalidad que la necesita no pasa a producción (G8).
+**Simuladores por ambiente (decisión del equipo; revisión interna del equipo, O-18).** El R-02 del PLT-01 condiciona «el pase a producción de cada integración» a su API real. Por eso: en local, DEV y QA cada adaptador puede correr con su simulador; en PRE (UAT), solo si el plan de UAT lo dice por integración, para que el PO decida el Go/No-Go con ese dato, como con Control de acceso (ADR-014, punto 8); y **en producción ningún adaptador corre con simulador**: una verificación al arrancar con el perfil `prod` (no con `preprod`) impide activar un simulador. Sin la API real, la sección de la consulta 360 degrada (ADR-003) o la funcionalidad que la necesita no pasa a producción (G8).
 
 ## Consecuencias
 
@@ -92,10 +92,11 @@ Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2
 | 0.1 (v3 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-04 |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Resilience4j (reintento y circuit breaker) con el BOM, `client_credentials` (DT-10), tabla de dueño y fecha por API externa |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | DEP-15 en la tabla; DEP-16 con fecha requerida y sin la API de líderes como si existiera (P-035, P-040); variables del cliente de servicio; versión de Resilience4j del BOM; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: fuente RMP-001 v0.4 y `analisis-dependencias.md` v0.4; por dependencia, persona responsable (las que da el PLT-01: Rosario, José y Sony Montoya; las demás, «por confirmar» con quién la da), fecha comprometida por confirmar, historias que bloquea y qué pasa sin fecha; DEP-16 deja de ser «propuesta» y queda «Pendiente · en riesgo (P-040)» |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: fuente RMP-001 v0.4 y `analisis-dependencias.md` v0.4; por dependencia, persona responsable (las que da el PLT-01: Rosario, José y Sony Montoya; las demás, «por confirmar» con quién la da), fecha comprometida por confirmar, historias que bloquea y qué pasa sin fecha; DEP-16 deja de ser «propuesta» y queda «Pendiente · en riesgo (P-040)» |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6 y la fuente de la tabla de dependencias, RMP-001 v0.5 y `analisis-dependencias.md` v0.5 (24 HU con la DEP-16), las versiones vigentes (decían v0.5, v0.4 y v0.4). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): cada dependencia es un riesgo del roadmap con mitigación (R-02; DEP-16, R-11, ED-08), sin dejar persona ni fecha en duda; responsable = el del PLT-01; DEP-16 sin la API de líderes (ED-03; `GestoresPort` con la actividad de ATC); DEP-01 con el `PartyID` en su contrato (ED-05); DEP-14 con proveedor decidido (ED-17); valores de Resilience4j decididos; reintento dentro de HU-050; fuente RMP-001 v0.6 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): nota con el alcance de la Etapa 1 en la tabla de dependencias (la 053 sale de DEP-01, 06, 13 y 16; DEP-14 no aplica en la Etapa 1, porque HU-ATC-048 y 053 están fuera y la guía de HU-ATC-047 no usa IA) |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: «3 intentos (2 reintentos)» como dice `aybar-starter-logging` (O-24); DEP-16 con HU-049 (24 HU; 23 en la Etapa 1, O-16); simuladores por ambiente, ninguno en producción (O-18). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: «3 intentos (2 reintentos)» como dice `aybar-starter-logging` (O-24); DEP-16 con HU-049 (24 HU; 23 en la Etapa 1, O-16); simuladores por ambiente, ninguno en producción (O-18). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

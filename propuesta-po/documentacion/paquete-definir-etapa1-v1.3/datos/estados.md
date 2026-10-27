@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Estados y transiciones del ticket"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-002, ADR-005, ADR-008, SPEC-DATOS-ACTA-F4, SPEC-DATOS-DICCIONARIO]
 tags: [datos, estados, g3]
 ---
@@ -133,12 +133,13 @@ Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jes
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Frontmatter completo para el acta F4, de la que es evidencia: owner (Jesús Chávez Elías, autor de la versión base), aprobador (Líder Técnico, como el resto de `datos/`), versión, fecha, relacionados e historial. Los estados no cambian |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): salida de `ESCALATED` y validación de transiciones (ED-26); pausas en `SVC_TICKET_SLA_PAUSE` y cierre automático a los 5 días hábiles (ED-15); códigos del asiento, de la instancia de apelación y de los 8 cierres de casos sensibles, y plazos de la Mesa SGD (ED-26); retención de la evidencia del Libro (ED-13); interesado «sin cliente vinculado» (ED-05). Los estados del ticket no cambian |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): la regla de EntregaFest (HU-038) queda marcada «fuera de la Etapa 1» |
-| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: asiento con 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); purga de los datos mínimos del interesado (O-11); códigos del caso de resolución. Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: asiento con 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); purga de los datos mínimos del interesado (O-11); códigos del caso de resolución. Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
-Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión técnica interna del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-03, ED-05, ED-13, ED-15 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01 y O-11). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-01 y O-11). — Revisado por: (pendiente)

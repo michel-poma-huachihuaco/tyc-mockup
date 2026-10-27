@@ -109,4 +109,4 @@ Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Decisiones del equip
 
 Historial: 1.3.3 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el criterio 9 ya no remite el cierre de horas al coordinador. No se borra texto del PO. — Revisado por: (pendiente)
 
-Historial: 1.3.4 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: citas sin versión (la fija Nexora); DEP-16 en DEV, QA y PRE con el criterio de corte de la UAT (R-12). No se borra texto del PO. — Revisado por: (pendiente)
+Historial: 1.3.4 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo: citas sin versión (la fija Nexora); DEP-16 en DEV, QA y PRE con el criterio de corte de la UAT (R-12). No se borra texto del PO. — Revisado por: (pendiente)

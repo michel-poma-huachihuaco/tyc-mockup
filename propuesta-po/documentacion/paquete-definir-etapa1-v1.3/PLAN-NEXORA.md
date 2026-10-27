@@ -63,7 +63,7 @@ mismas versiones y huellas que ese sello.
 
 ## Por publicar (26-oct, tarde)
 
-Las correcciones del 26-oct por la tarde (revisiones del Líder Técnico y de coherencia, y el barrido final) son **locales**: 131 archivos
+Las correcciones del 26-oct por la tarde (revisiones internas técnica y de coherencia, y el barrido final) son **locales**: 131 archivos
 del paquete difieren de Nexora y 2 son nuevos (`analisis/proceso-atencion-prospectos.md` y `datos/registro-de-tablas.md`). Solo 44 siguen
 iguales: las 11 épicas, las 23 funcionalidades, 7 DoR en 1.3, la ficha de intake, la cobertura de requisitos y `estados-ticket.mmd`. Se
 publican como versiones nuevas, pendientes de aprobación, con el `dry_run` primero y la luz verde de Brayan; nadie las aprueba al publicarlas.
@@ -88,7 +88,7 @@ Faltan los pasos de personas: firmar «Revisado por», enviar los correos de `..
 Brayan publicó **102 versiones nuevas, 1 documento nuevo (`roadmap/alcance-diferido.md`) y 5 versiones «RETIRADO»**, todas
 pendientes de aprobación; 80 documentos ya estaban iguales. Antes se hizo el `dry_run` y se comprobó que nadie había publicado
 desde la exportación de la tarde: las 102 huellas de Nexora eran las de esa exportación. Incluye P-025 con la opción A, las
-decisiones del equipo (ED-01 a ED-28), las 14 ADR con «Revisado por» de Brayan y la revisión final con los criterios del Líder
+decisiones del equipo (ED-01 a ED-28), las 14 ADR con «Revisado por» de Brayan y la revisión interna del equipo con los criterios del Líder
 Técnico, verificada por un revisor independiente.
 
 | Carpeta | Versión nueva | Documento nuevo | Ya estaba igual |
@@ -119,13 +119,39 @@ Técnico, verificada por un revisor independiente.
   `hu-sin-tareas`), todas de los retirados; desaparecen cuando se borren. Esta carpeta da 0 errores y 0 advertencias.
 - **Carga de ítems** (`../nexora-items/`): 96 ítems con la columna `etapa`. La carga la hace el PO o el administrador.
 
+## Publicado el 27-oct: atribución de las revisiones del 26-oct
+
+Las dos revisiones del 26-oct que el paquete citaba como «del Líder Técnico» (los hallazgos de la tarde y las observaciones O-01
+a O-29 de la noche) fueron **revisiones internas del equipo**, hechas con IA con los criterios de la revisión del Líder Técnico
+del 22-oct. El 27-oct se corrigió la atribución en todo el paquete y en los correos (`analisis/decisiones.md`, nota del 27-oct);
+ninguna decisión cambia. De paso, la DEU-01 del acta F4 y de `arquitectura/migracion-y-reversion.md` toma la fecha y el dueño de
+ED-11 (a más tardar el 30-nov-2026; Brayan Hurtado), que antes decía 03-dic.
+
+Se publicó en dos tandas, cada una con `dry_run` primero y sin cambios ajenos (las huellas de Nexora eran las de la exportación
+del 26-oct por la noche y, en la segunda, las de la primera):
+
+- **78 versiones nuevas** con la atribución corregida (14 ADR, 5 de `analisis/`, 10 de `arquitectura/`, 7 de `datos/`, 23 DoR,
+  11 archivos de `backlog/tareas/`, 5 gates de `gates/AYB-0001/` y 3 de `roadmap/`).
+- **27 versiones nuevas** de los documentos que dicen «cada cambio de texto sube la versión»: versión y fecha subidas y una fila
+  de historial del 27-oct (14 ADR, 7 de `arquitectura/` y 6 de `datos/`).
+
+**Verificación:** se volvió a exportar Nexora: 183 documentos, todos pendientes; los 178 del paquete coinciden con esta carpeta
+y los 5 retirados no cambian. `docs-atiende/` se volvió a sellar (78 escritos, 105 iguales): 0 errores y las 6 advertencias de los
+retirados. Esta carpeta da 0 errores y 0 advertencias. La tabla del correo 2 (`../correos-revision-tl-26-oct.md`) tiene la versión
+y la huella de cada documento.
+
+**Firma del acta F4:** en Nexora, `datos/acta-validacion-arquitectura-datos.md` solo pide la firma del líder técnico; el Data
+Chief no figura como firmante. Se le pide al Líder Técnico en el correo 2 que el administrador lo agregue.
+
 ## Qué queda pendiente en Nexora (no lo resuelve el perfil desarrollador)
 
-Estado al 26-oct por la noche (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
+Estado al 27-oct (la lista del 20-oct decía que faltaban G2, G3 y G4 y que el resto de Jesús no se había tocado: ya no es así).
 
 - **Aprobar** las 62 historias, las 11 épicas y las 23 funcionalidades (el PO; 57, 10 y 22 en la Etapa 1), los 23 DoR (el líder técnico y el project manager),
   el análisis, el roadmap y el backlog (el PO), los ADR, la arquitectura y los datos (el líder técnico; el acta F4 la firma el Data
   Chief) y los gates (quien aprueba cada uno).
+- **Agregar al Data Chief como firmante del acta F4** (`datos/acta-validacion-arquitectura-datos.md`): hoy solo pide la firma del
+  líder técnico. Lo configura el administrador de Nexora, a pedido del Líder Técnico.
 - **Borrar el duplicado de Daniel**, `historias/HU-DOC-001 HU-ATC-001-registrar-tickets-multicanal-tipificados.md.md`. Desde
   el 26-oct tiene una versión «RETIRADO» que apunta a la HU vigente. Lo borra o lo rechaza el PO.
 - **Ítems y gates:** el proyecto tiene 0 ítems (ni ticket ni backlog; la carga está en `../nexora-items/`). Los 5 gates de

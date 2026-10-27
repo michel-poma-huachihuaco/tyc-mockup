@@ -122,7 +122,7 @@ Decididas por el equipo (Brayan Hurtado), 26-oct-2026, y propuestas al Líder T�
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-06; DT-03 y DT-06) y del paquete aprobado de Control de acceso (PJ-05). No cambia el plan del PO. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico (hallazgo 29) y de coherencia (hallazgo 9) del 26-oct. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica (hallazgo 29) y de coherencia (hallazgo 9) del 26-oct. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7, ED-09): fuera de la Etapa 1, propuesta para una etapa posterior. — Revisado por: (pendiente)
 

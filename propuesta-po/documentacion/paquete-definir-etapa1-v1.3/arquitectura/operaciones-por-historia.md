@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, api, g3]
 ---
@@ -16,9 +16,9 @@ tags: [arquitectura, api, g3]
 
 Los módulos van con su nombre en inglés (ADR-001) y son las etiquetas del contrato; HU-064 no tiene operaciones de código ni de sesión (DT-04). El contrato `aybar-atc.openapi.yaml` declara el permiso de cada operación (`x-permiso`; `roles-y-permisos-atc.md`).
 
-Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 26-oct-2026 (revisión final del Líder Técnico, O-02): todas las historias tienen al menos una operación. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
+Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 26-oct-2026 (revisión interna del equipo, O-02): todas las historias tienen al menos una operación. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
 
-Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-atc.openapi.yaml` (69 operaciones); **en la Etapa 1, las 57 historias, todas con `ui: true`, tienen operación**, con `x-roles` (o, en Mi Portal, `x-autorizacion`), `x-permiso` del catálogo y errores `AYB-<ÁREA>-<HTTP>` (lo comprueba el script de cruce de la entrega). Las 13 que antes no tenían API propia (eventos, jobs o adaptadores) siguen con su mecanismo, en la columna «Además», y suman la operación de lectura que su pantalla necesita (revisión final del Líder Técnico, O-02). HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 (P-025): sus 6 operaciones (`registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento`, `pedirSugerenciaIa`, `decidirSugerenciaIa` y `buscarDocumentos`) quedan en el contrato y no se construyen en la Etapa 1. Las tareas de `backlog/tareas/` nombran cada endpoint con su método, su ruta y su `operationId` del contrato.
+Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-atc.openapi.yaml` (69 operaciones); **en la Etapa 1, las 57 historias, todas con `ui: true`, tienen operación**, con `x-roles` (o, en Mi Portal, `x-autorizacion`), `x-permiso` del catálogo y errores `AYB-<ÁREA>-<HTTP>` (lo comprueba el script de cruce de la entrega). Las 13 que antes no tenían API propia (eventos, jobs o adaptadores) siguen con su mecanismo, en la columna «Además», y suman la operación de lectura que su pantalla necesita (revisión interna del equipo, O-02). HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 (P-025): sus 6 operaciones (`registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento`, `pedirSugerenciaIa`, `decidirSugerenciaIa` y `buscarDocumentos`) quedan en el contrato y no se construyen en la Etapa 1. Las tareas de `backlog/tareas/` nombran cada endpoint con su método, su ruta y su `operationId` del contrato.
 
 | Historia | Título | Módulo | Operación (`operationId`) | Estado | Además |
 |---|---|---|---|---|---|
@@ -112,7 +112,8 @@ Lo que cada operación necesita de Control de acceso tiene una decisión del equ
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el contrato se cita en su versión vigente, `0.5.0-borrador` (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: la tabla de lo que falta de Control de acceso pasa a «decisiones del equipo que aplican» (ED-01 a ED-05 y ED-08); prospectos fuera de la Etapa 1 (ED-09); contrato `0.6.0-borrador` |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): HU-ATC-037, 038, 039, 048 y 053 fuera de la Etapa 1; sus 6 operaciones siguen en el contrato y no se construyen en la Etapa 1; en la Etapa 1, 44 historias con operación y 13 sin API propia |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico (O-02): tabla regenerada desde el contrato 0.7.0-borrador, con método, ruta y `operationId`; las 57 historias de la Etapa 1 tienen operación (antes 13 no la tenían: 015, 019, 029, 031, 032, 040, 041, 042, 046, 055, 056, 057 y 058), y su mecanismo de evento, job o adaptador queda en «Además»; Mi Portal por cuenta `CUSTOMER` activa (O-07); prospectos con el tipo «Validación de identidad (prospecto)» en la Etapa 1 (decisión del coordinador, C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo (O-02): tabla regenerada desde el contrato 0.7.0-borrador, con método, ruta y `operationId`; las 57 historias de la Etapa 1 tienen operación (antes 13 no la tenían: 015, 019, 029, 031, 032, 040, 041, 042, 046, 055, 056, 057 y 058), y su mecanismo de evento, job o adaptador queda en «Además»; Mi Portal por cuenta `CUSTOMER` activa (O-07); prospectos con el tipo «Validación de identidad (prospecto)» en la Etapa 1 (decisión del coordinador, C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 
@@ -120,10 +121,10 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (C-06, C-07, C-11 y C-12) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 26-oct (hallazgo 15): nombres de evento con el formato de tópico del SDK. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de la revisión técnica interna del 26-oct (hallazgo 15): nombres de evento con el formato de tópico del SDK. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01 a ED-06, ED-08 y ED-09 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); operaciones de las 5 HU fuera de la Etapa 1. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-02 y O-07) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-02 y O-07) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)

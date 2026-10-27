@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-003, ADR-009, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-011: Mi Portal: el cliente entra con el login de clientes de Control de acceso
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: decisión DT-04 del Líder Técnico (Jose Jara, 22-oct-2026) y colisión C-05 de su revisión, registradas en `analisis/decisiones.md`, con las decisiones del equipo del 26-oct (ED-01, ED-05 y ED-26). **Sustituye a la v0.1** («DNI + código de un solo uso propio»): ATC ya no emite códigos ni abre sesiones.
@@ -82,9 +82,10 @@ Mi Portal (HU-064, 065 y 066) deja al cliente consultar y responder sus tickets;
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Reglas HU-064 a 066 y mockup de Mi Portal |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Reescrito con DT-04: login de clientes de Control de acceso, sin sesiones ni códigos propios. El nombre del archivo conserva «dni-codigo» para publicarse como versión nueva |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Referencias a PJ-05 verificadas: el token no trae `PartyID` y el diseño del filtro queda para P-033; rol `CUSTOMER` en la cuenta por DNI (P-033); sin `PROSPECT` en Mi Portal (D-62); ATC no crea la `PARTY` de quien no existe (R29); evidencia de RN-SVC-044 en los PDF del PO; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: contrato de Mi Portal con esquemas propios (decisión 8): identidad solo del token, rechazo de cualquier campo de más en el cuerpo, lo que fija el servidor y lo que devuelve, reclamo o queja con `AYB-PTL-422`; lo que ve el cliente se cita por los criterios HU-064 CA-02 y HU-065 CA-03 y CA-04; contrato 0.5.0-borrador; nota sobre el nombre del archivo |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: contrato de Mi Portal con esquemas propios (decisión 8): identidad solo del token, rechazo de cualquier campo de más en el cuerpo, lo que fija el servidor y lo que devuelve, reclamo o queja con `AYB-PTL-422`; lo que ve el cliente se cita por los criterios HU-064 CA-02 y HU-065 CA-03 y CA-04; contrato 0.5.0-borrador; nota sobre el nombre del archivo |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): el `PartyID` y el tipo de cuenta del cliente salen del vínculo `IDN_USER_ACCOUNT` por `CuentaPersonaPort` (ED-01); Mi Portal acepta la cuenta o el rol `CUSTOMER` y rechaza `PROSPECT`; ya no hay historias bloqueadas por P-033; interesado «sin cliente vinculado» (ED-05); adjuntos, 5 días hábiles, prioridad Media y nombre del área como decisiones (ED-26); tipos y subtipos de Mi Portal sin Visita técnica (Q-064-1); HU-064 CA-01 como diferencia listada en ED-19; DEP-16 riesgo aceptado (ED-08) |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: una sola regla para Mi Portal, cuenta de tipo `CUSTOMER` activa sin exigir rol, igual en el contrato, el catálogo y `seguridad.md` (O-07); adjuntos máximo 3 por envío (O-15); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga el dueño de la tabla (O-03). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: una sola regla para Mi Portal, cuenta de tipo `CUSTOMER` activa sin exigir rol, igual en el contrato, el catálogo y `seguridad.md` (O-07); adjuntos máximo 3 por envío (O-15); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga el dueño de la tabla (O-03). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

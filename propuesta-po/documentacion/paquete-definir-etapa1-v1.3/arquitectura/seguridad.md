@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Seguridad: autenticación, autorización, datos sensibles y secretos"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-002, ADR-003, ADR-004, ADR-006, ADR-007, ADR-009, ADR-010, ADR-011, ADR-014]
 tags: [arquitectura, seguridad, g3]
 ---
@@ -109,11 +109,12 @@ Todas son decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Lí
 | 0.1 (v3 en Nexora) | 2026-10-21 | Brayan, con IA | Fila de autenticación de gestores |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Autenticación y autorización de Control de acceso (DT-03, DT-04, DT-05); Azure y Key Vault (DT-07); errores (DT-09); `client_credentials` (DT-10); catálogo de roles; correo de asignación sin maestro local; pendientes |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Verificado contra el paquete aprobado de PJ-05: el token no trae `PartyID` ni permisos (autorización por rol con `x-roles`, S-1 y S-3; P-033, P-034); la audiencia la validan API Management y el SDK, con `AYBAR_JWT_AUDIENCE` como lista (P-038); registro de clientes OAuth y `CATALOG_REGISTRAR` (C-09; P-039); aislamiento por empresa según el origen del rol (C-08; D-178) y por área (S-4; P-036); sin API de líderes con token de servicio (P-035); errores de negocio por área (C-10); intentos denegados, logs y auditoría técnica; pendientes con dueño |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: aviso ⚠ con los 7 archivos de PJ-05 que no coinciden con el sello; alcance de empresa calculado por operación con los roles que la autorizan (sin escalar con un rol global y otro por empresa); Mi Portal con identidad solo del token y esquemas propios; WebSocket del visor autenticado en el *handshake* y fuera de API Management (verificado en Microsoft Learn); intentos denegados con `AuthorizationEventPublisher` y desde el caso de uso; roles de base y Flyway; usuarios del almacén de lectura; la visibilidad del cliente citada por sus criterios |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: aviso ⚠ con los 7 archivos de PJ-05 que no coinciden con el sello; alcance de empresa calculado por operación con los roles que la autorizan (sin escalar con un rol global y otro por empresa); Mi Portal con identidad solo del token y esquemas propios; WebSocket del visor autenticado en el *handshake* y fuera de API Management (verificado en Microsoft Learn); intentos denegados con `AuthorizationEventPublisher` y desde el caso de uso; roles de base y Flyway; usuarios del almacén de lectura; la visibilidad del cliente citada por sus criterios |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: `PartyID` por `CuentaPersonaPort` sobre `IDN_USER_ACCOUNT` y Mi Portal con cuenta `CUSTOMER` (ED-01); autorización por rol (ED-02); gestores, líder y avisos por rol (ED-03); áreas (ED-04); interesado en `SVC_TICKET_PROSPECT` (ED-05); `aud` = `aybar-atc` (ED-06); catálogo en dos lotes (ED-07); DEP-16 como riesgo con mitigación (ED-08); retención de 2 años por la norma (ED-13); proveedor de IA (ED-17); Event Hubs con SASL (ED-24). «Pendientes de seguridad» pasa a «Decisiones del equipo que aplica este documento» |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el proveedor de IA (ED-17) queda decidido y sin consumo en la Etapa 1, porque HU-ATC-048 y 053 están fuera; sus reglas de anonimización y de búsqueda con permisos se aplican cuando entren |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: catálogo registrado como lo documenta PJ-05, sin «una sola vez» ni script de TI, todo inactivo, aprobación fila por fila y lo posterior en una nueva solicitud (O-08, O-09); Mi Portal con una sola regla, cuenta de tipo `CUSTOMER` activa sin rol (O-07); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso (O-03); plazo legal de 15 días hábiles improrrogables (Ley 31435; ED-28; O-01); adjuntos máximo 3 por envío (O-15); `/ws/visor` como divergencia declarada (O-12). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: catálogo registrado como lo documenta PJ-05, sin «una sola vez» ni script de TI, todo inactivo, aprobación fila por fila y lo posterior en una nueva solicitud (O-08, O-09); Mi Portal con una sola regla, cuenta de tipo `CUSTOMER` activa sin rol (O-07); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso (O-03); plazo legal de 15 días hábiles improrrogables (Ley 31435; ED-28; O-01); adjuntos máximo 3 por envío (O-15); `/ws/visor` como divergencia declarada (O-12). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente) · Aprueba: TL
 
@@ -121,4 +122,4 @@ Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): decisiones
 
 Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); proveedor de IA sin consumo en la Etapa 1. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01, O-03, O-07, O-08, O-09, O-12, O-15 y O-22). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-01, O-03, O-07, O-08, O-09, O-12, O-15 y O-22). — Revisado por: (pendiente)

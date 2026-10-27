@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-004, ADR-005, ADR-006, ADR-009, ADR-011, ADR-012]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-003: El dato del cliente no se copia: PARTY es la fuente viva, con consulta 360 federada y degradación por fuente
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.8 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-03 del PLT-05 v1.3, con la decisión DT-06 del Líder Técnico (Jose Jara, 22-oct-2026): las tablas de ATC van en la base única del v7 con FK físicas y **`PARTY` es la fuente viva del cliente, no una copia**. Registrada en `analisis/decisiones.md`. Cierra P-010 en lo técnico; el interesado sin `PARTY` y la relación con SIGDA/TAXON los decide el equipo (P-037 y P-027, ED-05).
@@ -45,7 +45,7 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
    - los **datos mínimos** del interesado (tipo y número de documento, nombre, teléfono y correo) van a `SVC_TICKET_PROSPECT`, tabla de ATC 1:1 con el ticket (cambio al v7 del fragmento SERVICE, en el acta F4), clasificada como dato personal (Ley 29733) y visible solo para los roles de atención;
    - la `PARTY` la crea **Control de acceso** cuando la persona se autorregistra (R29) o llega por la carga de personas (D-60);
    - entonces el job de vinculación (ADR-005, cada 5 min) consulta al cliente por el documento con el puerto de la consulta del cliente (punto 3), completa el `PartyID`, deja el cambio en la bitácora (HU-051 CA-02 y CA-03) y **borra en la misma transacción** la fila de datos mínimos. Guardarlos solo hasta la vinculación es lo mínimo que pide el criterio (principio de proporcionalidad);
-   - **si nunca se vincula, la fila se purga** (decisión del equipo, revisión final del Líder Técnico, O-11): a los **30 días hábiles del cierre del ticket**, o a los **2 años del registro** si el ticket tiene asiento en el Libro de Reclamaciones, la misma retención de la hoja (punto 6). La borra un job diario (ADR-005) y la vigila la regla de calidad Q-012 del acta F4. Así `SVC_TICKET_PROSPECT` no queda como un registro paralelo sin plazo; el ticket conserva su historia y queda «sin cliente vinculado».
+   - **si nunca se vincula, la fila se purga** (decisión del equipo, revisión interna del equipo, O-11): a los **30 días hábiles del cierre del ticket**, o a los **2 años del registro** si el ticket tiene asiento en el Libro de Reclamaciones, la misma retención de la hoja (punto 6). La borra un job diario (ADR-005) y la vigila la regla de calidad Q-012 del acta F4. Así `SVC_TICKET_PROSPECT` no queda como un registro paralelo sin plazo; el ticket conserva su historia y queda «sin cliente vinculado».
 3. **Consulta 360 federada en línea** para lo que `PARTY` no tiene (contratos, cobranza, documentos), con **caché corta** y **degradación por fuente**: si una fuente falla, la consulta responde con el resto y el ticket sigue (ticket mínimo y reintento de vinculación, RF-051). **Relación de `PARTY` con SIGDA/TAXON (ED-05):** el contrato de la consulta del cliente que define ATC (ADR-004) devuelve, junto con los datos de pantalla, el `PartyID` de la base única; lo implementa el adaptador de la DEP-01 y, mientras no esté, su simulador.
 4. **Dato sensible:** llega por la consulta en línea con los permisos del origen (RNF-SEC-010) y, cuando exista, enmascarado desde su dueño según `MAE_FIELD_MASKING_POLICY`, que publica Control de acceso (D-119 de PJ-05, de su Etapa 2); el acceso excepcional pasa por `IDN_SENSITIVE_ACCESS_REQUEST`, también de Control de acceso.
 5. **El almacén de lectura** guarda lo de ATC, no el dato del cliente (ADR-012).
@@ -79,10 +79,11 @@ Sugerencia del equipo (no es parte de los PLT): que el módulo Clientes reemplac
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | Línea de conflicto abierto por la FK a `PARTY` |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Alineado con DT-06: `PARTY` fuente viva, `PARTY` no verificada para el interesado, excepción de la hoja del Libro por validar con Legal |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Verificado contra PJ-05: ATC no crea la `PARTY` (R29, A26) ni la lee por JOIN (D-119); el interesado queda con vinculación pendiente: su `PARTY` la autorregistra Control de acceso o la crea la vía que defina P-037; excepción de la hoja del Libro como documento probatorio, con Legal (DEP-05); evidencia de RNF-SEC-010; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: qué datos lleva la hoja se cita en la DEP-05 y la retención en P-007; `SVC_SEARCH_INDEX` es una colección del almacén de lectura (ADR-012), no una tabla ni un cambio al v7; fuente del costo en la v0.4 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: qué datos lleva la hoja se cita en la DEP-05 y la retención en P-007; `SVC_SEARCH_INDEX` es una colección del almacén de lectura (ADR-012), no una tabla ni un cambio al v7; fuente del costo en la v0.4 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): interesado «sin cliente vinculado» con sus datos mínimos en `SVC_TICKET_PROSPECT`, que se borran al vincular cuando Control de acceso crea su `PARTY` (ED-05); la consulta del cliente devuelve el `PartyID` (relación con SIGDA/TAXON); sin JOIN a las tablas de personas; hoja del Libro con el Anexo I del Reglamento y 2 años de retención (ED-13); caché dentro de HU-050; diferencias con el PO en ED-19 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_TICKET_PROSPECT` y su borrado se hacen en HU-ATC-051-T01 con las horas del PLT-04; lo que exceda es parte del riesgo aceptado (la v0.5 lo dejaba pendiente de P-025) |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: purga de `SVC_TICKET_PROSPECT` a los 30 días hábiles del cierre o a los 2 años si hay asiento del Libro (O-11); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga el dueño de la tabla y se pide en el correo de solicitud (O-03). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: purga de `SVC_TICKET_PROSPECT` a los 30 días hábiles del cierre o a los 2 años si hay asiento del Libro (O-11); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga el dueño de la tabla y se pide en el correo de solicitud (O-03). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

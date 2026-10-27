@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-008: Motor de flujos configurable por tipo + subtipo + área, versionado; el ticket congela su versión"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-005, ADR-009, ADR-012, ADR-013]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-008: Motor de flujos configurable por tipo + subtipo + área, versionado; el ticket congela su versión
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-08 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: las tablas de flujo, subtipo y versión como **cambio formal al v7** (P-016) y cerrar las combinaciones tipo · subtipo · área del piloto (P-017). Registrado en `analisis/decisiones.md`; el catálogo y las tablas los decide el equipo (ED-14 y ED-15), con la decisión del coordinador del 26-oct sobre C-06.
@@ -56,7 +56,7 @@ Reglas que el mockup ya prueba:
 | `SVC_TICKET_SLA_PAUSE` | Pausas del SLA (desde, hasta, motivo) y su efecto en la actividad en curso (regla 6) | No existe |
 | Columna `AutoCloseBusinessDays` en `MAE_SLA_POLICY` | Días hábiles de espera antes del cierre automático (HU-066 CA-04); valor inicial 5; el ticket la congela con su política | `MAE_SLA_POLICY` no la trae; el v7 solo permite agregar columnas |
 
-**Combinaciones del piloto (P-017): catálogo decidido por el equipo (ED-14).** El Líder Técnico pidió cerrarlas. Este es el **catálogo del piloto**, una lista cerrada que sale de cuatro fuentes. Los flujos del PO: los cuatro de su prototipo y el del CA-01 de la HU-043 (PLT-04). Los subtipos reales que el equipo registró el 20-oct, tomados del catálogo de la plataforma actual (respuesta 1 de `DECISIONES.md` §5.9). Los tipos de ticket que crean los formularios de HU-059 y HU-060 (revisión final del Líder Técnico, O-13). Y el tipo «Validación de identidad (prospecto)», por decisión del coordinador del 26-oct (C-06). Los códigos de tipos y subtipos están en `datos/diccionario.md` («Catálogo del piloto»). El SLA de cada actividad está en horas hábiles; el del flujo es la suma, salvo que la política del tipo sea menor (regla 3).
+**Combinaciones del piloto (P-017): catálogo decidido por el equipo (ED-14).** El Líder Técnico pidió cerrarlas. Este es el **catálogo del piloto**, una lista cerrada que sale de cuatro fuentes. Los flujos del PO: los cuatro de su prototipo y el del CA-01 de la HU-043 (PLT-04). Los subtipos reales que el equipo registró el 20-oct, tomados del catálogo de la plataforma actual (respuesta 1 de `DECISIONES.md` §5.9). Los tipos de ticket que crean los formularios de HU-059 y HU-060 (revisión interna del equipo, O-13). Y el tipo «Validación de identidad (prospecto)», por decisión del coordinador del 26-oct (C-06). Los códigos de tipos y subtipos están en `datos/diccionario.md` («Catálogo del piloto»). El SLA de cada actividad está en horas hábiles; el del flujo es la suma, salvo que la política del tipo sea menor (regla 3).
 
 | # | Tipo | Subtipo | Área | Actividades en orden (SLA en horas hábiles) | SLA del flujo | Origen |
 |---|---|---|---|---|---|---|
@@ -109,9 +109,10 @@ Reglas que el mockup ya prueba:
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Reglas 1 a 5 atribuidas a HU-043 y HU-044 |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Tablas de flujo, subtipo, versión y pausa como cambio formal al v7 (propuesta de entidades); combinaciones del piloto siguen abiertas para el PO (P-017); RN-SVC-045 sustituida por su criterio de origen |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | RN-SVC-045 se conserva, con su evidencia en los PDF del PO (P-030); permiso de publicación del catálogo de ATC; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: lista cerrada de 9 combinaciones tipo · subtipo · área con sus actividades y SLA, sacada de los flujos del PO (prototipo y HU-043 CA-01) y de los subtipos reales registrados el 20-oct, como propuesta para que el PO la confirme (P-017); flujo por defecto de cada área (propuesta); condición explícita sobre la HU-043; la clave única se cita por HU-043 CA-06 y no por el código de regla que falta en el Excel |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: lista cerrada de 9 combinaciones tipo · subtipo · área con sus actividades y SLA, sacada de los flujos del PO (prototipo y HU-043 CA-01) y de los subtipos reales registrados el 20-oct, como propuesta para que el PO la confirme (P-017); flujo por defecto de cada área (propuesta); condición explícita sobre la HU-043; la clave única se cita por HU-043 CA-06 y no por el código de regla que falta en el Excel |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): las 9 combinaciones son el catálogo del piloto, con responsables por cola y rol sin personas y publicación de `ATC_ADMIN_FUNCIONAL` sin aprobación (ED-14); tablas del flujo con `SVC_TICKET_ACTIVITY` y `AutoCloseBusinessDays` (ED-15); se quita la condición del PO; ticket que cambia de área y lugar del subtipo decididos; «Registro y acceso de clientes» para una etapa posterior (ED-09); regla 6 como decisión |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct y decisión del coordinador: combinaciones 10 y 11, «Ingreso a proyecto» y «Reserva de bus» de HU-059 y HU-060 (O-13), y 12 a 15, «Validación de identidad (prospecto)» con 4 subtipos en la cola `ATC` (C-06); el catálogo pasa a 9 tipos y 15 combinaciones. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct y decisión del coordinador: combinaciones 10 y 11, «Ingreso a proyecto» y «Reserva de bus» de HU-059 y HU-060 (O-13), y 12 a 15, «Validación de identidad (prospecto)» con 4 subtipos en la cola `ATC` (C-06); el catálogo pasa a 9 tipos y 15 combinaciones. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

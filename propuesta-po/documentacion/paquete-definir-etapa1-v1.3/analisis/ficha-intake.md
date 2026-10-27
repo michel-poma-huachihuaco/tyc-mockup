@@ -41,4 +41,4 @@ Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de
 
 Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 en 10 épicas, 22 funcionalidades y 57 historias (227 h de historias más 28 h técnicas de DT-02); EP-ATC-08 y el proveedor de IA sin uso en la Etapa 1. Tipo T3 sin cambio. — Revisado por: (pendiente)
 
-Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: P-025 como recorte del R-01 del PO, retiro de HU-DOC-001 con una versión «RETIRADO» (ED-21) y citas sin versión. — Revisado por: (pendiente)
+Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo: P-025 como recorte del R-01 del PO, retiro de HU-DOC-001 con una versión «RETIRADO» (ED-21) y citas sin versión. — Revisado por: (pendiente)

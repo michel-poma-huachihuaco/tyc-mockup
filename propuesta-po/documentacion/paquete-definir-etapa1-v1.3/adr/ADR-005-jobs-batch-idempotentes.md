@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-004, ADR-008, ADR-009, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-005: Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY y ShedLock
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-05 del PLT-05 v1.3, con la decisión DT-08 del Líder Técnico (Jose Jara, 22-oct-2026): tareas programadas con ShedLock sobre PostgreSQL, como las de Control de acceso (D-90 de PJ-05). Registrada en `analisis/decisiones.md`. Cierra P-006.
@@ -119,9 +119,10 @@ Contraste del 20-oct-2026 con las 62 historias de Nexora: además de HU-010 y HU
 | 0.1 (v5 en Nexora) | 2026-10-21 | Brayan, con IA | Título completo del ADR-05 y clave única de la alerta (RN-SVC-008) |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Escrito con DT-08: ShedLock, idempotencia, fuente de lectura, reintento, alerta ante fallo y frecuencias por job (propuesta) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Destinatarios y severidad de la alerta (antes «por definir»); jobs del publicador y la purga del outbox y de la verificación del hash; `GestoresPort` para HU-046 y HU-055 (P-035); tópicos con el formato del SDK; ShedLock con versión fija; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: HU-046 es del orquestador, no un job; la columna «Mecanismo» queda como decisión del ADR (sin «el arquitecto decide»); `CalendarioPort` con simulador mientras `MAE_TIME` y `MAE_HOLIDAY` no existan en la base única (P-043, DEP-04); dueño de dato remitido al registro; fuente del costo en la v0.4 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: HU-046 es del orquestador, no un job; la columna «Mecanismo» queda como decisión del ADR (sin «el arquitecto decide»); `CalendarioPort` con simulador mientras `MAE_TIME` y `MAE_HOLIDAY` no existan en la base única (P-043, DEP-04); dueño de dato remitido al registro; fuente del costo en la v0.4 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): frecuencias, reintento y destinatarios de la alerta como decisión; calendario del Equipo Datos con el script sintético en local y DEV y el calendario configurado mientras falten las tablas (ED-11); HU-046 con `GestoresPort` «actividad de ATC» y carga por puntos (ED-03, Q-046-1); HU-055 con aviso al rol (ED-03); job de vinculación con `SVC_TICKET_PROSPECT` (ED-05); cierre automático con `AutoCloseBusinessDays` (ED-15); umbrales de escalamiento de la Mesa (FT-09); plazo de HU-058 (Q-058-3); horas dentro de HU-003 y del ADR-05 del PO; supuestos del costo en ED-12 |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: plazo legal de 15 días hábiles improrrogables (Ley 31435, verificada en El Peruano y en el texto del Congreso; ED-28; O-01), sin descontar la suspensión del art. 6-A.2 b) del reglamento; calendario configurado y versionado, firmado por la Gerencia de ATC, como término único (O-17); «3 intentos (2 reintentos)» (O-24); candidatos de HU-046 con cuenta `EMPLOYEE` activa (O-10); job de purga de `SVC_TICKET_PROSPECT` (O-11). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: plazo legal de 15 días hábiles improrrogables (Ley 31435, verificada en El Peruano y en el texto del Congreso; ED-28; O-01), sin descontar la suspensión del art. 6-A.2 b) del reglamento; calendario configurado y versionado, firmado por la Gerencia de ATC, como término único (O-17); «3 intentos (2 reintentos)» (O-24); candidatos de HU-046 con cuenta `EMPLOYEE` activa (O-10); job de purga de `SVC_TICKET_PROSPECT` (O-11). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v5 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

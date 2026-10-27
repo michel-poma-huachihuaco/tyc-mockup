@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Trazabilidad de las historias de Nexora al paquete G3"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, trazabilidad, g3]
 ---
@@ -29,7 +29,7 @@ Contraste del 20-oct-2026 entre las **62 historias publicadas en PJ-06** (carpet
 | Reglas de seguridad y de contenido, y tiempos de respuesta | `arquitectura/seguridad.md` |
 | Preguntas de las historias (58 en 25 historias y 23 de las funcionalidades), con su decisión del equipo (ED-26), y decisiones D-008, P-018 y P-019 | `analisis/decisiones.md` |
 | Requisitos no funcionales con umbral (31) y estado de DoR de las 23 funcionalidades | esta página |
-| 69 operaciones de API en el contrato al 26-oct (59 antes de la revisión final del Líder Técnico; la versión vigente está en su cabecera), con campos y errores de los criterios; las 57 historias de la Etapa 1 tienen al menos una (O-02) | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
+| 69 operaciones de API en el contrato al 26-oct (59 antes de la revisión interna del equipo; la versión vigente está en su cabecera), con campos y errores de los criterios; las 57 historias de la Etapa 1 tienen al menos una (O-02) | `arquitectura/aybar-atc.openapi.yaml` y `operaciones-por-historia.md` |
 
 Lectura de la tabla: «Contrato» son los `operationId` del OpenAPI (o el mecanismo si la historia no tiene API propia); «Datos» son tablas y columnas del v7 o la falta de ellas; «Cómo se cierra» es la decisión del equipo (26-oct; `analisis/decisiones.md`) para lo que faltaba cerrar en G3. Las historias que antes no tenían API propia dicen en «Contrato» la operación de lectura de su pantalla y, «además», su evento, job o adaptador. Una historia con «Sin tabla en el v7» usa una tabla de ATC del fragmento SERVICE, como cambio al v7 en el acta F4, lista para la firma del Data Chief (ED-15, ED-23).
 
@@ -184,7 +184,8 @@ No es una historia del PLT-04 v1.3. **Decisión del coordinador del 26-oct:** lo
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Eventos con el formato de tópico del SDK de ADR-013 v0.3 y outbox `SVC_OUTBOX_EVENT`; la DEP-16 de FT-20 suma HU-049 (P-034); el número de operaciones sin versión fija del contrato |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: la columna «Falta o por confirmar» de las 62 historias pasa a «Cómo se cierra» con su decisión (ED-01 a ED-26 y respuestas Q-xxx); umbrales de RNF-REN-003 e IGDC decididos; columna de decisión en el estado de DoR; prospectos fuera de la Etapa 1 (ED-09) |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): nota del alcance de la Etapa 1 (57 de las 62 historias); HU-037, 038, 039, 048 y 053, FT-15 y sus RNF marcados «fuera de la Etapa 1»; FT-19 sin consumo de IA ni DEP-14 en la Etapa 1 |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: columna «Contrato» de las 62 historias desde el contrato 0.7.0-borrador (69 operaciones; las 13 historias que no tenían API propia suman su operación de lectura y conservan su mecanismo; O-02); HU-013 con 15 días hábiles improrrogables (Ley 31435; ED-28; O-01); adjuntos máximo 3 por envío (O-15); `SVC_TICKET_PROSPECT` con purga y `PARALLEL_RECORD` (HU-032); Mi Portal por cuenta `CUSTOMER` activa (O-07); tipo de ticket «Validación de identidad (prospecto)» en la Etapa 1 (decisión del coordinador, C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: columna «Contrato» de las 62 historias desde el contrato 0.7.0-borrador (69 operaciones; las 13 historias que no tenían API propia suman su operación de lectura y conservan su mecanismo; O-02); HU-013 con 15 días hábiles improrrogables (Ley 31435; ED-28; O-01); adjuntos máximo 3 por envío (O-15); `SVC_TICKET_PROSPECT` con purga y `PARALLEL_RECORD` (HU-032); Mi Portal por cuenta `CUSTOMER` activa (O-07); tipo de ticket «Validación de identidad (prospecto)» en la Etapa 1 (decisión del coordinador, C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: columnas y listas que ya da el Excel, conflictos abiertos señalados y sin referencias a versiones anteriores. — Revisado por: (pendiente)
 
@@ -192,10 +193,10 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-06, C-11 y C-12) y de las dependencias de las historias. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgo 15 de la técnica; DEP-16 de HU-049). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (hallazgo 15 de la técnica; DEP-16 de HU-049). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): decisiones del equipo de `analisis/decisiones.md` v0.7 en cada historia y en las condiciones de DoR. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); historias fuera de la Etapa 1 marcadas. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01, O-02, O-07 y O-15) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-01, O-02, O-07 y O-15) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)

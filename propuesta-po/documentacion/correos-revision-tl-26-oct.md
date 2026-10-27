@@ -1,12 +1,12 @@
-# Correos para cerrar la segunda revisión del Líder Técnico (26-oct-2026)
+# Correos para pedir la nueva revisión del Líder Técnico (26 y 27-oct-2026)
 
 Borradores listos para enviar. **No se envió ninguno.** Los envía Brayan Hurtado. Todas las referencias (ED, P, DEP, R) están en
 `paquete-definir-etapa1-v1.3/analisis/decisiones.md` (0.9). El correo de formalización de G3 no va aquí: lo envía el Líder Técnico
 al aprobar (revisión del 22-oct, §4).
 
-Orden: (1) publicar en Nexora con `dry_run` primero; (2) completar la tabla del correo 2 con la versión y la huella que devuelva
-Nexora y enviarlo; (3) enviar el 1, el 3, el 4 y el 5 el mismo día y anotar la hora del 1 en `decisiones.md`, sección «Entregables
-de Control de acceso para ATC».
+Estado al 27-oct: todo está publicado en Nexora, pendiente de firma, y la tabla del correo 2 tiene la versión y la huella que
+devolvió Nexora. Orden: enviar el 1 y el 2 el mismo día (el 2 dice que el 1 salió hoy); después el 3, el 4 y el 5; anotar la hora
+del 1 en `decisiones.md`, sección «Entregables de Control de acceso para ATC».
 
 ---
 
@@ -44,7 +44,7 @@ Para tu información, estas son las decisiones de ATC (ED-01 a ED-09). Si no hay
 - ED-05: ATC no crea `PARTY`; el interesado queda «sin cliente vinculado» hasta que se autorregistra.
 - ED-06: `aud` = `aybar-atc`.
 - ED-07: catálogo en los lotes del ADR-021 (punto 1).
-- ED-08: mientras tanto, emisor de pruebas en local y DEV.
+- ED-08: mientras tanto, emisor de pruebas en local, DEV y QA; en PRE, solo con el criterio de corte de la UAT; en producción, nunca.
 - ED-09: los casos de identidad de prospectos entran como ticket «Validación de identidad (prospecto)» en la cola `ATC` y se
   resuelven en la consola de Control de acceso (valida `PROSPECT_VALIDATOR`; suspende `IT_ADMIN`).
 
@@ -56,41 +56,75 @@ Brayan
 
 ## 2. A Jose Jara (Líder Técnico) · copia: Eddie Huamaní, Jesús Chávez, Michel Poma, Daniel David Lorenzo Ramos
 
-**Asunto:** ATC (PJ-06): segunda revisión corregida y publicada en Nexora
+**Asunto:** ATC (PJ-06): correcciones a su revisión del 22-oct, publicadas en Nexora para su revisión
 
 Hola, Jose:
 
-Publicamos en Nexora, pendientes de firma, las versiones que corrigen su revisión del 26-oct:
+Publicamos en Nexora (PJ-06, apartado Tiketes) las versiones que corrigen su revisión del 22-oct. Todas están pendientes de su
+firma; ninguna está aprobada.
 
-| Documento | Local | Nexora (versión · huella) |
-|---|---|---|
-| `analisis/decisiones.md` | 0.9 | [al publicar] |
-| `adr/ADR-001` a `ADR-014` | [al publicar] | [al publicar] |
-| `arquitectura/aybar-atc.openapi.yaml` | `0.7.0-borrador` | [al publicar] |
-| `arquitectura/` y `datos/` (acta F4 y registro de tablas) | [al publicar] | [al publicar] |
-| `gates/AYB-0001/G3.md` y `G4.md` | 0.8 | [al publicar] |
-| `roadmap/RMP-001-roadmap-aybar-atiende.md` y `roadmap/alcance-diferido.md` | 0.8 y 0.2 | [al publicar] |
-| `historias/HU-ATC-013-…`, 23 DoR y `backlog/tareas/` | 1.3.1, 1.3.3 a 1.3.5 | [al publicar] |
-| «RETIRADO» de `gates/G0.md`, `G1.md`, `G3.md`, `G4.md` y `historias/HU-DOC-001 …md.md` | 0.2 (id cambiado) | [al publicar] |
+| Documento | Nexora (versión · huella) |
+|---|---|
+| `analisis/decisiones.md` | v9 · `81ed2e4807db` |
+| `adr/ADR-001` | v9 · `dbcfe28f8bc6` |
+| `adr/ADR-002` | v9 · `1c7da938d901` |
+| `adr/ADR-003` | v9 · `421b79732887` |
+| `adr/ADR-004` | v8 · `96eeaba8eaa8` |
+| `adr/ADR-005` | v10 · `66f86838446a` |
+| `adr/ADR-006` | v9 · `1795ccef9aea` |
+| `adr/ADR-007` | v9 · `535d42b00118` |
+| `adr/ADR-008` | v10 · `c4af203a1800` |
+| `adr/ADR-009` | v9 · `823ceba1a296` |
+| `adr/ADR-010` | v8 · `abf679378025` |
+| `adr/ADR-011` | v10 · `8210f5824e9c` |
+| `adr/ADR-012` | v9 · `56089302232c` |
+| `adr/ADR-013` | v9 · `b3c0e288ae17` |
+| `adr/ADR-014` | v9 · `c5a216ae44f2` |
+| `arquitectura/aybar-atc.openapi.yaml` | v9 · `f54e485e77e9` |
+| `arquitectura/seguridad.md` | v8 · `c75658c09729` |
+| `arquitectura/roles-y-permisos-atc.md` (C-02) | v5 · `c31483aa108c` |
+| `arquitectura/diagrama-arquitectura.md` | v8 · `7a4c0a6e2be8` |
+| `arquitectura/costo-cloud.md` | v6 · `50572c27de45` |
+| `arquitectura/migracion-y-reversion.md` | v6 · `bbae33b87c44` |
+| `datos/acta-validacion-arquitectura-datos.md` (acta F4) | v11 · `39e973e9ada4` |
+| `datos/registro-de-tablas.md` (C-11) | v4 · `662c14dc32ff` |
+| `gates/AYB-0001/G3.md` | v5 · `3bd7775de9e6` |
+| `gates/AYB-0001/G4.md` | v5 · `6e2e955d4a94` |
+| `roadmap/RMP-001-roadmap-aybar-atiende.md` (DEP-16, C-12) | v7 · `038d0558d3df` |
+| `roadmap/alcance-diferido.md` | v2 · `d1f6951b005d` |
+| 23 DoR y 11 archivos de `backlog/tareas/` | v4 a v6 |
+
+La huella es el comienzo del sha256; la completa está en el índice de Nexora.
+
+**Cómo lo revisamos.** Antes de enviárselo hicimos dos revisiones internas del equipo (26-oct), con IA y con los criterios de su
+revisión: una técnica y otra de coherencia. Los documentos las citan como «revisión interna del equipo», y a sus observaciones
+como O-01 a O-29: no son suyas. Lo único suyo es la revisión del 22-oct, con DT-01 a DT-10.
 
 Lo principal:
 
-- **Decisiones:** el equipo decidió ED-01 a ED-28 y se las propone; ninguna cambia una DT. Se apartan de lo que usted pidió: ED-01
+- **Sus decisiones:** DT-01 a DT-10 registradas con su nombre y fecha; ADR-005, 009, 011, 012, 013 y 014 reescritos y las
+  condiciones de los demás aplicadas. Las 14 ADR tienen «Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026».
+- **Decisiones del equipo:** ED-01 a ED-28 se las proponemos; ninguna cambia una DT. Se apartan de lo que usted pidió: ED-01
   (leemos `IDN_USER_ACCOUNT`; el permiso se pide a su dueño), ED-02 (por rol, no por permiso), ED-03 (gestores desde la bitácora de
   ATC), ED-05 (no se crea `PARTY`) y ED-13 (la norma en lugar de Legal).
-- **Plazo del Libro (O-01):** la Ley 31435 fija 15 días hábiles improrrogables (verificado en El Peruano y en el Archivo Digital del
+- **Plazo del Libro:** la Ley 31435 fija 15 días hábiles improrrogables (verificado en El Peruano y en el Archivo Digital del
   Congreso). La prórroga de HU-013 queda deshabilitada por parámetro, con una nota en la historia (ED-28).
 - **Prospectos (C-06):** entra en la Etapa 1 el tipo «Validación de identidad (prospecto)» con 4 subtipos, sin HU ni horas (ED-09).
-- **Contrato (O-02):** 10 operaciones nuevas (69; 63 en la Etapa 1): las 57 HU de la Etapa 1 tienen operación.
-- **UAT (O-04):** si Control de acceso no está en PRE el 02-nov a mediodía, la UAT corre con el emisor de pruebas en PRE y el PO
-  decide el Go/No-Go (R-12).
-- **P-025 (O-05):** 28 h técnicas (DT02-T01 a T06: Brayan 9, Jesús 4, Michel 9 y Daniel 6); salen HU-037, 038, 039, 048 y 053
-  (16 h), el R-01 del PO, que puede revertirlo. Etapa 1: 57 HU, 227 h + 28 h = 255 h. **Sobrecosto real: 7 h** sobre 252 h de
-  capacidad (con las 4 h de la reestimación de ADR-009), no 3 h; el PO lo acepta al firmar G4.
-- **Duplicados:** publicamos versiones «RETIRADO» (id cambiado) de los 4 gates sueltos y de `HU-DOC-001`; el borrado lo hace el PO o
-  el administrador.
-- **«Revisado por»:** las 14 ADR lo tienen; faltan 145 documentos y las 308 tareas.
+- **Contrato:** 69 operaciones (63 en la Etapa 1): las 57 HU de la Etapa 1 tienen operación.
+- **Control de acceso (C-12):** hoy pedimos a Sony Montoya los entregables de la DEP-16, con usted en copia. Si Control de acceso no
+  está en PRE el 02-nov a mediodía, la UAT corre con el emisor de pruebas en PRE y el PO decide el Go/No-Go (R-12).
+- **Horas (P-025):** 28 h técnicas de DT-02 (DT02-T01 a T06: Brayan 9, Jesús 4, Michel 9 y Daniel 6); salen HU-037, 038, 039, 048
+  y 053 (16 h), el R-01 del PO, que puede revertirlo. Etapa 1: 57 HU, 227 h + 28 h = 255 h. **Sobrecosto real: 7 h** sobre 252 h de
+  capacidad (con las 4 h de la reestimación de ADR-009); el PO lo acepta al firmar G4.
+- **Duplicados en Nexora:** los 4 gates sueltos y `HU-DOC-001` tienen una versión «RETIRADO»; le pedimos a Eddie que los borre.
 - Diferencias con el PO: ED-19. RN-SVC-044 y 045 se citan por su criterio de origen (ED-18).
+
+Le pedimos dos cosas:
+
+1. **Firma del Data Chief en el acta F4.** En Nexora, `datos/acta-validacion-arquitectura-datos.md` solo pide la firma del Líder
+   Técnico. Para que Enrique Albán emita el acta (§4 de su revisión), ¿puede pedir al administrador de Nexora que lo agregue como
+   firmante? Nuestro perfil no configura firmas.
+2. **Lo que quedó de su lado el 22-oct:** la dispensa M0 con el Data Chief y el correo de formalización del G3.
 
 Gracias.
 
@@ -159,6 +193,8 @@ Hola, Enrique:
   30-nov (ED-11).
 - **Decididas:** dueño de migración (P-043, ED-11) y tipos y largos (P-015, ED-16).
 - **Dispensa M0:** la pidió el Líder Técnico el 22-oct; las 14 ADR dicen «requiere dispensa (solicitada)».
+- **Firma en Nexora:** hoy el acta solo pide la firma del Líder Técnico. Le pedimos a Jose que el administrador de Nexora lo agregue
+  a usted como firmante; si al entrar no ve la opción de firmar, es por eso.
 
 Gracias.
 
@@ -168,10 +204,10 @@ Brayan
 
 ## Lo que tiene que hacer Brayan
 
-- Publicar en Nexora con `dry_run` primero (`PLAN-NEXORA.md`), incluidas las 5 versiones «RETIRADO»; fijar la versión y la huella en
-  G3 §3, G4 §3.1 y la tabla del correo 2, y enviarlo.
-- Enviar el 1, el 3, el 4 y el 5; anotar la hora del 1 en `decisiones.md`.
+- Hecho: publicado en Nexora (26-oct por la noche y 27-oct, `PLAN-NEXORA.md`), con la tabla del correo 2 completa.
+- Enviar el 1 y el 2 el mismo día, y después el 3, el 4 y el 5; anotar la hora del 1 en `decisiones.md`.
 - «Revisado por»: las 14 ADR ya lo tienen; faltan 145 documentos y las 308 tareas. Lo pone quien lea cada uno; se propone a Jesús
   como segundo revisor de lo que escribió Brayan.
 
-Historial: 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Rehechos tras la segunda revisión del Líder Técnico: horas de P-025 (28 h, opción A, sobrecosto real de 7 h), todas las P como decisiones del equipo, permiso sobre `IDN_USER_ACCOUNT`, Ley 31435, tipo de ticket de prospectos, criterio de la UAT, Daniel Lorenzo en copia y aviso de publicación con lo publicado.
+Historial: 0.3 · 2026-10-27 · Brayan Hurtado, con IA · Correo 2 rehecho: corrige la revisión del 22-oct (las del 26-oct fueron internas del equipo), tabla con la versión y la huella de Nexora y pedido de la firma del Data Chief en el acta; correo 5 con el aviso de la firma.
+0.2 · 2026-10-26 · Brayan Hurtado, con IA · Rehechos tras la revisión interna del equipo: horas de P-025 (28 h, opción A, sobrecosto real de 7 h), todas las P como decisiones del equipo, permiso sobre `IDN_USER_ACCOUNT`, Ley 31435, tipo de ticket de prospectos, criterio de la UAT, Daniel Lorenzo en copia y aviso de publicación con lo publicado.

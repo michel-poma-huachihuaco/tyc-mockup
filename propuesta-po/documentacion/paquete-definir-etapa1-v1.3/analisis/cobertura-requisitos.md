@@ -204,7 +204,7 @@ No tienen identificador del Excel.
 | 0.2 | 2026-10-21 | Brayan (Dev 1), con IA | Pasa al Excel (3) con la división por etapas: cuenta solo los RF y RNF de la Etapa 1 y dice cuántos quedan fuera. Suma la medida por funcionalidad (PLT-03) a la de historias. Añade la prioridad del PLT-03, RN-SVC-044 y 045, y quita la nota de las «15 historias» en Nexora (hoy están las 62) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: las capas de feedback del Excel cuentan como origen (D-004); los 19 RNF sin cita en historias se verifican en el plan de pruebas (P-012); historias listas para la firma del PO. Owner: Brayan Hurtado (Dev 1). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): RF-SVC-037, 038, 039, 048 y 053 «Cubierto · fuera de la Etapa 1»; 57 RF se construyen en la Etapa 1; RNF-REN-006 y RNF-SEC-009 sin uso en la Etapa 1. La cobertura no cambia |
-| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: RF-SVC-013 cubierto en el plazo de 15 días hábiles, sin la prórroga (Ley 31435, ED-28); citas sin versión |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: RF-SVC-013 cubierto en el plazo de 15 días hábiles, sin la prórroga (Ley 31435, ED-28); citas sin versión |
 
 Generado por IA: borrador completo. Versión base de Nexora (v1, de Jesús, 19-oct), actualizada a la v1.3 del PO (Etapa 1) y al Excel (3) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (los requisitos que el Excel deja fuera de la Etapa 1 se cuentan, no se listan). — Revisado por: (pendiente)
 

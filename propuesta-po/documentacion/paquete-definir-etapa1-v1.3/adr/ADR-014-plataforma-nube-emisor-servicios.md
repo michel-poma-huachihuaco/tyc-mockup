@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-014: Plataforma: Azure, emisor de tokens de Control de acceso y servicios gestionados"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-004, ADR-005, ADR-006, ADR-009, ADR-010, ADR-011, ADR-012, ADR-013]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-014: Plataforma: Azure, emisor de tokens de Control de acceso y servicios gestionados
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.8 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: decisiones DT-01, DT-05, DT-07, DT-08 y DT-10 del Líder Técnico (Jose Jara, 22-oct-2026) y colisiones C-03, C-09 y C-12 de su revisión, registradas en `analisis/decisiones.md`, con las decisiones del equipo del 26-oct (ED-01, ED-03, ED-06, ED-07, ED-08, ED-12 y ED-24). Sustituye a la v0.1 (19-oct), que dejaba sin decidir la nube y el emisor y daba por inexistente a Control de acceso: el servicio está en construcción en `aybar-access-control` y su paquete (PJ-05) está aprobado en Nexora.
@@ -109,10 +109,11 @@ Además:
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | Línea de conflicto abierto con el PO v1.3 |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Reescrito con DT-05, DT-07, DT-08 y DT-10 del Líder Técnico. Quita «POR DECIDIR» y «access-control no existe» |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Referencias a PJ-05 verificadas en su paquete aprobado; la audiencia la validan API Management y el SDK (P-038); el token no trae `PartyID` (P-033); sin API de líderes con token de servicio (P-035); secretos con identidad administrada; logs y auditoría técnica; tabla de ambientes; registro en Control de acceso (C-09, P-039); diferencias de los servicios gestionados; costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: ambientes como el PLT-05 §4.2 (QA para E2E y PRE para la UAT del 03-nov, que entra en la Etapa 1); costo base con PRE, USD 2.592,53; verificados en Microsoft Learn el WebSocket de API Management (no en consumo), el límite de Event Hubs Standard (10 por espacio de nombres) y los usuarios secundarios de Azure DocumentDB (permisos de clúster), con su efecto en el diseño; Key Vault con las cadenas nuevas; job de migraciones; aviso ⚠ con los 7 archivos de PJ-05 |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: ambientes como el PLT-05 §4.2 (QA para E2E y PRE para la UAT del 03-nov, que entra en la Etapa 1); costo base con PRE, USD 2.592,53; verificados en Microsoft Learn el WebSocket de API Management (no en consumo), el límite de Event Hubs Standard (10 por espacio de nombres) y los usuarios secundarios de Azure DocumentDB (permisos de clúster), con su efecto en el diseño; Key Vault con las cadenas nuevas; job de migraciones; aviso ⚠ con los 7 archivos de PJ-05 |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): `AYBAR_JWT_AUDIENCE=aybar-atc` (ED-06); `PartyID` del cliente por `CuentaPersonaPort` (ED-01); gestores y líderes con la solución interina de ADR-009 (ED-03); DEV con Control de acceso cuando esté y el emisor de pruebas mientras tanto (DEP-16, R-11, ED-08); catálogo en los lotes del ADR-021 (ED-07); SASL con Event Hubs decidido (ED-24); reparto de lo compartido decidido (todo a ATC como cota superior, ED-12); costo de la IA (ED-17); diferencias con el PO en ED-19 |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): el proveedor de IA queda decidido (ED-17) y sin consumo en la Etapa 1 (HU-ATC-048 y 053 fuera): USD 0 en la Etapa 1 y USD 0,45 al mes en producción cuando entren; los totales no cambian |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: criterio de corte de la UAT en PRE (emisor de pruebas de PJ-05 si Control de acceso no está el 02-nov a mediodía; Go/No-Go del PO; O-04); registro del catálogo sin plan B (O-08); `/ws/visor` como divergencia (O-12). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: criterio de corte de la UAT en PRE (emisor de pruebas de PJ-05 si Control de acceso no está el 02-nov a mediodía; Go/No-Go del PO; O-04); registro del catálogo sin plan B (O-08); `/ws/visor` como divergencia (O-12). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

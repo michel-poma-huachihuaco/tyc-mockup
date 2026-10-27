@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-002: Bitácoras append-only con IntegrityHash HMAC-SHA256"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-005, ADR-006, ADR-012, ADR-013, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -15,7 +15,7 @@ tags: [adr, arquitectura, g3]
 # ADR-002: Bitácoras append-only con IntegrityHash HMAC-SHA256
 
 - Estado: propuesto
-- Ticket: AYB-0001 · Versión 0.6 · Fecha: 2026-10-26 (historial al final)
+- Ticket: AYB-0001 · Versión 0.7 · Fecha: 2026-10-27 (historial al final)
 - Owner: Jesús Chávez Elías (Dev 2) · Aprueba: Líder Técnico (`aprobadores: [tech_lead]`) · Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026
 - Compatibilidad con M0 (Arquitectura de Directorio): **requiere dispensa (solicitada)**. El Líder Técnico la pidió a Enrique Albán (Data Chief) el 22-oct-2026; M0 no está en el repositorio ni en Nexora. La dispensa es una firma, no una condición del contenido (P-005, ED-25).
 - Origen: convierte a la plantilla del marco el ADR-02 del PLT-05 v1.3. Incorpora las condiciones de la revisión del Líder Técnico del 22-oct-2026: llave en Key Vault con política de rotación (DT-07), receta del hash por tabla según el v7, hash encadenado, y solo inserción garantizada por la base. Registrado en `analisis/decisiones.md`. El encadenado es condición del Líder Técnico y queda como decisión del equipo (P-007, ED-13).
@@ -100,9 +100,10 @@ Los cambios de estado y las asignaciones de un ticket son evidencia ante INDECOP
 | 0.1 (v4 en Nexora) | 2026-10-21 | Brayan, con IA | 5 bitácoras firmadas según RNF-AUD-004 |
 | 0.2 | 2026-10-22 | Jesús Chávez Elías, con IA | Condiciones del Líder Técnico: llave en Key Vault con rotación, receta por tabla (pendiente de transcribir del v7), hash encadenado por entidad, trigger que rechaza `UPDATE`/`DELETE` y usuario de aplicación sin ser dueño |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Tablas firmadas según el libro del v7 (4) más las 5 de RNF-AUD-004; receta por tabla: la de `SVC_TICKET` del v7 y las de las bitácoras como cambio al v7; formato de la versión de la llave y lectura de versiones anteriores (P-032); costo con número y fuente |
-| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: receta completa de las 9 tablas, sin columnas sin nombre, con reglas comunes de serialización (fecha de `CreatedDate`, texto y documentos por SHA-256); dueño y momento para contrastar con la literal del v7 (P-015); `SELECT … FOR UPDATE` sobre la fila padre para que la cadena no se bifurque; ancla del final de la cadena (estado firmado de la entidad y punto de control diario en Blob Storage); `IntegrityHash` sin cambio de formato (la verificación prueba las versiones de la llave); roles de base de ADR-001; dueño de dato remitido al registro; costo de los 4 ambientes |
+| 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: receta completa de las 9 tablas, sin columnas sin nombre, con reglas comunes de serialización (fecha de `CreatedDate`, texto y documentos por SHA-256); dueño y momento para contrastar con la literal del v7 (P-015); `SELECT … FOR UPDATE` sobre la fila padre para que la cadena no se bifurque; ancla del final de la cadena (estado firmado de la entidad y punto de control diario en Blob Storage); `IntegrityHash` sin cambio de formato (la verificación prueba las versiones de la llave); roles de base de ADR-001; dueño de dato remitido al registro; costo de los 4 ambientes |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de decisión): el origen cita `analisis/decisiones.md` v0.6, la versión vigente (decía v0.5). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo del 26-oct (`analisis/decisiones.md` v0.7): encadenado como decisión (ED-13); las recetas de las 3 entidades del v7 que no son `SVC_TICKET` son las de este ADR, sin contraste pendiente (ED-16); `IntegrityHash` `varchar(64)`; autor por `CuentaPersonaPort` (ED-01); rotación anual decidida; lectura de versiones de la llave (ED-24); columna nueva en el acta F4 (ED-23); horas dentro de HU-004, 006 y 012; supuestos del costo en ED-12 |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: sin cambio de decisión. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: sin cambio de decisión. Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

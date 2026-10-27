@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Registro de tablas de ATC en la base única: qué crea, qué lee y qué escribe en otro dominio"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: [tech_lead, data_chief]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-003, ADR-005, ADR-008, ADR-009, ADR-013, SPEC-DATOS-DICCIONARIO, SPEC-DATOS-ACTA-F4, SPEC-ARQ-MIGRACION]
 tags: [datos, base-unica, gobierno-de-datos, f4, g3]
 ---
@@ -206,14 +206,15 @@ Riesgo: igual que en PJ-05 (su R-03), ATC carga con tablas de otros dominios has
 | 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Dueño de dato propuesto como rol (Gerente de ATC), no como área ni módulo. Columna «Firmada» con las 9 tablas de ADR-002 (4 del v7 y 5 bitácoras). `SVC_COMPLAINT_BOOK_ENTRY` sin datos personales en columnas (la hoja va al almacén de evidencia, ADR-003 punto 6). `SVC_SEARCH_INDEX` sale de los cambios al v7: es una colección del almacén de lectura (ADR-012 v0.4). `SVC_OUTBOX_EVENT` con `UserAccountID` (ADR-013 v0.4). Tabla de historial de Flyway propia de ATC (`flyway_schema_history_atc`, línea base 0, roles `app_atc_migracion` y `app_atc_servicio`, job aparte; sección 3.1, ADR-001 v0.4) |
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): dueño de migración decidido (ED-11, §6), con script de datos sintéticos fuera de Flyway en local y DEV y FK diferida en QA, PRE y producción; lectura por columna de `IDN_USER_ACCOUNT` (ED-01, §4 y §8); `SVC_TICKET_PROSPECT` (ED-05), `SVC_TICKET_ACTIVITY` y `AutoCloseBusinessDays` (ED-15), `SVC_NOTIFICATION_LOG` y listas nuevas (ED-23, ED-26) en §3; sin las candidatas `EVT_*` y `NEX_NOTIFICATION_LOG`; `MAE_AREA` sin correspondencia en la Etapa 1 y sin la columna de área organizacional (ED-04, §7); recetas de ADR-002 (ED-16) |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_AI_SUGGESTION_LOG` (HU-048) y el caso sensible del evento (HU-037 a 039) siguen documentados como cambio al v7 y no se crean en la Etapa 1; la búsqueda vectorial de HU-053 se activa cuando entre |
-| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: §4.1 con los permisos sobre tablas de otro dueño como entregables, el `SELECT` por columna sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso y se pide en el correo de solicitud (O-03); purga de `SVC_TICKET_PROSPECT` (O-11); calendario configurado y versionado, no simulador (O-17); FK diferida como deuda DEU-01 (O-27); HU-043 CA-02 y CA-06 en lugar de RN-SVC-045 (O-28); fila de 5 celdas corregida (O-29); `PARALLEL_RECORD`, listas `SVC_DEFAULT_CASE_STATUS` y `SVC_DELIVERY_STATUS` y semilla del catálogo del piloto con «Validación de identidad (prospecto)» (C-06). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: §4.1 con los permisos sobre tablas de otro dueño como entregables, el `SELECT` por columna sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso y se pide en el correo de solicitud (O-03); purga de `SVC_TICKET_PROSPECT` (O-11); calendario configurado y versionado, no simulador (O-17); FK diferida como deuda DEU-01 (O-27); HU-043 CA-02 y CA-06 en lugar de RN-SVC-045 (O-28); fila de 5 celdas corregida (O-29); `PARALLEL_RECORD`, listas `SVC_DEFAULT_CASE_STATUS` y `SVC_DELIVERY_STATUS` y semilla del catálogo del piloto con «Validación de identidad (prospecto)» (C-06). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-07 y C-11; DT-03, DT-04 y DT-06), el diccionario de datos de ATC y el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgos 5, 16, 17, 18 y 31 de la técnica). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (hallazgos 5, 16, 17, 18 y 31 de la técnica). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-04, ED-05, ED-11, ED-15, ED-16, ED-23 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); tablas que no se crean en la Etapa 1. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-03, O-11, O-17, O-22, O-27, O-28 y O-29) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-03, O-11, O-17, O-22, O-27, O-28 y O-29) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)

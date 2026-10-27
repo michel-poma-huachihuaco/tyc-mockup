@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Estrategia de migración y reversión, con el registro de tablas de ATC"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-005, ADR-009, ADR-012, ADR-013, ADR-014, SPEC-DATOS-REGISTRO-TABLAS]
 tags: [arquitectura, migracion, g3]
 ---
@@ -41,7 +41,7 @@ ATC no crea ni migra tablas de identidad, roles, permisos ni sesiones: son de Co
 
 **Orden de despliegue (ED-11).** Con FK físicas, la primera migración de ATC (`SVC_TICKET`, tarea HU-ATC-001-T02) referencia `ORG_COMPANY`, `ORG_COMPANY_ADDRESS`, `PARTY`, `CONTRACT`, `AST_UNIT`, `MAE_CHANNEL`, `MAE_BUSINESS_LINE`, `ORG_PRODUCT`, `MAE_GENERIC_LIST` y `MAE_GENERIC_LIST_VALUE` (registro §4). Las que crea Control de acceso llegan con su despliegue; `ORG_COMPANY_ADDRESS`, `ORG_PRODUCT` y `GOV_DOCUMENT_REPOSITORY` las crea ATC como custodio, tal como están en el v7, antes de `SVC_TICKET`; `CONTRACT` y `AST_UNIT` son del dueño del fragmento CONTRACT (DEP-07), y `MAE_TIME` y `MAE_HOLIDAY`, del Equipo Datos (DEP-04).
 - **Local y DEV:** si una tabla ajena no existe, la crea un **script de datos sintéticos de ATC fuera de Flyway**, tal como está en el v7; no es una migración ni llega a QA. No hay scripts de datos sintéticos del v7 para esas tablas: PJ-05 trae solo sus semillas y su juego sintético de personas, y la plantilla de ATC solo `V1__init.sql`. Las migraciones de ATC corren con línea base 0 sobre su propio historial y no dependen del de otros.
-- **QA, PRE y producción:** mientras una tabla ajena no exista en el ambiente, la columna de ATC que la referencia se crea sin `REFERENCES` y la FK llega en una migración posterior (*expand → contract*), como hizo PJ-05 con `CompanyAreaID` (D-193). Es la deuda **DEU-01** del acta F4: se cierra cuando el dueño crea la tabla y la regla Q-013 da 0, con revisión en G9. `CalendarioPort` usa el **calendario configurado y versionado** (feriados nacionales de Perú, que firma la Gerencia de ATC) mientras falten `MAE_TIME` y `MAE_HOLIDAY` en el ambiente (ADR-005; deuda DEU-02).
+- **QA, PRE y producción:** mientras una tabla ajena no exista en el ambiente, la columna de ATC que la referencia se crea sin `REFERENCES` y la FK llega en una migración posterior (*expand → contract*), como hizo PJ-05 con `CompanyAreaID` (D-193). Es la deuda **DEU-01** del acta F4: se cierra cuando el dueño crea la tabla y la regla Q-013 da 0; se revisa en el Go/No-Go del 03-nov y se cierra a más tardar el 30-nov-2026 (ED-11). `CalendarioPort` usa el **calendario configurado y versionado** (feriados nacionales de Perú, que firma la Gerencia de ATC) mientras falten `MAE_TIME` y `MAE_HOLIDAY` en el ambiente (ADR-005; deuda DEU-02).
 
 ### 2.1 Lo que se retira
 
@@ -98,16 +98,17 @@ Decisiones del equipo (Brayan Hurtado), 26-oct-2026, propuestas al Líder Técni
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: dueño de migración y orden de despliegue (ED-11: custodia de ATC, script de datos sintéticos fuera de Flyway en local y DEV, línea base 0 y FK diferida en QA, PRE y producción); `SELECT` por columna sobre `IDN_USER_ACCOUNT` (ED-01); `SVC_TICKET_PROSPECT` y su borrado al vincular (ED-05); tablas del flujo (ED-15); re-proyección dentro de las 28 h nuevas de ADR-012 v0.5. «Pendientes» pasa a «Decisiones del equipo que aplica este documento» |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las horas del proyector y la re-proyección son tareas técnicas de la fundación (DT02-T05 y DT02-T06); `SVC_AI_SUGGESTION_LOG` y la tabla del caso sensible del evento no se crean en la Etapa 1 |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: FK diferida como deuda DEU-01 y calendario configurado y versionado, no simulador (DEU-02) (O-17, O-27); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso, dueño de la tabla, como entregable de la DEP-16 (O-03); catálogo inactivo hasta la aprobación fila por fila (O-08); 15 combinaciones del piloto con «Validación de identidad (prospecto)» (C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: FK diferida como deuda DEU-01 y calendario configurado y versionado, no simulador (DEU-02) (O-17, O-27); el `SELECT` sobre `IDN_USER_ACCOUNT` lo otorga Control de acceso, dueño de la tabla, como entregable de la DEP-16 (O-03); catálogo inactivo hasta la aprobación fila por fila (O-08); 15 combinaciones del piloto con «Validación de identidad (prospecto)» (C-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.8 | 2026-10-27 | Brayan Hurtado, con IA | DEU-01 con la fecha de ED-11 (se revisa en el Go/No-Go del 03-nov; a más tardar el 30-nov-2026); las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v1 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct. — Revisado por: (pendiente) · Aprueba: TL
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (§4, «Migración y reversión»; C-01 y C-11). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (hallazgos 4, 5, 8, 11 y 12 de la técnica; 6 de la de coherencia). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (hallazgos 4, 5, 8, 11 y 12 de la técnica; 6 de la de coherencia). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): decisiones del equipo ED-01, ED-05, ED-11, ED-12 y ED-15 de `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-03, O-08, O-17, O-22 y O-27) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.7) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-03, O-08, O-17, O-22 y O-27) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)

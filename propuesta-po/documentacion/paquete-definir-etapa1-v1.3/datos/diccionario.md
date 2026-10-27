@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Diccionario de datos de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.6"
+version: "0.7"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-26"
+fecha: "2026-10-27"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, diccionario, g3]
 ---
@@ -336,7 +336,7 @@ Rama `feature/AYB-0001-propuesta-po-v1-3` de `tyc-mockup` (20-oct-2026). **Son d
 | Acceso a Mi Portal con DNI y código de 6 dígitos que vence a los 5 minutos y admite 3 intentos (lo fija el PO, PLT-03 FT-24), enviado al correo o al celular (HU-064 CA-01; enviarlo a los dos es propuesta del mockup); abrir un ticket ajeno se rechaza y queda en la bitácora (HU-065 CA-04) | Sin tabla en ATC | **Se retira (DT-04):** el login de clientes, la verificación y la sesión son de Control de acceso; ATC no guarda códigos ni sesiones (C-11). La diferencia con HU-064 CA-01 está listada en ED-19. El rechazo del ticket ajeno sigue en la bitácora de ATC, con el cliente autenticado (ED-01) |
 | Cierre automático sin confirmación del cliente a los días hábiles configurados (lo fija el PO, HU-066 CA-04); que sean 5, configurables por el administrador funcional, es propuesta del mockup | Sin tabla de configuración | Columna `AutoCloseBusinessDays` de `MAE_SLA_POLICY`, valor inicial 5 (ED-15) |
 | Encuesta con CSAT (1 a 5) y CES (1 a 7), sin la pregunta NPS 0–10; informes diario (cierre a las 18:00) y quincenal generados al cierre (HU-019, HU-031) | Encuesta: calza con `SVY_SURVEY_RESPONSE`. Informes: candidatas `KPI_SNAPSHOT` y `SVY_METRIC_SNAPSHOT` | La encuesta va a `SVY_SURVEY_RESPONSE`, que migra el dueño del KPI Engine (DEP-10; ED-11); los informes diario y quincenal son vistas del almacén de lectura de ATC (ADR-012), no tablas |
-| Adjuntos de hasta 10 MB (lo fija el PO: HU-064 CA-05 y el requisito de fotos de FT-10); inspección de garantía con informe y fotos o documentos JPG, PNG o PDF; el PO no fija cuántos: el mockup proponía de 1 a 5 en la inspección y hasta 3 en Mi Portal (HU-035, HU-064 CA-05) | Candidata `GOV_DOCUMENT_REPOSITORY` (catálogo de documentos con versión, checksum y retención) | Límite único (revisión final del Líder Técnico, O-15): JPG, PNG o PDF de hasta 10 MB por archivo (HU-064 CA-05) y **máximo 3 por envío**, en la consola, en Mi Portal y en la inspección (ED-26; parámetro configurable). Espejo en `GOV_DOCUMENT_REPOSITORY`, que ATC migra como custodio (ED-11), para lo probatorio (ADR-006) |
+| Adjuntos de hasta 10 MB (lo fija el PO: HU-064 CA-05 y el requisito de fotos de FT-10); inspección de garantía con informe y fotos o documentos JPG, PNG o PDF; el PO no fija cuántos: el mockup proponía de 1 a 5 en la inspección y hasta 3 en Mi Portal (HU-035, HU-064 CA-05) | Candidata `GOV_DOCUMENT_REPOSITORY` (catálogo de documentos con versión, checksum y retención) | Límite único (revisión interna del equipo, O-15): JPG, PNG o PDF de hasta 10 MB por archivo (HU-064 CA-05) y **máximo 3 por envío**, en la consola, en Mi Portal y en la inspección (ED-26; parámetro configurable). Espejo en `GOV_DOCUMENT_REPOSITORY`, que ATC migra como custodio (ED-11), para lo probatorio (ADR-006) |
 | Los ids del mockup son cadenas (por ejemplo `tk-272`) | Todas las claves del v7 son `int` | El contrato expone ids opacos; en la base las claves son `bigint` (ED-16) |
 
 ## Entidades que lee y escribe cada grupo de HU (propuesta para CAD-F5)
@@ -578,14 +578,15 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo (`analisis/decisiones.md` v0.7): sección «Tipos y nulabilidad» con las convenciones físicas del diccionario de PJ-05 y la nulabilidad de los criterios (ED-16), en lugar de «Pendiente de los archivos fuente de Drive»; columnas y tablas nuevas de ATC (ED-15): actividades del ticket, rayo, conflicto, eje, subtipo, flujo y cierre automático; interesado «sin cliente vinculado» con `SVC_TICKET_PROSPECT` (ED-05); `SVC_NOTIFICATION_LOG`, `SVC_CONTRACT_DEFAULT_ALERT` y `SVC_EVENT_BUS_BOOKING` como tablas de ATC, sin las candidatas de fragmentos sin dueño (ED-23); listas con sus códigos (ED-19 y ED-26); `MAE_AREA` sin correspondencia en la Etapa 1 (ED-04); colaboradores por `CuentaPersonaPort` (ED-01); conflictos C-1 a C-5 con su decisión |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): `SVC_AI_SUGGESTION_LOG` (HU-048) y las tablas del caso sensible del evento (HU-037 a 039) siguen documentadas como cambio al v7 y no se crean en la Etapa 1; la búsqueda por significado de HU-053 queda para cuando entre |
-| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión final del Líder Técnico del 26-oct: plazo de 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); adjuntos con un solo límite, máximo 3 por envío (O-15); sección «Catálogo del piloto» con los códigos de los 9 tipos y los subtipos de las 15 combinaciones, entre ellos `IDENTITY_VALIDATION` y sus 4 subtipos (decisión del coordinador, C-06) e `SITE_ENTRY` y `BUS_BOOKING` (O-13); listas `SVC_DEFAULT_CASE_STATUS` y `SVC_DELIVERY_STATUS` y valor `PARALLEL_RECORD` (contrato 0.7.0-borrador). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.6 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: plazo de 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); adjuntos con un solo límite, máximo 3 por envío (O-15); sección «Catálogo del piloto» con los códigos de los 9 tipos y los subtipos de las 15 combinaciones, entre ellos `IDENTITY_VALIDATION` y sus 4 subtipos (decisión del coordinador, C-06) e `SITE_ENTRY` y `BUS_BOOKING` (O-13); listas `SVC_DEFAULT_CASE_STATUS` y `SVC_DELIVERY_STATUS` y valor `PARALLEL_RECORD` (contrato 0.7.0-borrador). Desde esta versión cada cambio de texto sube la versión (O-26) |
+| 0.7 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11) y del paquete aprobado de PJ-05. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones del Líder Técnico y de coherencia del 26-oct (outbox, tablas firmadas, dueño de dato y clasificación del asiento del Libro). — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de las revisiones internas técnica y de coherencia del 26-oct (outbox, tablas firmadas, dueño de dato y clasificación del asiento del Libro). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de las decisiones del equipo del 26-oct (ED-01, ED-04, ED-05, ED-15, ED-16, ED-19, ED-23 y ED-26 de `analisis/decisiones.md` v0.7). — Revisado por: (pendiente)
 
 Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude): P-025 decidida por el equipo (`analisis/decisiones.md` v0.8); tablas que no se crean en la Etapa 1. — Revisado por: (pendiente)
 
-Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión final del Líder Técnico (O-01, O-13, O-15 y O-22) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)
+Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude): revisión interna del equipo (O-01, O-13, O-15 y O-22) y decisión del coordinador sobre C-06. — Revisado por: (pendiente)

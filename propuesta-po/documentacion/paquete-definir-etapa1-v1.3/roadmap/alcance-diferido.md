@@ -16,7 +16,7 @@ tags: [roadmap, alcance, diferido]
 
 **Decisión del equipo (Brayan Hurtado), 26-oct-2026** (`analisis/decisiones.md`, P-025). Las 28 h que exige DT-02 (outbox, publicador, proyector y bus, ADR-012) no caben en la holgura de 9 h del plan del PO. Por eso el equipo activó el recorte que el PO previó en su riesgo **R-01** (PLT-01 y PLT-05) y salen de la Etapa 1 las 5 historias de **alcance flexible**: HU-ATC-037, 038 y 039 (toda la EP-ATC-08 EntregaFest, FT-ATC-15), HU-ATC-048 y HU-ATC-053, en total 16 h. **El R-01 es del PO, que conserva la decisión de revertirlo** (control de alcance del 29-oct o firma de G4): si lo revierte, estas tareas vuelven tal como están.
 
-**Sobrecosto real (revisión del Líder Técnico, O-05): 7 h**, no 3 h. Capacidad del PLT-01 v1.3: 63 h por persona y 252 h el equipo (días 1 a 9 de 7 h y día 10 de UAT y pase). Carga del backlog de la Etapa 1: 255 h (Brayan 64, Jesús 64, Michel 64 y Daniel 63; 28 h técnicas en la iteración 1), 3 h más, y 4 h de la reestimación de ADR-009 que no se aplica (Jesús 1,5 y Michel 2,5): 7 h (Brayan 1, Jesús 2,5, Michel 3,5 y Daniel 0). Si el PO revierte el recorte, vuelven estas 16 h y el sobrecosto pasa a 23 h. El cálculo por iteración está en `RMP-001-roadmap-aybar-atiende.md` §1 y en `analisis/decisiones.md` (P-025, punto 7). Dueño: el PO.
+**Sobrecosto real (revisión interna del equipo, O-05): 7 h**, no 3 h. Capacidad del PLT-01 v1.3: 63 h por persona y 252 h el equipo (días 1 a 9 de 7 h y día 10 de UAT y pase). Carga del backlog de la Etapa 1: 255 h (Brayan 64, Jesús 64, Michel 64 y Daniel 63; 28 h técnicas en la iteración 1), 3 h más, y 4 h de la reestimación de ADR-009 que no se aplica (Jesús 1,5 y Michel 2,5): 7 h (Brayan 1, Jesús 2,5, Michel 3,5 y Daniel 0). Si el PO revierte el recorte, vuelven estas 16 h y el sobrecosto pasa a 23 h. El cálculo por iteración está en `RMP-001-roadmap-aybar-atiende.md` §1 y en `analisis/decisiones.md` (P-025, punto 7). Dueño: el PO.
 
 Las tareas están **tal como estaban** en `backlog/tareas/` (mismas horas, responsables y dependencias) y vuelven allí cuando se retomen sus historias. Mientras, cada una de esas historias conserva en `backlog/tareas/` una tarea de 0 h que remite a este documento.
 
@@ -82,7 +82,7 @@ Las tareas están **tal como estaban** en `backlog/tareas/` (mismas horas, respo
 | Versión | Fecha | Autor | Cambio |
 |---|---|---|---|
 | 0.1 | 2026-10-26 | Brayan Hurtado, con IA | Versión inicial: tareas apartadas de la Etapa 1 por P-025 |
-| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: el recorte es el R-01 del PO, que puede revertirlo; sobrecosto real de 7 h con su cálculo. Las tareas no cambian |
+| 0.2 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: el recorte es el R-01 del PO, que puede revertirlo; sobrecosto real de 7 h con su cálculo. Las tareas no cambian |
 
 Generado por IA a partir de `backlog/tareas/` v1.3. — Revisado por: (pendiente)
 

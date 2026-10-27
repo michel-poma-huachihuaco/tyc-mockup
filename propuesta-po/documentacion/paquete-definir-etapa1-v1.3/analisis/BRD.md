@@ -225,7 +225,7 @@ Solo cuenta como evidencia la aprobación registrada en Nexora o `estado: approv
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | La DEP-16 ya no es propuesta (C-12); P-021 cerrada por DT-06; alcance nuevo del proceso de prospectos (C-06, P-041) |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: objetivos adoptados (OBJ-04 con la línea base en la primera medición de la UAT); proceso de prospectos fuera de la Etapa 1 (ED-09); DEP-16 como riesgo R-11 con mitigación; la lista de puntos del registro pasa a decisiones y solo queda P-025 (28 h nuevas, brecha de 19 h; la cierra el coordinador) |
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 en 57 historias, 22 funcionalidades y 10 épicas, con 227 h de historias (55, 60, 55 y 57) más 28 h técnicas de DT-02 = 255 h; HU-ATC-037, 038, 039, 048 y 053 fuera (alcance flexible R-01), en «Flexible» y «Fuera»; R-01 con la mitigación aplicada; OBJ-06 sin IA en la Etapa 1; no queda ninguna pendiente abierta. Sin cambiar texto del PO |
-| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Segunda revisión del Líder Técnico: OBJ-02 con el plazo de 15 días hábiles improrrogables (ED-28) y nota sobre la meta de EP-ATC-03 y RES-03, sin cambiar texto del PO; el tipo de ticket de prospectos entra en la Etapa 1 (P-041, ED-09); DEP-16 con R-11 y R-12; P-025 como R-01 del PO; citas sin versión |
+| 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: OBJ-02 con el plazo de 15 días hábiles improrrogables (ED-28) y nota sobre la meta de EP-ATC-03 y RES-03, sin cambiar texto del PO; el tipo de ticket de prospectos entra en la Etapa 1 (P-041, ED-09); DEP-16 con R-11 y R-12; P-025 como R-01 del PO; citas sin versión |
 
 Generado por IA: contenido completo. Versión base de Nexora (v1, de Daniel, 15-oct, sobre el plan v1.2), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
 
@@ -237,4 +237,4 @@ Actualizado el 26-oct-2026 (v0.5) por Brayan Hurtado con IA (Claude) a partir de
 
 Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude) a partir de P-025, decidida por el equipo el 26-oct (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 y horas. — Revisado por: (pendiente)
 
-Historial: 0.7 · 2026-10-26 · Brayan Hurtado, con IA · Segunda revisión del Líder Técnico: plazo del Libro sin prórroga (ED-28), tipo de ticket de prospectos en la Etapa 1 (ED-09), R-12 y R-01 del PO. — Revisado por: (pendiente)
+Historial: 0.7 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo: plazo del Libro sin prórroga (ED-28), tipo de ticket de prospectos en la Etapa 1 (ED-09), R-12 y R-01 del PO. — Revisado por: (pendiente)
