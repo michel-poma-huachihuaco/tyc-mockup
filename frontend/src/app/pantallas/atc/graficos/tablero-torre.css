@@ -8,3 +8,9 @@
 .tt__datos[open] summary { margin-block-end: var(--aybar-space-2); }
 .tt__alto-lg { --grafico-alto: 22rem; }
 .tt__alto-md { --grafico-alto: 18rem; }
+
+/* Las dos tarjetas de gráficos se apilan en pantallas estrechas; cada una puede encogerse. */
+.tt__graficos > * { min-inline-size: 0; }
+@media (max-width: 56rem) {
+  .tt__graficos { grid-template-columns: 1fr !important; }
+}

@@ -61,7 +61,7 @@ type Fila = Record<string, string | number>;
         </ay-card>
       </div>
 
-      <div ayGrid [columnas]="2" gap="md">
+      <div ayGrid [columnas]="2" gap="md" class="tt__graficos">
         <ay-card variante="elevated" superficie="solid">
           <ay-card-header titulo="Tickets por área y estado" subtitulo="Pulsa una barra para verla en Vivo." nivel="h2" [separador]="true" />
           <ay-card-body padding="md">

@@ -49,8 +49,10 @@ function colorToken(canvas: HTMLElement, token: string): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<canvas #lienzo role="img" [attr.aria-label]="ariaLabel()"></canvas>`,
   styles: `
-    :host { display: block; position: relative; block-size: var(--grafico-alto, 18rem); }
-    canvas { max-inline-size: 100%; }
+    /* Chart.js mide este contenedor: debe poder encogerse (min-inline-size: 0) y el canvas no se
+       recorta con max-inline-size, que lo deforma (ancho recortado, alto intacto) al estrechar la columna. */
+    :host { display: block; position: relative; min-inline-size: 0; inline-size: 100%; overflow: hidden; block-size: var(--grafico-alto, 18rem); }
+    canvas { display: block; }
   `,
 })
 export class GraficoChartComponent {
