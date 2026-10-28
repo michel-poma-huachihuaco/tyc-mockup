@@ -44,6 +44,12 @@ export const routes: Routes = [
       import('./pantallas/atc/propuestas-detalle/vista-propuestas-detalle').then((m) => m.VistaPropuestasDetalle),
   },
   {
+    path: 'propuestas-monitor',
+    title: `Propuestas del Monitor · ${NOMBRE_PROYECTO} · Aybar`,
+    loadComponent: () =>
+      import('./pantallas/atc/propuestas-monitor/vista-propuestas-monitor').then((m) => m.VistaPropuestasMonitor),
+  },
+  {
     path: 'bienvenida',
     title: `Portada SDK · ${NOMBRE_PROYECTO} · Aybar`,
     loadComponent: () => import('./pantallas/bienvenida').then((m) => m.Bienvenida),
