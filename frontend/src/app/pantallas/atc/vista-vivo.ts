@@ -47,6 +47,7 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { MonitorOperacionComponent } from './monitor-operacion';
+import { PlantaViajeAreasComponent } from './planta-viaje-areas';
 import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
@@ -309,6 +310,7 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
     AyText,
     AyTimeline,
     MonitorOperacionComponent,
+    PlantaViajeAreasComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -451,6 +453,9 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
               </ay-card-body>
             </ay-card>
           </div>
+
+          <!-- 2. Viaje de los tickets por las áreas (solo en la Planta) -->
+          <app-planta-viaje-areas />
         </div>
       </div>
 
