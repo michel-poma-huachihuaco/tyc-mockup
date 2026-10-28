@@ -14,15 +14,14 @@ import {
   viewChild,
 } from '@angular/core';
 import {
+  AyAlert,
   AyBadge,
   AyButton,
   AyCard,
   AyCardBody,
-  AyCardHeader,
   AyCardPairs,
-  AyDivider,
-  AyDrawer,
   AyHeading,
+  AyModal,
   AyPageHeader,
   AyProgressBar,
   AyRow,
@@ -107,50 +106,6 @@ interface PuestoEstadoInterno {
   csat: string;
 }
 
-export interface PuestoTerminalVivo {
-  readonly id: string;
-  readonly nombre: string;
-  readonly rol: string;
-  readonly areaKey: string;
-  readonly areaNombre: string;
-  readonly atendidosHoy: number;
-  readonly activosEnCola: number;
-  readonly ticketActual: TicketVivo | null;
-  readonly pctAvanceTicket: number;
-  readonly tiempoPromedioMin: number;
-  readonly metaMin: number;
-  readonly enMetaVerde: boolean;
-  readonly csat: string;
-  readonly esMenorDelArea: boolean;
-  readonly esMenorGlobal: boolean;
-  readonly diferenciaContraPromedioArea: number;
-  readonly diagnosticoIndividual: 'USUARIO_LENTO' | 'PROCESO_COMPLEJO' | 'BALANCEADO';
-  readonly etiquetaDiagnostico: string;
-}
-
-export interface AreaSemaforoVivo {
-  readonly id: string;
-  readonly codigoTerminal: string;
-  readonly nombre: string;
-  readonly lider: string;
-  readonly tiempoPromedioMin: number;
-  readonly metaSlaMin: number;
-  readonly enMetaVerde: boolean;
-  readonly activos: number;
-  readonly enCola: number;
-  readonly enEscritorio: number;
-  readonly vencidos: number;
-  readonly resueltosHoy: number;
-  readonly ticketsEnColaLista: readonly TicketVivo[];
-  readonly puestos: readonly PuestoTerminalVivo[];
-  readonly menorResponsable: PuestoTerminalVivo | null;
-  readonly tipoCuello: 'PROCESO' | 'USUARIO' | 'OPTIMO';
-  readonly tituloCuello: string;
-  readonly detalleCuello: string;
-}
-
-export type AsesorRendimientoVivo = PuestoTerminalVivo;
-
 const CLIENTES_SIM: readonly (readonly [string, string, string])[] = [
   ['Eddie Huamaní', 'Villa Sol II · Lote C-07', 'Consulta de cupo en bus EntregaFest y pase QR'],
   ['Lucía Paredes', 'Mirador del Sur · Lote C-21', 'Inspección de fisura en muro perimétrico (Garantía)'],
@@ -169,15 +124,6 @@ const LIDERES_SALA: Readonly<Record<string, string>> = {
   legal: 'Dr. Ernesto Alarcón (Gerencia Legal Eje 3)',
   post: 'Ing. Roberto Castañeda (Jefe Postventa)',
   proy: 'Arq. Claudia Mendoza (Responsable Proyecto)',
-};
-
-const CODIGOS_TERMINAL_SALA: Readonly<Record<string, string>> = {
-  eje1: 'EJE 1 · ATC',
-  cob: 'EJE 2 · COB',
-  libro: 'LIBRO · IND',
-  legal: 'EJE 3 · LEG',
-  post: 'EJE 2 · POST',
-  proy: 'EJE 2 · PROY',
 };
 
 const TOKEN_ZONA: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, string>>>> = {
@@ -340,124 +286,23 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
   ],
 };
 
-interface MetaEstacionVivo {
-  readonly clave: string;
-  readonly categoria: 'Canal de entrada' | 'Orquestación' | 'Área operativa' | 'Escalamiento' | 'Cierre y CX';
-  readonly nombre: string;
-  readonly hu: string;
-  readonly rfRn: string;
-  readonly entidad: string;
-  readonly lider: string;
-  readonly slaRegla: string;
-  readonly inputsReales: string;
-  readonly areaKey?: string;
-  readonly gateKey?: string;
-}
-
-const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
-  'etapa:bandeja': {
-    clave: 'etapa:bandeja',
-    categoria: 'Orquestación',
-    nombre: 'Bandeja Orquestadora Central (Robot Despachador)',
-    hu: 'Despacho inteligente por prioridad y carga',
-    rfRn: 'Tope máximo de 10% de cola con prioridad Rayo',
-    entidad: 'Motor de Despacho ATC',
-    lider: 'Sup. Mirtha Delgado (Supervisión Orquestación)',
-    slaRegla: 'Orden estricto: 1.º Rayo (máx. 10% de cola) · 2.º SLA más próximo a vencer · 3.º Prioridad · Menor carga.',
-    inputsReales: 'Tipificación en 5 familias, prioridad, marca Rayo con motivo obligatorio, carga por gestor y correo CC al líder.',
-  },
-  'sala:eje1': {
-    clave: 'sala:eje1',
-    categoria: 'Área operativa',
-    nombre: 'Atención Eje 1 (ATC General)',
-    hu: 'Consultas generales, pedidos y primera línea',
-    rfRn: 'Base de conocimiento y casillero único por consulta',
-    entidad: 'Área Atención Eje 1',
-    lider: LIDERES_SALA['eje1'],
-    slaRegla: '1.ª respuesta ≤ 2 h hábiles · Resolución consultas/pedidos simples ≤ 24 h hábiles.',
-    inputsReales: 'Consultas generales, pedidos simples, guía de solución recomendada y casillero independiente por consulta.',
-    areaKey: 'eje1',
-  },
-  'sala:cob': {
-    clave: 'sala:cob',
-    categoria: 'Área operativa',
-    nombre: 'Cobranza (Eje 2 · Financiamiento y Letras)',
-    hu: 'Validación de abonos, letras y prevención de mora',
-    rfRn: 'Sincronización con Motor de Cobranza y control de resolución',
-    entidad: 'Área de Cobranza y Cartera',
-    lider: LIDERES_SALA['cob'],
-    slaRegla: 'Validación de abonos ≤ 24 h · Alerta automática al cumplir 3 meses de letras impagas.',
-    inputsReales: 'Vouchers de pago, cronograma de letras, estado de cartera en línea, carta de resolución y alerta paralela de cancelación.',
-    areaKey: 'cob',
-  },
-  'sala:libro': {
-    clave: 'sala:libro',
-    categoria: 'Área operativa',
-    nombre: 'Libro de Reclamaciones (INDECOPI)',
-    hu: 'Gestión legal de quejas y reclamos de consumo',
-    rfRn: 'Plazo legal Ley 29571 con control de prórroga y cargo',
-    entidad: 'Oficialía de Cumplimiento',
-    lider: LIDERES_SALA['libro'],
-    slaRegla: 'Plazo legal improrrogable de 15 días hábiles (Ley 29571) con 1 sola prórroga motivada.',
-    inputsReales: 'Asiento correlativo (Queja / Reclamo), pedido concreto del consumidor, cargo de notificación al cliente y expediente INDECOPI.',
-    areaKey: 'libro',
-  },
-  'sala:legal': {
-    clave: 'sala:legal',
-    categoria: 'Área operativa',
-    nombre: 'Legal · Eje 3 (Handoff y Custodia)',
-    hu: 'Dictamen jurídico y custodia probatoria',
-    rfRn: 'Validación obligatoria de checklist documental 6/6',
-    entidad: 'Gerencia Legal Eje 3',
-    lider: LIDERES_SALA['legal'],
-    slaRegla: 'No acepta derivación sin paquete documental completo 6/6 validado.',
-    inputsReales: 'Checklist 6/6 (contrato, estado de cuenta, cartas previas, evidencias, hoja de ruta y dictamen), resolución legal y custodia probatoria.',
-    areaKey: 'legal',
-  },
-  'sala:post': {
-    clave: 'sala:post',
-    categoria: 'Área operativa',
-    nombre: 'Postventa (Eje 4 · Garantías e Inspección)',
-    hu: 'Cobertura de garantías, visitas técnicas y cuadrillas',
-    rfRn: 'Matriz de vigencia en meses desde el Acta de Entrega',
-    entidad: 'Ingeniería de Postventa',
-    lider: LIDERES_SALA['post'],
-    slaRegla: 'Vigencia calculada en meses desde el Acta de Entrega · Inspección de campo y control de reincidencia.',
-    inputsReales: 'Fecha de acta de entrega, partida observada, vigencia en meses, informe de visita técnica y acta de conformidad.',
-    areaKey: 'post',
-  },
-  'sala:proy': {
-    clave: 'sala:proy',
-    categoria: 'Área operativa',
-    nombre: 'Proyecto · Entrega Fest (Administración / Obra)',
-    hu: 'Visitas a proyecto y logística de eventos de entrega',
-    rfRn: 'Control de cupos por bus, asistencia QR y encuestas',
-    entidad: 'Administración de Proyectos',
-    lider: LIDERES_SALA['proy'],
-    slaRegla: 'Control de aforo por bus y bloqueo automático de sobrecupo en EntregaFest.',
-    inputsReales: 'Formulario de ingreso a proyecto (DNI, lote, motivo, fecha/hora) y padrón de buses, asientos y pases QR.',
-    areaKey: 'proy',
-  },
-};
-
 @Component({
   selector: 'app-vista-vivo',
   standalone: true,
   imports: [
+    AyAlert,
     AyBadge,
     AyButton,
     AyCard,
     AyCardBody,
-    AyCardHeader,
     AyCardPairs,
-    AyDivider,
-    AyDrawer,
     AyHeading,
     AyPageHeader,
     AyProgressBar,
     AyRow,
     AySelect,
     AyStack,
+    AyModal,
     AyTabs,
     AyTag,
     AyText,
@@ -480,7 +325,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     }
   `,
   template: `
-    <div #vivoRootHost ayStack gap="6" aria-label="Centro de Comando y Operación en Vivo">
+    <div ayStack gap="6" aria-label="Centro de Comando y Operación en Vivo">
       <ay-page-header
         [conPestanas]="true"
         titulo="Operación en Vivo · Trazabilidad por responsable"
@@ -511,11 +356,11 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
         <ay-button
           ayAcciones
           tamano="sm"
-          [variante]="cajonLateralAbierto() ? 'primary' : 'secondary'"
-          (click)="cajonLateralAbierto.set(!cajonLateralAbierto())"
+          [variante]="correosActivo() ? 'primary' : 'secondary'"
+          (click)="alternarCorreos()"
         >
           {{
-            cajonLateralAbierto()
+            correosActivo()
               ? 'Cerrar bitácora CC'
               : 'Correos CC (' + correosEnviados().length + ')'
           }}
@@ -556,7 +401,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                   Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
                 </ay-heading>
                 <span ayText="subtitle" size="xs">
-                  Haz clic en cualquier tarjeta 3D, canal o sala para inspeccionar su detalle en tiempo real o abre el cajón de bandejas.
+                  Haz clic en un ticket para abrir su ficha; las salas filtran la planta y el botón «Correos CC» abre la bitácora de correos.
                 </span>
               </div>
               <div ayRow gap="2" [ajuste]="true">
@@ -637,84 +482,105 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                     }
                   </ul>
 
-                  <!-- Lienzo 3D + Ficha flotante del ticket -->
+                  <!-- Lienzo 3D -->
                   <div #stageHost class="atc-vivo-stage-area">
-                    <canvas #threeCanvas style="display: block; width: 100%; cursor: pointer;"></canvas>
+                    <canvas
+                      #threeCanvas
+                      style="display: block; width: 100%; cursor: pointer;"
+                    ></canvas>
+                  </div>
 
-                    <!-- Ficha flotante del ticket seleccionado dentro de la escena 3D (lado izquierdo) -->
-                    @if (ticketSeleccionado(); as tk) {
-                      <div
-                        class="pl-atc-ficha-flotante pl-atc-ficha-flotante--abierta pl-atc-ficha-flotante--izq"
-                        role="dialog"
-                        aria-modal="false"
-                        aria-label="Ficha del ticket en escena 3D"
-                      >
-                        <ay-card>
-                          <ay-card-header
-                            [titulo]="tk.numero"
-                            [subtitulo]="tk.resumen"
-                            nivel="h3"
-                          >
-                            <div ayAcciones ayRow gap="2" [ajuste]="true">
-                              <ay-badge size="sm" [tono]="tk.rayo ? 'warning' : 'info'">
-                                {{ tk.rayo ? 'Prioridad Rayo' : tk.prio }}
-                              </ay-badge>
-                              <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
-                                {{ etiquetaSlaTicket(tk) }}
-                              </ay-badge>
-                              <ay-button
-                                tamano="sm"
-                                variante="ghost"
-                                aria-label="Cerrar ficha"
-                                (click)="ticketSeleccionadoId.set(null)"
-                              >
-                                Cerrar
-                              </ay-button>
-                            </div>
-                          </ay-card-header>
-                          <ay-card-body>
-                            <div ayStack gap="3">
-                              <ay-progress-bar
-                                etiqueta="SLA restante en turno"
-                                [valor]="pctSlaRestante(tk)"
-                                [detalle]="pctSlaRestante(tk) + '% restante'"
-                                [tono]="tonoSlaBarra(tk)"
-                                size="sm"
+                  <!-- Modal único: pestañas Ticket y Correos CC (Esc, cierre y foco los gestiona ay-modal) -->
+                  <ay-modal
+                    [abierto]="panelVisible()"
+                    (abiertoChange)="!$event && cerrarPanel()"
+                    [titulo]="etiquetaPanel()"
+                    size="lg"
+                  >
+                    <div ayStack gap="3">
+                      <ay-tabs
+                        etiqueta="Contenido de la ficha"
+                        variante="underline"
+                        size="sm"
+                        [items]="tabsPanel()"
+                        [valor]="pestanaPanel()"
+                        (valorChange)="pestanaPanel.set($event === 'correos' ? 'correos' : 'ticket')"
+                      />
+                      @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
+                        @if (!enPlanta()) {
+                          <ay-alert size="sm" tono="info">
+                            Este ticket ya salió de la planta; se muestra su último estado.
+                          </ay-alert>
+                        }
+                        <div ayRow gap="2" [ajuste]="true">
+                          <ay-badge size="sm" [tono]="tk.rayo ? 'warning' : 'info'">
+                            {{ tk.rayo ? 'Prioridad Rayo' : tk.prio }}
+                          </ay-badge>
+                          <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
+                            {{ etiquetaSlaTicket(tk) }}
+                          </ay-badge>
+                          <span ayText="body">{{ tk.resumen }}</span>
+                        </div>
+                        <div class="pl-vivo-modal__cols">
+                          <div ayStack gap="3">
+                            <ay-progress-bar
+                              etiqueta="SLA restante en turno"
+                              [valor]="pctSlaRestante(tk)"
+                              [detalle]="pctSlaRestante(tk) + '% restante'"
+                              [tono]="tonoSlaBarra(tk)"
+                              size="sm"
+                            />
+                            <ay-card-pairs [pares]="paresTicketVivo(tk)" />
+                          </div>
+                          <div ayStack gap="1">
+                            <span ayText="label" size="xs">Recorrido en tiempo real</span>
+                            <div class="pl-vivo-modal__recorrido">
+                              <ay-timeline
+                                etiqueta="Recorrido del ticket en planta"
+                                [hitos]="hitosTicketVivo(tk)"
                               />
-                              <ay-card-pairs [pares]="paresTicketVivo(tk)" />
-                              <div ayStack gap="1">
-                                <span ayText="label" size="xs">Recorrido en tiempo real</span>
-                                <ay-timeline
-                                  etiqueta="Recorrido del ticket en planta"
-                                  [hitos]="hitosTicketVivo(tk)"
-                                />
-                              </div>
-                              <ay-divider espaciado="sm" />
-                              <div ayRow gap="2" [ajuste]="true">
-                                <ay-button tamano="sm" variante="secondary" (click)="alternarRayoTicket(tk.id)">
-                                  ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
-                                </ay-button>
-                                @if (!tk.esc) {
-                                  <ay-button tamano="sm" variante="danger" (click)="escalarTicketAComite(tk.id)">
-                                    Escalar a Comité SGD
-                                  </ay-button>
-                                }
-                                <ay-button tamano="sm" variante="primary" (click)="resolverTicketInmediato(tk.id)">
-                                  Resolver a Mi Portal
-                                </ay-button>
-                                <ay-button tamano="sm" variante="ghost" (click)="reasignarMenorCarga(tk.id)">
-                                  Reasignar gestor
-                                </ay-button>
-                                <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
-                                  Ver expediente
-                                </ay-button>
-                              </div>
                             </div>
-                          </ay-card-body>
-                        </ay-card>
+                          </div>
+                        </div>
+                      } @else {
+                        <div ayRow gap="2" [ajuste]="true">
+                          <ay-badge size="sm" tono="info">{{ correosEnviados().length }} recientes</ay-badge>
+                          <span ayText="body">
+                            Correos de asignación (CC Líder de Área): notificación automática en cada despacho a responsable
+                          </span>
+                        </div>
+                        <ay-timeline
+                          etiqueta="Correos de asignación enviados"
+                          [hitos]="hitosCorreosEnviados()"
+                        />
+                      }
+                    </div>
+                    @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
+                      <div ayAcciones class="pl-vivo-modal__pie">
+                        <div class="pl-vivo-modal__pie-sec">
+                          <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" [disabled]="!enPlanta()" (click)="reasignarMenorCarga(tk.id)">
+                            Reasignar gestor
+                          </ay-button>
+                          <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
+                            Ver expediente
+                          </ay-button>
+                        </div>
+                        <div class="pl-vivo-modal__pie-sec">
+                          <ay-button tamano="sm" variante="secondary" [disabled]="!enPlanta()" (click)="alternarRayoTicket(tk.id)">
+                            ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
+                          </ay-button>
+                          @if (!tk.esc) {
+                            <ay-button tamano="sm" variante="danger" [disabled]="!enPlanta()" (click)="escalarTicketAComite(tk.id)">
+                              Escalar a Comité SGD
+                            </ay-button>
+                          }
+                          <ay-button tamano="sm" variante="primary" [disabled]="!enPlanta()" (click)="resolverTicketInmediato(tk.id)">
+                            Resolver a Mi Portal
+                          </ay-button>
+                        </div>
                       </div>
                     }
-                  </div>
+                  </ay-modal>
 
                   <!-- Leyenda de escena 3D con componentes del SDK -->
                   <div ayRow gap="2" [ajuste]="true">
@@ -740,33 +606,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
           </div>
         </div>
       }
-
-      <!-- Cajón lateral de Correos CC y Bandeja con <ay-drawer> del SDK -->
-      <ay-drawer
-        [(abierto)]="cajonLateralAbierto"
-        [modal]="false"
-        lado="end"
-        size="lg"
-        titulo="Correos CC de Asignación y Bandeja Orquestadora"
-      >
-        <div ayStack gap="3">
-          <ay-card>
-            <ay-card-header
-              titulo="Correos de asignación (CC Líder de Área)"
-              subtitulo="Notificación automática en cada despacho a responsable"
-              nivel="h3"
-            >
-              <ay-badge ayAcciones size="sm" tono="info">{{ correosEnviados().length }} recientes</ay-badge>
-            </ay-card-header>
-            <ay-card-body>
-              <ay-timeline
-                etiqueta="Correos de asignación enviados"
-                [hitos]="hitosCorreosEnviados()"
-              />
-            </ay-card-body>
-          </ay-card>
-        </div>
-      </ay-drawer>
     </div>
   `,
 })
@@ -779,7 +618,6 @@ export class VistaVivoComponent {
   readonly irABandeja = output<void>();
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly vivoRootHostRef = viewChild<ElementRef<HTMLDivElement>>('vivoRootHost');
   private readonly stageHostRef = viewChild<ElementRef<HTMLDivElement>>('stageHost');
   private readonly threeCanvasRef = viewChild<ElementRef<HTMLCanvasElement>>('threeCanvas');
 
@@ -809,18 +647,66 @@ export class VistaVivoComponent {
     ...PUERTAS_CANAL.map((p) => ({ value: p.k, label: `${p.nombre} (${p.ic})` })),
   ];
 
-  readonly cajonLateralAbierto = signal<boolean>(false);
-  readonly vistaCajon = signal<'todo' | 'bandeja' | 'estacion' | 'correos'>('todo');
   readonly areaFiltro = signal<string>('');
   readonly canalEntradaCustom = signal<string>('');
   readonly rayoEntradaCustom = signal<boolean>(false);
-  readonly estacionSeleccionadaKey = signal<string>('etapa:bandeja');
   readonly ticketSeleccionadoId = signal<string | null>(null);
+
+  /** Panel único de la escena: pestaña Ticket (ficha) o Correos CC (bitácora). */
+  readonly panelAbierto = signal<boolean>(false);
+  readonly pestanaPanel = signal<'ticket' | 'correos'>('ticket');
+  /** Visible = abierto y con algo que mostrar (si el ticket sale de la planta, no queda vacío). */
+  readonly panelVisible = computed(
+    () => this.panelAbierto() && (this.pestanaPanel() === 'correos' || !!this.ticketMostrado()),
+  );
+  /** Último estado conocido del ticket abierto: sobrevive a su salida de la planta mientras el modal siga abierto. */
+  private readonly ultimoTicket = signal<TicketVivo | null>(null);
+  private readonly _congelar = effect(() => {
+    const tk = this.ticketSeleccionado();
+    if (tk) this.ultimoTicket.set(tk);
+  });
+  readonly ticketMostrado = computed<TicketVivo | null>(() => {
+    const id = this.ticketSeleccionadoId();
+    const u = this.ultimoTicket();
+    return this.ticketSeleccionado() ?? (id && u?.id === id ? u : null);
+  });
+  readonly enPlanta = computed(() => !!this.ticketSeleccionado());
+  readonly correosActivo = computed(() => this.panelVisible() && this.pestanaPanel() === 'correos');
+  readonly tabsPanel = computed<AyTabsElemento[]>(() => [
+    { value: 'ticket', label: 'Ticket', disabled: !this.ticketMostrado() },
+    { value: 'correos', label: 'Correos CC', contador: this.correosEnviados().length },
+  ]);
+  readonly etiquetaPanel = computed(() => {
+    const tk = this.ticketMostrado();
+    return this.pestanaPanel() === 'ticket' && tk
+      ? 'Ficha del ticket ' + tk.numero
+      : 'Correos CC de asignación';
+  });
+
+  abrirTicket(id: string): void {
+    this.ticketSeleccionadoId.set(id);
+    this.pestanaPanel.set('ticket');
+    this.panelAbierto.set(true);
+  }
+
+  alternarCorreos(): void {
+    if (this.correosActivo()) {
+      this.cerrarPanel();
+      return;
+    }
+    this.pestanaPanel.set('correos');
+    this.panelAbierto.set(true);
+  }
+
+  cerrarPanel(): void {
+    this.panelAbierto.set(false);
+    this.ticketSeleccionadoId.set(null);
+    this.ultimoTicket.set(null);
+  }
 
   readonly cerradosHoy = signal<number>(38);
   readonly cerradosEnSlaHoy = signal<number>(35);
   readonly escaladosCount = signal<number>(2);
-  readonly reabiertosHoy = signal<number>(1);
   readonly xpEquipo = signal<number>(115);
   readonly nivelEquipo = signal<number>(4);
   readonly rachaSla = signal<number>(11);
@@ -871,190 +757,10 @@ export class VistaVivoComponent {
 
   readonly conRayoCount = computed(() => this.ticketsActivos().filter((t) => t.rayo).length);
 
-  readonly ticketsEnBandejaOrquestadora = computed(() =>
-    this.ticketsActivos().filter((t) => t.etapa === 'bandeja'),
-  );
-
-  readonly totalEnColaSinAsignar = computed(
-    () => this.ticketsActivos().filter((t) => t.etapa === 'cola' || t.etapa === 'bandeja').length,
-  );
-
-  readonly totalEnEscritorioActivo = computed(
-    () => this.ticketsActivos().filter((t) => t.etapa === 'atencion').length,
-  );
-
-  /** Calcula el estado vivo de todos los responsables y áreas, identificando quién trabaja menos tickets y el origen de cada cuello. */
-  readonly semaforoAreasVivo = computed<readonly AreaSemaforoVivo[]>(() => {
-    const activos = this.ticketsActivos().filter((t) => t.etapa !== 'salida');
-    const mapaPuestos = this.puestosEstado();
-
-    const todosLosConteos = Object.values(mapaPuestos)
-      .flat()
-      .map((p) => p.atendidos);
-    const minGlobalAtendidos = todosLosConteos.length > 0 ? Math.min(...todosLosConteos) : 0;
-
-    return this.salas.map((s) => {
-      const enSala = activos.filter((t) => t.area === s.k);
-      const enColaLista = enSala.filter((t) => t.etapa === 'cola' || t.etapa === 'bandeja');
-      const enEscritorioLista = enSala.filter((t) => t.etapa === 'atencion');
-      const vencidosSala = enSala.filter((t) => t.esc || t.age >= t.slaMax).length;
-
-      const crudosSala = mapaPuestos[s.k] ?? [];
-      const minAreaAtendidos =
-        crudosSala.length > 0 ? Math.min(...crudosSala.map((p) => p.atendidos)) : 0;
-      const promAreaAtendidos =
-        crudosSala.length > 0
-          ? Math.round(crudosSala.reduce((acc, p) => acc + p.atendidos, 0) / crudosSala.length)
-          : 0;
-
-      const puestos: PuestoTerminalVivo[] = crudosSala.map((p) => {
-        const tk = activos.find((t) => t.id === p.ticketId && t.etapa === 'atencion') ?? null;
-        const pctAvance = tk ? Math.min(99, Math.round((tk.workDone / Math.max(1, tk.workNeed)) * 100)) : 0;
-        const penalidadTicket = tk && (tk.esc || this.pctSlaRestante(tk) < 30) ? 5 : 0;
-        const tiempoPromedioMin = p.baseMin + penalidadTicket;
-        const enMetaVerde = tiempoPromedioMin <= p.metaMin;
-        const esMenorDelArea = p.atendidos === minAreaAtendidos;
-        const esMenorGlobal = p.atendidos === minGlobalAtendidos;
-
-        let diagnosticoIndividual: PuestoTerminalVivo['diagnosticoIndividual'] = 'BALANCEADO';
-        let etiquetaDiagnostico = 'Cadencia normal';
-        if (p.velocidadFactor < 0.72 || (!enMetaVerde && esMenorDelArea)) {
-          diagnosticoIndividual = 'USUARIO_LENTO';
-          etiquetaDiagnostico = 'Cuello por usuario (baja cadencia)';
-        } else if (tk && tk.workNeed >= 75) {
-          diagnosticoIndividual = 'PROCESO_COMPLEJO';
-          etiquetaDiagnostico = 'Retenido por proceso (checklist/plazo)';
-        }
-
-        return {
-          id: p.id,
-          nombre: p.nombre,
-          rol: p.rol,
-          areaKey: s.k,
-          areaNombre: s.nombre,
-          atendidosHoy: p.atendidos,
-          activosEnCola: tk ? 1 + enColaLista.length : enColaLista.length,
-          ticketActual: tk,
-          pctAvanceTicket: pctAvance,
-          tiempoPromedioMin,
-          metaMin: p.metaMin,
-          enMetaVerde,
-          csat: p.csat,
-          esMenorDelArea,
-          esMenorGlobal,
-          diferenciaContraPromedioArea: p.atendidos - promAreaAtendidos,
-          diagnosticoIndividual,
-          etiquetaDiagnostico,
-        };
-      });
-
-      const metaSala = puestos[0]?.metaMin ?? 25;
-      const promSalaMin =
-        puestos.length > 0
-          ? Math.round(puestos.reduce((acc, p) => acc + p.tiempoPromedioMin, 0) / puestos.length) +
-            enColaLista.length * 2 +
-            vencidosSala * 4
-          : 18;
-      const enMetaVerde = promSalaMin <= metaSala && vencidosSala === 0;
-      const resueltosSala = puestos.reduce((acc, p) => acc + p.atendidosHoy, 0);
-      const menorResponsable =
-        [...puestos].sort((a, b) => a.atendidosHoy - b.atendidosHoy || b.tiempoPromedioMin - a.tiempoPromedioMin)[0] ??
-        null;
-
-      // Diagnóstico automático: ¿el cuello de botella del área es por el PROCESO del ticket o por el USUARIO?
-      const tieneTicketComplejo = enSala.some((t) => t.workNeed >= 75 || t.stateRf004 === 'PENDING_CUSTOMER');
-      const brechaResponsables =
-        puestos.length > 1
-          ? Math.max(...puestos.map((p) => p.atendidosHoy)) - Math.min(...puestos.map((p) => p.atendidosHoy))
-          : 0;
-
-      let tipoCuello: AreaSemaforoVivo['tipoCuello'] = 'OPTIMO';
-      let tituloCuello = 'SIN CUELLO ACTIVO · Flujo balanceado';
-      let detalleCuello = `Todos los puestos operan dentro de la meta SLA (≤ ${metaSala} min).`;
-
-      if (!enMetaVerde || enColaLista.length >= 2) {
-        if (brechaResponsables >= 5 && menorResponsable && menorResponsable.diagnosticoIndividual === 'USUARIO_LENTO') {
-          tipoCuello = 'USUARIO';
-          tituloCuello = `CUELLO POR RESPONSABLE · Baja cadencia de ${menorResponsable.nombre}`;
-          detalleCuello = `${menorResponsable.nombre} registra solo ${menorResponsable.atendidosHoy} tickets hoy (${menorResponsable.tiempoPromedioMin} min/tk vs meta ≤ ${metaSala}m), acumulando ${enColaLista.length} en cola.`;
-        } else {
-          tipoCuello = 'PROCESO';
-          tituloCuello = `CUELLO POR PROCESO DEL TICKET · Etapa de alta complejidad`;
-          detalleCuello = tieneTicketComplejo
-            ? `Los tickets en ${s.nombre} exigen validación documental / espera de cliente (promedio ${promSalaMin} min vs meta ≤ ${metaSala}m).`
-            : `Volumen de entrada supera capacidad simultánea de la sala (${enColaLista.length} esperando despacho).`;
-        }
-      } else if (menorResponsable && brechaResponsables >= 5) {
-        tipoCuello = 'USUARIO';
-        tituloCuello = `ALERTA DE DESBALANCE · ${menorResponsable.nombre} trabaja menos tickets`;
-        detalleCuello = `Aunque el área cumple SLA, ${menorResponsable.nombre} lleva ${menorResponsable.atendidosHoy} tickets (${brechaResponsables} menos que el tope de su área).`;
-      }
-
-      return {
-        id: s.k,
-        codigoTerminal: CODIGOS_TERMINAL_SALA[s.k] ?? `AREA::${s.k.toUpperCase()}`,
-        nombre: s.nombre,
-        lider: LIDERES_SALA[s.k] ?? 'Supervisor ATC',
-        tiempoPromedioMin: promSalaMin,
-        metaSlaMin: metaSala,
-        enMetaVerde,
-        activos: enSala.length,
-        enCola: enColaLista.length,
-        enEscritorio: enEscritorioLista.length,
-        vencidos: vencidosSala,
-        resueltosHoy: resueltosSala,
-        ticketsEnColaLista: enColaLista,
-        puestos,
-        menorResponsable,
-        tipoCuello,
-        tituloCuello,
-        detalleCuello,
-      };
-    });
-  });
-
-  readonly areasFiltradasComando = computed<readonly AreaSemaforoVivo[]>(() => {
-    const f = this.areaFiltro();
-    const todas = this.semaforoAreasVivo();
-    if (!f) return todas;
-    return todas.filter((a) => a.id === f);
-  });
-
-  readonly areaPrincipalCuello = computed<AreaSemaforoVivo>(() => {
-    const areas = [...this.semaforoAreasVivo()];
-    areas.sort((a, b) => {
-      const scoreA = (a.enMetaVerde ? 0 : 20) + a.enCola * 5 + (a.tiempoPromedioMin - a.metaSlaMin);
-      const scoreB = (b.enMetaVerde ? 0 : 20) + b.enCola * 5 + (b.tiempoPromedioMin - b.metaSlaMin);
-      return scoreB - scoreA;
-    });
-    return areas[0]!;
-  });
-
-  readonly areaRotacionTvActual = computed<AreaSemaforoVivo>(() => {
-    const areas = this.semaforoAreasVivo();
-    const idx = this.indiceRotacionTv() % Math.max(1, areas.length);
-    return areas[idx] ?? areas[0]!;
-  });
-
   readonly ticketSeleccionado = computed<TicketVivo | null>(() => {
     const id = this.ticketSeleccionadoId();
     if (!id) return null;
     return this.ticketsActivos().find((t) => t.id === id) ?? null;
-  });
-
-  readonly estacionActual = computed<MetaEstacionVivo | null>(() => {
-    const k = this.estacionSeleccionadaKey();
-    return META_ESTACIONES_VIVO[k] ?? META_ESTACIONES_VIVO['etapa:bandeja'] ?? null;
-  });
-
-  readonly ticketsFiltradosBandeja = computed<TicketVivo[]>(() => {
-    const filtro = this.areaFiltro();
-    const lista = this.ticketsActivos().filter((t) => !filtro || t.area === filtro);
-    lista.sort((a, b) => {
-      if (a.rayo !== b.rayo) return a.rayo ? -1 : 1;
-      return a.slaMax - a.age - (b.slaMax - b.age);
-    });
-    return lista.slice(0, 10);
   });
 
   constructor() {
@@ -1080,10 +786,6 @@ export class VistaVivoComponent {
     }
     for (let i = 0; i < 14; i++) {
       this.ejecutarPasoSimulacion();
-    }
-    const primeroActivo = this.ticketsActivos().find((t) => t.etapa !== 'salida');
-    if (primeroActivo) {
-      this.ticketSeleccionadoId.set(primeroActivo.id);
     }
 
     effect(() => {
@@ -1205,9 +907,7 @@ export class VistaVivoComponent {
       hits: this.hitsRef,
       obtener: () => this.snapshotEscena(),
       alClickTicket: (id) => {
-        this.ticketSeleccionadoId.set(id);
-        this.vistaCajon.set('todo');
-        this.cajonLateralAbierto.set(true);
+        this.abrirTicket(id);
       },
       alClickCanal: (gateKey) => {
         this.inspeccionarCanal3D(gateKey);
@@ -1263,27 +963,14 @@ export class VistaVivoComponent {
   });
 
   inspeccionarCanal3D(gateKey: string): void {
-    this.estacionSeleccionadaKey.set(`canal:${gateKey}`);
-    this.vistaCajon.set('estacion');
-    this.cajonLateralAbierto.set(true);
     this.inyectarTicket({ gate: gateKey });
   }
 
   inspeccionarSala3D(areaKey: string): void {
-    this.estacionSeleccionadaKey.set(`sala:${areaKey}`);
-    this.vistaCajon.set('estacion');
-    this.cajonLateralAbierto.set(true);
     this.areaFiltro.set(areaKey);
-    const primeroDeSala = this.ticketsActivos().find((t) => t.area === areaKey && t.etapa !== 'salida');
-    if (primeroDeSala) {
-      this.ticketSeleccionadoId.set(primeroDeSala.id);
-    }
   }
 
   inspeccionarEtapa3D(etapa: 'bandeja' | 'comite' | 'salida'): void {
-    this.estacionSeleccionadaKey.set(`etapa:${etapa}`);
-    this.vistaCajon.set('estacion');
-    this.cajonLateralAbierto.set(true);
     if (etapa === 'bandeja') {
       this.areaFiltro.set('');
     }
@@ -1474,7 +1161,7 @@ export class VistaVivoComponent {
       const tk = tkEscalado as TicketVivo;
       this.escaladosCount.update((n) => Math.min(6, n + 1));
       this.rachaSla.set(0);
-      this.ticketSeleccionadoId.set(ticketId);
+      this.abrirTicket(ticketId);
       this.registrarEventoTerminal(
         tk.numero,
         this.nombreSala(tk.area),
@@ -1652,9 +1339,6 @@ export class VistaVivoComponent {
       if (t.etapa === 'salida') {
         t.workDone += 2;
         if (t.workDone >= t.workNeed + 16) {
-          if (this.ticketSeleccionadoId() === t.id) {
-            this.ticketSeleccionadoId.set(null);
-          }
           cambioVisible = true;
           continue;
         }
@@ -1822,7 +1506,4 @@ export class VistaVivoComponent {
     return this.puertas.find((p) => p.k === k)?.nombre ?? k;
   }
 
-  nombreTipoSim(k: string): string {
-    return TIPOS_SIMULACION[k]?.nombre ?? k;
-  }
 }
