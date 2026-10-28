@@ -26,7 +26,6 @@ import {
   AyPageHeader,
   AyProgressBar,
   AyRow,
-  AySegmentedControl,
   AySelect,
   AyStack,
   AyTabs,
@@ -34,7 +33,6 @@ import {
   AyText,
   AyTimeline,
   type AyOpcionSelect,
-  type AySegmentoOpcion,
   type AyTabsElemento,
   type AyTimelineEvento,
   type ParCardPairs,
@@ -457,7 +455,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AyPageHeader,
     AyProgressBar,
     AyRow,
-    AySegmentedControl,
     AySelect,
     AyStack,
     AyTabs,
@@ -491,14 +488,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
             : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
         "
       >
-        <ay-button
-          ayAcciones
-          tamano="sm"
-          [variante]="enEjecucion() ? 'secondary' : 'primary'"
-          (click)="alternarPausa()"
-        >
-          {{ enEjecucion() ? '⏸ Pausar motor' : '▶ Reanudar motor' }}
-        </ay-button>
         <ay-button
           ayAcciones
           tamano="sm"
@@ -575,19 +564,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
                 <div ayStack gap="3">
                   <!-- Barra de Simulación y Customización de Entradas -->
                   <div ayRow gap="3" justificar="between" alinear="center" [ajuste]="true">
-                    <div ayRow gap="2" alinear="center" [ajuste]="true">
-                      <ay-button tamano="sm" variante="secondary" (click)="alternarPausa()">
-                        {{ enEjecucion() ? 'Pausa' : 'Reanudar' }}
-                      </ay-button>
-                      <ay-segmented-control
-                        etiqueta="Velocidad de planta"
-                        size="sm"
-                        [opciones]="opcionesVelocidad"
-                        [valor]="velocidadStr()"
-                        (valorChange)="cambiarVelocidad($event)"
-                      />
-                    </div>
-
                     <div ayRow gap="2" alinear="center" [ajuste]="true">
                       <div class="pl-atc-vivo-select">
                         <ay-select
@@ -759,20 +735,9 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
           <div class="pl-cmd-barra">
             <div ayRow gap="3" alinear="center" [ajuste]="true">
               <span class="pl-cmd-barra__estado">
-                <span class="pl-cmd-led" [class.pl-cmd-led--warn]="!enEjecucion()"></span>
-                {{
-                  enEjecucion()
-                    ? 'TERMINAL EN LÍNEA · FLUJO EN VIVO (' + velocidadStr() + '×)'
-                    : 'TERMINAL EN PAUSA'
-                }}
+                <span class="pl-cmd-led"></span>
+                TERMINAL EN LÍNEA · FLUJO EN VIVO
               </span>
-              <ay-segmented-control
-                etiqueta="Velocidad de simulación"
-                size="sm"
-                [opciones]="opcionesVelocidad"
-                [valor]="velocidadStr()"
-                (valorChange)="cambiarVelocidad($event)"
-              />
             </div>
 
             <div ayRow gap="2" alinear="center" [ajuste]="true">
@@ -1105,12 +1070,6 @@ export class VistaVivoComponent {
   readonly indiceRotacionTv = signal<number>(0);
   readonly segundosRotacionTv = signal<number>(4);
 
-  readonly opcionesVelocidad: AySegmentoOpcion[] = [
-    { valor: '1', etiqueta: '1× Normal' },
-    { valor: '2', etiqueta: '2× Rápido' },
-    { valor: '4', etiqueta: '4× Turbo' },
-  ];
-
   readonly opcionesSalasSelect: AyOpcionSelect[] = [
     { value: '', label: 'Todas las áreas (6 salas)' },
     ...SALAS_OFICINA.map((s) => ({ value: s.k, label: s.nombre })),
@@ -1121,9 +1080,6 @@ export class VistaVivoComponent {
     ...PUERTAS_CANAL.map((p) => ({ value: p.k, label: `${p.nombre} (${p.ic})` })),
   ];
 
-  readonly enEjecucion = signal<boolean>(true);
-  readonly velocidad = signal<number>(1);
-  readonly velocidadStr = computed(() => String(this.velocidad()));
   readonly cajonLateralAbierto = signal<boolean>(false);
   readonly vistaCajon = signal<'todo' | 'bandeja' | 'estacion' | 'correos'>('todo');
   readonly areaFiltro = signal<string>('');
@@ -1441,10 +1397,7 @@ export class VistaVivoComponent {
         this.vistaModo.set('comando');
       }
       this.tickInterval = setInterval(() => {
-        if (!this.enEjecucion()) return;
-        for (let k = 0; k < this.velocidad(); k++) {
-          this.ejecutarPasoSimulacion();
-        }
+        this.ejecutarPasoSimulacion();
       }, 220);
 
       this.tvRotacionInterval = setInterval(() => {
@@ -1658,17 +1611,6 @@ export class VistaVivoComponent {
     const entrada = Object.entries(TIPOS_SIMULACION).find(([, v]) => v.area === areaKey);
     const typeKey = entrada?.[0] ?? 'cons';
     this.inyectarTicket({ type: typeKey, rayo });
-  }
-
-  alternarPausa(): void {
-    this.enEjecucion.update((v) => !v);
-  }
-
-  cambiarVelocidad(val: string): void {
-    const num = Number(val);
-    if (num === 1 || num === 2 || num === 4) {
-      this.velocidad.set(num);
-    }
   }
 
   tonoSlaBadge(tk: TicketVivo): 'success' | 'warning' | 'danger' {
