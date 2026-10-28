@@ -786,50 +786,36 @@ body {
   background: transparent;
 }
 
-.pl-ingreso__aviso {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--aybar-space-3);
+.pl-ingreso__rapido {
+  display: grid;
+  gap: var(--aybar-space-1);
   box-sizing: border-box;
   inline-size: 100%;
   /* el ancho de la tarjeta lg del Login Form: 0.7 × breakpoint sm */
   max-inline-size: calc(var(--aybar-breakpoint-sm) * 0.7);
   padding: var(--aybar-space-3) var(--aybar-space-4);
-  border: var(--aybar-border-width-thin) solid
-    color-mix(in oklab, var(--aybar-color-feedback-warning-border) 35%, transparent);
+  border: var(--aybar-border-width-thin) solid var(--aybar-color-border-subtle);
   border-radius: var(--aybar-radius-lg);
-  background: var(--aybar-color-feedback-warning-bg);
-  color: var(--aybar-color-feedback-warning-fg);
-  font-size: var(--aybar-font-size-sm);
-  line-height: var(--aybar-font-leading-normal);
+  background: var(--aybar-color-bg-surface);
 }
 
-.pl-ingreso__aviso p {
-  margin: 0;
-}
-
-.pl-ingreso__aviso-icono {
-  flex: none;
-  inline-size: var(--aybar-space-5);
-  block-size: var(--aybar-space-5);
-}
-
-.pl-ingreso__aviso-texto {
-  display: grid;
+.pl-ingreso__rapido-fila {
+  display: flex;
+  align-items: flex-end;
   gap: var(--aybar-space-2);
+}
+
+.pl-ingreso__rapido-fila ay-form-field {
+  flex: 1 1 auto;
   min-inline-size: 0;
 }
 
-/* Los usuarios de prueba, uno por línea: usuario y clave en monoespaciada, como se escriben. */
-.pl-ingreso__usuarios {
-  display: grid;
-  gap: var(--aybar-space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.pl-ingreso__rapido-datos {
+  color: var(--aybar-color-fg-muted);
+  font-size: var(--aybar-font-size-xs);
 }
 
-.pl-ingreso__usuarios code {
+.pl-ingreso__rapido-datos code {
   font-family: var(--aybar-family-mono);
   font-weight: var(--aybar-font-weight-semibold);
   overflow-wrap: anywhere;

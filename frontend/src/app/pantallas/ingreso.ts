@@ -1,11 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AyAlert, AyButton, AyLoginForm, AySpinner } from '@aybarcorp/ui-angular';
-import type { AyCredenciales } from '@aybarcorp/ui-angular';
+import { AyAlert, AyButton, AyFormField, AyLoginForm, AySelect, AySpinner } from '@aybarcorp/ui-angular';
+import type { AyCredenciales, AyOpcionSelect } from '@aybarcorp/ui-angular';
 import { Acceso } from '../acceso';
 import { NOMBRE_PROYECTO } from '../proyecto';
 import { destinoSeguro } from '../rutas';
-import { rolesDeUsuarioDemo } from '../sesion';
 import type { UsuarioDemo } from '../sesion';
 import { Marca } from './marca';
 import { codigoDe, mensajeDe } from './utiles';
@@ -32,7 +31,7 @@ import { codigoDe, mensajeDe } from './utiles';
  */
 @Component({
   selector: 'app-ingreso',
-  imports: [AyAlert, AyButton, AyLoginForm, AySpinner, Marca, RouterLink],
+  imports: [AyAlert, AyButton, AyFormField, AyLoginForm, AySelect, AySpinner, Marca, RouterLink],
   template: `
     @if (acceso.demo) {
       <div class="pl-ingreso">
@@ -51,37 +50,27 @@ import { codigoDe, mensajeDe } from './utiles';
           </ul>
         </header>
         <div class="pl-ingreso__lado">
-          <aside class="pl-ingreso__aviso" aria-label="Perfiles disponibles para ingreso">
-            <svg class="pl-ingreso__aviso-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 8v5M12 16v.5" />
-            </svg>
-            <div class="pl-ingreso__aviso-texto" style="width: 100%;">
-              <p><strong>Ingreso rápido por perfil o mediante credenciales:</strong></p>
-              @if (usuarios.length > 0) {
-                <ul class="pl-ingreso__usuarios" style="display: grid; gap: 6px; margin-top: 8px;">
-                  @for (usuario of usuarios; track usuario.usuario) {
-                    <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 8px; background: color-mix(in oklab, var(--aybar-color-bg-surface) 75%, transparent); border: 1px solid var(--aybar-color-border-subtle);">
-                      <span>
-                        <strong>{{ usuario.nombre || usuario.usuario }}</strong>
-                        <span style="display: block; font-size: 11.5px; color: var(--aybar-color-fg-muted);">
-                          Usuario: <code>{{ usuario.usuario }}</code> · Clave: <code>{{ usuario.clave }}</code> · Rol: {{ roles(usuario) }}
-                        </span>
-                      </span>
-                      <ay-button
-                        size="sm"
-                        variante="secondary"
-                        [disabled]="enviando()"
-                        (click)="ingresarRapido(usuario)"
-                      >
-                        Entrar →
-                      </ay-button>
-                    </li>
-                  }
-                </ul>
+          @if (usuarios.length > 0) {
+            <aside class="pl-ingreso__rapido" aria-label="Ingreso rápido por perfil">
+              <div class="pl-ingreso__rapido-fila">
+                <ay-form-field etiqueta="Ingreso rápido por perfil">
+                  <ay-select
+                    nombre="perfil-rapido"
+                    size="sm"
+                    [opciones]="opcionesPerfil"
+                    [valor]="perfil()"
+                    (valorChange)="perfil.set($event)"
+                  />
+                </ay-form-field>
+                <ay-button size="sm" variante="secondary" [disabled]="enviando()" (click)="entrarConPerfil()">
+                  Entrar →
+                </ay-button>
+              </div>
+              @if (usuarioElegido(); as u) {
+                <small class="pl-ingreso__rapido-datos">Usuario: <code>{{ u.usuario }}</code> · Clave: <code>{{ u.clave }}</code></small>
               }
-            </div>
-          </aside>
+            </aside>
+          }
           <ay-login-form
             como="main"
             size="lg"
@@ -141,6 +130,12 @@ export class Ingreso {
 
   protected readonly nombre = NOMBRE_PROYECTO;
   protected readonly usuarios = this.acceso.usuariosDemo;
+  protected readonly opcionesPerfil: AyOpcionSelect[] = this.usuarios.map((u) => ({
+    value: u.usuario,
+    label: u.nombre || u.usuario,
+  }));
+  protected readonly perfil = signal(this.usuarios[0]?.usuario ?? '');
+  protected readonly usuarioElegido = computed(() => this.usuarios.find((u) => u.usuario === this.perfil()));
   protected readonly proveedores = ['Google', 'Microsoft', 'Apple', 'Celular'] as const;
   protected readonly idNota = 'ingreso-proveedores-nota';
   protected readonly error = signal<string | undefined>(undefined);
@@ -151,6 +146,11 @@ export class Ingreso {
     if (!this.acceso.demo && this.acceso.conEmisor) {
       this.acceso.entrar(this.destino).catch((falla: unknown) => this.errorEmisor.set(falla));
     }
+  }
+
+  protected async entrarConPerfil(): Promise<void> {
+    const usuario = this.usuarioElegido();
+    if (usuario) await this.ingresarRapido(usuario);
   }
 
   protected async ingresarRapido(usuario: UsuarioDemo): Promise<void> {
@@ -174,9 +174,5 @@ export class Ingreso {
 
   protected mensaje(falla: unknown): string {
     return mensajeDe(falla);
-  }
-
-  protected roles(usuario: UsuarioDemo): string {
-    return rolesDeUsuarioDemo(usuario);
   }
 }
