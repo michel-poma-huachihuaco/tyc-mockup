@@ -384,18 +384,9 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
             <ay-card>
               <ay-card-body>
                 <div ayStack gap="3">
-                  <!-- Barra de Simulación y Customización de Entradas -->
+                  <!-- Filtro de salas de la planta -->
                   <div ayRow gap="3" justificar="between" alinear="center" [ajuste]="true">
                     <div ayRow gap="2" alinear="center" [ajuste]="true">
-                      <div class="pl-atc-vivo-select">
-                        <ay-select
-                          nombre="canal-entrada"
-                          size="sm"
-                          [opciones]="opcionesCanalesSelect"
-                          [valor]="canalEntradaCustom()"
-                          (valorChange)="canalEntradaCustom.set($event)"
-                        />
-                      </div>
                       <div class="pl-atc-vivo-select">
                         <ay-select
                           nombre="sala-filtro"
@@ -405,13 +396,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
                           (valorChange)="areaFiltro.set($event)"
                         />
                       </div>
-                      <ay-button
-                        tamano="sm"
-                        variante="ghost"
-                        (click)="simularPicoMasivo()"
-                      >
-                        Pico +5
-                      </ay-button>
                     </div>
                   </div>
 
