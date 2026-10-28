@@ -45,6 +45,7 @@ import {
   type SalaOficina,
   type TicketAtc,
 } from './datos-atc';
+import { MonitorOperacionComponent } from './monitor-operacion';
 import { TableroResponsablesComponent } from './tablero-responsables';
 import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
@@ -461,6 +462,7 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
     AyTag,
     AyText,
     AyTimeline,
+    MonitorOperacionComponent,
     TableroResponsablesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -485,7 +487,9 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
         [descripcion]="
           vistaModo() === 'responsables'
             ? 'Status de atención de los tickets de cada responsable: carga, estados, SLA y último movimiento.'
-            : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
+            : vistaModo() === 'monitor'
+              ? 'Vista macro: cuántos tickets tiene cada persona, en qué estado de atención están y cómo va el SLA.'
+              : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
         "
       >
         <ay-button
@@ -526,6 +530,10 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
           (valorChange)="cambiarVistaModo($event)"
         />
       </ay-page-header>
+
+      @if (vistaModo() === 'monitor') {
+        <app-monitor-operacion [tickets]="tickets()" (seleccionarTicket)="seleccionarTicket.emit($event)" />
+      }
 
       @if (vistaModo() === 'responsables') {
         <app-tablero-responsables
@@ -730,286 +738,6 @@ const META_ESTACIONES_VIVO: Readonly<Record<string, MetaEstacionVivo>> = {
               </ay-card-body>
             </ay-card>
           </div>
-
-          <!-- 2.1 Barra Superior de Control de Terminal -->
-          <div class="pl-cmd-barra">
-            <div ayRow gap="3" alinear="center" [ajuste]="true">
-              <span class="pl-cmd-barra__estado">
-                <span class="pl-cmd-led"></span>
-                TERMINAL EN LÍNEA · FLUJO EN VIVO
-              </span>
-            </div>
-
-            <div ayRow gap="2" alinear="center" [ajuste]="true">
-              <div class="pl-atc-vivo-select">
-                <ay-select
-                  size="sm"
-                  [opciones]="opcionesCanalesSelect"
-                  [valor]="canalEntradaCustom()"
-                  (valorChange)="canalEntradaCustom.set($event)"
-                />
-              </div>
-              <div class="pl-atc-vivo-select">
-                <ay-select
-                  size="sm"
-                  [opciones]="opcionesSalasSelect"
-                  [valor]="areaFiltro()"
-                  (valorChange)="areaFiltro.set($event)"
-                />
-              </div>
-              <ay-button
-                tamano="sm"
-                [variante]="rayoEntradaCustom() ? 'primary' : 'secondary'"
-                (click)="rayoEntradaCustom.set(!rayoEntradaCustom())"
-              >
-                ⚡ {{ rayoEntradaCustom() ? 'Con Rayo' : 'Rayo' }}
-              </ay-button>
-              <ay-button tamano="sm" variante="primary" (click)="inyectarTicketCustomizado()">
-                + Ticket
-              </ay-button>
-              <ay-button tamano="sm" variante="secondary" (click)="simularPicoMasivo()">
-                Pico +5
-              </ay-button>
-              @if (areaFiltro()) {
-                <ay-button tamano="sm" variante="ghost" (click)="areaFiltro.set('')">
-                  Ver todas
-                </ay-button>
-              }
-            </div>
-          </div>
-
-          <!-- 2.2 Franja compacta de Tránsito entre Etapas -->
-          <div class="pl-cmd-router-bar">
-            <div class="pl-cmd-metricas">
-              <div class="pl-cmd-metrica">
-                <small>1. Orquestador</small>
-                <strong>{{ ticketsEnBandejaOrquestadora().length }}</strong>
-              </div>
-              <div class="pl-cmd-metrica">
-                <small>2. Cola área</small>
-                <strong>{{ totalEnColaSinAsignar() }}</strong>
-              </div>
-              <div class="pl-cmd-metrica">
-                <small>3. En puesto</small>
-                <strong>{{ totalEnEscritorioActivo() }}</strong>
-              </div>
-              <div class="pl-cmd-metrica">
-                <small>4. Comité SGD</small>
-                <strong>{{ escaladosCount() }}</strong>
-              </div>
-            </div>
-
-            <div class="pl-cmd-cola-strip">
-              <span class="pl-cmd-cola-strip__etiqueta">Bandeja Orquestadora:</span>
-              @if (ticketsEnBandejaOrquestadora().length > 0) {
-                @for (tk of ticketsEnBandejaOrquestadora(); track tk.id) {
-                  <button
-                    type="button"
-                    class="pl-cmd-chip"
-                    [class.pl-cmd-chip--activo]="ticketSeleccionadoId() === tk.id"
-                    (click)="ticketSeleccionadoId.set(tk.id)"
-                  >
-                    {{ tk.rayo ? '⚡ ' : '' }}{{ tk.numero }} · {{ nombreCanal(tk.gate) }} → {{ nombreSala(tk.area) }}
-                  </button>
-                }
-              } @else {
-                <span class="pl-cmd-cola-strip__vacio">0 en espera · Todos ruteados a su área</span>
-              }
-            </div>
-          </div>
-
-          <!-- 2.3 Panel de Terminales por Área Operativa (Tamaño fijo y responsivo) -->
-          <div class="pl-cmd-grid-salas">
-            @for (ar of areasFiltradasComando(); track ar.id) {
-              <div
-                class="pl-cmd-terminal pl-cmd-terminal--sala"
-                [class.pl-cmd-terminal--alerta]="!ar.enMetaVerde"
-                [class.pl-cmd-terminal--foco]="modoTvActivo() && areaRotacionTvActual().id === ar.id"
-              >
-                <div class="pl-cmd-terminal__cab">
-                  <div class="pl-cmd-terminal__titulo">
-                    <span
-                      class="pl-cmd-led"
-                      [class.pl-cmd-led--warn]="ar.enMetaVerde && ar.enCola >= 2"
-                      [class.pl-cmd-led--danger]="!ar.enMetaVerde"
-                    ></span>
-                    <span class="pl-cmd-terminal__cod">{{ ar.codigoTerminal }}</span>
-                    <span>{{ ar.nombre }}</span>
-                  </div>
-                  <div ayRow gap="1" alinear="center">
-                    <button
-                      type="button"
-                      class="pl-cmd-btn-cab"
-                      (click)="inyectarTicketEnSala(ar.id, false)"
-                    >
-                      + Ticket
-                    </button>
-                    <ay-badge size="sm" [tono]="ar.enMetaVerde ? 'success' : 'danger'">
-                      {{ ar.tiempoPromedioMin }}m / ≤{{ ar.metaSlaMin }}m
-                    </ay-badge>
-                  </div>
-                </div>
-
-                <div class="pl-cmd-terminal__cuerpo">
-                  <!-- A. Franja de Cola de Espera de altura constante -->
-                  <div class="pl-cmd-cola-strip">
-                    <span class="pl-cmd-cola-strip__etiqueta">Cola ({{ ar.ticketsEnColaLista.length }}):</span>
-                    @if (ar.ticketsEnColaLista.length > 0) {
-                      @for (tk of ar.ticketsEnColaLista; track tk.id) {
-                        <button
-                          type="button"
-                          class="pl-cmd-chip"
-                          [class.pl-cmd-chip--activo]="ticketSeleccionadoId() === tk.id"
-                          (click)="ticketSeleccionadoId.set(tk.id)"
-                        >
-                          {{ tk.rayo ? '⚡ ' : '' }}{{ tk.numero }} · {{ tk.cli }} · {{ pctSlaRestante(tk) }}%
-                        </button>
-                      }
-                    } @else {
-                      <span class="pl-cmd-cola-strip__vacio">Sin espera</span>
-                    }
-                  </div>
-
-                  <!-- B. Puestos de Responsables con tamaño fijo -->
-                  <div class="pl-cmd-puestos">
-                    @for (puesto of ar.puestos; track puesto.id) {
-                      <div
-                        class="pl-cmd-puesto"
-                        [class.pl-cmd-puesto--menor]="puesto.esMenorDelArea"
-                      >
-                        <div class="pl-cmd-puesto__cab">
-                          <span class="pl-cmd-puesto__nombre">
-                            {{ puesto.nombre }} · {{ puesto.tiempoPromedioMin }}m
-                          </span>
-                          @if (puesto.esMenorDelArea) {
-                            <ay-badge size="sm" tono="warning">Menor ({{ puesto.atendidosHoy }})</ay-badge>
-                          } @else {
-                            <ay-badge size="sm" tono="neutral">{{ puesto.atendidosHoy }} hoy</ay-badge>
-                          }
-                        </div>
-
-                        @if (puesto.ticketActual; as tk) {
-                          <button
-                            type="button"
-                            class="pl-cmd-ticket-btn"
-                            [class.pl-cmd-ticket-btn--activo]="ticketSeleccionadoId() === tk.id"
-                            (click)="ticketSeleccionadoId.set(tk.id)"
-                          >
-                            <div class="pl-cmd-linea-trunc">
-                              <span class="pl-cmd-texto-trunc">
-                                <strong>{{ tk.rayo ? '⚡ ' : '' }}{{ tk.numero }}</strong> · {{ tk.cli }}
-                              </span>
-                              <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
-                                {{ pctSlaRestante(tk) }}%
-                              </ay-badge>
-                            </div>
-                            <div class="pl-cmd-linea-trunc">
-                              <span class="pl-cmd-texto-trunc" ayText="subtitle" size="xs">
-                                {{ nombreTipoSim(tk.type) }}
-                              </span>
-                              <span ayText="mono" size="xs">{{ puesto.pctAvanceTicket }}%</span>
-                            </div>
-                          </button>
-                        } @else {
-                          <div class="pl-cmd-slot-libre">
-                            [DISPONIBLE · ESPERANDO TICKET]
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-
-          <!-- 2.4 Inspector del Ticket Seleccionado + Bitácora Terminal (Altura fija) -->
-          <div class="pl-cmd-grid-inferior">
-            <!-- Inspector de Ticket Seleccionado -->
-            <div class="pl-cmd-terminal pl-cmd-terminal--panel-inf">
-              <div class="pl-cmd-terminal__cab">
-                <div class="pl-cmd-terminal__titulo">
-                  <span class="pl-cmd-led"></span>
-                  <span class="pl-cmd-terminal__cod">INSPECT::TICKET</span>
-                  <span>
-                    {{
-                      ticketSeleccionado()
-                        ? 'Ticket ' + ticketSeleccionado()!.numero
-                        : 'Inspector de Ticket'
-                    }}
-                  </span>
-                </div>
-                @if (ticketSeleccionado(); as tk) {
-                  <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">{{ etiquetaSlaTicket(tk) }}</ay-badge>
-                }
-              </div>
-              <div class="pl-cmd-terminal__cuerpo pl-cmd-terminal__cuerpo--scroll">
-                @if (ticketSeleccionado(); as tk) {
-                  <div ayStack gap="2">
-                    <ay-card-pairs [pares]="paresTicketVivo(tk)" />
-                    <ay-progress-bar
-                      etiqueta="SLA restante"
-                      [valor]="pctSlaRestante(tk)"
-                      [detalle]="pctSlaRestante(tk) + '%'"
-                      [tono]="tonoSlaBarra(tk)"
-                      size="sm"
-                    />
-                    <ay-timeline
-                      etiqueta="Recorrido del ticket"
-                      [hitos]="hitosTicketVivo(tk)"
-                    />
-                    <div ayRow gap="2" [ajuste]="true">
-                      <ay-button tamano="sm" variante="secondary" (click)="alternarRayoTicket(tk.id)">
-                        ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Rayo' }}
-                      </ay-button>
-                      <ay-button tamano="sm" variante="secondary" (click)="reasignarMenorCarga(tk.id)">
-                        Reasignar
-                      </ay-button>
-                      @if (!tk.esc) {
-                        <ay-button tamano="sm" variante="danger" (click)="escalarTicketAComite(tk.id)">
-                          Escalar SGD
-                        </ay-button>
-                      }
-                      <ay-button tamano="sm" variante="primary" (click)="resolverTicketInmediato(tk.id)">
-                        Resolver
-                      </ay-button>
-                      <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
-                        Expediente →
-                      </ay-button>
-                    </div>
-                  </div>
-                } @else {
-                  <p ayText="body" size="sm">
-                    Selecciona cualquier ticket en cola o en el puesto de un responsable para ver su recorrido e intervenir.
-                  </p>
-                }
-              </div>
-            </div>
-
-            <!-- Consola Terminal de Navegación en Vivo -->
-            <div class="pl-cmd-terminal pl-cmd-terminal--panel-inf">
-              <div class="pl-cmd-terminal__cab">
-                <div class="pl-cmd-terminal__titulo">
-                  <span class="pl-cmd-led"></span>
-                  <span class="pl-cmd-terminal__cod">STREAM::TRANSIT-LOG</span>
-                  <span>Bitácora de Movimientos en Vivo</span>
-                </div>
-                <ay-badge size="sm" tono="info">{{ eventosTerminal().length }} eventos</ay-badge>
-              </div>
-              <div class="pl-cmd-terminal__cuerpo">
-                <div class="pl-cmd-log" role="log" aria-label="Flujo de tickets en tiempo real">
-                  @for (ev of eventosTerminal(); track ev.id) {
-                    <div class="pl-cmd-log__linea">
-                      <span class="pl-cmd-log__hora">[{{ ev.hora }}]</span>
-                      <strong>{{ ev.ticketNumero }}</strong>
-                      <span>{{ ev.origen }} → {{ ev.destino }}</span>
-                      <span>· <strong>{{ ev.responsable }}</strong></span>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       }
 
@@ -1059,10 +787,11 @@ export class VistaVivoComponent {
   readonly salas = SALAS_OFICINA;
   readonly metaXpNivel = 150;
 
-  readonly vistaModo = signal<'responsables' | 'comando'>('comando');
+  readonly vistaModo = signal<'responsables' | 'comando' | 'monitor'>('comando');
   readonly areaResponsables = signal<string>('');
   readonly tabsOperacionVivo: AyTabsElemento[] = [
     { value: 'comando', label: 'Planta' },
+    { value: 'monitor', label: 'Monitor' },
     { value: 'responsables', label: 'Responsables' },
   ];
 
@@ -1591,7 +1320,7 @@ export class VistaVivoComponent {
   }
 
   cambiarVistaModo(id: string): void {
-    if (id === 'responsables' || id === 'comando') {
+    if (id === 'responsables' || id === 'comando' || id === 'monitor') {
       this.vistaModo.set(id);
     }
   }

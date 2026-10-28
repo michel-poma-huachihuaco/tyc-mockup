@@ -88,6 +88,11 @@ const MAPA_FILTROS_POR_TABLA: Readonly<Record<string, Readonly<Record<string, re
   'acciones-hoy': {
     etiqueta: ['categoria'],
   },
+  'monitor-personas': {
+    persona: ['persona'],
+    area: ['area'],
+    sla: ['sla'],
+  },
   'cierre-e2e': {
     eje: ['eje'],
     etiqueta: ['situacion'],
