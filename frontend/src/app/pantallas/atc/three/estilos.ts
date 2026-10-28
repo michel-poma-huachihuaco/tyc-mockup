@@ -78,65 +78,6 @@ const CSS = `
   inline-size: 100%;
 }
 
-.v3-entradas {
-  --v3-ok: var(--aybar-color-feedback-success-border);
-  --v3-warn: var(--aybar-color-feedback-warning-border);
-  --v3-bad: var(--aybar-color-feedback-danger-border);
-  --v3-acc: var(--aybar-color-secondary-400);
-  --v3-fg: var(--aybar-color-fg-default);
-  --v3-mu: var(--aybar-color-fg-muted);
-  --v3-sf: var(--aybar-color-bg-surface);
-  --v3-sk: var(--aybar-color-bg-surface-sunken);
-  --v3-ln: var(--aybar-color-border-subtle);
-  --v3-pri: var(--aybar-color-primary-500);
-  position: absolute;
-  z-index: 4;
-  inset-inline-start: var(--aybar-space-3);
-  inset-block-end: var(--aybar-space-3);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--aybar-space-2);
-  max-inline-size: calc(100% - var(--aybar-space-6));
-  padding: var(--aybar-space-2) var(--aybar-space-3);
-  border-radius: var(--aybar-radius-lg);
-  background: color-mix(in srgb, var(--v3-sf) 86%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: var(--aybar-border-width-thin) solid var(--v3-ln);
-  font-family: inherit;
-}
-
-.v3-entradas span {
-  font-size: var(--aybar-font-size-2xs);
-  font-weight: var(--aybar-font-weight-bold);
-  letter-spacing: var(--aybar-font-tracking-wide);
-  text-transform: uppercase;
-  color: var(--v3-mu);
-}
-
-.v3-entradas button {
-  font-family: inherit;
-  font-size: var(--aybar-font-size-xs);
-  font-weight: var(--aybar-font-weight-semibold);
-  padding: var(--aybar-space-1) var(--aybar-space-3);
-  border-radius: var(--aybar-radius-full);
-  border: var(--aybar-border-width-thin) solid var(--v3-ln);
-  background: transparent;
-  color: var(--v3-fg);
-  cursor: pointer;
-}
-
-.v3-entradas button:hover {
-  border-color: var(--v3-acc);
-}
-
-.v3-entradas button[aria-pressed='true'] {
-  background: var(--v3-acc);
-  border-color: var(--v3-acc);
-  color: var(--aybar-color-fg-on-accent);
-}
-
 /* ---------------------------------------------------------------- asistente flotante 3D (pt-bot) */
 .pt-bot {
   --v3-ok: var(--aybar-color-feedback-success-border);
@@ -513,14 +454,7 @@ const CSS = `
 }
 
 @media (max-width: 639.98px) {
-  .v3-entradas {
-    inset-inline-start: var(--aybar-space-2);
-    inset-block-end: var(--aybar-space-2);
-    max-inline-size: calc(100% - var(--aybar-space-4));
-    padding: var(--aybar-space-1) var(--aybar-space-2);
-    gap: var(--aybar-space-1);
-  }
-
+  
   .pt-bot {
     inset-inline-end: var(--aybar-space-3);
     inset-block-end: var(--aybar-space-3);

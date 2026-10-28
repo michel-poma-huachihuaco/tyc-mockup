@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { bucle, capaEtiquetas, color, css, type RGB } from './comun';
-import { ESTILOS, crearEntrada, glifo, type Entrada, type EstiloEntrada } from './entradas';
+import { crearEntrada, glifo, type Entrada, type EstiloEntrada } from './entradas';
 import { inyectarEstilos } from './estilos';
 import { Kit, PELOS, PIELES, hash, mezcla } from './modelos';
 import {
@@ -464,18 +464,8 @@ export function montarVivo(o: OptsVivo): () => void {
   const entradas = new Map<string, Entrada>();
   const pulsoCanal = new Map<string, number>();
   const letreros: CSS2DObject[] = [];
-  const leerEstilo = (): EstiloEntrada => {
-    let id = new URLSearchParams(location.search).get('entradas');
-    if (!id) {
-      try {
-        id = localStorage.getItem('v3:entradas');
-      } catch {
-        /* sin almacenamiento */
-      }
-    }
-    return ESTILOS.some((e) => e.id === id) ? (id as EstiloEntrada) : 'terminal';
-  };
-  let estiloEntrada = leerEstilo();
+  // Las entradas son siempre «Portales»: arcos de datos por donde entra cada solicitud.
+  const estiloEntrada: EstiloEntrada = 'portal';
   const montarEntradas = (): void => {
     for (const e of entradas.values()) {
       grupoEntradas.remove(e.g);
@@ -511,34 +501,6 @@ export function montarVivo(o: OptsVivo): () => void {
     }
   };
   montarEntradas();
-
-  const selector = document.createElement('div');
-  selector.className = 'v3-entradas';
-  selector.setAttribute('role', 'group');
-  selector.setAttribute('aria-label', 'Estilo de las entradas automatizadas');
-  const rotulo = document.createElement('span');
-  rotulo.textContent = 'Entradas';
-  selector.append(rotulo);
-  const botones = ESTILOS.map((e) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = e.n;
-    b.title = e.d;
-    b.setAttribute('aria-pressed', String(e.id === estiloEntrada));
-    b.addEventListener('click', () => {
-      estiloEntrada = e.id;
-      try {
-        localStorage.setItem('v3:entradas', e.id);
-      } catch {
-        /* sin almacenamiento */
-      }
-      botones.forEach((x, i) => x.setAttribute('aria-pressed', String(ESTILOS[i]!.id === e.id)));
-      montarEntradas();
-    });
-    selector.append(b);
-    return b;
-  });
-  host.append(selector);
 
   // Mesa de orquestación y Robot Orquestador
   const mesa = new THREE.Mesh(
@@ -1537,7 +1499,6 @@ export function montarVivo(o: OptsVivo): () => void {
     for (const e of entradas.values()) e.dispose();
     glifos.forEach((t) => t.dispose());
     pechoBandeja.dispose();
-    selector.remove();
     r.dispose();
     movil.removeEventListener('change', ocultarEtiquetas);
     etiquetas.domElement.remove();

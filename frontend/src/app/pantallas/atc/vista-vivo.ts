@@ -335,23 +335,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
             : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
         "
       >
-        <ay-button
-          ayAcciones
-          tamano="sm"
-          [variante]="modoTvActivo() ? 'primary' : 'secondary'"
-          (click)="alternarModoTv()"
-        >
-          {{ modoTvActivo() ? 'Salir de Auto-rotación TV (' + segundosRotacionTv() + 's)' : 'Auto-rotación TV (4s)' }}
-        </ay-button>
-        <ay-button
-          ayAcciones
-          tamano="sm"
-          variante="primary"
-          (click)="inyectarTicketCustomizado()"
-        >
-          + Inyectar ticket
-        </ay-button>
-
         <ay-tabs
           ayPestanas
           etiqueta="Vistas del Centro de Comando de Operación en Vivo"
@@ -422,20 +405,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
                           (valorChange)="areaFiltro.set($event)"
                         />
                       </div>
-                      <ay-button
-                        tamano="sm"
-                        [variante]="rayoEntradaCustom() ? 'primary' : 'secondary'"
-                        (click)="rayoEntradaCustom.set(!rayoEntradaCustom())"
-                      >
-                        ⚡ {{ rayoEntradaCustom() ? 'Con Rayo' : 'Rayo' }}
-                      </ay-button>
-                      <ay-button
-                        tamano="sm"
-                        variante="primary"
-                        (click)="inyectarTicketCustomizado()"
-                      >
-                        + Ticket
-                      </ay-button>
                       <ay-button
                         tamano="sm"
                         variante="ghost"
