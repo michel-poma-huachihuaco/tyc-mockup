@@ -1474,7 +1474,7 @@ export class ConsolaAtcComponent {
     {
       id: 'morosidad',
       grupo: 'MESAS',
-      titulo: 'Morosidad 3 meses',
+      titulo: 'Morosidad',
       subtitulo: 'Evaluación diaria de mora y suspensión por reclamo abierto',
       icono: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M12 8v4 M12 16h.01',
     },
