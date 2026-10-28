@@ -920,27 +920,27 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
       <!-- =========================================================================
            1. BUSCADOR + GRAFO 360 EN 3D Y 2D (APAGADO HASTA BUSCAR UN CLIENTE)
            ========================================================================= -->
-      <ay-card>
-        <ay-card-body>
-          <div ayStack gap="3">
+      <div ayStack gap="3">
             <!-- Barra superior: Buscador de cliente (con aproximación fonética) / documental + Controles de Zonas Fijas -->
-            <div #buscador360Host ayRow gap="2" [ajuste]="true" role="search">
-              <ay-search-input
-                [etiqueta]="
-                  clienteSeleccionado()
-                    ? 'Buscar otro cliente (DNI, nombre, sonido fonético, lote) o consultar documentos/secciones 360'
-                    : 'Buscar cliente (DNI, nombre, aproximación fonética: Wamani, Parades, Kispe, Marya…)'
-                "
-                size="sm"
-                [retardo]="0"
-                [valor]="busquedaTexto()"
-                (valorChange)="alCambiarBusqueda($event)"
-                (buscar)="ejecutarBusquedaSemantica($event)"
-                placeholder="Ej. 72282555, Wamani (≈Huamaní), Parades (≈Paredes), Kispe (≈Quispe), Soto o VS-2025-0507…"
-              />
-              <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
-                {{ clienteSeleccionado() ? 'Consultar' : 'Buscar cliente' }}
-              </ay-button>
+            <div #buscador360Host ayRow gap="2" [ajuste]="true" justificar="between" role="search">
+              <div ayRow gap="2" [ajuste]="true" style="flex: 1 1 auto; min-width: 0;">
+                <ay-search-input
+                  [etiqueta]="
+                    clienteSeleccionado()
+                      ? 'Buscar otro cliente (DNI, nombre, sonido fonético, lote) o consultar documentos/secciones 360'
+                      : 'Buscar cliente (DNI, nombre, aproximación fonética: Wamani, Parades, Kispe, Marya…)'
+                  "
+                  size="sm"
+                  [retardo]="0"
+                  [valor]="busquedaTexto()"
+                  (valorChange)="alCambiarBusqueda($event)"
+                  (buscar)="ejecutarBusquedaSemantica($event)"
+                  placeholder="Ej. 72282555, Wamani (≈Huamaní), Parades (≈Paredes), Kispe (≈Quispe), Soto o VS-2025-0507…"
+                />
+                <ay-button tamano="sm" variante="primary" (click)="ejecutarBusquedaSemantica()">
+                  {{ clienteSeleccionado() ? 'Consultar' : 'Buscar cliente' }}
+                </ay-button>
+              </div>
               <ay-button
                 tamano="sm"
                 [variante]="ocultarNodosVacios() ? 'primary' : 'secondary'"
@@ -952,34 +952,6 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                     : 'Mostrar los 16 nodos (incl. vacíos)'
                 }}
               </ay-button>
-            </div>
-
-            <!-- Barra rápida de demostración: Clientes de prueba + Búsqueda fonética + Reglas de tamaño y zona -->
-            <div ayRow gap="2" [ajuste]="true" justificar="between">
-              <div ayRow gap="2" [ajuste]="true">
-                <span ayText="label" size="xs">Clientes 360:</span>
-                @for (cliDemo of clientes; track cliDemo.k) {
-                  <ay-button
-                    tamano="sm"
-                    [variante]="clienteSeleccionado() && clienteKey() === cliDemo.k ? 'primary' : 'ghost'"
-                    (click)="entrarAFichaCliente(cliDemo.k)"
-                  >
-                    {{ cliDemo.nombre }} ({{ contarNodosConDatosDe(cliDemo) }}/{{ nodos.length }})
-                  </ay-button>
-                }
-              </div>
-              <div ayRow gap="2" [ajuste]="true">
-                <ay-badge size="sm" [tono]="hayCoincidenciaFoneticaActiva() ? 'info' : 'neutral'">
-                  {{
-                    hayCoincidenciaFoneticaActiva()
-                      ? '≈ Coincidencia fonética por sonido activa'
-                      : '≈ Fonética ES habilitada (B/V, C/S/Z, H/G/W, Q/K, Y/LL)'
-                  }}
-                </ay-badge>
-                <ay-badge size="sm" tono="neutral">
-                  Tamaño proporcional: 1 a 100 registros
-                </ay-badge>
-              </div>
             </div>
 
             @if (!clienteSeleccionado() && busquedaTexto().trim().length >= 2) {
@@ -1354,8 +1326,6 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
                 </div>
               </div>
             </div>
-          </ay-card-body>
-        </ay-card>
 
       <!-- Alertas de contingencia / disponibilidad de fuentes / búsqueda semántica -->
       @if (modoNoEncontrado()) {
