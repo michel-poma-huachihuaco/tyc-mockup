@@ -9,6 +9,7 @@ import {
   effect,
   inject,
   input,
+  model,
   signal,
   untracked,
 } from '@angular/core';
@@ -57,7 +58,7 @@ interface SeccionFiltroColumna {
   readonly limpiar: () => void;
 }
 
-const COLUMNAS_SIN_FILTRO = new Set(['accion', 'acciones']);
+const COLUMNAS_SIN_FILTRO = new Set(['accion', 'acciones', 'expandir']);
 
 const COLUMNAS_FECHA_LOCAL = new Set([
   'fecha',
@@ -89,9 +90,11 @@ const MAPA_FILTROS_POR_TABLA: Readonly<Record<string, Readonly<Record<string, re
     etiqueta: ['categoria'],
   },
   'monitor-personas': {
-    persona: ['persona'],
-    area: ['area'],
+    persona: ['persona', 'area'],
+    cargaActiva: ['carga'],
+    estado: ['estado'],
     sla: ['sla'],
+    prioritario: ['rayo'],
   },
   'cierre-e2e': {
     eje: ['eje'],
@@ -295,20 +298,22 @@ export function extraerFechaDeFila(fila: Record<string, unknown>, clave: string)
 }
 
 @Directive({
-  selector: 'ay-table',
+  selector: 'ay-table, table[filtrosTabla]',
   standalone: true,
 })
 export class FiltroColumnasTablaDirective {
-  private readonly tabla = inject<AyTable<Record<string, unknown>>>(AyTable);
+  private readonly tabla = inject<AyTable<Record<string, unknown>>>(AyTable, { optional: true });
   private readonly tablaInterna = this.tabla as unknown as {
     visibles: Signal<readonly Record<string, unknown>[]>;
-  };
+  } | null;
   private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly doc = inject(DOCUMENT);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly filtrosTabla = input<FiltrosTabla<any> | undefined>(undefined);
+  readonly columnasFiltro = input<readonly AyColumna[]>([]);
+  readonly ordenFiltro = model<{ clave: string; dir: 'asc' | 'desc' } | undefined>(undefined);
 
   readonly filtrosLocales = signal<Readonly<Record<string, readonly string[]>>>({});
   readonly rangosFechaLocales = signal<Readonly<Record<string, readonly [string, string]>>>({});
@@ -320,51 +325,67 @@ export class FiltroColumnasTablaDirective {
   private textoBusquedaPopover = '';
   private listoEnDom = false;
 
+  private obtenerColumnas(): readonly AyColumna[] {
+    return this.tabla ? this.tabla.columnas() : this.columnasFiltro();
+  }
+
+  private obtenerFilas(): readonly Record<string, unknown>[] {
+    if (this.tabla) return this.tabla.filas();
+    return (this.filtrosTabla()?.filtradas() as readonly Record<string, unknown>[]) ?? [];
+  }
+
+  private obtenerOrden(): { clave: string; dir: 'asc' | 'desc' } | undefined {
+    return this.tabla ? this.tabla.orden() : this.ordenFiltro();
+  }
+
   constructor() {
-    const baseFilas = this.tabla.filas;
-    this.tablaInterna.visibles = computed(() => {
-      const filas = baseFilas();
-      const locales = this.filtrosLocales();
-      const rangos = this.rangosFechaLocales();
-      const clavesActivas = Object.keys(locales).filter((k) => (locales[k]?.length ?? 0) > 0);
-      const rangosActivos = Object.keys(rangos).filter((k) => {
-        const r = rangos[k];
-        return Boolean(r && (r[0].trim() || r[1].trim()));
+    if (this.tabla && this.tablaInterna) {
+      const baseFilas = this.tabla.filas;
+      const tablaRef = this.tabla;
+      this.tablaInterna.visibles = computed(() => {
+        const filas = baseFilas();
+        const locales = this.filtrosLocales();
+        const rangos = this.rangosFechaLocales();
+        const clavesActivas = Object.keys(locales).filter((k) => (locales[k]?.length ?? 0) > 0);
+        const rangosActivos = Object.keys(rangos).filter((k) => {
+          const r = rangos[k];
+          return Boolean(r && (r[0].trim() || r[1].trim()));
+        });
+        const filtradas =
+          clavesActivas.length === 0 && rangosActivos.length === 0
+            ? filas
+            : filas.filter(
+                (f) =>
+                  clavesActivas.every((k) => {
+                    const sel = locales[k];
+                    if (!sel?.length) return true;
+                    const { valor } = extraerValorYEtiquetaColumna(f, k);
+                    return sel.includes(valor);
+                  }) &&
+                  rangosActivos.every((k) => {
+                    const r = rangos[k];
+                    if (!r) return true;
+                    return coincideRangoFecha(extraerFechaDeFila(f, k), r[0], r[1]);
+                  }),
+              );
+        const o = tablaRef.orden();
+        if (!o) return filtradas;
+        const dir = o.dir === 'asc' ? 1 : -1;
+        return [...filtradas].sort((a, b) => {
+          const va = a[o.clave];
+          const vb = b[o.clave];
+          if (typeof va === 'number' && typeof vb === 'number') {
+            return (va - vb) * dir;
+          }
+          return (
+            String(va ?? '').localeCompare(String(vb ?? ''), 'es', {
+              numeric: true,
+              sensitivity: 'base',
+            }) * dir
+          );
+        });
       });
-      const filtradas =
-        clavesActivas.length === 0 && rangosActivos.length === 0
-          ? filas
-          : filas.filter(
-              (f) =>
-                clavesActivas.every((k) => {
-                  const sel = locales[k];
-                  if (!sel?.length) return true;
-                  const { valor } = extraerValorYEtiquetaColumna(f, k);
-                  return sel.includes(valor);
-                }) &&
-                rangosActivos.every((k) => {
-                  const r = rangos[k];
-                  if (!r) return true;
-                  return coincideRangoFecha(extraerFechaDeFila(f, k), r[0], r[1]);
-                }),
-            );
-      const o = this.tabla.orden();
-      if (!o) return filtradas;
-      const dir = o.dir === 'asc' ? 1 : -1;
-      return [...filtradas].sort((a, b) => {
-        const va = a[o.clave];
-        const vb = b[o.clave];
-        if (typeof va === 'number' && typeof vb === 'number') {
-          return (va - vb) * dir;
-        }
-        return (
-          String(va ?? '').localeCompare(String(vb ?? ''), 'es', {
-            numeric: true,
-            sensitivity: 'base',
-          }) * dir
-        );
-      });
-    });
+    }
 
     afterNextRender(() => {
       this.listoEnDom = true;
@@ -379,9 +400,9 @@ export class FiltroColumnasTablaDirective {
 
     effect(() => {
       // Leemos las señales reactivas que deben refrescar las cabeceras o el popover abierto
-      this.tabla.columnas();
-      this.tabla.filas();
-      this.tabla.orden();
+      this.obtenerColumnas();
+      this.obtenerFilas();
+      this.obtenerOrden();
       this.filtrosLocales();
       this.rangosFechaLocales();
       const colAbierta = this.columnaAbierta();
@@ -443,7 +464,7 @@ export class FiltroColumnasTablaDirective {
 
   private columnaTieneFechasLocal(claveColumna: string): boolean {
     if (COLUMNAS_FECHA_LOCAL.has(claveColumna)) return true;
-    const primera = this.tabla.filas()[0];
+    const primera = this.obtenerFilas()[0];
     if (!primera) return false;
     return parsearFechaValor(extraerFechaDeFila(primera, claveColumna)) !== null;
   }
@@ -514,7 +535,7 @@ export class FiltroColumnasTablaDirective {
     }
 
     // Filtro facetado local sobre las filas de la tabla
-    const todasFilas = this.tabla.filas();
+    const todasFilas = this.obtenerFilas();
     const locales = this.filtrosLocales();
     const otrasClaves = Object.keys(locales).filter(
       (k) => k !== col.clave && (locales[k]?.length ?? 0) > 0,
@@ -610,10 +631,14 @@ export class FiltroColumnasTablaDirective {
   }
 
   private aplicarOrden(clave: string, dir: 'asc' | 'desc' | undefined): void {
-    const actual = this.tabla.orden();
+    const actual = this.obtenerOrden();
     const nuevo =
       dir && !(actual?.clave === clave && actual.dir === dir) ? { clave, dir } : undefined;
-    this.tabla.orden.set(nuevo);
+    if (this.tabla) {
+      this.tabla.orden.set(nuevo);
+    } else {
+      this.ordenFiltro.set(nuevo);
+    }
   }
 
   private configurarListenersHost(): void {
@@ -626,7 +651,7 @@ export class FiltroColumnasTablaDirective {
       const tr = th.parentElement;
       if (!tr) return;
       const idx = Array.from(tr.children).indexOf(th);
-      const col = this.tabla.columnas()[idx];
+      const col = this.obtenerColumnas()[idx];
       if (!this.esColumnaFiltrable(col)) return;
 
       ev.preventDefault();
@@ -649,7 +674,7 @@ export class FiltroColumnasTablaDirective {
       const tr = th.parentElement;
       if (!tr) return;
       const idx = Array.from(tr.children).indexOf(th);
-      const col = this.tabla.columnas()[idx];
+      const col = this.obtenerColumnas()[idx];
       if (!this.esColumnaFiltrable(col)) return;
 
       ev.preventDefault();
@@ -711,8 +736,8 @@ export class FiltroColumnasTablaDirective {
   private sincronizarCabeceras(): void {
     const host = this.hostRef.nativeElement;
     const ths = Array.from(host.querySelectorAll<HTMLElement>('thead th'));
-    const cols = this.tabla.columnas();
-    const orden = this.tabla.orden();
+    const cols = this.obtenerColumnas();
+    const orden = this.obtenerOrden();
     const abierta = this.columnaAbierta();
 
     ths.forEach((th, idx) => {
@@ -773,7 +798,7 @@ export class FiltroColumnasTablaDirective {
     const host = this.hostRef.nativeElement;
     const locales = this.filtrosLocales();
     const rangos = this.rangosFechaLocales();
-    const cols = this.tabla.columnas();
+    const cols = this.obtenerColumnas();
     const entradasActivas = Object.entries(locales).filter(([, vals]) => vals.length > 0);
     const rangosActivos = Object.entries(rangos).filter(
       ([, r]) => Boolean(r && (r[0].trim() || r[1].trim())),
@@ -794,7 +819,8 @@ export class FiltroColumnasTablaDirective {
     this.barraLocalEl.innerHTML = '';
     const etq = this.doc.createElement('span');
     etq.className = 'pl-tabla-filtros-locales__info';
-    etq.textContent = `${this.tablaInterna.visibles().length} de ${this.tabla.filas().length} visibles · Filtros:`;
+    const totalVisibles = this.tablaInterna ? this.tablaInterna.visibles().length : this.obtenerFilas().length;
+    etq.textContent = `${totalVisibles} de ${this.obtenerFilas().length} visibles · Filtros:`;
     this.barraLocalEl.appendChild(etq);
 
     for (const [clave, vals] of entradasActivas) {
@@ -850,7 +876,7 @@ export class FiltroColumnasTablaDirective {
       this.ocultarPopoverDom();
       return;
     }
-    const col = this.tabla.columnas().find((c) => c.clave === clave);
+    const col = this.obtenerColumnas().find((c) => c.clave === clave);
     if (!col) {
       this.ocultarPopoverDom();
       return;
@@ -883,7 +909,7 @@ export class FiltroColumnasTablaDirective {
     popover.appendChild(cab);
 
     // 2. Ordenamiento rápido A-Z / Z-A (omitido en la columna Rayo por no ser alfabética)
-    const ordenActual = this.tabla.orden();
+    const ordenActual = this.obtenerOrden();
     const dirActual = ordenActual?.clave === col.clave ? ordenActual.dir : undefined;
     if (col.clave !== 'rayo') {
       const filaOrden = this.doc.createElement('div');

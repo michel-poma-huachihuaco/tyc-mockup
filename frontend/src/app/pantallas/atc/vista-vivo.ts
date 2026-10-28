@@ -38,6 +38,8 @@ import {
 } from '@aybarcorp/ui-angular';
 import { subscribeAppearance } from '@aybarcorp/tokens/apariencia';
 import {
+  AHORA_BASE,
+  EMPRESAS_AYBAR,
   PUERTAS_CANAL,
   SALAS_OFICINA,
   TIPOS_SIMULACION,
@@ -45,7 +47,6 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { MonitorOperacionComponent } from './monitor-operacion';
-import { TableroResponsablesComponent } from './tablero-responsables';
 import { leerTokenRgb } from './three/comun';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
@@ -308,7 +309,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
     AyText,
     AyTimeline,
     MonitorOperacionComponent,
-    TableroResponsablesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -330,11 +330,9 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
         [conPestanas]="true"
         titulo="Operación en Vivo · Trazabilidad por responsable"
         [descripcion]="
-          vistaModo() === 'responsables'
-            ? 'Status de atención de los tickets de cada responsable: carga, estados, SLA y último movimiento.'
-            : vistaModo() === 'monitor'
-              ? 'Vista macro: cuántos tickets tiene cada persona, en qué estado de atención están y cómo va el SLA.'
-              : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
+          vistaModo() === 'monitor'
+            ? 'Control de SLAs y Carga de Tickets por responsable: métricas SLA, distribución proporcional de estados y filas desplegables.'
+            : 'Planta de atención en vivo: monitorea el tránsito de tickets entre áreas y qué responsable atiende cada caso.'
         "
       >
         <ay-button
@@ -353,18 +351,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
         >
           + Inyectar ticket
         </ay-button>
-        <ay-button
-          ayAcciones
-          tamano="sm"
-          [variante]="correosActivo() ? 'primary' : 'secondary'"
-          (click)="alternarCorreos()"
-        >
-          {{
-            correosActivo()
-              ? 'Cerrar bitácora CC'
-              : 'Correos CC (' + correosEnviados().length + ')'
-          }}
-        </ay-button>
 
         <ay-tabs
           ayPestanas
@@ -377,21 +363,21 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
       </ay-page-header>
 
       @if (vistaModo() === 'monitor') {
-        <app-monitor-operacion [tickets]="tickets()" (seleccionarTicket)="seleccionarTicket.emit($event)" />
-      }
-
-      @if (vistaModo() === 'responsables') {
-        <app-tablero-responsables
-          [tickets]="tickets()"
+        <app-monitor-operacion
+          [tickets]="ticketsEnVivo()"
           [(area)]="areaResponsables"
-          (seleccionarTicket)="seleccionarTicket.emit($event)"
+          [eventosVivo]="eventosTerminal()"
+          [cerradosHoy]="cerradosHoy()"
+          [conRayo]="conRayoCount()"
+          (seleccionarTicket)="alSeleccionarTicketEnVivo($event)"
         />
       }
 
       <!-- =========================================================================
            PLANTA: 3D + SALA DE COMANDOS · PANEL DE ALTURA FIJA Y RESPONSIVO
+           Se mantiene montado en el DOM para no destruir ni recrear el contexto WebGL al cambiar de pestaña.
            ========================================================================= -->
-      @if (vistaModo() === 'comando') {
+      <div [style.display]="vistaModo() === 'comando' ? '' : 'none'">
         <div ayStack gap="4">
           <!-- 1. Planta de Atención en Vivo (3D) -->
           <div ayStack gap="2">
@@ -401,7 +387,7 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
                   Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
                 </ay-heading>
                 <span ayText="subtitle" size="xs">
-                  Haz clic en un ticket para abrir su ficha; las salas filtran la planta y el botón «Correos CC» abre la bitácora de correos.
+                  Haz clic en un ticket para abrir su ficha y su bitácora; las salas filtran la planta.
                 </span>
               </div>
               <div ayRow gap="2" [ajuste]="true">
@@ -490,98 +476,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
                     ></canvas>
                   </div>
 
-                  <!-- Modal único: pestañas Ticket y Correos CC (Esc, cierre y foco los gestiona ay-modal) -->
-                  <ay-modal
-                    [abierto]="panelVisible()"
-                    (abiertoChange)="!$event && cerrarPanel()"
-                    [titulo]="etiquetaPanel()"
-                    size="lg"
-                  >
-                    <div ayStack gap="3">
-                      <ay-tabs
-                        etiqueta="Contenido de la ficha"
-                        variante="underline"
-                        size="sm"
-                        [items]="tabsPanel()"
-                        [valor]="pestanaPanel()"
-                        (valorChange)="pestanaPanel.set($event === 'correos' ? 'correos' : 'ticket')"
-                      />
-                      @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
-                        @if (!enPlanta()) {
-                          <ay-alert size="sm" tono="info">
-                            Este ticket ya salió de la planta; se muestra su último estado.
-                          </ay-alert>
-                        }
-                        <div ayRow gap="2" [ajuste]="true">
-                          <ay-badge size="sm" [tono]="tk.rayo ? 'warning' : 'info'">
-                            {{ tk.rayo ? 'Prioridad Rayo' : tk.prio }}
-                          </ay-badge>
-                          <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
-                            {{ etiquetaSlaTicket(tk) }}
-                          </ay-badge>
-                          <span ayText="body">{{ tk.resumen }}</span>
-                        </div>
-                        <div class="pl-vivo-modal__cols">
-                          <div ayStack gap="3">
-                            <ay-progress-bar
-                              etiqueta="SLA restante en turno"
-                              [valor]="pctSlaRestante(tk)"
-                              [detalle]="pctSlaRestante(tk) + '% restante'"
-                              [tono]="tonoSlaBarra(tk)"
-                              size="sm"
-                            />
-                            <ay-card-pairs [pares]="paresTicketVivo(tk)" />
-                          </div>
-                          <div ayStack gap="1">
-                            <span ayText="label" size="xs">Recorrido en tiempo real</span>
-                            <div class="pl-vivo-modal__recorrido">
-                              <ay-timeline
-                                etiqueta="Recorrido del ticket en planta"
-                                [hitos]="hitosTicketVivo(tk)"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      } @else {
-                        <div ayRow gap="2" [ajuste]="true">
-                          <ay-badge size="sm" tono="info">{{ correosEnviados().length }} recientes</ay-badge>
-                          <span ayText="body">
-                            Correos de asignación (CC Líder de Área): notificación automática en cada despacho a responsable
-                          </span>
-                        </div>
-                        <ay-timeline
-                          etiqueta="Correos de asignación enviados"
-                          [hitos]="hitosCorreosEnviados()"
-                        />
-                      }
-                    </div>
-                    @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
-                      <div ayAcciones class="pl-vivo-modal__pie">
-                        <div class="pl-vivo-modal__pie-sec">
-                          <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" [disabled]="!enPlanta()" (click)="reasignarMenorCarga(tk.id)">
-                            Reasignar gestor
-                          </ay-button>
-                          <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
-                            Ver expediente
-                          </ay-button>
-                        </div>
-                        <div class="pl-vivo-modal__pie-sec">
-                          <ay-button tamano="sm" variante="secondary" [disabled]="!enPlanta()" (click)="alternarRayoTicket(tk.id)">
-                            ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
-                          </ay-button>
-                          @if (!tk.esc) {
-                            <ay-button tamano="sm" variante="danger" [disabled]="!enPlanta()" (click)="escalarTicketAComite(tk.id)">
-                              Escalar a Comité SGD
-                            </ay-button>
-                          }
-                          <ay-button tamano="sm" variante="primary" [disabled]="!enPlanta()" (click)="resolverTicketInmediato(tk.id)">
-                            Resolver a Mi Portal
-                          </ay-button>
-                        </div>
-                      </div>
-                    }
-                  </ay-modal>
-
                   <!-- Leyenda de escena 3D con componentes del SDK -->
                   <div ayRow gap="2" [ajuste]="true">
                     <ay-tag variante="outline" colorPunto="var(--aybar-color-feedback-success-border)">
@@ -605,7 +499,99 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
             </ay-card>
           </div>
         </div>
-      }
+      </div>
+
+      <!-- Modal único: pestañas Ticket y Bitácora (disponible desde Planta y Monitor) -->
+      <ay-modal
+        [abierto]="panelVisible()"
+        (abiertoChange)="!$event && cerrarPanel()"
+        [titulo]="etiquetaPanel()"
+        size="lg"
+      >
+        <div ayStack gap="3">
+          <ay-tabs
+            etiqueta="Contenido de la ficha"
+            variante="underline"
+            size="sm"
+            [items]="tabsPanel()"
+            [valor]="pestanaPanel()"
+            (valorChange)="pestanaPanel.set($event === 'correos' ? 'correos' : 'ticket')"
+          />
+          @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
+            @if (!enPlanta()) {
+              <ay-alert size="sm" tono="info">
+                Este ticket ya salió de la planta; se muestra su último estado.
+              </ay-alert>
+            }
+            <div ayRow gap="2" [ajuste]="true">
+              <ay-badge size="sm" [tono]="tk.rayo ? 'warning' : 'info'">
+                {{ tk.rayo ? 'Prioridad Rayo' : tk.prio }}
+              </ay-badge>
+              <ay-badge size="sm" [tono]="tonoSlaBadge(tk)">
+                {{ etiquetaSlaTicket(tk) }}
+              </ay-badge>
+              <span ayText="body">{{ tk.resumen }}</span>
+            </div>
+            <div class="pl-vivo-modal__cols">
+              <div ayStack gap="3">
+                <ay-progress-bar
+                  etiqueta="SLA restante en turno"
+                  [valor]="pctSlaRestante(tk)"
+                  [detalle]="pctSlaRestante(tk) + '% restante'"
+                  [tono]="tonoSlaBarra(tk)"
+                  size="sm"
+                />
+                <ay-card-pairs [pares]="paresTicketVivo(tk)" />
+              </div>
+              <div ayStack gap="1">
+                <span ayText="label" size="xs">Recorrido en tiempo real</span>
+                <div class="pl-vivo-modal__recorrido">
+                  <ay-timeline
+                    etiqueta="Recorrido del ticket en planta"
+                    [hitos]="hitosTicketVivo(tk)"
+                  />
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div ayRow gap="2" [ajuste]="true">
+              <ay-badge size="sm" tono="info">{{ correosEnviados().length }} recientes</ay-badge>
+              <span ayText="body">
+                Bitácora de asignación (CC Líder de Área): registro automático en cada despacho a responsable
+              </span>
+            </div>
+            <ay-timeline
+              etiqueta="Bitácora de asignaciones"
+              [hitos]="hitosCorreosEnviados()"
+            />
+          }
+        </div>
+        @if (pestanaPanel() === 'ticket' && ticketMostrado(); as tk) {
+          <div ayAcciones class="pl-vivo-modal__pie">
+            <div class="pl-vivo-modal__pie-sec">
+              <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" [disabled]="!enPlanta()" (click)="reasignarMenorCarga(tk.id)">
+                Reasignar gestor
+              </ay-button>
+              <ay-button class="pl-vivo-modal__contorno" tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(tk.numero)">
+                Ver expediente
+              </ay-button>
+            </div>
+            <div class="pl-vivo-modal__pie-sec">
+              <ay-button tamano="sm" variante="secondary" [disabled]="!enPlanta()" (click)="alternarRayoTicket(tk.id)">
+                ⚡ {{ tk.rayo ? 'Quitar Rayo' : 'Prioridad Rayo' }}
+              </ay-button>
+              @if (!tk.esc) {
+                <ay-button tamano="sm" variante="danger" [disabled]="!enPlanta()" (click)="escalarTicketAComite(tk.id)">
+                  Escalar a Comité SGD
+                </ay-button>
+              }
+              <ay-button tamano="sm" variante="primary" [disabled]="!enPlanta()" (click)="resolverTicketInmediato(tk.id)">
+                Resolver a Mi Portal
+              </ay-button>
+            </div>
+          </div>
+        }
+      </ay-modal>
     </div>
   `,
 })
@@ -625,12 +611,11 @@ export class VistaVivoComponent {
   readonly salas = SALAS_OFICINA;
   readonly metaXpNivel = 150;
 
-  readonly vistaModo = signal<'responsables' | 'comando' | 'monitor'>('comando');
+  readonly vistaModo = signal<'comando' | 'monitor'>('comando');
   readonly areaResponsables = signal<string>('');
   readonly tabsOperacionVivo: AyTabsElemento[] = [
     { value: 'comando', label: 'Planta' },
     { value: 'monitor', label: 'Monitor' },
-    { value: 'responsables', label: 'Responsables' },
   ];
 
   readonly modoTvActivo = signal<boolean>(false);
@@ -674,13 +659,13 @@ export class VistaVivoComponent {
   readonly correosActivo = computed(() => this.panelVisible() && this.pestanaPanel() === 'correos');
   readonly tabsPanel = computed<AyTabsElemento[]>(() => [
     { value: 'ticket', label: 'Ticket', disabled: !this.ticketMostrado() },
-    { value: 'correos', label: 'Correos CC', contador: this.correosEnviados().length },
+    { value: 'correos', label: 'Bitácora', contador: this.correosEnviados().length },
   ]);
   readonly etiquetaPanel = computed(() => {
     const tk = this.ticketMostrado();
     return this.pestanaPanel() === 'ticket' && tk
       ? 'Ficha del ticket ' + tk.numero
-      : 'Correos CC de asignación';
+      : 'Bitácora de asignación';
   });
 
   abrirTicket(id: string): void {
@@ -763,6 +748,90 @@ export class VistaVivoComponent {
     return this.ticketsActivos().find((t) => t.id === id) ?? null;
   });
 
+  /** Combina la cartera base con los tickets en tránsito de la simulación en vivo para alimentar Monitor y Responsables en tiempo real. */
+  readonly ticketsEnVivo = computed<readonly TicketAtc[]>(() => {
+    const base = this.tickets();
+    const numsBase = new Set(base.map((b) => b.num));
+    const mapaArea: Readonly<Record<string, string>> = {
+      eje1: 'ATC',
+      cob: 'COBRANZA',
+      libro: 'LEGAL',
+      legal: 'LEGAL',
+      post: 'POSTVENTA',
+      proy: 'ADMINISTRACION',
+    };
+    const mapaTipo: Readonly<Record<string, string>> = {
+      cons: 'PED',
+      cuota: 'CTA',
+      moro: 'CTA',
+      recl: 'REC',
+      legal: 'REC',
+      gar: 'GAR',
+      ingr: 'VIS',
+      bus: 'VIS',
+    };
+    const empresaDefault = EMPRESAS_AYBAR[0]!;
+    const ahoraMs = AHORA_BASE.getTime();
+    const simulados: TicketAtc[] = this.ticketsActivos()
+      .filter((tv) => !numsBase.has(tv.numero))
+      .map((tv) => {
+        const areaAtc = mapaArea[tv.area] ?? 'ATC';
+        const opened = new Date(ahoraMs - Math.max(1, tv.age) * 60000);
+        const due = new Date(ahoraMs + (tv.slaMax - tv.age) * 60000);
+        const movFecha = new Date(ahoraMs - (tv.age % 6) * 60000);
+        const prio: TicketAtc['prio'] =
+          tv.prio === 'Urgente' ? 'URGENT' : tv.prio === 'Alta' ? 'HIGH' : 'MEDIUM';
+        const state: TicketAtc['state'] =
+          tv.etapa === 'salida'
+            ? 'RESOLVED'
+            : tv.esc && tv.age > tv.slaMax + 20
+              ? 'IN_COMMITTEE'
+              : tv.esc
+                ? 'ESCALATED'
+                : tv.stateRf004;
+        return {
+          num: tv.numero,
+          co: empresaDefault.id,
+          empresa: empresaDefault,
+          line: 'Lotes urbanos',
+          ch: this.nombreCanal(tv.gate),
+          cli: tv.cli,
+          dni: '40000000',
+          proj: tv.lote,
+          type: mapaTipo[tv.type] ?? 'PED',
+          prio,
+          state,
+          area: areaAtc,
+          owner: tv.respNombre ?? null,
+          opened,
+          firstResp: tv.etapa === 'atencion' || tv.etapa === 'salida' ? opened : undefined,
+          frDue: due,
+          resDue: due,
+          slaSrc: 'en vivo',
+          reopen: 0,
+          conflict: tv.esc,
+          rayo: tv.rayo,
+          emotion: 'Monitoreo en vivo.',
+          eje: tv.area === 'legal' ? 3 : tv.area === 'post' ? 2 : 1,
+          contract: null,
+          summary: tv.resumen,
+          interactions: [],
+          log: [{ fecha: movFecha, area: areaAtc, responsable: tv.respNombre ?? 'Cola', motivo: 'VIVO', nota: tv.resumen }],
+          status: [{ fecha: movFecha, estado: state, autor: tv.respNombre ?? 'Robot Orquestador' }],
+        };
+      });
+    return [...base, ...simulados];
+  });
+
+  alSeleccionarTicketEnVivo(num: string): void {
+    const vivo = this.ticketsActivos().find((t) => t.numero === num || t.id === num);
+    if (vivo) {
+      this.abrirTicket(vivo.id);
+      return;
+    }
+    this.seleccionarTicket.emit(num);
+  }
+
   constructor() {
     this.salas.forEach((r) => {
       const plantillas = PLANTILLA_PUESTOS_SALA[r.k] ?? [];
@@ -793,7 +862,7 @@ export class VistaVivoComponent {
       if (!area) return;
       untracked(() => {
         this.areaResponsables.set(area);
-        this.vistaModo.set('responsables');
+        this.vistaModo.set('monitor');
       });
     });
 
@@ -801,10 +870,22 @@ export class VistaVivoComponent {
       const host = this.stageHostRef()?.nativeElement;
       const canvas = this.threeCanvasRef()?.nativeElement;
       if (!host || !canvas) return;
-      untracked(() => {
-        this.inicializarEscena3D();
-      });
+      let rafInit = 0;
+      if (typeof requestAnimationFrame === 'function') {
+        rafInit = requestAnimationFrame(() => {
+          untracked(() => {
+            this.inicializarEscena3D();
+          });
+        });
+      } else {
+        untracked(() => {
+          this.inicializarEscena3D();
+        });
+      }
       onCleanup(() => {
+        if (rafInit && typeof cancelAnimationFrame === 'function') {
+          cancelAnimationFrame(rafInit);
+        }
         if (this.desmontarVivo) {
           this.desmontarVivo();
           this.desmontarVivo = null;
@@ -829,7 +910,7 @@ export class VistaVivoComponent {
       }
       this.tickInterval = setInterval(() => {
         this.ejecutarPasoSimulacion();
-      }, 220);
+      }, 550);
 
       this.tvRotacionInterval = setInterval(() => {
         if (!this.modoTvActivo()) return;
@@ -1007,7 +1088,7 @@ export class VistaVivoComponent {
   }
 
   cambiarVistaModo(id: string): void {
-    if (id === 'responsables' || id === 'comando' || id === 'monitor') {
+    if (id === 'comando' || id === 'monitor') {
       this.vistaModo.set(id);
     }
   }
@@ -1107,14 +1188,16 @@ export class VistaVivoComponent {
     };
 
     this.ticketsActivos.update((lista) => [...lista, nuevo]);
-    this.registrarEventoTerminal(
-      numero,
-      `Canal ${g.nombre}`,
-      'Bandeja Orquestadora',
-      'Robot Despachador',
-      `Ruteando hacia ${this.nombreSala(tp.area)}${rayo ? ' [⚡ RAYO]' : ''}`,
-      rayo ? 'warn' : 'ok',
-    );
+    if (!opts?.silencioso) {
+      this.registrarEventoTerminal(
+        numero,
+        `Canal ${g.nombre}`,
+        'Bandeja Orquestadora',
+        'Robot Despachador',
+        `Ruteando hacia ${this.nombreSala(tp.area)}${rayo ? ' [⚡ RAYO]' : ''}`,
+        rayo ? 'warn' : 'ok',
+      );
+    }
   }
 
   inyectarTicketCustomizado(): void {
@@ -1458,7 +1541,7 @@ export class VistaVivoComponent {
       }
     }
 
-    if (cambioVisible || puestosCambiaron || this.spawnTimer % 3 === 0) {
+    if (cambioVisible || puestosCambiaron) {
       this.ticketsActivos.set(sobrevivientes);
     }
     if (puestosCambiaron) {

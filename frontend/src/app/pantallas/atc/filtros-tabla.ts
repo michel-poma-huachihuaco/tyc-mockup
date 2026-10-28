@@ -23,7 +23,7 @@ export interface DefFiltroTabla<T> {
   readonly etiqueta: string;
   readonly tipo: TipoFiltroTabla;
   /** Valor de la fila para este filtro; en `boolean`, true si la fila cumple la condición; en `rango-fechas`, `Date` o texto de fecha. */
-  readonly valorDe: (fila: T) => string | boolean | Date;
+  readonly valorDe: (fila: T) => string | readonly string[] | boolean | Date;
   /** Catálogo fijo de opciones; si falta se derivan de las filas. */
   readonly opciones?: readonly OpcionBaseFiltro[];
   readonly etiquetaDe?: (valor: string) => string;
@@ -168,7 +168,15 @@ export class FiltrosTabla<T> {
         if (!coincideRangoFecha(v, vs[0] ?? '', vs[1] ?? '')) return false;
         continue;
       }
-      if (d.tipo === 'boolean' ? v !== true : !vs.includes(String(v))) return false;
+      if (d.tipo === 'boolean') {
+        if (v !== true) return false;
+        continue;
+      }
+      if (Array.isArray(v)) {
+        if (!v.some((item) => vs.includes(String(item)))) return false;
+        continue;
+      }
+      if (!vs.includes(String(v))) return false;
     }
     return true;
   }
@@ -183,8 +191,11 @@ export class FiltrosTabla<T> {
     if (d.opciones) return d.opciones;
     const vistos: string[] = [];
     for (const f of this.filas()) {
-      const v = String(d.valorDe(f));
-      if (!vistos.includes(v)) vistos.push(v);
+      const v = d.valorDe(f);
+      const items = Array.isArray(v) ? v.map(String) : [String(v)];
+      for (const item of items) {
+        if (!vistos.includes(item)) vistos.push(item);
+      }
     }
     return vistos.map((v) => ({ valor: v, etiqueta: d.etiquetaDe?.(v) ?? v }));
   }
@@ -198,7 +209,11 @@ export class FiltrosTabla<T> {
         this.base(d).map((o) => ({
           valor: o.valor,
           etiqueta: o.etiqueta,
-          recuento: this.filas().filter((f) => this.coincide(f, id) && String(d.valorDe(f)) === o.valor).length,
+          recuento: this.filas().filter((f) => {
+            if (!this.coincide(f, id)) return false;
+            const v = d.valorDe(f);
+            return Array.isArray(v) ? v.map(String).includes(o.valor) : String(v) === o.valor;
+          }).length,
         })),
       );
       this.opcionesPorId.set(id, s);

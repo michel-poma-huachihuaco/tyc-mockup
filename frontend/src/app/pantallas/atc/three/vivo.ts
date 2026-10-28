@@ -179,8 +179,8 @@ export function montarVivo(o: OptsVivo): () => void {
   const glPrevio = canvas.getContext('webgl2') as WebGL2RenderingContext | null;
   glPrevio?.pixelStorei(glPrevio.UNPACK_FLIP_Y_WEBGL, false);
   glPrevio?.pixelStorei(glPrevio.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-  const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  r.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+  const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  r.setPixelRatio(Math.min(1.5, devicePixelRatio || 1));
   r.shadowMap.enabled = true;
   r.shadowMap.type = THREE.PCFShadowMap;
   r.toneMapping = THREE.ACESFilmicToneMapping;
@@ -205,7 +205,7 @@ export function montarVivo(o: OptsVivo): () => void {
   sol.position.set(CENTRO.x - 9, 17, CENTRO.z + 7);
   sol.target.position.copy(CENTRO);
   sol.castShadow = true;
-  sol.shadow.mapSize.set(2048, 2048);
+  sol.shadow.mapSize.set(1024, 1024);
   sol.shadow.bias = -0.0004;
   sol.shadow.normalBias = 0.03;
   sol.shadow.radius = 4;
@@ -346,15 +346,23 @@ export function montarVivo(o: OptsVivo): () => void {
     const obj = new CSS2DObject(el);
     obj.position.set(x, y, z);
     escena.add(obj);
+    let prevSub = sub;
+    let prevRiesgo: boolean | undefined;
     const api = {
       set: (n: string, riesgo = false): void => {
-        if (s.textContent !== n) s.textContent = n;
-        const c = riesgo ? C.bad : acento;
-        punto.style.background = css(c);
-        punto.style.boxShadow = `0 0 0 3px ${css(c, 0.25)}`;
-        // Segundo canal además del color: el punto de una zona en riesgo pasa a rombo.
-        punto.style.borderRadius = riesgo ? '2px' : '50%';
-        punto.style.transform = riesgo ? 'rotate(45deg) scale(1.1)' : '';
+        if (prevSub !== n) {
+          prevSub = n;
+          s.textContent = n;
+        }
+        if (prevRiesgo !== riesgo) {
+          prevRiesgo = riesgo;
+          const c = riesgo ? C.bad : acento;
+          punto.style.background = css(c);
+          punto.style.boxShadow = `0 0 0 3px ${css(c, 0.25)}`;
+          // Segundo canal además del color: el punto de una zona en riesgo pasa a rombo.
+          punto.style.borderRadius = riesgo ? '2px' : '50%';
+          punto.style.transform = riesgo ? 'rotate(45deg) scale(1.1)' : '';
+        }
       },
     };
     signos.push(api);
@@ -1241,6 +1249,10 @@ export function montarVivo(o: OptsVivo): () => void {
   const v3 = new THREE.Vector3();
 
   const frame = (ahora: number): void => {
+    if (!host.clientWidth) {
+      ultimo = ahora;
+      return;
+    }
     const dt = Math.min(0.1, (ahora - ultimo) / 1000);
     ultimo = ahora;
     const t = ahora / 1000;
@@ -1461,7 +1473,9 @@ export function montarVivo(o: OptsVivo): () => void {
     for (const z of s.zonas) {
       pZona.get(z.k)?.set(`${z.cola} en cola · ${z.atencion} en atención`, z.riesgo);
     }
-    dibujarHub(s, ahora);
+    if (primera || tick % 4 === 0) {
+      dibujarHub(s, ahora);
+    }
 
     pX += (parX - pX) * 0.06;
     pY += (parY - pY) * 0.06;

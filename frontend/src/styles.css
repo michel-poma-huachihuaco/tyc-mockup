@@ -2289,7 +2289,7 @@ body {
    FILTROS DESPLEGABLES EN CABECERAS DE COLUMNA (<thead><th>) Y OPTIMIZACIÓN DE ESPACIOS
    ========================================================================== */
 
-.pl-atc-marco .ay-table thead th.pl-th-filtrable {
+.pl-atc-marco thead th.pl-th-filtrable {
   cursor: pointer;
   user-select: none;
   transition:
@@ -2297,13 +2297,13 @@ body {
     color var(--aybar-motion-duration-fast) var(--aybar-motion-easing-standard);
 }
 
-.pl-atc-marco .ay-table thead th.pl-th-filtrable:hover {
+.pl-atc-marco thead th.pl-th-filtrable:hover {
   background-color: color-mix(in oklab, var(--aybar-color-primary-500) 8%, var(--aybar-color-bg-surface-sunken));
   color: var(--aybar-color-fg-default);
 }
 
-.pl-atc-marco .ay-table thead th.pl-th-filtrable--activo,
-.pl-atc-marco .ay-table thead th.pl-th-filtrable--abierto {
+.pl-atc-marco thead th.pl-th-filtrable--activo,
+.pl-atc-marco thead th.pl-th-filtrable--abierto {
   background-color: color-mix(in oklab, var(--aybar-color-primary-500) 14%, var(--aybar-color-bg-surface-sunken));
   color: var(--aybar-color-fg-default);
 }
