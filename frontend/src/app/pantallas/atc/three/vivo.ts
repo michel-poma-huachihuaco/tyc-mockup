@@ -5,6 +5,7 @@ import { crearEntrada, glifo, type Entrada, type EstiloEntrada } from './entrada
 import { inyectarEstilos } from './estilos';
 import { Kit, PELOS, PIELES, hash, mezcla } from './modelos';
 import {
+  ANEXO,
   CANALES,
   CENTRO,
   COMITE,
@@ -205,17 +206,17 @@ export function montarVivo(o: OptsVivo): () => void {
   sol.position.set(CENTRO.x - 9, 17, CENTRO.z + 7);
   sol.target.position.copy(CENTRO);
   sol.castShadow = true;
-  sol.shadow.mapSize.set(1024, 1024);
+  sol.shadow.mapSize.set(2048, 2048);
   sol.shadow.bias = -0.0004;
   sol.shadow.normalBias = 0.03;
   sol.shadow.radius = 4;
   Object.assign(sol.shadow.camera, {
-    left: -15,
-    right: 15,
-    top: 13,
-    bottom: -13,
+    left: -22,
+    right: 22,
+    top: 20,
+    bottom: -20,
     near: 1,
-    far: 50,
+    far: 70,
   });
   sol.shadow.camera.updateProjectionMatrix();
   escena.add(sol, sol.target);
@@ -275,6 +276,9 @@ export function montarVivo(o: OptsVivo): () => void {
   tira(2.55, 10.45, 12.2, 11.35, pasillo);
   tira(11.2, 0.1, 12.1, 11.35, pasillo);
   tira(3.0, 6.25, 11.6, 7.15, pasillo);
+  // anexo de las áreas de la organización: enlace con el pasillo oeste y corredor entre las dos filas de salas
+  tira(2.95, 11.35, 3.85, ANEXO.z + ANEXO.ancho / 2, pasillo);
+  tira(ANEXO.x0, ANEXO.z - ANEXO.ancho / 2, ANEXO.x1, ANEXO.z + ANEXO.ancho / 2, pasillo);
 
   const muroC = mezcla(C.superficie, C.suelo, 0.45);
   const muro = (x: number, z: number, w: number, d: number): void => {
@@ -308,6 +312,8 @@ export function montarVivo(o: OptsVivo): () => void {
     acento: RGB,
     compacto = false,
     onClick?: () => void,
+    /** Ancho máximo en px: el título se parte en varias líneas (letreros de las salas del anexo, muy juntas). */
+    ancho?: number,
   ): { set: (n: string, riesgo?: boolean) => void; obj: CSS2DObject } => {
     const el = document.createElement('div');
     el.style.pointerEvents = 'none';
@@ -339,6 +345,15 @@ export function montarVivo(o: OptsVivo): () => void {
     if (compacto) {
       s.style.display = 'none';
       pill.style.padding = '3px 9px 3px 7px';
+    }
+    if (ancho) {
+      pill.style.whiteSpace = 'normal';
+      pill.style.maxWidth = `${ancho}px`;
+      pill.style.borderRadius = '9px';
+      pill.style.gap = '5px';
+      pill.style.padding = '3px 7px 3px 6px';
+      t.style.font = '700 9.5px Montserrat,system-ui,sans-serif';
+      t.style.lineHeight = '1.1';
     }
     caja.append(t, s);
     pill.append(punto, caja);
@@ -638,6 +653,14 @@ export function montarVivo(o: OptsVivo): () => void {
       const b = z + d - (s.puerta[1] + puertaHueco / 2);
       oeste(a, x, z + a / 2);
       oeste(b, x, z + d - b / 2);
+    } else if (s.lado === 'sur') {
+      oeste(d, x, z + d / 2);
+      oeste(d, x + w, z + d / 2);
+      norte(w, x + w / 2, z);
+      const a = s.puerta[0] - puertaHueco / 2 - x;
+      const b = x + w - (s.puerta[0] + puertaHueco / 2);
+      norte(a, x + a / 2, z + d);
+      norte(b, x + w - b / 2, z + d);
     } else {
       oeste(d, x, z + d / 2);
       oeste(d, x + w, z + d / 2);
@@ -687,12 +710,12 @@ export function montarVivo(o: OptsVivo): () => void {
     pl.position.set(
       s.lado === 'oeste' ? s.x + s.w - 0.3 : s.x + 0.3,
       0,
-      s.lado === 'oeste' ? s.z + 0.3 : s.z + s.d - 0.3,
+      s.lado === 'oeste' || s.lado === 'sur' ? s.z + 0.3 : s.z + s.d - 0.3,
     );
     escena.add(pl);
     plantas.push(pl);
     const pl2 = kit.planta(0.45);
-    pl2.position.set(s.x + s.w - 0.3, 0, s.z + s.d - 0.3);
+    pl2.position.set(s.x + s.w - 0.3, 0, s.lado === 'sur' ? s.z + 0.3 : s.z + s.d - 0.3);
     escena.add(pl2);
     plantas.push(pl2);
   };
@@ -703,10 +726,10 @@ export function montarVivo(o: OptsVivo): () => void {
     if (!s) continue;
     grande(s, z.color);
     const sx = s.lado === 'oeste' ? s.x - 0.1 : s.puerta[0];
-    const sz = s.lado === 'oeste' ? s.puerta[1] : s.z - 0.1;
+    const sz = s.lado === 'oeste' ? s.puerta[1] : s.lado === 'sur' ? s.z + s.d + 0.1 : s.z - 0.1;
     pZona.set(
       z.k,
-      signo(z.n, '', sx, 2.0, sz, z.color, false, () => o.alClickSala?.(z.k)),
+      signo(z.n, '', sx, 2.0, sz, z.color, Boolean(s.anexo), () => o.alClickSala?.(z.k), s.anexo ? 84 : undefined),
     );
   }
 
@@ -1083,9 +1106,10 @@ export function montarVivo(o: OptsVivo): () => void {
     x.fillStyle = css(HUB_TENUE);
     x.font = '500 18px Montserrat, system-ui, sans-serif';
     x.fillText('en espera · rayo > SLA > prioridad', 24, 140);
-    const n = s.zonas.length;
+    const zonasHub = s.zonas.slice(0, 6);
+    const n = zonasHub.length;
     const bw = (W - 48) / n;
-    s.zonas.forEach((z, i) => {
+    zonasHub.forEach((z, i) => {
       const meta = clamp(z.cola / 12);
       const act = barras.get(z.k) ?? 0;
       const v = act + (meta - act) * 0.4;
@@ -1130,12 +1154,12 @@ export function montarVivo(o: OptsVivo): () => void {
   const ajustar = (): void => {
     const w = host.clientWidth;
     if (!w) return;
-    const h = Math.round(Math.max(480, Math.min(680, w * 0.6)));
+    const h = Math.round(Math.max(520, Math.min(760, w * 0.65)));
     canvas.style.height = `${h}px`;
     r.setSize(w, h, false);
     etiquetas.setSize(w, h);
     const asp = w / h;
-    const alto = Math.max(16.4, 25.5 / asp);
+    const alto = Math.max(22, 34 / asp);
     cam.left = (-alto * asp) / 2;
     cam.right = (alto * asp) / 2;
     cam.top = alto / 2;

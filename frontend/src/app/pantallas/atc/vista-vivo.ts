@@ -47,8 +47,17 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { MonitorOperacionComponent } from './monitor-operacion';
-import { PlantaViajeAreasComponent } from './planta-viaje-areas';
 import { leerTokenRgb } from './three/comun';
+import {
+  AREAS_ORG,
+  CLAVES_ORG,
+  GRUPOS_ORG,
+  LIDERES_ORG,
+  PUESTOS_ORG,
+  SALAS_ORG,
+  TIPOS_ORG,
+  TOKEN_ZONA_ORG,
+} from './three/areas-org';
 import { montarVivo, type Cols, type Estatico, type Snap } from './three/vivo';
 
 interface TicketVivo {
@@ -126,6 +135,7 @@ const LIDERES_SALA: Readonly<Record<string, string>> = {
   legal: 'Dr. Ernesto Alarcón (Gerencia Legal Eje 3)',
   post: 'Ing. Roberto Castañeda (Jefe Postventa)',
   proy: 'Arq. Claudia Mendoza (Responsable Proyecto)',
+  ...LIDERES_ORG,
 };
 
 const TOKEN_ZONA: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, string>>>> = {
@@ -136,6 +146,7 @@ const TOKEN_ZONA: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, st
     legal: 'neutral-700',
     post: 'success-700',
     proy: 'secondary-800',
+    ...TOKEN_ZONA_ORG.claro,
   },
   oscuro: {
     eje1: 'primary-500',
@@ -144,6 +155,7 @@ const TOKEN_ZONA: Readonly<Record<'claro' | 'oscuro', Readonly<Record<string, st
     legal: 'neutral-300',
     post: 'success-300',
     proy: 'secondary-300',
+    ...TOKEN_ZONA_ORG.oscuro,
   },
 };
 
@@ -286,7 +298,11 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
       csat: '4.7',
     },
   ],
+  ...PUESTOS_ORG,
 };
+
+/** Tipos de ticket de la Planta: los de las salas de atención y los de las áreas de la organización. */
+const TIPOS_SIM = { ...TIPOS_SIMULACION, ...TIPOS_ORG };
 
 @Component({
   selector: 'app-vista-vivo',
@@ -310,7 +326,6 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
     AyText,
     AyTimeline,
     MonitorOperacionComponent,
-    PlantaViajeAreasComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -369,7 +384,7 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
             <div ayRow gap="2" justificar="between" [ajuste]="true">
               <div ayStack gap="1">
                 <ay-heading [nivel]="2" size="sm">
-                  Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas · Comité SGD · Cierre en Mi Portal
+                  Planta de Atención en Vivo (3D) · Robot Orquestador · 6 Salas de atención y 13 áreas · Comité SGD · Cierre en Mi Portal
                 </ay-heading>
                 <span ayText="subtitle" size="xs">
                   Haz clic en un ticket para abrir su ficha y su bitácora; las salas filtran la planta.
@@ -448,14 +463,14 @@ const PLANTILLA_PUESTOS_SALA: Readonly<
                     <ay-tag variante="outline" colorPunto="var(--aybar-color-primary-500)">
                       Robot Orquestador: Despacho automático por carga
                     </ay-tag>
+                    @for (g of gruposOrg; track g.id) {
+                      <ay-tag variante="outline" [colorPunto]="colorGrupo(g)">Áreas · {{ g.nombre }}</ay-tag>
+                    }
                   </div>
                 </div>
               </ay-card-body>
             </ay-card>
           </div>
-
-          <!-- 2. Viaje de los tickets por las áreas (solo en la Planta) -->
-          <app-planta-viaje-areas />
         </div>
       </div>
 
@@ -566,7 +581,14 @@ export class VistaVivoComponent {
   private readonly threeCanvasRef = viewChild<ElementRef<HTMLCanvasElement>>('threeCanvas');
 
   readonly puertas = PUERTAS_CANAL;
-  readonly salas = SALAS_OFICINA;
+  /** Tema de la escena 3D, para que la leyenda de los grupos de áreas use el mismo color que sus salas. */
+  protected readonly temaOscuro = signal(false);
+  protected readonly gruposOrg = GRUPOS_ORG;
+  protected colorGrupo(g: (typeof GRUPOS_ORG)[number]): string {
+    return `var(--aybar-color-${this.temaOscuro() ? g.tokenOscuro : g.tokenClaro})`;
+  }
+
+  readonly salas: readonly SalaOficina[] = [...SALAS_OFICINA, ...SALAS_ORG];
   readonly metaXpNivel = 150;
 
   readonly vistaModo = signal<'comando' | 'monitor'>('comando');
@@ -581,8 +603,8 @@ export class VistaVivoComponent {
   readonly segundosRotacionTv = signal<number>(4);
 
   readonly opcionesSalasSelect: AyOpcionSelect[] = [
-    { value: '', label: 'Todas las áreas (6 salas)' },
-    ...SALAS_OFICINA.map((s) => ({ value: s.k, label: s.nombre })),
+    { value: '', label: 'Todas las áreas (19 salas)' },
+    ...[...SALAS_OFICINA, ...SALAS_ORG].map((s) => ({ value: s.k, label: s.nombre })),
   ];
 
   readonly opcionesCanalesSelect: AyOpcionSelect[] = [
@@ -731,7 +753,7 @@ export class VistaVivoComponent {
     const empresaDefault = EMPRESAS_AYBAR[0]!;
     const ahoraMs = AHORA_BASE.getTime();
     const simulados: TicketAtc[] = this.ticketsActivos()
-      .filter((tv) => !numsBase.has(tv.numero))
+      .filter((tv) => !numsBase.has(tv.numero) && !CLAVES_ORG.has(tv.area))
       .map((tv) => {
         const areaAtc = mapaArea[tv.area] ?? 'ATC';
         const opened = new Date(ahoraMs - Math.max(1, tv.age) * 60000);
@@ -902,6 +924,7 @@ export class VistaVivoComponent {
     const sueloRgb = leerTokenRgb('bg-surface-sunken', [232, 232, 232]);
     const tema =
       0.2126 * sueloRgb[0]! + 0.7152 * sueloRgb[1]! + 0.0722 * sueloRgb[2]! < 110 ? 'oscuro' : 'claro';
+    this.temaOscuro.set(tema === 'oscuro');
     const estado = (n: string, resp: [number, number, number]) =>
       leerTokenRgb(tema === 'claro' ? `${n}-600` : `${n}-500`, resp);
     const cols: Cols = {
@@ -923,9 +946,10 @@ export class VistaVivoComponent {
     const est: Estatico = {
       zonas: this.salas.map((s) => ({
         k: s.k,
-        n: s.nombre,
+        n: AREAS_ORG.find((a) => a.k === s.k)?.corto ?? s.nombre,
         color: leerTokenRgb(TOKEN_ZONA[tema][s.k] ?? 'primary-500', cols.teal2),
       })),
+
       compuertas: this.puertas.map((p) => ({
         k: p.k,
         n: p.nombre,
@@ -1063,7 +1087,7 @@ export class VistaVivoComponent {
   }
 
   inyectarTicketEnSala(areaKey: string, rayo: boolean): void {
-    const entrada = Object.entries(TIPOS_SIMULACION).find(([, v]) => v.area === areaKey);
+    const entrada = Object.entries(TIPOS_SIM).find(([, v]) => v.area === areaKey);
     const typeKey = entrada?.[0] ?? 'cons';
     this.inyectarTicket({ type: typeKey, rayo });
   }
@@ -1111,9 +1135,10 @@ export class VistaVivoComponent {
     const g = opts?.gate
       ? (this.puertas.find((p) => p.k === opts.gate) ?? this.puertas[0]!)
       : this.puertas[Math.floor(Math.random() * this.puertas.length)]!;
-    const tiposKeys = Object.keys(TIPOS_SIMULACION);
+    // la mitad de los tickets llega a las salas de atención y la otra mitad a las áreas de la organización
+    const tiposKeys = Object.keys(Math.random() < 0.5 ? TIPOS_SIMULACION : TIPOS_ORG);
     const tkKey = opts?.type ?? tiposKeys[Math.floor(Math.random() * tiposKeys.length)]!;
-    const tp = TIPOS_SIMULACION[tkKey] ?? TIPOS_SIMULACION['cons']!;
+    const tp = TIPOS_SIM[tkKey] ?? TIPOS_SIM['cons']!;
     const cli = CLIENTES_SIM[Math.floor(Math.random() * CLIENTES_SIM.length)]!;
     const rayo = opts?.rayo ?? Math.random() < 0.18;
     const numSeq = ++this.seqId;
@@ -1163,7 +1188,7 @@ export class VistaVivoComponent {
     const sala = this.areaFiltro();
     const rayo = this.rayoEntradaCustom();
     const tipoMatch = sala
-      ? Object.keys(TIPOS_SIMULACION).find((k) => TIPOS_SIMULACION[k]?.area === sala)
+      ? Object.keys(TIPOS_SIM).find((k) => TIPOS_SIM[k]?.area === sala)
       : undefined;
     this.inyectarTicket({
       gate: canal || undefined,
