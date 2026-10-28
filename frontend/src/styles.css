@@ -2106,6 +2106,11 @@ body {
   grid-template-rows: auto 1fr auto;
 }
 
+/* Reserva la fila de ayuda/error en todos los campos: los controles quedan alineados aunque uno muestre mensaje. */
+.pl-atc-fila-campos--reserva > ay-form-field > .ay-field {
+  grid-template-rows: auto 1fr minmax(1.25rem, auto);
+}
+
 .pl-atc-fila-campos .ay-input,
 .pl-atc-fila-campos .ay-selectwrap,
 .pl-atc-fila-campos .ay-textarea {
@@ -2380,7 +2385,7 @@ body {
   block-size: 1rem;
   padding-inline: 0.2rem;
   border-radius: var(--aybar-radius-full);
-  background-color: var(--aybar-color-primary-500);
+  background-color: var(--aybar-color-action-primary-bg);
   color: var(--aybar-color-fg-on-accent);
   font-size: 0.65rem;
   font-weight: var(--aybar-font-weight-bold);
@@ -2679,7 +2684,7 @@ body {
 
 .pl-col-filtro-popover__btn-listo {
   border-color: var(--aybar-color-primary-500);
-  background-color: var(--aybar-color-primary-500);
+  background-color: var(--aybar-color-action-primary-bg);
   color: var(--aybar-color-fg-on-accent);
 }
 
@@ -2783,4 +2788,47 @@ body {
   .pl-barra-filtros-guia {
     white-space: normal;
   }
+}
+
+/* Mesa SGD: tabla de casos contenida; botones compactos que envuelven, sin scroll de página */
+.pl-sgd-tabla { min-width: 0; max-width: 100%; overflow-x: auto; }
+.pl-sgd-tabla .ay-table table { min-width: 52rem; }
+.pl-sgd-tabla td { min-width: 0; overflow-wrap: anywhere; }
+.pl-sgd-tabla .pl-atc-acciones-celda { flex-wrap: wrap; white-space: normal; }
+.pl-sgd-tabla .ay-btn {
+  max-width: 100%;
+  height: auto;
+  min-height: var(--aybar-space-8, 2rem);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  padding-block: var(--aybar-space-1);
+}
+@media (max-width: 640px) {
+  .pl-sgd-tabla .pl-atc-acciones-celda { justify-content: stretch; }
+  .pl-sgd-tabla .pl-atc-acciones-celda > * { flex: 1 1 100%; }
+}
+
+/* Bandeja: Acciones compacta (Ver ticket primario + menú ⋯), fija al borde final */
+.pl-atc-marco .pl-atc-bandeja tbody td .pl-atc-acciones-celda .ay-btn.ay-btn--primary {
+  border-color: transparent;
+  background-color: var(--aybar-color-action-primary-bg);
+  color: var(--aybar-color-action-primary-fg);
+  box-shadow: none;
+}
+.pl-atc-marco .pl-atc-bandeja tbody td .pl-atc-acciones-celda .ay-btn.ay-btn--primary:hover:not(:disabled) {
+  background-color: var(--aybar-color-action-primary-bg-hover);
+}
+.pl-atc-bandeja .pl-atc-acciones-celda { gap: var(--aybar-space-1); }
+.pl-atc-bandeja th:last-child,
+.pl-atc-bandeja td:last-child {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 1;
+  background-color: var(--aybar-color-bg-surface);
+}
+.pl-atc-marco .pl-atc-bandeja .ay-table__scroll .ay-table thead th:last-child { z-index: 11; background-color: var(--aybar-color-bg-canvas); }
+/* Columnas secundarias (Rayo, Canal/Tipo, Área/Gestor) fuera bajo 900px */
+@media (max-width: 900px) {
+  .pl-atc-bandeja :is(th, td):is(:nth-child(1), :nth-child(5), :nth-child(6)) { display: none; }
 }

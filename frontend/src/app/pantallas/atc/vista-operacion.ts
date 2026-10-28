@@ -26,6 +26,8 @@ import {
   AyGrid,
   AyHeading,
   AyInput,
+  AyDropdownMenu,
+  AyIconButton,
   AyModal,
   AyPageHeader,
   AyPagination,
@@ -39,6 +41,7 @@ import {
   AyText,
   AyTimeline,
   type AyColumna,
+  type AyMenuItem,
   type AyOpcionSelect,
   type AyTimelineEvento,
   type ParCardPairs,
@@ -96,6 +99,8 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
     AyGrid,
     AyHeading,
     AyInput,
+        AyDropdownMenu,
+        AyIconButton,
         AyModal,
     AyPageHeader,
     AyPagination,
@@ -167,8 +172,9 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               <app-barra-filtros [filtros]="filtrosBandeja" [conFiltroEmpresa]="true" />
 
               <ay-table
+                class="pl-atc-bandeja"
                 leyenda="Bandeja de tickets de atención multicanal"
-                [columnas]="columnasBandeja"
+                [columnas]="columnasBandejaCompacta"
                 [filas]="ticketsPaginadosBandeja()"
                 [filtrosTabla]="filtrosBandeja"
                 [(orden)]="ordenBandeja"
@@ -185,7 +191,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                       [attr.aria-pressed]="t.rayo"
                       [attr.aria-label]="t.rayo ? 'Quitar prioridad Rayo' : 'Marcar con prioridad Rayo'"
                       [title]="t.rayo ? 'Prioridad Rayo activa (clic para quitar)' : 'Marcar con prioridad Rayo'"
-                      (click)="alternarRayo(t)"
+                      (click)="rayoPendiente.set(t)"
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
@@ -273,27 +279,30 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 <ng-template ayCelda="acciones" let-fila>
                   @let t = comoTicket(fila);
                   <div class="pl-atc-acciones-celda">
-                    <ay-button tamano="sm" variante="secondary" (click)="seleccionarTicket.emit(t.num)">
+                    <ay-button
+                      tamano="sm"
+                      variante="primary"
+                      [attr.aria-label]="'Ver ticket ' + t.num"
+                      (click)="seleccionarTicket.emit(t.num)"
+                    >
                       Ver ticket
                     </ay-button>
-                    <ay-button
-                      tamano="sm"
-                      variante="secondary"
-                      [disabled]="!t.contract"
-                      [attr.title]="t.contract ? 'Ver contrato ' + t.contract : 'Sin contrato vinculado'"
-                      (click)="t.contract && verContrato.emit(t.contract)"
+                    <ay-dropdown-menu
+                      colocacion="bottom-end"
+                      [items]="itemsMasAcciones(t)"
+                      (elegido)="elegirMasAccion($event, t)"
                     >
-                      Contrato
-                    </ay-button>
-                    <ay-button
-                      tamano="sm"
-                      variante="secondary"
-                      [disabled]="!!t.owner"
-                      [attr.title]="t.owner ? 'Ya asignado a ' + t.owner : 'Auto-asignar por menor carga'"
-                      (click)="!t.owner && autoAsignarMenorCarga(t)"
-                    >
-                      Auto-asignar
-                    </ay-button>
+                      <ay-icon-button
+                        ayDisparador
+                        variante="ghost"
+                        tamano="sm"
+                        [etiqueta]="'Más acciones del ticket ' + t.num"
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" />
+                        </svg>
+                      </ay-icon-button>
+                    </ay-dropdown-menu>
                   </div>
                 </ng-template>
                 <app-vacio-filtros ayVacio [filtros]="filtrosBandeja" elemento="ticket" />
@@ -310,6 +319,31 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             </ay-card-body>
           </ay-card>
         </div>
+
+        <!-- Confirmación de prioridad Rayo (Esc, scrim y foco los gestiona ay-modal) -->
+        <ay-modal
+          [abierto]="!!rayoPendiente()"
+          (abiertoChange)="!$event && rayoPendiente.set(null)"
+          [titulo]="rayoPendiente()?.rayo ? 'Quitar prioridad Rayo' : 'Marcar con prioridad Rayo'"
+          size="sm"
+        >
+          @if (rayoPendiente(); as r) {
+            <div ayStack gap="3">
+              <p ayText="body" size="sm">
+                Ticket <strong ayText="mono">{{ r.num }}</strong> · {{ r.cli }}.
+                @if (r.rayo) {
+                  Dejará de ir primero y volverá a ordenarse solo por su SLA.
+                } @else {
+                  Irá primero en la bandeja sin alterar su SLA.
+                }
+              </p>
+              <div ayRow gap="2" justificar="end">
+                <ay-button variante="secondary" (click)="rayoPendiente.set(null)">Cancelar</ay-button>
+                <ay-button variante="primary" (click)="confirmarRayo()">Confirmar</ay-button>
+              </div>
+            </div>
+          }
+        </ay-modal>
 
         <!-- Modal de Reasignación Masiva por Cese/Rotación -->
         <ay-modal
@@ -796,7 +830,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 <ay-card-body padding="md" gap="md">
                   <ay-form class="pl-atc-form-ancho" (enviar)="guardarNuevoTicket()">
                     <div ayStack gap="4">
-                      <div ayGrid [columnas]="4" gap="sm" class="pl-atc-fila-campos">
+                      <div ayGrid [columnas]="3" gap="sm" class="pl-atc-fila-campos pl-atc-fila-campos--reserva">
                         <ay-form-field etiqueta="Empresa (razón social y RUC)" obligatorio>
                           <ay-select nombre="form-empresa"
                             [opciones]="opcionesEmpresasForm"
@@ -1089,6 +1123,39 @@ export class VistaOperacionComponent {
   ];
 
 
+  /** Bandeja: Acciones compacta (Ver ticket + menú ⋯); Tu Día conserva `columnasBandeja`. */
+  readonly columnasBandejaCompacta: readonly AyColumna[] = this.columnasBandeja.map((c) =>
+    c.clave === 'acciones' ? { ...c, ancho: '8rem' } : c,
+  );
+
+  // Una lista por combinación (contrato, dueño): el input de ay-dropdown-menu no cambia entre ciclos.
+  private readonly menuMas: Record<string, AyMenuItem[]> = Object.fromEntries(
+    [false, true].flatMap((c) =>
+      [false, true].map((o) => [
+        `${c}${o}`,
+        [
+          { tipo: 'item', value: 'contrato', label: c ? 'Ver contrato' : 'Ver contrato (sin contrato vinculado)', disabled: !c },
+          { tipo: 'item', value: 'asignar', label: o ? 'Auto-asignar (ya asignado)' : 'Auto-asignar por menor carga', disabled: o },
+        ] as AyMenuItem[],
+      ]),
+    ),
+  );
+
+  itemsMasAcciones(t: TicketAtc): AyMenuItem[] {
+    return this.menuMas[`${!!t.contract}${!!t.owner}`];
+  }
+
+  elegirMasAccion(v: string, t: TicketAtc): void {
+    if (v === 'contrato' && t.contract) this.verContrato.emit(t.contract);
+    else if (v === 'asignar' && !t.owner) this.autoAsignarMenorCarga(t);
+  }
+
+  confirmarRayo(): void {
+    const t = this.rayoPendiente();
+    if (t) this.alternarRayo(t);
+    this.rayoPendiente.set(null);
+  }
+
   readonly opcionesCeseOrigen: AyOpcionSelect[] = [
     { value: 'C. Rojas', label: 'C. Rojas (ATC)' },
     { value: 'R. Salazar', label: 'R. Salazar (Cobranza)' },
@@ -1378,6 +1445,7 @@ export class VistaOperacionComponent {
 
   readonly ctiEntranteVisible = signal<boolean>(true);
   readonly modalCeseAbierto = signal<boolean>(false);
+  readonly rayoPendiente = signal<TicketAtc | null>(null);
   readonly ceseOrigen = signal<string>('C. Rojas');
   readonly ceseDestino = signal<string>('M. Delgado (ATC)');
   readonly ceseMotivo = signal<string>('REASSIGNMENT_CESE');
