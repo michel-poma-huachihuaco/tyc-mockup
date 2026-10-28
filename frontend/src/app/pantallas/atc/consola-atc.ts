@@ -1397,6 +1397,13 @@ export class ConsolaAtcComponent {
       subtitulo: 'Estado de atención por responsable, planta en tiempo real y niveles de servicio',
       icono: 'M22 12h-4l-3 9L9 3l-3 9H2',
     },
+    {
+      id: 'torre',
+      grupo: 'ESTRELLA',
+      titulo: 'Torre de Control CX',
+      subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
+      icono: 'M18 20V10 M12 20V4 M6 20v-6',
+    },
   ];
 
   readonly menuOperacion: readonly ItemMenuAtc[] = [
@@ -1508,13 +1515,6 @@ export class ConsolaAtcComponent {
       titulo: 'Cierre end-to-end',
       subtitulo: 'Objetivo 72 h hábiles (Eje 1/2) y 120 h hábiles (Eje 3)',
       icono: 'M12 8v4l3 3 M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0 -20',
-    },
-    {
-      id: 'torre',
-      grupo: 'SUPERVISION',
-      titulo: 'Torre de Control CX',
-      subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
-      icono: 'M18 20V10 M12 20V4 M6 20v-6',
     },
   ];
 
