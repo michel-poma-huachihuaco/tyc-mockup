@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable, inject, isDevMode, signal } from '@angular/core';
+import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { environment } from '../environments/environment';
 import { AUTENTICACION, AUTENTICACION_DEMO, ERROR_AUTENTICACION } from './aybar/autenticacion';
 import { usuariosDemo } from './sesion';
@@ -24,7 +24,7 @@ export class Acceso {
    * Los usuarios de prueba del modo demo (environment.development.ts), para que /ingresar los
    * muestre. Vacío fuera de desarrollo: environment.ts, el de producción, trae `demo: null`.
    */
-  readonly usuariosDemo: readonly UsuarioDemo[] = this.demo && isDevMode() ? usuariosDemo(environment.aybar.demo) : [];
+  readonly usuariosDemo: readonly UsuarioDemo[] = this.demo ? usuariosDemo(environment.aybar.demo) : [];
   /** Sin modo demo, /ingresar redirige al emisor OIDC. */
   readonly conEmisor = !this.demo;
   /** El error de `iniciar()` —emisor caído, modo demo fuera de localhost—, o `null`. */

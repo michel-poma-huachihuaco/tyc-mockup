@@ -8,8 +8,10 @@
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
+    "dev:tunnel": "ng serve --configuration prototipo --host 0.0.0.0",
     "start": "ng serve",
     "build": "ng build",
+    "build:prototipo": "ng build --configuration prototipo && cp dist/index.html dist/404.html",
     "watch": "ng build --watch --configuration development",
     "test": "node --test \"pruebas/*.test.ts\"",
     "lint": "oxlint src",
