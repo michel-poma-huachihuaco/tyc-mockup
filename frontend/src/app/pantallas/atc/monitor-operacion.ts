@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
+  ElementRef,
   inject,
   input,
   model,
@@ -146,8 +148,18 @@ function enriquecerTicket(t: TicketAtc): TicketEnriquecido {
     VacioFiltrosComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.p1-pantalla]': 'pantallaCompleta()',
+    '(document:fullscreenchange)': 'alCambiarPantalla()',
+  },
   template: `
     <div class="p1-wrap">
+      <div class="p1-barra-tv">
+        <ay-button tamano="sm" variante="secondary" (click)="alternarPantallaCompleta()">
+          {{ pantallaCompleta() ? 'Salir de pantalla completa' : 'Pantalla completa' }}
+        </ay-button>
+      </div>
+
       <!-- NOTIFICACIÓN TOAST DE BALANCEO DE CARGA -->
       @if (avisoBalanceo(); as av) {
         <div class="p1-toast" role="status">
@@ -623,6 +635,8 @@ function enriquecerTicket(t: TicketAtc): TicketEnriquecido {
     :host{display:block}
     .p1-wrap,.p1-card,.p1-estado-celda,.p1-rayo-slot{display:flex;flex-direction:column}
     .p1-wrap{gap:var(--aybar-space-5)}
+    .p1-barra-tv{display:flex;justify-content:flex-end}
+    :host(.p1-pantalla){position:fixed;inset:0;z-index:calc(var(--aybar-z-sticky) + 50);display:block;overflow:auto;padding:var(--aybar-space-6);background:var(--aybar-color-bg-canvas)}
     .p1-toast{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;padding:.75rem 1rem;border:1px solid var(--aybar-color-feedback-success-border);border-radius:var(--aybar-radius-xl);background:var(--aybar-color-feedback-success-bg);color:var(--aybar-color-feedback-success-fg);font-size:var(--aybar-font-size-xs)}
     .p1-topbar__der,.p1-sec-head__izq,.p1-sla-pills{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
     .p1-sec-head,.p1-card__val-row,.p1-drill-head,.p1-tcard__top,.p1-tcard__foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem}
@@ -700,6 +714,28 @@ export class MonitorOperacionComponent {
   readonly cerradosHoy = input<number>(38);
   readonly conRayo = input<number>(0);
   readonly seleccionarTicket = output<string>();
+
+  private readonly anfitrion = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /**
+   * Modo TV: la página pasa a pantalla completa y el Monitor cubre toda la ventana. Se pone la página entera en
+   * pantalla completa, y no solo el Monitor, para que el modal de inspección (que se dibuja en el `body`) siga
+   * viéndose. Se sale con Esc o con el mismo botón.
+   */
+  protected readonly pantallaCompleta = signal(false);
+
+  protected alternarPantallaCompleta(): void {
+    const doc = this.anfitrion.nativeElement.ownerDocument;
+    if (doc.fullscreenElement) {
+      void doc.exitFullscreen();
+    } else {
+      void doc.documentElement.requestFullscreen?.();
+    }
+  }
+
+  protected alCambiarPantalla(): void {
+    this.pantallaCompleta.set(this.anfitrion.nativeElement.ownerDocument.fullscreenElement !== null);
+  }
 
   protected readonly estadosSdk = ESTADOS_SDK;
   protected readonly estadoEs = ESTADO_ES;
@@ -862,6 +898,11 @@ export class MonitorOperacionComponent {
   );
 
   constructor() {
+    // al salir del Monitor (otra pestaña o el expediente de un ticket) no se queda la página a pantalla completa
+    inject(DestroyRef).onDestroy(() => {
+      const doc = this.anfitrion.nativeElement.ownerDocument;
+      if (doc.fullscreenElement) void doc.exitFullscreen();
+    });
     effect(() => {
       const ar = this.area();
       untracked(() => {
