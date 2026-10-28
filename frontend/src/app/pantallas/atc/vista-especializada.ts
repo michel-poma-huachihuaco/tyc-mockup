@@ -1550,7 +1550,7 @@ export type SubvistaEspecializadaAtc =
           />
         </ay-page-header>
 
-        <div ayGrid [columnas]="2" gap="md">
+        <div ayStack gap="4">
           <ay-card superficie="solid">
             <ay-card-header
               titulo="Cargo previo vs. activación, casos vinculados y cierre GLI"
@@ -1558,7 +1558,7 @@ export type SubvistaEspecializadaAtc =
               nivel="h2"
               [separador]="true"
             />
-            <ay-card-body padding="sm">
+            <ay-card-body padding="sm" class="pl-sgd-tabla">
               <ay-table
                 leyenda="Casos documentales SGD y custodia GLI"
                 [columnas]="columnasSgd"
