@@ -1,0 +1,1 @@
+function n(r){return r?.atributos?.demo===!0}function i(r){return r.nombre||r.usuarioId||`Usuario sin nombre`}function s(r){return r.roles.length?r.roles.join(`, `):`Sin roles`}function l(r){return(r?Array.isArray(r)?r:[r]:[]).filter(e=>!!(e?.usuario?.trim()&&e.clave))}export{s as i,l as n,n as r,i as t};
