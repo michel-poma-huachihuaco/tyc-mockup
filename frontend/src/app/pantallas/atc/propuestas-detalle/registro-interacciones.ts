@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  type ElementRef,
+  ElementRef,
   type OnInit,
   computed,
+  afterNextRender,
   effect,
+  inject,
+  Injector,
   input,
   signal,
   viewChild,
@@ -106,15 +109,18 @@ const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
           <ay-alert tono="info" size="sm" titulo="Sugerencia del Copiloto IA (HU-048, fuera de la Etapa 1)">
             {{ sugerenciaIa() }}
             <div ayAcciones class="ri-fila">
-              <ay-button tamano="sm" variante="primary" (click)="texto.set(sugerenciaIa()!)">Usar sugerencia</ay-button>
+              <ay-button tamano="sm" variante="primary" (click)="usarSugerencia()">Usar sugerencia</ay-button>
             </div>
           </ay-alert>
         }
 
         <ay-form-field [etiqueta]="tipoNuevo() === 'nota_interna' ? 'Nota interna' : 'Mensaje al cliente'">
           <ay-textarea
+            #campoTexto
             nombre="texto-interaccion"
-            [filas]="2"
+            [filas]="3"
+            autoajuste
+            [filasMax]="12"
             [valor]="texto()"
             (valorChange)="texto.set($event)"
             [placeholder]="tipoNuevo() === 'nota_interna' ? 'Escribe una nota solo para el equipo…' : 'Escribe un mensaje para el cliente…'"
@@ -174,6 +180,8 @@ export class RegistroInteracciones implements OnInit {
   /** Borrador del Copiloto IA para un mensaje al cliente; si falta, no se ofrece. */
   readonly sugerenciaIa = input<string | null>(null);
 
+  private readonly injector = inject(Injector);
+  private readonly campoTexto = viewChild('campoTexto', { read: ElementRef<HTMLElement> });
   private readonly hilo = viewChild<ElementRef<HTMLElement>>('hilo');
   protected readonly filtro = signal<Filtro>('todo');
   protected readonly tipoNuevo = signal<TipoNuevo>('respuesta_agente');
@@ -237,6 +245,18 @@ export class RegistroInteracciones implements OnInit {
   }
   protected elegirTipo(v: string): void {
     if (v === 'respuesta_agente' || v === 'nota_interna') this.tipoNuevo.set(v);
+  }
+
+  /** Inserta el borrador del Copiloto y deja el cursor al final para que el operador lo revise. */
+  protected usarSugerencia(): void {
+    this.texto.set(this.sugerenciaIa() ?? '');
+    afterNextRender(() => {
+      const ta = this.campoTexto()?.nativeElement.querySelector('textarea');
+      if (!ta) return;
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      ta.scrollTop = ta.scrollHeight;
+    }, { injector: this.injector });
   }
 
   protected registrar(): void {
