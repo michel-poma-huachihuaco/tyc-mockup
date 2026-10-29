@@ -1,0 +1,46 @@
+name: Desplegar Prototipo en GitHub Pages
+
+on:
+  push:
+    branches:
+      - prototipo-polar
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.3"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar prototipo minificado con login demo
+        run: |
+          npx ng build --configuration prototipo --base-href "/${{ github.event.repository.name }}/"
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+
+      - name: Publicar en rama gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/dist

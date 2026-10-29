@@ -78,6 +78,29 @@
                   "with": "src/app/galeria.development.ts"
                 }
               ]
+            },
+            "prototipo": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
+              "outputHashing": "all",
+              "extractLicenses": false,
+              "sourceMap": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                },
+                {
+                  "replace": "src/app/galeria.ts",
+                  "with": "src/app/galeria.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -93,6 +116,9 @@
             },
             "development": {
               "buildTarget": "aybar-atc:build:development"
+            },
+            "prototipo": {
+              "buildTarget": "aybar-atc:build:prototipo"
             }
           },
           "defaultConfiguration": "development"

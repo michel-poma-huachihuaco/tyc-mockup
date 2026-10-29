@@ -1,4 +1,4 @@
-import { InjectionToken, isDevMode, makeEnvironmentProviders, provideAppInitializer, signal } from '@angular/core';
+import { InjectionToken, makeEnvironmentProviders, provideAppInitializer, signal } from '@angular/core';
 import type { EnvironmentProviders, Signal } from '@angular/core';
 import { crearAutenticacion, crearAutenticacionDemo, entornoNavegador } from '@aybarcorp/auth';
 import type { EntornoNavegador, UsuarioDemo } from '@aybarcorp/auth';
@@ -22,12 +22,12 @@ function usuariosDemo(valor: UsuarioDemo | UsuarioDemo[] | null | undefined): Us
   });
 }
 
-const usuarios = isDevMode() ? usuariosDemo(demo) : [];
+const usuarios = usuariosDemo(demo);
 
 /**
- * Adaptador de entorno para `crearAutenticacionDemo` en desarrollo (`isDevMode()`),
- * que permite compartir el servidor local (`ng serve`) por túnel (DevTunnels, ngrok,
- * Cloudflare Tunnel o IP de red local) manteniendo la navegación en el origen actual.
+ * Adaptador de entorno para `crearAutenticacionDemo` en desarrollo o prototipo estático,
+ * que permite compartir el servidor por túnel (DevTunnels, ngrok, Cloudflare Tunnel) o
+ * desplegar el prototipo en GitHub Pages manteniendo la navegación en el origen y baseHref actuales.
  */
 function entornoDemoDesarrollo(): EntornoNavegador {
   const base = entornoNavegador();
@@ -40,7 +40,9 @@ function entornoDemoDesarrollo(): EntornoNavegador {
     },
     redirigir: (destino: string) => {
       const u = new URL(destino, window.location.origin);
-      base.redirigir(`${window.location.origin}${u.pathname}${u.search}${u.hash}`);
+      const baseHref = typeof document !== 'undefined' ? new URL(document.baseURI).pathname.replace(/\/$/, '') : '';
+      const ruta = baseHref && !u.pathname.startsWith(`${baseHref}/`) ? `${baseHref}${u.pathname}` : u.pathname;
+      base.redirigir(`${window.location.origin}${ruta}${u.search}${u.hash}`);
     },
   };
 }
