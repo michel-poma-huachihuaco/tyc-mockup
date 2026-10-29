@@ -46,6 +46,7 @@ import {
   AyTabs,
   AyText,
   type AyColumna,
+  type AyComando,
   type AyGrupoComandos,
   type AyMenuItem,
   type AyOpcionSelect,
@@ -95,6 +96,15 @@ import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
 import { alternarFavorito, guardarFavoritos, leerFavoritos } from './favoritos-atc';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
+import {
+  buscar,
+  coincidePalabras,
+  funcionesVisibles,
+  funcionPorId,
+  guardarRecientes,
+  leerRecientes,
+  registrarReciente,
+} from './indice-busqueda';
 
 interface ItemMenuAtc {
   readonly id: VistaAtc;
@@ -327,6 +337,32 @@ interface ItemMenuAtc {
           </button>
         </div>
         </ng-template>
+        <ay-button
+              tamano="sm"
+              variante="ghost"
+              [bloque]="true"
+              class="pl-buscar-modulo pl-buscar-modulo--lateral"
+              [class.pl-buscar-modulo--plegado]="lateralPlegado()"
+              [title]="'Buscar módulo o función (' + atajoBusqueda + ')'"
+              aria-haspopup="dialog"
+              (click)="abrirPaleta()"
+            >
+              <svg
+                ayIconoInicio
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="20" y1="20" x2="16.65" y2="16.65" />
+              </svg>
+              <span class="pl-buscar-modulo__texto">Buscar módulo o función…</span>
+              <kbd class="pl-buscar-modulo__atajo" aria-hidden="true">{{ atajoBusqueda }}</kbd>
+            </ay-button>
         <ay-sidebar
           etiqueta="Módulos de Aybar Atiende"
           [grupos]="gruposSidebar()"
@@ -888,6 +924,31 @@ interface ItemMenuAtc {
       [(abierto)]="navegacionMovilAbierta"
     >
       <div ayStack gap="3">
+        <ay-button
+              tamano="sm"
+              variante="ghost"
+              [bloque]="true"
+              class="pl-buscar-modulo pl-buscar-modulo--movil"
+              [title]="'Buscar módulo o función (' + atajoBusqueda + ')'"
+              aria-haspopup="dialog"
+              (click)="navegacionMovilAbierta.set(false); abrirPaleta()"
+            >
+              <svg
+                ayIconoInicio
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="20" y1="20" x2="16.65" y2="16.65" />
+              </svg>
+              <span class="pl-buscar-modulo__texto">Buscar módulo o función…</span>
+              <kbd class="pl-buscar-modulo__atajo" aria-hidden="true">{{ atajoBusqueda }}</kbd>
+            </ay-button>
         @for (grupo of gruposSidebar(); track grupo.etiqueta) {
           <ay-heading class="pl-nav-movil__grupo" [nivel]="3" size="sm">{{ grupo.etiqueta }}</ay-heading>
           <div ayStack gap="1">
@@ -914,9 +975,10 @@ interface ItemMenuAtc {
     <ay-command-palette
       etiqueta="Buscar en Aybar Atiende"
       size="lg"
-      mensajeVacio="No se encontraron módulos, contratos ni historias con ese criterio."
+      [mensajeVacio]="mensajeVacioPaleta()"
       [filtroLocal]="false"
       [grupos]="gruposComandos()"
+      [recientes]="recientesPaleta()"
       [(abierta)]="paletaAbierta"
       (consultaChange)="consultaPaleta.set($event)"
     />
@@ -1761,47 +1823,150 @@ export class ConsolaAtcComponent {
     ];
   });
 
-  readonly gruposComandos = computed<AyGrupoComandos[]>(() => {
-    const q = this.consultaPaleta().trim().toLowerCase();
-    const modulos = this.todosLosMenus
-      .filter((m) => !m.oculto)
-      .filter((m) => !q || m.titulo.toLowerCase().includes(q) || m.subtitulo.toLowerCase().includes(q))
-      .map((m) => ({
-        id: `mod:${m.id}`,
-        titulo: m.titulo,
-        contexto: m.subtitulo,
-        alSeleccionar: () => {
-          this.irAVista(m.id);
-          this.paletaAbierta.set(false);
-        },
-      }));
-    const contratosCmd = this.contratos
-      .filter((c) => !q || c.codigo.toLowerCase().includes(q) || c.clienteNombre.toLowerCase().includes(q))
-      .map((c) => ({
-        id: `ctr:${c.codigo}`,
-        titulo: `${c.codigo} · ${c.clienteNombre}`,
-        contexto: `${c.proyecto} · ${c.manzanaLote}`,
-        alSeleccionar: () => {
-          this.paletaAbierta.set(false);
-          this.abrirContrato(c.codigo);
-        },
-      }));
-    const husCmd = this.catalogoHus
-      .filter((h) => !q || h.id.toLowerCase().includes(q) || h.titulo.toLowerCase().includes(q))
-      .slice(0, 12)
-      .map((h) => ({
-        id: `hu:${h.id}`,
-        titulo: `${h.id} · ${h.titulo}`,
-        contexto: `${h.feature} · ${h.pantalla}`,
-        alSeleccionar: () => {
-          this.paletaAbierta.set(false);
-          this.irAVista(h.vista);
-        },
-      }));
+  /** Vistas a las que el perfil activo puede ir: exactamente las del sidebar (incluida la rama CLIENTE). */
+  private readonly vistasBuscables = computed(() => new Set(this.opcionesMenu().map((o) => o.id as VistaAtc)));
+  private readonly esCliente = computed(() => this.perspectivaId() === 'CLIENTE');
+  private readonly recientesPorPersona = signal<Record<string, string[]>>({});
+  private readonly recientesIds = computed(() => {
+    const persona = this.perspectivaActual().personaId;
+    return this.recientesPorPersona()[persona] ?? leerRecientes(persona);
+  });
+  readonly atajoBusqueda =
+    typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent) ? '⌘ K' : 'Ctrl K';
+
+  abrirPaleta(): void {
+    this.paletaAbierta.set(true);
+  }
+
+  private recordarReciente(id: string): void {
+    const persona = this.perspectivaActual().personaId;
+    const ids = registrarReciente(this.recientesIds(), id);
+    this.recientesPorPersona.update((m) => ({ ...m, [persona]: ids }));
+    guardarRecientes(persona, ids);
+  }
+
+  private comandoModulo(vista: VistaAtc, titulo: string, contexto: string, prefijo = ''): AyComando {
+    return {
+      id: `${prefijo}mod:${vista}`,
+      titulo,
+      contexto,
+      alSeleccionar: () => {
+        this.recordarReciente(`mod:${vista}`);
+        this.areaVivo.set('');
+        this.irAVista(vista);
+        this.paletaAbierta.set(false);
+      },
+    };
+  }
+
+  private comandoFuncion(id: string, titulo: string, contexto: string, prefijo = ''): AyComando {
+    return {
+      id: `${prefijo}fn:${id}`,
+      titulo,
+      contexto,
+      alSeleccionar: () => {
+        const f = funcionPorId(id);
+        if (!f) return;
+        this.recordarReciente(`fn:${id}`);
+        this.areaVivo.set('');
+        this.irAVista(f.vista);
+        this.paletaAbierta.set(false);
+      },
+    };
+  }
+
+  private readonly modulosBuscables = computed(() =>
+    this.opcionesMenu().map((o) => ({
+      vista: o.id as VistaAtc,
+      titulo: o.titulo,
+      // El subtítulo describe la operación interna: el portal del cliente no lo muestra.
+      subtitulo: this.esCliente() ? '' : (this.todosLosMenus.find((m) => m.id === o.id)?.subtitulo ?? ''),
+    })),
+  );
+
+  /** Favoritos y últimos elegidos con la paleta vacía; solo lo que el perfil activo puede ver hoy. */
+  readonly recientesPaleta = computed<AyComando[]>(() => {
+    const modulos = this.modulosBuscables();
+    const funciones = funcionesVisibles(this.perspectivaId(), this.vistasBuscables());
+    const cliente = this.esCliente();
+    const deId = (id: string, rotulo: string): AyComando | undefined => {
+      if (id.startsWith('mod:')) {
+        const m = modulos.find((x) => x.vista === id.slice(4));
+        return m && this.comandoModulo(m.vista, m.titulo, `${rotulo} · Módulo`, `${rotulo}:`);
+      }
+      const f = funciones.find((x) => `fn:${x.id}` === id);
+      const etiqueta = f && (cliente && f.etiquetaCliente ? f.etiquetaCliente : f.etiqueta);
+      return f && etiqueta ? this.comandoFuncion(f.id, etiqueta, `${rotulo} · ${f.grupo}`, `${rotulo}:`) : undefined;
+    };
+    const favoritos = this.favoritosDisponibles().map((o) => `mod:${o.id}`);
+    const vistos = new Set(favoritos);
     return [
-      { etiqueta: 'Módulos Operativos', elementos: modulos },
-      { etiqueta: 'Expedientes Contractuales', elementos: contratosCmd },
-      { etiqueta: 'Historias de Usuario (60 HUs)', elementos: husCmd },
+      ...favoritos.map((id) => deId(id, 'Favorito')),
+      ...this.recientesIds()
+        .filter((id) => !vistos.has(id))
+        .map((id) => deId(id, 'Reciente')),
+    ].filter((c): c is AyComando => !!c);
+  });
+
+  readonly mensajeVacioPaleta = computed(() => {
+    const q = this.consultaPaleta().trim();
+    return q
+      ? `Sin resultados para «${q}». Prueba con una sola palabra o un sinónimo, por ejemplo «mora», «registrar ticket» o «contrato».`
+      : 'Escribe el nombre de un módulo o de lo que quieres hacer.';
+  });
+
+  readonly gruposComandos = computed<AyGrupoComandos[]>(() => {
+    const q = this.consultaPaleta().trim();
+    const modulos = this.modulosBuscables();
+    const permitidas = this.vistasBuscables();
+    const cliente = this.esCliente();
+    if (!q) {
+      return [
+        {
+          etiqueta: 'Módulos',
+          elementos: modulos.map((m) => this.comandoModulo(m.vista, m.titulo, m.subtitulo)),
+        },
+      ];
+    }
+    const { modulos: mods, funciones } = buscar(q, modulos, funcionesVisibles(this.perspectivaId(), permitidas), cliente);
+    const modsCmd = mods.map((r) => this.comandoModulo(r.modulo.vista, r.modulo.titulo, r.modulo.subtitulo));
+    const funcsCmd = funciones.slice(0, 12).map((r) => this.comandoFuncion(r.funcion.id, r.etiqueta, r.funcion.grupo));
+    // Contratos y catálogo de HUs son material interno: el portal del cliente no los ve.
+    const contratosCmd: AyComando[] = cliente
+      ? []
+      : this.contratos
+          .filter((c) => coincidePalabras(q, `${c.codigo} ${c.clienteNombre} ${c.proyecto}`))
+          .slice(0, 8)
+          .map((c) => ({
+            id: `ctr:${c.codigo}`,
+            titulo: `${c.codigo} · ${c.clienteNombre}`,
+            contexto: `${c.proyecto} · ${c.manzanaLote}`,
+            alSeleccionar: () => {
+              this.paletaAbierta.set(false);
+              this.abrirContrato(c.codigo);
+            },
+          }));
+    const efectiva = (v: VistaAtc): VistaAtc => (v === 'buses' ? 'evento' : v === 'detalle' ? 'bandeja' : v);
+    const husCmd: AyComando[] = cliente
+      ? []
+      : this.catalogoHus
+          .filter((h) => permitidas.has(efectiva(h.vista)))
+          .filter((h) => coincidePalabras(q, `${h.id} ${h.titulo} ${h.feature} ${h.pantalla}`))
+          .slice(0, 12)
+          .map((h) => ({
+            id: `hu:${h.id}`,
+            titulo: `${h.id} · ${h.titulo}`,
+            contexto: `${h.feature} · ${h.pantalla}`,
+            alSeleccionar: () => {
+              this.paletaAbierta.set(false);
+              this.irAVista(h.vista);
+            },
+          }));
+    return [
+      { etiqueta: 'Módulos', elementos: modsCmd },
+      { etiqueta: 'Funcionalidades (abre el módulo)', elementos: funcsCmd },
+      { etiqueta: 'Expedientes contractuales', elementos: contratosCmd },
+      { etiqueta: 'Historias de usuario', elementos: husCmd },
     ].filter((g) => g.elementos.length > 0);
   });
 
@@ -1839,6 +2004,11 @@ export class ConsolaAtcComponent {
   constructor() {
     const destruccion = inject(DestroyRef);
     const doc = inject(DOCUMENT);
+    // La paleta arranca vacía en cada apertura: el kit limpia su campo pero no avisa de la consulta anterior.
+    effect(() => {
+      this.paletaAbierta();
+      untracked(() => this.consultaPaleta.set(''));
+    });
     // El contexto de «Nueva gestión» vale para una sola apertura del formulario.
     effect(() => {
       if (this.vistaActiva() !== 'nuevo') untracked(() => this.contextoNuevoTicket.set(null));

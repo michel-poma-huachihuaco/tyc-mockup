@@ -1232,6 +1232,94 @@ body {
   border: 0;
 }
 
+/* Buscador de módulos (abre la paleta Ctrl/Cmd+K). El kit no tiene slot de cabecera: el botón va antes del
+   sidebar en el DOM (primero en el orden de Tab) y se ancla arriba del todo, sobre el padding que el sidebar reserva. */
+.pl-atc-marco .ay-sidebar {
+  padding-block-start: calc(var(--aybar-space-4) + var(--aybar-space-8) + var(--aybar-space-3));
+}
+
+.pl-buscar-modulo--lateral {
+  position: absolute;
+  z-index: 1;
+  display: block !important; /* el kit fija display:contents inline en ay-button */
+  inset-block-start: var(--aybar-space-4);
+  inset-inline: var(--aybar-space-3);
+  /* mismo ámbito de tokens que el sidebar oscuro */
+  --aybar-color-fg-default: var(--aybar-color-primary-50);
+  --aybar-color-fg-muted: var(--aybar-color-primary-200);
+  --aybar-color-border-default: var(--aybar-color-primary-600);
+  --aybar-color-border-focus: var(--aybar-color-secondary-400);
+  --aybar-color-bg-brand-subtle: color-mix(in oklab, var(--aybar-color-primary-700) 75%, transparent);
+}
+
+.pl-buscar-modulo--plegado {
+  inset-inline: var(--aybar-space-2);
+  display: flex !important;
+  justify-content: center;
+}
+
+.pl-buscar-modulo .ay-btn {
+  min-block-size: var(--aybar-space-8);
+  padding-inline: var(--aybar-space-1);
+  justify-content: flex-start;
+  gap: var(--aybar-space-1);
+  font-size: 0.8125rem;
+  border: 1px solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-md);
+  color: var(--aybar-color-fg-muted);
+  white-space: nowrap;
+}
+
+.pl-buscar-modulo .ay-btn__label {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  gap: var(--aybar-space-1);
+}
+
+.pl-buscar-modulo__texto {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+}
+
+.pl-buscar-modulo__atajo {
+  flex: 0 0 auto;
+  padding: 0 var(--aybar-space-1);
+  border: 1px solid var(--aybar-color-border-default);
+  border-radius: var(--aybar-radius-sm);
+  font: inherit;
+  font-size: 0.6875rem;
+  color: var(--aybar-color-fg-muted);
+}
+
+/* En el Drawer (táctil) el atajo de teclado no aplica. */
+.pl-buscar-modulo--movil .pl-buscar-modulo__atajo {
+  display: none;
+}
+
+.pl-buscar-modulo--plegado .ay-btn {
+  inline-size: var(--aybar-space-8);
+  min-inline-size: var(--aybar-space-8);
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+  border-color: transparent;
+}
+
+.pl-buscar-modulo--plegado .ay-btn__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .pl-atc-lateral {
   position: sticky;
   inset-block-start: var(--pl-atc-navbar-alto, 0px);
