@@ -4,7 +4,7 @@ tipo: hu
 titulo: "Buscar al cliente y llamarlo desde su ficha"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-049 | Debe | 4 h con IA | Dev 4 (Daniel) | 1 | 21-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-11 (plataforma del call center; PLT-04), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: la búsqueda respeta los permisos del rol, RN-SVC-036; P-034)
+
+**La necesitan:** HU-ATC-050, HU-ATC-051 (HU-053 fuera de la Etapa 1)
 
 **Requerimiento de origen:** El sistema debe ofrecer un motor de búsqueda de clientes por DNI, nombre, código de cliente, lote, teléfono o N.º de ticket, con opción de llamar a la cuenta desde la ficha. Feedback presentación · ítem 9
 
@@ -80,3 +86,11 @@ Escenario: CA-03 · Varias coincidencias (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): suma la DEP-16 con el criterio de las otras 23 HU que la llevan (autorizan por rol: RN-SVC-036 «Búsqueda respeta permisos», como HU-050, 052 y 053; P-034). No cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Suma la DEP-16 al bloque «Depende de» (RN-SVC-036 autoriza por rol; P-034), con el criterio de las otras 23 HU que la llevan. No cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-049 → HU-053 del bloque «La necesitan»: HU-053 sale de la Etapa 1 por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)

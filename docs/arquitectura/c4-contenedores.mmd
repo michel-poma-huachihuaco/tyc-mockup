@@ -1,0 +1,81 @@
+flowchart TB
+  gestor([Gestor · supervisor · administrador funcional])
+  cliente([Cliente])
+  personal([Personal de proyecto y del evento])
+  subgraph ca["Control de acceso (PJ-05) · DEP-16"]
+    emisor[["Emisor de tokens<br/>Spring Authorization Server"]]
+    apicat[["API de catálogo<br/>ADR-021 de PJ-05"]]
+  end
+  subgraph borde["Borde"]
+    cf["Cloudflare<br/>TLS · WAF · DDoS"]
+    apim["Azure API Management<br/>JWT, aud = aybar-atc y nivel por API REST<br/>nivel de consumo: sin WebSocket"]
+  end
+  subgraph front["Frontend · Angular · @aybarcorp/ui-angular · Azure Container Apps"]
+    consola[Consola ATC]
+    mp[Mi Portal]
+    visor[Visor 3D]
+    forms[Formularios PWA]
+  end
+  subgraph app["aybar-atc · Java 21 Corretto · Spring Boot 3.5.6 · SDK Aybar 0.7.1 · Azure Container Apps"]
+    direction TB
+    rest["API REST /api/v1<br/>valida el JWT · @PreAuthorize por rol"]
+    mods["Módulos: tickets · sla · complaintbook · legalcases · aftersales<br/>portal · quality · inbox · customer360 · delinquency · integrations<br/>sin módulo identidad"]
+    jobs["Jobs con ShedLock<br/>SLA · plazo legal · vinculación"]
+    pub["Publicador del outbox<br/>cada 1 s"]
+    proy["Proyector<br/>único escritor del almacén de lectura"]
+    wsc["Visor en vivo · WebSocket /ws/visor<br/>valida el JWT en el handshake:<br/>firma, emisor, aud y exp · cierra al vencer"]
+    obs["Logs JSON y auditoría técnica<br/>aybar-starter-logging y aybar-starter-audit"]
+  end
+  subgraph datos["Datos en Azure"]
+    pg[("Azure Database for PostgreSQL<br/>base única v7 · SVC_* · MAE_*<br/>SVC_OUTBOX_EVENT · shedlock<br/>flyway_schema_history_atc")]
+    mg[("Azure Cosmos DB for MongoDB vCore<br/>Azure DocumentDB · clúster de ATC<br/>vistas de lectura")]
+    eh{{"Azure Event Hubs Standard · protocolo Kafka<br/>espacio de nombres de ATC<br/>5 tópicos aybar.service.* y 5 colas .DLQ<br/>SASL_SSL (ED-24)"}}
+    blob[("Azure Blob Storage<br/>evidencia inmutable")]
+  end
+  kv[["Azure Key Vault<br/>secretos y llave HMAC"]]
+  mon[["Azure Monitor<br/>Log Analytics · Application Insights · alertas"]]
+  acr[["Azure Container Registry<br/>una imagen por release"]]
+  ext[Sistemas externos<br/>con simulador]
+  mig[["Job de migraciones Flyway<br/>Container Apps Job · rol app_atc_migracion"]]
+
+  gestor --> consola
+  gestor --> visor
+  cliente --> mp
+  personal --> forms
+  consola -- "login PKCE" --> emisor
+  mp -- "login PKCE" --> emisor
+  consola -- "HTTPS + JWT" --> cf
+  mp -- "HTTPS + JWT" --> cf
+  forms -- "HTTPS + JWT" --> cf
+  visor -- "WebSocket · JWT en Sec-WebSocket-Protocol" --> cf
+  cf -- "API REST" --> apim
+  apim --> rest
+  cf -- "/ws/visor · host propio, sin API Management" --> wsc
+  emisor -. "llaves públicas JWKS" .-> rest
+  emisor -. "llaves públicas JWKS" .-> wsc
+  rest --> mods
+  mods -- "escribe y guarda el evento en la misma transacción" --> pg
+  mods -- "lee" --> mg
+  mods -- "PartyID · CuentaPersonaPort lee el claim party_id (S28-4), hoy simulador · sin lectura de IDN_USER_ACCOUNT" --> pg
+  jobs -- "lee y escribe" --> pg
+  pub -- "lee pendientes" --> pg
+  pub -- "publica" --> eh
+  eh --> proy
+  proy -- "escribe" --> mg
+  eh --> wsc
+  wsc -- "eventos por área" --> visor
+  mods -- "sube evidencia" --> blob
+  mods -- "registro del catálogo · client_credentials" --> apicat
+  mods <--> ext
+  app -. "identidad administrada" .-> kv
+  obs -. "logs, auditoría y métricas" .-> mon
+  acr -. "imagen" .-> app
+  acr -. "imagen" .-> mig
+  mig -- "migra antes de cada despliegue" --> pg
+  mig -. "secreto del rol dueño" .-> kv
+%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con DT-01 a DT-08 del Líder Técnico: sin módulo identidad, emisor de Control de acceso, Azure, módulos en inglés y visor alimentado por el servicio (ADR-010). Ambientes: DEV, QA, PRE y producción, con la misma topología (ADR-014; diagrama de ambientes en diagrama-arquitectura.md). — Revisado por: (pendiente)
+%% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · el visor recibe los eventos del consumidor del servicio por WebSocket, no del bus; outbox y ShedLock en PostgreSQL; publicador y proyector; Cloudflare y API Management por separado; JWKS del emisor; Key Vault con identidad administrada; logs y auditoría técnica a Azure Monitor; registro de imágenes; registro del catálogo en Control de acceso
+%% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · revisión interna del equipo: /ws/visor entra por Cloudflare al ingreso, sin API Management (el nivel de consumo no admite WebSocket); el JWT se valida en el handshake; job de migraciones con su rol y su tabla de historial; Event Hubs y Cosmos DB exclusivos de ATC
+%% Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: aud = aybar-atc en API Management (ED-06), lectura del vínculo de IDN_USER_ACCOUNT (ED-01) y Event Hubs con SASL_SSL (ED-24)
+%% Historial: 0.6 · 2026-10-28 · Jesús Chávez Elías, con IA · contraste con PJ-05: la persona de la cuenta es el puerto CuentaPersonaPort de ATC (adaptador real no definido en PJ-05; hoy simulador), sin lectura acordada de IDN_USER_ACCOUNT
+%% Historial: 0.7 · 2026-10-28 · Jesús Chávez Elías, con IA · cruce del Líder Técnico del 28-oct (C14, C20): PartyID por el claim party_id (S28-4), sin lectura de IDN_USER_ACCOUNT; la UAT del 03-nov exige Control de acceso en DEV (C-12)

@@ -1,0 +1,44 @@
+flowchart LR
+  ctrl[["Control de acceso (PJ-05)<br/>JWT con roles · API de catálogo"]]
+  sec["Seguridad transversal<br/>aybar-starter-security · @PreAuthorize por rol<br/>CuentaPersonaPort (ED-01)"]
+  tickets[tickets]
+  sla[sla]
+  cbook[complaintbook]
+  lcases[legalcases]
+  aftersales[aftersales]
+  portal[portal]
+  quality[quality]
+  inbox[inbox]
+  c360[customer360]
+  delinq[delinquency]
+  integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort: actividad de ATC (ED-03)"]
+  outbox[("Outbox<br/>SVC_OUTBOX_EVENT")]
+  bus{{"Bus · aybar.service.*"}}
+  ctrl -. "roles en el token" .-> sec
+  sec --> tickets
+  sec --> portal
+  sec --> inbox
+  integ -. "catálogo · client_credentials" .-> ctrl
+  portal -- API --> tickets
+  cbook -- API --> tickets
+  lcases -- API --> tickets
+  aftersales -- API --> tickets
+  delinq -- API --> tickets
+  inbox -- API --> tickets
+  tickets -- "ticket_created · ticket_assigned<br/>ticket_status_changed · ticket_updated" --> outbox
+  sla -- sla_breached --> outbox
+  outbox --> bus
+  bus --> inbox
+  bus --> quality
+  bus --> portal
+  c360 --> integ
+  delinq --> integ
+  lcases --> integ
+  aftersales --> integ
+  tickets --> integ
+  inbox --> integ
+  integ --> ext[(Sistemas externos)]
+%% Generado por IA (Claude, 2026-10-22), versión base v1 de Nexora; actualizado con DT-03 y ADR-001: sin módulo identidad y módulos en inglés. — Revisado por: (pendiente)
+%% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · eventos por el outbox con los tópicos del SDK (ADR-013); seguridad transversal con roles del token; integrations con GestoresPort y el registro del catálogo en Control de acceso (ADR-009)
+%% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: CuentaPersonaPort en la seguridad transversal (ED-01) y GestoresPort con datos de ATC (ED-03)
+%% Historial: 0.5 · 2026-10-28 · Jesús Chávez Elías, con IA · cruce del Líder Técnico del 28-oct (C14): CuentaPersonaPort lee el claim party_id (S28-4); ED-01 ya no es lectura de IDN_USER_ACCOUNT

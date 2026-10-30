@@ -22,6 +22,12 @@ ui: true
 |---|---|---|---|---|---|---|
 | RF-SVC-007 | Debe | 4 h con IA | Dev 2 (Jesús) | 1 | 21-oct-2026 | Pendiente DoR |
 
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-16 (Control de acceso, PJ-05: reemplaza a la DEP-02 de la traza del PLT-03, DT-03)
+
+**La necesitan:** HU-ATC-008, HU-ATC-009
+
 **Requerimiento de origen:** El sistema debe derivar tickets entre las 6 áreas y colaboradores registrando cada movimiento con motivo en bitácora append-only.
 
 ## Criterios de aceptación (Gherkin, verificables)
@@ -80,3 +86,5 @@ Escenario: CA-03 · Motivo obligatorio (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

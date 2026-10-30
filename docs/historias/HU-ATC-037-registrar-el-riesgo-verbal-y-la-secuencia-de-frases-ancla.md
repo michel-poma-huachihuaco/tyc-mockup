@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Registrar el riesgo verbal y la secuencia de Frases Ancla"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["FT-ATC-15", "EP-ATC-08"]
+fecha: "2026-10-28"
+relacionados: ["FT-ATC-15", "EP-ATC-08", "HU-ATC-025"]
 tags: [hu, plt-04, flexible]
 ui: true
 ---
@@ -21,6 +21,14 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-037 | Podría · flexible | 2 h con IA | Dev 1 (Brayan) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-025 (EP-ATC-08 depende de EP-ATC-04, «gate legal», en la PLT-02 y el PLT-03, y esta es su última HU; el calendario no la respeta: A-03) · Dependencias externas: DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: la operación `registrarFraseAncla` exige rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5); la HU está fuera de la Etapa 1, P-025), sin otras (PLT-03 y PLT-05; el PLT-03 pone «EP-ATC-04 gate legal», que es interna: HU-ATC-025 → HU-ATC-037)
+
+**La necesitan:** HU-ATC-038
+
+**Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior.
 
 **Requerimiento de origen:** El sistema debe registrar la clasificación de riesgo de la intervención en vivo y la secuencia de Frases Ancla (4, 5, 6) aplicada.
 
@@ -74,3 +82,9 @@ Escenario: CA-02 · Frase 6
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.2) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

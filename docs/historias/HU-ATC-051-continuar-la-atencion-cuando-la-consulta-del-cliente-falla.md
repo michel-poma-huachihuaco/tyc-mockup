@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Continuar la atención cuando la consulta del cliente falla"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["FT-ATC-20", "EP-ATC-10"]
+fecha: "2026-10-28"
+relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-049"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-051 | Debe | 3 h con IA | Dev 4 (Daniel) | 1 | 22-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-049 (RF-SVC-049 es predecesora de RF-SVC-051, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-13 (motor de consultas de José; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: las operaciones `registrarTicket`, `consulta360` exigen rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5)) · Supuesto de diseño de ATC (28-oct-2026): mapa documento → PartyID para clientes existentes. PJ-05 carga `PARTY` desde `LEGACY_ANTIGUO`, `SLIN` y `URBEMIND` (D-60; HU-IDN-061 CA-12) y no tiene API de búsqueda por documento (D-119: nadie lee las tablas de personas directamente). ATC lo declara como dependencia propia (adaptador y fuente del mapa por definir por ATC, sin plazo) y el simulador no lo prueba
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe manejar las excepciones de la consulta del cliente: cliente no encontrado, interesado sin contrato, datos incompletos o sistema fuente no disponible, permitiendo continuar el registro con un flujo controlado. Feedback presentación · ítem 14
 
@@ -80,3 +86,7 @@ Escenario: CA-03 · Vinculación posterior (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.1) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal) y el supuesto «mapa documento → PartyID» (C11). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

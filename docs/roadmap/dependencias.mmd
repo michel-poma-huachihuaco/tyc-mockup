@@ -1,0 +1,106 @@
+flowchart LR
+  subgraph Deps["Dependencias del producto (PLT-01 v1.3)"]
+    DEP01["DEP-01 · SIGDA/TAXON<br/>21-oct · Pendiente"]
+    DEP16["DEP-16 · Control de acceso (PJ-05)<br/>21-oct DEV · sin fecha comprometida · R-11 en revisión · sin plan B de emisor de pruebas (LT 29-oct): si falta en PRE, se reprograma la UAT"]
+    S28["Solicitud S28-1 a S28-8 al área de Roles y Permisos<br/>enviada el 29-oct, sin respuesta aún · cruce del LT 28-oct · roles-y-permisos-atc.md §13"]
+    PJ05["PJ05-DEP-01, 02, 03, 04, 05, 08 y 11<br/>5 y 7-oct (roadmap de PJ-05) · Pendiente"]
+    DEP03["DEP-03 · Matriz SLA<br/>22-oct · Pendiente"]
+    DEP04["DEP-04 · Calendario<br/>22-oct · En curso"]
+    DEP05["DEP-05 · Validación legal<br/>26-oct · Pendiente · R-08"]
+    DEP06["DEP-06 · Documental y GLI<br/>23-oct · En curso"]
+    DEP07["DEP-07 · Contratos<br/>29-oct · Pendiente"]
+    DEP08["DEP-08 · Cobranza<br/>21-oct · Pendiente"]
+    DEP10["DEP-10 · KPI y encuestas<br/>29-oct · Pendiente"]
+    DEP11["DEP-11 · Call center<br/>21-oct · Por evaluar"]
+    DEP12["DEP-12 · Herramienta de Legal<br/>26-oct · Por evaluar"]
+    DEP13["DEP-13 · Motor de José<br/>23-oct · Por evaluar"]
+    DEP15["DEP-15 · Proyectos<br/>29-oct · Pendiente"]
+  end
+  subgraph Epicas["Épicas (Etapa 1)"]
+    EPATC01["EP-01 · Núcleo de tickets omnicanal<br/>Dev 1 · 21-oct a 26-oct"]
+    EPATC02["EP-02 · Enrutamiento, SLA y alertas<br/>Dev 2 · 21-oct a 26-oct"]
+    EPATC03["EP-03 · Libro de Reclamaciones y apelaciones<br/>Dev 1 · 26-oct a 29-oct"]
+    EPATC04["EP-04 · Gate legal Eje 3 y Mesa de Casos sensibles<br/>Dev 2 · 27-oct a 2-nov"]
+    EPATC05["EP-05 · Postventa: reclamos de garantía<br/>Dev 1 · 29-oct a 30-oct"]
+    EPATC06["EP-06 · Autogestión del cliente y trazabilidad (Mi Portal)<br/>Dev 4 · 30-oct a 2-nov"]
+    EPATC07["EP-07 · Calidad de atención y Torre de Control CX<br/>Dev 3 · 29-oct a 2-nov"]
+    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct"]
+    EPATC10["EP-10 · Consulta 360 e integraciones operativas<br/>Dev 4 · 21-oct a 28-oct"]
+    EPATC11["EP-11 · Resolución por morosidad y formularios simples<br/>Dev 4 · 28-oct a 30-oct"]
+  end
+  subgraph Fuera["Fuera de la Etapa 1 (P-025, 26-oct): alcance flexible R-01"]
+    EPATC08["EP-08 · EntregaFest: contención y derivación en vivo<br/>Dev 1 · se retoma en una etapa posterior"]
+    DEP14["DEP-14 · Proveedor de IA<br/>no aplica en la Etapa 1 · ED-17"]
+  end
+  DEP01 --> EPATC01
+  DEP01 --> EPATC04
+  DEP01 --> EPATC06
+  DEP01 --> EPATC10
+  PJ05 --> DEP16
+  S28 --> DEP16
+  S28 --> PJ05
+  DEP16 --> EPATC01
+  DEP16 --> EPATC02
+  DEP16 --> EPATC09
+  DEP16 --> EPATC04
+  DEP16 --> EPATC06
+  DEP16 --> EPATC10
+  DEP16 --> EPATC11
+  DEP16 --> EPATC03
+  DEP16 --> EPATC05
+  DEP16 --> EPATC07
+  DEP03 --> EPATC02
+  DEP03 --> EPATC04
+  DEP04 --> EPATC02
+  DEP04 --> EPATC03
+  DEP05 --> EPATC03
+  DEP05 --> EPATC11
+  DEP06 --> EPATC01
+  DEP06 --> EPATC03
+  DEP06 --> EPATC04
+  DEP06 --> EPATC10
+  DEP07 --> EPATC05
+  DEP08 --> EPATC04
+  DEP08 --> EPATC10
+  DEP08 --> EPATC11
+  DEP10 --> EPATC07
+  DEP11 --> EPATC10
+  DEP12 --> EPATC10
+  DEP13 --> EPATC10
+  DEP15 --> EPATC11
+  EPATC01 -..-> EPATC03
+  EPATC01 -..-> EPATC11
+  EPATC02 -..-> EPATC04
+  EPATC02 -..-> EPATC07
+  EPATC09 -..-> EPATC06
+  classDef pend fill:#FFA726,stroke:#9A5B00,color:#02424E
+  classDef curso fill:#36C76C,stroke:#1B8A4A,color:#02424E
+  classDef eval fill:#EEEEEE,stroke:#777,color:#333,stroke-dasharray:4 3
+  classDef ep fill:#02424E,stroke:#012F38,color:#FFFFFF
+  classDef fuera fill:#FFFFFF,stroke:#999,color:#777,stroke-dasharray:4 3
+  class DEP01 pend
+  class DEP16 pend
+  class PJ05 pend
+  class S28 pend
+  class DEP03 pend
+  class DEP04 curso
+  class DEP05 pend
+  class DEP06 curso
+  class DEP07 pend
+  class DEP08 pend
+  class DEP10 pend
+  class DEP11 eval
+  class DEP12 eval
+  class DEP13 eval
+  class DEP14 fuera
+  class DEP15 pend
+  class EPATC01,EPATC02,EPATC03,EPATC04,EPATC05,EPATC06,EPATC07,EPATC09,EPATC10,EPATC11 ep
+  class EPATC08 fuera
+%% 0.4 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · DEP-16 «en riesgo» y sus épicas desde las 23 HU que la tienen (C-12). — Revisado por: (pendiente)
+%% 0.5 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · La DEP-16 la tienen 24 HU (suma HU-049, RN-SVC-036; P-034); sus épicas no cambian. Las épicas siguen con las 6 dependencias lógicas del PO (Gantt del PLT-01 y PLT-02). — Revisado por: (pendiente)
+%% 0.6 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · DEP-16 como riesgo aceptado con mitigación (R-11, ED-08), DEP-05 con R-08 (ED-13) y DEP-14 con proveedor decidido (ED-17), según `analisis/decisiones.md` v0.7. — Revisado por: (pendiente)
+%% 0.7 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): EP-08 y DEP-14 pasan al grupo «Fuera de la Etapa 1», sin flechas; salen DEP-14 → EP-09, DEP-14 → EP-10 y EP-04 → EP-08. En la Etapa 1 quedan 10 épicas, 13 dependencias del producto y 5 dependencias lógicas entre épicas. — Revisado por: (pendiente)
+%% 0.8 · 2026-10-28 · Jesús Chávez Elías, con IA (Claude) · Contraste con Control de acceso (PJ-05): la DEP-16 pasa a «sin fecha comprometida; R-11 y R-12» y suma el nodo PJ05 (PJ05-DEP-01, 02, 03, 04, 05, 08 y 11, con las fechas del roadmap de PJ-05: 5 y 7-oct, Pendiente). La DEP-16 suma las flechas a EP-03, EP-05 y EP-07 (desde el 28-oct abarca las 10 épicas de la Etapa 1: sus operaciones exigen rol del token). — Revisado por: (pendiente)
+%% 0.9 · 2026-10-28 · Jesús Chávez Elías, con IA (Claude) · Cruce del Líder Técnico del 28-oct (C14 a C20): nodo S28 (solicitud S28-1 a S28-8, a enviar por el equipo; `arquitectura/roles-y-permisos-atc.md` §13) enlazado con DEP-16 y PJ05-DEP; DEP-16 con R-11 y R-12 en revisión: el emisor de pruebas solo vale en local, la UAT del 03-nov exige Control de acceso en DEV y no es un riesgo aceptado por el Líder Técnico (C-12). — Revisado por: (pendiente)
+%% 0.10 · 2026-10-29 · Jesús Chávez Elías, con IA (Claude) · revisión del Líder Técnico del 29-oct (puntos 1 a 7): DEP-16 sin plan B de emisor de pruebas (si Control de acceso no está en PRE para la UAT, la UAT se reprograma; el emisor de pruebas solo sirve en local); la UAT exige Control de acceso en PRE, no en DEV (texto superado de la 0.9: «exige Control de acceso en DEV»); S28 preparada el 29-oct, aún sin enviar. — Revisado por: (pendiente)
+%% 0.11 · 2026-10-29 · Jesús Chávez Elías, con IA (Claude) · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)

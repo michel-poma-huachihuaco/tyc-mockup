@@ -2,89 +2,225 @@
   "epica": "EP-ATC-06",
   "generado_por_ia": true,
   "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Tareas de migracion alineadas con el registro de tablas (C-11): ATC no crea ni altera tablas de otros dominios (MAE_CHANNEL, GOV_INTEGRITY_EXCEPTION, SVY_SURVEY_RESPONSE, CONTRACT_WARRANTY_CLAIM); siembra filas con semilla versionada (P-043). Mismas horas por HU (PLT-04, 243 h). 0.3 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-064-T01 <- HU-ATC-055-T04 (PO: HU-ATC-055 -> HU-ATC-064); HU-ATC-065-T03 ya no lleva en depende_de HU-ATC-057-T01. 0.3 · 2026-10-26 · Brayan Hurtado, con IA · Barrido de coherencia: la tarea de login de Mi Portal cita ADR-011 v0.4, la version vigente (decia v0.2). Mismas horas y dependencias. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Sin cambios de tareas en este archivo. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision interna del equipo del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28). Mismas horas por HU. Cambios en este archivo: HU-ATC-064-T01, HU-ATC-064-T02, HU-ATC-064-T03, HU-ATC-064-T04, HU-ATC-065-T01, HU-ATC-065-T02, HU-ATC-066-T02. 0.6 · 2026-10-28 · Jesus Chavez Elias, con IA · Contraste con PJ-05: HU-ATC-064-T01 con los datos del cliente OAuth PUBLIC de Mi Portal como dato que ATC define por ambiente (D-223), sin 'lo carga el seeder del area'. Sin cambio de horas 0.7 · 2026-10-28 · Jesus Chavez Elias, con IA · Cruce del Lider Tecnico del 28-oct (C14): PartyID del cliente por el claim party_id (S28-4); tipo y estado de la cuenta CUSTOMER por confirmar con el area. Sin cambio de horas. — Revisado por: (pendiente)",
+  "titulo": "Autogestión del cliente y trazabilidad (Mi Portal)",
+  "responsable": "Daniel David Lorenzo Ramos",
+  "horas": 9,
+  "ventana": "2026-10-30 -> 2026-11-02",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
   "historias": [
     {
-      "hu": "HU-ATC-017",
+      "hu": "HU-ATC-064",
+      "titulo": "Registrar y consultar mis tickets en Mi Portal",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 2,
+      "inicio": "2026-10-30",
+      "fin": "2026-11-02",
       "tareas": [
         {
-          "id": "HU-ATC-017-T01",
-          "titulo": "BLOQUEADO (ver docs/dor/DOR-FT-ATC-11-*.md: NO READY, patrocinador no confirma si UrbeMind entra al alcance, R-06/DEP-09). Previo a construir: confirmacion de alcance. Una vez resuelto: migracion Flyway V28__agregar_columna_contract_id_opcional_ticket.sql (vinculacion opcional a contrato/unidad, tipo CITY_INCIDENT)",
+          "id": "HU-ATC-064-T01",
+          "titulo": "[portal] Login de Mi Portal con @aybarcorp/auth (Authorization Code + PKCE) contra el login de clientes de Control de acceso (DT-04, ADR-011): cuenta de tipo CUSTOMER, DNI con correo coincidente y verificacion a cargo del area; cliente OAuth PUBLIC de Mi Portal: ATC define sus datos por ambiente en su repositorio (client_id, redirect_uri y post_logout_redirect_uri exactas y origenes CORS); PJ-05 carga los clientes PUBLIC de las pantallas por D-223 (redirect_uri por variable de despliegue); correccion del cruce del Lider Tecnico del 28-oct (C15): el seeder solo carga aybar-web; los clientes de ATC los crea el area con crear-cliente-publico a pedido de ATC (S28-2); token en memoria, en Angular con @aybarcorp/ui-angular; en local, emisor de pruebas; ATC no emite codigos, no abre sesiones ni guarda PORTAL_SESSION",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-001-T08",
+            "HU-ATC-055-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T02",
+          "titulo": "[portal] Semilla versionada V36__semilla_canal_mi_portal.sql: valor MI_PORTAL en MAE_CHANNEL (fila en una tabla que migra Control de acceso; semilla versionada de ATC, ED-11) y subtipos habilitados al cliente (MAE_TICKET_SUBTYPE, cambio al v7, ED-15)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Daniel (Dev 4)",
-          "estimacion_horas": 1,
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T02"
           ]
         },
         {
-          "id": "HU-ATC-017-T02",
-          "titulo": "Logica de vinculacion opcional a CONTRACT_UNIT_HANDOVER y, si deriva en cobro, a un contrato CITY_SERVICE_FEE (entidades de otro dominio, sin contrato de consulta definido - ver D-10)",
+          "id": "HU-ATC-064-T03",
+          "titulo": "[portal] Caso de uso RegistrarTicketMiPortalUseCase: crea el ticket con canal MI_PORTAL, tipo y subtipo con el flujo publicado (HU-ATC-043) y su fecha de compromiso; datos del cliente desde SIGDA/TAXON sin copia (RN-SVC-026); Reclamo o Queja se deriva al Libro de Reclamaciones con el aviso legal; el cliente es el del token: su PartyID no viaja en el token de PJ-05: lo obtiene CuentaPersonaPort (ED-01; cruce del Lider Tecnico del 28-oct (C14): del claim party_id, S28-4)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Daniel (Dev 4)",
+          "responsable": "Daniel David Lorenzo Ramos",
           "estimacion_horas": 1,
           "depende_de": [
-            "HU-ATC-017-T01"
+            "HU-ATC-064-T01",
+            "HU-ATC-064-T02",
+            "HU-ATC-001-T03",
+            "HU-ATC-043-T03"
           ]
         },
         {
-          "id": "HU-ATC-017-T03",
-          "titulo": "Un test por cada TC de HU-ATC-017 en docs/pruebas/test-plan.md",
+          "id": "HU-ATC-064-T04",
+          "titulo": "[portal] Endpoints POST /api/v1/portal/tickets (registrarMiTicket), GET /api/v1/portal/tickets (listarMisTickets) y GET /api/v1/portal/tipos (listarTiposPortal): solo los tickets del cliente autenticado (HU-064 CA-02), adjuntos JPG, PNG o PDF de hasta 10 MB y maximo 3 por envio en Azure Blob Storage (ADR-006, DT-07; ED-26); autorizacion por cuenta de tipo CUSTOMER activa con un bean de @PreAuthorize que consulta CuentaPersonaPort (x-autorizacion; ED-01; cruce del Lider Tecnico del 28-oct (C14): tipo y estado de cuenta por confirmar con el area, S28-4) y filtro por el PartyID del cliente; «Mis tickets» lee la vista que escribe el proyector DT02-T05",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-064-T03",
+            "DT02-T05"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T05",
+          "titulo": "[portal] Un test por cada criterio de aceptacion de HU-ATC-064 (CA-01 a CA-05) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-02 con tokens CUSTOMER del emisor de pruebas de dos clientes",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Daniel (Dev 4)",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-064-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-064-T06",
+          "titulo": "[portal] Mi Portal: Nuevo ticket (registro guiado con adjunto) y Mis tickets, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
           "estimacion_horas": 1,
           "depende_de": [
-            "HU-ATC-017-T02"
+            "HU-ATC-064-T04"
           ]
         }
       ]
     },
     {
-      "hu": "HU-ATC-018",
+      "hu": "HU-ATC-065",
+      "titulo": "Ver la trazabilidad de mi ticket",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 2,
+      "inicio": "2026-11-02",
+      "fin": "2026-11-02",
       "tareas": [
         {
-          "id": "HU-ATC-018-T01",
-          "titulo": "BLOQUEADO (mismo motivo que HU-ATC-017-T01: FT-ATC-11 NO READY). Puerto UrbeMindPort en domain.port.out (ADR-004: solo por API/eventos, sin JOIN fisico)",
-          "capa": "domain",
-          "actividad": "DESARROLLO",
-          "responsable": "Daniel (Dev 4)",
-          "estimacion_horas": 1,
-          "depende_de": []
-        },
-        {
-          "id": "HU-ATC-018-T02",
-          "titulo": "Adaptador de exposicion API/evento hacia UrbeMind (adapters.outbound.external + adapters.outbound.messaging), con simulador (ADR-007), tratandola como canal mas",
-          "capa": "adapters",
-          "actividad": "DESARROLLO",
-          "responsable": "Daniel (Dev 4)",
-          "estimacion_horas": 2,
-          "depende_de": [
-            "HU-ATC-018-T01"
-          ]
-        },
-        {
-          "id": "HU-ATC-018-T03",
-          "titulo": "Caso de uso ExponerTicketApiEventoUrbeMindUseCase (creacion y consulta de tickets reutilizando RegistrarTicketUseCase)",
+          "id": "HU-ATC-065-T01",
+          "titulo": "[portal] Caso de uso ConsultarTrazabilidadClienteUseCase: linea de tiempo desde SVC_TICKET_STATUS_LOG e interacciones con Visible = si, sin notas internas ni nombre del gestor (HU-065 CA-03); un ticket de otro cliente que el del token no se muestra y el intento queda en bitacora (DT-04; PartyID por CuentaPersonaPort, ED-01; cruce del Lider Tecnico del 28-oct (C14): claim party_id, S28-4); lee la vista que escribe el proyector DT02-T05",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Daniel (Dev 4)",
-          "estimacion_horas": 2,
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 1,
           "depende_de": [
-            "HU-ATC-018-T02",
-            "HU-ATC-001-T03"
+            "HU-ATC-064-T03",
+            "HU-ATC-004-T03",
+            "HU-ATC-005-T03",
+            "DT02-T05"
           ]
         },
         {
-          "id": "HU-ATC-018-T04",
-          "titulo": "Un test por cada TC de HU-ATC-018 en docs/pruebas/test-plan.md (incluye verificar 0 accesos fuera de API/evento, RNF-INT-003)",
+          "id": "HU-ATC-065-T02",
+          "titulo": "[portal] Endpoint GET /api/v1/portal/tickets/{ticketId}/trazabilidad (verTrazabilidad) segun el contrato OpenAPI; cuenta de tipo CUSTOMER activa (x-autorizacion; ED-01; cruce del Lider Tecnico del 28-oct (C14): por confirmar con el area, S28-4) y filtro por el PartyID del cliente",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T03",
+          "titulo": "[portal] Aviso al cliente por correo y WhatsApp en cada cambio de estado, con el enlace al ticket, reutilizando los adaptadores de notificacion de HU-ATC-055 y HU-ATC-057. Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa el adaptador de notificaciones multicanal de HU-ATC-057-T01 (el calendario del PO termina HU-ATC-057 el 29-oct, antes de que empiece esta HU)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01",
+            "HU-ATC-055-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T04",
+          "titulo": "[portal] Un test por cada criterio de aceptacion de HU-ATC-065 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-04 con tokens CUSTOMER del emisor de pruebas de dos clientes",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Daniel (Dev 4)",
-          "estimacion_horas": 1,
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-018-T03"
+            "HU-ATC-065-T02",
+            "HU-ATC-065-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-065-T05",
+          "titulo": "[portal] Linea de tiempo del ticket en Mi Portal, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T02"
+          ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-066",
+      "titulo": "Responder, adjuntar y confirmar la solución de mi ticket",
+      "feature": "FT-ATC-24",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 2,
+      "iteracion": 2,
+      "inicio": "2026-11-02",
+      "fin": "2026-11-02",
+      "tareas": [
+        {
+          "id": "HU-ATC-066-T01",
+          "titulo": "[portal] Caso de uso GestionarRespuestaClienteUseCase: la respuesta con adjunto queda como interaccion visible (autor = cliente) y reanuda el SLA; confirmar cierra formalmente en Mi Portal (RN-SVC-023) y dispara la encuesta de HU-ATC-019; rechazar reabre el ticket con motivo (REOPENED en STATUS_LOG)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-065-T01",
+            "HU-ATC-019-T02",
+            "HU-ATC-011-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T02",
+          "titulo": "[portal] Endpoints POST /api/v1/portal/tickets/{ticketId}/respuestas (responderMiTicket; maximo 3 adjuntos por envio, ED-26) y POST /api/v1/portal/tickets/{ticketId}/confirmacion (confirmarSolucion), y job idempotente de cierre automatico sin respuesta tras los dias habiles configurados (ADR-005; ShedLock, DT-08); cuenta de tipo CUSTOMER activa (x-autorizacion; ED-01; cruce del Lider Tecnico del 28-oct (C14): por confirmar con el area, S28-4) y filtro por el PartyID del cliente",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T03",
+          "titulo": "[portal] Un test por cada criterio de aceptacion de HU-ATC-066 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-066-T04",
+          "titulo": "[portal] Detalle del ticket en Mi Portal: responder, adjuntar y confirmar o rechazar la solucion, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-066-T02"
           ]
         }
       ]

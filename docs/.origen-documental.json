@@ -1,0 +1,2169 @@
+{
+  "esquema": "aybar.origen-documental/1",
+  "fuente": "nexora",
+  "url": "http://nexora/PJ-06",
+  "proyecto": "PJ-06",
+  "traido_en": "2026-10-30T14:07:42Z",
+  "traido_por": "Claude (Daniel David Lorenzo Ramos)",
+  "documentos": [
+    {
+      "ruta": "adr/ADR-001-monolito-modular.md",
+      "id": "cd834cb0-0e08-4f8a-a867-ee2dc43e6acc",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f4fbd04120f8d6f81e657489a76bf6d2d3ef9ee4c6a8c90e84254235ebf08dbb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-002-bitacoras-append-only-hmac.md",
+      "id": "b45995b2-34f2-4aa8-ac7b-ba26194abd43",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ce40784eeef92956d27276571624c0783031982b0bd0d40665d6f4bce92dabbb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-003-dato-del-cliente-no-se-copia.md",
+      "id": "a8a8ed1d-23d7-4e17-b3ef-de4b7a92a4e1",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "45c3d1297d39ede8eac647869b631dddd432a1aa69b340f7db36119e7109c678",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-004-integraciones-contract-first.md",
+      "id": "085ed66e-f349-4ffb-8e46-d2b971f97c35",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "15e55d84d03b393078770e7e49f62068b7cc5a94ed2e75161af6b656ff099c1c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-005-jobs-batch-idempotentes.md",
+      "id": "087dcac3-bb21-469a-b642-6e242d970e24",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "95d3cb2c82ddad07617232e68a78342751e237e468860f355aa5bfce7608c033",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-006-evidencia-s3-object-lock.md",
+      "id": "fa88fa06-46e1-4780-a569-0304eb5d6873",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "1795ccef9aea24e2037482904394aa2777e506af861bc8e694da49a48bff1fe6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-007-ia-solo-via-servicio-de-asistencia.md",
+      "id": "dcdb8fc3-4753-41c9-8c9a-1df6b0fc594b",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "535d42b00118a1f14279e3769fc5c702185db8ce8827df6fb58cdce40bb5efa7",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-008-motor-de-flujos-configurable.md",
+      "id": "d3c4c190-26ad-426d-b990-86cfec01fe58",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c4af203a1800bf759a3814c4ef2b8f2f8d55c3fd95a4c33c25783e7211fece92",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-009-identidad-local-etapa-1.md",
+      "id": "274d9048-834b-499c-b879-85a1b114f6c9",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9df483aa9ee7a725801382c9533674e757e674dc62dbde8b888dff52f50b4bd8",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-010-visor-3d-navegador.md",
+      "id": "b2f4ee19-1d27-427c-bb5e-9d2499450188",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "03a0a3d4323c58ccf0f053454192b6c55851e6482e053d38a67e604278ffc7e1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-011-mi-portal-acceso-dni-codigo.md",
+      "id": "6c4221fd-3d44-4960-a2a4-f9d2c71f73ee",
+      "version": 12,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "57f0e4387948c2a6aaa86ff2b527c7352e15ac4e8cad6083dc5e2fcf064de93f",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-012-stack-y-lectura-escritura.md",
+      "id": "5ed80503-e777-42f0-8c18-f79241dd3407",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "af4a301fbff77a6528ae8e45ddb8a555d62b93477240c52a2ed47ce89eddd041",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-013-outbox-de-eventos.md",
+      "id": "82695b44-3843-46fb-a7ad-acf0ed1e222a",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "b3c0e288ae17744947ea4e2744c918211e9f899e7b30be8c2e0701728ec788ce",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "adr/ADR-014-plataforma-nube-emisor-servicios.md",
+      "id": "ee9a9c59-10c0-4338-bc00-02411f61fe11",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a5eea6c57ffca00b3dc7b49e44ac85665816c0b932319cf8db3824fe0f8bec07",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "analisis/BRD.md",
+      "id": "51d41eaf-cc4c-4f45-80b4-ff74aedc39fd",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f0f67d84b9ad56f312410d6545b8ec92197b12c6958909c843cc4527986a80db",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "analisis/cobertura-requisitos.md",
+      "id": "c661b95f-648a-4148-8aa6-92734e3d3d32",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3a4f79cd0bd522970a33829ebe18ed4587c67ab9b28f899c948e3aa5eb5ff1d5",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "analisis/decisiones.md",
+      "id": "ee2bf645-5dbf-46bb-b75d-2be95589dbaa",
+      "version": 12,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "1d4e321c3272d5b07f08cc0f526341ef6fd8092f1b0cdccb014c709759789bfb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "analisis/ficha-intake.md",
+      "id": "1f92573e-bb11-4844-b200-4acfd1726864",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "0f025d620ece888ebf3b27d96aa06530f1518d806c87f5acf838cfad11e533f5",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "analisis/proceso-atencion-prospectos.md",
+      "id": "7b037956-eb7b-4b86-bfcf-6aead0a33b65",
+      "version": 5,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "84da949287b13baacf65e4060eb8f5b6bf44f6e756ee28c8bace24acb038510a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "arquitectura/aybar-atc.openapi.yaml",
+      "id": "9471bfb1-c622-4121-b89f-02c2a3ecbf3b",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9f0c5a86dc3fcef626deccb3fb9ca2c8d8e15c17d7b18bf25d0777320cefb302",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/c4-contenedores.mmd",
+      "id": "788728b9-bd29-438c-9639-f0d84ac9f4bf",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "e8a4f78adc90a933e3f36207fb744f1400541c700aa1d735fc11b50e00e743e6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/c4-contexto.mmd",
+      "id": "f9d81e94-ce7e-41d6-961e-0b1952973f6c",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "cfc293f0fe6a2450594a9b7f88a4edc160d3ddf310f2f5fabb5219c1556417b7",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/costo-cloud.md",
+      "id": "964d5058-a1bc-496e-89da-defa570dce0d",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "466a10343838f6d9e09e1c1c3a8bf24646ebe302b0e9185c6ce2872d1e82f40f",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/diagrama-arquitectura.md",
+      "id": "77408787-d683-4190-af62-50231d8b91af",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "92f65917fa76464f555b2ec9edd795999000bf3cba6ddf3945e62004906b86fd",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/migracion-y-reversion.md",
+      "id": "2dd8bf66-4dd4-4c7d-a1da-d7da5a03ed5b",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d8629f4163cffba804105d7319573553ba544702a5687195a29317782acc0046",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/modulos.mmd",
+      "id": "0a2d9e35-ced3-49af-ae8b-4a1dd537e9ca",
+      "version": 5,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "65631118341fd82abdaccd9efe35edf03505abd41fa5ea0d095131b7c702b8f3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/operaciones-por-historia.md",
+      "id": "d9e9ffd8-6222-4c3d-8e61-81063e4b26ce",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "33c71932bb9c99cb28468e60152fd6309cf830d7d0d198c52d81e51698185502",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/roles-y-permisos-atc.md",
+      "id": "8eb6583f-c40c-4a64-92fc-037ad09f4107",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "26e44ac49142e9dc5ae304caf5bbe7cb8ddb1b59bac493b6d1e721a54368199d",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/seguridad.md",
+      "id": "4ffc73ab-d6d8-48db-b7f7-2d891e0ceb4c",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "34d02a0593581278f0d4dbbff7379c398e3dcbd30b9be440a2f5f818cf7803c2",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "arquitectura/trazabilidad-historias.md",
+      "id": "f38fdd20-f216-442c-abe1-5ea19ebb7c5d",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fd9169fd140b16a1b81502b1ab14cff0cfc22beacbd4f50b584e95ad0654783b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-01.json",
+      "id": "f4f29b95-2068-43d7-bed3-ff394acc1874",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3bf24bd306760fb8b0b32c7e13fa3e4b2ae22edb0325ec4b60b1edd34ee2ecac",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-02.json",
+      "id": "484cee12-caa1-4068-88b3-98074342e760",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "7396d99f94e97d42fe5e64c4ebbe2151f5379631a3b398c24d2f5bb17bc11d56",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-03.json",
+      "id": "7a52dcb5-ae13-4572-8f93-b942133f746f",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3018b24c26c2689ba0fabe4121b64dcb03b13f885ebf8bd0372037d772946108",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-04.json",
+      "id": "d17f9330-35b9-4192-b6d9-5d678c6f79c2",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "de8316855f9428945ef73de73a9c1bc9499c3ff3b259275cb3bfdf5dc104e345",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-05.json",
+      "id": "1bca1313-3f5b-4da5-8824-7c1001a00bbd",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3c51e09710d046fe9bb00e68753bd852a73e3404f18c53646a0033e4f68f8ae8",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-06.json",
+      "id": "7e3775d2-39e4-40d0-b0af-932f76a3279e",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bc26fad8fc1cf560605aef0d7658d89fc581c2a172af7c84f0a44a75192a1f69",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-07.json",
+      "id": "b1983d86-d3b5-4fdd-a255-5da9a3cfe9cd",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "aebff74d4dbb8ddc88f19ef3c01384f2ffcb79afff16356c4bb182f97f25403f",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-08.json",
+      "id": "1acc44d0-4fb0-45fb-a62d-70914e18d186",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d85785d3eac2c1531511a351700ac8654c5f05273bbe26a19c7d86011cf053f7",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-09.json",
+      "id": "6d1514d4-9146-444a-baf6-c2ae019427a8",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "654c1106ec672cd3276ca08b2913e55761652e4900818f3bd6e8f8c0473582a3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-10.json",
+      "id": "cb47f326-2e8c-459a-bcbc-f8a8e0e098e2",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "7a018103c00c4e8d8abffabe0ca86e0dc458a54de373ba84a14a628940631bbb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "backlog/tareas/EP-ATC-11.json",
+      "id": "7fafd5b4-7ff2-44dd-a58c-b37d87bbd92d",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ccc5dfed169c9a4a4fae5e488052b41cb841c171cda7c75ce2939d552f0a4dad",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "datos/acta-validacion-arquitectura-datos.md",
+      "id": "829964f8-f877-41b6-b640-459722136b54",
+      "version": 13,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "2c990ee361f0c78276927fa5712a7326018138317258aef4adb958715fc38aaa",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/diccionario.md",
+      "id": "5c105f58-c3fc-4c47-be78-7c2b6480e6ee",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c55eb327fba605148ef5d74c1bbf2c3fc5ffd33c88689319a48ae992642e5fe6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/er-diagrama.mmd",
+      "id": "c3996bbd-7d86-4063-b856-11a0dda38719",
+      "version": 5,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ca51753141fc25ba08f0e012bd543e4af2036ebeaa8c5077bd9f842fee10fea6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/er.md",
+      "id": "c29db6ba-8996-4392-85b9-2ae062440125",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "20fa80a18fcae42908610ab6055ec829c68f5ead98df626a5b7348139b6510ba",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/estados-ticket.mmd",
+      "id": "5ee786bd-e48c-4913-8d99-d3af9cf43f1e",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8d0199f67f22010005b189e22eac68d8c09a41e26dce70616983d1b0ac339d2a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/estados.md",
+      "id": "87377044-675e-4a28-b922-fddfed2faab2",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "5717ea81116a9ce5bad6af6bbc6d22a4e8fb2f2730ca9ca418b82d6fb06309d9",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/linaje.md",
+      "id": "752e9f68-3296-4b8e-84f6-cb5ebeae0989",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "97b577ee0e0f95b2322c45ae724a3d406f13ba87e4eb40892b40859817df930c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "datos/registro-de-tablas.md",
+      "id": "c4e9337a-969e-41ae-9abc-5eab294a957f",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a4aca7cb028d7cf3854e8eb1aced13b0a75c93c7ca2a0b28ce8790d5dbd42dd9",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-01-registro-multicanal-y-tipificacion.md",
+      "id": "f81aeca9-4084-420d-8e45-a889477172d8",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d7656ebc5c1afd5fde3258433b67d8e6d786401704a092946e17ed04218e03aa",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md",
+      "id": "9ae8a899-8560-4fe9-8db0-a5cbd4043299",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "1c56b2292ed55a1797b7a836fc115893c48298ddb40b3f81ce9f126a9473c35c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-03-derivacion-reasignacion-y-casillero.md",
+      "id": "66e6cb0b-f820-49e6-9356-792004663adc",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f08f758f8bf894e36210eabf8f1d6944f191877c182c8cf96a0b811773815317",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-04-motor-sla-y-alertas.md",
+      "id": "2d8481f2-867e-4bd6-abf3-2e1c40928812",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "317132a6cc15b0284b3868fcac874fc718cdc9793b9eb1e4bb47c7b7fbc732dc",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-05-libro-de-reclamaciones.md",
+      "id": "8d78eb19-68c0-4462-9751-020bdbcbb284",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "61f11fa0a4941fef01810dce3589ade7213e0978d043a2722590ded8f8086582",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-06-apelaciones-internas-e-indecopi.md",
+      "id": "d55f8a9a-c3c5-487d-90d0-f840be707ffd",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c3442030385b980fd91c9709448186863d51df2d344b75733086284913f57677",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md",
+      "id": "cd921708-bdd3-46db-bd6b-e8b7b8ba60d3",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a629b9cc23f64639ceb559ca7a6739d03e1012d7d986c2f6e350dda6fdb5af09",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md",
+      "id": "c7a91a00-b4a2-4931-8d86-fb03be7ffa59",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "85f5bb81167f05f9dab8c94af7d69639b84b19f8220a48838172f3bee9bc78e9",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md",
+      "id": "49b8eb0d-af22-4616-af89-a54a27d00796",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9c6e67b3c2d26ce475147f7f119f95d66b90acdbd812aa7da96408fb335a064e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-10-reclamos-de-garantia-postventa.md",
+      "id": "9e38895c-2a42-4b6d-8046-73886dcc675b",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "5570bee25378f5f9c65e29a8a002b5a43c89029393aeb83af0ec67b6f4fc1246",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-13-encuesta-post-atencion.md",
+      "id": "ef9339de-fe34-4fbd-a707-bfd8b656683b",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "2d8252345eccc5ace51006a30b95b94454ff297918a61a4830d4cddc00b6e8c3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-14-torre-de-control-cx.md",
+      "id": "3f4e411f-998b-46b7-bcd5-d505a7524f46",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "03169946db6ddeae2dd033ff8af56fbc7ae24352c28f5d76a4c42d5a22ae2116",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-15-entregafest-contencion-en-vivo.md",
+      "id": "1dc5d980-9414-45d8-b6bc-e06740712008",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "722fb3866a39d99bd86a6111344967d664cdcf378901c1f7bb09e8b31e7c0b20",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md",
+      "id": "fd0762ac-63fe-4385-b655-ee1ca4015e37",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "dd86d70b8ce29403f9c72abdb44d76cc0d65362b8a6ca5cf082766a45949dd03",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-17-integracion-con-la-plataforma-del-call-center.md",
+      "id": "3fdacf7f-6b9a-4c54-be6a-a08b9c56f6ae",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "19f496626712768b72f69277ec91ccc1f1f0409e1d211f25a75cab26006144e0",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md",
+      "id": "56d8f57c-9601-4c91-acb7-55300653533b",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8a5e81e93f19205fe1a3fafa0ece71c972abfb737bee155bcfb193ede8a8382c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-19-asistencia-al-gestor-guia-e-ia.md",
+      "id": "6bd64ad0-8875-4af4-a684-7afdf93bb9ea",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "4663f84143dfef3b7a7fa1c53398d348ac06ca8f195c75423dc0f3a4c528c920",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-20-busqueda-y-consulta-360-del-cliente.md",
+      "id": "b605707e-896b-4cdc-a084-04c29c4912d6",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "5a2a5d8fa2bdbf3081d9b5ef1bda29ea2c16422e673aff727fb1a6c4088a5f13",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-21-productividad-y-notificaciones-del-gestor.md",
+      "id": "9eebdccf-403d-4960-a33c-450176271bd2",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c4ed69d4f8ec93027ebcec2c0d8793af04ddcf2ee0c7cb278f2aa3f933e2aa80",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-22-resolucion-de-contrato-por-morosidad.md",
+      "id": "0afd6a60-c8eb-4f9f-874b-644405a17708",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "70603d96fccca0eacbe828b3c7b4d2a15335b5a821871be86a962286fd9b89c4",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md",
+      "id": "b94345e8-39dc-44cc-8e35-0ea2c7557bc5",
+      "version": 7,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "19372b744e837746c0289137cfe620b52d20d3b59a2c2290d3c5b99936b9ddd3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md",
+      "id": "50346e7b-6fe2-4a1e-b9bf-ab6c3a026c26",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "933e4d767eae12bf8e3b79ce0ad6ae7d747035416124d5fe6227576f9643c16a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "dor/DOR-FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md",
+      "id": "00c7a11f-0d29-4ae8-b02a-8047aab91f74",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d4262ffd052ae738e0dd1cf60208f07a306a787ba1751b8dda803c6319380a77",
+      "firmas": [],
+      "firmas_pendientes": [
+        "tech_lead",
+        "project_manager"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-01-nucleo-de-tickets-omnicanal.md",
+      "id": "8fd541a8-3ef2-44df-b64c-50036e90bc1a",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "7b4f94e408111015ff16826331dfb3b7bc8f0b42ae8a6b7b720cdca4971dc906",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-02-enrutamiento-sla-y-alertas.md",
+      "id": "ab3e24fd-58ca-4f97-b67d-a12054aca06b",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "25e43752005e2e66aec66abf0f2022f90424af9b1e25cd6b2f0519fbc9f3b11e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-03-libro-de-reclamaciones-y-apelaciones.md",
+      "id": "3a15f140-0449-4c2c-bb52-7628bd699341",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bf04953126b875118e19c01267f2e7c482a8f7fb5d8be3d03685159d89e25c44",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-04-gate-legal-eje-3-y-mesa-de-casos-sensibles.md",
+      "id": "37e8ea00-4897-4aaa-b9c5-66d9046525ca",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "32d70ba0ccc947a16cbd81706cd273cd21855210389bc58d0ec76164c04462dd",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-05-postventa-reclamos-de-garantia.md",
+      "id": "59e2ead2-aa4c-4090-aa19-c9130c6697a4",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8d8fc4c199bfb1fcf2e294f2ace5de788259f387ed038af58c31e344d9cc4602",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-06-autogestion-del-cliente-y-trazabilidad-mi-portal.md",
+      "id": "b8a77e2a-5f14-49cf-834b-bd22e2057270",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "987549877876b5b2b879922d4e3befca849c11aaf39136f1ce48a61c0cbdf80c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-07-calidad-de-atencion-y-torre-de-control-cx.md",
+      "id": "8f8d3c78-3e0b-48c2-9f99-260c5f48f855",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "842fd53f40a989909adddfad1dcb2b252c785dbbcff5e3da9e45992c3e32a1cd",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-08-entregafest-contencion-y-derivacion-en-vivo.md",
+      "id": "ea16e339-ee32-4ba4-9f87-887927042b26",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "cdc53bfa510cd7d13d65bc32bd7f7e960ed017a64103013eb43322f0db5d41d1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md",
+      "id": "c53be8a9-3918-4c58-993b-0a332835ab39",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "b92ae033dc305d32532b920c93cd27876309649db778ec5c16227c164ace4ff2",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md",
+      "id": "8480ff3b-1af1-4909-9469-4917000581e8",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "30cfb9dd4c4c3c2a83f4890ab8267811db9ed6cad0217d754c91c7f9b9809f07",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "epicas/EP-ATC-11-resolucion-por-morosidad-y-formularios-simples.md",
+      "id": "cce88ed2-22d3-46a9-9ae6-9c055881785d",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fd0bd7e5a01c68b067d4fac6ca51bbd103e15d715c8d5e01e70e295bb862da95",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-01-registro-multicanal-y-tipificacion.md",
+      "id": "656a94d0-827d-463d-8b91-d5fdcc0fde80",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "0017cf5b93d9b75a3af06c923cff310f748903b92eee0cd5c914df2075c14935",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md",
+      "id": "9f8bee1e-70aa-4f14-99d1-ee311e173045",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "808428db3aa1bd0ff21f7b0d02f825efc90ecff22eb185640637af5f2fd86150",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-03-derivacion-reasignacion-y-casillero.md",
+      "id": "190da502-2b0c-4892-a2ac-6bcf9c5ea5d3",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "528241f749823270ff53973e5c990c17d6523581079962f88ffdc9a771ebcd4e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-04-motor-sla-y-alertas.md",
+      "id": "ac04ca98-9ae2-40b2-9bed-e217cc29a182",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c03931a4a23b42d457e57295c7ea38452c39de4b4aa118d46d98b0bae29c8795",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-05-libro-de-reclamaciones.md",
+      "id": "c9740bf4-e25a-4ecf-bcd1-b47ab3bb6432",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "0e1e73185c58d2a54443f59418ab12a9069ed5281b33f2d8659abc19e669b92c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-06-apelaciones-internas-e-indecopi.md",
+      "id": "2443a6bd-21f6-4371-bf4e-e452fd78e494",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bb4e2dee2ab879049138fda85e314a4cf7f329ee26b69091fac07ac3c2e52d5c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md",
+      "id": "dca46059-289c-44bd-85e7-4d4916a60b62",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "40f766bf1d2335996172597238861f07cf668a4ab8dfefde62973fd2fc380a2a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md",
+      "id": "76e5fcd6-e0c4-413b-b784-d779a2f88b33",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "0a6809cbac575e7069ed7f454a9ea1d8e0553fd9f3ddbaff676527e8203e28fa",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md",
+      "id": "e9f4d2d6-2b5c-40fc-95ba-3461b9dee3be",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f2e964202ea906b7298a8b9a8ee2aef2cd92277a3f26cbb7f94958266e56072f",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-10-reclamos-de-garantia-postventa.md",
+      "id": "3857be53-b8ce-450d-9b25-7d14925571d4",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "265ceb81b2d5fe742906324eb06568278c79891a5fa8a3be91d3973c05ebf811",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-13-encuesta-post-atencion.md",
+      "id": "f7651376-0962-4400-b733-e9b7ee19b63d",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bbde2c1bbdf58b5cdd422eeb602b23ce215595673319667550858e51907218bf",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-14-torre-de-control-cx.md",
+      "id": "deab050c-ff54-4fd8-9f30-f45b85475d74",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "82bea869a256126d6a44378abae1f415383c47f94ccde7fb2e4c803179b4e105",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-15-entregafest-contencion-en-vivo.md",
+      "id": "a99fce64-6c9c-49f2-881d-91f6ff43c8d4",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "905767864fe721cca436d1e1e7cce21bcd3d8f38c6705e4c44f6ec372fb59846",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md",
+      "id": "7a6ba2b3-788e-46c3-9c84-b0e26063718f",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "88127bd449882ad1ec66df040c57c1f28a3ed4062af2393d850ac7d8504e1803",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-17-integracion-con-la-plataforma-del-call-center.md",
+      "id": "b86a989d-73c2-46f1-88b8-ba5f78bd84c1",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6d1004d8f735ae0f64341ae589d922fe670bdf6b8c6a2982d699fc48750c1cd2",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md",
+      "id": "e6943405-4219-41a5-957e-26d8ffeffe7a",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "2a0b904a19f89e49174d5d7a836979b17e937a50b9fe8c0604769263d6e57204",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md",
+      "id": "848100a5-b0ff-487b-a9f1-e39e5228e899",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6834800129111fde361ce1ad5d148fd9c537da9bbb8b873473707c695f7603bf",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md",
+      "id": "b818bd8e-af73-484c-a1ca-f0247ba329a6",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f7cbaa0914e0b6c6284ba3c33d6ba1e8c037ad1dad1a9eba8762fb47173f38ae",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-21-productividad-y-notificaciones-del-gestor.md",
+      "id": "950380dc-6404-4397-9e45-a42039e59692",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "e69ecff55a5600d8810a154db83b32d082f760e15bb12bb9a0cf8dce11352137",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-22-resolucion-de-contrato-por-morosidad.md",
+      "id": "b6a79cbb-a411-4ccd-9e58-c2c05a42612f",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "2bba2a717154393ceb935310cf8f7a0646280648a619516043fb9ac57741c599",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md",
+      "id": "958598ed-7b7d-4338-bf6b-138a7fe21462",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "dd7f3596d4a7bc957be2a7fe11af70b51eb41f0c4340893bc6b926465c9e57b4",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md",
+      "id": "c6fa56a9-eaad-495c-a36f-dc50a61d2600",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "494cc40c9abaf9d0cf3bb67dc0ae4c10591f231205e4e59e5ef37561802b3c03",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "features/FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md",
+      "id": "25c7d798-cc25-40ff-92b4-ebba85480a5a",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a7aa9734fba8eec1f6bdf06f99633425a02a19284771db0090b47e392d0ba61e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G0.md",
+      "id": "f8ddadf3-d407-40a3-bb6d-253f88e78c60",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ef06874cba45736a3c63ced6cf08d7c7a2addfa5868b058ef628684c8af4a88b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "gate_approver"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G1.md",
+      "id": "ba254188-a930-4ded-853d-bcfbe507298e",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "05977593150423b76d7f131b5977c6eea40a637293003bf788f8f7ad67d44937",
+      "firmas": [],
+      "firmas_pendientes": [
+        "gate_approver"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G2.md",
+      "id": "54d79ec7-f73c-40ac-8350-da1185ee5dc2",
+      "version": 6,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f3789c2e5ab40b3cc208c107b12593b0b382e30f83b34ff387fd66a2b0bb6c5c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "gate_approver"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G3.md",
+      "id": "4ce81ead-d036-4895-9eff-d4866ff93a27",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a520d1ab77ad2b2b97f673f9614de7a12c5a984c91911ce5f67c89d8101d3d11",
+      "firmas": [],
+      "firmas_pendientes": [
+        "gate_approver"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G4.md",
+      "id": "48b8f55e-8a19-4099-a5b6-c5761fc42fee",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fcb897257411d41583fd6ba0d41b4378f26c11a13cc81ca9f915d4c27fbbb94d",
+      "firmas": [],
+      "firmas_pendientes": [
+        "gate_approver"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-001-registrar-un-ticket-tipificado-desde-cualquier-canal.md",
+      "id": "529750c2-4a40-44b3-8204-14cdc61ce7d6",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fe3812ffc8bff583f27a2161719e75317e9fc94cf7a89c55eadad2a76cd2241b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-002-entregar-al-cliente-un-numero-de-ticket-por-razon-social.md",
+      "id": "b8f75546-dda0-403a-a79c-3f4c5ddac95c",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ccab34789a1714c94c0de943da8c8ac6c3d174217af255d4808e28dfd9d24843",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-003-congelar-el-sla-del-ticket-al-abrirlo.md",
+      "id": "56a3d604-a1f7-4995-aab1-532e8e7d8ea3",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "47a467a501d6df5ba0ea4b73cc744c2711bbbc4af48b98567d5aec6ad35cbcfa",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-004-cambiar-el-estado-del-ticket-con-historial-inmutable.md",
+      "id": "d3fec824-7349-4842-9b45-7dc70bae6f7c",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c7b64f25753d31044f65819aad8ad9ad983d02327042ebc83e3061d742b4a7a1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-005-registrar-interacciones-visibles-o-internas-con-evidencia.md",
+      "id": "6eba28bc-f535-4308-a6c3-2ce4326fd0d5",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ed3159e2054cf9b009a442b6506eb12fb56dab331368cc2c287f36db9d866d75",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-006-conservar-los-hitos-temporales-probatorios.md",
+      "id": "5a340284-e3ae-428e-976e-dfb44577a7a4",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "0cf7916ab8f23964b1ad33bc426d613167f44c941eebabc0f1c354bef0e8b3c8",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-007-derivar-un-ticket-a-otra-area-con-motivo-tipificado.md",
+      "id": "bd1a569c-7c92-4cc0-ac49-19c73b5a3d87",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "99f59ce26ddd103174b110c70821ea87d2efd85f5ef30ef90dce9f4f4f837c19",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-008-reasignar-en-bloque-los-tickets-de-un-colaborador-que-cesa.md",
+      "id": "28a0870d-a308-4b80-826e-55a1b8c61b7b",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "acf1acc4bbc11361a7fdc8b1e921fe3b6f796bbe6eaf176c7ae8ab98429abed6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-009-ver-mi-casillero-de-tareas-por-area-y-responsable.md",
+      "id": "d1f605a1-1fef-4bb2-abaa-5cb0e114eef4",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6f6bbc673a059cc6f2acf48714516524e51544ad0522ba7cdf764291b3f410e9",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-010-recibir-una-sola-alerta-por-incumplimiento-de-sla.md",
+      "id": "8145e992-ac43-4cd3-a654-b04062bc8a8c",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f236ac4d176dd3d07ecddb73e22d051b172bcd19b750430e4374a1fbde396751",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-011-reabrir-un-ticket-con-un-nuevo-compromiso-sin-borrar-el.md",
+      "id": "ad228b41-3f7a-48eb-819c-5fce9ee7a905",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "dcdc90be8c8c10b746b09b02a420e40c5ad29155d23c6e0d9c3dc4222dd90d64",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-012-registrar-el-asiento-del-libro-de-reclamaciones.md",
+      "id": "8b198af2-3421-40b8-a8d9-9faa89688e33",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d6b844b7d79ba73897180017b769966ea398b5e51e319041fe54550781f167b1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-013-calcular-el-plazo-legal-y-gestionar-la-prorroga-unica.md",
+      "id": "8689cb84-616a-4f24-a6a5-62a3dc05e10d",
+      "version": 5,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8ce691bbf18bbdb361cf1af0e918bbf4842197de06fad9c49aa569a3a4663522",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-014-registrar-la-respuesta-formal-con-cargo.md",
+      "id": "91185654-f99e-45ca-a498-a1da2cc6d959",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9ea5bbf6da85ddea3aaab6fa0f9e488b7f6164a4ecddbc160e8ef6ed325a5e52",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-015-vigilar-el-plazo-legal-y-detectar-reclamos-huerfanos.md",
+      "id": "efcd66ea-c925-4541-89f3-46d682004196",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "2befc1779e2cf58c702ff06da2562ed035f10e92cc52aed85407b413d36b907a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-016-dar-seguimiento-a-apelaciones-internas-y-ante-indecopi.md",
+      "id": "db58d2b5-3572-4c85-8925-e1691f3c4006",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "1508e794fff7aea5d93135619d3faf01e05d276050c4ffd68811bf80b0ee98b6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-019-disparar-la-encuesta-al-cerrar-el-ticket.md",
+      "id": "25eea75c-18dd-480e-a926-9302998807ed",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f9af842e5098b7b94c213e97521403303832e6eabf4991d62cf3b9922a01dfb3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-020-registrar-un-caso-sensible-con-codigo-unico.md",
+      "id": "79712a16-8151-4d7d-b1f9-6622eeb5f156",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "cf2b4e8aee660cded5eb249e40e3fd928759a41657eedbf68037b051eb4ba89a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-021-emitir-cargo-previo-y-cargo-de-activacion-por-separado.md",
+      "id": "c6fe56ee-b71e-40f4-af88-3d2958717390",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "e480a3e192e82fb7b9245a454dc03ed4367c6a018604b3f68c0f9d080026ca7b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-022-clasificar-el-riesgo-del-caso-con-matriz-objetiva.md",
+      "id": "a69aedf5-1308-4846-8d41-e42ec364342e",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "01812001d2b9cf1472157c749adbbda036b210cfe2b7ef2b9b8849dd5bc0d95c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-023-escalar-en-cadena-un-caso-que-incumple-su-sla.md",
+      "id": "35aaac8b-0e9b-4010-8b49-896c87a2d2eb",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "34afafe53655bfc4bed703c763f73d4d0b78f5b3d3e720bbf37f080cc52c086d",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-024-validar-casos-cruzados-o-vinculados-antes-de-registrar.md",
+      "id": "7bd827b3-f271-470a-82ad-a7224a18308b",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bd003134b1e1d6440f85decb69cb5665cb08eb12bbd08334df87f7cd954a68e0",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-025-cerrar-el-caso-con-estado-homologado-y-evidencia.md",
+      "id": "474a2bab-0fcb-454d-bdf4-8bcf5682d3e7",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a00fce88a6c23f0f804cb007b9a24936e5c1109cbd3b4a747367790f62c92d95",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-026-bloquear-la-resolucion-en-eje-1-2-ante-senal-de-conflicto.md",
+      "id": "90832afe-96c2-4998-9469-9d2174dc50a1",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "bf7ef5b55033f7cfd77ffee61b9c8bbf813b9f7318cf9d628ea0152e27d590d6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-027-armar-el-paquete-minimo-de-handoff-y-confirmar-su-recepcion.md",
+      "id": "1988268c-74cb-4145-96c5-8e23f804a17c",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c8c0565375345eb28a4d2115204ad6721d8a0083de461e2c4a5f206d4389f9ae",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-028-registrar-la-nota-de-estado-emocional-sin-juicios-de-valor.md",
+      "id": "e59ce55f-4218-4776-8bb0-a1bd71b53f47",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "cca43d8d9173ac749f33cc4b16fa009488fd446a42d7b94c5f86ebeed2daf5e2",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-029-medir-el-cierre-end-to-end-de-la-experiencia.md",
+      "id": "0b8511e4-b158-4b69-8251-e7bcd3925e7f",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "e990793413f7a1e99ecd057927eae58d4509e25cf843efc3f8e3539178497a51",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-030-monitorear-en-tiempo-real-y-corregir-antes-del.md",
+      "id": "1d901223-4d15-469b-a101-af008575c0bb",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3cb4451f586e87c1f86a7ea8a4242362576d2455c827b6d1c220ef088ef02804",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-031-generar-el-informe-diario-y-el-quincenal.md",
+      "id": "21419dec-2be7-478d-9a1b-ba12ff0d8bad",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ad75fd64ab51ce07ea1eaf26979a7fda28b3a609166cae3fd96e712e68222a8c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-032-auditar-registros-paralelos-del-dato-de-cliente.md",
+      "id": "bafb70bb-643a-4406-b8b1-25696245ddb8",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "650559fbcb7ce0febf08ffdb8a8139c609efcdd600483ce2656f5704640dfd5a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-033-registrar-un-reclamo-de-garantia-vinculado-a-la-entrega.md",
+      "id": "1d98e148-c745-4f3c-88e4-78d1a52fdaa9",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "3a54f5bd2b1b0258c2879626974e7f8d309b89d6facce2380e2dbd07a2a52763",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-034-validar-la-vigencia-de-la-garantia-contra-la-cobertura.md",
+      "id": "4c378347-902f-4fff-8c95-aa8ee0435cd6",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "322665bfaba806d3e4c0357fa6066bfa6f1a99623390aab3ca88b082acf8a151",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-035-registrar-la-inspeccion-tecnica-antes-de-resolver.md",
+      "id": "3639a655-1893-400a-8739-aafcf612cd4d",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "57e5625be8661abea74c1587002c27fb697cc2cef5379ac8ff280ccba20111c1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-036-escalar-la-garantia-a-eje-3-y-gestionar-la-adenda.md",
+      "id": "7f6dab4f-a1b6-4bcf-b508-2cec3a373b7e",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "7dd46102170e32b6671d58a82423f1ace03de1bb31a82e40edcfb450f2da00ad",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-037-registrar-el-riesgo-verbal-y-la-secuencia-de-frases-ancla.md",
+      "id": "bf074425-418c-4d5d-8090-725beb5e747a",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "09ceddfa32eda4b8ca762489971873998a61f103336b42db0087e95a6c752a0e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-038-derivar-de-inmediato-a-la-estacion-4-sin-debate.md",
+      "id": "7dabae39-48cc-46ae-8a57-73320ee64a9a",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "f31c698b005fc4492092605a8cf53d641deedfe6bd10f202a28f077c0677bdf6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-039-registrar-el-caso-con-la-etiqueta-estandar.md",
+      "id": "087fa7bd-a189-4f27-b4fb-7bf68a76267c",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c33b18aa36f483eb0308c6aedca6136c86ef445f867bd9401271b12676548d4e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-040-sincronizar-con-legal-los-tickets-derivados-a-eje-3.md",
+      "id": "a3ec5003-5891-4c70-9a16-efab3ea34673",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "dc762f00b0404ad96b88b58cdcebffef93a687e97a52ec7ca6583f6f876e5dd1",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-041-priorizar-los-reclamos-con-riesgo-de-denuncia-por-su.md",
+      "id": "c1cae5e5-42fe-4d9e-abba-5c24f7e913e2",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "4e968788ffe8280d3c04c3344cefde1318b33c9884a60423ebb8496dea8bcd58",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-042-atender-la-llamada-con-la-ficha-del-cliente-y-registrarla-en.md",
+      "id": "2ed520ea-d643-4523-aeb3-0f5ece67835e",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "89ae18baf9232ef179d9b819f227415cdcdac1b6b56665517c8c09b6e61a6a35",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-043-configurar-el-flujo-de-trabajo-de-un-tipo-de-ticket-por-area.md",
+      "id": "ecdd4f98-20da-43ae-bd23-11d35e62768e",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9f39f42298ecc414f219b7954b307c934a8766449285442bd1f281aa8b709cc7",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-044-trabajar-desde-una-bandeja-unica-ordenada-por-urgencia.md",
+      "id": "ab0e6ae3-4b9b-4825-8968-96669ac5e614",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8e8684a1497ef12201c3e83de92b3ef5c0b38fd3de9ba547364d73ab54f61d9b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-045-marcar-un-ticket-critico-con-el-rayo-de-prioridad.md",
+      "id": "bb5d2448-3723-4439-9e6e-dd41c7735c23",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6c5963e2a994f8d4962e3a690bb6a4a0b50e83cf5910b1e33781acaddba4771c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-046-reasignar-automaticamente-al-gestor-con-menos-carga.md",
+      "id": "e5fb5650-b93b-410b-b6ef-06a23d36db39",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c461a907179bee6449fe86f1545d182da65f01095252007dd58f737cf6de0cda",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md",
+      "id": "dd94592e-271a-492f-b855-46900c622659",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "52060eef1bcfde745b8abd4dd135f307996492b12c68c8f57d7168f523bec02a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md",
+      "id": "d732122c-f4e5-4206-a323-e4905e835dc7",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "1fc3af09825aee9a280a9bf1e0c753c5ce3ed321b91ae18c55f212ef31ffe09c",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-049-buscar-al-cliente-y-llamarlo-desde-su-ficha.md",
+      "id": "f0b1870a-922f-4e0c-8254-eb837135d135",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "cc4f74c70604ad799be29c533fd6465d87ed813caa530ec6a24ff5a84462a6c3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-050-ver-la-consulta-360-del-cliente-dentro-del-ticket.md",
+      "id": "6e4c3e52-f9be-4acb-bdf2-1bd13368d76e",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "8e2690175ff73ebdbcde8684b1350a284be96f9ca4ccb6835db0f9f1c8e66a98",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-051-continuar-la-atencion-cuando-la-consulta-del-cliente-falla.md",
+      "id": "26c2a59f-95a7-4236-a08c-c7d728e73f49",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "12fffe1974008de8d05224d78a893b4f831bab1195607ead0ebff27896be4060",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-052-consultar-datos-especificos-con-el-motor-de-jose.md",
+      "id": "1cf29337-7a2d-48bf-8614-f39008e0dbfd",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "c1a489f23204406decc27f332491bb89a7524c3f70b3ed3fde7655ce8fdffa21",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md",
+      "id": "28fe8140-f879-4ea7-a6e0-d0cf89a9727c",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d4c859b3299c1e9f8fcf9f5828ac369efd91941b375267d996da3c062c09886a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-054-ver-mi-avance-diario-y-el-de-mi-equipo.md",
+      "id": "58653d87-3ffa-4a05-b191-a14ef16c84fc",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "9c05df8d6403047c018526b68ac311a59efbf4014d8e227ac2d578457a03c3ec",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-055-recibir-un-correo-al-asignarme-un-ticket-con-copia-a-mi.md",
+      "id": "388b3b6d-035d-4526-a8e0-008c1ceaabcc",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "28c0472773b008708bfdfd3cbe58d6040ed78dc85a7a37aaf2b6118eac0acfd3",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-056-abrir-el-caso-de-resolucion-por-3-meses-impagos.md",
+      "id": "85305ecf-9425-46ae-b3f7-d5b4cf4a60bd",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fa49bf67f7d9ebedfeecf5368068a35308dd8d030b1245fd36afe6181ccfb75b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-057-enviar-al-cliente-la-alerta-de-cancelacion-en-paralelo.md",
+      "id": "a845d510-b38d-4cc2-9973-26752db015dc",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d7f637b834a774bbf421e6f81201159fc8b5885025c65ba1a0c546cfb9a7fa48",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-058-enviar-la-carta-de-alerta-al-responsable-del-proyecto-y-su.md",
+      "id": "9beca3ed-a59f-4936-b7b7-c6acac59f93d",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d76b951d9487a2f7cd13e875e829a1c27ebc65245231a75f0b7804a1a2c322fd",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-059-registrar-el-ingreso-de-una-persona-al-proyecto.md",
+      "id": "2d70157c-2305-45b4-a026-4a8ceba84b8d",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "7a209252d3d6798a5ba673c0983f23af75332ad49731c8eeebf80e67208b0072",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-060-reservar-un-cupo-en-el-bus-del-entrega-fest.md",
+      "id": "f7317494-3db3-4ee0-b055-8de6b69dbd06",
+      "version": 3,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "b989953db1f1974a7d4600504f1ee046f8c094d7b410e36d041a398abcf29c91",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-064-registrar-y-consultar-mis-tickets-en-mi-portal.md",
+      "id": "7412c1cb-fedb-44dc-9ea6-59816ee9d0c3",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "431e24089c0a7aa70882e5223ff0a50e66151ce1012a28b72d41023f26f3ccfe",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-065-ver-la-trazabilidad-de-mi-ticket.md",
+      "id": "d6d29ea0-e539-42e0-9a08-cb75153f5439",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "b01fe3cb15a1f27b484802321f7ffd5cad48e9b8b35cf58a2de7b19fc3efddc0",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-066-responder-adjuntar-y-confirmar-la-solucion-de-mi-ticket.md",
+      "id": "c9029772-dcac-44e7-977d-3a2f16db4726",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "a4a7cea5c51d19785850a8c7cf2146c7a068df8dc19d9b79f456512411dfd2bb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-067-ver-el-proceso-de-atencion-en-un-visor-3d-operacion-en-vivo.md",
+      "id": "06014fe6-de7a-4198-b37a-88ec41069c6f",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "365432ef8de0cbe37eb47c7f4743afc60badd6ac17f2c6750f2dcb47e6c1fa74",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "roadmap/RMP-001-roadmap-aybar-atiende.md",
+      "id": "7460980e-415f-4097-8d00-eec74c788c7f",
+      "version": 10,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "54d07b36e5e08e2c80454295bc4c6dfec1c4464b749e8a88d7f6e20b8dae28cb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "roadmap/alcance-diferido.md",
+      "id": "ce123300-c0eb-4ebc-9b6b-800d0850c801",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "d1f6951b005dcb0169fad06e2dbad11d468b70df24138577c454837c4d9e760b",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "roadmap/analisis-dependencias.md",
+      "id": "d44b557f-c6ee-4fad-aecf-5024804aab22",
+      "version": 9,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6f988f52a4bdade672e3dafbbf1e86c8fd45ab4124697dffd9908de38f55634e",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "roadmap/dependencias.mmd",
+      "id": "651f8bcc-2819-4d28-8477-e5739a0d1d4c",
+      "version": 8,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "ef86d485051235e4317ab11001c31edcab89d06a3ab540b35890da8964a6fe59",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "roadmap/olas-features.mmd",
+      "id": "5780996b-892e-4de8-aa4f-c2e25f31fd89",
+      "version": 4,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "86d3a2875a9d6750236a761bd8132b6c60e95c8f7fcb8b386d783aa36ad4bb85",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    }
+  ]
+}

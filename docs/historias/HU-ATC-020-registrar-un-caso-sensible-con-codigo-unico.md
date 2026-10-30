@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Registrar un caso sensible con Código Único"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["FT-ATC-08", "EP-ATC-04"]
+fecha: "2026-10-28"
+relacionados: ["FT-ATC-08", "EP-ATC-04", "HU-ATC-028"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-020 | Debe | 4 h con IA | Dev 2 (Jesús) | 2 | 28-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-028 (FT-ATC-07 es predecesora de FT-ATC-08 y esta es su última HU, PLT-02) · Dependencias externas: DEP-03 (plazos de línea de la Mesa SGD; PLT-05); el PLT-03 pone «modelo de datos SGD», que no es una DEP, DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: las operaciones `registrarCasoSensible`, `reclasificarCaso` exigen rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5))
+
+**La necesitan:** HU-ATC-021, HU-ATC-022
 
 **Requerimiento de origen:** El sistema debe registrar todo caso sensible por su línea de origen (5 líneas) con un Código Único Estandarizado.
 
@@ -74,3 +80,7 @@ Escenario: CA-02 · Reclasificación
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.1) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

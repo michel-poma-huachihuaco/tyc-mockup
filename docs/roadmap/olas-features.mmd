@@ -1,0 +1,55 @@
+flowchart LR
+  subgraph O0["Ola 0 · fundación"]
+    FTATC01["FT-01 · Registro multicanal<br/>EP-01 · Dev 1"]
+    FTATC03["FT-03 · Derivación<br/>EP-02 · Dev 2"]
+    FTATC04["FT-04 · Motor SLA<br/>EP-02 · Dev 2"]
+    FTATC16["FT-16 · Integración con Legal<br/>EP-10 · Dev 4"]
+    FTATC18["FT-18 · Bandeja orquestadora<br/>EP-09 · Dev 3"]
+    FTATC19["FT-19 · Asistencia al gestor (sin HU-048)<br/>EP-09 · Dev 3"]
+    FTATC20["FT-20 · Búsqueda y consulta 360 (sin HU-053)<br/>EP-10 · Dev 4"]
+    FTATC23["FT-23 · Formularios simples<br/>EP-11 · Dev 4"]
+  end
+  subgraph O1["Ola 1"]
+    FTATC02["FT-02 · Ciclo de vida<br/>EP-01 · Dev 1"]
+    FTATC07["FT-07 · Gate de derivación a Eje 3<br/>EP-04 · Dev 2"]
+    FTATC13["FT-13 · Encuesta post-atención<br/>EP-07 · Dev 3"]
+    FTATC17["FT-17 · Integración con el call center<br/>EP-10 · Dev 4"]
+    FTATC21["FT-21 · Productividad y notificaciones<br/>EP-09 · Dev 3"]
+    FTATC25["FT-25 · Visor del proceso 3D<br/>EP-09 · Dev 3"]
+  end
+  subgraph O2["Ola 2"]
+    FTATC05["FT-05 · Libro de Reclamaciones<br/>EP-03 · Dev 1"]
+    FTATC08["FT-08 · Mesa SGD<br/>EP-04 · Dev 2"]
+    FTATC10["FT-10 · Reclamos de garantía postventa<br/>EP-05 · Dev 1"]
+    FTATC14["FT-14 · Torre de Control CX<br/>EP-07 · Dev 3"]
+    FTATC22["FT-22 · Resolución por morosidad<br/>EP-11 · Dev 4"]
+    FTATC24["FT-24 · Autogestión en Mi Portal<br/>EP-06 · Dev 4"]
+  end
+  subgraph O3["Ola 3"]
+    FTATC06["FT-06 · Apelaciones internas e INDECOPI<br/>EP-03 · Dev 1"]
+    FTATC09["FT-09 · Escalamiento y cierre tipificado<br/>EP-04 · Dev 2"]
+  end
+  subgraph O4["Fuera de la Etapa 1 (P-025) · ola 4 de aybar paquete plan, 0 h"]
+    FTATC15["FT-15 · EntregaFest<br/>EP-08 · se retoma en una etapa posterior"]
+  end
+  FTATC01 --> FTATC02
+  FTATC02 --> FTATC05
+  FTATC05 --> FTATC06
+  FTATC04 --> FTATC07
+  FTATC07 --> FTATC08
+  FTATC07 --> FTATC10
+  FTATC08 --> FTATC09
+  FTATC04 --> FTATC13
+  FTATC13 --> FTATC14
+  FTATC13 --> FTATC24
+  FTATC09 -. al retomarla .-> FTATC15
+  FTATC20 --> FTATC17
+  FTATC18 --> FTATC21
+  FTATC02 --> FTATC22
+  FTATC18 --> FTATC25
+  FTATC21 --> FTATC24
+  FTATC18 --> FTATC24
+%% Olas de features de Aybar Atiende (plan v1.3, Etapa 1, tras P-025): 22 funcionalidades y 16 dependencias entre ellas en 4 olas (0 a 3); FT-15 queda fuera de la Etapa 1. aybar paquete plan da 5 olas (0 a 4), porque las primeras lecturas esperan al proyector de DT-02 (A-15), y pone FT-15 sola en la ola 5 con 0 h. Es el diagrama de analisis-dependencias.md §4.1; la diferencia con aybar paquete plan está en §4.3.
+%% Antes: 15 vinculos entre features en 5 olas (el de analisis-dependencias.md v0.2 a v0.4), sin historial propio.
+%% 0.2 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · 17 vinculos: FT-07 → FT-10 (HU-026 → HU-036, PLT-04) y FT-13 → FT-24 (HU-019 → HU-066, PLT-04); FT-10 pasa de la ola 0 a la 2. — Revisado por: (pendiente)
+%% 0.3 · 2026-10-26 · Brayan Hurtado, con IA (Claude) · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): FT-15 pasa a «Fuera de la Etapa 1» (ola 4 del plan, 0 h) y su vínculo con FT-09 queda punteado «al retomarla»; FT-19 sin HU-048 y FT-20 sin HU-053; FT-20 → FT-17 sigue por HU-052 → HU-042. 16 vínculos y 4 olas en la Etapa 1. — Revisado por: (pendiente)

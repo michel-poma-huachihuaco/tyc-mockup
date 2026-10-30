@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Consultar datos específicos con el motor de José"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-20", "EP-ATC-10"]
+relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-050"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-052 | Debería | 3 h con IA | Dev 4 (Daniel) | 1 | 23-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-050 (RF-SVC-050 es predecesora de RF-SVC-052, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03 y PLT-05), DEP-13 (motor de consultas de José; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: datos según el rol, CA-03)
+
+**La necesitan:** HU-ATC-042 (FT-ATC-20 es predecesora de FT-ATC-17, PLT-02; ocupa el lugar de HU-053, fuera de la Etapa 1)
 
 **Requerimiento de origen:** El sistema debe consumir el motor de consultas que ya construyó José para obtener datos especificos del cliente, integrándolo por API en lugar de desarrollar uno nuevo. Feedback presentación · ítem 17
 
@@ -79,3 +85,7 @@ Escenario: CA-03 · Permisos (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Suma HU-042 al bloque «La necesitan»: con HU-053 fuera de la Etapa 1 por P-025, HU-052 es la última HU de FT-20 y la predecesora de HU-042 (FT-20 → FT-17, PLT-02). No cambia texto del PO. — Revisado por: (pendiente)

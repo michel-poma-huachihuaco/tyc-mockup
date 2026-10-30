@@ -2,27 +2,40 @@
   "epica": "EP-ATC-09",
   "generado_por_ia": true,
   "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-054-T01 <- HU-ATC-046-T04 (PO: HU-ATC-046 -> HU-ATC-054); HU-ATC-045-T01 ya no lleva en depende_de HU-ATC-001-T02; HU-ATC-046-T01 ya no lleva en depende_de HU-ATC-007-T01; HU-ATC-046-T02 ya no lleva en depende_de HU-ATC-008-T01. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Cambios en este archivo: HU-ATC-048 fuera de la Etapa 1 (6 tareas, 5 h, a roadmap/alcance-diferido.md); queda HU-ATC-048-T00, de 0 h, con la dependencia del PO HU-ATC-047 -> HU-ATC-048. EP-ATC-09 en la Etapa 1: 39 h. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision interna del equipo del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28). Mismas horas por HU. Cambios en este archivo: HU-ATC-043-T02, HU-ATC-043-T04, HU-ATC-043-T07, HU-ATC-044-T01, HU-ATC-044-T02, HU-ATC-044-T03, HU-ATC-045-T01, HU-ATC-045-T02, HU-ATC-046-T02, HU-ATC-046-T04, HU-ATC-067-T02, HU-ATC-067-T03, HU-ATC-067-T04, HU-ATC-047-T04, HU-ATC-054-T01, HU-ATC-054-T03, HU-ATC-055-T01, HU-ATC-055-T04. 0.6 · 2026-10-28 · Jesus Chavez Elias, con IA · Contraste con la documentacion de Control de acceso (PJ-05): HU-ATC-043-T07 describe la carga del catalogo como la define el ADR-021 de PJ-05 (decisiones 1 a 5): la ruta para otorgar CATALOG_REGISTRAR esta en propuesta (D-171), la carga real es cuando el rol exista y la aprobacion es posterior y asincrona, fila por fila (tomar y decidir), en cada ambiente; sin 'lo carga el area'. Nuevo bloque tareas_fuera_del_plan_del_po (FPO-T01 y FPO-T02: lotes del catalogo y AlcanceDeEmpresa con su matriz; +5 a +7 h, estimacion de la revision del 28-oct, por confirmar), fuera de las historias: no cambia ninguna hora de HU, las 243 h del PO ni las 255 h 0.7 · 2026-10-28 · Jesus Chavez Elias, con IA · Cruce del Lider Tecnico del 28-oct (C14): adaptador de correo sin lectura de IDN_USER_ACCOUNT; fuente del correo por confirmar con el area (S28-4). Sin cambio de horas. — Revisado por: (pendiente) 0.8 · 2026-10-29 · Jesus Chavez Elias, con IA · Revision del Lider Tecnico del 29-oct (puntos 7 y 8): ADR-022 aprobado segun el Lider Tecnico (el recalculo C21 sigue en borrador hasta D1 a D5); no se registran las 108 tareas del catalogo hasta entonces. Sin cambio de horas, cifras ni estados; ninguna historia se integra sin G3 y G4 aprobados. — Revisado por: (pendiente)",
+  "titulo": "Bandeja orquestadora y asistencia al gestor",
+  "responsable": "Michel Poma Huachihuaco",
+  "horas": 44,
+  "horas_etapa_1": 39,
+  "ventana": "2026-10-21 -> 2026-10-29",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
   "historias": [
     {
       "hu": "HU-ATC-043",
+      "titulo": "Configurar el flujo de trabajo de un tipo de ticket por área",
+      "feature": "FT-ATC-18",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 8,
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-22",
       "tareas": [
         {
           "id": "HU-ATC-043-T01",
-          "titulo": "BLOQUEADO (ver docs/analisis/decisiones.md D-09): no esta resuelto si el flujo configurable aqui es sub-pasos dentro de IN_PROGRESS o reemplaza el Status de SVC_TICKET. Tambien D-10 (nomenclatura): esta HU usa SVC_WORKFLOW_CONFIG, confirmar nombre final con Gobierno de Datos. Una vez resuelto: entidad y puerto en domain.port.out",
+          "titulo": "[inbox] Entidad SVC_WORKFLOW_DEFINITION (ENT-SVC-014: tipo, subtipo, area, version) con sus actividades y puerto en domain.port.out; motor de flujos configurable y versionado, el ticket congela su version (ADR-008)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
-          "depende_de": [
-            "HU-ATC-004-T01"
-          ]
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1.5,
+          "depende_de": []
         },
         {
           "id": "HU-ATC-043-T02",
-          "titulo": "Migracion Flyway V33__crear_tabla_workflow_config.sql (pasos, estados, responsables, aprobaciones, SLA por paso)",
+          "titulo": "[inbox] Migracion Flyway V5__crear_tabla_workflow_definition.sql (actividades, estados, responsables, aprobaciones y SLA por actividad; clave unica tipo+subtipo+area, HU-043 CA-06); semilla versionada del catalogo del piloto de ADR-008 (15 combinaciones, entre ellas las 4 de «Validacion de identidad (prospecto)», C-06, y las de «Ingreso a proyecto» y «Reserva de bus») y del flujo por defecto de cada area (ED-14)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
+          "responsable": "Michel Poma Huachihuaco",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-043-T01"
@@ -30,10 +43,10 @@
         },
         {
           "id": "HU-ATC-043-T03",
-          "titulo": "Caso de uso ConfigurarFlujoUseCase (publicacion sin despliegue, RNF-USA-002)",
+          "titulo": "[inbox] Caso de uso ConfigurarFlujoUseCase: publicacion sin despliegue (RNF-USA-002), SLA total = suma de actividades salvo politica menor (RN-SVC-001), flujo por defecto del area y bitacora de cada publicacion",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
+          "responsable": "Michel Poma Huachihuaco",
           "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-043-T02"
@@ -41,94 +54,111 @@
         },
         {
           "id": "HU-ATC-043-T04",
-          "titulo": "Endpoint POST /api/v1/flujos",
+          "titulo": "[inbox] Endpoints PUT /api/v1/flujos/{tipoId}/{subtipoId}/{areaId} (configurarFlujo) con @PreAuthorize por el rol ATC_ADMIN_FUNCIONAL del token (CA-08: el intento sin rol responde 403 y queda en la bitacora; arquitectura/roles-y-permisos-atc.md, ED-02), GET /api/v1/flujos/publicaciones (listarPublicacionesFlujo) y POST /api/v1/tickets/{ticketId}/actividades/{numero}/cierre (cerrarActividad)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-043-T03"
           ]
         },
         {
           "id": "HU-ATC-043-T05",
-          "titulo": "Un test por cada TC de HU-ATC-043 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-043 (CA-01 a CA-08) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-08 con un token del emisor de pruebas sin rol de administrador funcional",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-043-T04"
           ]
         },
         {
           "id": "HU-ATC-043-T06",
-          "titulo": "Pantalla de configuracion de flujos para el administrador funcional (ui: true, estimacion separada del backend)",
+          "titulo": "[inbox] Pantalla de configuracion de flujos para el administrador funcional, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 3,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 2.5,
           "depende_de": [
             "HU-ATC-043-T04"
           ]
+        },
+        {
+          "id": "HU-ATC-043-T07",
+          "titulo": "[integrations] Registrar el catalogo de la Etapa 1 en Control de acceso por las rutas definidas del ADR-021 de PJ-05 (C-02; arquitectura/roles-y-permisos-atc.md §11): POST /api/v1/catalogo/opciones-de-menu (30 opciones (recalculo C21 en borrador hasta que el Lider Tecnico responda D1 a D5; ADR-022 aprobado segun el Lider Tecnico (29-oct))) y POST /api/v1/catalogo/roles (8 roles, 67 permisos y 3 incompatibilidades (recalculo C21 en borrador hasta que el Lider Tecnico responda D1 a D5; ADR-022 aprobado segun el Lider Tecnico (29-oct))), rutas de Control de acceso, con el cliente CONFIDENTIAL de ATC (D-223: lo crea un script de TI; D-30: los clientes de servicio los registra el Administrador de seguridad) y su rol de cliente CATALOG_REGISTRAR, cuya ruta de otorgar esta en propuesta en PJ-05 (D-171): la carga real es cuando el rol exista y, en local, DEV y QA, se sigue con el emisor de pruebas (ED-07, ED-08); los lotes (listos y versionados) se generan en FPO-T01, fuera del plan del PO; no se registran las 108 tareas del catalogo hasta que el Lider Tecnico responda D1 a D5 (revision del 29-oct, punto 7); client_credentials con aybar-starter-client (DT-10); antes consulta GET /api/v1/catalogo/registros y envia solo lo que falta (cada lote entra entero o se rechaza); primero las opciones y luego roles y permisos (AYB-ROP-422) y el mismo cliente en ambos lotes (AYB-RDM-422); todo nace inactivo y se aprueba despues, de forma asincrona, por una persona con ROLE_IT_ADMIN: cada fila exige tomar y decidir (108 filas, 216 acciones (recalculo C21 en borrador hasta que el Lider Tecnico responda D1 a D5; ADR-022 aprobado segun el Lider Tecnico (29-oct))), en el orden opcion, rol, permiso, con vencimiento a los 7 dias y reenvio corregido de las REJECTED o EXPIRED; se repite en cada ambiente y es entrada de QA y de release, no de esta tarea; ATC no guarda copia del catalogo; lo posterior (ATC_EVENT y 5 opciones) es una nueva solicitud",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
+          "depende_de": []
         }
       ]
     },
     {
       "hu": "HU-ATC-044",
+      "titulo": "Trabajar desde una bandeja única ordenada por urgencia",
+      "feature": "FT-ATC-18",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-22",
+      "fin": "2026-10-22",
       "tareas": [
         {
           "id": "HU-ATC-044-T01",
-          "titulo": "Repositorio de lectura CQRS (Mongo) que combina SVC_TICKET y SVC_WORKFLOW_CONFIG, orden rayo > SLA mas proximo > prioridad",
+          "titulo": "[inbox] Repositorio de lectura CQRS sobre el almacen con API de MongoDB (Azure Cosmos DB for MongoDB vCore, DT-07; AybarReadRepository; lo alimenta el proyector DT02-T05, del que depende) que combina SVC_TICKET, SVC_TICKET_ASSIGNMENT_LOG y SVC_WORKFLOW_DEFINITION, orden rayo > SLA mas proximo > prioridad (RN-SVC-031)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-043-T02",
-            "HU-ATC-010-T02"
+            "DT02-T05"
           ]
         },
         {
           "id": "HU-ATC-044-T02",
-          "titulo": "Caso de uso ObtenerBandejaUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerBandejaUseCase: filtra por la empresa activa o el rol global de ATC del token (C-08) y por el area del gestor; el supervisor de un area ve sus tickets por su rol del token (CA-03); el area de cada rol es un parametro de ATC (S-4 de arquitectura/roles-y-permisos-atc.md; ED-04)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-044-T01"
           ]
         },
         {
           "id": "HU-ATC-044-T03",
-          "titulo": "Endpoint GET /api/v1/tickets/bandeja",
+          "titulo": "[inbox] Endpoint GET /api/v1/bandeja (listarBandeja); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-044-T02"
           ]
         },
         {
           "id": "HU-ATC-044-T04",
-          "titulo": "Un test por cada TC de HU-ATC-044 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-044 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-03 con tokens del emisor de pruebas (gestor y supervisor de otra area)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-044-T03"
           ]
         },
         {
           "id": "HU-ATC-044-T05",
-          "titulo": "Bandeja orquestadora unica con lo mas urgente primero (ui: true, estimacion separada del backend)",
+          "titulo": "[inbox] Bandeja orquestadora unica con lo mas urgente primero, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 3,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 2,
           "depende_de": [
             "HU-ATC-044-T03"
           ]
@@ -137,47 +167,54 @@
     },
     {
       "hu": "HU-ATC-045",
+      "titulo": "Marcar un ticket crítico con el rayo de prioridad",
+      "feature": "FT-ATC-18",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 2,
+      "iteracion": 1,
+      "inicio": "2026-10-22",
+      "fin": "2026-10-23",
       "tareas": [
         {
           "id": "HU-ATC-045-T01",
-          "titulo": "Migracion Flyway V34__agregar_columna_rayo_ticket.sql y endpoint POST /api/v1/tickets/{id}/rayo",
+          "titulo": "[inbox] Migracion Flyway V8__agregar_columna_rayo_ticket.sql y endpoint POST /api/v1/tickets/{ticketId}/rayo (marcarRayo); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa la migracion V2 de SVC_TICKET de HU-ATC-001-T02 (el calendario del PO termina HU-ATC-001 el 21-oct, antes de que empiece esta HU)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
-          "depende_de": [
-            "HU-ATC-001-T02"
-          ]
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
+          "depende_de": []
         },
         {
           "id": "HU-ATC-045-T02",
-          "titulo": "Caso de uso MarcarRayoUseCase (solo supervisor o lider, con motivo, en bitacora; umbral 10% de la bandeja del area a validar RN-SVC-031)",
+          "titulo": "[inbox] Caso de uso MarcarRayoUseCase: solo con el rol del token que el catalogo asigna al lider (ATC_SUPERVISOR en arquitectura/roles-y-permisos-atc.md; «lider» = ATC_SUPERVISOR, ED-20), con motivo, en bitacora; umbral 10% de la bandeja del area a validar, RN-SVC-031",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-045-T01"
+            "HU-ATC-045-T01",
+            "HU-ATC-044-T02"
           ]
         },
         {
           "id": "HU-ATC-045-T03",
-          "titulo": "Un test por cada TC de HU-ATC-045 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-045 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-02 con un token del emisor de pruebas sin rol de lider",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-045-T02"
           ]
         },
         {
           "id": "HU-ATC-045-T04",
-          "titulo": "Icono de rayo en la bandeja, solo visible/accionable para supervisor o lider (ui: true, estimacion separada del backend)",
+          "titulo": "[inbox] Icono de rayo en la bandeja, visible y accionable solo con el rol que trae el token de la sesion (@aybarcorp/auth), en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-045-T02"
           ]
@@ -186,37 +223,55 @@
     },
     {
       "hu": "HU-ATC-046",
+      "titulo": "Reasignar automáticamente al gestor con menos carga",
+      "feature": "FT-ATC-18",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-23",
       "tareas": [
         {
           "id": "HU-ATC-046-T01",
-          "titulo": "Caso de uso ReasignarPorMenorCargaUseCase (gestor disponible del mismo area/habilidad con menor carga ponderada por prioridad)",
+          "titulo": "[inbox] Caso de uso ReasignarPorMenorCargaUseCase (gestor disponible del mismo area/habilidad con menor carga ponderada por prioridad, RN-SVC-033). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa la entidad SVC_TICKET_ASSIGNMENT_LOG de HU-ATC-007-T01 (tarea de dominio de la ola 0: es fundacion del SDK y se mergea antes de abrir las olas; el calendario del PO termina HU-ATC-007 el 21-oct, antes de que empiece esta HU)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1.5,
           "depende_de": [
-            "HU-ATC-007-T01"
+            "HU-ATC-044-T02"
           ]
         },
         {
           "id": "HU-ATC-046-T02",
-          "titulo": "Job/trigger que detecta indisponibilidad o sobrecarga y consulta disponibilidad (NEXUS) para invocar ReasignarPorMenorCargaUseCase",
+          "titulo": "[inbox] Disparo del balanceo desde el orquestador de la bandeja al entrar un ticket, dentro del caso de uso (ADR-005, punto 8: no es un job), con GestoresPort y su adaptador «actividad de ATC» (gestores de la cola con cuenta EMPLOYEE activa; ED-03), sin maestro local (DT-03); endpoints GET /api/v1/bandeja/carga (consultarCargaGestores) y GET /api/v1/avisos (listarAvisos: aviso SIN_GESTOR_DISPONIBLE de CA-03). Dependencia tecnica fuera de depende_de para no cambiar las olas del PO (roadmap/analisis-dependencias.md 4.3): usa el puerto GestoresPort de HU-ATC-008-T01 (el calendario del PO termina HU-ATC-008 el 22-oct, antes de que empiece esta HU)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1.5,
           "depende_de": [
-            "HU-ATC-046-T01",
-            "HU-ATC-008-T01"
+            "HU-ATC-046-T01"
           ]
         },
         {
           "id": "HU-ATC-046-T03",
-          "titulo": "Un test por cada TC de HU-ATC-046 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-046 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-046-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-046-T04",
+          "titulo": "[inbox] Vista del supervisor en la bandeja con la carga por gestor y las reasignaciones por menor carga (consultarCargaGestores) y los avisos (listarAvisos), en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-046-T02"
           ]
@@ -224,68 +279,161 @@
       ]
     },
     {
+      "hu": "HU-ATC-067",
+      "titulo": "Ver el proceso de atención en un visor 3D (operación en vivo)",
+      "feature": "FT-ATC-25",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 10,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-27",
+      "tareas": [
+        {
+          "id": "HU-ATC-067-T01",
+          "titulo": "[inbox] Modelo de lectura de la operacion en vivo (areas de SVC_WORKFLOW_DEFINITION y MAE_AREA, cola, gestores ocupados, % en SLA) y puerto en domain.port.out",
+          "capa": "domain",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-043-T01"
+          ]
+        },
+        {
+          "id": "HU-ATC-067-T02",
+          "titulo": "[inbox] Publicacion por WebSocket de los eventos aybar.service.ticket_created, aybar.service.ticket_assigned, aybar.service.ticket_status_changed, aybar.service.ticket_updated y aybar.service.sla_breached (los 5 topicos de ADR-013; los consume del bus DT02-T02) hacia el visor (ADR-010), con modo simulacion de datos sinteticos (9 areas, 71 tickets, 3 gestores por area); el canal WebSocket exige el token de Control de acceso y filtra por la empresa activa o el rol global y por las areas permitidas (C-08, CA-07)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-067-T01",
+            "HU-ATC-044-T02",
+            "DT02-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-067-T03",
+          "titulo": "[inbox] Caso de uso ObtenerOperacionEnVivoUseCase: escena por area, panel del area (en cola, ocupados, resueltos, % en SLA y carga por gestor con la reasignacion de HU-ATC-046) y filtro por la empresa activa o el rol global del token (C-08) y los roles del catalogo (RN-SVC-036; ED-02); lee la vista que escribe el proyector DT02-T05",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "HU-ATC-067-T01",
+            "HU-ATC-046-T01",
+            "DT02-T05"
+          ]
+        },
+        {
+          "id": "HU-ATC-067-T04",
+          "titulo": "[inbox] Endpoint GET /api/v1/visor/estado (estadoVisor: escena inicial y panel por area) segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-067-T03"
+          ]
+        },
+        {
+          "id": "HU-ATC-067-T05",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-067 (CA-01 a CA-10) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
+          "capa": "boot",
+          "actividad": "PRUEBAS",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
+          "depende_de": [
+            "HU-ATC-067-T02",
+            "HU-ATC-067-T04"
+          ]
+        },
+        {
+          "id": "HU-ATC-067-T06",
+          "titulo": "[inbox] Visor 3D en el navegador (canvas isometrico, ADR-010): escena de la sede, recorrido y color del SLA, panel del area, seguimiento del ticket, indicadores y registro de actividad; vista 2D alternativa accesible, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "HU-ATC-067-T02",
+            "HU-ATC-067-T04"
+          ]
+        }
+      ]
+    },
+    {
       "hu": "HU-ATC-047",
+      "titulo": "Consultar la guía de solución del tipo de ticket",
+      "feature": "FT-ATC-19",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 1,
+      "inicio": "2026-10-27",
+      "fin": "2026-10-27",
       "tareas": [
         {
           "id": "HU-ATC-047-T01",
-          "titulo": "Nota D-10 (nomenclatura menor, confirmar nombre final con Gobierno de Datos): entidad SVC_SOLUTION_GUIDE (pasos, plantillas, documentos, criterios de cierre) y puerto en domain.port.out",
+          "titulo": "[inbox] Entidad SVC_KNOWLEDGE_ARTICLE (ENT-SVC-015: pasos, plantillas, documentos y criterios de cierre por MAE_TICKET_TYPE) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": []
         },
         {
           "id": "HU-ATC-047-T02",
-          "titulo": "Migracion Flyway V35__crear_tabla_solution_guide.sql (mantenida por administrador funcional)",
+          "titulo": "[inbox] Migracion Flyway V17__crear_tabla_knowledge_article.sql (mantenida por el administrador funcional)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-047-T01"
           ]
         },
         {
           "id": "HU-ATC-047-T03",
-          "titulo": "Caso de uso ObtenerGuiaSolucionUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerGuiaSolucionUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-047-T02"
           ]
         },
         {
           "id": "HU-ATC-047-T04",
-          "titulo": "Endpoint GET /api/v1/guias-solucion/{tipoTicket}",
+          "titulo": "[inbox] Endpoint GET /api/v1/tickets/{ticketId}/guia (obtenerGuia: la guia del tipo del ticket); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-047-T03"
           ]
         },
         {
           "id": "HU-ATC-047-T05",
-          "titulo": "Un test por cada TC de HU-ATC-047 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-047 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-047-T04"
           ]
         },
         {
           "id": "HU-ATC-047-T06",
-          "titulo": "Vista de guia de solucion dentro del ticket (ui: true, estimacion separada del backend)",
+          "titulo": "[inbox] Vista de guia de solucion dentro del ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-047-T04"
           ]
@@ -294,131 +442,94 @@
     },
     {
       "hu": "HU-ATC-048",
+      "titulo": "Recibir retroalimentación de IA mientras atiendo y cierro",
+      "feature": "FT-ATC-19",
+      "prioridad": "Podría",
+      "flexible": true,
+      "etapa": "fuera de la Etapa 1 (P-025)",
+      "horas": 5,
+      "iteracion": 2,
+      "inicio": "2026-10-27",
+      "fin": "2026-10-28",
       "tareas": [
         {
-          "id": "HU-ATC-048-T01",
-          "titulo": "Etapa 3 (D-12, fuera de la Etapa 1, sin fecha; asistente IA a futuro, ADR-009): Nota D-10 (nomenclatura menor): entidad SVC_IA_SUGGESTION (sugerencia, decision del gestor) y puerto en domain.port.out; respeta ADR-008 (anonimizacion y registro)",
-          "capa": "domain",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "id": "HU-ATC-048-T00",
+          "titulo": "Fuera de la Etapa 1 por decision del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Su desglose (6 tareas, 5 h del PLT-04) esta sin cambios en roadmap/alcance-diferido.md. Tarea de 0 h que solo deja constancia; depende_de conserva la dependencia del PO (HU-ATC-047 -> HU-ATC-048) para cuando se retome",
+          "capa": "docs",
+          "actividad": "PLANIFICACION",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0,
           "depende_de": [
-            "HU-ATC-047-T01"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T02",
-          "titulo": "Migracion Flyway V36__crear_tabla_ia_suggestion.sql",
-          "capa": "adapters",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
-          "depende_de": [
-            "HU-ATC-048-T01"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T03",
-          "titulo": "Caso de uso SugerirRespuestaIaUseCase: sugiere respuesta, verifica criterios de cierre de la guia, senala tono o datos faltantes; el gestor acepta/edita/descarta (RN-SVC-032)",
-          "capa": "application",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
-          "depende_de": [
-            "HU-ATC-048-T02",
-            "HU-ATC-047-T03"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T04",
-          "titulo": "Endpoint POST /api/v1/tickets/{id}/sugerencia-ia",
-          "capa": "adapters",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
-          "depende_de": [
-            "HU-ATC-048-T03"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T05",
-          "titulo": "Un test por cada TC de HU-ATC-048 en docs/pruebas/test-plan.md",
-          "capa": "boot",
-          "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
-          "depende_de": [
-            "HU-ATC-048-T04"
-          ]
-        },
-        {
-          "id": "HU-ATC-048-T06",
-          "titulo": "Sugerencia de IA visible en el ticket, con aceptar/editar/descartar (ui: true, estimacion separada del backend)",
-          "capa": "frontend",
-          "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
-          "depende_de": [
-            "HU-ATC-048-T04"
+            "HU-ATC-047-T06"
           ]
         }
       ]
     },
     {
       "hu": "HU-ATC-054",
+      "titulo": "Ver mi avance diario y el de mi equipo",
+      "feature": "FT-ATC-21",
+      "prioridad": "Debería",
+      "flexible": false,
+      "horas": 4,
+      "iteracion": 2,
+      "inicio": "2026-10-28",
+      "fin": "2026-10-28",
       "tareas": [
         {
           "id": "HU-ATC-054-T01",
-          "titulo": "Repositorio de lectura CQRS (Mongo) de productividad por gestor (atendidos, pendientes, SLA, tiempo medio, CSAT)",
+          "titulo": "[inbox] Repositorio de lectura CQRS de productividad por gestor (atendidos, pendientes, SLA, tiempo medio y CSAT de SVY_SURVEY_RESPONSE); el lider de cada gestor se pide al puerto GestoresPort de HU-ATC-008-T01 (adaptador «actividad de ATC»: el equipo del lider son los gestores de las colas que supervisa, ED-03; area por rol, ED-04), sin copia en ATC (DT-03); lo alimenta el proyector DT02-T05, del que depende",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-030-T02",
-            "HU-ATC-019-T02"
+            "HU-ATC-044-T01",
+            "HU-ATC-008-T01",
+            "HU-ATC-046-T04",
+            "DT02-T05"
           ]
         },
         {
           "id": "HU-ATC-054-T02",
-          "titulo": "Caso de uso ObtenerAvanceDiarioUseCase",
+          "titulo": "[inbox] Caso de uso ObtenerAvanceDiarioUseCase",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-054-T01"
           ]
         },
         {
           "id": "HU-ATC-054-T03",
-          "titulo": "Endpoint GET /api/v1/gestores/{id}/avance-diario",
+          "titulo": "[inbox] Endpoint GET /api/v1/tablero (verTablero con ambito GESTOR o EQUIPO: avance diario del gestor y de su equipo; HU-ATC-030 le suma la Torre de Control); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-054-T02"
           ]
         },
         {
           "id": "HU-ATC-054-T04",
-          "titulo": "Un test por cada TC de HU-ATC-054 en docs/pruebas/test-plan.md",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-054 (CA-01 a CA-03) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-054-T03"
           ]
         },
         {
           "id": "HU-ATC-054-T05",
-          "titulo": "Tablero de avance diario del gestor y su lider (ui: true, estimacion separada del backend)",
+          "titulo": "[inbox] Tablero de avance diario del gestor y su lider, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 2,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-054-T03"
           ]
@@ -427,25 +538,33 @@
     },
     {
       "hu": "HU-ATC-055",
+      "titulo": "Recibir un correo al asignarme un ticket, con copia a mi líder",
+      "feature": "FT-ATC-21",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 2,
+      "iteracion": 2,
+      "inicio": "2026-10-29",
+      "fin": "2026-10-29",
       "tareas": [
         {
           "id": "HU-ATC-055-T01",
-          "titulo": "Adaptador de envio de correo (notificaciones) con copia al lider, consultando NEXUS para identificar al lider del gestor",
+          "titulo": "[integrations] Adaptador de envio de correo (notificaciones) al gestor, a la direccion de su cuenta EMPLOYEE (Username de IDN_USER_ACCOUNT por CuentaPersonaPort, ED-01; texto superado por el cruce del Lider Tecnico del 28-oct (C14): ATC no lee IDN_USER_ACCOUNT y la fuente del correo del gestor queda por confirmar con el area, S28-4); la copia al lider es el aviso COPIA_ASIGNACION a los ATC_SUPERVISOR de la cola, que muestra listarAvisos (GET /api/v1/avisos; ED-03), sin maestro local de lideres (DT-03)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-008-T01"
           ]
         },
         {
           "id": "HU-ATC-055-T02",
-          "titulo": "Caso de uso EnviarAlertaAsignacionUseCase, disparado al asignar/reasignar un ticket (N.º, tipo, prioridad, vencimiento de SLA)",
+          "titulo": "[inbox] Caso de uso EnviarAlertaAsignacionUseCase, disparado al asignar o reasignar un ticket (N.º, tipo, prioridad, vencimiento de SLA; RN-SVC-035, DLP RN-SVC-012)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-055-T01",
             "HU-ATC-007-T03"
@@ -453,16 +572,69 @@
         },
         {
           "id": "HU-ATC-055-T03",
-          "titulo": "Un test por cada TC de HU-ATC-055 en docs/pruebas/test-plan.md (RNF-REN-008: envio en <= 1 min en el 99%)",
+          "titulo": "[inbox] Un test por cada criterio de aceptacion de HU-ATC-055 (CA-01 a CA-03) con datos sinteticos; RNF-REN-008: envio en <= 1 min en el 99%; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Michel (Dev 3)",
-          "estimacion_horas": 1,
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-055-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-055-T04",
+          "titulo": "[inbox] Plantilla del correo de asignacion (N.º, tipo, prioridad y vencimiento de SLA, sin datos del cliente; la copia al lider llega como aviso en la consola, ED-03) segun G2 (ui: true)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-055-T01"
           ]
         }
       ]
     }
-  ]
+  ],
+  "tareas_fuera_del_plan_del_po": {
+    "nota": "Estimacion de la revision del 28-oct-2026 (contraste con la documentacion de Control de acceso, PJ-05), por confirmar. Estas tareas van fuera de las historias: no suman a las horas de ninguna HU, a las 243 h del PO, a las 227 h de las 57 HU de la Etapa 1 ni a las 255 h con las 28 h tecnicas de DT-02 (como ADR-002, '0 h fuera del plan del PO'). En conjunto, +8 a +14 h sobre las +7 h de sobrecosto ya declaradas (roadmap/RMP-001-roadmap-aybar-atiende.md, seccion 1). Sin responsable ni fechas: el PO decide en el control de alcance del 29-oct.",
+    "origen": "revision-28-oct-contraste-PJ-05",
+    "estimacion_por_confirmar": true,
+    "tareas": [
+      {
+        "id": "FPO-T01",
+        "titulo": "[integrations] Generar y versionar en el repositorio los dos lotes del catalogo de la Etapa 1 segun el ADR-021 de PJ-05 (lote de opciones de menu: 30 (recalculo C21 en borrador hasta que el Lider Tecnico responda D1 a D5; ADR-022 aprobado segun el Lider Tecnico (29-oct)); lote de roles: 8 roles, 67 permisos y 3 incompatibilidades (recalculo C21 en borrador hasta que el Lider Tecnico responda D1 a D5; ADR-022 aprobado segun el Lider Tecnico (29-oct))), con el orden de carga (primero opciones y luego roles y permisos, AYB-ROP-422), el mismo cliente en ambos lotes (AYB-RDM-422) y un RoleName por rol; listos para cargar cuando exista CATALOG_REGISTRAR (estimacion de la revision del 28-oct, por confirmar)",
+        "capa": "integrations",
+        "actividad": "DESARROLLO",
+        "responsable": null,
+        "estimacion_horas": null,
+        "estimacion_horas_min": 2,
+        "estimacion_horas_max": 3,
+        "estimacion_por_confirmar": true,
+        "origen": "revision-28-oct-contraste-PJ-05",
+        "fuera_del_plan_del_po": true,
+        "relacionada_con": [
+          "HU-ATC-043-T07"
+        ],
+        "depende_de": []
+      },
+      {
+        "id": "FPO-T02",
+        "titulo": "[inbox] Componente AlcanceDeEmpresa (un rol global se evalua contra todas las empresas de la persona, D-29 y D-296 de PJ-05; un rol de empresa, contra su empresa; C-08) y su matriz de pruebas: rol global, rol de empresa y ambos, con tokens de prueba de Spring Security porque el emisor de pruebas no emite company_roles ni companyId (estimacion de la revision del 28-oct, por confirmar)",
+        "capa": "application",
+        "actividad": "DESARROLLO",
+        "responsable": null,
+        "estimacion_horas": null,
+        "estimacion_horas_min": 3,
+        "estimacion_horas_max": 4,
+        "estimacion_por_confirmar": true,
+        "origen": "revision-28-oct-contraste-PJ-05",
+        "fuera_del_plan_del_po": true,
+        "relacionada_con": [
+          "HU-ATC-044-T02",
+          "HU-ATC-067-T03"
+        ],
+        "depende_de": []
+      }
+    ]
+  }
 }

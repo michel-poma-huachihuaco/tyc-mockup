@@ -4,10 +4,10 @@ tipo: hu
 titulo: "Consultar la guía de solución del tipo de ticket"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-28"
 relacionados: ["FT-ATC-19", "EP-ATC-09"]
 tags: [hu, plt-04]
 ui: true
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-047 | Debería | 4 h con IA | Dev 3 (Michel) | 1 | 27-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 3 · Michel Poma Huachihuaco (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-14 (proveedor de IA aprobado; PLT-03 y PLT-05) (DEP-14 no aplica en la Etapa 1: la guía de esta HU no usa IA y HU-048 queda fuera por P-025), DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: las operaciones `obtenerGuia`, `listarAvisos` exigen rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5))
+
+**La necesitan:** ninguna en la Etapa 1 (HU-048 fuera de la Etapa 1)
 
 **Requerimiento de origen:** El sistema debe mostrar al gestor de tickets una guía de como solucionar cada tipo de ticket (pasos, plantillas de respuesta, documentos requeridos y criterios de cierre) mantenida por el administrador funcional. Feedback presentación · ítem 7
 
@@ -79,3 +85,9 @@ Escenario: CA-03 · Tipo sin guía (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Quita la dependencia HU-047 → HU-048 del bloque «La necesitan» y anota que DEP-14 no aplica en la Etapa 1: HU-048 sale por P-025 (`analisis/decisiones.md` v0.8). No cambia texto del PO. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.2) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

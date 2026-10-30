@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-24", "EP-ATC-06"]
+relacionados: ["FT-ATC-24", "EP-ATC-06", "HU-ATC-064"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-065 | Debe | 3 h con IA | Dev 4 (Daniel) | 2 | 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-064 (RF-SVC-064 es predecesora de RF-SVC-065, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON: contacto del cliente; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: cliente autenticado de Mi Portal, DT-04; ticket de otro cliente, CA-04 y RN-SVC-044)
+
+**La necesitan:** HU-ATC-066
 
 **Requerimiento de origen:** El sistema debe mostrar al cliente la línea de tiempo de su ticket: cada paso (registrado, asignado, en atención, pendiente del cliente, resuelto, cerrado) con fecha y hora, área responsable y fecha de compromiso, y avisarle por correo y WhatsApp en cada cambio de estado. Propuesta PO v1.3 · decisión de etapas del 16-oct-2026 (EP-ATC-06)
 
@@ -85,3 +91,5 @@ Escenario: CA-04 · Ticket de otro cliente (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

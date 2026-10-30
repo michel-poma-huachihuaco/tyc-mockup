@@ -1,0 +1,55 @@
+flowchart LR
+  subgraph Quien["Quién pide y atiende"]
+    tel[Teléfono]
+    wa[WhatsApp]
+    mail[Correo]
+    cli[Cliente<br/>Mi Portal]
+    ges[Gestores, supervisores<br/>y áreas · consola ATC]
+    obra[Personal de proyecto<br/>y del Entrega Fest<br/>formularios]
+  end
+  borde["Borde corporativo<br/>Cloudflare + Azure API Management<br/>TLS · WAF · JWT y audiencia aybar-atc<br/>el WebSocket del visor no pasa por API Management"]
+  atc(["<b>Aybar Atiende</b><br/>plataforma ATC · monolito modular<br/>Java 21 · Spring Boot · SDK Aybar 0.7.1 · Angular<br/>Azure · DEV, QA, PRE (UAT) y producción"])
+  ctrl[["Control de acceso (PJ-05) · DEP-16<br/>emisor de tokens · login de internos y clientes<br/>catálogo de roles y permisos"]]
+  base[("Base única del v7<br/>PARTY, IDN_USER_ACCOUNT y maestros de otros dominios")]
+  mon[["Azure Monitor<br/>logs y auditoría técnica"]]
+  subgraph Ext["Sistemas externos (adaptador + simulador)"]
+    sigda[SIGDA/TAXON<br/>DEP-01]
+    con[Contratos y Activos<br/>DEP-07]
+    cob[Cobranza<br/>DEP-08]
+    cti[Call center CTI<br/>DEP-11]
+    leg[Herramienta de Legal<br/>DEP-12]
+    jose[Motor de José<br/>DEP-13]
+    ia["Azure OpenAI Service<br/>ED-17 · sin consumo en la Etapa 1 (P-025)"]
+    kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
+    proy[Proyectos<br/>DEP-15]
+  end
+  cli -- "login de clientes · PKCE" --> ctrl
+  ges -- "login de internos" --> ctrl
+  cli -- "HTTPS + JWT" --> borde
+  ges -- "HTTPS + JWT" --> borde
+  obra -- "HTTPS + JWT" --> borde
+  borde --> atc
+  tel --> ges
+  wa --> ges
+  mail --> ges
+  atc -- "registro del catálogo · client_credentials" --> ctrl
+  atc -. "S28-4: estado de cuenta y gestores por rol por API con token de servicio · mientras, ED-03 interina sin copias" .-> ctrl
+  atc -- "FK a PARTY · fuente viva<br/>PartyID por claim party_id (S28-4), hoy simulador · sin lectura de IDN_USER_ACCOUNT" --> base
+  atc -. "logs y auditoría" .-> mon
+  atc <--> sigda
+  atc <--> con
+  atc <--> cob
+  atc <--> cti
+  atc <--> leg
+  atc <--> jose
+  atc -. "cuando entren HU-048 y HU-053" .-> ia
+  atc --> kpi
+  atc <--> proy
+%% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con las decisiones DT-01 a DT-07 del Líder Técnico (Control de acceso emite los tokens y hace el login; Azure; borde con Cloudflare y API Management; base única con PARTY como fuente viva). — Revisado por: (pendiente)
+%% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · borde corporativo, base única, Azure Monitor y ambientes; DEP-15; la consulta de gestores y líderes queda punteada porque Control de acceso no la tiene (P-035); los canales llegan por los gestores
+%% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · revisión interna del equipo: PRE con la UAT (PLT-05 §4.2) y el WebSocket del visor fuera de API Management
+%% Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: audiencia aybar-atc (ED-06), vínculo de la cuenta en la base única (ED-01), la consulta de gestores y líderes como evolución (ED-03) y proveedor de IA (ED-17)
+%% Historial: 0.6 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (analisis/decisiones.md v0.8): Azure OpenAI Service sin consumo en la Etapa 1 (HU-048 y HU-053 fuera); su enlace pasa a punteado, «cuando entren HU-048 y HU-053». — Revisado por: (pendiente)
+%% Historial: 0.7 · 2026-10-28 · Jesús Chávez Elías, con IA · contraste con PJ-05: la etiqueta del vínculo de la cuenta dice puerto y simulador, sin lectura acordada de IDN_USER_ACCOUNT; Control de acceso (DEP-16) sin fecha comprometida en PJ-05 y el Go del 03-nov solo para PRE con el emisor de pruebas de ATC
+%% Historial: 0.8 · 2026-10-28 · Jesús Chávez Elías, con IA · cruce del Líder Técnico del 28-oct (C14): PartyID por el claim party_id (S28-4), sin lectura de IDN_USER_ACCOUNT
+%% Historial: 0.9 · 2026-10-29 · Jesús Chávez Elías, con IA · revisión del Líder Técnico del 29-oct (punto 4): S28-4 pide estado de cuenta y gestores por rol por API con el token de servicio, ED-03 queda interina sin copias; el Go del 03-nov de la v0.7 (PRE con el emisor de pruebas de ATC) queda superado: si Control de acceso no está en PRE, la UAT se reprograma (punto 2)

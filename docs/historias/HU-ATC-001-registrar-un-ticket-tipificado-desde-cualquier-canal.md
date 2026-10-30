@@ -4,10 +4,10 @@ tipo: hu
 titulo: "Registrar un ticket tipificado desde cualquier canal"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-10-28"
 relacionados: ["FT-ATC-01", "EP-ATC-01"]
 tags: [hu, plt-04]
 ui: true
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-001 | Debe | 6 h con IA | Dev 1 (Brayan) | 1 | 21-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** ninguna (PLT-04) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: usuarios y roles de ATC que el PLT-01 §0 y el PLT-04 tenían locales; rol de atención, CA-04) · Supuesto de diseño de ATC (28-oct-2026): mapa documento → PartyID para clientes existentes. PJ-05 carga `PARTY` desde `LEGACY_ANTIGUO`, `SLIN` y `URBEMIND` (D-60; HU-IDN-061 CA-12) y no tiene API de búsqueda por documento (D-119: nadie lee las tablas de personas directamente). ATC lo declara como dependencia propia (adaptador y fuente del mapa por definir por ATC, sin plazo) y el simulador no lo prueba
+
+**La necesitan:** HU-ATC-002
 
 **Requerimiento de origen:** El sistema debe registrar tickets de teléfono, WhatsApp y correo con canal, cliente, empresa (RUC), línea de negocio, tipo, prioridad, resumen y descripción.
 
@@ -85,3 +91,7 @@ Escenario: CA-04 · Permiso (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.1) por Jesús Chávez Elías con IA (Claude): añade el supuesto «mapa documento → PartyID» (C11). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

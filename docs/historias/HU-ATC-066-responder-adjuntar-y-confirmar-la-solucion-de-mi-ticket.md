@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-24", "EP-ATC-06"]
+relacionados: ["FT-ATC-24", "EP-ATC-06", "HU-ATC-019", "HU-ATC-065"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-066 | Debe | 2 h con IA | Dev 4 (Daniel) | 2 | 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-019 (al confirmar la solución se dispara la encuesta de HU-019, CA-02, PLT-04), HU-ATC-065 (RF-SVC-065 es predecesora de RF-SVC-066, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON: contacto del cliente; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05: cliente autenticado de Mi Portal, DT-04; solo sus tickets, RN-SVC-044)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe permitir al cliente responder lo que pide el gestor, adjuntar documentos y confirmar o rechazar la solución desde Mi Portal; la confirmación cierra el ticket y el rechazo lo reabre con su motivo. Propuesta PO v1.3 · decisión de etapas del 16-oct-2026 (EP-ATC-06)
 
@@ -85,3 +91,5 @@ Escenario: CA-04 · Sin respuesta (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

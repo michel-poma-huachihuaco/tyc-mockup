@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Medir el cierre end-to-end de la experiencia"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["FT-ATC-04", "EP-ATC-02"]
+fecha: "2026-10-28"
+relacionados: ["FT-ATC-04", "EP-ATC-02", "HU-ATC-003"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-029 | Debe | 3 h con IA | Dev 2 (Jesús) | 1 | 26-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-003 (RF-SVC-003 es predecesora de RF-SVC-029, PLT-03) · Dependencias externas: DEP-03 (matriz SLA por tipo y prioridad; PLT-03 y PLT-05), DEP-04 (calendario MAE_TIME y MAE_HOLIDAY; PLT-03), DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: la operación `verTablero` exige rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5))
+
+**La necesitan:** HU-ATC-019, HU-ATC-026
 
 **Requerimiento de origen:** El sistema debe medir el cierre end-to-end y alertar al acercarse a 72 horas hábiles sin escalamiento o al plazo del eje si hay escalamiento.
 
@@ -72,3 +78,7 @@ Escenario: CA-02 · Con escalamiento
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.1) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

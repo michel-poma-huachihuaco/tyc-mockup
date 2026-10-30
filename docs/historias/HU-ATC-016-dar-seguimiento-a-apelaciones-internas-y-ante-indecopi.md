@@ -4,11 +4,11 @@ tipo: hu
 titulo: "Dar seguimiento a apelaciones internas y ante INDECOPI"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.3.1"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["FT-ATC-06", "EP-ATC-03"]
+fecha: "2026-10-28"
+relacionados: ["FT-ATC-06", "EP-ATC-03", "HU-ATC-015"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-016 | Debe | 3 h con IA | Dev 1 (Brayan) | 2 | 28-oct-2026 → 29-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 1 · Brayan Manuel Hurtado Paucar (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-015 (FT-ATC-05 es predecesora de FT-ATC-06 y esta es su última HU, PLT-02) · Dependencias externas: DEP-05 (validación legal de RN-SVC-010; PLT-05), DEP-06 (repositorio documental y GLI; PLT-03 y PLT-05), DEP-16 (Control de acceso, PJ-05; añadida el 28-oct-2026 al revisar las operaciones del contrato: las operaciones `registrarApelacion`, `cambiarEstadoApelacion` exigen rol del token (`x-roles`; `arquitectura/roles-y-permisos-atc.md` §5))
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe gestionar apelaciones con estados PENDING … WITHDRAWN, número de caso y resolución de INDECOPI, con historial.
 
@@ -79,3 +85,7 @@ Escenario: CA-03 · Desistimiento (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
+
+Actualizado el 28-oct-2026 (v1.3.1) por Jesús Chávez Elías con IA (Claude): añade la dependencia DEP-16 (operaciones con x-roles o cuenta CUSTOMER de Mi Portal). No cambian criterios de aceptación ni horas. — Revisado por: (pendiente)

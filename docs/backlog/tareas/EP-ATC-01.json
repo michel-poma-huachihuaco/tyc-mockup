@@ -2,98 +2,237 @@
   "epica": "EP-ATC-01",
   "generado_por_ia": true,
   "revisado_por": null,
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Tareas de migracion alineadas con el registro de tablas (C-11): ATC no crea ni altera tablas de otros dominios (MAE_CHANNEL, GOV_INTEGRITY_EXCEPTION, SVY_SURVEY_RESPONSE, CONTRACT_WARRANTY_CLAIM); siembra filas con semilla versionada (P-043). Mismas horas por HU (PLT-04, 243 h). 0.3 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-004-T01 <- HU-ATC-002-T04 (PO: HU-ATC-002 -> HU-ATC-004). 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Cambios en este archivo: historia tecnica de la fundacion (DT-02) sobre HU-ATC-001, con 6 tareas y 28 h; no cambia ninguna tarea del PO. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision interna del equipo del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28); DT02-T01 a T06 con iteracion 1 y fechas, y las lecturas que usan el proyector dependen de DT02-T05 (O-06); semilla de tipos con «Validacion de identidad (prospecto)» (C-06). Mismas horas por HU. Cambios en este archivo: HU-ATC-001-T02, HU-ATC-001-T04, HU-ATC-001-T07, HU-ATC-001-T08, DT02-T01 a T06 con fechas en la iteracion 1, HU-ATC-004-T04, HU-ATC-005-T04. 0.6 · 2026-10-28 · Jesus Chavez Elias, con IA · Contraste con la documentacion de Control de acceso (PJ-05): ATC se adapta a lo que PJ-05 documenta. HU-ATC-001-T07 ya no dice que el dueno de la tabla otorgue un SELECT por columna sobre IDN_USER_ACCOUNT: CuentaPersonaPort es un puerto de ATC con simulador y su adaptador real no esta definido en PJ-05 (ED-01, ED-08) (adaptador definitivo = claim party_id, pedido en S28-4). HU-ATC-001-T08: los datos del cliente OAuth PUBLIC de la consola los define ATC por ambiente (D-223 y D-30 de PJ-05). Nuevo bloque tareas_fuera_del_plan_del_po (FPO-T03 a FPO-T05: publicador y listener de autorizacion, emisor de pruebas operado en PRE y pruebas del criterio aud; +4 a +7 h, estimacion de la revision del 28-oct, por confirmar), fuera de las historias: no cambia ninguna hora de HU, las 243 h del PO ni las 255 h 0.7 · 2026-10-28 · Jesus Chavez Elias, con IA · Cruce del Lider Tecnico del 28-oct (C14, C20): HU-ATC-001-T07 sin lectura de IDN_USER_ACCOUNT (PartyID por el claim party_id, S28-4); R-11 y R-12 en revision. Sin cambio de horas. — Revisado por: (pendiente) 0.8 · 2026-10-29 · Jesus Chavez Elias, con IA · Revision del Lider Tecnico del 29-oct (puntos 2, 6 y 8): se retira el plan B del emisor de pruebas en PRE (la UAT se reprograma si Control de acceso no esta en PRE; FPO-T04 y HU-ATC-001-T07 con el texto del 28-oct marcado superado). Sin cambio de horas ni de estados; ninguna historia se integra sin G3 y G4 aprobados. — Revisado por: (pendiente)",
+  "titulo": "Núcleo de tickets omnicanal",
+  "responsable": "Brayan Manuel Hurtado Paucar",
+  "horas": 22,
+  "horas_tecnicas": 28,
+  "ventana": "2026-10-21 -> 2026-10-26",
+  "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
   "historias": [
     {
       "hu": "HU-ATC-001",
+      "titulo": "Registrar un ticket tipificado desde cualquier canal",
+      "feature": "FT-ATC-01",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 6,
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-21",
       "tareas": [
         {
           "id": "HU-ATC-001-T01",
-          "titulo": "Crear la entidad de dominio Ticket (SVC_TICKET) y el puerto TicketRepository en domain.port.out, segun docs/datos/diccionario.md (fundacion)",
+          "titulo": "[tickets] Crear la entidad de dominio Ticket (SVC_TICKET) y el puerto TicketRepository en domain.port.out, segun docs/datos/diccionario.md (fundacion)",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 1,
           "depende_de": []
         },
         {
           "id": "HU-ATC-001-T02",
-          "titulo": "Migracion Flyway V2__crear_tabla_ticket.sql (expand) con tipo, prioridad, empresa, linea de negocio, establecimiento; reversion probada",
+          "titulo": "[tickets] Migracion Flyway V2__crear_tabla_ticket.sql (expand): SVC_TICKET con canal, tipo, prioridad, empresa, linea de negocio y establecimiento, y los catalogos de SERVICE MAE_TICKET_TYPE y MAE_TICKET_PRIORITY; reversion probada. La semilla de MAE_TICKET_TYPE trae los 9 tipos del catalogo del piloto de ADR-008, entre ellos IDENTITY_VALIDATION, «Validacion de identidad (prospecto)» (C-06; codigos en docs/datos/diccionario.md, ED-14). MAE_CHANNEL no se crea: ya la crea Control de acceso en la base unica y ATC solo la lee (docs/datos/registro-de-tablas.md, C-11). Precondicion por las FK fisicas: ORG_COMPANY, ORG_COMPANY_ADDRESS, PARTY, CONTRACT, AST_UNIT, ORG_PRODUCT y MAE_GENERIC_LIST existen en la base unica (dueno de migracion: ED-11; en local y DEV, el script de datos sinteticos de ATC fuera de Flyway; en QA, PRE y produccion, FK diferida mientras falte la tabla ajena, deuda DEU-01 del acta F4); en las pruebas se crean solo en el contenedor",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T01"
           ]
         },
         {
           "id": "HU-ATC-001-T03",
-          "titulo": "Caso de uso RegistrarTicketUseCase: valida empresa/linea obligatorias, consulta cliente en SIGDA/TAXON por puerto ClienteExternoPort",
+          "titulo": "[tickets] Caso de uso RegistrarTicketUseCase: valida empresa/linea obligatorias (RN-SVC-005) y trae el cliente de SIGDA/TAXON por el puerto ClienteExternoPort sin registro paralelo (RN-SVC-026, DEP-01, contract-first con simulador ADR-004); el rol de atencion ya no sale de un maestro local: llega en el token de Control de acceso y lo exige el endpoint (T04; DT-03)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T01"
           ]
         },
         {
           "id": "HU-ATC-001-T04",
-          "titulo": "Endpoint POST /api/v1/tickets segun docs/arquitectura/aybar-atc.openapi.yaml, errores ProblemDetail RFC7807",
+          "titulo": "[tickets] Endpoint POST /api/v1/tickets (registrarTicket) segun docs/arquitectura/aybar-atc.openapi.yaml con @PreAuthorize por el rol de atencion del token (ATC_AGENT o ATC_SUPERVISOR en arquitectura/roles-y-permisos-atc.md; autorizacion por rol, ED-02); CA-04: sin rol de atencion responde 403 (AYB-SEG-403 del SDK) y el intento queda en la auditoria; errores ProblemDetail del SDK (aybar-starter-web, codigo AYB-TKT-<HTTP>, DT-09)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T02",
-            "HU-ATC-001-T03"
+            "HU-ATC-001-T03",
+            "HU-ATC-001-T07"
           ]
         },
         {
           "id": "HU-ATC-001-T05",
-          "titulo": "Un test por cada TC de HU-ATC-001 en docs/pruebas/test-plan.md, con datos sinteticos",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-001 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado); CA-04 con un token del emisor de pruebas sin rol de atencion",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T04"
           ]
         },
         {
           "id": "HU-ATC-001-T06",
-          "titulo": "Pantalla de registro de ticket en frontend/ con @aybarcorp/http: campos obligatorios/opcionales, estados vacio/carga/error/sin permisos de G2 (ui: true, estimacion separada del backend: ver resumen)",
+          "titulo": "[tickets] Pantalla de registro de ticket en Angular con @aybarcorp/ui-angular y @aybarcorp/http: campos obligatorios/opcionales, estados vacio/carga/error/sin permisos de G2 (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 4,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 2,
           "depende_de": [
-            "HU-ATC-001-T04"
+            "HU-ATC-001-T04",
+            "HU-ATC-001-T08"
+          ]
+        },
+        {
+          "id": "HU-ATC-001-T07",
+          "titulo": "Transversal (capa infrastructure, sin modulo de negocio; no hay modulo identidad, DT-03): validar el JWT del emisor de Control de acceso con aybar-starter-security (DT-05): AYBAR_ISSUER_URI y spring.security.oauth2.resourceserver.jwt.audiences (AYBAR_JWT_AUDIENCE=aybar-atc en todos los ambientes, ED-06; obligatoria en el SDK 0.7.1 fuera de local) por entorno, sin secretos en Git; lectura de user_account_id, companyId, realm_access.roles y company_roles con AybarUserContext (claims aybar.security.claims.*); puerto CuentaPersonaPort (domain.port.out) con el adaptador definitivo = claim party_id, pedido en S28-4 (ED-01): PJ-05 no define el adaptador real (el token trae user_account_id y no PartyID; sin GRANT acordado sobre IDN_USER_ACCOUNT): hoy simulador con el mismo contrato en local, DEV y QA (R-11, ED-08, en revision; Texto del 28-oct, superado por la revision del Lider Tecnico del 29-oct, punto 2: en PRE solo bajo el R-12; ahora en PRE no hay emisor de pruebas y, si Control de acceso no esta en PRE para la UAT, la UAT se reprograma; nunca en produccion) y la forma del adaptador (claim party_id, /oauth2/userinfo, endpoint interno o vista) es una opcion de diseno de ATC sin plazo; cruce del Lider Tecnico del 28-oct (C14): ED-01 ya no es lectura de IDN_USER_ACCOUNT, el adaptador definitivo lee el claim party_id que el area debe agregar (solicitud S28-4) y el simulador solo vale en local (C-12: R-11 y R-12 en revision, no son un riesgo aceptado por el Lider Tecnico); seguridad por metodo para @PreAuthorize; CORS de la consola y de Mi Portal (aybar.security.cors.*); en local, emisor de pruebas herramientas/emisor-local.mjs del repo AybarCorp/aybar-access-control-deus; sin tablas de usuarios, roles ni sesiones (C-11)",
+          "capa": "infrastructure",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
+          "depende_de": []
+        },
+        {
+          "id": "HU-ATC-001-T08",
+          "titulo": "Transversal (frontend, sin modulo de negocio): sesion de la consola de ATC con @aybarcorp/auth (crearAutenticacion: Authorization Code + PKCE contra el emisor de Control de acceso; emisor, clienteId y audiencia por entorno; token en memoria) en Angular con @aybarcorp/ui-angular; los roles del token muestran u ocultan acciones; sin login, usuarios ni roles propios (DT-03, DT-05); cliente OAuth PUBLIC de la consola: ATC define sus datos por ambiente en su repositorio (client_id, redirect_uri y post_logout_redirect_uri exactas y origenes CORS); PJ-05 carga los clientes PUBLIC de las pantallas por D-223 (redirect_uri por variable de despliegue); correccion del cruce del Lider Tecnico del 28-oct (C15): el seeder solo carga aybar-web; los clientes de ATC los crea el area con crear-cliente-publico a pedido de ATC (S28-2) y los de servicio los registra el Administrador de seguridad (D-30); en local, emisor de pruebas o crearAutenticacionDemo",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-001-T07"
           ]
         }
       ]
     },
     {
+      "hu": "HU-ATC-001",
+      "titulo": "Fundacion CQRS de DT-02: outbox, publicador, proyector y bus (trabajo tecnico de la Etapa 1; no es una HU del PO)",
+      "feature": "FT-ATC-01",
+      "tecnica": true,
+      "prioridad": "Debe",
+      "horas": 28,
+      "fuente": "DT-02 (Jose Jara, Lider Tecnico, 22-oct-2026); ADR-012 y ADR-013 (horas por pieza); P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026)",
+      "nota": "Va en la fundacion (EP-ATC-01 habilitadora), en la iteracion 1 (21 al 27-oct; fecha de cada tarea en inicio y fin), y se construye antes de las vistas de lectura. Desde la revision interna del equipo (O-06) dependen del proyector (DT02-T05) las tareas de lectura de la bandeja (HU-ATC-044-T01), el casillero (HU-ATC-009-T01), la consulta 360 (HU-ATC-050-T02), el visor (HU-ATC-067-T03; HU-ATC-067-T02 depende del bus, DT02-T02), la Torre de Control (HU-ATC-030-T02), el tablero (HU-ATC-054-T01) y Mi Portal (HU-ATC-064-T04 y HU-ATC-065-T01); por eso FT-03, FT-18 y FT-20 dejan la ola 0 (aybar paquete plan) y esas lecturas no terminan antes del 26-oct, fin de DT02-T05. Reparto: Brayan 9 h (outbox y re-proyeccion), Jesus 4 h (publicador con ShedLock), Michel 9 h (proyector, purga y metrica) y Daniel 6 h (bus en Event Hubs). Contra la capacidad del PLT-01 (63 h por persona: 7 h los dias 1 a 9; el dia 10 es UAT y pase) quedan Brayan 64, Jesus 64, Michel 64 y Daniel 63 h: 255 h sobre 252 h. Con la reestimacion que reconoce ADR-009 (+2,5 h en HU-ATC-043-T07 y +1,5 h en HU-ATC-008-T01) el sobrecosto real es de 7 h (259 h sobre 252 h: Brayan +1, Jesus +2,5, Michel +3,5, Daniel 0). En la iteracion 1 (35 h por persona) la carga es Brayan 41, Jesus 40,5, Michel 44,5 y Daniel 33 h: 19 h netas sobre la capacidad, que pasan a la iteracion 2 (P-025).",
+      "tareas": [
+        {
+          "id": "DT02-T01",
+          "titulo": "[fundacion DT-02] Outbox transaccional (ADR-013): tabla SVC_OUTBOX_EVENT y lista SVC_OUTBOX_EVENT_TYPE con migracion Flyway (expand) y reversion probada, puerto Outbox en domain.port.out y adaptador en adapters.outbound.persistence.postgres; el evento se inserta en la misma transaccion que el cambio (primer uso: RegistrarTicketUseCase), solo con referencias en el payload",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 6,
+          "depende_de": [
+            "HU-ATC-001-T02",
+            "HU-ATC-001-T03"
+          ],
+          "inicio": "2026-10-22",
+          "fin": "2026-10-23"
+        },
+        {
+          "id": "DT02-T02",
+          "titulo": "[fundacion DT-02] Bus en Azure Event Hubs con protocolo Kafka (ADR-013 y ADR-014): espacio de nombres exclusivo de ATC por ambiente, los 5 topicos aybar.service.* y sus colas .DLQ, grupos de consumidores y autenticacion SASL_SSL con la cadena en Azure Key Vault (ED-24); configuracion de aybar-starter-messaging por ambiente y broker local para pruebas",
+          "capa": "infrastructure",
+          "actividad": "DESARROLLO",
+          "responsable": "Daniel David Lorenzo Ramos",
+          "estimacion_horas": 6,
+          "depende_de": [],
+          "inicio": "2026-10-21",
+          "fin": "2026-10-22"
+        },
+        {
+          "id": "DT02-T03",
+          "titulo": "[fundacion DT-02] Publicador del outbox (ADR-013, punto 2): tarea programada con ShedLock (DT-08) cada 1 s que lee las filas PENDING por orden de creacion, publica con AybarEventProducer, marca PUBLISHED solo cuando el broker confirma, suma AttemptCount y marca FAILED a los 5 intentos; cabeceras desde la fila por el MDC",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Jesus Chavez Elias",
+          "estimacion_horas": 4,
+          "depende_de": [
+            "DT02-T01",
+            "DT02-T02"
+          ],
+          "inicio": "2026-10-23",
+          "fin": "2026-10-23"
+        },
+        {
+          "id": "DT02-T04",
+          "titulo": "[fundacion DT-02] Purga del outbox a los 7 dias (ADR-013, punto 8) y metrica de eventos pendientes y antiguedad del mas viejo, con alerta en Azure Monitor (Q-007: atencion a 5 s, critico a 10 s)",
+          "capa": "infrastructure",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 2,
+          "depende_de": [
+            "DT02-T03"
+          ],
+          "inicio": "2026-10-26",
+          "fin": "2026-10-26"
+        },
+        {
+          "id": "DT02-T05",
+          "titulo": "[fundacion DT-02] Proyector (ADR-012): consumidor idempotente por OutboxEventID en adapters.inbound.messaging y adaptador de escritura propio al almacen de lectura (Azure Cosmos DB for MongoDB vCore) con la credencial atc_proyector (secreto atc-proyector-mongo-uri en Azure Key Vault); unico escritor del almacen (DT-02); completa el detalle desde PostgreSQL; retraso p95 <= 5 s (Q-006)",
+          "capa": "adapters",
+          "actividad": "DESARROLLO",
+          "responsable": "Michel Poma Huachihuaco",
+          "estimacion_horas": 7,
+          "depende_de": [
+            "DT02-T01",
+            "DT02-T02"
+          ],
+          "inicio": "2026-10-23",
+          "fin": "2026-10-26"
+        },
+        {
+          "id": "DT02-T06",
+          "titulo": "[fundacion DT-02] Reconstruccion de las vistas de lectura: re-proyeccion completa desde PostgreSQL, que es tambien la reversion del almacen de lectura (ADR-012; arquitectura/migracion-y-reversion.md 4)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 3,
+          "depende_de": [
+            "DT02-T05"
+          ],
+          "inicio": "2026-10-26",
+          "fin": "2026-10-27"
+        }
+      ],
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-27"
+    },
+    {
       "hu": "HU-ATC-002",
+      "titulo": "Entregar al cliente un número de ticket por razón social",
+      "feature": "FT-ATC-01",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 1,
+      "inicio": "2026-10-21",
+      "fin": "2026-10-22",
       "tareas": [
         {
           "id": "HU-ATC-002-T01",
-          "titulo": "Migracion Flyway V3__indice_unico_ticket_number_por_empresa.sql (constraint UNIQUE TicketNumber x CompanyID)",
+          "titulo": "[tickets] Migracion Flyway V3__indice_unico_ticket_number_por_empresa.sql (constraint UNIQUE TicketNumber x CompanyID)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T02"
           ]
         },
         {
           "id": "HU-ATC-002-T02",
-          "titulo": "Logica de generacion del correlativo por CompanyID dentro de RegistrarTicketUseCase (secuencia o lock optimista)",
+          "titulo": "[tickets] Logica de generacion del correlativo por CompanyID dentro de RegistrarTicketUseCase (secuencia o lock optimista)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-001-T03",
             "HU-ATC-002-T01"
@@ -101,11 +240,22 @@
         },
         {
           "id": "HU-ATC-002-T03",
-          "titulo": "Un test por cada TC de HU-ATC-002 en docs/pruebas/test-plan.md (concurrencia del correlativo incluida)",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-002 (CA-01 a CA-03) con datos sinteticos; concurrencia del correlativo incluida; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-002-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-002-T04",
+          "titulo": "[tickets] Numero de ticket por razon social visible en la cabecera del detalle y en la confirmacion del registro, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-002-T02"
           ]
@@ -114,47 +264,56 @@
     },
     {
       "hu": "HU-ATC-004",
+      "titulo": "Cambiar el estado del ticket con historial inmutable",
+      "feature": "FT-ATC-02",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-22",
+      "fin": "2026-10-22",
       "tareas": [
         {
           "id": "HU-ATC-004-T01",
-          "titulo": "Entidad SVC_TICKET_ESTADO_HISTORIAL (append-only) y puerto TicketEstadoHistorialRepository en domain.port.out",
+          "titulo": "[tickets] Entidad SVC_TICKET_STATUS_LOG (ENT-SVC-002, append-only con hash de integridad RNF-AUD-004, ADR-002) y puerto TicketStatusLogRepository en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-001-T01"
+            "HU-ATC-001-T01",
+            "HU-ATC-002-T04"
           ]
         },
         {
           "id": "HU-ATC-004-T02",
-          "titulo": "Migracion Flyway V4__crear_tabla_ticket_estado_historial.sql (expand, FK a ticket)",
+          "titulo": "[tickets] Migracion Flyway V6__crear_tabla_ticket_status_log.sql (expand, FK a ticket)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-004-T01"
           ]
         },
         {
           "id": "HU-ATC-004-T03",
-          "titulo": "Caso de uso CambiarEstadoTicketUseCase: valida transicion de los 7 estados, inserta fila nueva sin sobrescribir",
+          "titulo": "[tickets] Caso de uso CambiarEstadoTicketUseCase: valida transicion de los 7 estados, inserta fila nueva sin sobrescribir",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-004-T01"
           ]
         },
         {
           "id": "HU-ATC-004-T04",
-          "titulo": "Endpoint PATCH /api/v1/tickets/{id}/estado segun el contrato OpenAPI",
+          "titulo": "[tickets] Endpoints POST /api/v1/tickets/{ticketId}/estado (cambiarEstado) y GET /api/v1/tickets/{ticketId} (obtenerTicket, con el historial de estados de SVC_TICKET_STATUS_LOG) segun el contrato OpenAPI; @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-004-T02",
             "HU-ATC-004-T03"
@@ -162,22 +321,22 @@
         },
         {
           "id": "HU-ATC-004-T05",
-          "titulo": "Un test por cada TC de HU-ATC-004 en docs/pruebas/test-plan.md",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-004 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-004-T04"
           ]
         },
         {
           "id": "HU-ATC-004-T06",
-          "titulo": "Accion de cambio de estado e historial visible en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "titulo": "[tickets] Accion de cambio de estado e historial visible en la pantalla de ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 3,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 2,
           "depende_de": [
             "HU-ATC-004-T04"
           ]
@@ -186,47 +345,55 @@
     },
     {
       "hu": "HU-ATC-005",
+      "titulo": "Registrar interacciones visibles o internas con evidencia",
+      "feature": "FT-ATC-02",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 5,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-23",
       "tareas": [
         {
           "id": "HU-ATC-005-T01",
-          "titulo": "Entidad SVC_TICKET_INTERACCION (canal, autor, visibilidad, adjuntos) y puerto en domain.port.out",
+          "titulo": "[tickets] Entidad SVC_TICKET_INTERACTION (ENT-SVC-004: canal, autor, visibilidad, adjuntos) y puerto en domain.port.out",
           "capa": "domain",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
-            "HU-ATC-001-T01"
+            "HU-ATC-004-T01"
           ]
         },
         {
           "id": "HU-ATC-005-T02",
-          "titulo": "Migracion Flyway V5__crear_tabla_ticket_interaccion.sql",
+          "titulo": "[tickets] Migracion Flyway V9__crear_tabla_ticket_interaction.sql",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-005-T01"
           ]
         },
         {
           "id": "HU-ATC-005-T03",
-          "titulo": "Caso de uso RegistrarInteraccionUseCase, incluye subida de evidencia multimedia a object storage (ver ADR-006)",
+          "titulo": "[tickets] Caso de uso RegistrarInteraccionUseCase (visible al cliente o nota interna, DLP en bitacoras RN-SVC-012), incluye subida de evidencia multimedia a Azure Blob Storage con inmutabilidad (ADR-006, DT-07)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-005-T01"
           ]
         },
         {
           "id": "HU-ATC-005-T04",
-          "titulo": "Endpoint POST /api/v1/tickets/{id}/interacciones, adaptador de subida a object storage (adapters.outbound.external, con simulador segun ADR-007)",
+          "titulo": "[tickets] Endpoint POST /api/v1/tickets/{ticketId}/interacciones (registrarInteraccion; JPG, PNG o PDF de hasta 10 MB y maximo 3 adjuntos por envio, ED-26) y las interacciones en la respuesta de obtenerTicket; adaptador de subida a Azure Blob Storage (DT-07) (adapters.outbound.external, contract-first con simulador ADR-004); @PreAuthorize por rol del token segun arquitectura/roles-y-permisos-atc.md (ED-02)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 1,
           "depende_de": [
             "HU-ATC-005-T02",
             "HU-ATC-005-T03"
@@ -234,22 +401,22 @@
         },
         {
           "id": "HU-ATC-005-T05",
-          "titulo": "Un test por cada TC de HU-ATC-005 en docs/pruebas/test-plan.md",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-005 (CA-01 a CA-04) con datos sinteticos; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-005-T04"
           ]
         },
         {
           "id": "HU-ATC-005-T06",
-          "titulo": "Timeline de interacciones (nota interna vs visible al cliente) con adjuntos en la pantalla de ticket (ui: true, estimacion separada del backend)",
+          "titulo": "[tickets] Timeline de interacciones (nota interna vs visible al cliente) con adjuntos en la pantalla de ticket, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
           "capa": "frontend",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 3,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 2,
           "depende_de": [
             "HU-ATC-005-T04"
           ]
@@ -258,25 +425,33 @@
     },
     {
       "hu": "HU-ATC-006",
+      "titulo": "Conservar los hitos temporales probatorios",
+      "feature": "FT-ATC-02",
+      "prioridad": "Debe",
+      "flexible": false,
+      "horas": 3,
+      "iteracion": 1,
+      "inicio": "2026-10-23",
+      "fin": "2026-10-26",
       "tareas": [
         {
           "id": "HU-ATC-006-T01",
-          "titulo": "Migracion Flyway V6__agregar_columnas_hitos_ticket.sql (FirstResponseDateTime, FirstResolvedDateTime, LastResolvedDateTime, ClosedDateTime en SVC_TICKET, expand)",
+          "titulo": "[tickets] Migracion Flyway V10__agregar_columnas_hitos_ticket.sql (FirstResponseDateTime, FirstResolvedDateTime, LastResolvedDateTime, ClosedDateTime en SVC_TICKET, expand)",
           "capa": "adapters",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-001-T02"
           ]
         },
         {
           "id": "HU-ATC-006-T02",
-          "titulo": "Logica de registro de hitos temporales en CambiarEstadoTicketUseCase (FirstResolvedDateTime inmutable tras reapertura)",
+          "titulo": "[tickets] Logica de registro de hitos temporales en CambiarEstadoTicketUseCase (FirstResolvedDateTime inmutable tras reapertura)",
           "capa": "application",
           "actividad": "DESARROLLO",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 2,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 1.5,
           "depende_de": [
             "HU-ATC-004-T03",
             "HU-ATC-006-T01"
@@ -284,16 +459,86 @@
         },
         {
           "id": "HU-ATC-006-T03",
-          "titulo": "Un test por cada TC de HU-ATC-006 en docs/pruebas/test-plan.md (incluye caso de reapertura)",
+          "titulo": "[tickets] Un test por cada criterio de aceptacion de HU-ATC-006 (CA-01 y CA-02) con datos sinteticos; incluye caso de reapertura; el id TC-... lo fija el test plan de QA (docs/pruebas/test-plan.md, aun no publicado)",
           "capa": "boot",
           "actividad": "PRUEBAS",
-          "responsable": "Brayan (Dev 1)",
-          "estimacion_horas": 1,
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
+          "depende_de": [
+            "HU-ATC-006-T02"
+          ]
+        },
+        {
+          "id": "HU-ATC-006-T04",
+          "titulo": "[tickets] Seccion Compromisos SLA del detalle del ticket con los hitos probatorios, en Angular con @aybarcorp/ui-angular (ui: true: pantalla y estados segun G2)",
+          "capa": "frontend",
+          "actividad": "DESARROLLO",
+          "responsable": "Brayan Manuel Hurtado Paucar",
+          "estimacion_horas": 0.5,
           "depende_de": [
             "HU-ATC-006-T02"
           ]
         }
       ]
     }
-  ]
+  ],
+  "tareas_fuera_del_plan_del_po": {
+    "nota": "Estimacion de la revision del 28-oct-2026 (contraste con la documentacion de Control de acceso, PJ-05), por confirmar. Estas tareas van fuera de las historias: no suman a las horas de ninguna HU, a las 243 h del PO, a las 227 h de las 57 HU de la Etapa 1 ni a las 255 h con las 28 h tecnicas de DT-02 (como ADR-002, '0 h fuera del plan del PO'). En conjunto, +8 a +14 h sobre las +7 h de sobrecosto ya declaradas (roadmap/RMP-001-roadmap-aybar-atiende.md, seccion 1). Sin responsable ni fechas: el PO decide en el control de alcance del 29-oct.",
+    "origen": "revision-28-oct-contraste-PJ-05",
+    "estimacion_por_confirmar": true,
+    "tareas": [
+      {
+        "id": "FPO-T03",
+        "titulo": "[tickets] AuthorizationEventPublisher y listener de auditoria de los 403 (cada intento sin rol queda en la bitacora, seguridad.md); hoy solo se menciona dentro de HU-ATC-001-T04 (estimacion de la revision del 28-oct, por confirmar)",
+        "capa": "adapters",
+        "actividad": "DESARROLLO",
+        "responsable": null,
+        "estimacion_horas": null,
+        "estimacion_horas_min": 1,
+        "estimacion_horas_max": 2,
+        "estimacion_por_confirmar": true,
+        "origen": "revision-28-oct-contraste-PJ-05",
+        "fuera_del_plan_del_po": true,
+        "relacionada_con": [
+          "HU-ATC-001-T04"
+        ],
+        "depende_de": []
+      },
+      {
+        "id": "FPO-T04",
+        "titulo": "SUPERADA por la revision del Lider Tecnico del 29-oct, punto 2 (el emisor de pruebas solo vale en local; si Control de acceso no esta en PRE para la UAT, la UAT se reprograma; sin cambio de horas ni de estado). Texto del 28-oct, superado: Operar el emisor de pruebas de ATC en PRE para la UAT del 03-nov (R-12): despliegue, identidad con la que corre, suscripcion y tokens de prueba por rol, con AYBAR_ISSUER_URI de PRE apuntando a el; PJ-05 no documenta este emisor ni su despliegue, es un supuesto de diseno de ATC; no va a produccion (estimacion de la revision del 28-oct, por confirmar)",
+        "capa": "infrastructure",
+        "actividad": "DESARROLLO",
+        "responsable": null,
+        "estimacion_horas": null,
+        "estimacion_horas_min": 2,
+        "estimacion_horas_max": 4,
+        "estimacion_por_confirmar": true,
+        "origen": "revision-28-oct-contraste-PJ-05",
+        "fuera_del_plan_del_po": true,
+        "relacionada_con": [
+          "HU-ATC-001-T07"
+        ],
+        "depende_de": []
+      },
+      {
+        "id": "FPO-T05",
+        "titulo": "Pruebas del criterio de aceptacion 'token real con aybar-atc en aud': con el SDK 0.7.1 y audiences obligatoria, sin esa audiencia se rechazan todos los tokens (D-224 de PJ-05: aud = servicio destino + client_id); si no se absorbe en HU-ATC-001-T05, 0 h (estimacion de la revision del 28-oct, por confirmar)",
+        "capa": "boot",
+        "actividad": "PRUEBAS",
+        "responsable": null,
+        "estimacion_horas": null,
+        "estimacion_horas_min": 0,
+        "estimacion_horas_max": 1,
+        "estimacion_por_confirmar": true,
+        "origen": "revision-28-oct-contraste-PJ-05",
+        "fuera_del_plan_del_po": true,
+        "relacionada_con": [
+          "HU-ATC-001-T05",
+          "HU-ATC-001-T07"
+        ],
+        "depende_de": []
+      }
+    ]
+  }
 }

@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-24", "EP-ATC-06"]
+relacionados: ["FT-ATC-24", "EP-ATC-06", "HU-ATC-043", "HU-ATC-055"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-064 | Debe | 4 h con IA | Dev 4 (Daniel) | 2 | 30-oct-2026 → 2-nov-2026 | Pendiente DoR |
+
+**Responsable:** Dev 4 · Daniel David Lorenzo Ramos (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-043 (los flujos por tipo y subtipo son la base del formulario: PLT-02 en EP-ATC-06; PLT-04 en la ficha de HU-043 y el CA-01), HU-ATC-055 (dependencia lógica EP-ATC-09 → EP-ATC-06 del Gantt del PLT-01 y esta es la última HU de EP-ATC-09) · Dependencias externas: DEP-01 (API de SIGDA/TAXON: contacto del cliente; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: login del cliente en Mi Portal, DT-04; solo sus tickets, CA-02)
+
+**La necesitan:** HU-ATC-065
 
 **Requerimiento de origen:** El sistema debe permitir al cliente identificado registrar un ticket desde Mi Portal, con tipo y subtipo guiados, descripción y adjuntos, y consultar la lista de sus tickets con número, estado, área y fecha de compromiso. Propuesta PO v1.3 · decisión de etapas del 16-oct-2026 (EP-ATC-06)
 
@@ -91,3 +97,5 @@ Escenario: CA-05 · Adjunto no permitido (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

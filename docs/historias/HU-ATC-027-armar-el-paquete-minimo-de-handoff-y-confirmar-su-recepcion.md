@@ -8,7 +8,7 @@ version: "1.3"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
 fecha: "2026-10-16"
-relacionados: ["FT-ATC-07", "EP-ATC-04"]
+relacionados: ["FT-ATC-07", "EP-ATC-04", "HU-ATC-026"]
 tags: [hu, plt-04]
 ui: true
 ---
@@ -21,6 +21,12 @@ ui: true
 | Traza | Prioridad | Horas | Desarrollador | Iteración | Fechas (PLT-04) | Estado |
 |---|---|---|---|---|---|---|
 | RF-SVC-027 | Debe | 4 h con IA | Dev 2 (Jesús) | 1 | 27-oct-2026 | Pendiente DoR |
+
+**Responsable:** Dev 2 · Jesus Chavez Elias (PLT-01/PLT-04)
+
+**Depende de:** HU-ATC-026 (RF-SVC-026 es predecesora de RF-SVC-027, PLT-03) · Dependencias externas: DEP-01 (API de SIGDA/TAXON; PLT-03, PLT-04 y PLT-05), DEP-08 (API de Cobranza; PLT-03, PLT-04 y PLT-05), DEP-16 (Control de acceso, PJ-05: supervisor del eje destino, CA-03)
+
+**La necesitan:** ninguna
 
 **Requerimiento de origen:** El sistema debe armar el paquete mínimo de handoff (6 elementos) en toda derivación entre ejes y permitir al eje destino confirmar la recepción.
 
@@ -77,3 +83,5 @@ Escenario: CA-03 · Sin confirmar (agregado por el PO)
 - [ ] Estimada por el equipo - [ ] Cabe en un sprint
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-04 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
+
+Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)

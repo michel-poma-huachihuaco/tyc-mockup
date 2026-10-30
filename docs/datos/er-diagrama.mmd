@@ -1,0 +1,177 @@
+erDiagram
+  MAE_TICKET_TYPE ||--o{ MAE_SLA_POLICY : "TicketTypeID"
+  MAE_TICKET_PRIORITY ||--o{ MAE_SLA_POLICY : "PriorityID"
+  MAE_GENERIC_LIST_VALUE ||--o{ MAE_SLA_POLICY : "TimeBasisID"
+  ORG_COMPANY ||--o{ SVC_TICKET : "CompanyID"
+  ORG_COMPANY_ADDRESS ||--o{ SVC_TICKET : "CompanyAddressID"
+  PARTY ||--o{ SVC_TICKET : "PartyID"
+  CONTRACT ||--o{ SVC_TICKET : "ContractID"
+  AST_UNIT ||--o{ SVC_TICKET : "UnitID"
+  MAE_CHANNEL ||--o{ SVC_TICKET : "ChannelID"
+  MAE_TICKET_TYPE ||--o{ SVC_TICKET : "TicketTypeID"
+  MAE_BUSINESS_LINE ||--o{ SVC_TICKET : "BusinessLineID"
+  ORG_PRODUCT ||--o{ SVC_TICKET : "ProductID"
+  MAE_TICKET_PRIORITY ||--o{ SVC_TICKET : "PriorityID"
+  MAE_SLA_POLICY ||--o{ SVC_TICKET : "SLAPolicyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_TICKET : "TicketStatusID"
+  PARTY ||--o{ SVC_TICKET : "CreatedByPartyID"
+  PARTY ||--o{ SVC_TICKET : "CurrentOwnerPartyID"
+  MAE_AREA ||--o{ SVC_TICKET : "CurrentAreaID"
+  SVC_TICKET ||--o{ SVC_TICKET_STATUS_LOG : "TicketID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_TICKET_STATUS_LOG : "TicketStatusID"
+  PARTY ||--o{ SVC_TICKET_STATUS_LOG : "ChangedByPartyID"
+  SVC_TICKET ||--o{ SVC_TICKET_ASSIGNMENT_LOG : "TicketID"
+  MAE_AREA ||--o{ SVC_TICKET_ASSIGNMENT_LOG : "AreaID"
+  PARTY ||--o{ SVC_TICKET_ASSIGNMENT_LOG : "AssignedToPartyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_TICKET_ASSIGNMENT_LOG : "AssignmentReasonID"
+  PARTY ||--o{ SVC_TICKET_ASSIGNMENT_LOG : "AssignedByPartyID"
+  SVC_TICKET ||--o{ SVC_TICKET_INTERACTION : "TicketID"
+  MAE_CHANNEL ||--o{ SVC_TICKET_INTERACTION : "ChannelID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_TICKET_INTERACTION : "InteractionTypeID"
+  PARTY ||--o{ SVC_TICKET_INTERACTION : "AgentPartyID"
+  SVC_TICKET ||--o{ SVC_SLA_BREACH_ALERT : "TicketID"
+  MAE_SLA_POLICY ||--o{ SVC_SLA_BREACH_ALERT : "SLAPolicyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_SLA_BREACH_ALERT : "BreachTypeID"
+  PARTY ||--o{ SVC_SLA_BREACH_ALERT : "AlertedPartyID"
+  MAE_CHANNEL ||--o{ SVC_SLA_BREACH_ALERT : "ChannelID"
+  SVC_TICKET ||--o| SVC_COMPLAINT_BOOK_ENTRY : "TicketID"
+  ORG_COMPANY ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "CompanyID"
+  ORG_COMPANY_ADDRESS ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "CompanyAddressID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "ComplaintTypeID"
+  MAE_CURRENCY ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "CurrencyID"
+  MAE_CHANNEL ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "ExtensionCommunicationChannelID"
+  PARTY ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "ResponderPartyID"
+  PARTY ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "ClosedByPartyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_BOOK_ENTRY : "ComplaintStatusID"
+  SVC_COMPLAINT_BOOK_ENTRY ||--o{ SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG : "TicketID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG : "ComplaintStatusID"
+  PARTY ||--o{ SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG : "ChangedByPartyID"
+  SVC_COMPLAINT_BOOK_ENTRY ||--o{ SVC_COMPLAINT_APPEAL : "TicketID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_APPEAL : "AppealLevelID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_APPEAL : "AppealStatusID"
+  SVC_COMPLAINT_APPEAL ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "ComplaintAppealID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "AppealStatusID"
+  PARTY ||--o{ SVC_COMPLAINT_APPEAL_STATUS_LOG : "ChangedByPartyID"
+  SVC_TICKET ||--o{ SVC_OUTBOX_EVENT : "TicketID"
+  ORG_COMPANY ||--o{ SVC_OUTBOX_EVENT : "CompanyID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_OUTBOX_EVENT : "EventTypeID"
+  MAE_GENERIC_LIST_VALUE ||--o{ SVC_OUTBOX_EVENT : "PublishStatusID"
+  MAE_AREA {
+    int AreaID PK
+  }
+  MAE_TICKET_TYPE {
+    int TicketTypeID PK
+  }
+  MAE_TICKET_PRIORITY {
+    int PriorityID PK
+  }
+  MAE_SLA_POLICY {
+    int SLAPolicyID PK
+    int TicketTypeID FK
+    int PriorityID FK
+    int TimeBasisListID FK
+    int TimeBasisID FK
+  }
+  SVC_TICKET {
+    int TicketID PK
+    int CompanyID FK
+    int CompanyAddressID FK
+    int PartyID FK
+    int ContractID FK
+    int UnitID FK
+    int ChannelID FK
+    int TicketTypeID FK
+    int BusinessLineID FK
+    int ProductID FK
+    int PriorityID FK
+    int SLAPolicyID FK
+    int TicketStatusListID FK
+    int TicketStatusID FK
+    int CreatedByPartyID FK
+    int CurrentOwnerPartyID FK
+    int CurrentAreaID FK
+  }
+  SVC_TICKET_STATUS_LOG {
+    int TicketStatusLogID PK
+    int TicketID FK
+    int TicketStatusListID FK
+    int TicketStatusID FK
+    int ChangedByPartyID FK
+  }
+  SVC_TICKET_ASSIGNMENT_LOG {
+    int TicketAssignmentLogID PK
+    int TicketID FK
+    int AreaID FK
+    int AssignedToPartyID FK
+    int AssignmentReasonListID FK
+    int AssignmentReasonID FK
+    int AssignedByPartyID FK
+  }
+  SVC_TICKET_INTERACTION {
+    int TicketInteractionID PK
+    int TicketID FK
+    int ChannelID FK
+    int InteractionTypeListID FK
+    int InteractionTypeID FK
+    int AgentPartyID FK
+  }
+  SVC_SLA_BREACH_ALERT {
+    int SLABreachAlertID PK
+    int TicketID FK
+    int SLAPolicyID FK
+    int BreachTypeListID FK
+    int BreachTypeID FK
+    int AlertedPartyID FK
+    int ChannelID FK
+  }
+  SVC_COMPLAINT_BOOK_ENTRY {
+    int TicketID PK, FK
+    int CompanyID FK
+    int CompanyAddressID FK
+    int ComplaintTypeListID FK
+    int ComplaintTypeID FK
+    int CurrencyID FK
+    int ExtensionCommunicationChannelID FK
+    int ResponderPartyID FK
+    int ClosedByPartyID FK
+    int ComplaintStatusListID FK
+    int ComplaintStatusID FK
+  }
+  SVC_COMPLAINT_BOOK_ENTRY_STATUS_LOG {
+    int ComplaintBookEntryStatusLogID PK
+    int TicketID FK
+    int ComplaintStatusListID FK
+    int ComplaintStatusID FK
+    int ChangedByPartyID FK
+  }
+  SVC_COMPLAINT_APPEAL {
+    int ComplaintAppealID PK
+    int TicketID FK
+    int AppealLevelListID FK
+    int AppealLevelID FK
+    int AppealStatusListID FK
+    int AppealStatusID FK
+  }
+  SVC_COMPLAINT_APPEAL_STATUS_LOG {
+    int ComplaintAppealStatusLogID PK
+    int ComplaintAppealID FK
+    int AppealStatusListID FK
+    int AppealStatusID FK
+    int ChangedByPartyID FK
+  }
+  SVC_OUTBOX_EVENT {
+    int OutboxEventID PK "ADR-013, cambio al v7"
+    int TicketID FK
+    int CompanyID FK
+    int EventTypeListID FK
+    int EventTypeID FK
+    int PublishStatusListID FK
+    int PublishStatusID FK
+    int UserAccountID "user_account_id del token, sin FK; nulo en los jobs"
+  }
+%% Diagrama entidad-relación del fragmento 10 SERVICE del v7 (13 entidades) más SVC_OUTBOX_EVENT, cambio al v7 de ATC (ADR-013; ED-23). Se explica en er.md.
+%% 0.1 · 2026-10-19 a 2026-10-22 · Jesús Chávez Elías y Brayan Hurtado, con IA · 13 entidades de SERVICE desde el v7 (sin historial propio hasta ahora; ver er.md).
+%% 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Se dibuja SVC_OUTBOX_EVENT (propuesta, ADR-013 v0.3 y v0.4: INTG_OUTBOX_EVENT no sirve) con sus 4 relaciones y la columna UserAccountID (sin FK, nula en los jobs). — Revisado por: (pendiente)
+%% 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Barrido de coherencia (misma versión, sin cambio de contenido): el outbox cita ADR-013 v0.4, la versión vigente (decía v0.3). — Revisado por: (pendiente)
+%% 0.3 · 2026-10-26 · Brayan Hurtado, con IA · La etiqueta del outbox ya no dice «propuesta»: es cambio al v7 decidido por el equipo (ED-23 de analisis/decisiones.md v0.7). — Revisado por: (pendiente)
+%% 0.4 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo del 26-oct: la descripción cita ADR-013 sin número de versión (O-22) y dice «cambio al v7 de ATC», no «propuesto». Sin cambio del diagrama. — Revisado por: (pendiente)
