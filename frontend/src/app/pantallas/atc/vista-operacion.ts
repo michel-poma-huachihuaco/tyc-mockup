@@ -127,7 +127,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
         >
           @if (!ctiEntranteVisible()) {
             <ay-button ayAcciones tamano="sm" variante="ghost" (click)="ctiEntranteVisible.set(true)">
-              Mostrar central CTI
+              Mostrar llamada
             </ay-button>
           }
           <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
@@ -138,15 +138,15 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </ay-button>
         </ay-page-header>
 
-        <!-- Pop-up CTI de llamada entrante con AyAlert oficial -->
+        <!-- Pop-up de llamada entrante con AyAlert oficial -->
         @if (ctiEntranteVisible()) {
           <ay-alert
             tono="info"
-            titulo="Llamada entrante CTI · +51 991 224 266 · Jorge Mamani Ccori (DNI 7013••••)"
+            titulo="Llamada entrante · +51 991 224 266 · Jorge Mamani Ccori (DNI 7013••••)"
             [descartable]="true"
             (cerrar)="ctiEntranteVisible.set(false)"
           >
-            Los Álamos · Mz. F Lt. 3 · Ticket activo: ALT-001204 (Eje 3 Legal)
+            Los Álamos · Mz. F Lt. 3 · Ticket activo: ALT-001204
             <div ayAcciones ayRow gap="2" [ajuste]="true">
               <ay-button tamano="sm" variante="primary" (click)="atenderLlamadaCti('ALT-001204')">
                 Atender y ver ticket ALT-001204
@@ -155,7 +155,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 Abrir Consulta 360
               </ay-button>
               <ay-button tamano="sm" variante="ghost" (click)="ctiEntranteVisible.set(false)">
-                Ocultar CTI
+                Ocultar Llamada
               </ay-button>
             </div>
           </ay-alert>
