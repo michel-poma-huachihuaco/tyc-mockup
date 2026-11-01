@@ -161,11 +161,6 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </ay-alert>
         }
 
-        <ay-alert tono="info" size="sm" titulo="Distribución a áreas">
-          Fuente única de tickets, consultable por área, estado y tipo, incluidos Queja/Reclamo (Libro) y Garantía postventa.
-          Reglas de distribución por área distintas de la asignación manual o por menor carga: definición pendiente.
-        </ay-alert>
-
         <div ayStack gap="2">
           <ay-card variante="elevated" superficie="solid">
             <ay-card-body padding="sm" gap="md">
