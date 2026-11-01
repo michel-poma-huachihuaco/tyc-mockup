@@ -130,9 +130,11 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               Mostrar llamada
             </ay-button>
           }
-          <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
-            Reasignación masiva por rotación
-          </ay-button>
+          @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+            <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
+              Reasignación masiva por rotación
+            </ay-button>
+          }
           <ay-button ayAcciones tamano="sm" variante="primary" (click)="irANuevo.emit()">
             + Nuevo ticket
           </ay-button>
@@ -394,9 +396,11 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           titulo="Tu Día"
           descripcion="Tu avance de hoy: tickets atendidos, acciones realizadas, pendientes en riesgo, avance del equipo y correos de asignación."
         >
-          <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
-            Reasignación masiva por rotación
-          </ay-button>
+          @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+            <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
+              Reasignación masiva por rotación
+            </ay-button>
+          }
           <ay-button ayAcciones tamano="sm" variante="primary" (click)="irANuevo.emit()">
             + Registrar nuevo ticket
           </ay-button>
