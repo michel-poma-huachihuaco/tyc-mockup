@@ -146,7 +146,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             [descartable]="true"
             (cerrar)="ctiEntranteVisible.set(false)"
           >
-            Los Álamos · Mz. F Lt. 3 · Ticket activo: ALT-001204
+            Ticket activo: ALT-001204
             <div ayAcciones ayRow gap="2" [ajuste]="true">
               <ay-button tamano="sm" variante="primary" (click)="atenderLlamadaCti('ALT-001204')">
                 Atender y ver ticket ALT-001204
