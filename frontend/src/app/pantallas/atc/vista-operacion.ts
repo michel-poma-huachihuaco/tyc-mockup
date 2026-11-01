@@ -151,7 +151,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               <ay-button tamano="sm" variante="primary" (click)="atenderLlamadaCti('ALT-001204')">
                 Atender y ver ticket ALT-001204
               </ay-button>
-              <ay-button tamano="sm" variante="secondary" (click)="irA360.emit()">
+              <ay-button tamano="sm" variante="secondary" (click)="irA360.emit(dniLlamadaEntrante)">
                 Abrir Consulta 360
               </ay-button>
               <ay-button tamano="sm" variante="ghost" (click)="ctiEntranteVisible.set(false)">
@@ -1092,7 +1092,10 @@ export class VistaOperacionComponent {
   readonly volver = output<void>();
   readonly seleccionarTicket = output<string>();
   readonly irANuevo = output<void>();
-  readonly irA360 = output<void>();
+  /** Documento de quien llama en la llamada de ejemplo de la card: con él se abre su ficha en Consulta 360. */
+  protected readonly dniLlamadaEntrante = '70134409';
+  /** Pide abrir Consulta 360; con `dni`, ya con la ficha de ese cliente. */
+  readonly irA360 = output<string | undefined>();
   readonly verContrato = output<string>();
   readonly ticketCreado = output<{ ticket: TicketAtc; crearAsientoLibro: boolean }>();
 

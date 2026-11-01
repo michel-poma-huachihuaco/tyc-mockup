@@ -439,6 +439,8 @@ interface ItemMenuAtc {
                 [rolExterno]="perspectivaActual().rol360"
                 [nodoFocoExterno]="perspectivaActual().nodoInicial360"
                 [fuentesCaidasExternas]="fuentesCaidas()"
+                [clientePedido]="clienteConsulta360()"
+                (clientePedidoAtendido)="clienteConsulta360.set(null)"
                 (fuentesCaidasChange)="fuentesCaidas.set($event)"
                 (crearTicketDesde360)="alCrearDesde360($event)"
                 (verContrato)="abrirContrato($event)"
@@ -464,7 +466,7 @@ interface ItemMenuAtc {
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (verContrato)="abrirContrato($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
-                (irA360)="vistaActiva.set('c360')"
+                (irA360)="irAConsulta360($event)"
               />
             }
             @case ('tudia') {
@@ -476,7 +478,7 @@ interface ItemMenuAtc {
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (verContrato)="abrirContrato($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
-                (irA360)="vistaActiva.set('c360')"
+                (irA360)="irAConsulta360($event)"
               />
             }
             @case ('nuevo') {
@@ -1292,6 +1294,8 @@ export class ConsolaAtcComponent {
   readonly herramientasAbierto = signal(false);
   readonly vistaHerramientas = signal<'menu' | 'notas'>('menu');
   readonly paletaAbierta = signal(false);
+  /** Documento del cliente cuya ficha debe abrir Consulta 360; la vista la atiende al abrirse y la limpia. */
+  readonly clienteConsulta360 = signal<string | null>(null);
   readonly consultaPaleta = signal('');
 
   readonly horasAvanzadasSim = signal(0);
@@ -2395,6 +2399,12 @@ export class ConsolaAtcComponent {
   }
 
   /** El expediente solo se abre desde un ticket concreto; sin él se vuelve a la Bandeja. */
+  /** Abre Consulta 360; si llega un documento, con la ficha de ese cliente. */
+  irAConsulta360(dni?: string): void {
+    this.irAVista('c360');
+    this.clienteConsulta360.set(dni ?? null);
+  }
+
   irAVista(vista: VistaAtc): void {
     if (vista === 'buses') {
       vista = 'evento';

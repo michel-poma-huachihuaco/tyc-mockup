@@ -10,6 +10,7 @@ import {
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import {
@@ -1604,6 +1605,9 @@ const CONSULTAS_MOTOR_RAPIDAS: readonly ConsultaMotorRapida[] = [
   `,
 })
 export class VistaC360Component {
+  /** Documento del cliente cuya ficha se pide abrir (por ejemplo, desde la llamada entrante de la Bandeja). */
+  readonly clientePedido = input<string | null>(null);
+  readonly clientePedidoAtendido = output<void>();
   readonly mostrarHu = input<boolean>(false);
   readonly rolExterno = input<'gestor' | 'supervisor' | 'legal' | 'cx'>('gestor');
   readonly nodoFocoExterno = input<string>('lote');
@@ -1770,6 +1774,16 @@ export class VistaC360Component {
   readonly nombreConsultaMotorActual = computed<string>(
     () => this.consultasMotor.find((c) => c.id === this.consultaMotorId())?.nombre ?? 'Consulta al motor',
   );
+
+  private readonly abrirClientePedido = effect(() => {
+    const dni = this.clientePedido();
+    if (!dni) return;
+    untracked(() => {
+      const cliente = this.clientes.find((c) => c.dni === dni);
+      if (cliente) this.entrarAFichaCliente(cliente.k);
+      this.clientePedidoAtendido.emit();
+    });
+  });
 
   constructor() {
     effect(() => {
