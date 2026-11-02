@@ -111,7 +111,9 @@ export class DetalleDemo {
   /** Actividades que se completaron en esta sesión de prueba, además de las que infiere la bitácora. */
   private readonly actividadesCompletadas = signal(0);
   /** Cerrado por estado, o porque ya no queda ninguna actividad del workflow por completar. */
-  readonly cerrado = computed(() => this.cerradoPorEstado() || this.pasoActual() >= this.flujo().pasos.length);
+  readonly cerrado = computed(
+    () => this.cerradoPorEstado() || (this.flujo().pasos.length > 0 && this.pasoActual() >= this.flujo().pasos.length),
+  );
   /** Área en la que está ahora el ticket: la del ticket hasta que se deriva en esta sesión de prueba. */
   private readonly areaDerivada = signal<string | null>(null);
   readonly area = computed(() => this.areaDerivada() ?? this.ticket().area);

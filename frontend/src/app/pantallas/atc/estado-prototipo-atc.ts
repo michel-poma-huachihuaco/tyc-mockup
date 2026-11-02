@@ -105,7 +105,7 @@ export interface GuiaTipoConfig {
 export interface AlertaAdminConfig {
   readonly id: string;
   readonly fecha: Date;
-  readonly codigo: 'GUIA_FALTANTE' | 'POLITICA_FALTANTE' | 'PROYECTO_SIN_RESPONSABLE';
+  readonly codigo: 'GUIA_FALTANTE' | 'POLITICA_FALTANTE' | 'PROYECTO_SIN_RESPONSABLE' | 'FLUJO_FALTANTE';
   readonly etiqueta: string;
   readonly tipoTicket: string | null;
   readonly detalle: string;
@@ -703,6 +703,114 @@ export interface SubtipoTicketCfg { id: string; tipoId: string; nombre: string; 
 
 const sub = (id: string, tipoId: string, nombre: string): SubtipoTicketCfg => ({ id, tipoId, nombre, activo: true, provisional: true });
 
+/** Flujo de ejemplo de un subtipo, con una sola versión publicada. */
+function flujoSubtipo(
+  tipo: string,
+  subtipo: string,
+  nombreTipo: string,
+  version: number,
+  area: string,
+  pasos: PasoFlujoConfig[],
+): FlujoTipoConfig {
+  return {
+    tipo,
+    subtipo,
+    nombreTipo,
+    versionActual: version,
+    area,
+    pasos,
+    historial: [{ version, fecha: haceHoras(72), autor: 'Alonso Pérez', area, pasos: pasos.map((p) => ({ ...p })) }],
+  };
+}
+
+/**
+ * Flujos de ejemplo por subtipo: varían en área, número de actividades, responsables y horas para que se
+ * note la diferencia al elegir uno u otro. «Actualización de datos» (Pedido simple) y «Demora en trámite»
+ * (Queja) no tienen flujo a propósito, para ver el aviso de «sin flujo publicado».
+ */
+const FLUJOS_DE_SUBTIPO: FlujoTipoConfig[] = [
+  flujoSubtipo('PED', 'PED-CONSTANCIA', 'Pedido simple', 1, 'ATC', [
+    { nombre: 'Verificación de identidad', responsable: 'Lucía Benavides', horas: 2 },
+    { nombre: 'Emisión de la constancia', responsable: 'Mateo Ríos', horas: 6 },
+    { nombre: 'Entrega al cliente', responsable: 'Mateo Ríos', horas: 4 },
+  ]),
+  flujoSubtipo('PED', 'PED-COPIA-DOC', 'Pedido simple', 1, 'ATC', [
+    { nombre: 'Ubicación del documento en archivo', responsable: 'Mateo Ríos', horas: 8 },
+    { nombre: 'Envío de la copia certificada', responsable: 'Lucía Benavides', horas: 8 },
+  ]),
+  flujoSubtipo('CTA', 'CTA-ESTADO-CUENTA', 'Consulta de cuenta', 2, 'ATC', [
+    { nombre: 'Validación en SIGDA y Motor de Consultas', responsable: 'Lucía Benavides', horas: 2 },
+    { nombre: 'Envío de estado de cuenta y cierre', responsable: 'Lucía Benavides', horas: 22 },
+  ]),
+  flujoSubtipo('CTA', 'CTA-CRONOGRAMA', 'Consulta de cuenta', 1, 'ATC', [
+    { nombre: 'Generación del cronograma', responsable: 'Lucía Benavides', horas: 4 },
+    { nombre: 'Conciliación con las letras pagadas', responsable: 'Carla Villarán', horas: 12 },
+    { nombre: 'Envío al cliente', responsable: 'Lucía Benavides', horas: 4 },
+  ]),
+  flujoSubtipo('CTA', 'CTA-CONFIRMA-ABONO', 'Consulta de cuenta', 1, 'COBRANZA', [
+    { nombre: 'Conciliación del abono en Cobranza', responsable: 'Diego Salazar', horas: 8 },
+    { nombre: 'Confirmación escrita al cliente', responsable: 'Lucía Benavides', horas: 16 },
+  ]),
+  flujoSubtipo('VIS', 'VIS-INSPECCION-LOTE', 'Visita técnica', 1, 'POSTVENTA', [
+    { nombre: 'Coordinación de agenda con el propietario', responsable: 'Nelly Quispe', horas: 8 },
+    { nombre: 'Inspección en campo', responsable: 'Nelly Quispe', horas: 24 },
+    { nombre: 'Informe técnico', responsable: 'Jorge Zambrano', horas: 16 },
+    { nombre: 'Respuesta al cliente', responsable: 'Lucía Benavides', horas: 8 },
+  ]),
+  flujoSubtipo('VIS', 'VIS-LINDEROS', 'Visita técnica', 2, 'POSTVENTA', [
+    { nombre: 'Coordinación con topografía', responsable: 'Nelly Quispe', horas: 8 },
+    { nombre: 'Verificación de linderos en campo', responsable: 'Jorge Zambrano', horas: 32 },
+    { nombre: 'Acta firmada por el propietario', responsable: 'Nelly Quispe', horas: 8 },
+  ]),
+  flujoSubtipo('VIS', 'VIS-AVANCE-OBRA', 'Visita técnica', 1, 'POSTVENTA', [
+    { nombre: 'Solicitud de avance al residente de obra', responsable: 'Jorge Zambrano', horas: 16 },
+    { nombre: 'Informe fotográfico del avance', responsable: 'Jorge Zambrano', horas: 24 },
+  ]),
+  flujoSubtipo('QUE', 'QUE-ATENCION', 'Queja (Libro)', 1, 'LEGAL', [
+    { nombre: 'Registro del asiento en el Libro', responsable: 'Patricia Vílchez', horas: 4 },
+    { nombre: 'Respuesta formal con cargo', responsable: 'Patricia Vílchez', horas: 44 },
+  ]),
+  flujoSubtipo('REC', 'REC-COBRO', 'Reclamo (Libro)', 2, 'LEGAL', [
+    { nombre: 'Registro del asiento en el Libro', responsable: 'Patricia Vílchez', horas: 4 },
+    { nombre: 'Validación del cobro con Cobranza', responsable: 'Carla Villarán', horas: 24 },
+    { nombre: 'Respuesta formal con cargo', responsable: 'Patricia Vílchez', horas: 44 },
+  ]),
+  flujoSubtipo('REC', 'REC-SERVICIO', 'Reclamo (Libro)', 1, 'LEGAL', [
+    { nombre: 'Registro del asiento en el Libro', responsable: 'Patricia Vílchez', horas: 4 },
+    { nombre: 'Revisión del servicio con el área responsable', responsable: 'Nelly Quispe', horas: 40 },
+    { nombre: 'Respuesta formal con cargo', responsable: 'Patricia Vílchez', horas: 40 },
+  ]),
+  flujoSubtipo('CIT', 'CIT-ALUMBRADO', 'Incidencia de ciudad', 1, 'ADMINISTRACION', [
+    { nombre: 'Registro en la administración de la ciudad', responsable: 'Marco Alarcón', horas: 4 },
+    { nombre: 'Orden de trabajo al proveedor', responsable: 'Marco Alarcón', horas: 24 },
+    { nombre: 'Verificación en campo', responsable: 'Jorge Zambrano', horas: 16 },
+  ]),
+  flujoSubtipo('CIT', 'CIT-LIMPIEZA', 'Incidencia de ciudad', 1, 'ADMINISTRACION', [
+    { nombre: 'Programación de la cuadrilla', responsable: 'Marco Alarcón', horas: 8 },
+    { nombre: 'Ejecución y fotos de cierre', responsable: 'Jorge Zambrano', horas: 24 },
+  ]),
+  flujoSubtipo('CIT', 'CIT-VIAS', 'Incidencia de ciudad', 1, 'POSTVENTA', [
+    { nombre: 'Evaluación técnica de la vía', responsable: 'Jorge Zambrano', horas: 16 },
+    { nombre: 'Presupuesto de reparación', responsable: 'Marco Alarcón', horas: 24 },
+    { nombre: 'Aprobación y ejecución', responsable: 'Marco Alarcón', horas: 72 },
+  ]),
+  flujoSubtipo('GAR', 'GAR-ACABADOS', 'Garantía postventa', 1, 'POSTVENTA', [
+    { nombre: 'Registro y verificación de vigencia (6 meses)', responsable: 'Nelly Quispe', horas: 4 },
+    { nombre: 'Inspección técnica', responsable: 'Jorge Zambrano', horas: 40 },
+    { nombre: 'Resolución al cliente', responsable: 'Nelly Quispe', horas: 16 },
+  ]),
+  flujoSubtipo('GAR', 'GAR-ESTRUCTURA', 'Garantía postventa', 2, 'POSTVENTA', [
+    { nombre: 'Registro y verificación de vigencia (10 años)', responsable: 'Nelly Quispe', horas: 4 },
+    { nombre: 'Peritaje estructural', responsable: 'Jorge Zambrano', horas: 72 },
+    { nombre: 'Opinión de Legal', responsable: 'Patricia Vílchez', horas: 24 },
+    { nombre: 'Respuesta al cliente', responsable: 'Nelly Quispe', horas: 8 },
+  ]),
+  flujoSubtipo('GAR', 'GAR-INSTALACIONES', 'Garantía postventa', 1, 'POSTVENTA', [
+    { nombre: 'Registro y verificación de vigencia (1 año)', responsable: 'Nelly Quispe', horas: 4 },
+    { nombre: 'Visita del técnico', responsable: 'Nelly Quispe', horas: 32 },
+  ]),
+];
+
 @Injectable({ providedIn: 'root' })
 export class EstadoPrototipoAtcService {
   /** Catálogo editable de tipos de ticket (Mantenimiento). */
@@ -854,29 +962,7 @@ export class EstadoPrototipoAtcService {
         },
       ],
     },
-    {
-      tipo: 'CTA',
-      subtipo: 'CTA-CONFIRMA-ABONO',
-      nombreTipo: 'Consulta de cuenta',
-      versionActual: 1,
-      area: 'COBRANZA',
-      pasos: [
-        { nombre: 'Conciliación del abono en Cobranza', responsable: 'Diego Salazar', horas: 8 },
-        { nombre: 'Confirmación escrita al cliente', responsable: 'Lucía Benavides', horas: 16 },
-      ],
-      historial: [
-        {
-          version: 1,
-          fecha: haceHoras(72),
-          autor: 'Alonso Pérez',
-          area: 'COBRANZA',
-          pasos: [
-            { nombre: 'Conciliación del abono en Cobranza', responsable: 'Diego Salazar', horas: 8 },
-            { nombre: 'Confirmación escrita al cliente', responsable: 'Lucía Benavides', horas: 16 },
-          ],
-        },
-      ],
-    },
+    ...FLUJOS_DE_SUBTIPO,
     {
       tipo: 'PED',
       nombreTipo: 'Pedido simple',
@@ -2232,31 +2318,51 @@ export class EstadoPrototipoAtcService {
   }
 
   /* ── Métodos que conectan Workflow y Políticas SLA con el resto de vistas ── */
-  /** Flujo del subtipo si tiene uno propio; si no, el general del tipo (HU-ATC-043 CA-07). */
+  /**
+   * Flujo publicado para ese tipo y subtipo, o `null`. Sin subtipo es el general del tipo. Si no hay flujo
+   * no se inventa uno: el ticket entra a la cola del área y se alerta al administrador (HU-ATC-043 CA-07).
+   */
+  buscarFlujo(tipo: string, subtipo?: string): FlujoTipoConfig | null {
+    return this.flujosPorTipo().find((f) => f.tipo === tipo && f.subtipo === (subtipo || undefined)) ?? null;
+  }
+
+  /** Para un ticket que ya existe: su flujo (el del subtipo si lo tiene) o uno sin actividades si no hay ninguno. */
   obtenerFlujoActivo(tipo: string, subtipo?: string): FlujoTipoConfig {
-    const lista = this.flujosPorTipo();
     return (
-      (subtipo ? lista.find((f) => f.tipo === tipo && f.subtipo === subtipo) : undefined) ??
-      lista.find((f) => f.tipo === tipo && !f.subtipo) ?? {
+      this.buscarFlujo(tipo, subtipo) ?? {
         tipo,
         nombreTipo: TIPOS_TICKET.find((t) => t.id === tipo)?.nombre ?? tipo,
-        versionActual: 1,
+        versionActual: 0,
         area: 'ATC',
-        pasos: [{ nombre: 'Recepción y clasificación', responsable: 'Lucía Benavides', horas: 24 }],
+        pasos: [],
         historial: [],
       }
     );
-  }
-
-  /** ¿Este subtipo tiene un flujo publicado propio, distinto del general del tipo? */
-  tieneFlujoPropio(tipo: string, subtipo: string): boolean {
-    return this.flujosPorTipo().some((f) => f.tipo === tipo && f.subtipo === subtipo);
   }
 
   /** «Consulta de cuenta» o «Consulta de cuenta › Confirmación de abono» si el flujo es de un subtipo. */
   etiquetaFlujo(f: FlujoTipoConfig): string {
     const sub = f.subtipo ? this.subtiposTicket().find((s) => s.id === f.subtipo)?.nombre : undefined;
     return sub ? `${f.nombreTipo} › ${sub}` : f.nombreTipo;
+  }
+
+  /** Avisa al administrador funcional de que se registró un ticket de un tipo y subtipo sin flujo (HU-ATC-043 CA-07). */
+  registrarAlertaFlujoFaltante(tipo: string, subtipo?: string): void {
+    const id = `adm-flujo-${subtipo ?? tipo}`;
+    if (this.alertasAdmin().some((a) => a.id === id)) return;
+    const nombreTipo = TIPOS_TICKET.find((t) => t.id === tipo)?.nombre ?? tipo;
+    const nombreSub = subtipo ? this.subtiposTicket().find((s) => s.id === subtipo)?.nombre : undefined;
+    this.alertasAdmin.update((prev) => [
+      {
+        id,
+        fecha: AHORA_BASE,
+        codigo: 'FLUJO_FALTANTE',
+        etiqueta: 'Falta flujo para el tipo y subtipo',
+        tipoTicket: tipo,
+        detalle: `Se registró un ticket de «${nombreTipo}${nombreSub ? ' › ' + nombreSub : ''}» sin flujo publicado: quedó en la cola del área, sin responsable.`,
+      },
+      ...prev,
+    ]);
   }
 
   publicarVersionFlujo(

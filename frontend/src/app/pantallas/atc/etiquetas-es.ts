@@ -43,6 +43,7 @@ export const ALERTA_SLA_ES: MapaEtiquetas = {
 export const ALERTA_ADMIN_ES: MapaEtiquetas = {
   GUIA_FALTANTE: 'Falta guía de solución',
   POLITICA_FALTANTE: 'Falta política de SLA para el tipo',
+  FLUJO_FALTANTE: 'Falta flujo para el tipo y subtipo',
   PROYECTO_SIN_RESPONSABLE: 'Proyecto sin responsable en el maestro',
 };
 

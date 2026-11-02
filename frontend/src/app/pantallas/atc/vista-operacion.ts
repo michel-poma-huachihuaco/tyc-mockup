@@ -841,25 +841,26 @@ import { PasosFlujoComponent } from './pasos-flujo';
               <ay-card superficie="solid">
                 <ay-card-header
                   titulo="Flujo configurado que se aplicará"
-                  [subtitulo]="'Workflow › Flujos · v' + previewFlujoConfig().versionActual"
+                  [subtitulo]="previewFlujoConfig() ? 'Workflow › Flujos · v' + previewFlujoConfig()!.versionActual : 'Workflow › Flujos'"
                   nivel="h2"
                   [separador]="true"
                 />
                 <ay-card-body padding="sm" gap="sm">
-                  @if (subtiposForm().length > 0 && !formSubtipo()) {
+                  @if (previewFlujoConfig(); as fl) {
+                    <ay-card-pairs [pares]="paresPreviewFlujoConfig()" />
+                    <app-pasos-flujo [pasos]="fl.pasos" />
+                    <span ayText="body" size="xs">
+                      Si el Administrador Funcional publica una nueva versión del flujo en Workflow, los nuevos tickets usarán esa versión automáticamente.
+                    </span>
+                  } @else if (subtiposForm().length > 0 && !formSubtipo()) {
                     <ay-alert tono="info" size="sm" titulo="Elige un subtipo">
-                      Mostramos el flujo general de «{{ nombreTipo(formTipo()) }}». Al elegir el subtipo verás su flujo.
+                      El flujo depende del tipo y del subtipo. Al elegir el subtipo verás su flujo.
                     </ay-alert>
-                  } @else if (sinFlujoPropio()) {
-                    <ay-alert tono="warning" size="sm" titulo="Este subtipo no tiene flujo propio">
-                      Se aplica el flujo general de «{{ nombreTipo(formTipo()) }}». El Administrador Funcional puede publicar uno específico en Workflow.
+                  } @else {
+                    <ay-alert tono="warning" size="sm" titulo="Sin flujo publicado">
+                      Este tipo y subtipo no tiene flujo. El ticket entrará a la cola del área, sin responsable asignado, y se avisará al Administrador Funcional.
                     </ay-alert>
                   }
-                  <ay-card-pairs [pares]="paresPreviewFlujoConfig()" />
-                  <app-pasos-flujo [pasos]="previewFlujoConfig().pasos" />
-                  <span ayText="body" size="xs">
-                    Si el Administrador Funcional publica una nueva versión del flujo en Workflow, los nuevos tickets usarán esa versión automáticamente.
-                  </span>
                 </ay-card-body>
               </ay-card>
             </div>
@@ -1405,14 +1406,11 @@ export class VistaOperacionComponent {
     this.estadoProto.calcularPoliticaVigente(this.formTipo(), this.formPrioridad()),
   );
 
-  readonly previewFlujoConfig = computed(() =>
-    this.estadoProto.obtenerFlujoActivo(this.formTipo(), this.formSubtipo() || undefined),
-  );
-
-  /** Hay un subtipo elegido y no tiene flujo publicado propio: aplica el general del tipo. */
-  readonly sinFlujoPropio = computed(
-    () => !!this.formSubtipo() && !this.estadoProto.tieneFlujoPropio(this.formTipo(), this.formSubtipo()),
-  );
+  /** Flujo publicado para el tipo y subtipo elegidos; `null` si falta el subtipo o si no hay flujo. */
+  readonly previewFlujoConfig = computed(() => {
+    if (this.subtiposForm().length > 0 && !this.formSubtipo()) return null;
+    return this.estadoProto.buscarFlujo(this.formTipo(), this.formSubtipo() || undefined);
+  });
 
   readonly paresPreviewSlaCongelado = computed<ParCardPairs[]>(() => {
     const calc = this.previewPoliticaSla();
@@ -1433,6 +1431,7 @@ export class VistaOperacionComponent {
 
   readonly paresPreviewFlujoConfig = computed<ParCardPairs[]>(() => {
     const fl = this.previewFlujoConfig();
+    if (!fl) return [];
     const paso1 = fl.pasos[0];
     return [
       { clave: 'Versión del flujo', valor: `v${fl.versionActual} (${this.estadoProto.etiquetaFlujo(fl)})` },
@@ -1582,8 +1581,9 @@ export class VistaOperacionComponent {
     }
     const corr = String(Math.floor(500 + Math.random() * 400)).padStart(6, '0');
     const num = `${emp.id}-${corr}`;
-    const areaInicial = flujo.area;
-    const responsableInicial = flujo.pasos[0]?.responsable ?? 'Lucía Benavides';
+    if (!flujo) this.estadoProto.registrarAlertaFlujoFaltante(this.formTipo(), this.formSubtipo() || undefined);
+    const areaInicial = flujo?.area ?? 'ATC';
+    const responsableInicial = flujo?.pasos[0]?.responsable ?? null;
 
     const nuevo: TicketAtc = {
       num,
@@ -1603,7 +1603,7 @@ export class VistaOperacionComponent {
       opened: AHORA_BASE,
       frDue: calcSla.venceRespuesta,
       resDue: calcSla.venceResolucion,
-      slaSrc: `${calcSla.politica.id} v${calcSla.politica.version} · Flujo v${flujo.versionActual}`,
+      slaSrc: `${calcSla.politica.id} v${calcSla.politica.version}${flujo ? ` · Flujo v${flujo.versionActual}` : ' · Sin flujo publicado'}`,
       reopen: 0,
       conflict: false,
       rayo: false,
@@ -1627,7 +1627,9 @@ export class VistaOperacionComponent {
           area: areaInicial,
           responsable: responsableInicial,
           motivo: this.formContingencia() ? 'ALTA_SIN_CLIENTE_VINCULADO' : 'ALTA_FLUJO_CONFIGURADO',
-          nota: `Enrutado por Flujo ${flujo.tipo} v${flujo.versionActual} y SLA congelado con ${calcSla.politica.id} v${calcSla.politica.version}.`,
+          nota: flujo
+            ? `Enrutado por Flujo ${this.estadoProto.etiquetaFlujo(flujo)} v${flujo.versionActual} y SLA fijado con ${calcSla.politica.id} v${calcSla.politica.version}.`
+            : `Sin flujo publicado: queda en la cola del área ${areaInicial}, sin responsable. SLA fijado con ${calcSla.politica.id} v${calcSla.politica.version}. Se alertó al Administrador Funcional.`,
         },
       ],
       status: [{ fecha: AHORA_BASE, estado: 'OPEN', autor: this.estadoProto.perfilActivo().nombre }],

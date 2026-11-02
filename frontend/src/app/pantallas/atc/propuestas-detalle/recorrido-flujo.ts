@@ -16,6 +16,9 @@ import type { DetalleDemo } from './base';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="rf" aria-label="Recorrido del workflow del ticket">
+      @if (total() === 0) {
+        <p class="rf-vacio">Este ticket no tiene flujo publicado: está en la cola del área, sin actividades ni responsable.</p>
+      } @else {
       <div class="rf-cab">
         <div class="rf-actual">
           <strong>Actividad {{ enCurso() }} de {{ total() }}</strong>
@@ -72,6 +75,7 @@ import type { DetalleDemo } from './base';
           [actual]="d().pasoStepper()"
         />
       }
+      }
     </section>
   `,
   styles: `
@@ -93,6 +97,7 @@ import type { DetalleDemo } from './base';
     .rf-muestra--pendiente { background: var(--aybar-color-border-subtle); }
     .rf-detalle { display: flex; justify-content: space-between; font-size: var(--aybar-font-size-xs); color: var(--aybar-color-fg-muted); }
     .rf-solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .rf-vacio { margin: 0; font-size: var(--aybar-font-size-sm); color: var(--aybar-color-fg-muted); }
     .rf-meta { color: var(--aybar-color-fg-muted); font-size: var(--aybar-font-size-xs); }
   `,
 })

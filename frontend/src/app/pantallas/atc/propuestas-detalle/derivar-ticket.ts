@@ -185,7 +185,7 @@ export class DerivarTicket {
   /** El flujo de este tipo si está publicado en el área destino; si no, se usa el del área por defecto. */
   protected readonly flujoDelArea = computed(() => {
     const f = this.proto.obtenerFlujoActivo(this.ticket().type, this.ticket().subtipo);
-    return f.area === this.destino() ? f : null;
+    return f.pasos.length > 0 && f.area === this.destino() ? f : null;
   });
 
   protected readonly exigePaquete = computed(() => this.destino() === 'LEGAL' && this.area() !== 'LEGAL');
