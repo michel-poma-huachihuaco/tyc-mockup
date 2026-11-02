@@ -146,7 +146,7 @@ export class DetalleDemo {
    * actividades de ejemplo (son datos de prueba) y `?paso=K` fija la actividad en curso (desde 0).
    */
   readonly flujo = computed(() => {
-    const f = this.proto.obtenerFlujoActivo(this.ticket().type);
+    const f = this.proto.obtenerFlujoActivo(this.ticket().type, this.ticket().subtipo);
     const n = etapasDemo();
     if (n <= f.pasos.length) return f;
     return { ...f, pasos: [...f.pasos, ...ACTIVIDADES_EJEMPLO.slice(0, n - f.pasos.length)] };

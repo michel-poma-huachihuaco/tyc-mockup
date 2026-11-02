@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { AyAvatar, AyBadge, AyButton, AyProgressBar } from '@aybarcorp/ui-angular';
 import { AREAS_ATC } from './datos-atc';
-import type { FlujoTipoConfig } from './estado-prototipo-atc';
+import { EstadoPrototipoAtcService, type FlujoTipoConfig } from './estado-prototipo-atc';
 
 /** Meta corporativa de cierre end-to-end (la misma del tablero de la Torre). */
 const SLA_E2E_HORAS = 72;
@@ -34,11 +34,11 @@ interface SalaArea {
           </header>
 
           <div class="ft__pistas">
-            @for (f of sala.flujos; track f.tipo) {
+            @for (f of sala.flujos; track f.tipo + (f.subtipo ?? '')) {
               <article class="ft__flujo">
                 <div class="ft__cab">
                   <header class="ft__flujo-cab">
-                    <h4 class="ft__flujo-nombre">{{ f.nombreTipo }}</h4>
+                    <h4 class="ft__flujo-nombre">{{ estado.etiquetaFlujo(f) }}</h4>
                     <ay-badge size="sm" tono="info">{{ f.tipo }}</ay-badge>
                     <ay-badge size="sm" tono="neutral">v{{ f.versionActual }}</ay-badge>
                     @if (puedeEditar()) {
@@ -91,6 +91,7 @@ interface SalaArea {
   `,
 })
 export class FlujosTorreComponent {
+  protected readonly estado = inject(EstadoPrototipoAtcService);
   readonly flujos = input.required<readonly FlujoTipoConfig[]>();
   /** Con permiso, cada flujo trae «Editar», igual que la tabla. */
   readonly puedeEditar = input(false);

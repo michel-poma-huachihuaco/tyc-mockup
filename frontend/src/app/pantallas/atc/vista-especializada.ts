@@ -259,7 +259,7 @@ export type SubvistaEspecializadaAtc =
                   <ng-template ayCelda="nombreTipo" let-fila>
                     @let f = comoFlujo(fila);
                     <div>
-                      <strong>{{ f.nombreTipo }}</strong>
+                      <strong>{{ estadoProto.etiquetaFlujo(f) }}</strong>
                       <span ayText="mono" size="xs"> ({{ f.tipo }})</span>
                     </div>
                   </ng-template>
@@ -392,7 +392,7 @@ export type SubvistaEspecializadaAtc =
         <ay-modal
           [abierto]="flujoEditando() !== null"
           (abiertoChange)="!$event && flujoEditando.set(null)"
-          [titulo]="flujoEditando() ? 'Flujo · ' + flujoEditando()!.nombreTipo : 'Flujo'"
+          [titulo]="flujoEditando() ? 'Flujo · ' + estadoProto.etiquetaFlujo(flujoEditando()!) : 'Flujo'"
           size="lg"
         >
           @if (flujoEditando(); as fl) {
@@ -2744,10 +2744,11 @@ export class VistaEspecializadaComponent {
       fl.tipo,
       this.editFlujoArea(),
       this.editFlujoPasos(),
+      fl.subtipo,
     );
     this.flujoEditando.set(null);
     this.avisoOperacion.set(
-      `Flujo de «${nuevo.nombreTipo}» actualizado a v${nuevo.versionActual} (Área: ${etiqueta(AREA_ES, nuevo.area)}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
+      `Flujo de «${this.estadoProto.etiquetaFlujo(nuevo)}» actualizado a v${nuevo.versionActual} (Área: ${etiqueta(AREA_ES, nuevo.area)}). Los nuevos tickets en «Nuevo ticket» aplicarán esta versión.`,
     );
   }
 

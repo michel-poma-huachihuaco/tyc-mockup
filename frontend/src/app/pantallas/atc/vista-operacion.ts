@@ -72,11 +72,13 @@ import { VacioFiltrosComponent } from './vacio-filtros';
 import type { DerivacionEvento } from './propuestas-detalle/derivar-ticket';
 import { DetalleCreativa } from './propuestas-detalle/version-creativa';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
+import { PasosFlujoComponent } from './pasos-flujo';
 
 @Component({
   selector: 'app-vista-operacion',
   standalone: true,
   imports: [
+    PasosFlujoComponent,
     DetalleCreativa,
     BarraFiltrosComponent,
     FiltroColumnasTablaDirective,
@@ -658,7 +660,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
       <div ayStack gap="6">
         <ay-page-header
           titulo="Nuevo ticket"
-          descripcion="Registra la solicitud tipificada desde el primer contacto. Al guardar, se asigna el número de ticket de la razón social y se congela el SLA vigente."
+          descripcion="Registra la solicitud tipificada desde el primer contacto. Al guardar, se asigna el número de ticket de la razón social y se fijan los plazos de atención (SLA)."
         />
 
         @if (!estadoProto.puedeRegistrarTicket()) {
@@ -741,7 +743,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                             (valorChange)="cambiarPrioridadForm($event)"
                           />
                         </ay-form-field>
-                        <ay-form-field etiqueta="Cliente o Interesado (SIGDA / TAXON)" obligatorio>
+                        <ay-form-field etiqueta="Cliente o interesado" obligatorio>
                           <ay-input nombre="form-cliente" [valor]="formCliente()" (valorChange)="formCliente.set($event)" />
                         </ay-form-field>
                         <ay-form-field etiqueta="Documento (DNI / CE)" obligatorio>
@@ -816,8 +818,8 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
             <div ayStack gap="4">
               <ay-card superficie="solid">
                 <ay-card-header
-                  titulo="SLA que se congelará"
-                  subtitulo="Se calcula al guardar con la versión activa en Políticas SLA y ya no cambia aunque la política cambie después."
+                  titulo="Plazos de atención (SLA)"
+                  subtitulo="Se fijan al guardar con la política vigente y no cambian aunque la política se actualice después."
                   nivel="h2"
                   [separador]="true"
                 />
@@ -844,7 +846,17 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                   [separador]="true"
                 />
                 <ay-card-body padding="sm" gap="sm">
+                  @if (subtiposForm().length > 0 && !formSubtipo()) {
+                    <ay-alert tono="info" size="sm" titulo="Elige un subtipo">
+                      Mostramos el flujo general de «{{ nombreTipo(formTipo()) }}». Al elegir el subtipo verás su flujo.
+                    </ay-alert>
+                  } @else if (sinFlujoPropio()) {
+                    <ay-alert tono="warning" size="sm" titulo="Este subtipo no tiene flujo propio">
+                      Se aplica el flujo general de «{{ nombreTipo(formTipo()) }}». El Administrador Funcional puede publicar uno específico en Workflow.
+                    </ay-alert>
+                  }
                   <ay-card-pairs [pares]="paresPreviewFlujoConfig()" />
+                  <app-pasos-flujo [pasos]="previewFlujoConfig().pasos" />
                   <span ayText="body" size="xs">
                     Si el Administrador Funcional publica una nueva versión del flujo en Workflow, los nuevos tickets usarán esa versión automáticamente.
                   </span>
@@ -1394,7 +1406,12 @@ export class VistaOperacionComponent {
   );
 
   readonly previewFlujoConfig = computed(() =>
-    this.estadoProto.obtenerFlujoActivo(this.formTipo()),
+    this.estadoProto.obtenerFlujoActivo(this.formTipo(), this.formSubtipo() || undefined),
+  );
+
+  /** Hay un subtipo elegido y no tiene flujo publicado propio: aplica el general del tipo. */
+  readonly sinFlujoPropio = computed(
+    () => !!this.formSubtipo() && !this.estadoProto.tieneFlujoPropio(this.formTipo(), this.formSubtipo()),
   );
 
   readonly paresPreviewSlaCongelado = computed<ParCardPairs[]>(() => {
@@ -1418,15 +1435,11 @@ export class VistaOperacionComponent {
     const fl = this.previewFlujoConfig();
     const paso1 = fl.pasos[0];
     return [
-      { clave: 'Versión del flujo', valor: `v${fl.versionActual} (${fl.nombreTipo})` },
-      { clave: 'Área receptora', valor: fl.area },
+      { clave: 'Versión del flujo', valor: `v${fl.versionActual} (${this.estadoProto.etiquetaFlujo(fl)})` },
+      { clave: 'Área receptora', valor: this.areaEs(fl.area) },
       {
-        clave: '1.er paso y responsable',
-        valor: paso1 ? `${paso1.nombre} · ${paso1.responsable} (${paso1.horas} h)` : 'Cola del área',
-      },
-      {
-        clave: 'Secuencia completa',
-        valor: fl.pasos.map((p, i) => `${i + 1}. ${p.nombre} (${p.responsable}, ${p.horas} h)`).join(' → '),
+        clave: 'Responsable inicial',
+        valor: paso1 ? paso1.responsable : 'Cola del área',
       },
     ];
   });
@@ -1478,7 +1491,7 @@ export class VistaOperacionComponent {
 
   /** Recorrido del flujo configurado para el tipo, con responsable y horas por actividad. */
   recorridoFlujo(t: TicketAtc): string[] {
-    return this.flujoDeTicket(t.type).pasos.map(
+    return this.flujoDeTicket(t.type, t.subtipo).pasos.map(
       (p, i) => `${i + 1}. ${p.nombre} · ${p.responsable} · ${p.horas} h`,
     );
   }
@@ -1623,8 +1636,8 @@ export class VistaOperacionComponent {
     this.ticketCreado.emit({ ticket: nuevo, crearAsientoLibro: this.esTipoLibro() });
   }
 
-  flujoDeTicket(type: string) {
-    return this.estadoProto.obtenerFlujoActivo(type);
+  flujoDeTicket(type: string, subtipo?: string) {
+    return this.estadoProto.obtenerFlujoActivo(type, subtipo);
   }
 
   guiaConfigDeTicket(type: string) {

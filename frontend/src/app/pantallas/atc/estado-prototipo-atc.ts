@@ -74,6 +74,8 @@ export interface VersionFlujoConfig {
 
 export interface FlujoTipoConfig {
   readonly tipo: string;
+  /** Subtipo al que aplica; sin él, es el flujo general del tipo (HU-ATC-043: tipo + subtipo + área). */
+  readonly subtipo?: string;
   readonly nombreTipo: string;
   versionActual: number;
   area: string;
@@ -848,6 +850,29 @@ export class EstadoPrototipoAtcService {
           pasos: [
             { nombre: 'Validación en SIGDA y Motor de Consultas', responsable: 'Lucía Benavides', horas: 2 },
             { nombre: 'Envío de estado de cuenta y cierre', responsable: 'Lucía Benavides', horas: 22 },
+          ],
+        },
+      ],
+    },
+    {
+      tipo: 'CTA',
+      subtipo: 'CTA-CONFIRMA-ABONO',
+      nombreTipo: 'Consulta de cuenta',
+      versionActual: 1,
+      area: 'COBRANZA',
+      pasos: [
+        { nombre: 'Conciliación del abono en Cobranza', responsable: 'Diego Salazar', horas: 8 },
+        { nombre: 'Confirmación escrita al cliente', responsable: 'Lucía Benavides', horas: 16 },
+      ],
+      historial: [
+        {
+          version: 1,
+          fecha: haceHoras(72),
+          autor: 'Alonso Pérez',
+          area: 'COBRANZA',
+          pasos: [
+            { nombre: 'Conciliación del abono en Cobranza', responsable: 'Diego Salazar', horas: 8 },
+            { nombre: 'Confirmación escrita al cliente', responsable: 'Lucía Benavides', horas: 16 },
           ],
         },
       ],
@@ -2207,9 +2232,12 @@ export class EstadoPrototipoAtcService {
   }
 
   /* ── Métodos que conectan Workflow y Políticas SLA con el resto de vistas ── */
-  obtenerFlujoActivo(tipo: string): FlujoTipoConfig {
+  /** Flujo del subtipo si tiene uno propio; si no, el general del tipo (HU-ATC-043 CA-07). */
+  obtenerFlujoActivo(tipo: string, subtipo?: string): FlujoTipoConfig {
+    const lista = this.flujosPorTipo();
     return (
-      this.flujosPorTipo().find((f) => f.tipo === tipo) ?? {
+      (subtipo ? lista.find((f) => f.tipo === tipo && f.subtipo === subtipo) : undefined) ??
+      lista.find((f) => f.tipo === tipo && !f.subtipo) ?? {
         tipo,
         nombreTipo: TIPOS_TICKET.find((t) => t.id === tipo)?.nombre ?? tipo,
         versionActual: 1,
@@ -2220,11 +2248,27 @@ export class EstadoPrototipoAtcService {
     );
   }
 
-  publicarVersionFlujo(tipo: string, area: string, pasos: PasoFlujoConfig[]): FlujoTipoConfig {
+  /** ¿Este subtipo tiene un flujo publicado propio, distinto del general del tipo? */
+  tieneFlujoPropio(tipo: string, subtipo: string): boolean {
+    return this.flujosPorTipo().some((f) => f.tipo === tipo && f.subtipo === subtipo);
+  }
+
+  /** «Consulta de cuenta» o «Consulta de cuenta › Confirmación de abono» si el flujo es de un subtipo. */
+  etiquetaFlujo(f: FlujoTipoConfig): string {
+    const sub = f.subtipo ? this.subtiposTicket().find((s) => s.id === f.subtipo)?.nombre : undefined;
+    return sub ? `${f.nombreTipo} › ${sub}` : f.nombreTipo;
+  }
+
+  publicarVersionFlujo(
+    tipo: string,
+    area: string,
+    pasos: PasoFlujoConfig[],
+    subtipo?: string,
+  ): FlujoTipoConfig {
     let actualizado!: FlujoTipoConfig;
     this.flujosPorTipo.update((lista) =>
       lista.map((f) => {
-        if (f.tipo !== tipo) return f;
+        if (f.tipo !== tipo || f.subtipo !== subtipo) return f;
         const nuevaVersion = f.versionActual + 1;
         const copiaPasos = pasos.map((p) => ({ ...p }));
         actualizado = {
