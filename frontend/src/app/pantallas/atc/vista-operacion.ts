@@ -508,10 +508,14 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                       }
                     </div>
                   </ng-template>
+                  <ng-template ayCelda="sla" let-fila>
+                    @let g = comoAvanceGestor(fila);
+                    <ay-badge size="sm" tono="success">{{ g.sla }}</ay-badge>
+                  </ng-template>
                   <ng-template ayCelda="csat" let-fila>
                     @let g = comoAvanceGestor(fila);
                     <div ayStack gap="1">
-                      <ay-badge size="sm" tono="success">{{ g.csat }} ★ ({{ g.sla }})</ay-badge>
+                      <ay-badge size="sm" tono="success">{{ g.csat }} ★</ay-badge>
                       <span ayText="subtitle" size="xs">{{ g.encuestas }} de {{ g.enviadas }} respondidas</span>
                     </div>
                   </ng-template>
@@ -1057,14 +1061,15 @@ export class VistaOperacionComponent {
     { clave: 'gestor', cabecera: 'Gestor / Área', ordenable: true },
     { clave: 'atendidos', cabecera: 'Atendidos hoy', ancho: '9rem', ordenable: true },
     { clave: 'pendientes', cabecera: 'Carga activa', ancho: '11rem', ordenable: true },
-    { clave: 'csat', cabecera: 'CSAT y SLA hoy', alineacion: 'end', ancho: '12rem', ordenable: true },
+    { clave: 'sla', cabecera: 'SLA hoy', ancho: '8rem', ordenable: true },
+    { clave: 'csat', cabecera: 'CSAT hoy', ancho: '12rem', ordenable: true },
   ];
 
   readonly avanceEquipoHoy = [
-    { gestor: 'Ana Torres / C. Rojas (Tú)', area: 'Atención al Cliente Eje 1/2', atendidos: 14, pendientes: 4, riesgo: 1, csat: '4.7', sla: '94% SLA', encuestas: 12, enviadas: 14 },
-    { gestor: 'M. Delgado', area: 'Atención al Cliente Eje 1/2', atendidos: 15, pendientes: 2, riesgo: 0, csat: '4.8', sla: '96% SLA', encuestas: 13, enviadas: 15 },
-    { gestor: 'R. Salazar', area: 'Cobranza y Recaudación', atendidos: 11, pendientes: 5, riesgo: 2, csat: '4.4', sla: '89% SLA', encuestas: 8, enviadas: 11 },
-    { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92% SLA', encuestas: 7, enviadas: 9 },
+    { gestor: 'Ana Torres / C. Rojas (Tú)', area: 'Atención al Cliente Eje 1/2', atendidos: 14, pendientes: 4, riesgo: 1, csat: '4.7', sla: '94%', encuestas: 12, enviadas: 14 },
+    { gestor: 'M. Delgado', area: 'Atención al Cliente Eje 1/2', atendidos: 15, pendientes: 2, riesgo: 0, csat: '4.8', sla: '96%', encuestas: 13, enviadas: 15 },
+    { gestor: 'R. Salazar', area: 'Cobranza y Recaudación', atendidos: 11, pendientes: 5, riesgo: 2, csat: '4.4', sla: '89%', encuestas: 8, enviadas: 11 },
+    { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92%', encuestas: 7, enviadas: 9 },
   ];
 
   /**
