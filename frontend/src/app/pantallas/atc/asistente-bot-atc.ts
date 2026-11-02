@@ -1,6 +1,7 @@
 import {
   Component,
   DestroyRef,
+  Injector,
   ElementRef,
   afterNextRender,
   computed,
@@ -139,7 +140,7 @@ export class BotAvatarCanvasComponent {
                 type="button"
                 class="pt-bot__x"
                 aria-label="Cerrar el asistente"
-                (click)="abierto.set(false)"
+                (click)="cerrar()"
               >
                 ✕
               </button>
@@ -370,21 +371,22 @@ export class BotAvatarCanvasComponent {
           </button>
         }
 
-        <div class="pt-bot__fabcaja">
-          <button
-            type="button"
-            class="pt-bot__fab"
-            title="Tigo · Asistente de IA"
-            [attr.aria-label]="etiquetaFab()"
-            [attr.aria-expanded]="abierto()"
-            (click)="alternarPanel()"
-          >
-            <app-bot-avatar-canvas [estado]="abierto() ? estado() : 'reposo'" />
-          </button>
-          @if (tigo.pendientes().length > 0) {
-            <span class="pt-bot__insignia" aria-hidden="true">{{ tigo.pendientes().length }}</span>
-          }
-        </div>
+        @if (!abierto()) {
+          <div class="pt-bot__fabcaja">
+            <button
+              type="button"
+              class="pt-bot__fab"
+              title="Tigo · Asistente de IA"
+              [attr.aria-label]="etiquetaFab()"
+              (click)="abrirPanel()"
+            >
+              <app-bot-avatar-canvas estado="reposo" />
+            </button>
+            @if (tigo.pendientes().length > 0) {
+              <span class="pt-bot__insignia" aria-hidden="true">{{ tigo.pendientes().length }}</span>
+            }
+          </div>
+        }
       </div>
     }
   `,
@@ -399,6 +401,8 @@ export class AsistenteBotAtcComponent {
   /** Pide abrir la vista «Tigo · Atención asistida» (propuesta fuera de la Etapa 1). */
   readonly irATigo = output<void>();
   private readonly doc = inject(DOCUMENT);
+  private readonly injector = inject(Injector);
+  private devolverFoco = false;
   private readonly contenedorMsgs = viewChild<ElementRef<HTMLElement>>('contenedorMsgs');
 
   readonly tonos = TONOS;
@@ -491,7 +495,7 @@ export class AsistenteBotAtcComponent {
       };
       const onKeyDown = (ev: KeyboardEvent) => {
         if (ev.key === 'Escape' && this.abierto()) {
-          this.abierto.set(false);
+          this.cerrar();
         }
       };
       const onAsistente = (ev: Event) => {
@@ -518,6 +522,19 @@ export class AsistenteBotAtcComponent {
         this.doc.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('pt:asistente', onAsistente);
       });
+    });
+
+    // Foco: al abrir, a la ✕ del panel; al cerrar por ✕/Escape, de vuelta al FAB (recreado por @if).
+    effect(() => {
+      const abierto = this.abierto();
+      afterNextRender(
+        () => {
+          const q = abierto ? '.pt-bot__x' : this.devolverFoco ? '.pt-bot__fab' : null;
+          this.devolverFoco = false;
+          if (q) this.doc.querySelector<HTMLElement>(q)?.focus();
+        },
+        { injector: this.injector },
+      );
     });
 
     effect((onCleanup) => {
@@ -559,16 +576,13 @@ export class AsistenteBotAtcComponent {
 
   etiquetaFab(): string {
     const n = this.tigo.pendientes().length;
-    const base = this.abierto() ? 'Cerrar el asistente Tigo' : 'Abrir a Tigo, asistente de IA';
+    const base = 'Abrir a Tigo, asistente de IA';
     return n > 0 ? `${base} (${n} ${n === 1 ? 'propuesta espera' : 'propuestas esperan'} tu aprobación)` : base;
   }
 
-  alternarPanel(): void {
-    if (this.abierto()) {
-      this.abierto.set(false);
-    } else {
-      this.abrirPanel();
-    }
+  cerrar(): void {
+    this.devolverFoco = true;
+    this.abierto.set(false);
   }
 
   nombreTono(tono?: Tono): string {

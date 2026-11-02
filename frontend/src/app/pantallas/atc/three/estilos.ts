@@ -202,7 +202,7 @@ const CSS = `
 .pt-bot__panel {
   position: absolute;
   inset-inline-end: 0;
-  inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-3));
+  inset-block-end: 0;
   inline-size: min(25.5rem, calc(100vw - var(--aybar-space-8)));
   block-size: min(38.5rem, calc(100dvh - 9.5rem));
   display: flex;
@@ -495,7 +495,6 @@ const CSS = `
   }
 
   .pt-bot__panel {
-    inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-2));
     inline-size: calc(100vw - var(--aybar-space-6));
     block-size: min(32rem, calc(100dvh - 7.5rem));
   }
