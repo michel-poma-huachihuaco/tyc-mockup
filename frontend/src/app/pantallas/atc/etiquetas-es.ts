@@ -49,7 +49,7 @@ export const ALERTA_ADMIN_ES: MapaEtiquetas = {
 /** Motivos de derivación, reasignación y bitácora de un ticket. */
 export const MOTIVO_ES: MapaEtiquetas = {
   ALTA: 'Alta del ticket',
-  ALTA_CONTINGENCIA_CONCILIACION: 'Alta por contingencia de conciliación',
+  ALTA_SIN_CLIENTE_VINCULADO: 'Alta sin cliente vinculado (pendiente de vincular)',
   ALTA_FLUJO_CONFIGURADO: 'Alta según flujo configurado',
   AUTO_ASIGNACION_MENOR_CARGA: 'Asignación automática por menor carga',
   DERIVACION_COMPETENCIA: 'Derivación por competencia del área',

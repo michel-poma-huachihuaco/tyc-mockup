@@ -92,6 +92,8 @@ export interface TicketAtc {
   rayo: boolean;
   rayoMotivo?: string;
   emotion: string;
+  /** Local donde se atendió; vacío si el canal es remoto (HU-ATC-001 CA-02). */
+  establecimiento?: string;
   eje: 1 | 2 | 3;
   contract?: string | null;
   summary: string;

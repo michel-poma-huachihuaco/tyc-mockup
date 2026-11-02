@@ -658,7 +658,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
       <div ayStack gap="6">
         <ay-page-header
           titulo="Nuevo ticket"
-          descripcion="Registra la solicitud tipificada desde el primer contacto. Al guardar, el cliente recibe su número y se congela el SLA vigente."
+          descripcion="Registra la solicitud tipificada desde el primer contacto. Al guardar, se asigna el número de ticket de la razón social y se congela el SLA vigente."
         />
 
         @if (!estadoProto.puedeRegistrarTicket()) {
@@ -702,6 +702,16 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                             (valorChange)="formCanal.set($event)"
                           />
                         </ay-form-field>
+                        <ay-form-field
+                          etiqueta="Establecimiento"
+                          ayuda="Déjalo vacío si el canal es remoto (WhatsApp, correo, Mi Portal)."
+                        >
+                          <ay-input nombre="form-establecimiento"
+                            [valor]="formEstablecimiento()"
+                            (valorChange)="formEstablecimiento.set($event)"
+                            placeholder="Ej. Sede Central San Isidro"
+                          />
+                        </ay-form-field>
                         <ay-form-field etiqueta="Tipo de ticket" obligatorio>
                           <ay-select nombre="form-tipo"
                             [opciones]="opcionesTiposForm"
@@ -737,33 +747,24 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         <ay-form-field etiqueta="Documento (DNI / CE)" obligatorio>
                           <ay-input nombre="form-dni" [valor]="formDni()" (valorChange)="formDni.set($event)" />
                         </ay-form-field>
-                        <ay-form-field etiqueta="Proyecto y Lote / Unidad" obligatorio>
+                        <ay-form-field
+                          etiqueta="Proyecto y lote / unidad"
+                          ayuda="Solo si la solicitud es de un lote."
+                        >
                           <ay-input nombre="form-proyecto" [valor]="formProyecto()" (valorChange)="formProyecto.set($event)" />
                         </ay-form-field>
                       </div>
 
                       <ay-form-group
-                        leyenda="Señales de conflicto y excepciones de consulta"
-                        descripcion="Si el cliente menciona alguna señal de conflicto, el ticket se atenderá en Eje 3 (Legal)."
+                        leyenda="Excepción de consulta del cliente"
+                        descripcion="Si el cliente no existe en SIGDA/TAXON o la fuente no responde, el ticket se registra con datos mínimos y queda pendiente de vincular."
                         variante="card"
                       >
                         <ay-checkbox
                           [marcado]="formContingencia()"
                           (marcadoChange)="formContingencia.set($event)"
                         >
-                          Interesado (excepción): Cliente no está en SIGDA/TAXON o sistema caído (queda pendiente de vincular)
-                        </ay-checkbox>
-                        <ay-checkbox
-                          [marcado]="formRayo()"
-                          (marcadoChange)="formRayo.set($event)"
-                        >
-                          Marcar con prioridad Rayo (va primero en la bandeja sin alterar su SLA)
-                        </ay-checkbox>
-                        <ay-checkbox
-                          [marcado]="formConflicto()"
-                          (marcadoChange)="formConflicto.set($event)"
-                        >
-                          Señal de conflicto legal (amenaza con INDECOPI, menciona abogado, carta notarial o medios → Eje 3 Legal)
+                          Registrar como interesado (el cliente no está en SIGDA/TAXON o el sistema no responde)
                         </ay-checkbox>
                       </ay-form-group>
 
@@ -787,20 +788,11 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                             (valorChange)="formResumen.set($event)"
                           />
                         </ay-form-field>
-                        <ay-form-field
-                          etiqueta="Descripción y nota de estado emocional (sin calificativos de juicio)"
-                          [error]="
-                            emocionInvalida()
-                              ? 'Contiene palabras de juicio («histérico», «problemático», «loco»). Reformúlalas con hechos observables.'
-                              : undefined
-                          "
-                          obligatorio
-                        >
-                          <ay-textarea nombre="form-emocion"
+                        <ay-form-field etiqueta="Descripción">
+                          <ay-textarea nombre="form-descripcion"
                             [filas]="3"
-                            [invalido]="emocionInvalida()"
-                            [valor]="formEmocion()"
-                            (valorChange)="formEmocion.set($event)"
+                            [valor]="formDescripcion()"
+                            (valorChange)="formDescripcion.set($event)"
                           />
                         </ay-form-field>
                       </div>
@@ -809,7 +801,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                         <ay-button
                           tipo="submit"
                           variante="primary"
-                          [disabled]="emocionInvalida() || subtipoInvalido()"
+                          [disabled]="subtipoInvalido()"
                         >
                           Registrar ticket
                         </ay-button>
@@ -1122,12 +1114,11 @@ export class VistaOperacionComponent {
   readonly formCliente = signal<string>('Eddie Huamaní');
   readonly formDni = signal<string>('7228••••');
   readonly formProyecto = signal<string>('Villa Sol II · Mz. C Lt. 07');
+  readonly formEstablecimiento = signal<string>('');
   readonly formContingencia = signal<boolean>(false);
-  readonly formRayo = signal<boolean>(false);
-  readonly formConflicto = signal<boolean>(false);
   readonly formContratoCiudad = signal<string>('CITY_SERVICE_FEE-2026-0113');
   readonly formResumen = signal<string>('Solicita confirmación de abono de cuota y horario de bus para EntregaFest.');
-  readonly formEmocion = signal<string>('Cliente en tono cordial; solicita confirmación por escrito.');
+  readonly formDescripcion = signal<string>('');
 
   readonly textoRespuesta = signal<string>('');
   readonly notaInterna = signal<boolean>(false);
@@ -1398,13 +1389,6 @@ export class VistaOperacionComponent {
     () => this.tipos.find((x) => x.id === this.formTipo())?.libro ?? false,
   );
 
-  readonly emocionInvalida = computed(() => {
-    const txt = this.formEmocion().toLowerCase();
-    return ['histérico', 'histerico', 'loco', 'mentiroso', 'problemático', 'problematico'].some((w) =>
-      txt.includes(w),
-    );
-  });
-
   readonly previewPoliticaSla = computed(() =>
     this.estadoProto.calcularPoliticaVigente(this.formTipo(), this.formPrioridad()),
   );
@@ -1576,7 +1560,7 @@ export class VistaOperacionComponent {
   }
 
   guardarNuevoTicket(): void {
-    if (this.emocionInvalida() || this.subtipoInvalido()) return;
+    if (this.subtipoInvalido()) return;
     const emp = this.empresas.find((e) => e.id === this.formEmpresa()) ?? this.empresas[0];
     const calcSla = this.previewPoliticaSla();
     const flujo = this.previewFlujoConfig();
@@ -1585,11 +1569,8 @@ export class VistaOperacionComponent {
     }
     const corr = String(Math.floor(500 + Math.random() * 400)).padStart(6, '0');
     const num = `${emp.id}-${corr}`;
-    const esConflicto = this.formConflicto();
-    const areaInicial = esConflicto ? 'LEGAL' : flujo.area;
-    const responsableInicial = esConflicto
-      ? 'Patricia Vílchez'
-      : (flujo.pasos[0]?.responsable ?? 'Lucía Benavides');
+    const areaInicial = flujo.area;
+    const responsableInicial = flujo.pasos[0]?.responsable ?? 'Lucía Benavides';
 
     const nuevo: TicketAtc = {
       num,
@@ -1597,13 +1578,13 @@ export class VistaOperacionComponent {
       empresa: emp,
       line: this.formLinea(),
       ch: this.formCanal(),
-      cli: this.formContingencia() ? `${this.formCliente()} [COLA CONCILIACIÓN]` : this.formCliente(),
+      cli: this.formContingencia() ? `${this.formCliente()} (sin vincular)` : this.formCliente(),
       dni: this.formDni(),
       proj: this.formProyecto(),
       type: this.formTipo(),
       subtipo: this.formSubtipo() || undefined,
       prio: this.formPrioridad(),
-      state: esConflicto ? 'ESCALATED' : 'OPEN',
+      state: 'OPEN',
       area: areaInicial,
       owner: responsableInicial,
       opened: AHORA_BASE,
@@ -1611,10 +1592,11 @@ export class VistaOperacionComponent {
       resDue: calcSla.venceResolucion,
       slaSrc: `${calcSla.politica.id} v${calcSla.politica.version} · Flujo v${flujo.versionActual}`,
       reopen: 0,
-      conflict: esConflicto,
-      rayo: this.formRayo(),
-      emotion: this.formEmocion(),
-      eje: esConflicto ? 3 : 1,
+      conflict: false,
+      rayo: false,
+      emotion: '',
+      eje: 1,
+      establecimiento: this.formEstablecimiento().trim() || undefined,
       contract: this.formTipo() === 'CIT' ? this.formContratoCiudad() : null,
       summary: this.formResumen(),
       interactions: [
@@ -1631,11 +1613,11 @@ export class VistaOperacionComponent {
           fecha: AHORA_BASE,
           area: areaInicial,
           responsable: responsableInicial,
-          motivo: this.formContingencia() ? 'ALTA_CONTINGENCIA_CONCILIACION' : 'ALTA_FLUJO_CONFIGURADO',
+          motivo: this.formContingencia() ? 'ALTA_SIN_CLIENTE_VINCULADO' : 'ALTA_FLUJO_CONFIGURADO',
           nota: `Enrutado por Flujo ${flujo.tipo} v${flujo.versionActual} y SLA congelado con ${calcSla.politica.id} v${calcSla.politica.version}.`,
         },
       ],
-      status: [{ fecha: AHORA_BASE, estado: esConflicto ? 'ESCALATED' : 'OPEN', autor: this.estadoProto.perfilActivo().nombre }],
+      status: [{ fecha: AHORA_BASE, estado: 'OPEN', autor: this.estadoProto.perfilActivo().nombre }],
     };
 
     this.ticketCreado.emit({ ticket: nuevo, crearAsientoLibro: this.esTipoLibro() });

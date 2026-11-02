@@ -174,7 +174,9 @@ import {
                   <ay-card-pairs [pares]="[{ clave: 'Gestor asignado', valor: d.responsable() }]" />
                 </section>
 
-                <ay-alert tono="info" size="sm" titulo="Nota de contexto del cliente">{{ t.emotion }}</ay-alert>
+                @if (t.emotion) {
+                  <ay-alert tono="info" size="sm" titulo="Nota de contexto del cliente">{{ t.emotion }}</ay-alert>
+                }
               </div>
             </ay-card-body>
           </ay-card>

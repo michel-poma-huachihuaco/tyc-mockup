@@ -158,7 +158,9 @@ import {
                   <ay-divider espaciado="sm" />
                 }
               }
-              <ay-alert tono="info" size="sm" titulo="Nota de contexto del cliente">{{ t.emotion }}</ay-alert>
+              @if (t.emotion) {
+                <ay-alert tono="info" size="sm" titulo="Nota de contexto del cliente">{{ t.emotion }}</ay-alert>
+              }
             </ay-card-body>
           </ay-card>
 
