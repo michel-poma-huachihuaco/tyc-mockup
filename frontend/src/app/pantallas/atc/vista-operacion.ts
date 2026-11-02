@@ -31,7 +31,6 @@ import {
   AyModal,
   AyPageHeader,
   AyPagination,
-  AyProgressBar,
   AyRow,
   AySelect,
   AyStack,
@@ -39,7 +38,6 @@ import {
   AyTable,
   AyTextarea,
   AyText,
-  AyTimeline,
   type AyColumna,
   type AyMenuItem,
   type AyOpcionSelect,
@@ -104,7 +102,6 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
         AyModal,
     AyPageHeader,
     AyPagination,
-    AyProgressBar,
     AyRow,
     AySelect,
     AyStack,
@@ -112,7 +109,6 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
     AyTable,
     AyTextarea,
     AyText,
-    AyTimeline,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -394,7 +390,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
       <div ayStack gap="6">
         <ay-page-header
           titulo="Tu Día"
-          descripcion="Tu avance de hoy: tickets atendidos, acciones realizadas, pendientes en riesgo, avance del equipo y correos de asignación."
+          descripcion="Tu avance de hoy: tickets atendidos, pendientes en riesgo, cumplimiento de SLA y CSAT. El supervisor ve además el avance de su equipo."
         >
           @if (estadoProto.rolActivo() === 'SUPERVISOR') {
             <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
@@ -414,40 +410,16 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
         <!-- 1. Resumen de KPIs de Tu Día -->
         <div ayStack gap="2">
-          <div ayGrid [columnas]="4" gap="sm">
+          <div ayGrid [columnas]="3" gap="sm">
             <ay-card superficie="solid">
               <ay-card-body padding="sm">
                 <div ayStack gap="2">
                   <ay-statistic
                     etiqueta="Tickets atendidos hoy"
                     [valor]="14"
-                    unidad="/ 18"
+                    unidad="tickets"
                     size="sm"
                   />
-                  <ay-progress-bar
-                    etiqueta="Meta diaria del turno"
-                    [valor]="78"
-                    detalle="78% de tu meta diaria"
-                    tono="success"
-                    size="sm"
-                  />
-                </div>
-              </ay-card-body>
-            </ay-card>
-
-            <ay-card superficie="solid">
-              <ay-card-body padding="sm">
-                <div ayStack gap="2">
-                  <ay-statistic
-                    etiqueta="Acciones realizadas hoy"
-                    [valor]="accionesHoy().length"
-                    unidad="acciones"
-                    size="sm"
-                  />
-                  <div ayRow gap="1" [ajuste]="true">
-                    <ay-badge size="sm" tono="info">6 respuestas SLA</ay-badge>
-                    <ay-badge size="sm" tono="success">4 cierres</ay-badge>
-                  </div>
                 </div>
               </ay-card-body>
             </ay-card>
@@ -487,88 +459,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </div>
         </div>
 
-        <!-- 2. Bitácora de tus avances y acciones de hoy -->
-        <div ayStack gap="2">
-          <div ayRow gap="3" justificar="between" [ajuste]="true">
-            <div ayStack gap="1">
-              <ay-heading [nivel]="2" size="sm">
-                Tus avances y acciones realizadas hoy
-              </ay-heading>
-              <span ayText="subtitle" size="xs">
-                Registro cronológico de aperturas, primeras respuestas en SLA, derivaciones 6/6, llamadas CTI y resoluciones ejecutadas hoy.
-              </span>
-            </div>
-          </div>
-
-          <div ayGrid [columnas]="3" gap="md">
-            <div class="pl-atc-col-span-2">
-              <ay-card variante="elevated" superficie="solid">
-                <ay-card-body padding="sm" gap="sm">
-                  <app-barra-filtros [filtros]="filtrosAccionesHoy" />
-                  <ay-table
-                    leyenda="Acciones y avances realizados hoy por el usuario"
-                    [columnas]="columnasAccionesHoy"
-                    [filas]="filtrosAccionesHoy.filtradas()"
-                    [filtrosTabla]="filtrosAccionesHoy"
-                    [rayada]="true"
-                  >
-                    <ng-template ayCelda="hora" let-fila>
-                      @let a = comoAccionHoy(fila);
-                      <strong ayText="mono" size="xs">{{ a.hora }}</strong>
-                    </ng-template>
-                    <ng-template ayCelda="etiqueta" let-fila>
-                      @let a = comoAccionHoy(fila);
-                      <ay-badge size="sm" [tono]="a.tono">{{ a.etiqueta }}</ay-badge>
-                    </ng-template>
-                    <ng-template ayCelda="ticket" let-fila>
-                      @let a = comoAccionHoy(fila);
-                      <div ayStack gap="1">
-                        <strong ayText="mono" size="xs">{{ a.ticket }}</strong>
-                        <span ayText="body" size="xs">{{ a.cliente }}</span>
-                      </div>
-                    </ng-template>
-                    <ng-template ayCelda="detalle" let-fila>
-                      @let a = comoAccionHoy(fila);
-                      <div ayStack gap="1">
-                        <span>{{ a.detalle }}</span>
-                        <span ayText="subtitle" size="xs">{{ a.impactoSla }}</span>
-                      </div>
-                    </ng-template>
-                    <ng-template ayCelda="accion" let-fila>
-                      @let a = comoAccionHoy(fila);
-                      <div class="pl-atc-acciones-celda">
-                        <ay-button
-                          tamano="sm"
-                          variante="secondary"
-                          [disabled]="!a.ticket"
-                          (click)="a.ticket && seleccionarTicket.emit(a.ticket)"
-                        >
-                          Abrir ticket
-                        </ay-button>
-                      </div>
-                    </ng-template>
-                    <app-vacio-filtros ayVacio [filtros]="filtrosAccionesHoy" elemento="registro" />
-                  </ay-table>
-                </ay-card-body>
-              </ay-card>
-            </div>
-
-            <ay-card superficie="solid">
-              <ay-card-body padding="md" gap="md">
-                <div ayStack gap="1">
-                  <strong ayText="label" size="sm">Línea de tiempo de tu turno</strong>
-                  <span ayText="subtitle" size="xs">Hitos clave registrados en tu sesión de hoy</span>
-                </div>
-                <ay-timeline
-                  etiqueta="Hitos del día del gestor"
-                  [hitos]="hitosTuDia"
-                />
-              </ay-card-body>
-            </ay-card>
-          </div>
-        </div>
-
-        <!-- 3. Tus tickets pendientes / en riesgo para cerrar hoy -->
+        <!-- 2. Tus tickets pendientes / en riesgo para cerrar hoy -->
         <div ayStack gap="2">
           <div ayRow gap="3" justificar="between" [ajuste]="true">
             <div ayStack gap="1">
@@ -699,13 +590,13 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </ay-card>
         </div>
 
-        <!-- 4. Avance diario del equipo y Correos de asignación enviados hoy -->
-        <div ayGrid [columnas]="2" gap="md">
+        <!-- 3. Avance diario del equipo: solo el supervisor (HU-ATC-054 CA-02 y CA-03; ATC.DASHBOARD.TEAM) -->
+        @if (estadoProto.rolActivo() === 'SUPERVISOR') {
           <div ayStack gap="2">
             <div ayStack gap="1">
               <ay-heading [nivel]="2" size="sm">Avance diario del equipo</ay-heading>
               <span ayText="subtitle" size="xs">
-                Productividad por gestor, carga ponderada activa y cumplimiento de SLA en el turno.
+                Tickets atendidos, carga activa, cumplimiento de SLA y CSAT de cada gestor hoy.
               </span>
             </div>
             <ay-card superficie="solid">
@@ -723,17 +614,9 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                       <span ayText="body" size="xs">{{ areaEs(g.area) }}</span>
                     </div>
                   </ng-template>
-                  <ng-template ayCelda="pct" let-fila>
+                  <ng-template ayCelda="atendidos" let-fila>
                     @let g = comoAvanceGestor(fila);
-                    <div ayStack gap="1">
-                      <strong>{{ g.atendidos }} / {{ g.meta }}</strong>
-                      <ay-progress-bar
-                        [etiqueta]="'Avance ' + g.gestor"
-                        [valor]="g.pct"
-                        [tono]="g.pct >= 75 ? 'success' : 'brand'"
-                        size="sm"
-                      />
-                    </div>
+                    <strong>{{ g.atendidos }}</strong>
                   </ng-template>
                   <ng-template ayCelda="pendientes" let-fila>
                     @let g = comoAvanceGestor(fila);
@@ -752,51 +635,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               </ay-card-body>
             </ay-card>
           </div>
-
-          <div ayStack gap="2">
-            <div ayStack gap="1">
-              <ay-heading [nivel]="2" size="sm">
-                Correos de asignación enviados hoy (con CC a líder de área)
-              </ay-heading>
-              <span ayText="subtitle" size="xs">
-                Trazabilidad de notificaciones automáticas disparadas hoy al asignar o derivar tickets.
-              </span>
-            </div>
-            <ay-card superficie="solid">
-              <ay-card-body padding="sm">
-                <ay-table
-                  leyenda="Correos automáticos de asignación enviados hoy"
-                  [columnas]="columnasCorreosHoy"
-                  [filas]="correosAsignacionHoy"
-                  [rayada]="true"
-                >
-                  <ng-template ayCelda="hora" let-fila>
-                    @let c = comoCorreoHoy(fila);
-                    <span ayText="mono" size="xs">{{ c.hora }}</span>
-                  </ng-template>
-                  <ng-template ayCelda="ticket" let-fila>
-                    @let c = comoCorreoHoy(fila);
-                    <div ayStack gap="1">
-                      <strong ayText="mono" size="xs">{{ c.ticket }}</strong>
-                      <span ayText="body" size="xs">{{ c.asunto }}</span>
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="para" let-fila>
-                    @let c = comoCorreoHoy(fila);
-                    <div ayStack gap="1">
-                      <span ayText="body" size="xs"><strong>Para:</strong> {{ c.para }}</span>
-                      <span ayText="subtitle" size="xs"><strong>CC Líder:</strong> {{ c.ccLider }}</span>
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="estado" let-fila>
-                    @let c = comoCorreoHoy(fila);
-                    <ay-badge size="sm" tono="success">{{ c.estado }}</ay-badge>
-                  </ng-template>
-                </ay-table>
-              </ay-card-body>
-            </ay-card>
-          </div>
-        </div>
+        }
       </div>
     }
 
@@ -1206,233 +1045,18 @@ export class VistaOperacionComponent {
 
 
 
-  readonly columnasAccionesHoy: readonly AyColumna[] = [
-    { clave: 'hora', cabecera: 'Hora', ancho: '6rem', ordenable: true },
-    { clave: 'etiqueta', cabecera: 'Tipo de acción', ancho: '11rem', ordenable: true },
-    { clave: 'ticket', cabecera: 'Ticket / Cliente', ancho: '12rem', ordenable: true },
-    { clave: 'detalle', cabecera: 'Avance o gestión realizada', ordenable: true },
-    { clave: 'accion', cabecera: 'Acciones', alineacion: 'end', ancho: '9rem' },
-  ];
-
   readonly columnasEquipoHoy: readonly AyColumna[] = [
     { clave: 'gestor', cabecera: 'Gestor / Área', ordenable: true },
-    { clave: 'pct', cabecera: 'Avance del turno', ancho: '11rem', ordenable: true },
+    { clave: 'atendidos', cabecera: 'Atendidos hoy', ancho: '9rem', ordenable: true },
     { clave: 'pendientes', cabecera: 'Carga activa', ancho: '11rem', ordenable: true },
     { clave: 'csat', cabecera: 'CSAT y SLA hoy', alineacion: 'end', ancho: '10rem', ordenable: true },
   ];
 
-  readonly columnasCorreosHoy: readonly AyColumna[] = [
-    { clave: 'hora', cabecera: 'Hora', ancho: '5.5rem', ordenable: true },
-    { clave: 'ticket', cabecera: 'Ticket y Asunto', ordenable: true },
-    { clave: 'para', cabecera: 'Destinatario y CC Líder', ordenable: true },
-    { clave: 'estado', cabecera: 'Envío', alineacion: 'end', ancho: '7rem', ordenable: true },
-  ];
-
-  readonly accionesHoy = signal([
-    {
-      hora: '15:42',
-      categoria: 'RESPUESTA_SLA',
-      etiqueta: '1.ª Respuesta SLA',
-      tono: 'info' as const,
-      ticket: 'AIN-000482',
-      cliente: 'Eddie Huamaní',
-      detalle: 'Envío de cronograma conciliado con Letras #14 y #15 validadas en Mi Portal.',
-      impactoSla: 'Respondido 2 h 15 min antes del vencimiento de 1.ª respuesta',
-    },
-    {
-      hora: '14:55',
-      categoria: 'DERIVACION',
-      etiqueta: 'Derivación 6/6 Legal',
-      tono: 'danger' as const,
-      ticket: 'ALT-001204',
-      cliente: 'Jorge Mamani Ccori',
-      detalle: 'Transferencia a Eje 3 Legal con checklist documental 6/6 verificado.',
-      impactoSla: 'Sincronizado con Comité SGD y bandeja de Dra. Lucía Paredes',
-    },
-    {
-      hora: '13:20',
-      categoria: 'RESOLUCION',
-      etiqueta: 'Resolución en línea',
-      tono: 'success' as const,
-      ticket: 'VSL-000319',
-      cliente: 'María Elena Quispe',
-      detalle: 'Confirmación de cupo en Bus #02 para EntregaFest y envío de pase QR.',
-      impactoSla: 'Cerrado en 1.er contacto (FCR) · Encuesta CSAT 5/5 recibida',
-    },
-    {
-      hora: '11:48',
-      categoria: 'LLAMADA_CTI',
-      etiqueta: 'Llamada CTI atendida',
-      tono: 'warning' as const,
-      ticket: 'AIN-000488',
-      cliente: 'Rosaura Mendoza',
-      detalle: 'Atención telefónica sobre partida de independización SUNARP y estado de adenda.',
-      impactoSla: 'Grabación vinculada automáticamente al expediente del ticket',
-    },
-    {
-      hora: '10:15',
-      categoria: 'RESPUESTA_SLA',
-      etiqueta: '1.ª Respuesta SLA',
-      tono: 'info' as const,
-      ticket: 'PRB-000105',
-      cliente: 'Luis Alberto Chávez',
-      detalle: 'Validación de vigencia de garantía postventa de instalaciones sanitarias (1 año).',
-      impactoSla: 'Inspección técnica programada dentro de SLA',
-    },
-    {
-      hora: '09:05',
-      categoria: 'RESOLUCION',
-      etiqueta: 'Resolución en línea',
-      tono: 'success' as const,
-      ticket: 'AIN-000479',
-      cliente: 'Carmen Rosa Salazar',
-      detalle: 'Actualización de correo y teléfono titular con validación biométrica.',
-      impactoSla: 'Cerrado en 18 min · SLA cumplido al 100%',
-    },
-  ]);
-
-  readonly filtrosAccionesHoy = crearFiltrosTabla(
-    this.accionesHoy,
-    {
-      clave: 'acciones-hoy',
-      etiquetaElemento: 'acciones',
-      filtros: [
-        {
-          id: 'categoria',
-          etiqueta: 'Filtrar acciones de hoy',
-          tipo: 'segmento',
-          etiquetaTodas: 'Todas las acciones',
-          valorDe: (a) => a.categoria,
-          opciones: [
-            { valor: 'RESPUESTA_SLA', etiqueta: '1.ª Respuesta SLA' },
-            { valor: 'RESOLUCION', etiqueta: 'Resoluciones' },
-            { valor: 'DERIVACION', etiqueta: 'Derivaciones 6/6' },
-            { valor: 'LLAMADA_CTI', etiqueta: 'Llamadas CTI' },
-          ],
-        },
-      ],
-    },
-    inject(EstadoFiltrosTablas),
-  );
-
-  readonly hitosTuDia: AyTimelineEvento[] = [
-    {
-      id: 'hito-1',
-      titulo: '15:42 · 1.ª respuesta enviada en AIN-000482 (Eddie Huamaní)',
-      fecha: AHORA_BASE,
-      autor: 'Cronograma conciliado visible en Mi Portal',
-      tono: 'accent',
-    },
-    {
-      id: 'hito-2',
-      titulo: '14:55 · Paquete 6/6 completado y derivado a Eje 3 Legal (ALT-001204)',
-      fecha: AHORA_BASE,
-      autor: 'Custodia documental validada sin observaciones',
-      tono: 'danger',
-    },
-    {
-      id: 'hito-3',
-      titulo: '13:20 · Ticket VSL-000319 resuelto en primer contacto (CSAT 5★)',
-      fecha: AHORA_BASE,
-      autor: 'Pase QR EntregaFest emitido en línea',
-      tono: 'success',
-    },
-    {
-      id: 'hito-4',
-      titulo: '11:48 · Llamada CTI vinculada a AIN-000488',
-      fecha: AHORA_BASE,
-      autor: 'Consulta de adenda y partida registral atendida',
-      tono: 'accent',
-    },
-    {
-      id: 'hito-5',
-      titulo: '08:30 · Inicio de turno y balanceo automático de bandeja (18 tickets)',
-      fecha: AHORA_BASE,
-      autor: 'Meta del día: 18 atenciones con ≥ 90% SLA',
-      tono: 'default',
-    },
-  ];
-
   readonly avanceEquipoHoy = [
-    {
-      gestor: 'Ana Torres / C. Rojas (Tú)',
-      area: 'Atención al Cliente Eje 1/2',
-      atendidos: 14,
-      meta: 18,
-      pct: 78,
-      pendientes: 4,
-      riesgo: 1,
-      csat: '4.7',
-      sla: '94% SLA',
-    },
-    {
-      gestor: 'M. Delgado',
-      area: 'Atención al Cliente Eje 1/2',
-      atendidos: 15,
-      meta: 18,
-      pct: 83,
-      pendientes: 2,
-      riesgo: 0,
-      csat: '4.8',
-      sla: '96% SLA',
-    },
-    {
-      gestor: 'R. Salazar',
-      area: 'Cobranza y Recaudación',
-      atendidos: 11,
-      meta: 16,
-      pct: 69,
-      pendientes: 5,
-      riesgo: 2,
-      csat: '4.4',
-      sla: '89% SLA',
-    },
-    {
-      gestor: 'L. Ccahuana',
-      area: 'Postventa y Garantías',
-      atendidos: 9,
-      meta: 12,
-      pct: 75,
-      pendientes: 3,
-      riesgo: 0,
-      csat: '4.6',
-      sla: '92% SLA',
-    },
-  ];
-
-  readonly correosAsignacionHoy = [
-    {
-      hora: '15:10',
-      ticket: 'AIN-000482',
-      asunto: 'Asignación automática por carga · Prioridad Rayo',
-      para: 'c.rojas@aybarcorp.pe',
-      ccLider: 'carlos.mendoza@aybarcorp.pe (Líder ATC)',
-      estado: 'Entregado',
-    },
-    {
-      hora: '14:55',
-      ticket: 'ALT-001204',
-      asunto: 'Handoff 6/6 Eje 3 Legal · Conflicto contractual',
-      para: 'lucia.paredes@aybarcorp.pe',
-      ccLider: 'gerencia.legal@aybarcorp.pe (Líder Legal)',
-      estado: 'Entregado',
-    },
-    {
-      hora: '12:30',
-      ticket: 'VSL-000390',
-      asunto: 'Derivación a Cobranza · Conciliación de voucher',
-      para: 'r.salazar@aybarcorp.pe',
-      ccLider: 'jefatura.cobranza@aybarcorp.pe (Líder Finanzas)',
-      estado: 'Entregado',
-    },
-    {
-      hora: '09:40',
-      ticket: 'PRB-000105',
-      asunto: 'Solicitud de inspección técnica postventa',
-      para: 'martin.salazar@aybarcorp.pe',
-      ccLider: 'postventa.lider@aybarcorp.pe (Líder Postventa)',
-      estado: 'Entregado',
-    },
+    { gestor: 'Ana Torres / C. Rojas (Tú)', area: 'Atención al Cliente Eje 1/2', atendidos: 14, pendientes: 4, riesgo: 1, csat: '4.7', sla: '94% SLA' },
+    { gestor: 'M. Delgado', area: 'Atención al Cliente Eje 1/2', atendidos: 15, pendientes: 2, riesgo: 0, csat: '4.8', sla: '96% SLA' },
+    { gestor: 'R. Salazar', area: 'Cobranza y Recaudación', atendidos: 11, pendientes: 5, riesgo: 2, csat: '4.4', sla: '89% SLA' },
+    { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92% SLA' },
   ];
 
   readonly misTicketsPendientesHoy = computed(() =>
@@ -1537,34 +1161,10 @@ export class VistaOperacionComponent {
     return fila as TicketAtc;
   }
 
-  comoAccionHoy(fila: unknown): {
-    hora: string;
-    categoria: string;
-    etiqueta: string;
-    tono: 'info' | 'success' | 'warning' | 'danger' | 'neutral';
-    ticket: string;
-    cliente: string;
-    detalle: string;
-    impactoSla: string;
-  } {
-    return fila as {
-      hora: string;
-      categoria: string;
-      etiqueta: string;
-      tono: 'info' | 'success' | 'warning' | 'danger' | 'neutral';
-      ticket: string;
-      cliente: string;
-      detalle: string;
-      impactoSla: string;
-    };
-  }
-
   comoAvanceGestor(fila: unknown): {
     gestor: string;
     area: string;
     atendidos: number;
-    meta: number;
-    pct: number;
     pendientes: number;
     riesgo: number;
     csat: string;
@@ -1574,34 +1174,12 @@ export class VistaOperacionComponent {
       gestor: string;
       area: string;
       atendidos: number;
-      meta: number;
-      pct: number;
       pendientes: number;
       riesgo: number;
       csat: string;
       sla: string;
     };
   }
-
-  comoCorreoHoy(fila: unknown): {
-    hora: string;
-    ticket: string;
-    asunto: string;
-    para: string;
-    ccLider: string;
-    estado: string;
-  } {
-    return fila as {
-      hora: string;
-      ticket: string;
-      asunto: string;
-      para: string;
-      ccLider: string;
-      estado: string;
-    };
-  }
-
-
 
   readonly ticketsConRayo = computed(() => this.tickets().filter((t) => t.rayo).length);
 
