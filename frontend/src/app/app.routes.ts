@@ -50,6 +50,11 @@ export const routes: Routes = [
       import('./pantallas/atc/propuestas-monitor/vista-propuestas-monitor').then((m) => m.VistaPropuestasMonitor),
   },
   {
+    path: 'propuestas-sla',
+    title: `Propuestas de la card de SLA · ${NOMBRE_PROYECTO} · Aybar`,
+    loadComponent: () => import('./pantallas/atc/propuestas-sla/vista-propuestas-sla').then((m) => m.VistaPropuestasSla),
+  },
+  {
     path: 'bienvenida',
     title: `Portada SDK · ${NOMBRE_PROYECTO} · Aybar`,
     loadComponent: () => import('./pantallas/bienvenida').then((m) => m.Bienvenida),
