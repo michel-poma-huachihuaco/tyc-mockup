@@ -471,7 +471,57 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </div>
         </div>
 
-        <!-- 2. Tus tickets pendientes / en riesgo para cerrar hoy -->
+        <!-- 2. Avance diario del equipo: solo el supervisor (HU-ATC-054 CA-02 y CA-03; ATC.DASHBOARD.TEAM) -->
+        @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+          <div ayStack gap="2">
+            <div ayStack gap="1">
+              <ay-heading [nivel]="2" size="sm">Avance diario del equipo</ay-heading>
+              <span ayText="subtitle" size="xs">
+                Tickets atendidos, carga activa, cumplimiento de SLA y CSAT de cada gestor hoy.
+              </span>
+            </div>
+            <ay-card superficie="solid">
+              <ay-card-body padding="sm">
+                <ay-table
+                  leyenda="Avance diario del equipo ATC"
+                  [columnas]="columnasEquipoHoy"
+                  [filas]="avanceEquipoHoy"
+                  [rayada]="true"
+                >
+                  <ng-template ayCelda="gestor" let-fila>
+                    @let g = comoAvanceGestor(fila);
+                    <div ayStack gap="1">
+                      <strong>{{ g.gestor }}</strong>
+                      <span ayText="body" size="xs">{{ areaEs(g.area) }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="atendidos" let-fila>
+                    @let g = comoAvanceGestor(fila);
+                    <strong>{{ g.atendidos }}</strong>
+                  </ng-template>
+                  <ng-template ayCelda="pendientes" let-fila>
+                    @let g = comoAvanceGestor(fila);
+                    <div ayRow gap="1" [ajuste]="true">
+                      <ay-badge size="sm" tono="neutral">{{ g.pendientes }} activos</ay-badge>
+                      @if (g.riesgo > 0) {
+                        <ay-badge size="sm" tono="warning">{{ g.riesgo }} en riesgo</ay-badge>
+                      }
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="csat" let-fila>
+                    @let g = comoAvanceGestor(fila);
+                    <div ayStack gap="1">
+                      <ay-badge size="sm" tono="success">{{ g.csat }} ★ ({{ g.sla }})</ay-badge>
+                      <span ayText="subtitle" size="xs">{{ g.encuestas }} de {{ g.enviadas }} respondidas</span>
+                    </div>
+                  </ng-template>
+                </ay-table>
+              </ay-card-body>
+            </ay-card>
+          </div>
+        }
+
+        <!-- 3. Tus tickets pendientes / en riesgo para cerrar hoy -->
         <div ayStack gap="2">
           <div ayRow gap="3" justificar="between" [ajuste]="true">
             <div ayStack gap="1">
@@ -602,55 +652,6 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
           </ay-card>
         </div>
 
-        <!-- 3. Avance diario del equipo: solo el supervisor (HU-ATC-054 CA-02 y CA-03; ATC.DASHBOARD.TEAM) -->
-        @if (estadoProto.rolActivo() === 'SUPERVISOR') {
-          <div ayStack gap="2">
-            <div ayStack gap="1">
-              <ay-heading [nivel]="2" size="sm">Avance diario del equipo</ay-heading>
-              <span ayText="subtitle" size="xs">
-                Tickets atendidos, carga activa, cumplimiento de SLA y CSAT de cada gestor hoy.
-              </span>
-            </div>
-            <ay-card superficie="solid">
-              <ay-card-body padding="sm">
-                <ay-table
-                  leyenda="Avance diario del equipo ATC"
-                  [columnas]="columnasEquipoHoy"
-                  [filas]="avanceEquipoHoy"
-                  [rayada]="true"
-                >
-                  <ng-template ayCelda="gestor" let-fila>
-                    @let g = comoAvanceGestor(fila);
-                    <div ayStack gap="1">
-                      <strong>{{ g.gestor }}</strong>
-                      <span ayText="body" size="xs">{{ areaEs(g.area) }}</span>
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="atendidos" let-fila>
-                    @let g = comoAvanceGestor(fila);
-                    <strong>{{ g.atendidos }}</strong>
-                  </ng-template>
-                  <ng-template ayCelda="pendientes" let-fila>
-                    @let g = comoAvanceGestor(fila);
-                    <div ayRow gap="1" [ajuste]="true">
-                      <ay-badge size="sm" tono="neutral">{{ g.pendientes }} activos</ay-badge>
-                      @if (g.riesgo > 0) {
-                        <ay-badge size="sm" tono="warning">{{ g.riesgo }} en riesgo</ay-badge>
-                      }
-                    </div>
-                  </ng-template>
-                  <ng-template ayCelda="csat" let-fila>
-                    @let g = comoAvanceGestor(fila);
-                    <div ayStack gap="1">
-                      <ay-badge size="sm" tono="success">{{ g.csat }} ★ ({{ g.sla }})</ay-badge>
-                      <span ayText="subtitle" size="xs">{{ g.encuestas }} de {{ g.enviadas }} respondidas</span>
-                    </div>
-                  </ng-template>
-                </ay-table>
-              </ay-card-body>
-            </ay-card>
-          </div>
-        }
       </div>
     }
 
