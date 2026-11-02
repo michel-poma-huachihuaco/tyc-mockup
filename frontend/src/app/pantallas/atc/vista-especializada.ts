@@ -61,6 +61,7 @@ import {
   type CasoSgd,
   type ReclamoGarantia,
   type TicketAtc,
+  crearTicketInicial,
 } from './datos-atc';
 import {
   ALERTA_SLA_ES,
@@ -1762,7 +1763,7 @@ export type SubvistaEspecializadaAtc =
           [descripcion]="
             estadoProto.rolActivo() === 'CLIENTE'
               ? 'Reserva tu cupo con tus acompañantes (hasta 3) y tu punto de embarque desde Mi Portal.'
-              : 'Tablero del evento: casos por criticidad, protocolo de contención con las 6 frases ancla, derivación inmediata a Estación 4 y aforo y reservas de buses.'
+              : 'Tablero del evento: casos con su riesgo verbal, secuencia de Frases Ancla 4-5-6, derivación inmediata a la Estación 4 y aforo y reservas de buses.'
           "
         />
 
@@ -1770,17 +1771,23 @@ export type SubvistaEspecializadaAtc =
           @if (imputacionPenalDetectada()) {
             <ay-alert
               tono="danger"
-              titulo="Imputación penal detectada: criticidad CRÍTICA obligatoria"
+              titulo="Palabra de riesgo muy alto: derivación inmediata a la Estación 4"
             >
-              La descripción menciona vocabulario penal («estafa», «robo», «denuncia penal», «fiscalía»). El anfitrión aplica la Frase Ancla #3 y deriva de inmediato a la Estación 4 (Legal).
+              La descripción contiene una palabra de riesgo muy alto («estafa», «fraude», «abuso» o «delito»). No se debate en sala: el caso se registra con la etiqueta «{{ etiquetaCasoEvento }}» y se deriva de inmediato a la Estación 4 (Legal).
+            </ay-alert>
+          }
+          @if (frasesAplicadas().includes(6)) {
+            <ay-alert tono="warning" titulo="Frase 6 aplicada: registra el caso">
+              La Frase 6 exige registrar el caso para cerrar el tema en sala.
             </ay-alert>
           }
 
-          <div ayGrid [columnas]="2" gap="md">
+          <div ayGrid [columnas]="3" gap="md">
+            <div class="pl-atc-col-span-2">
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Casos registrados en el evento"
-                subtitulo="Ordenados por criticidad y hora de registro."
+                subtitulo="Más recientes primero. Todos llevan la etiqueta «Atención especial — derivación a Legal» y su estado de derivación a la Estación 4."
                 nivel="h2"
                 [separador]="true"
               />
@@ -1800,13 +1807,19 @@ export type SubvistaEspecializadaAtc =
                     <div ayStack gap="1">
                       <strong>{{ c.cliente }}</strong>
                       <span ayText="body" size="xs">{{ c.proyecto }}</span>
+                      <span ayText="subtitle" size="xs">{{ etiquetaCasoEvento }}</span>
                     </div>
                   </ng-template>
-                  <ng-template ayCelda="criticidad" let-fila>
+                  <ng-template ayCelda="riesgo" let-fila>
                     @let c = comoCasoEvento(fila);
-                    <ay-badge size="sm" [tono]="c.criticidad === 'CRITICA' ? 'danger' : 'warning'">
-                      {{ etiqueta(criticidadEs, c.criticidad) }}
-                    </ay-badge>
+                    <div ayStack gap="1">
+                      <ay-badge size="sm" [tono]="c.imputacionPenal ? 'danger' : 'neutral'">
+                        {{ c.imputacionPenal ? 'Muy alto (imputación penal)' : 'Sin palabra de riesgo' }}
+                      </ay-badge>
+                      <span ayText="subtitle" size="xs">
+                        Frases: {{ c.frases.length > 0 ? c.frases.join(' → ') : 'ninguna' }}
+                      </span>
+                    </div>
                   </ng-template>
                   <ng-template ayCelda="situacion" let-fila>
                     @let c = comoCasoEvento(fila);
@@ -1817,7 +1830,7 @@ export type SubvistaEspecializadaAtc =
                         [disabled]="!!c.estacion4"
                         (click)="!c.estacion4 && derivarCasoAEstacion4(c)"
                       >
-                        {{ c.estacion4 ? 'En Estación 4 (Legal)' : 'Derivar a Estación 4' }}
+                        {{ c.estacion4 ? 'Derivado a Estación 4 (Legal)' : 'Derivar a Estación 4' }}
                       </ay-button>
                     </div>
                   </ng-template>
@@ -1825,7 +1838,7 @@ export type SubvistaEspecializadaAtc =
 
                 <ay-divider espaciado="sm" />
 
-                <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de imputación penal)">
+                <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de palabras de riesgo muy alto)">
                   <ay-textarea nombre="texto-evento"
                     [filas]="2"
                     [valor]="textoEvento()"
@@ -1837,9 +1850,9 @@ export type SubvistaEspecializadaAtc =
                   <ay-button
                     tamano="sm"
                     variante="danger"
-                    (click)="textoEvento.set('Exijo mi minuta hoy mismo, esto es una estafa y robo')"
+                    (click)="textoEvento.set('Exijo mi minuta hoy mismo, esto es una estafa')"
                   >
-                    Probar frase con imputación penal
+                    Probar frase con palabra de riesgo
                   </ay-button>
                   <ay-button
                     tamano="sm"
@@ -1851,16 +1864,32 @@ export type SubvistaEspecializadaAtc =
                 </div>
               </ay-card-body>
             </ay-card>
+            </div>
 
             <ay-card superficie="solid">
               <ay-card-header
-                titulo="Protocolo de contención: las 6 frases ancla"
-                subtitulo="Guía verbal obligatoria para moderadores y anfitriones del evento."
+                titulo="Secuencia de contención: Frases Ancla 4, 5 y 6"
+                subtitulo="Se aplican en orden ante la insistencia de un propietario, antes de derivar."
                 nivel="h2"
                 [separador]="true"
               />
               <ay-card-body padding="sm">
-                <app-protocolo-frases [frases]="estadoProto.frasesAnclaEvento" />
+                <div ayStack gap="3">
+                  <app-protocolo-frases
+                    [frases]="estadoProto.frasesAnclaEvento"
+                    [aplicadas]="frasesAplicadas()"
+                    (aplicar)="aplicarFrase($event)"
+                  />
+                  @if (frasesAplicadas().length > 0) {
+                    <div ayRow gap="2" justificar="between">
+                      <span ayText="subtitle" size="xs">Secuencia aplicada: {{ frasesAplicadas().join(' → ') }}</span>
+                      <ay-button tamano="sm" variante="ghost" (click)="frasesAplicadas.set([])">Reiniciar</ay-button>
+                    </div>
+                  }
+                  <span ayText="subtitle" size="xs">
+                    Las Frases Ancla 1 a 3 y el texto que dice el moderador en cada una están por definir con el PO.
+                  </span>
+                </div>
               </ay-card-body>
             </ay-card>
           </div>
@@ -1884,7 +1913,7 @@ export type SubvistaEspecializadaAtc =
           <ay-card variante="elevated" superficie="solid">
             <ay-card-header
               titulo="Mi Portal · Reservar mi cupo en el bus"
-              subtitulo="Hasta 3 acompañantes por titular convocado. Si el bus no tiene cupo, puedes entrar en la lista de espera."
+              subtitulo="Hasta 3 acompañantes por titular convocado. Si el bus no tiene cupo, puedes elegir otro bus u horario o entrar en la lista de espera."
               nivel="h2"
               [separador]="true"
             />
@@ -1917,6 +1946,20 @@ export type SubvistaEspecializadaAtc =
                   <ay-button tipo="submit" variante="primary">Reservar mi cupo</ay-button>
                 </div>
               </ay-form>
+              @if (ofertaSinCupo(); as o) {
+                <ay-alert tono="warning" titulo="Este bus no tiene cupo">
+                  {{ nombreBus(o.busId) }} no tiene cupo para {{ 1 + o.acompanantes }} personas. Elige otro bus u horario con cupo o entra a la lista de espera.
+                  <div ayRow gap="2" [ajuste]="true">
+                    @for (b of busesConCupo(); track b.id) {
+                      <ay-button tamano="sm" variante="secondary" (click)="reservarEnOtroBus(b.id)">
+                        Reservar en {{ b.nombre }} ({{ cuposLibresBus(b.id) }} libres)
+                      </ay-button>
+                    }
+                    <ay-button tamano="sm" variante="primary" (click)="entrarListaEspera()">Entrar a la lista de espera</ay-button>
+                    <ay-button tamano="sm" variante="ghost" (click)="ofertaSinCupo.set(null)">Cancelar</ay-button>
+                  </div>
+                </ay-alert>
+              }
             </ay-card-body>
           </ay-card>
         }
@@ -2175,6 +2218,8 @@ export class VistaEspecializadaComponent {
   /** Código de área (p. ej. 'LEGAL') que el Tablero de la Torre quiere ver en Vivo. */
   readonly verAreaEnVivo = output<string>();
   readonly irANuevo = output<void>();
+  /** La reserva de un cupo de bus genera un ticket (HU-ATC-060 CA-01): la consola lo suma a la bandeja. */
+  readonly ticketNuevo = output<TicketAtc>();
 
   readonly avisoOperacion = signal<string | null>(null);
 
@@ -2316,20 +2361,23 @@ export class VistaEspecializadaComponent {
   ];
 
   readonly columnasReservasBus: readonly AyColumna[] = [
-    { clave: 'n', cabecera: 'Cliente convocado', ordenable: true },
+    { clave: 'clienteNombre', cabecera: 'Cliente convocado', ordenable: true },
     { clave: 'busId', cabecera: 'Bus y horario', ancho: '13rem', ordenable: true },
     { clave: 'punto', cabecera: 'Punto de embarque' },
     { clave: 'acompanantes', cabecera: 'Personas', ancho: '9rem', ordenable: true },
-    { clave: 'reg', cabecera: 'Estado', ancho: '10rem', ordenable: true },
+    { clave: 'estado', cabecera: 'Estado', ancho: '10rem', ordenable: true },
     { clave: 'accion', cabecera: 'Acción', alineacion: 'end', ancho: '9rem' },
   ];
 
   readonly columnasCasosEvento: readonly AyColumna[] = [
     { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
-    { clave: 'clienteNombre', cabecera: 'Cliente / Proyecto', ordenable: true },
-    { clave: 'criticidad', cabecera: 'Criticidad', ancho: '8rem', ordenable: true },
-    { clave: 'situacion', cabecera: 'Acción Estación 4', alineacion: 'end', ancho: '12rem' },
+    { clave: 'cliente', cabecera: 'Cliente / Proyecto', ordenable: true },
+    { clave: 'riesgo', cabecera: 'Riesgo verbal y frases', ancho: '13rem', ordenable: true },
+    { clave: 'situacion', cabecera: 'Estación 4', alineacion: 'end', ancho: '13rem' },
   ];
+
+  /** Etiqueta estándar de todo caso del evento (HU-ATC-039 CA-01): se escribe literalmente así. */
+  readonly etiquetaCasoEvento = 'Atención especial — derivación a Legal';
 
   readonly columnasEncuestasCx: readonly AyColumna[] = [
     { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
@@ -2602,11 +2650,21 @@ export class VistaEspecializadaComponent {
       (this.riesgoCuantioso() ? 25 : 0),
   );
 
+  /** Palabras de riesgo muy alto (RN-SVC-029): obligan a derivar de inmediato a la Estación 4. */
   readonly imputacionPenalDetectada = computed(() => {
     const t = this.textoEvento().toLowerCase();
-    return ['estafa', 'robo', 'fiscalía', 'fiscalia', 'denuncia penal', 'delito'].some((w) =>
-      t.includes(w),
-    );
+    return ['estafa', 'fraude', 'abuso', 'delito'].some((w) => t.includes(w));
+  });
+
+  /** Frases Ancla aplicadas en la intervención en curso, en orden (RN-SVC-030). */
+  readonly frasesAplicadas = signal<number[]>([]);
+  /** Reserva que no entró por falta de cupo: se ofrece otro bus u horario o la lista de espera (HU-ATC-060 CA-02). */
+  readonly ofertaSinCupo = signal<{ busId: string; acompanantes: number; punto: string } | null>(null);
+  /** Buses que sí tienen cupo para la reserva que no entró. */
+  readonly busesConCupo = computed(() => {
+    const o = this.ofertaSinCupo();
+    if (!o) return [];
+    return this.estadoProto.busesFest.filter((b) => b.id !== o.busId && this.cuposLibresBus(b.id) >= 1 + o.acompanantes);
   });
 
   readonly paresImpactoLegal = computed<ParCardPairs[]>(() => {
@@ -2989,33 +3047,99 @@ export class VistaEspecializadaComponent {
 
   confirmarReservaBusCliente(): void {
     const busId = this.formBusId();
-    const acomp = Number(this.formBusAcompanantes()) || 0;
-    const libres = this.cuposLibresBus(busId);
-    const entra = libres >= 1 + acomp;
+    const acompanantes = Number(this.formBusAcompanantes()) || 0;
+    if (this.cuposLibresBus(busId) >= 1 + acompanantes) {
+      this.crearReservaBus(busId, acompanantes, this.formBusPunto(), 'CONFIRMADA');
+      return;
+    }
+    this.ofertaSinCupo.set({ busId, acompanantes, punto: this.formBusPunto() });
+  }
+
+  /** Elige otro bus u horario con cupo para la misma reserva. */
+  reservarEnOtroBus(busId: string): void {
+    const o = this.ofertaSinCupo();
+    if (!o) return;
+    this.ofertaSinCupo.set(null);
+    this.crearReservaBus(busId, o.acompanantes, o.punto, 'CONFIRMADA');
+  }
+
+  entrarListaEspera(): void {
+    const o = this.ofertaSinCupo();
+    if (!o) return;
+    this.ofertaSinCupo.set(null);
+    this.crearReservaBus(o.busId, o.acompanantes, o.punto, 'EN_ESPERA');
+  }
+
+  /** Genera el ticket de la reserva (HU-ATC-060 CA-01) y la registra; la confirmación sale por WhatsApp o correo. */
+  private crearReservaBus(
+    busId: string,
+    acompanantes: number,
+    punto: string,
+    estado: 'CONFIRMADA' | 'EN_ESPERA',
+  ): void {
+    const bus = this.estadoProto.busesFest.find((b) => b.id === busId);
+    const nombreBus = bus?.nombre ?? busId;
+    const cliente = this.estadoProto.perfilActivo().nombre;
+    const ultimo = Math.max(
+      0,
+      ...this.tickets()
+        .filter((t) => t.num.startsWith('AIN-'))
+        .map((t) => Number(t.num.slice(4)) || 0),
+    );
+    const num = `AIN-${String(ultimo + 1).padStart(6, '0')}`;
+    const resumen = `Reserva de cupo en ${nombreBus} para ${1 + acompanantes} personas${estado === 'EN_ESPERA' ? ' (en lista de espera)' : ''}`;
+    this.ticketNuevo.emit(
+      crearTicketInicial(num, 'AIN', 'Lotes urbanos', 'Mi Portal', cliente, '4412••••', 'Villa Sol II · Mz. C Lt. 07', 'PED', 'LOW', 'OPEN', 'ATC', null, 0, resumen, {
+        emotion: '',
+        interactions: [{ tipo: 'cli', fecha: AHORA_BASE, canal: 'Mi Portal', autor: cliente, texto: resumen }],
+      }),
+    );
     const nueva: ReservaBusFestItem = {
       id: `res-${Date.now()}`,
       clienteId: 'cli-nuevo',
-      clienteNombre: 'María Quispe Huamán (Mi Portal)',
+      clienteNombre: cliente,
       busId,
-      punto: this.formBusPunto(),
-      acompanantes: acomp,
-      estado: entra ? 'CONFIRMADA' : 'EN_ESPERA',
-      ticketNum: 'AIN-000495',
+      punto,
+      acompanantes,
+      estado,
+      ticketNum: num,
       fecha: AHORA_BASE,
     };
     this.estadoProto.reservasBusFest.update((prev) => [nueva, ...prev]);
     this.avisoOperacion.set(
-      entra
-        ? `Reserva confirmada en ${this.nombreBus(busId)} (${1 + acomp} personas).`
-        : `El bus no tenía cupo suficiente: quedaste registrado en la lista de espera.`,
+      estado === 'CONFIRMADA'
+        ? `Reserva confirmada: ${nombreBus}, ${1 + acompanantes} personas, embarque en ${punto} a las ${bus?.horario ?? ''}. Ticket ${num}. La confirmación se envía por WhatsApp o correo.`
+        : `${nombreBus} no tenía cupo: quedaste en la lista de espera. Ticket ${num}. Te confirmaremos por WhatsApp o correo si se libera cupo.`,
     );
   }
 
+  /** Cancela la reserva, libera el cupo y confirma al primero de la lista de espera de ese bus que entre (HU-ATC-060 CA-03). */
   cancelarReservaBus(r: ReservaBusFestItem): void {
+    const habiaCupo = r.estado === 'CONFIRMADA';
     this.estadoProto.reservasBusFest.update((lista) =>
       lista.map((item) => (item.id === r.id ? { ...item, estado: 'CANCELADA' } : item)),
     );
-    this.avisoOperacion.set(`Reserva de ${r.clienteNombre} cancelada y cupo liberado.`);
+    let promovido: ReservaBusFestItem | null = null;
+    if (habiaCupo) {
+      const libres = this.cuposLibresBus(r.busId);
+      promovido =
+        this.estadoProto
+          .reservasBusFest()
+          .filter((x) => x.busId === r.busId && x.estado === 'EN_ESPERA')
+          .sort((a, b) => a.fecha.getTime() - b.fecha.getTime())
+          .find((x) => 1 + x.acompanantes <= libres) ?? null;
+      if (promovido) {
+        const id = promovido.id;
+        this.estadoProto.reservasBusFest.update((lista) =>
+          lista.map((item) => (item.id === id ? { ...item, estado: 'CONFIRMADA' } : item)),
+        );
+      }
+    }
+    this.avisoOperacion.set(
+      promovido
+        ? `Reserva de ${r.clienteNombre} cancelada y cupo liberado. Se confirmó a ${promovido.clienteNombre} (el primero de la lista de espera): recibe su confirmación por WhatsApp o correo.`
+        : `Reserva de ${r.clienteNombre} cancelada y cupo liberado.`,
+    );
   }
 
   /* ── Acciones de Libro, SGD, Garantías, Evento y Torre ── */
@@ -3090,22 +3214,39 @@ export class VistaEspecializadaComponent {
       criticidad: penal ? 'CRITICA' : 'ALTA',
       resumen: txt,
       imputacionPenal: penal,
+      frases: [...this.frasesAplicadas()],
       registrado: AHORA_BASE,
       primeraAtencion: AHORA_BASE,
       estacion4: penal
         ? {
             fecha: AHORA_BASE,
-            motivo: 'Imputación penal detectada automáticamente al registrar.',
+            motivo: 'Palabra de riesgo muy alto: derivación inmediata a la Estación 4 al registrar.',
             autor: this.estadoProto.perfilActivo().nombre,
           }
         : null,
     };
     this.estadoProto.casosEventoFest.update((prev) => [nuevo, ...prev]);
     this.textoEvento.set('');
+    this.frasesAplicadas.set([]);
     this.avisoOperacion.set(
       penal
-        ? `Caso ${nuevo.ticketNum} registrado con criticidad CRÍTICA y derivado a Estación 4 Legal.`
-        : `Caso ${nuevo.ticketNum} registrado en el tablero de EntregaFest en vivo.`,
+        ? `Caso ${nuevo.ticketNum} registrado con la etiqueta «${this.etiquetaCasoEvento}» y derivado a la Estación 4 (Legal).`
+        : `Caso ${nuevo.ticketNum} registrado con la etiqueta «${this.etiquetaCasoEvento}».`,
+    );
+  }
+
+  /** Aplica la siguiente Frase Ancla de la secuencia 4-5-6 (HU-ATC-037). */
+  aplicarFrase(numero: number): void {
+    const aplicadas = this.frasesAplicadas();
+    const orden = this.estadoProto.frasesAnclaEvento.map((f) => f.numero as number);
+    if (orden[aplicadas.length] !== numero) return;
+    this.frasesAplicadas.set([...aplicadas, numero]);
+    this.avisoOperacion.set(
+      numero === 4
+        ? 'Frase 4 aplicada: queda registrado el intento de concreción.'
+        : numero === 5
+          ? 'Frase 5 aplicada: se invocaron las reglas del evento.'
+          : 'Frase 6 aplicada: registra el caso para cerrar el tema en sala.',
     );
   }
 

@@ -546,6 +546,7 @@ interface ItemMenuAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (ticketNuevo)="alAgregarTicket($event)"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
@@ -690,6 +691,7 @@ interface ItemMenuAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (ticketNuevo)="alAgregarTicket($event)"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
@@ -2438,6 +2440,11 @@ export class ConsolaAtcComponent {
   alCrearDesde360(ev: { cliente: string; dni: string; proyecto: string; contingencia: boolean; lote?: string }): void {
     this.contextoNuevoTicket.set(ev);
     this.vistaActiva.set('nuevo');
+  }
+
+  /** Suma un ticket a la bandeja sin cambiar de pantalla (por ejemplo, el de una reserva de bus). */
+  alAgregarTicket(ticket: TicketAtc): void {
+    this.tickets.update((prev) => [ticket, ...prev]);
   }
 
   alCrearTicket(ev: { ticket: TicketAtc; crearAsientoLibro: boolean }): void {

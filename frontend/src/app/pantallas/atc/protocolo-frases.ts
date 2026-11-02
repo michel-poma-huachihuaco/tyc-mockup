@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { AyBadge, AyButton } from '@aybarcorp/ui-angular';
 import type { FraseAnclaEvento } from './estado-prototipo-atc';
 
 /**
- * Protocolo de contención de EntregaFest: las frases ancla como una línea de tiempo. Cada paso lleva su
- * situación con color, la frase en una caja de cita y «Copiar frase» para el moderador; el paso que
- * deriva a Legal se marca en rojo con su consecuencia.
+ * Secuencia de contención verbal de EntregaFest (RN-SVC-030): las Frases Ancla 4, 5 y 6, que se aplican en
+ * ese orden ante la insistencia de un propietario. Cada paso muestra para qué sirve, si ya se aplicó y el
+ * botón para aplicarla cuando es su turno. El paquete no define el texto que dice el moderador.
  */
 @Component({
   selector: 'app-protocolo-frases',
@@ -14,24 +14,30 @@ import type { FraseAnclaEvento } from './estado-prototipo-atc';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './protocolo-frases.css',
   template: `
-    <ol class="pc" aria-label="Frases ancla del protocolo de contención">
+    <ol class="pc" aria-label="Secuencia de contención: Frases Ancla 4, 5 y 6">
       @for (f of frases(); track f.id; let i = $index) {
         <li class="pc__paso" [attr.data-tono]="f.tono">
-          <span class="pc__nodo" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="pc__nodo" aria-hidden="true">{{ f.numero }}</span>
           <div class="pc__cuerpo">
             <div class="pc__cab">
-              <ay-badge size="sm" [tono]="f.tono">{{ f.categoria }}</ay-badge>
-              <h3 class="pc__momento">{{ momento(f) }}</h3>
+              <ay-badge size="sm" [tono]="f.tono">Frase {{ f.numero }} · {{ f.categoria }}</ay-badge>
+              @if (aplicada(f)) {
+                <ay-badge size="sm" tono="success">Aplicada</ay-badge>
+              } @else if (esSiguiente(i)) {
+                <ay-badge size="sm" tono="warning">Siguiente</ay-badge>
+              } @else {
+                <ay-badge size="sm" tono="neutral">Pendiente</ay-badge>
+              }
               @if (f.alerta) {
                 <ay-badge size="sm" tono="danger">⚠ {{ f.alerta }}</ay-badge>
               }
             </div>
-            <blockquote class="pc__frase">
-              <p>{{ f.frase }}</p>
-              <ay-button tamano="sm" variante="ghost" (click)="copiar(f)">
-                {{ copiada() === f.id ? 'Copiada ✓' : 'Copiar frase' }}
+            <div class="pc__frase">
+              <p>{{ f.momento }}</p>
+              <ay-button tamano="sm" variante="secondary" [disabled]="!esSiguiente(i)" (click)="aplicar.emit(f.numero)">
+                Aplicar Frase {{ f.numero }}
               </ay-button>
-            </blockquote>
+            </div>
           </div>
         </li>
       }
@@ -40,20 +46,16 @@ import type { FraseAnclaEvento } from './estado-prototipo-atc';
 })
 export class ProtocoloFrasesComponent {
   readonly frases = input.required<readonly FraseAnclaEvento[]>();
-  protected readonly copiada = signal<string | null>(null);
+  /** Números de las frases ya aplicadas, en orden. */
+  readonly aplicadas = input<readonly number[]>([]);
+  readonly aplicar = output<number>();
 
-  /** El momento viene numerado («3. Ante…»): el número ya lo lleva el nodo. */
-  protected momento(f: FraseAnclaEvento): string {
-    return f.momento.replace(/^\d+\.\s*/, '');
+  protected aplicada(f: FraseAnclaEvento): boolean {
+    return this.aplicadas().includes(f.numero);
   }
 
-  protected async copiar(f: FraseAnclaEvento): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(f.frase.replace(/^«|»$/g, ''));
-      this.copiada.set(f.id);
-      setTimeout(() => this.copiada.set(null), 1600);
-    } catch {
-      this.copiada.set(null); // sin permiso de portapapeles: no hay nada que confirmar
-    }
+  /** Solo se puede aplicar la que sigue en el orden 4, 5, 6. */
+  protected esSiguiente(indice: number): boolean {
+    return this.aplicadas().length === indice;
   }
 }

@@ -47,15 +47,20 @@ export interface PerfilRolPrototipoAtc {
   readonly resumenPerspectiva: string;
 }
 
+/**
+ * Frase Ancla de la secuencia de contención verbal 4-5-6 (RN-SVC-030). El paquete define el nombre y el orden
+ * de las frases 4, 5 y 6, no el texto que dice el moderador (queda por definir con el PO).
+ */
 export interface FraseAnclaEvento {
   readonly id: string;
-  /** Situación en la que se usa la frase («Legal»). */
+  readonly numero: 4 | 5 | 6;
+  /** Nombre de la frase («Concreción»). */
   readonly categoria: string;
   readonly tono: 'info' | 'warning' | 'danger' | 'success' | 'neutral';
-  /** Lo que ocurre si se aplica (deriva a la Estación 4 Legal). */
-  readonly alerta?: string;
+  /** Qué se hace con ella. */
   readonly momento: string;
-  readonly frase: string;
+  /** Lo que exige al aplicarla. */
+  readonly alerta?: string;
 }
 
 export interface PasoFlujoConfig {
@@ -234,6 +239,8 @@ export interface CasoEventoFestItem {
   readonly criticidad: 'BAJA' | 'MEDIA' | 'ALTA' | 'CRITICA';
   readonly resumen: string;
   readonly imputacionPenal: boolean;
+  /** Frases Ancla aplicadas, en orden (HU-ATC-037): por ejemplo [4, 5, 6]. */
+  readonly frases: readonly number[];
   readonly registrado: Date;
   primeraAtencion: Date | null;
   estacion4: { fecha: Date; motivo: string; autor: string } | null;
@@ -1612,53 +1619,26 @@ export class EstadoPrototipoAtcService {
   /* ── 6. EntregaFest en vivo y Buses del Entrega Fest ── */
   readonly frasesAnclaEvento: readonly FraseAnclaEvento[] = [
     {
-      id: 'fa-1',
-      categoria: 'Escucha',
-      tono: 'info',
-      momento: '1. Recepción y escucha activa',
-      frase:
-        '«Bienvenido a EntregaFest. Tomo nota exacta de su solicitud para darle seguimiento con código verificable hoy mismo.»',
-    },
-    {
-      id: 'fa-2',
-      categoria: 'Contención',
-      tono: 'warning',
-      momento: '2. Contención sin debate en fila',
-      frase:
-        '«Comprendo su malestar; mi función en esta mesa es asegurar que su caso quede registrado con prioridad y pase al especialista indicado.»',
-    },
-    {
-      id: 'fa-3',
-      categoria: 'Legal',
-      tono: 'danger',
-      alerta: 'Deriva a la Estación 4 Legal',
-      momento: '3. Ante imputación penal o amenaza pública',
-      frase:
-        '«Para brindarle todas las garantías legales y revisar su expediente al detalle, lo acompaño de inmediato a la Estación 4 con nuestro apoderado legal.»',
-    },
-    {
       id: 'fa-4',
-      categoria: 'Cronograma',
+      numero: 4,
+      categoria: 'Concreción',
       tono: 'info',
-      momento: '4. Consulta de cronograma o letra en tránsito',
-      frase:
-        '«Dejamos registrado su comprobante con hora de recepción para que Cobranza emita la constancia conciliada en Mi Portal.»',
+      momento: 'Ante un propietario que divaga: pedirle que concrete su solicitud. Queda registrado el intento de concreción.',
     },
     {
       id: 'fa-5',
-      categoria: 'Acta de entrega',
-      tono: 'neutral',
-      momento: '5. Observación en acta de entrega',
-      frase:
-        '«Cada observación queda asentada en el Acta de Entrega con fecha de inspección técnica garantizada por Postventa.»',
+      numero: 5,
+      categoria: 'Invocación de reglas',
+      tono: 'warning',
+      momento: 'Si insiste tras la Frase 4: invocar las reglas del evento.',
     },
     {
       id: 'fa-6',
-      categoria: 'Cierre',
-      tono: 'success',
-      momento: '6. Cierre con número de seguimiento',
-      frase:
-        '«Este es su número de ticket oficial; puede consultar cada avance desde su celular en Mi Portal.»',
+      numero: 6,
+      categoria: 'Compromiso formal y registro',
+      tono: 'danger',
+      alerta: 'Exige registrar el caso',
+      momento: 'Si persiste tras la Frase 5: asumir un compromiso formal y registrar el caso para cerrar el tema en sala.',
     },
   ];
 
@@ -1673,6 +1653,7 @@ export class EstadoPrototipoAtcService {
       criticidad: 'CRITICA',
       resumen: 'Reclama demora en minuta y menciona denuncia penal por estafa en mesa de ingreso.',
       imputacionPenal: true,
+      frases: [4, 5, 6],
       registrado: haceHoras(1.2),
       primeraAtencion: haceHoras(1.1),
       estacion4: {
@@ -1691,6 +1672,7 @@ export class EstadoPrototipoAtcService {
       criticidad: 'MEDIA',
       resumen: 'Consulta horario de firma de Acta de Entrega y validación de acompañantes.',
       imputacionPenal: false,
+      frases: [4],
       registrado: haceHoras(0.6),
       primeraAtencion: haceHoras(0.5),
       estacion4: null,
@@ -1731,6 +1713,17 @@ export class EstadoPrototipoAtcService {
       estado: 'CONFIRMADA',
       ticketNum: 'AIN-000487',
       fecha: haceHoras(4),
+    },
+    {
+      id: 'res-bus-3',
+      clienteId: 'cli-004',
+      clienteNombre: 'Marcos Tello Yupanqui',
+      busId: 'bus-2',
+      punto: 'Plaza Norte · Puerta Principal Panamericana',
+      acompanantes: 1,
+      estado: 'EN_ESPERA',
+      ticketNum: 'AIN-000496',
+      fecha: haceHoras(3),
     },
   ]);
 

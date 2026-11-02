@@ -1436,7 +1436,7 @@ export const TIPOS_SIMULACION: Readonly<
 
 /* ── Tickets Iniciales y Casos Operativos ────────────────────────────────── */
 
-function crearTicketInicial(
+export function crearTicketInicial(
   num: string,
   co: string,
   line: string,
