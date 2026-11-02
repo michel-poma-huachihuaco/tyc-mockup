@@ -451,7 +451,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                   />
                   <div ayRow gap="1" [ajuste]="true">
                     <ay-badge size="sm" tono="success">CSAT 4.7 / 5.0</ay-badge>
-                    <ay-badge size="sm" tono="neutral">12 encuestas hoy</ay-badge>
+                    <ay-badge size="sm" tono="neutral" title="El CSAT es el promedio de las encuestas respondidas; las que el cliente no responde no cuentan">12 de 14 encuestas respondidas</ay-badge>
                   </div>
                 </div>
               </ay-card-body>
@@ -629,7 +629,10 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                   </ng-template>
                   <ng-template ayCelda="csat" let-fila>
                     @let g = comoAvanceGestor(fila);
-                    <ay-badge size="sm" tono="success">{{ g.csat }} ★ ({{ g.sla }})</ay-badge>
+                    <div ayStack gap="1">
+                      <ay-badge size="sm" tono="success">{{ g.csat }} ★ ({{ g.sla }})</ay-badge>
+                      <span ayText="subtitle" size="xs">{{ g.encuestas }} de {{ g.enviadas }} respondidas</span>
+                    </div>
                   </ng-template>
                 </ay-table>
               </ay-card-body>
@@ -1049,14 +1052,14 @@ export class VistaOperacionComponent {
     { clave: 'gestor', cabecera: 'Gestor / Área', ordenable: true },
     { clave: 'atendidos', cabecera: 'Atendidos hoy', ancho: '9rem', ordenable: true },
     { clave: 'pendientes', cabecera: 'Carga activa', ancho: '11rem', ordenable: true },
-    { clave: 'csat', cabecera: 'CSAT y SLA hoy', alineacion: 'end', ancho: '10rem', ordenable: true },
+    { clave: 'csat', cabecera: 'CSAT y SLA hoy', alineacion: 'end', ancho: '12rem', ordenable: true },
   ];
 
   readonly avanceEquipoHoy = [
-    { gestor: 'Ana Torres / C. Rojas (Tú)', area: 'Atención al Cliente Eje 1/2', atendidos: 14, pendientes: 4, riesgo: 1, csat: '4.7', sla: '94% SLA' },
-    { gestor: 'M. Delgado', area: 'Atención al Cliente Eje 1/2', atendidos: 15, pendientes: 2, riesgo: 0, csat: '4.8', sla: '96% SLA' },
-    { gestor: 'R. Salazar', area: 'Cobranza y Recaudación', atendidos: 11, pendientes: 5, riesgo: 2, csat: '4.4', sla: '89% SLA' },
-    { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92% SLA' },
+    { gestor: 'Ana Torres / C. Rojas (Tú)', area: 'Atención al Cliente Eje 1/2', atendidos: 14, pendientes: 4, riesgo: 1, csat: '4.7', sla: '94% SLA', encuestas: 12, enviadas: 14 },
+    { gestor: 'M. Delgado', area: 'Atención al Cliente Eje 1/2', atendidos: 15, pendientes: 2, riesgo: 0, csat: '4.8', sla: '96% SLA', encuestas: 13, enviadas: 15 },
+    { gestor: 'R. Salazar', area: 'Cobranza y Recaudación', atendidos: 11, pendientes: 5, riesgo: 2, csat: '4.4', sla: '89% SLA', encuestas: 8, enviadas: 11 },
+    { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92% SLA', encuestas: 7, enviadas: 9 },
   ];
 
   readonly misTicketsPendientesHoy = computed(() =>
@@ -1169,6 +1172,8 @@ export class VistaOperacionComponent {
     riesgo: number;
     csat: string;
     sla: string;
+    encuestas: number;
+    enviadas: number;
   } {
     return fila as {
       gestor: string;
@@ -1178,6 +1183,8 @@ export class VistaOperacionComponent {
       riesgo: number;
       csat: string;
       sla: string;
+      encuestas: number;
+      enviadas: number;
     };
   }
 
