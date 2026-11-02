@@ -22,9 +22,18 @@ import {
   textoAprobado,
   type CtxEscenario,
 } from '../src/app/pantallas/atc/tigo/tigo-guion.ts';
+import {
+  POLITICAS_POR_DEFECTO,
+  aplicarPolitica,
+  buscarPolitica,
+  efectosDelPaso,
+} from '../src/app/pantallas/atc/tigo/tigo-politica.ts';
 import { ETAPAS_TIGO, type DecisionTigo, type PropuestaTigo } from '../src/app/pantallas/atc/tigo/tigo-modelo.ts';
 
 const ahora = (): Date => AHORA_BASE;
+/** Política por defecto del tipo (comportamiento actual): lo que hace el servicio al iniciar el escenario. */
+const conPolitica = (pasos: PasoGuion[], tipo = 'CTA'): PasoGuion[] =>
+  aplicarPolitica(pasos, (etapa) => buscarPolitica(POLITICAS_POR_DEFECTO, tipo, etapa));
 const entrante = (extra: Partial<TicketAtc> = {}): TicketAtc => ({
   ...crearTicketsDemo()[0],
   num: 'AIN-000999',
@@ -59,8 +68,9 @@ const ctx = (t: TicketAtc = entrante()): CtxEscenario => ({
 function simular(
   t0: TicketAtc,
   decidir: (p: PropuestaTigo) => 'aprobar' | 'descartar',
-  pasos: PasoGuion[] = construirEscenarioA(ctx(t0)),
+  crudos: PasoGuion[] = construirEscenarioA(ctx(t0)),
 ) {
+  const pasos = conPolitica(crudos, crudos[0]?.propuestas.some((p) => p.accion === 'detectar-libro') ? 'QUE' : 'CTA');
   const propuestas: PropuestaTigo[] = [];
   const alAprobar = new Map<string, NonNullable<(typeof pasos)[number]['propuestas'][number]['efectosAlAprobar']>>();
   const estados: TicketAtc['state'][] = [];
@@ -85,7 +95,7 @@ function simular(
       propuestas.push(p);
       if (efectosAlAprobar) alAprobar.set(p.id, efectosAlAprobar);
     }
-    t = aplicarEfectos(t, paso.efectos, hora, 'Gestor');
+    t = aplicarEfectos(t, efectosDelPaso(paso), hora, 'Gestor');
     estados.push(t.state);
     sig = proximoPaso(pasos, ultimo, propuestas);
     while (sig.tipo === 'esperando') {
@@ -151,8 +161,8 @@ test('ningún paso deja RESOLVED/CLOSED sin pasar por un resolver aprobado', () 
   assert.ok(!sinResolver.estados.some((e) => e === 'RESOLVED' || e === 'CLOSED'));
   assert.equal(sinResolver.termino, true);
   // Los efectos de ejecución automática (no aprobados) jamás resuelven antes del cierre.
-  for (const paso of construirEscenarioA(ctx()).slice(0, 4)) {
-    assert.ok(!paso.efectos.some((e) => e.tipo === 'resuelto' || e.tipo === 'cerrado' || e.tipo === 'respuesta-gestor'));
+  for (const paso of conPolitica(construirEscenarioA(ctx())).slice(0, 4)) {
+    assert.ok(!efectosDelPaso(paso).some((e) => e.tipo === 'resuelto' || e.tipo === 'cerrado' || e.tipo === 'respuesta-gestor'));
   }
   // El cierre automático del cliente solo está en post-cierre, que exige resolver aprobado.
   assert.deepEqual(
@@ -180,8 +190,8 @@ test('guardarraíl bloqueado: el guion se reduce al registro y termina', () => {
 
 test('aplicarEfectos es inmutable y deja bitácora, estado e interacciones coherentes', () => {
   const t = entrante();
-  const pasos = construirEscenarioA(ctx(t));
-  const t2 = aplicarEfectos(t, pasos[1].efectos, AHORA_BASE, 'Gestor');
+  const pasos = conPolitica(construirEscenarioA(ctx(t)));
+  const t2 = aplicarEfectos(t, efectosDelPaso(pasos[1]), AHORA_BASE, 'Gestor');
   assert.notEqual(t2, t);
   assert.equal(t.owner, null);
   assert.equal(t.log.length, 0);
@@ -215,7 +225,7 @@ test('las horas de los pasos crecen y ninguna es anterior a la apertura', () => 
 });
 
 test('Tigo asigna solo «M. Delgado» y la nota de carga queda en la bitácora', () => {
-  const t2 = aplicarEfectos(entrante(), construirEscenarioA(ctx())[1].efectos, AHORA_BASE, 'Gestor');
+  const t2 = aplicarEfectos(entrante(), efectosDelPaso(conPolitica(construirEscenarioA(ctx()))[1]), AHORA_BASE, 'Gestor');
   assert.equal(RESPONSABLE_MENOR_CARGA, 'M. Delgado');
   assert.equal(t2.owner, 'M. Delgado');
   assert.equal(t2.log.length, 1);
@@ -281,7 +291,7 @@ test('B: plazo legal de 15 días hábiles, guía opcional y asiento/derivación 
   assert.deepEqual(pend.map((p) => p.accion), ['registrar-asiento', 'derivar-legal', 'redactar-acuse']);
   assert.ok(pend.every((p) => p.requiereAprobacion));
   // Los efectos automáticos no registran el asiento, no derivan ni resuelven.
-  assert.ok(!pasos.some((p) => p.efectos.some((e) => ['asiento-libro', 'asignar', 'resuelto', 'cerrado'].includes(e.tipo))));
+  assert.ok(!conPolitica(pasos, 'QUE').some((p) => efectosDelPaso(p).some((e) => ['asiento-libro', 'asignar', 'resuelto', 'cerrado'].includes(e.tipo))));
 });
 
 test('B: aprobando todo registra el asiento y deriva a Legal, sin RESOLVED/CLOSED', () => {
@@ -311,7 +321,7 @@ test('C: se bloquea, no redacta ni resuelve y solo ofrece escalar a Legal con ap
   const props = pasos.flatMap((p) => p.propuestas);
   assert.ok(props.some((p) => p.accion === 'guardarrailes' && p.estado === 'bloqueada'));
   assert.ok(!props.some((p) => ['redactar', 'resolver', 'redactar-acuse'].includes(p.accion)));
-  assert.ok(!pasos.some((p) => p.efectos.some((e) => ['clasificar', 'respuesta-gestor', 'resuelto', 'cerrado', 'asignar'].includes(e.tipo))));
+  assert.ok(!conPolitica(pasos).some((p) => efectosDelPaso(p).some((e) => ['clasificar', 'respuesta-gestor', 'resuelto', 'cerrado', 'asignar'].includes(e.tipo))));
   const pend = props.filter((p) => p.estado === 'pendiente');
   assert.deepEqual(pend.map((p) => p.accion), ['escalar-legal']);
   assert.equal(pend[0].requiereAprobacion, true);

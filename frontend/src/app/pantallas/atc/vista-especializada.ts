@@ -106,6 +106,7 @@ import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo
 import { TableroTorreComponent } from './graficos/tablero-torre';
 import { ImpactoTigo } from './tigo/impacto-tigo';
 import { PanelAprendizajeTigo } from './tigo/panel-aprendizaje-tigo';
+import { PanelPoliticaTigo } from './tigo/panel-politica-tigo';
 import { TigoEstadoService } from './tigo/tigo-estado';
 import { FlujosTorreComponent } from './flujos-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
@@ -172,6 +173,7 @@ export type SubvistaEspecializadaAtc =
     TableroTorreComponent,
     ImpactoTigo,
     PanelAprendizajeTigo,
+    PanelPoliticaTigo,
     PasosFlujoComponent,
     FlujosTorreComponent,
   ],
@@ -191,7 +193,8 @@ export type SubvistaEspecializadaAtc =
     <!-- 1. WORKFLOW (ADMIN_FUNCIONAL, SUPERVISOR; COORDINADOR_CX solo lectura): FLUJOS, GUÍAS Y ALERTAS -->
     <!-- ====================================================================== -->
     @if (subvista() === 'workflow') {
-      <div ayStack gap="6">
+      <!-- minmax(0,1fr): la pista no crece con las tablas anchas; ellas hacen scroll interno -->
+      <div ayStack gap="6" style="grid-template-columns: minmax(0, 1fr)">
         <ay-page-header
           titulo="Mantenimiento"
           descripcion="Catálogo de tipos y subtipos de ticket, flujos por tipo y área, guías de solución versionadas y alertas"
@@ -350,6 +353,10 @@ export type SubvistaEspecializadaAtc =
 
           @if (puedeEditarWorkflow() && tabConfig() === 'propuestas-tigo') {
             <app-panel-aprendizaje-tigo />
+          }
+
+          @if (puedeEditarWorkflow() && tabConfig() === 'politica-tigo') {
+            <app-panel-politica-tigo />
           }
 
           @if (puedeEditarWorkflow() && tabConfig() === 'alertas') {
@@ -2224,6 +2231,7 @@ export class VistaEspecializadaComponent {
             label: 'Propuestas de Tigo',
             contador: this.tigo.propuestasAprendizaje().filter((a) => a.estado === 'pendiente').length,
           },
+          { value: 'politica-tigo', label: 'Autonomía de Tigo' },
           { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
         ]
       : []),

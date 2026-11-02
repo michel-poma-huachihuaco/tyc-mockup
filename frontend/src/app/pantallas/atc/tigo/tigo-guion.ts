@@ -44,14 +44,17 @@ export type EfectoTicket =
   | { tipo: 'resuelto' }
   | { tipo: 'cerrado' };
 
-/** Una propuesta pendiente lleva los efectos que se aplican SOLO si el gestor la aprueba. */
-export type PropuestaGuion = PropuestaBase & { efectosAlAprobar?: EfectoTicket[] };
+/**
+ * `efectos`: lo que hace la propia acción (interna); la política decide si se aplican al ejecutar el paso o,
+ * si Tigo solo sugiere, pasan a `efectosAlAprobar` (solo si el gestor aprueba).
+ */
+export type PropuestaGuion = PropuestaBase & { efectos?: EfectoTicket[]; efectosAlAprobar?: EfectoTicket[] };
 
 export interface PasoGuion {
   etapa: EtapaTigo;
   retardoMs: number;
   propuestas: PropuestaGuion[];
-  /** Efectos que Tigo aplica al ejecutar el paso (solo acciones internas o simuladas). */
+  /** Efectos de sistema del paso (no pertenecen a una acción interna): se aplican al ejecutar el paso. */
   efectos: EfectoTicket[];
 }
 
@@ -184,7 +187,7 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
   const registro: PasoGuion = {
     etapa: 'registro',
     retardoMs: 1200,
-    efectos: guardarrail.permitido ? [{ tipo: 'clasificar', tipoId: 'CTA', subtipo: ctx.subtipo?.id }] : [],
+    efectos: [],
     propuestas: [
       {
         etapa: 'registro',
@@ -193,6 +196,7 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
         detalle: 'Tipo y subtipo según el catálogo vigente.',
         estado: 'ejecutada',
         requiereAprobacion: false,
+        efectos: guardarrail.permitido ? [{ tipo: 'clasificar', tipoId: 'CTA', subtipo: ctx.subtipo?.id }] : [],
       },
       {
         etapa: 'registro',
@@ -219,19 +223,7 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
   const enrutamiento: PasoGuion = {
     etapa: 'enrutamiento',
     retardoMs: 1500,
-    efectos: [
-      { tipo: 'asignar', responsable: RESPONSABLE_MENOR_CARGA },
-      { tipo: 'estado', valor: 'IN_PROGRESS' },
-      { tipo: 'bitacora', motivo: 'TIGO_ASIGNACION', nota: `${NOTA_ASIGNACION} ${RESPONSABLE_MENOR_CARGA}: ${DETALLE_CARGA}.` },
-      {
-        tipo: 'interaccion',
-        interaccion: {
-          tipo: 'sys',
-          autor: 'Tigo',
-          texto: `Correo de asignación enviado a ${RESPONSABLE_MENOR_CARGA} (${DETALLE_CARGA}) con copia al líder del área (HU-055).`,
-        },
-      },
-    ],
+    efectos: [],
     propuestas: [
       {
         etapa: 'enrutamiento',
@@ -249,6 +241,19 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
         detalle: 'Gestor de menor carga. El ticket pasa a En curso. Correo de asignación con copia al líder (HU-055).',
         estado: 'ejecutada',
         requiereAprobacion: false,
+        efectos: [
+          { tipo: 'asignar', responsable: RESPONSABLE_MENOR_CARGA },
+          { tipo: 'estado', valor: 'IN_PROGRESS' },
+          { tipo: 'bitacora', motivo: 'TIGO_ASIGNACION', nota: `${NOTA_ASIGNACION} ${RESPONSABLE_MENOR_CARGA}: ${DETALLE_CARGA}.` },
+          {
+            tipo: 'interaccion',
+            interaccion: {
+              tipo: 'sys',
+              autor: 'Tigo',
+              texto: `Correo de asignación enviado a ${RESPONSABLE_MENOR_CARGA} (${DETALLE_CARGA}) con copia al líder del área (HU-055).`,
+            },
+          },
+        ],
       },
     ],
   };
@@ -267,17 +272,7 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
   const atencion: PasoGuion = {
     etapa: 'atencion',
     retardoMs: 2000,
-    efectos: [
-      { tipo: 'completar-actividad' },
-      {
-        tipo: 'interaccion',
-        interaccion: {
-          tipo: 'int',
-          autor: 'Tigo',
-          texto: `Actividad 1 completada: «${act1}». Motor de consultas: ${m.cuotasPagadas}/${m.cuotasTotales} cuotas pagadas, saldo ${m.saldo}.`,
-        },
-      },
-    ],
+    efectos: [],
     propuestas: [
       {
         etapa: 'atencion',
@@ -313,6 +308,17 @@ export function construirEscenarioA(ctx: CtxEscenario): PasoGuion[] {
         detalle: 'Actividad interna y reversible.',
         estado: 'ejecutada',
         requiereAprobacion: false,
+        efectos: [
+          { tipo: 'completar-actividad' },
+          {
+            tipo: 'interaccion',
+            interaccion: {
+              tipo: 'int',
+              autor: 'Tigo',
+              texto: `Actividad 1 completada: «${act1}». Motor de consultas: ${m.cuotasPagadas}/${m.cuotasTotales} cuotas pagadas, saldo ${m.saldo}.`,
+            },
+          },
+        ],
       },
       {
         etapa: 'atencion',
@@ -430,9 +436,11 @@ export function construirEscenarioB(ctx: CtxEscenarioB): PasoGuion[] {
     {
       etapa: 'registro',
       retardoMs: 1200,
-      efectos: [{ tipo: 'clasificar', tipoId: 'QUE' }],
+      efectos: [],
       propuestas: [
-        prop('registro', 'clasificar', 'Clasifiqué el pedido como «Queja»', 'Reclamo de servicio según el catálogo vigente.'),
+        prop('registro', 'clasificar', 'Clasifiqué el pedido como «Queja»', 'Reclamo de servicio según el catálogo vigente.', {
+          efectos: [{ tipo: 'clasificar', tipoId: 'QUE' }],
+        }),
         prop('registro', 'anonimizar', tituloAnon(anon.cantidad), 'Solo el texto anonimizado llega al modelo (ADR-007).', {
           lineas: lineasAnonimas(anon),
         }),
@@ -455,15 +463,16 @@ export function construirEscenarioB(ctx: CtxEscenarioB): PasoGuion[] {
     {
       etapa: 'atencion',
       retardoMs: 2000,
-      efectos: [
-        {
-          tipo: 'interaccion',
-          interaccion: { tipo: 'int', autor: 'Tigo', texto: 'Resumen y plazo del Libro preparados. Tigo no atiende Quejas: espera la decisión de una persona.' },
-        },
-      ],
+      efectos: [],
       propuestas: [
         prop('atencion', 'resumir-caso', 'Resumí el caso', 'Hechos anonimizados y datos del expediente.', {
           lineas: [`Tipo: Queja · Canal: ${t.ch}`, `Hechos: ${anon.texto}`, `Proyecto: ${t.proj}`],
+          efectos: [
+            {
+              tipo: 'interaccion',
+              interaccion: { tipo: 'int', autor: 'Tigo', texto: 'Resumen y plazo del Libro preparados. Tigo no atiende Quejas: espera la decisión de una persona.' },
+            },
+          ],
         }),
         prop(
           'atencion',

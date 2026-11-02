@@ -248,6 +248,16 @@ const DECISION_ES = { ACEPTADA: 'Aceptada', EDITADA: 'Editada', DESCARTADA: 'Des
           <li>Rayo: urgencia marcada por el supervisor, la atiende una persona.</li>
           <li>Resolución de contrato: no se automatiza.</li>
         </ul>
+        <p class="vt-nota-suave">
+          @if (puedeIrAWorkflow()) {
+            <button type="button" class="vt-enlace" (click)="abrirWorkflow('politica-tigo')">Ver autonomía de Tigo por etapa</button>
+          } @else {
+            Autonomía de Tigo por etapa: la configura el administrador funcional.
+          }
+          @if (politicaTicket(); as v) {
+            <ay-badge size="sm" tono="info">Política v{{ v }} aplicada a este ticket</ay-badge>
+          }
+        </p>
       </section>
 
       <section class="vt-confianza" aria-labelledby="vt-c-t">
@@ -343,8 +353,12 @@ export class VistaTigo {
   private readonly proto = inject(EstadoPrototipoAtcService);
 
   protected readonly puedeIrAWorkflow = computed(() => this.proto.vistasPermitidasParaRol().includes('workflow') && ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.proto.rolActivo()));
-  protected abrirWorkflow(): void {
-    this.tigo.pestanaWorkflowPedida.set('propuestas-tigo');
+  protected readonly politicaTicket = computed(() => {
+    const num = this.tigo.guionTicket();
+    return num ? this.tigo.politicaVersionDe(num) : null;
+  });
+  protected abrirWorkflow(pestana = 'propuestas-tigo'): void {
+    this.tigo.pestanaWorkflowPedida.set(pestana);
     this.irAWorkflow.emit();
   }
 

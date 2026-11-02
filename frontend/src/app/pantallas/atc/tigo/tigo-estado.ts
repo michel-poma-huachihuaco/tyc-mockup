@@ -26,6 +26,16 @@ import {
   type MetricasTigo,
   type PropuestaAprendizaje,
 } from './tigo-aprendizaje';
+import {
+  POLITICAS_POR_DEFECTO,
+  aplicarPolitica,
+  buscarPolitica,
+  efectosDelPaso,
+  registrarCambio,
+  type CambioPolitica,
+  type NivelTigo,
+  type PoliticaEtapa,
+} from './tigo-politica';
 import type { DecisionTigo, EscenarioTigo, EtapaTigo, PropuestaTigo } from './tigo-modelo';
 
 /** Lo que Tigo necesita de la consola: los tickets, cómo crear el entrante, el reloj simulado y el gestor. */
@@ -86,6 +96,15 @@ export class TigoEstadoService {
   /** Solo el administrador funcional publica una guía: el resto lo ve en solo lectura. */
   readonly puedePublicarAprendizaje: Signal<boolean> = computed(() => this.proto.rolActivo() === 'ADMIN_FUNCIONAL');
   private guiaVersionTicket: number | undefined;
+
+  /* ── Política de autonomía: qué hace Tigo solo, qué pide aprobar y qué no hace (la edita el administrador funcional) ── */
+  readonly politicas: WritableSignal<PoliticaEtapa[]> = signal<PoliticaEtapa[]>([...POLITICAS_POR_DEFECTO]);
+  readonly versionPolitica: WritableSignal<number> = signal(1);
+  private readonly _bitacoraPoliticas = signal<CambioPolitica[]>([]);
+  readonly bitacoraPoliticas: Signal<CambioPolitica[]> = this._bitacoraPoliticas.asReadonly();
+  readonly puedeConfigurarPoliticas: Signal<boolean> = computed(() => this.proto.rolActivo() === 'ADMIN_FUNCIONAL');
+  /** Versión de la política con la que corre cada ticket (congelada al iniciar, como el flujo: HU-043 CA-02). */
+  private readonly versionPoliticaTicket = new Map<string, number>();
   /** Pestaña de Workflow que la vista de Mantenimiento abre al montarse (la consume una sola vez). */
   readonly pestanaWorkflowPedida = signal<string | null>(null);
 
@@ -120,7 +139,11 @@ export class TigoEstadoService {
     this.guiaVersionTicket = this.proto.obtenerGuiaActiva(id === 'B' ? 'QUE' : 'CTA')?.versionActual ?? undefined;
     const nuevo = p.crearEntrante(id);
     p.tickets.update((prev) => [nuevo, ...prev]);
-    this.pasos = this.construirPasos(id, nuevo, p);
+    // Congela la política vigente para este ticket: un cambio posterior solo afecta a tickets nuevos.
+    const tabla = [...this.politicas()];
+    const tipoPolitica = id === 'B' ? 'QUE' : 'CTA';
+    this.versionPoliticaTicket.set(nuevo.num, this.versionPolitica());
+    this.pasos = aplicarPolitica(this.construirPasos(id, nuevo, p), (etapa) => buscarPolitica(tabla, tipoPolitica, etapa));
     this._escenario.set(id);
     this._ticket.set(nuevo.num);
     this._paso.set({ indice: 0, total: this.pasos.length, etapa: null });
@@ -248,6 +271,37 @@ export class TigoEstadoService {
     this._resueltas.update((l) => [...l, { ...a, estado: 'rechazada' }]);
   }
 
+  /**
+   * Cambia una fila de la política y crea la versión siguiente. Solo el administrador funcional, con motivo y un cambio real;
+   * devuelve la versión creada o null. Solo afecta a los tickets que empiecen después.
+   */
+  cambiarPolitica(
+    tipo: string,
+    etapa: EtapaTigo,
+    cambio: Partial<{ participa: boolean; nivel: NivelTigo }>,
+    motivo: string,
+  ): number | null {
+    if (!this.puedeConfigurarPoliticas()) return null;
+    const r = registrarCambio(this.politicas(), this.versionPolitica(), {
+      tipo,
+      etapa,
+      cambio,
+      motivo,
+      autor: this.proto.perfilActivo().nombre,
+      fecha: this.ahoraPaso() ?? new Date(0),
+    });
+    if (!r) return null;
+    this.politicas.set(r.tabla);
+    this.versionPolitica.set(r.version);
+    this._bitacoraPoliticas.update((l) => [...l, r.registro]);
+    return r.version;
+  }
+
+  /** Versión de la política con la que corre ese ticket; null si Tigo no lo atendió. */
+  politicaVersionDe(num: string): number | null {
+    return this.versionPoliticaTicket.get(num) ?? null;
+  }
+
   /** Actividades que Tigo completó en ese ticket (para la línea de avance del flujo). */
   completadas(num: string): number {
     return this._completadas()[num] ?? 0;
@@ -330,12 +384,12 @@ export class TigoEstadoService {
     const aprobado = textoAprobado(this._propuestas().filter((x) => x.ticket === num));
     this.agregarPropuestas(
       num,
-      paso.propuestas.map(({ efectosAlAprobar: _e, ...base }) =>
+      paso.propuestas.map(({ efectosAlAprobar: _e, efectos: _f, ...base }) =>
         base.accion === 'resolver' && base.texto === undefined ? { ...base, texto: aprobado } : base,
       ),
       paso.propuestas.map((x) => x.efectosAlAprobar),
     );
-    this.aplicar(num, paso.efectos);
+    this.aplicar(num, efectosDelPaso(paso));
     this.decidir();
   }
 
