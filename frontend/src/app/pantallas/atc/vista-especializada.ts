@@ -1761,11 +1761,23 @@ export type SubvistaEspecializadaAtc =
           [descripcion]="
             estadoProto.rolActivo() === 'CLIENTE'
               ? 'Reserva tu cupo con tus acompañantes (hasta 3) y tu punto de embarque desde Mi Portal.'
-              : 'Tablero del evento: casos con su riesgo verbal, secuencia de contención en tres pasos, derivación inmediata a la Estación 4 y aforo y reservas de buses.'
+              : 'Tablero del evento: casos con su riesgo verbal, secuencia de contención en tres pasos y derivación inmediata a la Estación 4, y aforo y reservas de buses.'
           "
-        />
+          [conPestanas]="estadoProto.rolActivo() !== 'CLIENTE'"
+        >
+          @if (estadoProto.rolActivo() !== 'CLIENTE') {
+            <ay-tabs
+              ayPestanas
+              etiqueta="Secciones de EntregaFest en vivo"
+              variante="underline"
+              [items]="tabsEvento"
+              [valor]="tabEventoActiva()"
+              (valorChange)="tabEventoElegida.set($event)"
+            />
+          }
+        </ay-page-header>
 
-        @if (estadoProto.rolActivo() !== 'CLIENTE') {
+        @if (estadoProto.rolActivo() !== 'CLIENTE' && tabEventoActiva() === 'casos') {
           @if (imputacionPenalDetectada()) {
             <ay-alert
               tono="danger"
@@ -1967,6 +1979,7 @@ export type SubvistaEspecializadaAtc =
           </div>
         }
 
+        @if (tabEventoActiva() === 'buses') {
         <div ayGrid [columnas]="3" gap="sm">
           @for (b of estadoProto.busesFest; track b.id) {
             <ay-card superficie="solid">
@@ -2091,6 +2104,7 @@ export type SubvistaEspecializadaAtc =
             </ay-table>
           </ay-card-body>
         </ay-card>
+        }
       </div>
     }
 
@@ -2343,6 +2357,18 @@ export class VistaEspecializadaComponent {
   ]);
 
   readonly tabTorre = signal<string>('tablero');
+
+  /** Pestañas de EntregaFest en vivo: los casos del evento y los buses con sus reservas. */
+  readonly tabsEvento: AyTabsElemento[] = [
+    { value: 'casos', label: 'Casos del evento' },
+    { value: 'buses', label: 'Buses y reservas' },
+  ];
+  readonly tabEventoElegida = signal<string | null>(null);
+  /** El cliente solo ve buses; la entrada «Buses» del menú abre su pestaña, y la de EntregaFest, los casos. */
+  readonly tabEventoActiva = computed(() => {
+    if (this.estadoProto.rolActivo() === 'CLIENTE') return 'buses';
+    return this.tabEventoElegida() ?? (this.subvista() === 'buses' ? 'buses' : 'casos');
+  });
   readonly tabsTorreCx: AyTabsElemento[] = [
     { value: 'tablero', label: 'Tablero' },
     { value: 'riesgo', label: 'Riesgo de denuncia' },
