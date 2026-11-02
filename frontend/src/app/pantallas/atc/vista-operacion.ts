@@ -73,12 +73,15 @@ import type { DerivacionEvento } from './propuestas-detalle/derivar-ticket';
 import { DetalleCreativa } from './propuestas-detalle/version-creativa';
 import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 import { PasosFlujoComponent } from './pasos-flujo';
+import type { SlaPrevisto } from './propuestas-sla/sla-previsto';
+import { SlaConservadora } from './propuestas-sla/version-conservadora';
 
 @Component({
   selector: 'app-vista-operacion',
   standalone: true,
   imports: [
     PasosFlujoComponent,
+    SlaConservadora,
     DetalleCreativa,
     BarraFiltrosComponent,
     FiltroColumnasTablaDirective,
@@ -816,27 +819,7 @@ import { PasosFlujoComponent } from './pasos-flujo';
 
             <!-- Lateral derecho: SLA que se congelará + Flujo de Workflow -->
             <div ayStack gap="4">
-              <ay-card superficie="solid">
-                <ay-card-header
-                  titulo="Plazos de atención (SLA)"
-                  subtitulo="Se fijan al guardar con la política vigente y no cambian aunque la política se actualice después."
-                  nivel="h2"
-                  [separador]="true"
-                />
-                <ay-card-body padding="sm" gap="sm">
-                  <ay-card-pairs [pares]="paresPreviewSlaCongelado()" />
-                  @if (previewPoliticaSla().origen === 'global') {
-                    <ay-alert tono="warning" size="sm" titulo="Sin política específica para este tipo">
-                      «{{ nombreTipo(formTipo()) }}» no tiene política activa: se aplicará la genérica global y se registrará una alerta en Workflow.
-                    </ay-alert>
-                  }
-                  @if (esTipoLibro()) {
-                    <ay-alert tono="info" size="sm" titulo="Exige asiento en el Libro de Reclamaciones">
-                      Plazo legal improrrogable de 15 días hábiles ({{ previewSla().libroFecha }}).
-                    </ay-alert>
-                  }
-                </ay-card-body>
-              </ay-card>
+              <app-sla-conservadora [sla]="slaPrevisto()" />
 
               <ay-card superficie="solid">
                 <ay-card-header
@@ -1081,15 +1064,15 @@ export class VistaOperacionComponent {
    * Nombre con el que los tickets de ejemplo guardan al responsable de cada perfil. Los perfiles
    * sin entrada no tienen tickets propios: «Tu día» solo muestra los del usuario (HU-ATC-054 CA-01).
    */
-  private readonly responsablePorPerfil: Readonly<Record<string, string>> = {
-    GESTOR: 'C. Rojas',
-    LEGAL_RECLAMOS: 'Dra. P. Vílchez',
-    ANALISTA_COBRANZA: 'Carla V.',
+  private readonly responsablePorPerfil: Readonly<Record<string, readonly string[]>> = {
+    GESTOR: ['C. Rojas', 'Lucía Benavides'],
+    LEGAL_RECLAMOS: ['Dra. P. Vílchez', 'Patricia Vílchez'],
+    ANALISTA_COBRANZA: ['Carla V.', 'Carla Villarán'],
   };
 
   readonly misTicketsPendientesHoy = computed(() =>
     this.tickets()
-      .filter((t) => !!t.owner && t.owner === this.responsablePorPerfil[this.estadoProto.rolActivo()])
+      .filter((t) => !!t.owner && (this.responsablePorPerfil[this.estadoProto.rolActivo()] ?? []).includes(t.owner))
       .filter((t) => t.state !== 'RESOLVED' && t.state !== 'CLOSED')
       .map((t) => Object.assign(t, { sla: t.resDue.getTime() })),
   );
@@ -1412,21 +1395,21 @@ export class VistaOperacionComponent {
     return this.estadoProto.buscarFlujo(this.formTipo(), this.formSubtipo() || undefined);
   });
 
-  readonly paresPreviewSlaCongelado = computed<ParCardPairs[]>(() => {
-    const calc = this.previewPoliticaSla();
-    return [
-      { clave: 'Política', valor: `${calc.politica.id} · v${calc.politica.version}` },
-      { clave: 'Precedencia', valor: calc.etiquetaOrigen },
-      { clave: 'Apertura', valor: fmtFechaHora(AHORA_BASE) },
-      {
-        clave: '1.ª respuesta',
-        valor: `${fmtFechaHora(calc.venceRespuesta)} (${calc.politica.respuestaH} h hábiles)`,
-      },
-      {
-        clave: 'Resolución',
-        valor: `${fmtFechaHora(calc.venceResolucion)} (${calc.politica.resolucionH} h hábiles)`,
-      },
-    ];
+  /** Lo que muestra la card de plazos: la política vigente y sus vencimientos. */
+  readonly slaPrevisto = computed<SlaPrevisto>(() => {
+    const c = this.previewPoliticaSla();
+    return {
+      politica: `${c.politica.id} · v${c.politica.version}`,
+      origen: c.origen,
+      etiquetaOrigen: c.etiquetaOrigen,
+      apertura: AHORA_BASE,
+      venceRespuesta: c.venceRespuesta,
+      venceResolucion: c.venceResolucion,
+      respuestaH: c.politica.respuestaH,
+      resolucionH: c.politica.resolucionH,
+      libroFecha: this.esTipoLibro() ? sumarDiasHabiles(AHORA_BASE, 15) : null,
+      nombreTipo: this.nombreTipo(this.formTipo()),
+    };
   });
 
   readonly paresPreviewFlujoConfig = computed<ParCardPairs[]>(() => {
@@ -1441,19 +1424,6 @@ export class VistaOperacionComponent {
         valor: paso1 ? paso1.responsable : 'Cola del área',
       },
     ];
-  });
-
-  readonly previewSla = computed(() => {
-    const calc = this.previewPoliticaSla();
-    const libroDate = sumarDiasHabiles(AHORA_BASE, 15);
-    return {
-      fr: calc.politica.respuestaH,
-      res: calc.politica.resolucionH,
-      src: `${calc.politica.id} · v${calc.politica.version} (${calc.etiquetaOrigen})`,
-      frFecha: fmtFechaHora(calc.venceRespuesta),
-      resFecha: fmtFechaHora(calc.venceResolucion),
-      libroFecha: fmtFechaHora(libroDate),
-    };
   });
 
   readonly conteoPaquete6 = computed(

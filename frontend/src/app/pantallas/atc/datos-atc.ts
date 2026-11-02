@@ -1488,8 +1488,129 @@ function crearTicketInicial(
   };
 }
 
+/** Una actividad ya registrada en la bitácora de un ticket de ejemplo (la que se habilitó y quién la tiene). */
+function pasoBitacora(horasAtras: number, area: string, responsable: string, nota: string, primero = false): TicketAtc['log'][number] {
+  return {
+    fecha: haceHoras(horasAtras),
+    area,
+    responsable,
+    motivo: primero ? 'ALTA_FLUJO_CONFIGURADO' : 'ACTIVIDAD_COMPLETADA',
+    nota,
+  };
+}
+
+/**
+ * Tickets de ejemplo en distintos puntos de su workflow, para ver cómo avanza un ticket por las actividades
+ * de su flujo (mismos tipos, subtipos y actividades que los flujos de ejemplo de Mantenimiento). El estado
+ * del ticket es el mismo en casi todos (en curso): lo que cambia es la actividad habilitada y quién la tiene.
+ */
+function ticketsFlujoDemo(): TicketAtc[] {
+  const cliente = (autor: string, texto: string, canal: string, horas: number) => [
+    { tipo: 'cli' as const, fecha: haceHoras(horas), canal, autor, texto },
+  ];
+  return [
+    // CTA › Cronograma de pagos (ATC, 3 actividades): en la 2.ª, con Cobranza.
+    crearTicketInicial('AIN-000901', 'AIN', 'Lotes urbanos', 'WhatsApp', 'Rubén Castañeda Lira', '4412••••',
+      'Villa Sol II · Mz. D Lt. 03', 'CTA', 'MEDIUM', 'IN_PROGRESS', 'ATC', 'Carla Villarán', 9,
+      'Pide el cronograma de pagos actualizado con las letras ya canceladas', {
+        subtipo: 'CTA-CRONOGRAMA',
+        firstResp: haceHoras(8),
+        interactions: cliente('Rubén Castañeda', 'Necesito mi cronograma con las letras que ya pagué.', 'WhatsApp', 9),
+        log: [
+          pasoBitacora(9, 'ATC', 'Lucía Benavides', 'Flujo CTA › Cronograma de pagos v1: actividad 1 de 3', true),
+          pasoBitacora(5, 'ATC', 'Carla Villarán', 'Cronograma generado; pasa a conciliación con las letras pagadas'),
+        ],
+        status: [
+          { fecha: haceHoras(9), estado: 'OPEN', autor: 'Sistema' },
+          { fecha: haceHoras(8), estado: 'IN_PROGRESS', autor: 'Lucía Benavides' },
+        ],
+      }),
+    // VIS › Inspección de lote (Postventa, 4 actividades): 2.ª, esperando al propietario.
+    crearTicketInicial('APV-000902', 'APV', 'Postventa', 'Teléfono', 'Elena Ramos Duarte', '3318••••',
+      'Residencial Brisas · Torre B 402', 'VIS', 'HIGH', 'PENDING_CUSTOMER', 'POSTVENTA', 'Nelly Quispe', 30,
+      'Solicita inspección del lote por humedad en la pared perimetral', {
+        subtipo: 'VIS-INSPECCION-LOTE',
+        firstResp: haceHoras(28),
+        interactions: cliente('Elena Ramos', 'Hay humedad en la pared del fondo desde las lluvias.', 'Teléfono', 30),
+        log: [
+          pasoBitacora(30, 'POSTVENTA', 'Nelly Quispe', 'Flujo VIS › Inspección de lote v1: actividad 1 de 4', true),
+          pasoBitacora(20, 'POSTVENTA', 'Nelly Quispe', 'Agenda coordinada; se habilita la inspección en campo'),
+        ],
+        status: [
+          { fecha: haceHoras(30), estado: 'OPEN', autor: 'Sistema' },
+          { fecha: haceHoras(28), estado: 'IN_PROGRESS', autor: 'Nelly Quispe' },
+          { fecha: haceHoras(6), estado: 'PENDING_CUSTOMER', autor: 'Nelly Quispe' },
+        ],
+      }),
+    // REC › Cobro o facturación (Legal, 3 actividades): recién registrado, en la 1.ª.
+    crearTicketInicial('ALT-000903', 'ALT', 'Lotes urbanos', 'Libro de Reclamaciones', 'Marcos Tello Yupanqui', '2701••••',
+      'Los Álamos de Carabayllo · Mz. F Lt. 11', 'REC', 'HIGH', 'OPEN', 'LEGAL', 'Patricia Vílchez', 2,
+      'Reclama el cobro duplicado de la cuota de octubre', {
+        subtipo: 'REC-COBRO',
+        interactions: cliente('Marcos Tello', 'Me cobraron dos veces la cuota de octubre.', 'Libro de Reclamaciones', 2),
+        log: [pasoBitacora(2, 'LEGAL', 'Patricia Vílchez', 'Flujo REC › Cobro o facturación v2: actividad 1 de 3', true)],
+        status: [{ fecha: haceHoras(2), estado: 'OPEN', autor: 'Sistema' }],
+      }),
+    // GAR › Estructura (Postventa, 4 actividades): en la última, la respuesta al cliente.
+    crearTicketInicial('APV-000904', 'APV', 'Postventa', 'Mi Portal', 'Lucía Paredes Vega', '5520••••',
+      'Mirador del Sur · Mz. C Lt. 21', 'GAR', 'URGENT', 'IN_PROGRESS', 'POSTVENTA', 'Nelly Quispe', 140,
+      'Fisura en la viga de la sala dentro de los 10 años de garantía estructural', {
+        subtipo: 'GAR-ESTRUCTURA',
+        firstResp: haceHoras(138),
+        interactions: cliente('Lucía Paredes', 'Apareció una fisura en la viga de la sala.', 'Mi Portal', 140),
+        log: [
+          pasoBitacora(140, 'POSTVENTA', 'Nelly Quispe', 'Flujo GAR › Estructura v2: actividad 1 de 4', true),
+          pasoBitacora(120, 'POSTVENTA', 'Jorge Zambrano', 'Vigencia verificada; se habilita el peritaje estructural'),
+          pasoBitacora(40, 'POSTVENTA', 'Patricia Vílchez', 'Peritaje entregado; se habilita la opinión de Legal'),
+          pasoBitacora(12, 'POSTVENTA', 'Nelly Quispe', 'Opinión de Legal recibida; se habilita la respuesta al cliente'),
+        ],
+        status: [
+          { fecha: haceHoras(140), estado: 'OPEN', autor: 'Sistema' },
+          { fecha: haceHoras(138), estado: 'IN_PROGRESS', autor: 'Nelly Quispe' },
+        ],
+      }),
+    // CIT › Limpieza y áreas comunes (Administración, 2 actividades): terminado y resuelto.
+    crearTicketInicial('ACI-000905', 'ACI', 'Ciudad y servicios', 'Teléfono', 'Comité Vecinal Etapa II', '2088••••',
+      'Villa Sol II · Parque central', 'CIT', 'LOW', 'RESOLVED', 'ADMINISTRACION', 'Jorge Zambrano', 60,
+      'Acumulación de residuos en el parque central tras el fin de semana', {
+        subtipo: 'CIT-LIMPIEZA',
+        firstResp: haceHoras(58),
+        resolvedAt: haceHoras(10),
+        interactions: cliente('Comité Vecinal', 'El parque central amaneció lleno de residuos.', 'Teléfono', 60),
+        log: [
+          pasoBitacora(60, 'ADMINISTRACION', 'Marco Alarcón', 'Flujo CIT › Limpieza y áreas comunes v1: actividad 1 de 2', true),
+          pasoBitacora(36, 'ADMINISTRACION', 'Jorge Zambrano', 'Cuadrilla programada; se habilita la ejecución y fotos de cierre'),
+          pasoBitacora(10, 'ADMINISTRACION', 'Jorge Zambrano', 'Ejecución con fotos de cierre; flujo completado'),
+        ],
+        status: [
+          { fecha: haceHoras(60), estado: 'OPEN', autor: 'Sistema' },
+          { fecha: haceHoras(58), estado: 'IN_PROGRESS', autor: 'Marco Alarcón' },
+          { fecha: haceHoras(10), estado: 'RESOLVED', autor: 'Jorge Zambrano' },
+        ],
+      }),
+    // PED › Actualización de datos: sin flujo publicado, en la cola del área y sin responsable.
+    crearTicketInicial('AIN-000906', 'AIN', 'Lotes urbanos', 'Correo', 'Gloria Salinas Medina', '6643••••',
+      'Villa Sol II · Mz. A Lt. 18', 'PED', 'LOW', 'OPEN', 'ATC', null, 3,
+      'Pide actualizar su teléfono y correo de contacto', {
+        subtipo: 'PED-ACTUALIZAR-DATOS',
+        interactions: cliente('Gloria Salinas', 'Quiero actualizar mi teléfono y mi correo.', 'Correo', 3),
+        log: [
+          {
+            fecha: haceHoras(3),
+            area: 'ATC',
+            responsable: '',
+            motivo: 'ALTA',
+            nota: 'Sin flujo publicado: queda en la cola del área ATC, sin responsable. Se alertó al Administrador Funcional.',
+          },
+        ],
+        status: [{ fecha: haceHoras(3), estado: 'OPEN', autor: 'Sistema' }],
+      }),
+  ];
+}
+
 export function crearTicketsDemo(): TicketAtc[] {
   return [
+    ...ticketsFlujoDemo(),
     crearTicketInicial(
       'AIN-000482',
       'AIN',

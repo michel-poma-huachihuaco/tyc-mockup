@@ -52,6 +52,7 @@ export const MOTIVO_ES: MapaEtiquetas = {
   ALTA: 'Alta del ticket',
   ALTA_SIN_CLIENTE_VINCULADO: 'Alta sin cliente vinculado (pendiente de vincular)',
   ALTA_FLUJO_CONFIGURADO: 'Alta según flujo configurado',
+  ACTIVIDAD_COMPLETADA: 'Actividad completada: se habilita la siguiente',
   AUTO_ASIGNACION_MENOR_CARGA: 'Asignación automática por menor carga',
   DERIVACION_COMPETENCIA: 'Derivación por competencia del área',
   DERIVACION_CONFLICTO_EJE3: 'Derivación por conflicto (Eje 3 Legal)',
