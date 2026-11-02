@@ -1905,6 +1905,11 @@ body {
   min-inline-size: 0;
 }
 
+/* Columna lateral de Nuevo ticket: las cards se apilan con su propia altura. */
+.pl-atc-col-lateral {
+  align-content: start;
+}
+
 .pl-atc-vivo-select {
   flex: 1 1 calc(var(--aybar-space-4) * 11.5);
   min-inline-size: calc(var(--aybar-space-4) * 10);

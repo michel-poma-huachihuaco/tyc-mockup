@@ -101,6 +101,7 @@ export function diasCalendario(s: SlaPrevisto): number {
 @Component({
   selector: 'app-avisos-sla',
   standalone: true,
+  host: { style: 'display: contents' },
   imports: [AyAlert],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

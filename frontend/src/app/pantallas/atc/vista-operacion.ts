@@ -818,7 +818,7 @@ import { SlaConservadora } from './propuestas-sla/version-conservadora';
             </div>
 
             <!-- Lateral derecho: SLA que se congelará + Flujo de Workflow -->
-            <div ayStack gap="4">
+            <div ayStack gap="4" class="pl-atc-col-lateral">
               <app-sla-conservadora [sla]="slaPrevisto()" />
 
               <ay-card superficie="solid">
