@@ -27,7 +27,7 @@ import {
   slotSalida,
   type Sala,
 } from './oficina';
-import { crearOrquestador } from './robots';
+import { animarRobotBase, crearOrquestador, crearRobot } from './robots';
 
 export interface Estatico {
   zonas: { k: string; n: string; color: RGB }[];
@@ -44,6 +44,15 @@ export interface Snap {
   }[];
   bandeja: number;
   escalados: number;
+  /** Escenario de Tigo en curso: su avatar acompaña al ticket por la planta. Null sin escenario. */
+  tigo?: {
+    numero: string;
+    etapa: string;
+    etapaId: string;
+    zona: string;
+    espera: boolean;
+    frase: string;
+  } | null;
   tickets: {
     id: string;
     numero: string;
@@ -1228,6 +1237,42 @@ export function montarVivo(o: OptsVivo): () => void {
   objPers.position.y = 1.5;
   escena.add(objPers);
 
+  /* Tigo: mini-robot que acompaña al ticket del escenario (oculto sin escenario). Sus mallas cuelgan de `escena`
+     y se liberan en el traverse de la limpieza; la etiqueta y el anillo viven mientras viva la escena. */
+  const tigoRobot = crearRobot(kit, { cuerpo: mezcla(C.teal2, C.suelo, 0.35), acento: C.ok, escala: 1.5, fase: 1.3 });
+  const tigoG = new THREE.Group();
+  tigoG.add(tigoRobot.g);
+  tigoG.visible = false;
+  escena.add(tigoG);
+  const tigoAro = new THREE.Mesh(
+    new THREE.TorusGeometry(0.5, 0.03, 8, 40),
+    new THREE.MeshBasicMaterial({ color: color(C.orange), transparent: true, opacity: 0, depthWrite: false }),
+  );
+  tigoAro.rotation.x = Math.PI / 2;
+  tigoAro.position.y = 0.05;
+  tigoG.add(tigoAro);
+  const etTigo = document.createElement('div');
+  etTigo.style.cssText = `pointer-events:none;display:grid;grid-template-columns:auto;grid-auto-rows:auto;justify-items:center;row-gap:2px;padding:5px 12px;border-radius:10px;font:600 12px Montserrat,system-ui,sans-serif;white-space:nowrap;background:${css(C.superficie, 1)};border:2px solid ${css(C.line)};color:${css(C.texto)};box-shadow:0 4px 12px rgba(0,0,0,.3)`;
+  const etTigoA = document.createElement('strong');
+  const etTigoB = document.createElement('span');
+  // Ambos hijos en bloque; el margen es respaldo si el contenedor perdiera el grid.
+  etTigoA.style.display = 'block';
+  etTigoB.style.cssText = 'display:block;margin-inline-start:6px';
+  etTigo.append(etTigoA, etTigoB);
+  const objTigo = new CSS2DObject(etTigo);
+  objTigo.position.set(0, 3.2, 0);
+  tigoG.add(objTigo);
+  const destinoTigo = new THREE.Vector3();
+  let tigoColocado = false;
+
+  /** Dónde está Tigo: junto a la bandeja al registrar; en la puerta de la sala del ticket durante el trabajo; en Mi Portal al cerrar. */
+  const anclaTigo = (tg: NonNullable<Snap['tigo']>, out: THREE.Vector3): void => {
+    const sala = SALAS[tg.zona];
+    if (tg.etapaId === 'registro' || !sala) out.set(HUB.despachador[0] + 1.5, 0, HUB.despachador[1]);
+    else if (tg.etapaId === 'postcierre') out.set(SALIDA.puerta[0] + 0.6, 0, SALIDA.puerta[1]);
+    else out.set(sala.fuera[0], 0, sala.fuera[1]);
+  };
+
   let primera = true;
   let ultimo = performance.now();
   let tick = 0;
@@ -1449,6 +1494,38 @@ export function montarVivo(o: OptsVivo): () => void {
       objSel.visible = false;
     }
 
+    const tg = s.tigo ?? null;
+    tigoG.visible = !!tg;
+    objTigo.visible = !!tg;
+    if (tg) {
+      anclaTigo(tg, destinoTigo);
+      if (!tigoColocado || RM) {
+        tigoG.position.copy(destinoTigo);
+        tigoColocado = true;
+      } else {
+        const d = destinoTigo.clone().sub(tigoG.position);
+        const paso = Math.min(d.length(), 3 * dt);
+        if (d.lengthSq() > 1e-6) tigoG.position.addScaledVector(d.normalize(), paso);
+      }
+      tigoG.rotation.y = Math.PI / 4;
+      animarRobotBase(tigoRobot, t, RM, tg.espera ? 1.8 : 1);
+      const tono = color(tg.espera ? C.orange : C.ok);
+      tigoRobot.aro.color.copy(tono);
+      tigoRobot.bulbo.color.copy(tono);
+      tigoRobot.bulbo.emissive.copy(tono);
+      const am = tigoAro.material as THREE.MeshBasicMaterial;
+      const u = RM ? 0.3 : (t % 1.4) / 1.4;
+      am.opacity = tg.espera ? 0.9 * (1 - u) : 0;
+      tigoAro.scale.setScalar(0.9 + u * 1.5);
+      const a = `Tigo · ${tg.numero}`;
+      const b = tg.espera ? 'Espera tu aprobación' : tg.etapa;
+      if (etTigoA.textContent !== a) etTigoA.textContent = a;
+      if (etTigoB.textContent !== b) etTigoB.textContent = b;
+      etTigo.style.borderColor = css(tg.espera ? C.orange : C.line);
+    } else {
+      tigoColocado = false;
+    }
+
     pHub.set(`${s.bandeja} en espera · rayo > SLA > prioridad`);
     pCom.set(`${s.escalados} escalados en cadena`, s.escalados > 0);
     cartasComite.forEach((c, i) => {
@@ -1497,6 +1574,8 @@ export function montarVivo(o: OptsVivo): () => void {
     primera = false;
     r.render(escena, cam);
     etiquetas.render(escena, cam);
+    /* CSS2DRenderer reasigna z-index por profundidad en cada render: la de Tigo se fija después para quedar sobre las salas. */
+    etTigo.style.zIndex = '1000';
   };
 
   const parar = bucle(RM, frame);

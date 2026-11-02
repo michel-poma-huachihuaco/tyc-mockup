@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -14,6 +15,7 @@ import { DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AHORA_BASE, fmtFechaHora, type TicketAtc } from './datos-atc';
 import { EstadoPrototipoAtcService } from './estado-prototipo-atc';
+import { TigoEstadoService } from './tigo/tigo-estado';
 import {
   conversar,
   montarBot,
@@ -33,7 +35,7 @@ import { inyectarEstilos } from './three/estilos';
 interface MensajeBot {
   id: number;
   de: 'yo' | 'bot';
-  tipo?: 'tonos' | 'redactar' | 'resumen' | 'paso' | 'revision' | 'texto';
+  tipo?: 'tonos' | 'redactar' | 'resumen' | 'paso' | 'revision' | 'texto' | 'tigo';
   texto?: string;
   tono?: Tono;
   destino?: string;
@@ -157,6 +159,13 @@ export class BotAvatarCanvasComponent {
                             {{ t.n }}
                           </button>
                         }
+                      </div>
+                    } @else if (m.tipo === 'tigo') {
+                      {{ m.texto }}
+                      <div class="pt-bot__acc">
+                        <button type="button" class="pt-bot__btn pt-bot__btn--p" (click)="irATigoVista()">
+                          Ir a Tigo · Atención asistida
+                        </button>
                       </div>
                     } @else if (m.tipo === 'redactar') {
                       <h3>
@@ -361,16 +370,21 @@ export class BotAvatarCanvasComponent {
           </button>
         }
 
-        <button
-          type="button"
-          class="pt-bot__fab"
-          title="Tigo · Asistente de IA"
-          [attr.aria-label]="abierto() ? 'Cerrar el asistente Tigo' : 'Abrir a Tigo, asistente de IA'"
-          [attr.aria-expanded]="abierto()"
-          (click)="alternarPanel()"
-        >
-          <app-bot-avatar-canvas [estado]="abierto() ? estado() : 'reposo'" />
-        </button>
+        <div class="pt-bot__fabcaja">
+          <button
+            type="button"
+            class="pt-bot__fab"
+            title="Tigo · Asistente de IA"
+            [attr.aria-label]="etiquetaFab()"
+            [attr.aria-expanded]="abierto()"
+            (click)="alternarPanel()"
+          >
+            <app-bot-avatar-canvas [estado]="abierto() ? estado() : 'reposo'" />
+          </button>
+          @if (tigo.pendientes().length > 0) {
+            <span class="pt-bot__insignia" aria-hidden="true">{{ tigo.pendientes().length }}</span>
+          }
+        </div>
       </div>
     }
   `,
@@ -381,6 +395,9 @@ export class AsistenteBotAtcComponent {
   readonly tickets = input.required<readonly TicketAtc[]>();
 
   private readonly estadoProto = inject(EstadoPrototipoAtcService);
+  protected readonly tigo = inject(TigoEstadoService);
+  /** Pide abrir la vista «Tigo · Atención asistida» (propuesta fuera de la Etapa 1). */
+  readonly irATigo = output<void>();
   private readonly doc = inject(DOCUMENT);
   private readonly contenedorMsgs = viewChild<ElementRef<HTMLElement>>('contenedorMsgs');
 
@@ -525,6 +542,25 @@ export class AsistenteBotAtcComponent {
     if (this.msgs().length === 0) {
       this.agregarMensaje({ de: 'bot', tipo: 'texto', texto: SALUDO });
     }
+    const n = this.tigo.pendientes().length;
+    if (n > 0 && this.msgs().at(-1)?.tipo !== 'tigo') {
+      this.agregarMensaje({
+        de: 'bot',
+        tipo: 'tigo',
+        texto: `Tienes ${n} ${n === 1 ? 'propuesta esperando' : 'propuestas esperando'} tu aprobación.`,
+      });
+    }
+  }
+
+  irATigoVista(): void {
+    this.abierto.set(false);
+    this.irATigo.emit();
+  }
+
+  etiquetaFab(): string {
+    const n = this.tigo.pendientes().length;
+    const base = this.abierto() ? 'Cerrar el asistente Tigo' : 'Abrir a Tigo, asistente de IA';
+    return n > 0 ? `${base} (${n} ${n === 1 ? 'propuesta espera' : 'propuestas esperan'} tu aprobación)` : base;
   }
 
   alternarPanel(): void {
@@ -654,6 +690,11 @@ export class AsistenteBotAtcComponent {
 
   decidir(m: MensajeBot, decision: 'ACEPTADA' | 'EDITADA' | 'DESCARTADA', textoFinal: string): void {
     this.msgs.update((lista) => lista.map((x) => (x.id === m.id ? { ...x, decision } : x)));
+    // Mismo registro que las decisiones de Tigo, sin el texto (ADR-007): solo la longitud.
+    const ticket = this.ctx()?.numero;
+    if (ticket) {
+      this.tigo.registrarDecisionExterna({ ticket, accion: 'chat-redactar', decision, longitud: textoFinal.length });
+    }
     if (decision === 'DESCARTADA') {
       this.agregarMensaje({
         de: 'bot',

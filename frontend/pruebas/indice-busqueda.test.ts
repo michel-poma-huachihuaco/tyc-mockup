@@ -13,7 +13,7 @@ import {
 import type { VistaAtc } from '../src/app/pantallas/atc/datos-atc.ts';
 
 // Vistas que el sidebar muestra a cada perfil (espejo de vistasPermitidasParaRol sin las ocultas).
-const GESTOR: VistaAtc[] = ['c360', 'vivo', 'bandeja', 'tudia', 'nuevo'];
+const GESTOR: VistaAtc[] = ['c360', 'vivo', 'bandeja', 'tudia', 'nuevo', 'tigo'];
 const SUPERVISOR: VistaAtc[] = [...GESTOR, 'libro', 'sgd', 'garantias', 'morosidad', 'reasignar', 'alertas', 'cierre', 'politicas', 'workflow', 'evento', 'ingreso', 'torre'];
 const CLIENTE: VistaAtc[] = ['bandeja', 'nuevo', 'evento', 'libro'];
 
@@ -60,6 +60,13 @@ test('búsqueda · ranking nombre > sinónimo > funcionalidad', () => {
   assert.ok(c.funciones.some((f) => f.funcion.id === 'c360-contrato'));
   const puntajes = c.funciones.map((f) => f.puntaje);
   assert.deepEqual(puntajes, [...puntajes].sort((a, b) => b - a));
+});
+
+test('Tigo · se encuentra por sus sinónimos y no lo ve el cliente', () => {
+  for (const q of ['inteligencia artificial', 'copiloto', 'demo', 'autonomo']) {
+    assert.ok(busca(q, GESTOR, 'GESTOR').funciones.some((f) => f.funcion.vista === 'tigo') || busca(q, GESTOR, 'GESTOR').modulos.some((m) => m.modulo.vista === 'tigo'), q);
+  }
+  assert.ok(!funcionesVisibles('CLIENTE', new Set(CLIENTE)).some((f) => f.vista === 'tigo'));
 });
 
 test('permisos · Gestor no ve Políticas SLA; Supervisor sí', () => {

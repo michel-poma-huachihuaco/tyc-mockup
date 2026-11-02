@@ -52,6 +52,7 @@ export const MOTIVO_ES: MapaEtiquetas = {
   ALTA_CONTINGENCIA_CONCILIACION: 'Alta por contingencia de conciliación',
   ALTA_FLUJO_CONFIGURADO: 'Alta según flujo configurado',
   AUTO_ASIGNACION_MENOR_CARGA: 'Asignación automática por menor carga',
+  TIGO_ASIGNACION: 'Asignación por Tigo (menor carga)',
   DERIVACION_COMPETENCIA: 'Derivación por competencia del área',
   DERIVACION_CONFLICTO_EJE3: 'Derivación por conflicto (Eje 3 Legal)',
   REASSIGNMENT_CESE: 'Cese del colaborador',

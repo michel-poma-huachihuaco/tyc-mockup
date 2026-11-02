@@ -38,6 +38,7 @@ const CLI: readonly RolPrototipoAtc[] = ['CLIENTE'];
 export const SINONIMOS_MODULO: Readonly<Partial<Record<VistaAtc, readonly string[]>>> = {
   c360: ['cliente', 'ficha', 'consulta 360', 'contrato', 'grafo', 'dni', 'buscar cliente'],
   vivo: ['planta', 'monitor', 'tiempo real', 'responsables', 'sla', 'semaforo', 'tv'],
+  tigo: ['ia', 'asistente', 'inteligencia artificial', 'copiloto', 'demo', 'autonomo', 'bot', 'atencion asistida'],
   torre: ['control', 'cx', 'nps', 'encuesta', 'denuncia', 'riesgo', 'informe'],
   bandeja: ['tickets', 'solicitudes', 'casos', 'buscar ticket', 'vencimiento', 'sla', 'rayo', 'prioridad'],
   tudia: ['mi dia', 'avance', 'agenda', 'pendientes', 'hoy'],
@@ -67,6 +68,7 @@ export const INDICE_FUNCIONES: readonly EntradaIndice[] = [
   { id: 'torre-riesgo', etiqueta: 'Riesgo de denuncia', grupo: 'Torre de Control CX', vista: 'torre', sinonimos: ['denuncia', 'indecopi', 'reclamo'] },
   { id: 'torre-encuestas', etiqueta: 'Encuestas (NPS por tipo, área y gestor)', grupo: 'Torre de Control CX', vista: 'torre', sinonimos: ['nps', 'csat', 'recomendacion', 'satisfaccion'] },
   { id: 'torre-informes', etiqueta: 'Informes diario y quincenal', grupo: 'Torre de Control CX', vista: 'torre', sinonimos: ['informe', 'reporte'] },
+  { id: 'tigo-escenario', etiqueta: 'Ver a Tigo atender un ticket de punta a punta', grupo: 'Tigo · Atención asistida', vista: 'tigo', sinonimos: ['ia', 'demo', 'escenario', 'aprobar', 'guardarrailes', 'cola de aprobacion'] },
   { id: 'bandeja-filtros', etiqueta: 'Filtrar tickets por columna', grupo: 'Bandeja de tickets', vista: 'bandeja', sinonimos: ['buscar ticket', 'filtros', 'empresa', 'canal', 'estado'] },
   { id: 'bandeja-rayo', etiqueta: 'Marcar un ticket con el rayo de prioridad', grupo: 'Bandeja de tickets', vista: 'bandeja', sinonimos: ['rayo', 'urgente', 'prioridad'] },
   { id: 'bandeja-sla', etiqueta: 'Ver vencimiento SLA de los tickets', grupo: 'Bandeja de tickets', vista: 'bandeja', sinonimos: ['sla', 'vencimiento', 'plazo'] },

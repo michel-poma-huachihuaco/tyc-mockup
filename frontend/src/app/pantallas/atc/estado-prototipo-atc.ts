@@ -2127,7 +2127,13 @@ export class EstadoPrototipoAtcService {
     return ['CLIENTE', 'COORDINADOR_CX', 'MODERADOR_EVENTO', 'APOYO_CX', 'SUPERVISOR'].includes(rol);
   }
 
+  /** Vistas del rol; Tigo (propuesta fuera de la Etapa 1) se suma a todos menos al cliente y a «Sin atención», igual que el chat. */
   vistasPermitidasParaRol(rol: RolPrototipoAtc = this.rolActivo()): readonly VistaAtc[] {
+    const base = this.vistasBaseParaRol(rol);
+    return rol === 'CLIENTE' || rol === 'SIN_ATENCION' ? base : [...base, 'tigo'];
+  }
+
+  private vistasBaseParaRol(rol: RolPrototipoAtc): readonly VistaAtc[] {
     switch (rol) {
       case 'GESTOR':
         // #1 Gestor de tickets (HU-ATC-001, 002, 007, 026, 027, 042, 044, 047, 048, 049, 050, 051, 052, 053, 054, 055)
@@ -2277,6 +2283,7 @@ export class EstadoPrototipoAtcService {
     pasos: string[],
     plantillas: string[],
     criterios: string[],
+    autor: string = this.perfilActivo().nombre,
   ): number {
     let nuevaVer = 1;
     this.guiasPorTipo.update((lista) =>
@@ -2294,7 +2301,7 @@ export class EstadoPrototipoAtcService {
             {
               version: nuevaVer,
               fecha: AHORA_BASE,
-              autor: this.perfilActivo().nombre,
+              autor,
               pasos: [...pasos],
               plantillas: [...plantillas],
               criterios: [...criterios],

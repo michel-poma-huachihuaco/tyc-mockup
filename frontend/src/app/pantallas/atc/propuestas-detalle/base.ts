@@ -14,6 +14,7 @@ import {
 import { EstadoPrototipoAtcService } from '../estado-prototipo-atc';
 import { AREA_ES, MOTIVO_ES, etiqueta, traducirCodigos } from '../etiquetas-es';
 import type { DerivacionEvento } from './derivar-ticket';
+import type { TigoEstadoService } from '../tigo/tigo-estado';
 import { crearAsignacionesMock, type AsignacionMock } from './mock-interacciones';
 
 /**
@@ -104,6 +105,8 @@ export class DetalleDemo {
   constructor(
     readonly ticket: Signal<TicketAtc>,
     private readonly proto: EstadoPrototipoAtcService,
+    /** Opcional: la página aislada `/detalle-propuestas` funciona sin Tigo. */
+    private readonly tigo?: TigoEstadoService,
   ) {}
 
   readonly sla = computed(() => evaluarSlaTicket(this.ticket()));
@@ -156,7 +159,8 @@ export class DetalleDemo {
   /** Paso del flujo en el que está el ticket. El prototipo no lo registra: se infiere de las derivaciones de la bitácora. */
   readonly pasoActual = computed(() => {
     const total = this.flujo().pasos.length;
-    const extra = this.actividadesCompletadas();
+    // Las actividades que completó Tigo suman al avance y sobreviven a navegar entre vistas.
+    const extra = this.actividadesCompletadas() + (this.tigo?.completadas(this.ticket().num) ?? 0);
     const fijo = pasoDemo();
     if (fijo !== null) return Math.min(Math.max(fijo, 0) + extra, total);
     if (this.cerradoPorEstado()) return total;

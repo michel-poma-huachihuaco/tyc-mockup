@@ -14,6 +14,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { TigoEstadoService } from './tigo/tigo-estado';
+import type { EscenarioTigo } from './tigo/tigo-modelo';
+import { VistaTigo } from './tigo/vista-tigo';
 import {
   AyAlert,
   AyAppearancePanel,
@@ -160,6 +163,7 @@ interface ItemMenuAtc {
     VistaOperacionComponent,
     VistaEspecializadaComponent,
     AsistenteBotAtcComponent,
+    VistaTigo,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pl-atc-marco' },
@@ -454,6 +458,7 @@ interface ItemMenuAtc {
                 [areaInicial]="areaVivo()"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irABandeja)="vistaActiva.set('bandeja')"
+                (irATigo)="irAVista('tigo')"
               />
             }
             @case ('bandeja') {
@@ -694,6 +699,9 @@ interface ItemMenuAtc {
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
             }
+            @case ('tigo') {
+              <app-vista-tigo (verTicket)="abrirTicket($event, 'tigo')" (irAWorkflow)="irAVista('workflow')" />
+            }
             @case ('torre') {
               <app-vista-especializada
                 subvista="torre"
@@ -915,6 +923,7 @@ interface ItemMenuAtc {
       [vistaActiva]="vistaActiva()"
       [ticketSeleccionadoNum]="ticketSeleccionadoNum()"
       [tickets]="tickets()"
+      (irATigo)="irAVista('tigo')"
     />
 
     <!-- Navegación móvil en Drawer oficial -->
@@ -1285,6 +1294,7 @@ export class ConsolaAtcComponent {
   private readonly anfitrion: HTMLElement = inject(ElementRef).nativeElement;
   private readonly favoritosHostRef = viewChild<ElementRef<HTMLElement>>('favoritosHost');
   readonly estadoProto = inject(EstadoPrototipoAtcService);
+  private readonly tigo = inject(TigoEstadoService);
 
   readonly destinosSalto = [{ id: 'atc-contenido', etiqueta: 'Saltar al contenido principal' }];
   readonly navegacionMovilAbierta = signal(false);
@@ -1437,6 +1447,10 @@ export class ConsolaAtcComponent {
       evento: [
         'Control de padrón EntregaFest por QR/DNI y reserva de cupos en buses con validación de titularidad y estado de pago.',
       ],
+      tigo: [
+        'Propuesta fuera de la Etapa 1 (HU-048 y HU-053), todo simulado: Tigo ejecuta lo interno y deja pendiente de tu aprobación lo que sale al cliente y el cierre.',
+        'ADR-007 y RN-SVC-032: la IA sugiere, el gestor decide. Las decisiones se registran sin el texto.',
+      ],
       torre: [
         'NPS = % de respuestas 9–10 menos % de respuestas 0–6 a «¿Recomendarías…?». Desglose por tipo, área, gestor y resultado del cierre.',
       ],
@@ -1469,6 +1483,13 @@ export class ConsolaAtcComponent {
       titulo: 'Torre de Control CX',
       subtitulo: 'Estado de atención por área (gráficos), riesgo de denuncia, encuestas, informes y auditoría IA',
       icono: 'M18 20V10 M12 20V4 M6 20v-6',
+    },
+    {
+      id: 'tigo',
+      grupo: 'ESTRELLA',
+      titulo: 'Tigo · Atención asistida',
+      subtitulo: 'Propuesta fuera de la Etapa 1: la IA atiende un ticket de punta a punta y tú apruebas',
+      icono: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z',
     },
   ];
 
@@ -2007,6 +2028,14 @@ export class ConsolaAtcComponent {
 
   constructor() {
     const destruccion = inject(DestroyRef);
+    // Tigo (propuesta fuera de la Etapa 1): el servicio agrega el ticket entrante; aquí solo se construye.
+    this.tigo.conectar({
+      tickets: this.tickets,
+      crearEntrante: (id) => this.construirTicketEntranteTigo(id),
+      registrarAsientoLibro: (t) => this.registrarAsientoLibro(t),
+      ahora: () => this.relojSimuladoFecha(),
+      gestor: () => this.estadoProto.perfilActivo().nombre,
+    });
     const doc = inject(DOCUMENT);
     // La paleta arranca vacía en cada apertura: el kit limpia su campo pero no avisa de la consulta anterior.
     effect(() => {
@@ -2156,10 +2185,13 @@ export class ConsolaAtcComponent {
     );
   }
 
-  simularTicketEntranteMiPortal(): void {
+  /** Ticket entrante por Mi Portal, sin efectos: lo reutilizan el botón de simulación y Tigo. */
+  construirTicketEntranteMiPortal(): TicketAtc {
     const ahora = this.relojSimuladoFecha();
-    const correlativo = 510 + this.tickets().length;
-    const nuevo: TicketAtc = {
+    // El correlativo no repite número aunque la lista se haya vaciado o reordenado.
+    const mayor = this.tickets().reduce((m, t) => Math.max(m, Number(/(\d+)$/.exec(t.num)?.[1] ?? 0)), 0);
+    const correlativo = Math.max(510 + this.tickets().length, mayor + 1);
+    return {
       num: `AIN-${String(correlativo).padStart(6, '0')}`,
       co: 'AIN',
       empresa: this.empresas[0],
@@ -2204,6 +2236,64 @@ export class ConsolaAtcComponent {
       ],
       status: [{ fecha: ahora, estado: 'OPEN', autor: 'Mi Portal' }],
     };
+  }
+
+  /**
+   * Entrante para Tigo: llega sin asignar y con datos personales en el mensaje, para que Tigo los anonimice.
+   * A: consulta de cuenta · B: queja del Libro de Reclamaciones · C: riesgo verbal (amenaza de denuncia).
+   */
+  private construirTicketEntranteTigo(id: EscenarioTigo): TicketAtc {
+    const base = this.construirTicketEntranteMiPortal();
+    const comun = { ...base, owner: null, log: [] };
+    const cliente = (c: { cli: string; dni: string; contract: string; proj: string }, texto: string, canal: string) => ({
+      ...c,
+      ch: canal,
+      interactions: [{ tipo: 'cli' as const, fecha: base.opened, canal, autor: c.cli, texto }],
+    });
+    if (id === 'B') {
+      const c = { cli: 'Rosa Elena Paredes Díaz', dni: '41273985', contract: 'LA-2024-0318', proj: 'Los Álamos de Carabayllo · Mz. F Lt. 03' };
+      return {
+        ...comun,
+        ...cliente(
+          c,
+          `Buenas, soy ${c.cli} (DNI ${c.dni}, contrato ${c.contract}). Me cobraron dos veces la cuota de octubre y la entrega de mi minuta lleva tres meses de demora. Quiero dejar mi queja formal. Mi celular es 954 321 876.`,
+          'Mi Portal',
+        ),
+        type: 'QUE',
+        area: 'ATC',
+        summary: 'Queja por cobro duplicado de la cuota de octubre y demora en la entrega de la minuta',
+        emotion: 'Cliente molesta por el cobro indebido; pide dejar constancia formal.',
+        slaSrc: 'Matriz SLA v3 · QUE / MEDIA',
+      };
+    }
+    if (id === 'C') {
+      const c = { cli: 'Marco Antonio Huamán Lazo', dni: '46012358', contract: 'VS-2024-0211', proj: 'Valle Sagrado · Mz D Lt 07' };
+      return {
+        ...comun,
+        ...cliente(
+          c,
+          `Soy ${c.cli}, DNI ${c.dni}, contrato ${c.contract}. Llevo tres meses esperando una respuesta y esto es una estafa. Si hoy no me atienden pongo la denuncia en INDECOPI, hablo con mi abogado y lo publico en redes. Mi número es 987 123 456.`,
+          'WhatsApp',
+        ),
+        area: 'ATC',
+        summary: 'Cliente reitera su pedido y anuncia acciones legales',
+        emotion: 'Hostilidad alta: amenaza con denuncia y publicación en redes.',
+      };
+    }
+    return {
+      ...comun,
+      area: this.estadoProto.obtenerFlujoActivo('CTA').area,
+      interactions: [
+        {
+          ...base.interactions[0],
+          texto: `Hola, soy ${base.cli} (DNI ${base.dni}, contrato ${base.contract}). Solicito mi estado de cuenta actualizado con las cuotas pagadas. Pueden escribirme al 987 654 321.`,
+        },
+      ],
+    };
+  }
+
+  simularTicketEntranteMiPortal(): void {
+    const nuevo = this.construirTicketEntranteMiPortal();
     this.tickets.update((prev) => [nuevo, ...prev]);
     this.ticketSeleccionadoNum.set(nuevo.num);
     this.avisoSimulacion.set(`${nuevo.num} entró por Mi Portal y el flujo lo asignó por carga.`);
@@ -2442,61 +2532,64 @@ export class ConsolaAtcComponent {
 
   alCrearTicket(ev: { ticket: TicketAtc; crearAsientoLibro: boolean }): void {
     this.tickets.update((prev) => [ev.ticket, ...prev]);
-    if (ev.crearAsientoLibro) {
-      const nro = String(Math.floor(50 + Math.random() * 50)).padStart(4, '0');
-      this.asientosLibro.update((prev) => [
-        {
-          n: nro,
-          co: ev.ticket.co,
-          est: 'Sede Digital / Mi Portal',
-          ticket: ev.ticket.num,
-          kind: ev.ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
-          cli: ev.ticket.cli,
-          reg: AHORA_BASE,
-          amount: null,
-          ext: false,
-          resp: null,
-          appeal: null,
-          facts: ev.ticket.summary,
-        },
-        ...prev,
-      ]);
-      const venceOrig = sumarHorasHabiles(AHORA_BASE, 15 * 9);
-      this.estadoProto.asientosLibroDetalle.update((prev) => [
-        {
-          id: `lib-${Date.now()}`,
-          codigo: `LR-2026-${nro}`,
-          empresaId: ev.ticket.co,
-          establecimiento: 'Sede Digital / Mi Portal',
-          ticketNum: ev.ticket.num,
-          tipo: ev.ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
-          consumidor: ev.ticket.cli,
-          dni: ev.ticket.dni,
-          registrado: AHORA_BASE,
-          registradoPor: this.perspectivaActual().nombre,
-          venceOriginal: venceOrig,
-          venceProrrogado: null,
-          hechos: ev.ticket.summary,
-          pedido: 'Respuesta formal dentro del plazo legal INDECOPI.',
-          monto: null,
-          moneda: null,
-          prorroga: null,
-          respuesta: null,
-          apelaciones: [],
-          historialPlazo: [
-            {
-              id: `hp-${Date.now()}`,
-              fecha: AHORA_BASE,
-              evento: 'PLAZO_ORIGINAL',
-              detalle: 'Apertura de hoja de reclamación con plazo de 15 días hábiles.',
-              autor: this.perspectivaActual().nombre,
-            },
-          ],
-        },
-        ...prev,
-      ]);
-    }
+    if (ev.crearAsientoLibro) this.registrarAsientoLibro(ev.ticket);
     this.abrirTicket(ev.ticket.num, 'bandeja');
+  }
+
+  /** Asiento del Libro de Reclamaciones para un ticket de tipo libro: lo reutiliza Tigo al aprobar el registro. */
+  registrarAsientoLibro(ticket: TicketAtc): void {
+    const nro = String(Math.floor(50 + Math.random() * 50)).padStart(4, '0');
+    this.asientosLibro.update((prev) => [
+      {
+        n: nro,
+        co: ticket.co,
+        est: 'Sede Digital / Mi Portal',
+        ticket: ticket.num,
+        kind: ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
+        cli: ticket.cli,
+        reg: AHORA_BASE,
+        amount: null,
+        ext: false,
+        resp: null,
+        appeal: null,
+        facts: ticket.summary,
+      },
+      ...prev,
+    ]);
+    const venceOrig = sumarHorasHabiles(AHORA_BASE, 15 * 9);
+    this.estadoProto.asientosLibroDetalle.update((prev) => [
+      {
+        id: `lib-${Date.now()}`,
+        codigo: `LR-2026-${nro}`,
+        empresaId: ticket.co,
+        establecimiento: 'Sede Digital / Mi Portal',
+        ticketNum: ticket.num,
+        tipo: ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
+        consumidor: ticket.cli,
+        dni: ticket.dni,
+        registrado: AHORA_BASE,
+        registradoPor: this.perspectivaActual().nombre,
+        venceOriginal: venceOrig,
+        venceProrrogado: null,
+        hechos: ticket.summary,
+        pedido: 'Respuesta formal dentro del plazo legal INDECOPI.',
+        monto: null,
+        moneda: null,
+        prorroga: null,
+        respuesta: null,
+        apelaciones: [],
+        historialPlazo: [
+          {
+            id: `hp-${Date.now()}`,
+            fecha: AHORA_BASE,
+            evento: 'PLAZO_ORIGINAL',
+            detalle: 'Apertura de hoja de reclamación con plazo de 15 días hábiles.',
+            autor: this.perspectivaActual().nombre,
+          },
+        ],
+      },
+      ...prev,
+    ]);
   }
 
   irAVistaDeHu(vista: VistaAtc): void {

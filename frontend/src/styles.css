@@ -2217,8 +2217,8 @@ body {
   inline-size: var(--aybar-space-5);
   aspect-ratio: 1;
   background: currentColor;
-  -webkit-mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
-  mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
+  -webkit-mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 19) var(--aybar-space-5) no-repeat;
+  mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 19) var(--aybar-space-5) no-repeat;
 }
 
 .ay-sidebar__item[href='#vista:c360'] .ay-sidebar__icon,
@@ -2255,6 +2255,8 @@ body {
 .pl-nav-movil__item[data-href='#vista:torre'] .ay-sidebar__icon { --pl-i: 15; }
 .ay-sidebar__item[href='#vista:politicas'] .ay-sidebar__icon,
 .pl-nav-movil__item[data-href='#vista:politicas'] .ay-sidebar__icon { --pl-i: 16; }
+.ay-sidebar__item[href='#vista:tigo'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:tigo'] .ay-sidebar__icon { --pl-i: 18; }
 .ay-sidebar__item[href='#vista:configuracion'] .ay-sidebar__icon,
 .pl-nav-movil__item[data-href='#vista:configuracion'] .ay-sidebar__icon { --pl-i: 17; }
 

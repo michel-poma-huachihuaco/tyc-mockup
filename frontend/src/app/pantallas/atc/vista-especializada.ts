@@ -104,6 +104,9 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 import { CeldaTicketComponent } from './celda-ticket';
 import { EditorPasosFlujoComponent, type CambioPaso } from './editor-pasos-flujo';
 import { TableroTorreComponent } from './graficos/tablero-torre';
+import { ImpactoTigo } from './tigo/impacto-tigo';
+import { PanelAprendizajeTigo } from './tigo/panel-aprendizaje-tigo';
+import { TigoEstadoService } from './tigo/tigo-estado';
 import { FlujosTorreComponent } from './flujos-torre';
 import { PasosFlujoComponent } from './pasos-flujo';
 import { evaluarContextoMorosidad } from './contexto-morosidad';
@@ -167,6 +170,8 @@ export type SubvistaEspecializadaAtc =
     CeldaTicketComponent,
     EditorPasosFlujoComponent,
     TableroTorreComponent,
+    ImpactoTigo,
+    PanelAprendizajeTigo,
     PasosFlujoComponent,
     FlujosTorreComponent,
   ],
@@ -341,6 +346,10 @@ export type SubvistaEspecializadaAtc =
                 </ay-table>
               </ay-card-body>
             </ay-card>
+          }
+
+          @if (puedeEditarWorkflow() && tabConfig() === 'propuestas-tigo') {
+            <app-panel-aprendizaje-tigo />
           }
 
           @if (puedeEditarWorkflow() && tabConfig() === 'alertas') {
@@ -2003,6 +2012,10 @@ export type SubvistaEspecializadaAtc =
           <app-tablero-torre [tickets]="tickets()" (verAreaEnVivo)="verAreaEnVivo.emit($event)" />
         }
 
+        @if (tabTorre() === 'tigo') {
+          <app-impacto-tigo />
+        }
+
         @if (tabTorre() === 'riesgo') {
           <div ayGrid [columnas]="2" gap="md">
             <ay-card variante="elevated" superficie="solid">
@@ -2159,6 +2172,7 @@ export type SubvistaEspecializadaAtc =
 })
 export class VistaEspecializadaComponent {
   readonly estadoProto = inject(EstadoPrototipoAtcService);
+  private readonly tigo = inject(TigoEstadoService);
 
   readonly subvista = input.required<SubvistaEspecializadaAtc>();
   readonly tickets = input<TicketAtc[]>([]);
@@ -2179,7 +2193,12 @@ export class VistaEspecializadaComponent {
   readonly avisoOperacion = signal<string | null>(null);
 
   /* ── Pestañas de cada vista 5181 ── */
-  readonly tabConfig = signal<string>('tipos');
+  readonly tabConfig = signal<string>(this.consumirPestanaPedida());
+  private consumirPestanaPedida(): string {
+    const pedida = this.tigo.pestanaWorkflowPedida();
+    if (pedida) this.tigo.pestanaWorkflowPedida.set(null);
+    return pedida ?? 'tipos';
+  }
   /** Coordinador CX consulta los flujos; el resto de pestañas y la edición son del Admin Funcional y el Supervisor. */
   readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.estadoProto.rolActivo()));
   readonly puedeVerWorkflow = computed(() => this.puedeEditarWorkflow() || this.estadoProto.rolActivo() === 'COORDINADOR_CX');
@@ -2200,6 +2219,11 @@ export class VistaEspecializadaComponent {
     ...(this.puedeEditarWorkflow()
       ? [
           { value: 'guias', label: 'Guías', contador: this.estadoProto.guiasPorTipo().length },
+          {
+            value: 'propuestas-tigo',
+            label: 'Propuestas de Tigo',
+            contador: this.tigo.propuestasAprendizaje().filter((a) => a.estado === 'pendiente').length,
+          },
           { value: 'alertas', label: 'Alertas', contador: this.estadoProto.alertasAdmin().length },
         ]
       : []),
@@ -2228,6 +2252,7 @@ export class VistaEspecializadaComponent {
   readonly tabTorre = signal<string>('tablero');
   readonly tabsTorreCx: AyTabsElemento[] = [
     { value: 'tablero', label: 'Tablero' },
+    { value: 'tigo', label: 'Impacto de Tigo' },
     { value: 'riesgo', label: 'Riesgo de denuncia' },
     { value: 'encuestas', label: 'Encuestas' },
     { value: 'informes', label: 'Informes' },

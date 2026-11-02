@@ -23,8 +23,10 @@ import { BannerConflicto } from './banner-conflicto';
 import { DerivarTicket } from './derivar-ticket';
 import { GuiaSolucion } from './guia-solucion';
 import { RecorridoFlujo } from './recorrido-flujo';
+import { CintaTigo } from '../tigo/cinta-tigo';
 import { crearInteraccionesMock } from './mock-interacciones';
 import { RegistroInteracciones } from './registro-interacciones';
+import { TigoEstadoService } from '../tigo/tigo-estado';
 import { EstadoPrototipoAtcService } from '../estado-prototipo-atc';
 import {
   DetalleDemo,
@@ -48,6 +50,7 @@ import {
   standalone: true,
   imports: [
     RecorridoFlujo,
+    CintaTigo,
     BannerConflicto,
     DerivarTicket,
     GuiaSolucion,
@@ -98,6 +101,8 @@ import {
 
       <app-recorrido-flujo [d]="d" />
 
+      <app-cinta-tigo [ticket]="t" />
+
       <app-banner-conflicto [ticket]="t" [area]="d.area()" [retirada]="d.senalRetirada()" [handoffConfirmado]="d.handoffConfirmado()" (retirar)="d.senalRetirada.set($event)" (confirmarRecepcion)="d.handoffConfirmado.set(true)" />
 
       <div class="c2-cuerpo">
@@ -106,7 +111,7 @@ import {
             @switch (pestana()) {
               @case ('conversacion') {
                 <div class="c2-panel">
-                  <app-registro-interacciones [ticket]="t" [sugerenciaIa]="d.guia()?.versionActual != null ? d.plantillaIa() : null" />
+                  <app-registro-interacciones [ticket]="t" [sugerenciaIa]="tigo.tieneTigo(t.num) ? null : d.guia()?.versionActual != null ? d.plantillaIa() : null" />
                 </div>
               }
 
@@ -225,7 +230,8 @@ import {
 })
 export class DetalleIntermedia {
   readonly ticket = input.required<TicketAtc>();
-  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService));
+  protected readonly tigo = inject(TigoEstadoService);
+  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService), this.tigo);
   /** `?tab=guia|bitacora` abre directamente esa pestaña. */
   protected readonly pestana = signal(
     ['guia', 'bitacora'].includes(new URLSearchParams(globalThis.location?.search ?? '').get('tab') ?? '')

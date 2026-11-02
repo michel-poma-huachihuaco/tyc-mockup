@@ -61,6 +61,8 @@ export class GraficoChartComponent {
   readonly series = input.required<SerieGrafico[]>();
   readonly horizontal = input(false);
   readonly apilado = input(false);
+  /** Fija el eje de valores en 0..maximo (p. ej. 100 para porcentajes); sin él, Chart.js decide. */
+  readonly maximo = input<number | null>(null);
   readonly ariaLabel = input.required<string>();
   /** Índice de la etiqueta (barra o porción) pulsada. */
   readonly clic = output<number>();
@@ -97,6 +99,7 @@ export class GraficoChartComponent {
         borderColor: colorToken(canvas, 'bg-surface'),
         borderWidth: doughnut ? 2 : 0,
       }));
+      const eje = this.maximo() === null ? {} : { min: 0, max: this.maximo() as number };
       const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const config: ChartConfiguration = {
         type: this.tipo(),
@@ -112,8 +115,8 @@ export class GraficoChartComponent {
           scales: doughnut
             ? {}
             : {
-                x: { stacked: apilado, ticks: { color: texto, precision: 0 }, grid: { color: linea } },
-                y: { stacked: apilado, ticks: { color: texto, precision: 0 }, grid: { color: linea } },
+                x: { stacked: apilado, ticks: { color: texto, precision: 0 }, grid: { color: linea }, ...(this.horizontal() ? eje : {}) },
+                y: { stacked: apilado, ticks: { color: texto, precision: 0 }, grid: { color: linea }, ...(this.horizontal() ? {} : eje) },
               },
           onClick: (_e, els) => {
             if (els[0]) this.clic.emit(els[0].index);

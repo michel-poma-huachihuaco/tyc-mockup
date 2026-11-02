@@ -47,6 +47,10 @@ import {
   type TicketAtc,
 } from './datos-atc';
 import { MonitorOperacionComponent } from './monitor-operacion';
+import { TigoEnSala } from './tigo/tigo-en-sala';
+import { TigoEstadoService } from './tigo/tigo-estado';
+import { narrarPaso } from './tigo/tigo-guion';
+import { ETAPAS_TIGO, type EscenarioTigo } from './tigo/tigo-modelo';
 import { leerTokenRgb } from './three/comun';
 import {
   AREAS_ORG,
@@ -116,6 +120,8 @@ interface PuestoEstadoInterno {
   velocidadFactor: number;
   csat: string;
 }
+
+const ZONA_ESCENARIO: Readonly<Record<EscenarioTigo, string>> = { A: 'eje1', B: 'libro', C: 'legal' };
 
 const CLIENTES_SIM: readonly (readonly [string, string, string])[] = [
   ['Eddie Huamaní', 'Villa Sol II · Lote C-07', 'Consulta de cupo en bus EntregaFest y pase QR'],
@@ -326,6 +332,7 @@ const TIPOS_SIM = { ...TIPOS_SIMULACION, ...TIPOS_ORG };
     AyText,
     AyTimeline,
     MonitorOperacionComponent,
+    TigoEnSala,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -361,6 +368,8 @@ const TIPOS_SIM = { ...TIPOS_SIMULACION, ...TIPOS_ORG };
           (valorChange)="cambiarVistaModo($event)"
         />
       </ay-page-header>
+
+      <app-tigo-en-sala (irATigo)="irATigo.emit()" />
 
       @if (vistaModo() === 'monitor') {
         <app-monitor-operacion
@@ -426,7 +435,12 @@ const TIPOS_SIM = { ...TIPOS_SIMULACION, ...TIPOS_ORG };
                           [attr.aria-pressed]="areaFiltro() === r.k"
                           (click)="inspeccionarSala3D(r.k)"
                         >
-                          <span class="vivo-salas-movil__nombre">{{ r.nombre }}</span>
+                          <span class="vivo-salas-movil__nombre">
+                            {{ r.nombre }}
+                            @if (zonaTigo() === r.k) {
+                              <ay-badge size="sm" tono="info">Tigo aquí</ay-badge>
+                            }
+                          </span>
                           <span class="vivo-salas-movil__cifras">
                             {{ r.cola }} en cola · {{ r.atencion }} en atención
                             @if (r.riesgo) {
@@ -575,6 +589,15 @@ export class VistaVivoComponent {
   readonly areaInicial = input<string>('');
   readonly seleccionarTicket = output<string>();
   readonly irABandeja = output<void>();
+  /** Pide abrir «Tigo · Atención asistida» (la consola cambia de vista). */
+  readonly irATigo = output<void>();
+
+  private readonly tigo = inject(TigoEstadoService);
+  /** Sala de la planta donde Tigo acompaña al ticket del escenario en curso (A: Atención Eje 1; B: Libro; C: Legal). */
+  protected readonly zonaTigo = computed(() => {
+    const esc = this.tigo.escenario();
+    return this.tigo.guionTicket() && esc ? ZONA_ESCENARIO[esc] : null;
+  });
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly stageHostRef = viewChild<ElementRef<HTMLDivElement>>('stageHost');
@@ -1007,7 +1030,22 @@ export class VistaVivoComponent {
       };
     });
 
+    const numTigo = this.tigo.guionTicket();
+    const escTigo = this.tigo.escenario();
+    const pendTigo = this.tigo.pendientes();
+    const etapaTigo = this.tigo.guionPaso().etapa;
     return {
+      tigo:
+        numTigo && escTigo
+          ? {
+              numero: numTigo,
+              etapa: ETAPAS_TIGO.find((e) => e.id === etapaTigo)?.nombre ?? 'Registro',
+              etapaId: etapaTigo ?? 'registro',
+              zona: ZONA_ESCENARIO[escTigo],
+              espera: pendTigo.length > 0,
+              frase: narrarPaso(pendTigo[0] ?? this.tigo.propuestas().at(-1)),
+            }
+          : null,
       zonas,
       bandeja: lista.filter((t) => t.etapa === 'bandeja').length,
       escalados: this.escaladosCount(),
