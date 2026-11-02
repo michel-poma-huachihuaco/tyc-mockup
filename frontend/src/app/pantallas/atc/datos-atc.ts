@@ -1509,6 +1509,19 @@ function ticketsFlujoDemo(): TicketAtc[] {
     { tipo: 'cli' as const, fecha: haceHoras(horas), canal, autor, texto },
   ];
   return [
+    // CTA › Estado de cuenta (ATC, 2 actividades): el flujo más sencillo, recién tomado y en la 1.ª.
+    crearTicketInicial('AIN-000907', 'AIN', 'Lotes urbanos', 'WhatsApp', 'Teresa Lozano Bravo', '4036••••',
+      'Villa Sol II · Mz. B Lt. 09', 'CTA', 'MEDIUM', 'IN_PROGRESS', 'ATC', 'Lucía Benavides', 1,
+      'Pide su estado de cuenta actualizado', {
+        subtipo: 'CTA-ESTADO-CUENTA',
+        firstResp: haceHoras(0.5),
+        interactions: cliente('Teresa Lozano', 'Buenas, ¿me envían mi estado de cuenta actualizado?', 'WhatsApp', 1),
+        log: [pasoBitacora(1, 'ATC', 'Lucía Benavides', 'Flujo CTA › Estado de cuenta v2: actividad 1 de 2', true)],
+        status: [
+          { fecha: haceHoras(1), estado: 'OPEN', autor: 'Sistema' },
+          { fecha: haceHoras(0.5), estado: 'IN_PROGRESS', autor: 'Lucía Benavides' },
+        ],
+      }),
     // CTA › Cronograma de pagos (ATC, 3 actividades): en la 2.ª, con Cobranza.
     crearTicketInicial('AIN-000901', 'AIN', 'Lotes urbanos', 'WhatsApp', 'Rubén Castañeda Lira', '4412••••',
       'Villa Sol II · Mz. D Lt. 03', 'CTA', 'MEDIUM', 'IN_PROGRESS', 'ATC', 'Carla Villarán', 9,
