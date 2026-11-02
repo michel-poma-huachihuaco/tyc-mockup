@@ -1630,7 +1630,7 @@ export class EstadoPrototipoAtcService {
       numero: 5,
       categoria: 'Invocación de reglas',
       tono: 'warning',
-      momento: 'Si insiste tras la Frase 4: invocar las reglas del evento.',
+      momento: 'Si insiste tras el paso 1: invocar las reglas del evento.',
     },
     {
       id: 'fa-6',
@@ -1638,7 +1638,7 @@ export class EstadoPrototipoAtcService {
       categoria: 'Compromiso formal y registro',
       tono: 'danger',
       alerta: 'Exige registrar el caso',
-      momento: 'Si persiste tras la Frase 5: asumir un compromiso formal y registrar el caso para cerrar el tema en sala.',
+      momento: 'Si persiste tras el paso 2: asumir un compromiso formal y registrar el caso para cerrar el tema en sala.',
     },
   ];
 
