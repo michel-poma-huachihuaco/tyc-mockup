@@ -410,7 +410,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
 
         <!-- 1. Resumen de KPIs de Tu Día -->
         <div ayStack gap="2">
-          <div ayGrid [columnas]="3" gap="sm">
+          <div ayGrid [columnas]="4" gap="sm">
             <ay-card superficie="solid">
               <ay-card-body padding="sm">
                 <div ayStack gap="2">
@@ -444,15 +444,27 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
               <ay-card-body padding="sm">
                 <div ayStack gap="2">
                   <ay-statistic
-                    etiqueta="Cumplimiento SLA y CSAT hoy"
+                    etiqueta="Cumplimiento SLA hoy"
                     [valor]="94"
                     unidad="% SLA"
                     size="sm"
                   />
-                  <div ayRow gap="1" [ajuste]="true">
-                    <ay-badge size="sm" tono="success">CSAT 4.7 / 5.0</ay-badge>
-                    <ay-badge size="sm" tono="neutral" title="El CSAT es el promedio de las encuestas respondidas; las que el cliente no responde no cuentan">12 de 14 encuestas respondidas</ay-badge>
-                  </div>
+                </div>
+              </ay-card-body>
+            </ay-card>
+
+            <ay-card superficie="solid">
+              <ay-card-body padding="sm">
+                <div ayStack gap="2">
+                  <ay-statistic
+                    etiqueta="CSAT hoy"
+                    [valor]="4.7"
+                    unidad="/ 5.0"
+                    size="sm"
+                  />
+                  <ay-badge size="sm" tono="neutral" title="El CSAT es el promedio de las encuestas respondidas; las que el cliente no responde no cuentan">
+                    12 de 14 encuestas respondidas
+                  </ay-badge>
                 </div>
               </ay-card-body>
             </ay-card>
