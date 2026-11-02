@@ -19,14 +19,14 @@ import type { FraseAnclaEvento } from './estado-prototipo-atc';
         <li
           class="sec__paso"
           [class.sec__paso--hecho]="aplicada(f)"
-          [class.sec__paso--siguiente]="esSiguiente(i)"
+          [class.sec__paso--siguiente]="esSiguiente(i) && !bloqueado()"
           [attr.data-tono]="f.tono"
         >
           <div class="sec__cab">
             <span class="sec__num" aria-hidden="true">{{ i + 1 }}</span>
             @if (aplicada(f)) {
               <ay-badge size="sm" tono="success">Aplicado</ay-badge>
-            } @else if (esSiguiente(i)) {
+            } @else if (esSiguiente(i) && !bloqueado()) {
               <ay-badge size="sm" tono="warning">Siguiente</ay-badge>
             } @else {
               <ay-badge size="sm" tono="neutral">Pendiente</ay-badge>
@@ -38,7 +38,7 @@ import type { FraseAnclaEvento } from './estado-prototipo-atc';
           @if (f.alerta) {
             <ay-badge size="sm" tono="danger">⚠ {{ f.alerta }}</ay-badge>
           }
-          <ay-button tamano="sm" variante="secondary" [disabled]="!esSiguiente(i)" (click)="aplicar.emit(f.numero)">
+          <ay-button tamano="sm" variante="secondary" [disabled]="!esSiguiente(i) || bloqueado()" (click)="aplicar.emit(f.numero)">
             Aplicar paso {{ i + 1 }}
           </ay-button>
         </li>
@@ -67,6 +67,8 @@ export class ProtocoloFrasesComponent {
   readonly frases = input.required<readonly FraseAnclaEvento[]>();
   /** Números de las frases del guion ya aplicadas, en orden (4, 5, 6). */
   readonly aplicadas = input<readonly number[]>([]);
+  /** Con el tema cerrado la secuencia se ve pero ya no se puede aplicar nada. */
+  readonly bloqueado = input(false);
   readonly aplicar = output<number>();
 
   protected aplicada(f: FraseAnclaEvento): boolean {

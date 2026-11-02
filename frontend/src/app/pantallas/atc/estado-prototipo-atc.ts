@@ -239,8 +239,12 @@ export interface CasoEventoFestItem {
   readonly criticidad: 'BAJA' | 'MEDIA' | 'ALTA' | 'CRITICA';
   readonly resumen: string;
   readonly imputacionPenal: boolean;
-  /** Frases Ancla aplicadas, en orden (HU-ATC-037): por ejemplo [4, 5, 6]. */
+  /** Frases del guion aplicadas a este caso, en orden (HU-ATC-037): por ejemplo [4, 5, 6]. */
   readonly frases: readonly number[];
+  /** El tema sigue en sala o ya se cerró (HU-ATC-038 CA-02). */
+  readonly tema: 'EN_SALA' | 'CERRADO';
+  /** El registro del caso está completo: la Frase 6 lo exige para cerrar el tema (HU-ATC-037 CA-02). */
+  readonly registroCompleto: boolean;
   readonly registrado: Date;
   primeraAtencion: Date | null;
   estacion4: { fecha: Date; motivo: string; autor: string } | null;
@@ -1654,6 +1658,8 @@ export class EstadoPrototipoAtcService {
       resumen: 'Reclama demora en minuta y menciona denuncia penal por estafa en mesa de ingreso.',
       imputacionPenal: true,
       frases: [4, 5, 6],
+      tema: 'CERRADO',
+      registroCompleto: true,
       registrado: haceHoras(1.2),
       primeraAtencion: haceHoras(1.1),
       estacion4: {
@@ -1673,6 +1679,8 @@ export class EstadoPrototipoAtcService {
       resumen: 'Consulta horario de firma de Acta de Entrega y validación de acompañantes.',
       imputacionPenal: false,
       frases: [4],
+      tema: 'EN_SALA',
+      registroCompleto: false,
       registrado: haceHoras(0.6),
       primeraAtencion: haceHoras(0.5),
       estacion4: null,

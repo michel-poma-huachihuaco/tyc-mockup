@@ -17,7 +17,6 @@ import {
   AyCardPairs,
   AyCelda,
   AyCheckbox,
-  AyDivider,
   AyEmptyState,
   AyForm,
   AyFormField,
@@ -144,7 +143,6 @@ export type SubvistaEspecializadaAtc =
     AyCardPairs,
     AyCelda,
     AyCheckbox,
-    AyDivider,
     AyEmptyState,
     AyForm,
     AyFormField,
@@ -1776,11 +1774,6 @@ export type SubvistaEspecializadaAtc =
               La descripción contiene una palabra de riesgo muy alto («estafa», «fraude», «abuso» o «delito»). No se debate en sala: el caso se registra con la etiqueta «{{ etiquetaCasoEvento }}» y se deriva de inmediato a la Estación 4 (Legal).
             </ay-alert>
           }
-          @if (frasesAplicadas().includes(6) && !casoDeLaIntervencion()) {
-            <ay-alert tono="warning" titulo="Paso 3 aplicado: registra el caso">
-              El compromiso formal exige registrar el caso para poder cerrar el tema en sala.
-            </ay-alert>
-          }
           @if (reaperturaBloqueada(); as motivo) {
             <ay-alert tono="warning" titulo="No se puede reabrir el caso">
               {{ motivo }}
@@ -1788,50 +1781,98 @@ export type SubvistaEspecializadaAtc =
           }
 
           <div ayStack gap="4">
-            <ay-card superficie="solid">
-              <ay-card-header
-                titulo="Contención en sala"
-                subtitulo="Tres pasos en orden ante la insistencia de un propietario, antes de derivar. Si dice «estafa», «fraude», «abuso» o «delito» no hay pasos: se deriva de inmediato a la Estación 4."
-                nivel="h2"
-                [separador]="true"
-              />
-              <ay-card-body padding="md" gap="md">
-                <app-protocolo-frases
-                  [frases]="estadoProto.frasesAnclaEvento"
-                  [aplicadas]="frasesAplicadas()"
-                  (aplicar)="aplicarFrase($event)"
+            @if (casoAbierto(); as c) {
+              <ay-card superficie="solid">
+                <ay-card-header
+                  [titulo]="'Caso ' + c.ticketNum + ' · ' + c.cliente"
+                  subtitulo="Los pasos de contención, el registro y el cierre del tema en sala son de este caso."
+                  nivel="h2"
+                  [separador]="true"
                 />
-                <div ayRow gap="3" justificar="between" [ajuste]="true">
-                  <span ayText="subtitle" size="xs">
-                    {{ frasesAplicadas().length > 0 ? 'Pasos aplicados: ' + pasosTexto(frasesAplicadas()) + '.' : 'Aún no se aplicó ningún paso.' }}
-                    El texto que dice el moderador en cada paso está por definir con el PO.
-                  </span>
-                  <div ayRow gap="2">
-                    @if (frasesAplicadas().length > 0 || casoDeLaIntervencion()) {
-                      <ay-button tamano="sm" variante="ghost" (click)="reiniciarContencion()">Reiniciar</ay-button>
-                    }
-                    <ay-button
-                      tamano="sm"
-                      variante="primary"
-                      [disabled]="!puedeCerrarTema()"
-                      [attr.title]="puedeCerrarTema() ? null : 'Aplica algún paso; si llegas al paso 3 o hay una palabra de riesgo muy alto, registra el caso primero'"
-                      (click)="cerrarTemaEnSala()"
-                    >
-                      Cerrar el tema en sala
-                    </ay-button>
+                <ay-card-body padding="md" gap="md">
+                  <div ayRow gap="2" [ajuste]="true">
+                    <ay-badge size="sm" tono="neutral">{{ etiquetaCasoEvento }}</ay-badge>
+                    <ay-badge size="sm" [tono]="c.imputacionPenal ? 'danger' : 'neutral'">
+                      {{ c.imputacionPenal ? 'Riesgo muy alto (imputación penal)' : 'Sin palabra de riesgo' }}
+                    </ay-badge>
+                    <ay-badge size="sm" [tono]="c.estacion4 ? 'success' : 'warning'">
+                      {{ c.estacion4 ? 'Derivado a la Estación 4' : 'No derivado a la Estación 4' }}
+                    </ay-badge>
+                    <ay-badge size="sm" [tono]="c.tema === 'CERRADO' ? 'success' : 'warning'">
+                      {{ c.tema === 'CERRADO' ? 'Tema cerrado en sala' : 'Tema en sala' }}
+                    </ay-badge>
                   </div>
-                </div>
-              </ay-card-body>
-            </ay-card>
+
+                  @if (c.frases.includes(6) && !c.registroCompleto && c.tema === 'EN_SALA') {
+                    <ay-alert tono="warning" titulo="Paso 3 aplicado: completa el registro del caso">
+                      El compromiso formal exige registrar el caso para poder cerrar el tema en sala.
+                    </ay-alert>
+                  }
+
+                  @if (c.registroCompleto) {
+                    <div ayStack gap="1">
+                      <strong ayText="label" size="sm">Resumen del caso</strong>
+                      <span ayText="body" size="sm">{{ c.resumen }}</span>
+                    </div>
+                  } @else if (c.tema === 'EN_SALA') {
+                    <ay-form-field etiqueta="Resumen del caso" obligatorio>
+                      <ay-textarea nombre="resumen-caso-evento"
+                        [filas]="2"
+                        [valor]="resumenEdicion()"
+                        (valorChange)="resumenEdicion.set($event)"
+                      />
+                    </ay-form-field>
+                    <div ayRow gap="2">
+                      <ay-button tamano="sm" variante="secondary" (click)="completarRegistroCaso()">
+                        Completar el registro del caso
+                      </ay-button>
+                    </div>
+                  }
+
+                  <app-protocolo-frases
+                    [frases]="estadoProto.frasesAnclaEvento"
+                    [aplicadas]="c.frases"
+                    [bloqueado]="c.tema === 'CERRADO'"
+                    (aplicar)="aplicarFrase($event)"
+                  />
+
+                  <div ayRow gap="3" justificar="between" [ajuste]="true">
+                    <span ayText="subtitle" size="xs">
+                      {{ c.frases.length > 0 ? 'Pasos aplicados: ' + pasosTexto(c.frases) + '.' : 'Aún no se aplicó ningún paso.' }}
+                      El texto que dice el moderador en cada paso está por definir con el PO.
+                    </span>
+                    <div ayRow gap="2">
+                      <ay-button tamano="sm" variante="ghost" (click)="casoAbiertoId.set(null)">Cerrar el panel</ay-button>
+                      @if (!c.estacion4 && c.tema === 'EN_SALA') {
+                        <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
+                          Derivar a Estación 4
+                        </ay-button>
+                      }
+                      @if (c.tema === 'EN_SALA') {
+                        <ay-button
+                          tamano="sm"
+                          variante="primary"
+                          [disabled]="!puedeCerrarTema()"
+                          [attr.title]="puedeCerrarTema() ? null : 'Aplica algún paso o deriva el caso; si llegaste al paso 3, completa antes el registro'"
+                          (click)="cerrarTemaEnSala()"
+                        >
+                          Cerrar el tema en sala
+                        </ay-button>
+                      }
+                    </div>
+                  </div>
+                </ay-card-body>
+              </ay-card>
+            }
 
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Casos registrados en el evento"
-                subtitulo="Más recientes primero. Un caso derivado a la Estación 4 no se puede reabrir: queda con el especialista."
+                subtitulo="Más recientes primero. Abre un caso para aplicarle la contención. Un caso derivado a la Estación 4 no se puede reabrir: queda con el especialista."
                 nivel="h2"
                 [separador]="true"
               />
-              <ay-card-body padding="sm" gap="md">
+              <ay-card-body padding="sm">
                 <ay-table
                   leyenda="Casos del evento EntregaFest"
                   [columnas]="columnasCasosEvento"
@@ -1869,24 +1910,38 @@ export type SubvistaEspecializadaAtc =
                       {{ c.estacion4 ? 'Sí' : 'No' }}
                     </ay-badge>
                   </ng-template>
+                  <ng-template ayCelda="tema" let-fila>
+                    @let c = comoCasoEvento(fila);
+                    <ay-badge size="sm" [tono]="c.tema === 'CERRADO' ? 'success' : 'warning'">
+                      {{ c.tema === 'CERRADO' ? 'Cerrado' : 'En sala' }}
+                    </ay-badge>
+                  </ng-template>
                   <ng-template ayCelda="situacion" let-fila>
                     @let c = comoCasoEvento(fila);
                     <div class="pl-atc-acciones-celda">
-                      @if (c.estacion4) {
+                      @if (c.tema === 'EN_SALA') {
+                        <ay-button tamano="sm" variante="secondary" (click)="abrirCaso(c)">Atender caso</ay-button>
+                      } @else if (c.estacion4) {
                         <ay-button tamano="sm" variante="secondary" (click)="intentarReabrirCaso(c)">
                           Intentar reabrir
                         </ay-button>
                       } @else {
-                        <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
-                          Derivar a Estación 4
-                        </ay-button>
+                        <ay-button tamano="sm" variante="secondary" (click)="abrirCaso(c)">Ver caso</ay-button>
                       }
                     </div>
                   </ng-template>
                 </ay-table>
+              </ay-card-body>
+            </ay-card>
 
-                <ay-divider espaciado="sm" />
-
+            <ay-card superficie="solid">
+              <ay-card-header
+                titulo="Abrir un caso del evento"
+                subtitulo="Escribe lo que manifiesta el propietario. Con «estafa», «fraude», «abuso» o «delito» el caso nace derivado a la Estación 4."
+                nivel="h2"
+                [separador]="true"
+              />
+              <ay-card-body padding="md" gap="md">
                 <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de palabras de riesgo muy alto)">
                   <ay-textarea nombre="texto-evento"
                     [filas]="2"
@@ -1903,12 +1958,8 @@ export type SubvistaEspecializadaAtc =
                   >
                     Probar frase con palabra de riesgo
                   </ay-button>
-                  <ay-button
-                    tamano="sm"
-                    variante="primary"
-                    (click)="registrarCasoEnEntregaFest()"
-                  >
-                    + Registrar caso del evento
+                  <ay-button tamano="sm" variante="primary" (click)="abrirCasoDelEvento()">
+                    + Abrir caso del evento
                   </ay-button>
                 </div>
               </ay-card-body>
@@ -2396,6 +2447,7 @@ export class VistaEspecializadaComponent {
     { clave: 'etiqueta', cabecera: 'Etiqueta', ancho: '12rem' },
     { clave: 'riesgo', cabecera: 'Riesgo verbal y pasos', ancho: '13rem', ordenable: true },
     { clave: 'derivado', cabecera: '¿Derivado a la Estación 4?', ancho: '10rem', ordenable: true },
+    { clave: 'tema', cabecera: 'Tema', ancho: '7rem', ordenable: true },
     { clave: 'situacion', cabecera: 'Acción', alineacion: 'end', ancho: '11rem' },
   ];
 
@@ -2679,18 +2731,21 @@ export class VistaEspecializadaComponent {
     return ['estafa', 'fraude', 'abuso', 'delito'].some((w) => t.includes(w));
   });
 
-  /** Frases del guion aplicadas en la intervención en curso, en orden: 4, 5, 6 (RN-SVC-030). */
-  readonly frasesAplicadas = signal<number[]>([]);
-  /** Caso que se registró en la intervención en curso. */
-  readonly casoDeLaIntervencion = signal<CasoEventoFestItem | null>(null);
+  /** Caso del evento abierto: la contención, el registro y el cierre del tema son de un caso (G2: «caso EF-001»). */
+  readonly casoAbiertoId = signal<string | null>(null);
+  readonly casoAbierto = computed(
+    () => this.estadoProto.casosEventoFest().find((c) => c.id === this.casoAbiertoId()) ?? null,
+  );
+  /** Resumen que se escribe al completar el registro del caso abierto. */
+  readonly resumenEdicion = signal<string>('');
   /** Por qué no se puede reabrir un caso derivado (HU-ATC-038 CA-02). */
   readonly reaperturaBloqueada = signal<string | null>(null);
-  /** El paso 3 o una palabra de riesgo muy alto exigen registrar el caso antes de cerrar el tema en sala. */
+  /** El paso 3 (Frase 6) exige el registro completo del caso para cerrar el tema en sala (HU-ATC-037 CA-02). */
   readonly puedeCerrarTema = computed(() => {
-    const registrado = this.casoDeLaIntervencion() !== null;
-    const hayIntervencion = this.frasesAplicadas().length > 0 || registrado;
-    const exigeRegistro = this.frasesAplicadas().includes(6) || this.imputacionPenalDetectada();
-    return hayIntervencion && (!exigeRegistro || registrado);
+    const c = this.casoAbierto();
+    if (!c || c.tema === 'CERRADO') return false;
+    const hayIntervencion = c.frases.length > 0 || !!c.estacion4;
+    return hayIntervencion && (!c.frases.includes(6) || c.registroCompleto);
   });
   /** Reserva que no entró por falta de cupo: se ofrece otro bus u horario o la lista de espera (HU-ATC-060 CA-02). */
   readonly ofertaSinCupo = signal<{ busId: string; acompanantes: number; punto: string } | null>(null);
@@ -3227,15 +3282,25 @@ export class VistaEspecializadaComponent {
   }
 
   derivarCasoAEstacion4(c: CasoEventoFestItem): void {
-    c.estacion4 = {
-      fecha: AHORA_BASE,
-      motivo: 'Derivado en vivo a Estación 4 Legal aplicando protocolo de frases ancla.',
-      autor: this.estadoProto.perfilActivo().nombre,
-    };
+    this.actualizarCasoEvento(c.id, {
+      estacion4: {
+        fecha: AHORA_BASE,
+        motivo: 'Derivado en vivo a la Estación 4 (Legal) desde el caso del evento.',
+        autor: this.estadoProto.perfilActivo().nombre,
+      },
+    });
     this.avisoOperacion.set(`Caso ${c.ticketNum} derivado a la Estación 4 (Legal).`);
   }
 
-  registrarCasoEnEntregaFest(): void {
+  private actualizarCasoEvento(id: string, cambio: Partial<CasoEventoFestItem>): void {
+    this.estadoProto.casosEventoFest.update((lista) => lista.map((c) => (c.id === id ? { ...c, ...cambio } : c)));
+  }
+
+  /**
+   * Abre un caso del evento (HU-ATC-037 y 039): nace con la etiqueta estándar y, si hay una palabra de riesgo
+   * muy alto, ya derivado a la Estación 4 (HU-ATC-038 CA-01). Queda abierto para aplicarle la contención.
+   */
+  abrirCasoDelEvento(): void {
     const txt = this.textoEvento().trim() || 'Consulta presencial registrada en mesa de EntregaFest.';
     const penal = this.imputacionPenalDetectada();
     const nuevo: CasoEventoFestItem = {
@@ -3248,26 +3313,33 @@ export class VistaEspecializadaComponent {
       criticidad: penal ? 'CRITICA' : 'ALTA',
       resumen: txt,
       imputacionPenal: penal,
-      frases: [...this.frasesAplicadas()],
+      frases: [],
+      tema: 'EN_SALA',
+      registroCompleto: penal,
       registrado: AHORA_BASE,
       primeraAtencion: AHORA_BASE,
       estacion4: penal
         ? {
             fecha: AHORA_BASE,
-            motivo: 'Palabra de riesgo muy alto: derivación inmediata a la Estación 4 al registrar.',
+            motivo: 'Palabra de riesgo muy alto: derivación inmediata a la Estación 4 al abrir el caso.',
             autor: this.estadoProto.perfilActivo().nombre,
           }
         : null,
     };
     this.estadoProto.casosEventoFest.update((prev) => [nuevo, ...prev]);
     this.textoEvento.set('');
-    this.casoDeLaIntervencion.set(nuevo);
-    this.reaperturaBloqueada.set(null);
+    this.abrirCaso(nuevo);
     this.avisoOperacion.set(
       penal
-        ? `Caso ${nuevo.ticketNum} registrado con la etiqueta «${this.etiquetaCasoEvento}» y derivado a la Estación 4 (Legal).`
-        : `Caso ${nuevo.ticketNum} registrado con la etiqueta «${this.etiquetaCasoEvento}».`,
+        ? `Caso ${nuevo.ticketNum} abierto con la etiqueta «${this.etiquetaCasoEvento}» y derivado de inmediato a la Estación 4 (Legal).`
+        : `Caso ${nuevo.ticketNum} abierto con la etiqueta «${this.etiquetaCasoEvento}». Aplica los pasos de contención y completa su registro.`,
     );
+  }
+
+  abrirCaso(c: CasoEventoFestItem): void {
+    this.casoAbiertoId.set(c.id);
+    this.resumenEdicion.set(c.resumen);
+    this.reaperturaBloqueada.set(null);
   }
 
   /** «4 → 5 → 6» del guion se muestra como los pasos «1 → 2 → 3» de la contención. */
@@ -3275,23 +3347,28 @@ export class VistaEspecializadaComponent {
     return frases.map((n) => n - 3).join(' → ');
   }
 
-  /** Cierra el tema en sala: si el caso se derivó, queda con el especialista de la Estación 4 (HU-ATC-038 CA-02). */
-  cerrarTemaEnSala(): void {
-    if (!this.puedeCerrarTema()) return;
-    const caso = this.casoDeLaIntervencion();
-    this.avisoOperacion.set(
-      caso?.estacion4
-        ? `Tema cerrado en sala. El caso ${caso.ticketNum} queda con el especialista de la Estación 4 (Legal): no se reabre.`
-        : 'Tema cerrado en sala.',
-    );
-    this.reiniciarContencion();
+  /** Completa el registro del caso abierto: lo exige el paso 3 para poder cerrar el tema (HU-ATC-037 CA-02). */
+  completarRegistroCaso(): void {
+    const c = this.casoAbierto();
+    const resumen = this.resumenEdicion().trim();
+    if (!c || !resumen) {
+      this.avisoOperacion.set('Escribe el resumen del caso para completar su registro.');
+      return;
+    }
+    this.actualizarCasoEvento(c.id, { resumen, registroCompleto: true });
+    this.avisoOperacion.set(`Registro del caso ${c.ticketNum} completo, con la etiqueta «${this.etiquetaCasoEvento}».`);
   }
 
-  reiniciarContencion(): void {
-    this.frasesAplicadas.set([]);
-    this.casoDeLaIntervencion.set(null);
-    this.textoEvento.set('');
-    this.reaperturaBloqueada.set(null);
+  /** Cierra el tema en sala: si el caso está derivado, queda con el especialista de la Estación 4 (HU-ATC-038 CA-02). */
+  cerrarTemaEnSala(): void {
+    const c = this.casoAbierto();
+    if (!c || !this.puedeCerrarTema()) return;
+    this.actualizarCasoEvento(c.id, { tema: 'CERRADO' });
+    this.avisoOperacion.set(
+      c.estacion4
+        ? `Tema cerrado en sala. El caso ${c.ticketNum} queda con el especialista de la Estación 4 (Legal): no se reabre.`
+        : `Tema cerrado en sala. El caso ${c.ticketNum} queda registrado.`,
+    );
   }
 
   /** Un caso derivado a la Estación 4 no se reabre desde el evento (HU-ATC-038 CA-02). */
@@ -3301,18 +3378,19 @@ export class VistaEspecializadaComponent {
     );
   }
 
-  /** Aplica el siguiente paso de la contención, que es la siguiente Frase del guion: 4, 5 o 6 (HU-ATC-037). */
+  /** Aplica el siguiente paso de la contención al caso abierto: la siguiente Frase del guion, 4, 5 o 6 (HU-ATC-037). */
   aplicarFrase(numero: number): void {
-    const aplicadas = this.frasesAplicadas();
+    const c = this.casoAbierto();
+    if (!c || c.tema === 'CERRADO') return;
     const orden = this.estadoProto.frasesAnclaEvento.map((f) => f.numero as number);
-    if (orden[aplicadas.length] !== numero) return;
-    this.frasesAplicadas.set([...aplicadas, numero]);
+    if (orden[c.frases.length] !== numero) return;
+    this.actualizarCasoEvento(c.id, { frases: [...c.frases, numero] });
     this.avisoOperacion.set(
       numero === 4
-        ? 'Paso 1 aplicado: queda registrado el intento de concreción.'
+        ? `Caso ${c.ticketNum}, paso 1: queda registrado el intento de concreción.`
         : numero === 5
-          ? 'Paso 2 aplicado: se invocaron las reglas del evento.'
-          : 'Paso 3 aplicado: registra el caso para cerrar el tema en sala.',
+          ? `Caso ${c.ticketNum}, paso 2: se invocaron las reglas del evento.`
+          : `Caso ${c.ticketNum}, paso 3: completa el registro del caso para cerrar el tema en sala.`,
     );
   }
 
