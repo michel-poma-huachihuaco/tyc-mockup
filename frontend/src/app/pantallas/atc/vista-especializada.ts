@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   input,
   output,
@@ -60,6 +61,7 @@ import {
   type CasoSgd,
   type ReclamoGarantia,
   type TicketAtc,
+  CLIENTES_360,
   crearTicketInicial,
 } from './datos-atc';
 import {
@@ -123,6 +125,17 @@ export type SubvistaEspecializadaAtc =
   | 'urbemind'
   | 'torre'
   | 'evento';
+
+/** Ingreso guardado en el celular porque no había conexión en la garita (HU-ATC-059 CA-03). */
+interface IngresoPendiente {
+  readonly nombre: string;
+  readonly dni: string;
+  readonly telefono: string;
+  readonly motivo: string;
+  readonly lote: string;
+  readonly proyecto: string;
+  readonly placa?: string;
+}
 
 @Component({
   selector: 'app-vista-especializada',
@@ -1253,7 +1266,7 @@ export type SubvistaEspecializadaAtc =
       <div ayStack gap="6">
         <ay-page-header
           titulo="Ingreso a proyecto"
-          descripcion="Registra a cada persona que entra en garita. Se crea el ticket de visita y se avisa al responsable del proyecto."
+          descripcion="Registra a cada persona que ingresa al proyecto. Cada ingreso crea un ticket «Ingreso a proyecto» y se avisa al responsable del proyecto."
         />
 
         @if (!estadoProto.puedeRegistrarIngreso()) {
@@ -1261,20 +1274,40 @@ export type SubvistaEspecializadaAtc =
             <ay-card-body padding="md">
               <ay-empty-state
                 titulo="Acceso restringido (403)"
-                descripcion="Necesitas el rol de Control de Acceso o Supervisor para registrar ingresos a proyecto."
+                descripcion="Necesitas el rol de Control de Acceso para registrar ingresos a proyecto."
               />
             </ay-card-body>
           </ay-card>
         } @else {
+          @if (!enLinea()) {
+            <ay-alert tono="warning" titulo="Sin conexión en la garita">
+              Los ingresos se guardan en el celular y se envían solos al recuperar la conexión.
+            </ay-alert>
+          }
+          @if (ingresosPendientes().length > 0) {
+            <ay-alert tono="info" [titulo]="ingresosPendientes().length + ' ' + (ingresosPendientes().length === 1 ? 'ingreso guardado' : 'ingresos guardados') + ' en el celular'">
+              Pendientes de envío: {{ nombresPendientes() }}.
+            </ay-alert>
+          }
           <div ayGrid [columnas]="2" gap="md">
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
-                titulo="Formulario de control de acceso (7 campos, el último opcional)"
-                subtitulo="Si el visitante ya es cliente en SIGDA/TAXON se vincula a su lote; si no, entra como Interesado."
+                titulo="Formulario de control de acceso (6 campos y la placa, opcional)"
+                subtitulo="Si el DNI es de un cliente, el ticket se vincula a su ficha y a su lote; si no, queda sin vincular."
                 nivel="h2"
                 [separador]="true"
               />
               <ay-card-body padding="md" gap="md">
+                <ay-form-field
+                  etiqueta="Proyecto de la garita"
+                  ayuda="Se elige una vez: el responsable de cada proyecto recibe sus ingresos."
+                >
+                  <ay-select nombre="nuevo-asistente-proyecto"
+                    [opciones]="opcionesProyectoVisita"
+                    [valor]="nuevoAsistenteProyecto()"
+                    (valorChange)="nuevoAsistenteProyecto.set($event)"
+                  />
+                </ay-form-field>
                 <ay-form class="pl-atc-form-ancho" (enviar)="solicitarIngresoProyecto()">
                   <div ayStack gap="3">
                     <ay-form-field etiqueta="1. Nombre completo" obligatorio>
@@ -1285,9 +1318,10 @@ export type SubvistaEspecializadaAtc =
                       />
                     </ay-form-field>
                     <div ayGrid [columnas]="2" gap="sm" class="pl-atc-fila-campos">
-                      <ay-form-field etiqueta="2. DNI (8 dígitos)" obligatorio>
+                      <ay-form-field etiqueta="2. DNI (8 dígitos)" obligatorio [error]="errorDniIngreso()">
                         <ay-input nombre="nuevo-asistente-dni"
                           [valor]="nuevoAsistenteDni()"
+                          [invalido]="!!errorDniIngreso()"
                           (valorChange)="nuevoAsistenteDni.set($event)"
                           placeholder="Ej. 72282555"
                         />
@@ -1308,23 +1342,19 @@ export type SubvistaEspecializadaAtc =
                           (valorChange)="nuevoAsistenteMotivo.set($event)"
                         />
                       </ay-form-field>
-                      <ay-form-field etiqueta="5. Proyecto o área que visita" obligatorio>
-                        <ay-select nombre="nuevo-asistente-proyecto"
-                          [opciones]="opcionesProyectoVisita"
-                          [valor]="nuevoAsistenteProyecto()"
-                          (valorChange)="nuevoAsistenteProyecto.set($event)"
+                      <ay-form-field etiqueta="5. Lote o área a visitar" obligatorio>
+                        <ay-input nombre="nuevo-asistente-lote"
+                          [valor]="nuevoAsistenteLote()"
+                          (valorChange)="nuevoAsistenteLote.set($event)"
+                          placeholder="Ej. Mz. C Lt. 07 o Oficina de ventas"
                         />
                       </ay-form-field>
                     </div>
-                    <ay-form-field etiqueta="6. Lote / Unidad o referencia">
-                      <ay-input nombre="nuevo-asistente-lote"
-                        [valor]="nuevoAsistenteLote()"
-                        (valorChange)="nuevoAsistenteLote.set($event)"
-                        placeholder="Ej. Mz. C Lt. 07"
-                      />
+                    <ay-form-field etiqueta="6. Fecha y hora">
+                      <ay-input nombre="nuevo-asistente-fecha" [valor]="fechaHoraIngreso()" [soloLectura]="true" />
                     </ay-form-field>
                     <ay-form-field
-                      etiqueta="7. Placa del vehículo (opcional, si ingresa en vehículo propio)"
+                      etiqueta="Placa del vehículo (opcional, si ingresa en vehículo propio)"
                       ayuda="Déjalo vacío si ingresa a pie. Ejemplo: ABC-123"
                       [error]="errorPlaca()"
                     >
@@ -1335,7 +1365,7 @@ export type SubvistaEspecializadaAtc =
                       />
                     </ay-form-field>
                     <div ayRow gap="2" justificar="end">
-                      <ay-button tipo="submit" variante="primary">Registrar ingreso</ay-button>
+                      <ay-button tipo="submit" variante="primary" [disabled]="!ingresoValido()">Registrar ingreso</ay-button>
                     </div>
                   </div>
                 </ay-form>
@@ -2306,6 +2336,8 @@ export class VistaEspecializadaComponent {
   readonly irANuevo = output<void>();
   /** La reserva de un cupo de bus genera un ticket (HU-ATC-060 CA-01): la consola lo suma a la bandeja. */
   readonly ticketNuevo = output<TicketAtc>();
+  /** Un ingreso de garita registrado: la consola lo suma a «Ingresos registrados hoy». */
+  readonly ingresoRegistrado = output<AsistenteProyecto>();
 
   readonly avisoOperacion = signal<string | null>(null);
 
@@ -2690,6 +2722,51 @@ export class VistaEspecializadaComponent {
   readonly nuevoAsistenteLote = signal<string>('');
   readonly nuevoAsistentePlaca = signal<string>('');
   readonly confirmandoIngreso = signal(false);
+
+  /** Fecha y hora del ingreso: las pone el sistema (HU-ATC-059), no se escriben. */
+  readonly fechaHoraIngreso = computed(() => fmtFechaHora(AHORA_BASE));
+  readonly errorDniIngreso = computed(() => {
+    const dni = this.nuevoAsistenteDni().trim();
+    return dni && !/^\d{8}$/.test(dni) ? 'El DNI debe tener 8 dígitos.' : undefined;
+  });
+  /** Faltan datos obligatorios o la placa no es válida. */
+  readonly ingresoValido = computed(
+    () =>
+      !!this.nuevoAsistenteNombre().trim() &&
+      /^\d{8}$/.test(this.nuevoAsistenteDni().trim()) &&
+      !!this.nuevoAsistenteTelefono().trim() &&
+      !!this.nuevoAsistenteLote().trim() &&
+      !this.errorPlaca(),
+  );
+
+  /** Red del celular en la garita: sin conexión el ingreso se guarda y se envía al recuperarla (HU-ATC-059 CA-03). */
+  readonly enLinea = signal<boolean>(globalThis.navigator?.onLine ?? true);
+  readonly ingresosPendientes = signal<IngresoPendiente[]>([]);
+  readonly nombresPendientes = computed(() => this.ingresosPendientes().map((p) => p.nombre).join(', '));
+  private readonly destruir = inject(DestroyRef);
+  private readonly escucharRed = (() => {
+    const ventana = globalThis as unknown as Window;
+    if (typeof ventana.addEventListener !== 'function') return;
+    const alRecuperar = (): void => {
+      this.enLinea.set(true);
+      this.enviarIngresosPendientes();
+    };
+    const alPerder = (): void => this.enLinea.set(false);
+    ventana.addEventListener('online', alRecuperar);
+    ventana.addEventListener('offline', alPerder);
+    this.destruir.onDestroy(() => {
+      ventana.removeEventListener('online', alRecuperar);
+      ventana.removeEventListener('offline', alPerder);
+    });
+  })();
+
+  /** Responsable de cada proyecto en el maestro; `null` si el proyecto no tiene (HU-ATC-059 CA-01). */
+  private readonly responsablePorProyecto: Readonly<Record<string, string | null>> = {
+    'Villa Sol · Etapa II': 'Lucía Benavides',
+    'Los Álamos de Carabayllo': 'Diego Salazar',
+    'Mirador del Sur': 'Nelly Quispe',
+    'Praderas de Lurín (sin responsable en maestro)': null,
+  };
   readonly placaNormalizada = computed(() => normalizarPlaca(this.nuevoAsistentePlaca()));
   readonly errorPlaca = computed(() =>
     placaValida(this.nuevoAsistentePlaca()) ? undefined : 'Formato de placa no válido. Ejemplo: ABC-123',
@@ -3100,17 +3177,57 @@ export class VistaEspecializadaComponent {
   /* ── Acciones de Ingreso a proyecto ── */
   /** Con placa informada abre la confirmación; sin placa registra de inmediato. */
   solicitarIngresoProyecto(): void {
-    if (!this.nuevoAsistenteNombre().trim() || this.errorPlaca()) return;
+    if (!this.ingresoValido()) return;
     if (this.placaNormalizada()) this.confirmandoIngreso.set(true);
     else this.registrarIngresoProyecto();
   }
 
+  /** Registra el ingreso: con conexión crea el ticket; sin ella lo guarda en el celular (HU-ATC-059 CA-03). */
   registrarIngresoProyecto(): void {
-    const nombre = this.nuevoAsistenteNombre().trim();
-    if (!nombre || this.errorPlaca()) return;
-    const placa = this.placaNormalizada() || undefined;
-    const proy = this.nuevoAsistenteProyecto();
-    if (proy.includes('sin responsable')) {
+    if (!this.ingresoValido()) return;
+    const datos: IngresoPendiente = {
+      nombre: this.nuevoAsistenteNombre().trim(),
+      dni: this.nuevoAsistenteDni().trim(),
+      telefono: this.nuevoAsistenteTelefono().trim(),
+      motivo: this.nuevoAsistenteMotivo(),
+      lote: this.nuevoAsistenteLote().trim(),
+      proyecto: this.nuevoAsistenteProyecto(),
+      placa: this.placaNormalizada() || undefined,
+    };
+    this.nuevoAsistenteNombre.set('');
+    this.nuevoAsistenteDni.set('');
+    this.nuevoAsistenteLote.set('');
+    this.nuevoAsistentePlaca.set('');
+    this.confirmandoIngreso.set(false);
+    if (!this.enLinea()) {
+      this.ingresosPendientes.update((prev) => [...prev, datos]);
+      this.avisoOperacion.set(
+        `Sin conexión: el ingreso de ${datos.nombre} quedó guardado en el celular y se enviará al recuperarla.`,
+      );
+      return;
+    }
+    this.crearIngreso(datos);
+  }
+
+  /** Al recuperar la conexión se envían, en orden, los ingresos guardados en el celular. */
+  private enviarIngresosPendientes(): void {
+    const pendientes = this.ingresosPendientes();
+    if (pendientes.length === 0) return;
+    this.ingresosPendientes.set([]);
+    pendientes.forEach((p) => this.crearIngreso(p));
+    this.avisoOperacion.set(
+      `Conexión recuperada: se enviaron ${pendientes.length} ${pendientes.length === 1 ? 'ingreso guardado' : 'ingresos guardados'} en el celular y se crearon sus tickets.`,
+    );
+  }
+
+  /**
+   * Crea el ticket «Ingreso a proyecto» asignado al responsable del proyecto (HU-ATC-059 CA-01); si el DNI es de
+   * un cliente, lo vincula a su ficha y a su lote (CA-02). Los interesados, contratistas y proveedores quedan sin vincular.
+   */
+  private crearIngreso(datos: IngresoPendiente): void {
+    const cliente = CLIENTES_360.find((c) => c.dni === datos.dni);
+    const responsable = this.responsablePorProyecto[datos.proyecto] ?? null;
+    if (responsable === null) {
       this.estadoProto.alertasAdmin.update((prev) => [
         {
           id: `adm-proy-${Date.now()}`,
@@ -3118,31 +3235,72 @@ export class VistaEspecializadaComponent {
           codigo: 'PROYECTO_SIN_RESPONSABLE',
           etiqueta: 'Proyecto sin responsable en el maestro',
           tipoTicket: 'ING',
-          detalle: `Se registró un ingreso para «${proy}» y se derivó a supervisión comercial por falta de responsable en el maestro.`,
+          detalle: `Se registró un ingreso para «${datos.proyecto}» y el ticket quedó en la cola de ATC por falta de responsable en el maestro.`,
         },
         ...prev,
       ]);
     }
-    this.asistentes().unshift({
-      id: `ING-0${this.asistentes().length + 1}`,
-      nombre,
-      dni: this.nuevoAsistenteDni().trim() || '7000••••',
-      proyecto: proy,
-      lote: this.nuevoAsistenteLote().trim() || 'Visita general',
-      acompanantes: 1,
-      hora: '10:40',
-      placa,
-    });
-    this.nuevoAsistenteNombre.set('');
-    this.nuevoAsistenteDni.set('');
-    this.nuevoAsistenteLote.set('');
-    this.nuevoAsistentePlaca.set('');
-    this.confirmandoIngreso.set(false);
-    this.avisoOperacion.set(
-      placa
-        ? `Ingreso de ${nombre} registrado. Se notificó en línea al responsable del proyecto el ingreso en vehículo propio (${placa}).`
-        : `Ingreso de ${nombre} registrado y notificado al responsable del proyecto.`,
+    const num = this.siguienteNumeroTicket();
+    const proyecto = cliente
+      ? `${cliente.proyecto} · Lote ${cliente.lotes[0] ?? datos.lote}`
+      : `${datos.proyecto} · ${datos.lote}`;
+    const resumen = `Ingreso al proyecto «${datos.proyecto}»: ${datos.motivo}`;
+    this.ticketNuevo.emit(
+      crearTicketInicial(
+        num, 'AIN', 'Lotes urbanos', 'Presencial / Caseta',
+        cliente ? cliente.nombre : `${datos.nombre} (sin vincular)`,
+        datos.dni, proyecto, 'ING', 'LOW', 'OPEN', 'ATC', responsable, 0, resumen,
+        {
+          emotion: '',
+          interactions: [
+            {
+              tipo: 'cli',
+              fecha: AHORA_BASE,
+              canal: 'Presencial / Caseta',
+              autor: datos.nombre,
+              texto: `${resumen}. Lote o área: ${datos.lote}. Teléfono: ${datos.telefono}.${datos.placa ? ` Vehículo: ${datos.placa}.` : ''}`,
+            },
+          ],
+          log: [
+            {
+              fecha: AHORA_BASE,
+              area: 'ATC',
+              responsable: responsable ?? '',
+              motivo: 'ALTA',
+              nota: cliente
+                ? 'Ingreso registrado en garita; vinculado a la ficha y al lote del cliente.'
+                : 'Ingreso registrado en garita; sin cliente vinculado.',
+            },
+          ],
+        },
+      ),
     );
+    this.ingresoRegistrado.emit({
+      id: `ING-0${this.asistentes().length + 1}`,
+      nombre: datos.nombre,
+      dni: datos.dni,
+      proyecto: datos.proyecto,
+      lote: datos.lote,
+      acompanantes: 0,
+      hora: AHORA_BASE.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }),
+      placa: datos.placa,
+      ticket: num,
+      vinculado: !!cliente,
+    });
+    this.avisoOperacion.set(
+      `Ingreso de ${datos.nombre} registrado: ticket ${num}${cliente ? ` vinculado a su ficha y a su lote ${cliente.lotes[0] ?? ''}` : ' sin cliente vinculado'}. ${responsable ? `Se notificó a ${responsable}, responsable del proyecto` : 'El proyecto no tiene responsable: quedó en la cola de ATC'}.`,
+    );
+  }
+
+  /** Siguiente número libre de ticket de la razón social AIN. */
+  private siguienteNumeroTicket(): string {
+    const ultimo = Math.max(
+      0,
+      ...this.tickets()
+        .filter((t) => t.num.startsWith('AIN-'))
+        .map((t) => Number(t.num.slice(4)) || 0),
+    );
+    return `AIN-${String(ultimo + 1).padStart(6, '0')}`;
   }
 
   /* ── Acciones de Buses del Entrega Fest ── */
@@ -3195,16 +3353,10 @@ export class VistaEspecializadaComponent {
     const bus = this.estadoProto.busesFest.find((b) => b.id === busId);
     const nombreBus = bus?.nombre ?? busId;
     const cliente = this.estadoProto.perfilActivo().nombre;
-    const ultimo = Math.max(
-      0,
-      ...this.tickets()
-        .filter((t) => t.num.startsWith('AIN-'))
-        .map((t) => Number(t.num.slice(4)) || 0),
-    );
-    const num = `AIN-${String(ultimo + 1).padStart(6, '0')}`;
+    const num = this.siguienteNumeroTicket();
     const resumen = `Reserva de cupo en ${nombreBus} para ${1 + acompanantes} personas${estado === 'EN_ESPERA' ? ' (en lista de espera)' : ''}`;
     this.ticketNuevo.emit(
-      crearTicketInicial(num, 'AIN', 'Lotes urbanos', 'Mi Portal', cliente, '4412••••', 'Villa Sol II · Mz. C Lt. 07', 'PED', 'LOW', 'OPEN', 'ATC', null, 0, resumen, {
+      crearTicketInicial(num, 'AIN', 'Lotes urbanos', 'Mi Portal', cliente, '4412••••', 'Villa Sol II · Mz. C Lt. 07', 'BUS', 'LOW', 'OPEN', 'ATC', null, 0, resumen, {
         emotion: '',
         interactions: [{ tipo: 'cli', fecha: AHORA_BASE, canal: 'Mi Portal', autor: cliente, texto: resumen }],
       }),

@@ -530,6 +530,8 @@ interface ItemMenuAtc {
                 [buses]="buses()"
                 [mostrarHu]="mostrarTrazabilidadHu()"
                 (verContrato)="abrirContrato($event)"
+                (ingresoRegistrado)="asistentes.update(lista => [...lista, $event])"
+                (ticketNuevo)="alAgregarTicket($event)"
                 (seleccionarTicket)="alSeleccionarTicket($event)"
                 (irANuevo)="vistaActiva.set('nuevo')"
               />
@@ -1407,7 +1409,7 @@ export class ConsolaAtcComponent {
         'La evaluación diaria de morosidad suspende automáticamente cartas de resolución si existe un reclamo o queja abierta sobre el contrato.',
       ],
       ingreso: [
-        'Control de acceso de promotores y asesores en garita de proyecto con validación de empresa autorizada.',
+        'Registro del ingreso de cada persona al proyecto desde el celular: cada ingreso genera un ticket para el responsable del proyecto.',
       ],
       buses: [
         'Transporte EntregaFest y casos en evento con reserva de cupo por titular al día en cuotas.',
@@ -1519,7 +1521,7 @@ export class ConsolaAtcComponent {
       id: 'ingreso',
       grupo: 'OPERACION',
       titulo: 'Ingreso a proyectos',
-      subtitulo: 'Validación de acceso en garita de proyecto para promotores y asesores',
+      subtitulo: 'Registro de cada persona que ingresa al proyecto y su ticket',
       icono: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
     },
     {
@@ -2037,9 +2039,11 @@ export class ConsolaAtcComponent {
         cobranza: 'ANALISTA_COBRANZA',
         cdo: 'CDO',
         'apoyo-cx': 'APOYO_CX',
+        apoyocx: 'APOYO_CX',
         proyecto: 'RESPONSABLE_PROYECTO',
         referente: 'REFERENTE_ATENCION',
         garita: 'CONTROL_ACCESO',
+        acceso: 'CONTROL_ACCESO',
         admin: 'ADMIN_FUNCIONAL',
       };
       const rol = mapaUidRol[uid];

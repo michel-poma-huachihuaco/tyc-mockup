@@ -1029,7 +1029,7 @@ export class VistaOperacionComponent {
     label: c,
   }));
 
-  readonly opcionesTiposForm: AyOpcionSelect[] = TIPOS_TICKET.map((tp) => ({
+  readonly opcionesTiposForm: AyOpcionSelect[] = TIPOS_TICKET.filter((tp) => !tp.porFormulario).map((tp) => ({
     value: tp.id,
     label: `${tp.id} · ${tp.nombre}`,
   }));

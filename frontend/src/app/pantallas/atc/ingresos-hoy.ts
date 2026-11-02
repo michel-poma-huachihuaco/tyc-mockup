@@ -29,11 +29,18 @@ import type { AsistenteProyecto } from './datos-atc';
               <ay-avatar size="md" [nombre]="a.nombre" [decorativo]="true" />
               <div class="ih__datos">
                 <strong class="ih__nombre">{{ a.nombre }}</strong>
-                <span class="ih__dni">DNI {{ a.dni }}</span>
+                <span class="ih__dni">
+                  DNI {{ a.dni }}@if (a.ticket) { · {{ a.ticket }} }
+                </span>
               </div>
               <div class="ih__chips">
                 <ay-badge size="sm" tono="info">{{ a.proyecto }}</ay-badge>
-                <ay-badge size="sm" tono="neutral">Lote {{ a.lote }}</ay-badge>
+                <ay-badge size="sm" tono="neutral">{{ a.lote }}</ay-badge>
+                @if (a.ticket) {
+                  <ay-badge size="sm" [tono]="a.vinculado ? 'success' : 'warning'">
+                    {{ a.vinculado ? 'Cliente vinculado' : 'Sin vincular' }}
+                  </ay-badge>
+                }
                 <ay-badge size="sm" [tono]="a.placa ? 'success' : 'neutral'">{{ a.placa ? 'Vehículo ' + a.placa : 'A pie' }}</ay-badge>
                 @if (a.acompanantes > 0) {
                   <ay-badge size="sm" tono="warning">+{{ a.acompanantes }} acomp.</ay-badge>

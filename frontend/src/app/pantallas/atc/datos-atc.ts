@@ -36,6 +36,8 @@ export interface TipoTicketInfo {
   readonly id: string;
   readonly nombre: string;
   readonly libro: boolean;
+  /** Lo registra un formulario simple (ingreso a proyecto, reserva de bus), no el gestor desde Nuevo ticket. */
+  readonly porFormulario?: boolean;
 }
 
 export interface PrioridadInfo {
@@ -265,6 +267,10 @@ export interface AsistenteProyecto {
   readonly acompanantes: number;
   readonly hora: string;
   readonly placa?: string;
+  /** Ticket «Ingreso a proyecto» que generó el ingreso (HU-ATC-059 CA-01). */
+  readonly ticket?: string;
+  /** El DNI era de un cliente: el ticket quedó vinculado a su ficha y a su lote (CA-02). */
+  readonly vinculado?: boolean;
 }
 
 export interface BusEntregaFest {
@@ -433,6 +439,8 @@ export const TIPOS_TICKET: readonly TipoTicketInfo[] = [
   { id: 'REC', nombre: 'Reclamo (Libro)', libro: true },
   { id: 'CIT', nombre: 'Incidencia de infraestructura urbana (CITY_INCIDENT)', libro: false },
   { id: 'GAR', nombre: 'Garantía postventa', libro: false },
+  { id: 'ING', nombre: 'Ingreso a proyecto', libro: false, porFormulario: true },
+  { id: 'BUS', nombre: 'Reserva de bus', libro: false, porFormulario: true },
 ];
 
 export const PRIORIDADES_TICKET: readonly PrioridadInfo[] = [

@@ -735,6 +735,18 @@ function flujoSubtipo(
   };
 }
 
+/** Flujo general de un tipo sin subtipos, con una sola versión publicada. */
+function flujoGeneral(tipo: string, nombreTipo: string, area: string, pasos: PasoFlujoConfig[]): FlujoTipoConfig {
+  return {
+    tipo,
+    nombreTipo,
+    versionActual: 1,
+    area,
+    pasos,
+    historial: [{ version: 1, fecha: haceHoras(72), autor: 'Alonso Pérez', area, pasos: pasos.map((p) => ({ ...p })) }],
+  };
+}
+
 /**
  * Flujos de ejemplo por subtipo: varían en área, número de actividades, responsables y horas para que se
  * note la diferencia al elegir uno u otro. «Actualización de datos» (Pedido simple) y «Demora en trámite»
@@ -821,6 +833,9 @@ const FLUJOS_DE_SUBTIPO: FlujoTipoConfig[] = [
     { nombre: 'Registro y verificación de vigencia (1 año)', responsable: 'Nelly Quispe', horas: 4 },
     { nombre: 'Visita del técnico', responsable: 'Nelly Quispe', horas: 32 },
   ]),
+  // Ingreso a proyecto y reserva de bus (ADR-008, combinaciones 10 y 11): flujo por defecto del área, una actividad «Atención».
+  flujoGeneral('ING', 'Ingreso a proyecto', 'ATC', [{ nombre: 'Atención', responsable: 'Jorge Zambrano', horas: 4 }]),
+  flujoGeneral('BUS', 'Reserva de bus', 'ATC', [{ nombre: 'Atención', responsable: 'Lucía Benavides', horas: 24 }]),
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -2232,8 +2247,9 @@ export class EstadoPrototipoAtcService {
     return ['GESTOR_POSTVENTA', 'SUPERVISOR'].includes(rol);
   }
 
+  /** Solo el personal de control de acceso (`ATC_SITE_ACCESS`) registra ingresos (HU-ATC-059). */
   puedeRegistrarIngreso(rol: RolPrototipoAtc = this.rolActivo()): boolean {
-    return ['CONTROL_ACCESO', 'SUPERVISOR'].includes(rol);
+    return rol === 'CONTROL_ACCESO';
   }
 
   puedeVerBuses(rol: RolPrototipoAtc = this.rolActivo()): boolean {
@@ -2264,7 +2280,6 @@ export class EstadoPrototipoAtcService {
           'politicas',
           'workflow',
           'evento',
-          'ingreso',
           'buses',
           'torre',
         ];
