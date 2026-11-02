@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  type OnInit,
   computed,
   afterNextRender,
   effect,
@@ -175,7 +174,7 @@ const PATRON_PII = /\b\d{8}\b|\b(?:\d[ -]?){13,16}\b/;
     .ri-fila--entre { justify-content: space-between; align-items: center; }
   `,
 })
-export class RegistroInteracciones implements OnInit {
+export class RegistroInteracciones {
   readonly ticket = input.required<TicketAtc>();
   /** Borrador del Copiloto IA para un mensaje al cliente; si falta, no se ofrece. */
   readonly sugerenciaIa = input<string | null>(null);
@@ -187,8 +186,10 @@ export class RegistroInteracciones implements OnInit {
   protected readonly tipoNuevo = signal<TipoNuevo>('respuesta_agente');
   protected readonly texto = signal('');
 
-  /** Registro del caso. Es de prueba: lo que se registre aquí no se guarda en ningún sitio. */
-  private readonly entradas = signal<InteraccionMock[]>([]);
+  /** Lo que escribe el usuario a mano. Es de prueba: no se guarda en ningún sitio. */
+  private readonly locales = signal<InteraccionMock[]>([]);
+  /** Lo que ya trae el ticket (y lo que Tigo le escribe en vivo) más lo local. */
+  private readonly entradas = computed(() => [...crearInteraccionesMock(this.ticket()), ...this.locales()]);
 
   protected readonly tipos: AySegmentoOpcion[] = [
     { valor: 'respuesta_agente', etiqueta: 'Mensaje al cliente' },
@@ -209,10 +210,6 @@ export class RegistroInteracciones implements OnInit {
         if (el) el.scrollTop = el.scrollHeight;
       });
     });
-  }
-
-  ngOnInit(): void {
-    this.entradas.set(crearInteraccionesMock(this.ticket()));
   }
 
   /** Lo que ve el equipo: sin las asignaciones, que viven en la bitácora de asignaciones (HU-007). */
@@ -277,7 +274,7 @@ export class RegistroInteracciones implements OnInit {
   }
 
   private agregar(e: InteraccionMock): void {
-    this.entradas.update((l) => [...l, e]);
+    this.locales.update((l) => [...l, e]);
   }
 
   protected readonly fmt = fmt;
