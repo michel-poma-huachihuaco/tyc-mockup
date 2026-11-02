@@ -231,7 +231,8 @@ export interface ConsultaExternaAuditItem {
 
 export interface CasoEventoFestItem {
   readonly id: string;
-  readonly ticketNum: string;
+  /** Código del caso del evento («EF-001»): no es un ticket (el caso no guarda ticket ni persona). */
+  readonly codigo: string;
   readonly cliente: string;
   readonly dni: string;
   readonly proyecto: string;
@@ -1649,7 +1650,7 @@ export class EstadoPrototipoAtcService {
   readonly casosEventoFest = signal<CasoEventoFestItem[]>([
     {
       id: 'ev-1',
-      ticketNum: 'ALT-001204',
+      codigo: 'EF-002',
       cliente: 'Jorge Mamani Ccori',
       dni: '7013••••',
       proyecto: 'Los Álamos · Mz. F Lt. 3',
@@ -1670,7 +1671,7 @@ export class EstadoPrototipoAtcService {
     },
     {
       id: 'ev-2',
-      ticketNum: 'AIN-000486',
+      codigo: 'EF-001',
       cliente: 'Eddie Huamaní',
       dni: '7228••••',
       proyecto: 'Villa Sol II · Lote C-07',

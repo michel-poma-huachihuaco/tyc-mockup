@@ -1784,7 +1784,7 @@ export type SubvistaEspecializadaAtc =
             @if (casoAbierto(); as c) {
               <ay-card superficie="solid">
                 <ay-card-header
-                  [titulo]="'Caso ' + c.ticketNum + ' · ' + c.cliente"
+                  [titulo]="'Caso ' + c.codigo + ' · ' + c.cliente"
                   subtitulo="Los pasos de contención, el registro y el cierre del tema en sala son de este caso."
                   nivel="h2"
                   [separador]="true"
@@ -1879,9 +1879,9 @@ export type SubvistaEspecializadaAtc =
                   [filas]="estadoProto.casosEventoFest()"
                   [rayada]="true"
                 >
-                  <ng-template ayCelda="ticketNum" let-fila>
+                  <ng-template ayCelda="codigo" let-fila>
                     @let c = comoCasoEvento(fila);
-                    <strong ayText="mono" size="xs">{{ c.ticketNum }}</strong>
+                    <strong ayText="mono" size="xs">{{ c.codigo }}</strong>
                   </ng-template>
                   <ng-template ayCelda="cliente" let-fila>
                     @let c = comoCasoEvento(fila);
@@ -2442,7 +2442,7 @@ export class VistaEspecializadaComponent {
   ];
 
   readonly columnasCasosEvento: readonly AyColumna[] = [
-    { clave: 'ticketNum', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'codigo', cabecera: 'Caso', ancho: '8rem', ordenable: true },
     { clave: 'cliente', cabecera: 'Cliente / Proyecto', ordenable: true },
     { clave: 'etiqueta', cabecera: 'Etiqueta', ancho: '12rem' },
     { clave: 'riesgo', cabecera: 'Riesgo verbal y pasos', ancho: '13rem', ordenable: true },
@@ -3289,7 +3289,7 @@ export class VistaEspecializadaComponent {
         autor: this.estadoProto.perfilActivo().nombre,
       },
     });
-    this.avisoOperacion.set(`Caso ${c.ticketNum} derivado a la Estación 4 (Legal).`);
+    this.avisoOperacion.set(`Caso ${c.codigo} derivado a la Estación 4 (Legal).`);
   }
 
   private actualizarCasoEvento(id: string, cambio: Partial<CasoEventoFestItem>): void {
@@ -3305,7 +3305,7 @@ export class VistaEspecializadaComponent {
     const penal = this.imputacionPenalDetectada();
     const nuevo: CasoEventoFestItem = {
       id: `ev-${Date.now()}`,
-      ticketNum: `AIN-000${510 + this.estadoProto.casosEventoFest().length}`,
+      codigo: `EF-${String(this.estadoProto.casosEventoFest().length + 1).padStart(3, '0')}`,
       cliente: 'Asistente Convocado EntregaFest',
       dni: '4412••••',
       proyecto: 'Villa Sol II · Mz. C',
@@ -3331,8 +3331,8 @@ export class VistaEspecializadaComponent {
     this.abrirCaso(nuevo);
     this.avisoOperacion.set(
       penal
-        ? `Caso ${nuevo.ticketNum} abierto con la etiqueta «${this.etiquetaCasoEvento}» y derivado de inmediato a la Estación 4 (Legal).`
-        : `Caso ${nuevo.ticketNum} abierto con la etiqueta «${this.etiquetaCasoEvento}». Aplica los pasos de contención y completa su registro.`,
+        ? `Caso ${nuevo.codigo} abierto con la etiqueta «${this.etiquetaCasoEvento}» y derivado de inmediato a la Estación 4 (Legal).`
+        : `Caso ${nuevo.codigo} abierto con la etiqueta «${this.etiquetaCasoEvento}». Aplica los pasos de contención y completa su registro.`,
     );
   }
 
@@ -3356,7 +3356,7 @@ export class VistaEspecializadaComponent {
       return;
     }
     this.actualizarCasoEvento(c.id, { resumen, registroCompleto: true });
-    this.avisoOperacion.set(`Registro del caso ${c.ticketNum} completo, con la etiqueta «${this.etiquetaCasoEvento}».`);
+    this.avisoOperacion.set(`Registro del caso ${c.codigo} completo, con la etiqueta «${this.etiquetaCasoEvento}».`);
   }
 
   /** Cierra el tema en sala: si el caso está derivado, queda con el especialista de la Estación 4 (HU-ATC-038 CA-02). */
@@ -3366,15 +3366,15 @@ export class VistaEspecializadaComponent {
     this.actualizarCasoEvento(c.id, { tema: 'CERRADO' });
     this.avisoOperacion.set(
       c.estacion4
-        ? `Tema cerrado en sala. El caso ${c.ticketNum} queda con el especialista de la Estación 4 (Legal): no se reabre.`
-        : `Tema cerrado en sala. El caso ${c.ticketNum} queda registrado.`,
+        ? `Tema cerrado en sala. El caso ${c.codigo} queda con el especialista de la Estación 4 (Legal): no se reabre.`
+        : `Tema cerrado en sala. El caso ${c.codigo} queda registrado.`,
     );
   }
 
   /** Un caso derivado a la Estación 4 no se reabre desde el evento (HU-ATC-038 CA-02). */
   intentarReabrirCaso(c: CasoEventoFestItem): void {
     this.reaperturaBloqueada.set(
-      `El caso ${c.ticketNum} ya fue derivado a la Estación 4: el moderador no puede reabrirlo. Queda con el especialista de Legal.`,
+      `El caso ${c.codigo} ya fue derivado a la Estación 4: el moderador no puede reabrirlo. Queda con el especialista de Legal.`,
     );
   }
 
@@ -3387,10 +3387,10 @@ export class VistaEspecializadaComponent {
     this.actualizarCasoEvento(c.id, { frases: [...c.frases, numero] });
     this.avisoOperacion.set(
       numero === 4
-        ? `Caso ${c.ticketNum}, paso 1: queda registrado el intento de concreción.`
+        ? `Caso ${c.codigo}, paso 1: queda registrado el intento de concreción.`
         : numero === 5
-          ? `Caso ${c.ticketNum}, paso 2: se invocaron las reglas del evento.`
-          : `Caso ${c.ticketNum}, paso 3: completa el registro del caso para cerrar el tema en sala.`,
+          ? `Caso ${c.codigo}, paso 2: se invocaron las reglas del evento.`
+          : `Caso ${c.codigo}, paso 3: completa el registro del caso para cerrar el tema en sala.`,
     );
   }
 
