@@ -529,7 +529,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 Tus tickets pendientes y prioridades para cerrar hoy
               </ay-heading>
               <span ayText="subtitle" size="xs">
-                Casos activos que requieren seguimiento o primera respuesta durante tu jornada de hoy.
+                Tus casos activos que requieren seguimiento o primera respuesta durante tu jornada de hoy.
               </span>
             </div>
             <ay-badge tono="warning">{{ misTicketsEnRiesgoHoy().length }} requieren acción inmediata</ay-badge>
@@ -543,6 +543,7 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                 [filas]="misTicketsPendientesHoy()"
                 [rayada]="true"
               >
+                <span ayVacio ayText="subtitle" size="sm">No tienes tickets asignados pendientes hoy.</span>
                 <ng-template ayCelda="rayo" let-fila>
                   @let t = comoTicket(fila);
                   <div class="pl-atc-rayo-celda">
@@ -635,15 +636,6 @@ import { crearFiltrosTabla, EstadoFiltrosTablas } from './filtros-tabla';
                       (click)="t.contract && verContrato.emit(t.contract)"
                     >
                       Contrato
-                    </ay-button>
-                    <ay-button
-                      tamano="sm"
-                      variante="secondary"
-                      [disabled]="!!t.owner"
-                      [attr.title]="t.owner ? 'Ya asignado a ' + t.owner : 'Auto-asignar por menor carga'"
-                      (click)="!t.owner && autoAsignarMenorCarga(t)"
-                    >
-                      Auto-asignar
                     </ay-button>
                   </div>
                 </ng-template>
@@ -1075,8 +1067,19 @@ export class VistaOperacionComponent {
     { gestor: 'L. Ccahuana', area: 'Postventa y Garantías', atendidos: 9, pendientes: 3, riesgo: 0, csat: '4.6', sla: '92% SLA', encuestas: 7, enviadas: 9 },
   ];
 
+  /**
+   * Nombre con el que los tickets de ejemplo guardan al responsable de cada perfil. Los perfiles
+   * sin entrada no tienen tickets propios: «Tu día» solo muestra los del usuario (HU-ATC-054 CA-01).
+   */
+  private readonly responsablePorPerfil: Readonly<Record<string, string>> = {
+    GESTOR: 'C. Rojas',
+    LEGAL_RECLAMOS: 'Dra. P. Vílchez',
+    ANALISTA_COBRANZA: 'Carla V.',
+  };
+
   readonly misTicketsPendientesHoy = computed(() =>
     this.tickets()
+      .filter((t) => !!t.owner && t.owner === this.responsablePorPerfil[this.estadoProto.rolActivo()])
       .filter((t) => t.state !== 'RESOLVED' && t.state !== 'CLOSED')
       .map((t) => Object.assign(t, { sla: t.resDue.getTime() })),
   );
