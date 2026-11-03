@@ -12,6 +12,7 @@ flowchart LR
   c360[customer360]
   delinq[delinquency]
   integ["integrations<br/>adaptador + simulador por externo<br/>GestoresPort: actividad de ATC (ED-03)"]
+  asst["assistant<br/>puertos: modelo (Azure OpenAI o simulador), consulta 360, guía de solución, historial<br/>escribe solo SVC_AI_SUGGESTION_LOG"]
   outbox[("Outbox<br/>SVC_OUTBOX_EVENT")]
   bus{{"Bus · aybar.service.*"}}
   ctrl -. "roles en el token" .-> sec
@@ -31,6 +32,10 @@ flowchart LR
   bus --> inbox
   bus --> quality
   bus --> portal
+  tickets -- "pide sugerencia" --> asst
+  asst -- "lee el ticket por API · entrega el borrador por API" --> tickets
+  asst -- "o por evento del outbox (ADR-013)" --> outbox
+  asst -- "puerto del modelo, consulta 360 y guía" --> integ
   c360 --> integ
   delinq --> integ
   lcases --> integ
@@ -42,3 +47,4 @@ flowchart LR
 %% Historial: 0.3 · 2026-10-26 · Brayan Hurtado, con IA · eventos por el outbox con los tópicos del SDK (ADR-013); seguridad transversal con roles del token; integrations con GestoresPort y el registro del catálogo en Control de acceso (ADR-009)
 %% Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · decisiones del equipo de analisis/decisiones.md v0.7: CuentaPersonaPort en la seguridad transversal (ED-01) y GestoresPort con datos de ATC (ED-03)
 %% Historial: 0.5 · 2026-10-28 · Jesús Chávez Elías, con IA · cruce del Líder Técnico del 28-oct (C14): CuentaPersonaPort lee el claim party_id (S28-4); ED-01 ya no es lectura de IDN_USER_ACCOUNT
+%% Historial: 0.6 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): se dibuja el módulo assistant con sus puertos y su única tabla (SVC_AI_SUGGESTION_LOG); entrega por la API de tickets o por outbox

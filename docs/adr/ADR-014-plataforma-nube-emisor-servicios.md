@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-014: Plataforma: Azure, emisor de tokens de Control de acceso y servicios gestionados"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.11"
+version: "0.12"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-002, ADR-004, ADR-005, ADR-006, ADR-009, ADR-010, ADR-011, ADR-012, ADR-013]
 tags: [adr, arquitectura, g3]
 ---
@@ -94,7 +94,7 @@ Además:
 - Impide:
   - Suponer otra nube o servicio gestionado sin ADR.
   - Usar un emisor distinto del de Control de acceso, o abrir sesiones propias.
-- Cuesta: **USD 2.592,53 al mes** en Brazil South, con los cuatro ambientes del PLT-05: DEV 229,16, QA 390,19, PRE (UAT) 390,19, producción 1.562,71 y Azure Container Registry 20,28. En East US 2, como comparación, USD 1.770,59 (`arquitectura/costo-cloud.md`, §1.1 y §1.2: API pública de precios de Azure del 26-oct-2026, USD por mes; supuestos de región, volumen y tamaño fijados en ED-12). El WebSocket y el job de migraciones no suman: usan el ingreso y el plan de consumo de Container Apps. En producción pesan Azure Cosmos DB for MongoDB (vCore) 844,44, Azure Database for PostgreSQL 378,37 y Azure Container Apps 197,70. Es una cota superior: no resta capas gratuitas y lo compartido con Control de acceso (base única, API Management y Cloudflare) se imputa entero a ATC, sin reparto (decisión del equipo, ED-12). Fuera de esos totales: correo, USD 0,63 al mes; proveedor de IA (Azure OpenAI, ED-17), USD 0 en la Etapa 1, porque HU-ATC-048 y 053 están fuera (P-025), y USD 0,45 al mes en producción cuando entren; emisor y login, USD 0 para ATC (§1.4).
+- Cuesta: **USD 2.592,53 al mes** en Brazil South, con los cuatro ambientes del PLT-05: DEV 229,16, QA 390,19, PRE (UAT) 390,19, producción 1.562,71 y Azure Container Registry 20,28. En East US 2, como comparación, USD 1.770,59 (`arquitectura/costo-cloud.md`, §1.1 y §1.2: API pública de precios de Azure del 26-oct-2026, USD por mes; supuestos de región, volumen y tamaño fijados en ED-12). El WebSocket y el job de migraciones no suman: usan el ingreso y el plan de consumo de Container Apps. En producción pesan Azure Cosmos DB for MongoDB (vCore) 844,44, Azure Database for PostgreSQL 378,37 y Azure Container Apps 197,70. Es una cota superior: no resta capas gratuitas y lo compartido con Control de acceso (base única, API Management y Cloudflare) se imputa entero a ATC, sin reparto (decisión del equipo, ED-12). Fuera de esos totales: correo, USD 0,63 al mes; proveedor de IA (Azure OpenAI, ED-17): ya no es USD 0 en la Etapa 1, porque el Núcleo de IA entra (ED-29, ADR-007 v0.9); supuesto, por recalcular: USD 1,7 a 3,3 al mes de inferencia más embeddings ≈ USD 0,04 en producción (`arquitectura/costo-cloud.md`, §1.4); emisor y login, USD 0 para ATC (§1.4).
 
 ## Datos (puerta F4 de Gobierno de Datos)
 
@@ -118,6 +118,7 @@ Además:
 | 0.9 | 2026-10-28 | Jesús Chávez Elías, con IA | Contraste con Control de acceso (PJ-05): audiencia según solo D-224 (PJ-05 se contradice en ADR-012, arquitectura técnica, FT-EMI-04 y HU-IDN-053), criterio de aceptación «token real con `aybar-atc` en `aud`», token que ATC pide con audiencia `aybar-access-control`, SDK 0.7.1 frente al 0.2.7 de PJ-05; clientes OAuth como datos de ATC por ambiente (D-223 y D-30); `CuentaPersonaPort` como puerto de ATC sin `GRANT`; ShedLock con prefijo propio; base en la misma instancia como supuesto de topología |
 | 0.10 | 2026-10-28 | Jesús Chávez Elías, con IA | Cruce del Líder Técnico del 28-oct (C14, C15, C16, C20): `PartyID` por claim, sin lectura de `IDN_USER_ACCOUNT`; clientes OAuth a pedido de ATC (no seeder); `aybar-atc` en servicios destino y API Management, token de servicio con `audience=aybar-access-control`; emisor de pruebas solo en local, R-11 y R-12 en revisión |
 | 0.11 | 2026-10-29 | Jesús Chávez Elías, con IA | Revisión del Líder Técnico del 29-oct: sin plan B del emisor de pruebas en la UAT (si Control de acceso no está en PRE, la UAT se reprograma; punto 2); la audiencia de la API REST la valida API Management (D-44), el servicio la tiene configurada porque el SDK 0.7.1 lo exige (punto 3); S28-4 pide estado de cuenta y gestores por API, ED-03 interina sin copias (punto 4); la UAT exige Control de acceso en PRE, no en DEV (S28-8 corregida) |
+| 0.12 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): el costo de IA fuera de los totales deja de ser USD 0 (supuesto por recalcular, costo-cloud §1.4) |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26) contra el paquete aprobado de Control de acceso. — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL
 

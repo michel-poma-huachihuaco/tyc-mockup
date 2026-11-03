@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Cobertura de los requisitos del Excel por las historias de la Etapa 1 (plan v1.3)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.5"
+version: "0.6"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: []
-fecha: "2026-10-26"
+fecha: "2026-11-03"
 relacionados: ["AYB-0001"]
 tags: [analisis, trazabilidad, g3]
 ---
@@ -15,7 +15,7 @@ tags: [analisis, trazabilidad, g3]
 # Cobertura de requisitos
 
 Este documento cruza los requisitos del Excel `ATC_requerimientos (3).xlsx` con las **62 historias de
-la Etapa 1** del PLT-04 v1.3 (57 se construyen en la Etapa 1 desde la decisión del equipo P-025 del 26-oct; ver «Lectura»). El Excel es la versión del 16-oct con la división por etapas, y se usan
+la Etapa 1** del PLT-04 v1.3 (57 se construyen en la Etapa 1 desde la decisión del equipo P-025 del 26-oct; ver «Lectura»; desde el 3-nov, 57 HU + HU-048 + 5 propuestas, HU-068 a HU-072, por el Núcleo de IA). El Excel es la versión del 16-oct con la división por etapas, y se usan
 sus hojas 02_RF_Micro, 03_RNF, 04_Trazabilidad y 05_Catalogos. Para cada requisito de la Etapa 1, el
 documento dice a qué historia llega y si hay alguno que no llega. También responde a la observación
 del líder técnico sobre cobertura (19-oct). Solo cuenta los requisitos de la Etapa 1. Los que el
@@ -50,11 +50,11 @@ propuestas al Excel van en `decisiones.md` P-022.
 | RF de la Etapa 1 que solo trae el PLT-03/04 v1.3 | 4 (RF-SVC-064 a 067) |
 | RF de la Etapa 1 con historia | **62 de 62** (1 historia por RF) |
 | RF de la Etapa 1 sin historia | **0** |
-| RF con historia que salen de la Etapa 1 por P-025 (alcance flexible R-01) | 5: RF-SVC-037, 038, 039, 048 y 053 (se retoman en una etapa posterior) |
-| RF que se construyen en la Etapa 1 | **57** |
+| RF con historia que salen de la Etapa 1 por P-025 (alcance flexible R-01) | 5: RF-SVC-037, 038, 039, 048 y 053 (se retoman en una etapa posterior). **Desde el 3-nov, RF-SVC-048 vuelve a la Etapa 1** (Núcleo de IA); siguen fuera RF-SVC-037, 038, 039 y 053 |
+| RF que se construyen en la Etapa 1 | **57** + RF-SVC-048 (vuelve el 3-nov con el Núcleo de IA, ED-29) y los RF por asignar por el PO de HU-068 a HU-072 (propuestas) |
 | RNF del Excel (3) | 26 |
 | RNF de la Etapa 1 | 24 (2 quedan fuera de la Etapa 1) |
-| RNF de la Etapa 1 declarados en alguna funcionalidad (PLT-03) | **24 de 24** (con P-025: RNF-REN-006 solo lo declara FT-15, fuera de la Etapa 1; RNF-SEC-009 sigue en FT-19, sin uso de IA en la Etapa 1) |
+| RNF de la Etapa 1 declarados en alguna funcionalidad (PLT-03) | **24 de 24** (con P-025: RNF-REN-006 solo lo declara FT-15, fuera de la Etapa 1; RNF-SEC-009 sigue en FT-19 y, desde el 3-nov, se usa en la Etapa 1 por el Núcleo de IA) |
 | RNF de la Etapa 1 citados en alguna historia (PLT-04) | 5 de 24 |
 | RNF de la Etapa 1 sin cita en historias | 19 (todos están declarados en su funcionalidad) |
 | Reglas de negocio del Excel | 43 (RN-SVC-001 a 043) |
@@ -70,9 +70,9 @@ No hace falta otra historia. La decisión está en `decisiones.md`, P-012 (decid
 
 **P-025 (decidida por el equipo, Brayan Hurtado, 26-oct-2026; `analisis/decisiones.md`).** Los 5 RF de alcance
 flexible del PO (R-01) salen de la Etapa 1 para hacer sitio a las 28 h de DT-02: RF-SVC-037 a 039 (FT-15) y RF-SVC-048 y 053.
-Siguen con su historia documentada, así que la cobertura no cambia; en la Etapa 1 se construyen 57 de los 62 RF. Dos RNF quedan
-sin uso en la Etapa 1: RNF-REN-006 (solo lo declara FT-15) y RNF-SEC-009 (uso seguro de IA: sin IA en la Etapa 1). Se verifican
-cuando se retomen esas historias.
+Siguen con su historia documentada, así que la cobertura no cambia; en la Etapa 1 se construyen 57 de los 62 RF. Dos RNF quedaban
+sin uso en la Etapa 1: RNF-REN-006 (solo lo declara FT-15) y RNF-SEC-009 (uso seguro de IA). Se verifican
+cuando se retomen esas historias. **Actualización del 3-nov-2026 (ED-29):** RNF-SEC-009 vuelve a usarse en la Etapa 1 porque el Núcleo de IA entra (HU-048 y HU-068 a HU-072, propuestas con RF por asignar); RF-SVC-048 se construye. Las cifras de este documento se conservan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO (por decidir: recontar los RNF fuera de la Etapa 1).
 
 Las 62 historias están en Nexora (carpeta `historias/`, v1.3), listas para la firma del PO.
 
@@ -128,12 +128,12 @@ Las 62 historias están en Nexora (carpeta `historias/`, v1.3), listas para la f
 | RF-SVC-045 | Marcar un ticket con rayo de prioridad | Feedback de la presentación (oct-2026) | HU-045 | FT-18 | Debería | Cubierto |
 | RF-SVC-046 | Reasignar automaticamente al agente con menos carga | Feedback de la presentación (oct-2026) | HU-046 | FT-18 | Debería | Cubierto |
 | RF-SVC-047 | Guia de solucion por tipo de ticket | Feedback de la presentación (oct-2026) | HU-047 | FT-19 | Debería | Cubierto |
-| RF-SVC-048 | Retroalimentacion de IA al agente durante la atencion | Feedback de la presentación (oct-2026) | HU-048 | FT-19 | Podría · flexible | Cubierto · fuera de la Etapa 1 (P-025) |
+| RF-SVC-048 | Retroalimentacion de IA al agente durante la atencion | Feedback de la presentación (oct-2026) | HU-048 | FT-19 | Alta · ya no flexible (3-nov) | Cubierto · entra en la Etapa 1 con el Núcleo de IA (ED-29; HU-068 a HU-072 propuestas) |
 | RF-SVC-049 | Buscar al cliente y llamarlo desde la ficha | Feedback de la presentación (oct-2026) | HU-049 | FT-20 | Debe | Cubierto |
 | RF-SVC-050 | Consulta 360 del cliente en el ticket | Feedback de la presentación (oct-2026) | HU-050 | FT-20 | Debe | Cubierto |
 | RF-SVC-051 | Gestionar excepciones en la consulta del cliente | Feedback de la presentación (oct-2026) | HU-051 | FT-20 | Debe | Cubierto |
 | RF-SVC-052 | Reutilizar el motor de consultas existente (Jose) | Feedback de la presentación (oct-2026) | HU-052 | FT-20 | Debería | Cubierto |
-| RF-SVC-053 | Busqueda inteligente en archivos y documentos del cliente | Feedback de la presentación (oct-2026) | HU-053 | FT-20 | Podría · flexible | Cubierto · fuera de la Etapa 1 (P-025) |
+| RF-SVC-053 | Busqueda inteligente en archivos y documentos del cliente | Feedback de la presentación (oct-2026) | HU-053 | FT-20 | Podría · flexible | Cubierto · fuera de la Etapa 1 (P-025; desde el 3-nov, además, los documentos del cliente no llevan índice vectorial: se replantea, HU-052) |
 | RF-SVC-054 | Tablero de avance diario del agente | Feedback de la presentación (oct-2026) | HU-054 | FT-21 | Debería | Cubierto |
 | RF-SVC-055 | Alertar por correo la asignacion con copia al lider | Feedback de la presentación (oct-2026) | HU-055 | FT-21 | Debe | Cubierto |
 | RF-SVC-056 | Generar el caso de resolucion de contrato por 3 meses impagos | Feedback de la 2.ª reunión (oct-2026) | HU-056 | FT-22 | Debe | Cubierto |
@@ -182,7 +182,7 @@ RNF-AUD-004 con el ADR-002. La prioridad es la que el PLT-03 da al RNF (el Excel
 | RNF-INT-009 | Integracion con Legal sin doble registro | Feedback de la presentación (oct-2026) | Debe | FT-16 | — | Declarado en funcionalidad; sin cita en historias |
 | RNF-REN-007 | Respuesta del motor de busqueda | Feedback de la presentación (oct-2026) | Debería | FT-20 | HU-050 | Declarado en funcionalidad y citado en historia |
 | RNF-REN-008 | Oportunidad del correo de asignacion | Feedback de la presentación (oct-2026) | Debería | FT-21 | — | Declarado en funcionalidad; sin cita en historias |
-| RNF-SEC-009 | Uso seguro de IA | Feedback de la presentación (oct-2026) | Debe | FT-19 | — | Declarado en funcionalidad; sin cita en historias. Sin IA en la Etapa 1 (HU-048 y HU-053 fuera, P-025): se verifica cuando entren |
+| RNF-SEC-009 | Uso seguro de IA | Feedback de la presentación (oct-2026) | Debe | FT-19 | — | Declarado en funcionalidad; sin cita en historias. Con el Núcleo de IA en la Etapa 1 (HU-048 y HU-068 a HU-072, desde el 3-nov; HU-053 sigue fuera): se verifica con sus historias y en el plan de pruebas |
 | RNF-SEC-010 | Permisos en busqueda y consulta 360 | Feedback de la presentación (oct-2026) | Debe | FT-20, FT-25 | — | Declarado en funcionalidad; sin cita en historias |
 | RNF-USA-002 | Flujos configurables sin desarrollo | Feedback de la presentación (oct-2026) | Debería | FT-18, FT-25 | — | Declarado en funcionalidad; sin cita en historias |
 | RNF-INT-010 | Morosidad actualizada desde Cobranza | Feedback de la 2.ª reunión (oct-2026) | Debe | FT-22 | — | Declarado en funcionalidad; sin cita en historias |
@@ -205,6 +205,7 @@ No tienen identificador del Excel.
 | 0.3 | 2026-10-26 | Brayan Hurtado, con IA | Decisiones del equipo de `analisis/decisiones.md` v0.7: las capas de feedback del Excel cuentan como origen (D-004); los 19 RNF sin cita en historias se verifican en el plan de pruebas (P-012); historias listas para la firma del PO. Owner: Brayan Hurtado (Dev 1). |
 | 0.4 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): RF-SVC-037, 038, 039, 048 y 053 «Cubierto · fuera de la Etapa 1»; 57 RF se construyen en la Etapa 1; RNF-REN-006 y RNF-SEC-009 sin uso en la Etapa 1. La cobertura no cambia |
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: RF-SVC-013 cubierto en el plazo de 15 días hábiles, sin la prórroga (Ley 31435, ED-28); citas sin versión |
+| 0.6 | 2026-11-03 | Jesús Chávez Elías, con IA | El Núcleo de IA entra en la Etapa 1 (ED-29; ADR-007 v0.9): RF-SVC-048 vuelve y RNF-SEC-009 se usa; HU-068 a HU-072 propuestas con RF por asignar; RF-SVC-053 sigue fuera con motivo nuevo; cifras conservadas |
 
 Generado por IA: borrador completo. Versión base de Nexora (v1, de Jesús, 19-oct), actualizada a la v1.3 del PO (Etapa 1) y al Excel (3) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (los requisitos que el Excel deja fuera de la Etapa 1 se cuentan, no se listan). — Revisado por: (pendiente)
 
@@ -213,3 +214,7 @@ Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de
 Actualizado el 26-oct-2026 (v0.4) por Brayan Hurtado con IA (Claude) a partir de P-025, decidida por el equipo el 26-oct (`analisis/decisiones.md` v0.8). — Revisado por: (pendiente)
 
 Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · RF-SVC-013 sin prórroga (ED-28) y citas sin versión. — Revisado por: (pendiente)
+
+Actualizado el 3-nov-2026 (v0.6) por Jesús Chávez Elías con IA (Claude): el Núcleo de IA entra en la Etapa 1 (ED-29). — Revisado por: (pendiente)
+
+Historial: 0.6 · 2026-11-03 · Jesús Chávez Elías, con IA · RF-SVC-048 vuelve, RNF-SEC-009 se usa, HU-068 a HU-072 propuestas con RF por asignar. — Revisado por: (pendiente)

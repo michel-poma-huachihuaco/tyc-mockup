@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Operaciones de API por historia de usuario"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.11"
+version: "0.12"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-012]
 tags: [arquitectura, api, g3]
 ---
@@ -18,7 +18,7 @@ Los módulos van con su nombre en inglés (ADR-001) y son las etiquetas del cont
 
 Trazabilidad entre las 62 historias publicadas en PJ-06 (PLT-04 v1.3) y `aybar-atc.openapi.yaml`. Es una **propuesta** del equipo: el PLT no define endpoints. Revisión del 26-oct-2026 (revisión interna del equipo, O-02): todas las historias tienen al menos una operación. Cuando G2 pida un dato que no esté en el contrato, vuelve a G3 (`.agents/orquestacion.md`).
 
-Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-atc.openapi.yaml` (69 operaciones); **en la Etapa 1, las 57 historias, todas con `ui: true`, tienen operación**, con `x-roles` (o, en Mi Portal, `x-autorizacion`), `x-permiso` del catálogo y errores `AYB-<ÁREA>-<HTTP>` (lo comprueba el script de cruce de la entrega). Las 13 que antes no tenían API propia (eventos, jobs o adaptadores) siguen con su mecanismo, en la columna «Además», y suman la operación de lectura que su pantalla necesita (revisión interna del equipo, O-02). HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 (P-025): sus 6 operaciones (`registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento`, `pedirSugerenciaIa`, `decidirSugerenciaIa` y `buscarDocumentos`) quedan en el contrato y no se construyen en la Etapa 1. Las tareas de `backlog/tareas/` nombran cada endpoint con su método, su ruta y su `operationId` del contrato.
+Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-atc.openapi.yaml` (69 operaciones); **en la Etapa 1, las 57 historias, todas con `ui: true`, tienen operación**, con `x-roles` (o, en Mi Portal, `x-autorizacion`), `x-permiso` del catálogo y errores `AYB-<ÁREA>-<HTTP>` (lo comprueba el script de cruce de la entrega). Las 13 que antes no tenían API propia (eventos, jobs o adaptadores) siguen con su mecanismo, en la columna «Además», y suman la operación de lectura que su pantalla necesita (revisión interna del equipo, O-02). HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 (P-025): sus 6 operaciones (`registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento`, `pedirSugerenciaIa`, `decidirSugerenciaIa` y `buscarDocumentos`) quedan en el contrato y no se construyen en la Etapa 1. **Actualización del 3-nov-2026 (Núcleo de IA en la Etapa 1, ED-29; ADR-007 v0.9):** HU-048 vuelve a la Etapa 1, así que `pedirSugerenciaIa` y `decidirSugerenciaIa` (y las de revisión) **entran en la Etapa 1**; solo `registrarFraseAncla`, `registrarCasoEvento`, `listarCasosEvento` y `buscarDocumentos` siguen sin construirse. La Etapa 1 son 57 HU + HU-048 + 5 propuestas (HU-068 a HU-072); las operaciones de las propuestas están **por definir** (abajo). Las cifras de este resumen (62 historias, 69 operaciones, 57) se conservan sin ese cambio. Las tareas de `backlog/tareas/` nombran cada endpoint con su método, su ruta y su `operationId` del contrato.
 
 | Historia | Título | Módulo | Operación (`operationId`) | Estado | Además |
 |---|---|---|---|---|---|
@@ -67,7 +67,7 @@ Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-a
 | HU-045 | Marcar un ticket crítico con el rayo de prioridad | `inbox` | `GET /api/v1/bandeja` (`listarBandeja`)<br>`POST /api/v1/tickets/{ticketId}/rayo` (`marcarRayo`) | en el OpenAPI | — |
 | HU-046 | Reasignar automáticamente al gestor con menos carga | `inbox` | `GET /api/v1/bandeja/carga` (`consultarCargaGestores`)<br>`GET /api/v1/avisos` (`listarAvisos`) | en el OpenAPI | Orquestador: balanceo por carga al entrar el ticket (ADR-005, punto 8; ADR-008) |
 | HU-047 | Consultar la guía de solución del tipo de ticket | `inbox` | `GET /api/v1/tickets/{ticketId}/guia` (`obtenerGuia`)<br>`GET /api/v1/avisos` (`listarAvisos`) | en el OpenAPI | — |
-| HU-048 | Recibir retroalimentación de IA mientras atiendo y cierro | `inbox` | `POST /api/v1/tickets/{ticketId}/sugerencias-ia` (`pedirSugerenciaIa`)<br>`POST /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision` (`decidirSugerenciaIa`) | en el OpenAPI · fuera de la Etapa 1 (P-025) | — |
+| HU-048 | Recibir retroalimentación de IA mientras atiendo y cierro | `assistant` | `POST /api/v1/tickets/{ticketId}/sugerencias-ia` (`pedirSugerenciaIa`)<br>`POST /api/v1/tickets/{ticketId}/sugerencias-ia/{sugerenciaId}/decision` (`decidirSugerenciaIa`) | en el OpenAPI · **entra en la Etapa 1** (ED-29; antes «fuera de la Etapa 1, P-025») | Orquestador del Núcleo de IA (ADR-007 v0.9); las operaciones de revisión: por definir |
 | HU-049 | Buscar al cliente y llamarlo desde su ficha | `customer360` | `GET /api/v1/clientes` (`buscarClientes`)<br>`POST /api/v1/clientes/{partyId}/llamadas` (`llamarCliente`) | en el OpenAPI | — |
 | HU-050 | Ver la consulta 360 del cliente dentro del ticket | `customer360, tickets` | `GET /api/v1/tickets/{ticketId}` (`obtenerTicket`)<br>`GET /api/v1/clientes/{partyId}/consulta-360` (`consulta360`) | en el OpenAPI | — |
 | HU-051 | Continuar la atención cuando la consulta del cliente falla | `customer360, tickets` | `POST /api/v1/tickets` (`registrarTicket`)<br>`GET /api/v1/clientes/{partyId}/consulta-360` (`consulta360`) | en el OpenAPI | — |
@@ -84,6 +84,11 @@ Resumen: las 62 historias tienen al menos una operación en el contrato `aybar-a
 | HU-065 | Ver la trazabilidad de mi ticket | `portal` | `GET /api/v1/portal/tickets/{ticketId}/trazabilidad` (`verTrazabilidad`) | en el OpenAPI | — |
 | HU-066 | Responder, adjuntar y confirmar la solución de mi ticket | `portal` | `POST /api/v1/portal/tickets/{ticketId}/respuestas` (`responderMiTicket`)<br>`POST /api/v1/portal/tickets/{ticketId}/confirmacion` (`confirmarSolucion`) | en el OpenAPI | — |
 | HU-067 | Ver el proceso de atención en un visor 3D (operación en vivo) | `inbox` | `GET /api/v1/visor/estado` (`estadoVisor`) | en el OpenAPI | — |
+| HU-068 | Bloquear en la entrada los intentos de manipular a la IA o de pedir datos ajenos | `assistant` | por definir (propuesta; sin ruta ni esquema en el contrato) | por definir · entra en la Etapa 1 con el Núcleo de IA (ED-29) | ADR-007 v0.9 |
+| HU-069 | Verificar cada dato del borrador contra su fuente antes de mostrarlo | `assistant` | por definir (propuesta; sin ruta ni esquema en el contrato) | por definir · entra en la Etapa 1 con el Núcleo de IA (ED-29) | ADR-007 v0.9 |
+| HU-070 | Identificar de qué trata el ticket y elegir la guía y las reglas correctas | `assistant` | por definir (propuesta; sin ruta ni esquema en el contrato) | por definir · entra en la Etapa 1 con el Núcleo de IA (ED-29) | ADR-007 v0.9 |
+| HU-071 | Escalar a una persona con un motivo tipificado y mantener el estado del caso | `assistant` | por definir (propuesta; sin ruta ni esquema en el contrato) | por definir · entra en la Etapa 1 con el Núcleo de IA (ED-29) | ADR-007 v0.9 |
+| HU-072 | Probar cada cambio de la IA contra un set fijo de casos antes de desplegarlo | `assistant` | por definir (propuesta; sin ruta ni esquema en el contrato) | por definir · entra en la Etapa 1 con el Núcleo de IA (ED-29) | ADR-007 v0.9 |
 
 ## Operaciones que dependen de Control de acceso (PJ-05): decisiones del equipo que aplican
 
@@ -118,6 +123,7 @@ Lo que cada operación necesita de Control de acceso tiene una decisión del equ
 | 0.9 | 2026-10-28 | Jesús Chávez Elías, con IA | Cruce del Líder Técnico del 28-oct (C14, C20): `PartyID` por el claim `party_id` (S28-4); tipo y estado de la cuenta por confirmar con el área; nota C-12 sobre el emisor de pruebas; sin operaciones nuevas |
 | 0.10 | 2026-10-28 | Jesús Chávez Elías, con IA | C21 (en borrador): nota sobre el cambio de `x-permiso` de 13 operaciones por el ADR-022 (aún en borrador); sin cambio de operaciones |
 | 0.11 | 2026-10-29 | Jesús Chávez Elías, con IA | Revisión del Líder Técnico del 29-oct: nota C-12 corregida (la UAT exige Control de acceso en PRE; sin emisor de pruebas en PRE, la UAT se reprograma; punto 2); ED-03 interina y S28-4 (punto 4); ADR-022 aprobado según el Líder Técnico; sin operaciones nuevas |
+| 0.12 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): `pedirSugerenciaIa` y `decidirSugerenciaIa` (y las de revisión) entran en la Etapa 1; módulo de HU-048 pasa a `assistant`; filas de HU-068 a HU-072 con operaciones por definir; las cifras del resumen (62 HU, 69 operaciones, 57) se conservan |
 
 Generado por IA: borrador completo (Claude, 2026-10-19) — Revisado por: (pendiente)
 

@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Diagrama entidad-relación de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.8"
+version: "0.9"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-28"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, er, g3]
 ---
@@ -199,6 +199,7 @@ erDiagram
 - **`PARTY` es la fuente viva del cliente (DT-06, 22-oct).** `SVC_TICKET.PartyID` es clave foránea física a `PARTY` del v7: es una referencia, no una copia. La diferencia con el ADR-03, RN-SVC-026, RNF-INT-007 y DEP-01 del PO está listada en ED-19. ATC no crea la `PARTY` del «Interesado» (HU-051): en PJ-05 la Party no verificada solo la crea el autorregistro de Control de acceso (R29, A26); el ticket se registra «sin cliente vinculado» (`PartyID` nulo), con sus datos mínimos en `SVC_TICKET_PROSPECT`, hasta que el job de vinculación complete el `PartyID` (ED-05). El mapa documento → `PartyID` de los clientes existentes es una dependencia y supuesto nuevo de ATC: PJ-05 no tiene búsqueda por documento (D-119) y el simulador no lo prueba (28-oct). Ver el diccionario, C-1.
 - Las líneas desde `PARTY` hacia las bitácoras (`ChangedByPartyID`, `AssignedToPartyID`, `AgentPartyID`…) son colaboradores. El token trae `user_account_id`, no `PartyID`: ATC lo traduce con `CuentaPersonaPort`, un puerto de ATC cuyo adaptador real no está definido en PJ-05 (hoy, el simulador; ED-01 y ED-08). No hay un `GRANT` acordado sobre `IDN_USER_ACCOUNT` ni lo habrá: *cruce del Líder Técnico del 28-oct (C14): ATC no lee esa tabla; `PartyID` sale del claim `party_id` (S28-4).*
 - **El outbox es `SVC_OUTBOX_EVENT`** (ADR-013), en el fragmento SERVICE, como cambio al v7 (`registro-de-tablas.md` §3; ED-23). Se dibuja con sus claves (el ticket del evento, la empresa y los pares de lista del tipo de evento, `SVC_OUTBOX_EVENT_TYPE`, y del estado de publicación) y con `UserAccountID`, el `user_account_id` del token de quien hizo el cambio (nulo en los jobs; sin FK: es una tabla técnica que se purga a los 7 días; ADR-013). Las demás columnas están en el diccionario. `INTG_OUTBOX_EVENT` (INTEGRATION-HUB) no se usa: es para envíos a sistemas externos. La identidad (Control de acceso; ATC no crea tablas de identidad, C-11) vive fuera de SERVICE y no se dibuja.
+- **`SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) se crea en la Etapa 1** (Núcleo de IA, ED-29, ADR-007 v0.9), con estado y motivo de escalamiento (cambio al v7 en el acta F4, pendiente de firma del Data Chief). Todavía no se dibuja: sus columnas y claves se fijan en el acta F4 (por decidir). `SVC_SEARCH_INDEX` no cambia: sigue como colección del almacén de lectura para HU-049; HU-053 (búsqueda por significado) sigue fuera.
 - Las demás tablas y columnas nuevas de ATC (`SVC_TICKET_PROSPECT`, `SVC_TICKET_ACTIVITY`, flujos, subtipos, pausas del SLA, `SVC_NOTIFICATION_LOG` y las del registro §3) no se dibujan aquí: sus columnas, tipos y nulabilidad están en el diccionario (ED-15, ED-16).
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: 5 bitácoras firmadas (RNF-AUD-004), cardinalidad de la apelación del PLT-04 y conflicto abierto por la clave a PARTY. — Revisado por: (pendiente)
@@ -218,6 +219,7 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.6 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 | 0.7 | 2026-10-28 | Jesús Chávez Elías, con IA | ATC se adapta a PJ-05 (C1, C11): nota de nombres lógicos (listas y canal propios de ATC, excepciones en `SVC_INTEGRITY_EXCEPTION_LOG`); `CuentaPersonaPort` sin `GRANT` acordado; mapa documento → `PartyID` como supuesto. El diagrama no cambia |
 | 0.8 | 2026-10-28 | Jesús Chávez Elías, con IA | Cruce del Líder Técnico del 28-oct (C14): ATC no lee `IDN_USER_ACCOUNT`; `PartyID` por el claim `party_id`. El diagrama no cambia |
+| 0.9 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): nota de que `SVC_AI_SUGGESTION_LOG` se crea en la Etapa 1 y aún no se dibuja (columnas por fijar en el acta F4). El diagrama no cambia |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-06, C-07 y C-11). — Revisado por: (pendiente)
 

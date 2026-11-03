@@ -19,7 +19,7 @@ flowchart LR
     cti[Call center CTI<br/>DEP-11]
     leg[Herramienta de Legal<br/>DEP-12]
     jose[Motor de José<br/>DEP-13]
-    ia["Azure OpenAI Service<br/>ED-17 · sin consumo en la Etapa 1 (P-025)"]
+    ia["Azure OpenAI Service<br/>ED-17 · Núcleo de IA en la Etapa 1 (ED-29)<br/>solo vía módulo assistant · texto anonimizado"]
     kpi[KPI Engine y GLI<br/>DEP-10 y DEP-06]
     proy[Proyectos<br/>DEP-15]
   end
@@ -42,7 +42,7 @@ flowchart LR
   atc <--> cti
   atc <--> leg
   atc <--> jose
-  atc -. "cuando entren HU-048 y HU-053" .-> ia
+  atc --> |"módulo assistant: guardianes, borrador verificado (ADR-007 v0.9)"| ia
   atc --> kpi
   atc <--> proy
 %% Generado por IA (Claude, 2026-10-22), versión base v2 de Nexora; actualizado con las decisiones DT-01 a DT-07 del Líder Técnico (Control de acceso emite los tokens y hace el login; Azure; borde con Cloudflare y API Management; base única con PARTY como fuente viva). — Revisado por: (pendiente)
@@ -53,3 +53,4 @@ flowchart LR
 %% Historial: 0.7 · 2026-10-28 · Jesús Chávez Elías, con IA · contraste con PJ-05: la etiqueta del vínculo de la cuenta dice puerto y simulador, sin lectura acordada de IDN_USER_ACCOUNT; Control de acceso (DEP-16) sin fecha comprometida en PJ-05 y el Go del 03-nov solo para PRE con el emisor de pruebas de ATC
 %% Historial: 0.8 · 2026-10-28 · Jesús Chávez Elías, con IA · cruce del Líder Técnico del 28-oct (C14): PartyID por el claim party_id (S28-4), sin lectura de IDN_USER_ACCOUNT
 %% Historial: 0.9 · 2026-10-29 · Jesús Chávez Elías, con IA · revisión del Líder Técnico del 29-oct (punto 4): S28-4 pide estado de cuenta y gestores por rol por API con el token de servicio, ED-03 queda interina sin copias; el Go del 03-nov de la v0.7 (PRE con el emisor de pruebas de ATC) queda superado: si Control de acceso no está en PRE, la UAT se reprograma (punto 2)
+%% Historial: 0.10 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): el enlace a Azure OpenAI deja de ser punteado

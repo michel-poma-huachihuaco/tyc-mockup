@@ -4,17 +4,17 @@ tipo: epica
 titulo: "Bandeja orquestadora y asistencia al gestor"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.4.0"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-18", "FT-ATC-25", "FT-ATC-19", "FT-ATC-21"]
 tags: [epica, plt-02]
 ---
 
 # PLT-02 - EP-ATC-09 Bandeja orquestadora y asistencia al gestor
 
-**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la épica suma 39 h de las 44 h del PO, y la DEP-14 no aplica (la guía de HU-047 no usa IA).
+**Alcance en la Etapa 1 (decisión del 3-nov-2026, reemplaza la nota de P-025):** el Núcleo de IA entra en la Etapa 1 con la arquitectura de `adr/ADR-007` v0.9 (módulo Java en el monolito, pipeline con guardianes, Azure OpenAI). HU-048 se reescribe (FT-ATC-19) y se suman HU-068 a HU-072 (propuestas). Las horas están **por estimar por el equipo**; R-01 queda como riesgo crítico para el PO. HU-053 sigue fuera de la Etapa 1. Pendiente: que el PO acepte las HU nuevas y que el Líder Técnico apruebe el ADR-007. La épica deja de sumar 39 h: queda **por recalcular** con las horas de HU-048 y HU-068 a HU-072.
 
 | ID | Nombre | Producto |
 |---|---|---|
@@ -56,7 +56,7 @@ Objetivo del usuario:
 | Bandeja única que ordena por rayo, SLA y prioridad, y asigna según el flujo | IA que responde sola al cliente (la IA solo sugiere, RN-SVC-032) |
 | Marca de prioridad «rayo» controlada por el líder | Evaluación de desempeño o bonos |
 | Reasignación automática al gestor con menos carga |  |
-| Guía de solución por tipo de ticket y retroalimentación de IA al cerrar |  |
+| Guía de solución por tipo de ticket y Núcleo de IA (borrador verificado, guardianes, escalamiento con motivo; ADR-007 v0.9) |  |
 | Tablero de avance diario y correo de asignación con copia al líder |  |
 | Visor del proceso 3D de la operación en vivo (FT-ATC-25) |  |
 
@@ -70,7 +70,7 @@ Features:
 | FT-ATC-21 | Productividad y notificaciones del gestor | Debería | 6 | mié 28-oct → jue 29-oct | FT-ATC-18 | v1.0 · Etapa 1 · 03-nov-2026 |
 
 - **Ruta crítica**: FT-ATC-18 → FT-ATC-25 (29 h)
-- **Supuestos**: El modelo SVC_TICKET y la bitácora de asignación de EP-ATC-02 están disponibles; TI aprueba un proveedor de IA antes del 21-oct (DEP-14), día en que inicia la asistencia con IA.
+- **Supuestos**: El modelo SVC_TICKET y la bitácora de asignación de EP-ATC-02 están disponibles; TI habilita el proveedor de IA (DEP-14); mientras no esté, el módulo usa su simulador.
 - **Restricciones**: IA asesora: ninguna respuesta al cliente sin acción del gestor y sin datos personales hacia modelos externos (RN-SVC-032, RNF-SEC-009). Rayo ≤ 10 % de la bandeja del área (RN-SVC-031).
 - **Dependencias y riesgos**: DEP-02 maestro local de líderes · DEP-14 proveedor de IA · R-01 capacidad · R-04 código generado con IA
 - **Criterios de éxito**: 0 tickets huérfanos y carga balanceada durante el piloto; 100 % de asignaciones notificadas al gestor y a su líder. Indicadores: Tickets sin responsable > 1 día hábil: 0; Diferencia de carga entre gestores del mismo área: ≤ 20 %; % de cierres que siguieron la guía de solución: ≥ 80 %.
@@ -100,3 +100,5 @@ Riesgos (PLT-01):
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-02 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-048 (39 h de 44 h). No se cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.4.0 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1 (`adr/ADR-007` v0.9); alcance y supuestos actualizados; horas por recalcular. — Revisado por: (pendiente)

@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Estados y transiciones del ticket"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.7"
+version: "0.8"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-28"
+fecha: "2026-11-03"
 relacionados: [ADR-002, ADR-005, ADR-008, SPEC-DATOS-ACTA-F4, SPEC-DATOS-DICCIONARIO]
 tags: [datos, estados, g3]
 ---
@@ -123,6 +123,10 @@ Contraste del 20-oct-2026 con las 62 historias de PJ-06. Lo que sigue sale de su
 | Reserva de bus | Confirmada, en lista de espera o cancelada (la cancelación libera el cupo y lo pasa al primero de la lista) | HU-060 CA-01 a 03 |
 | EntregaFest | Caso derivado a la Estación 4: el moderador no puede reabrirlo | HU-038 CA-02 · fuera de la Etapa 1 (P-025): se aplica cuando se retome |
 
+## Estados del caso de IA (Núcleo de IA, ED-29, ADR-007 v0.9)
+
+`recibido → en_verificacion → redactando → listo_para_revision → aprobado | derivado`. Cada transición se guarda antes de avanzar (en `SVC_AI_SUGGESTION_LOG`, ampliada con `estado` y `motivo_escalamiento`: cambio al v7 en el acta F4, pendiente de firma del Data Chief) y, si el proceso se interrumpe, el caso retoma donde quedó. `derivado` lleva un código del catálogo cerrado de motivos de escalamiento (ADR-007, punto 6, propuesta a validar con el PO). Los códigos de estado y su lista: por definir en el acta F4. Es un estado propio del caso de IA, distinto del estado del ticket.
+
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jesús Chávez Elías en Nexora; actualizado por Brayan con IA (Claude, 2026-10-21) a la v1.3 del PO: códigos de la lista `SVC_TICKET_STATUS`, transiciones del PLT-04 (HU-004 y HU-064 a 066, con la reapertura de HU-011 y HU-066), estados de la apelación, del asiento, del reclamo de garantía y de los casos sensibles con los 8 estados de cierre. — Revisado por: (pendiente)
 
 ## Historial de cambios
@@ -136,6 +140,7 @@ Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Jes
 | 0.5 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: asiento con 15 días hábiles improrrogables y prórroga deshabilitada (Ley 31435; ED-28; O-01); purga de los datos mínimos del interesado (O-11); códigos del caso de resolución. Desde esta versión cada cambio de texto sube la versión (O-26) |
 | 0.6 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 | 0.7 | 2026-10-28 | Jesús Chávez Elías, con IA | ATC se adapta a PJ-05 (C11): la lista `SVC_TICKET_STATUS` vive en las tablas de listas propias de ATC, no en las de PJ-05. Las transiciones del ticket no cambian |
+| 0.8 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): se documentan los estados del caso de IA (recibido a aprobado o derivado), con códigos por definir en el acta F4. Los estados del ticket no cambian |
 
 Actualizado el 26-oct-2026 (v0.2) por Brayan Hurtado con IA (Claude) a partir de la revisión técnica interna del 26-oct (hallazgo 19): frontmatter e historial. — Revisado por: (pendiente)
 

@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-013: Outbox transaccional para publicar eventos sin perderlos"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.8"
+version: "0.9"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-27"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-005, ADR-010, ADR-012, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -57,7 +57,7 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
    | No se comparte de forma que el volumen de ATC la sature | «Alto volumen», compartida por todas las integraciones y firmada fila a fila (`IntegrityHash`) | No |
 
    **`SVC_OUTBOX_EVENT`** (decisión del equipo, en el fragmento SERVICE, con las convenciones del v7): `OutboxEventID` (PK, entero), `TicketID` (FK a `SVC_TICKET`; los 5 eventos son de un ticket), `CompanyID` (FK a `ORG_COMPANY`), `EventTypeListID` + `EventTypeID` (contra `MAE_GENERIC_LIST_VALUE`, lista nueva `SVC_OUTBOX_EVENT_TYPE` con los 5 tipos del punto 9), `PayloadJson` (solo referencias), `CorrelationID`, `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo cuando el evento lo origina un job), `PublishStatusListID` + `PublishStatusID` (`PENDING`, `PUBLISHED`, `FAILED`), `AttemptCount`, `CreatedDateTime` y `PublishedDateTime`; índice parcial por (`CreatedDateTime`) sobre las filas `PENDING`. Es una tabla técnica sin datos personales y sin `IntegrityHash` (se purga a los 7 días); `UserAccountID` va sin FK por eso. Va como cambio al v7 en el acta F4, lista para la firma del Data Chief (P-031, ED-23; hallazgo H-12).
-7. **Horas** (tabla del ADR-012): outbox 6 h, publicador 6 h, configuración del bus 6 h; con el proyector (10 h), **28 h**, que es todo lo nuevo que DT-02 suma al plan del PO. Con 9 h de holgura, la brecha es de 19 h. **P-025 (decidida por el equipo, 26-oct-2026)** la cierra: las 28 h son tareas técnicas de la fundación en `backlog/tareas/EP-ATC-01.json` (outbox, DT02-T01, Brayan 6 h; bus, DT02-T02, Daniel 6 h; publicador, DT02-T03, Jesús 4 h; purga y métrica, DT02-T04, Michel 2 h; proyector, DT02-T05, Michel 7 h; re-proyección, DT02-T06, Brayan 3 h) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (16 h). Las 6 tareas van en la iteración 1, con fechas, y de DT02-T05 dependen las tareas de lectura; el sobrecosto real es de 7 h (ADR-012).
+7. **Horas** (tabla del ADR-012): outbox 6 h, publicador 6 h, configuración del bus 6 h; con el proyector (10 h), **28 h**, que es todo lo nuevo que DT-02 suma al plan del PO. Con 9 h de holgura, la brecha es de 19 h. **P-025 (decidida por el equipo, 26-oct-2026)** la cierra: las 28 h son tareas técnicas de la fundación en `backlog/tareas/EP-ATC-01.json` (outbox, DT02-T01, Brayan 6 h; bus, DT02-T02, Daniel 6 h; publicador, DT02-T03, Jesús 4 h; purga y métrica, DT02-T04, Michel 2 h; proyector, DT02-T05, Michel 7 h; re-proyección, DT02-T06, Brayan 3 h) y salen de la Etapa 1 las 5 HU de alcance flexible del PO (16 h). Las 6 tareas van en la iteración 1, con fechas, y de DT02-T05 dependen las tareas de lectura; el sobrecosto real es de 7 h (ADR-012). **Actualización del 3-nov-2026 (ED-29, ADR-007 v0.9):** HU-048 vuelve a la Etapa 1 (Núcleo de IA) y entran HU-068 a 072 (propuestas): 57 HU + HU-048 + 5 propuestas; las cifras de horas se conservan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO. El módulo `assistant` puede entregar su resultado por un evento del outbox (ADR-007 v0.9); el evento y su tópico están por definir.
 8. **Retención:** las filas publicadas se conservan 7 días y se purgan con un job (decisión del equipo).
 9. **Tópicos con el formato del SDK.** `aybar-starter-messaging` exige `aybar.<fragmento>.<evento>` en minúsculas y lo valida al publicar (`MessagingValidations`: `aybar\.[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*`). El fragmento es `service` (SERVICE del v7); el evento va en inglés, como los módulos (ADR-001):
 
@@ -105,5 +105,6 @@ Se construye un **outbox transaccional en el servicio** (DT-02), no en el SDK:
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): las horas del punto 7 son las tareas DT02-T01 a T06 de la fundación, con su responsable, y la brecha se cubre con el alcance flexible del PO (5 HU, 16 h) y 3 h que absorbe el equipo; «Obliga a» y «Cuesta» ya no remiten la brecha al coordinador |
 | 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo del 26-oct: tareas DT-02 con fechas en la iteración 1 y sobrecosto real de 7 h (O-05, O-06). Citas a documentos del paquete sin número de versión, que lo fija Nexora (O-22). Desde esta versión cada cambio de texto sube la versión; las filas repetidas del historial se conservan como registro (O-26) |
 | 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
+| 0.9 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): nota sobre las horas (sin las del Núcleo de IA, por estimar por el equipo; R-01) y sobre la entrega opcional del módulo `assistant` por outbox, con evento por definir |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v4 de Nexora; reescrito con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y actualizado con IA (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL

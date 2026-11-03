@@ -4,17 +4,17 @@ tipo: epica
 titulo: "Consulta 360 e integraciones operativas"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.4.0"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-20", "FT-ATC-17", "FT-ATC-16"]
 tags: [epica, plt-02]
 ---
 
 # PLT-02 - EP-ATC-10 Consulta 360 e integraciones operativas
 
-**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la épica suma 31 h de las 36 h del PO; la DEP-14 no aplica y la DEP-06 no la usa ninguna historia de la épica en la Etapa 1. HU-042 depende de HU-052 en lugar de HU-053.
+**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). **Actualización del 3-nov-2026:** HU-053 sigue fuera de la Etapa 1, ahora porque los documentos del cliente no llevan índice vectorial (búsqueda por metadatos exactos, HU-052; `adr/ADR-007` v0.9) y debe replantearse antes de retomarla. En la Etapa 1 la épica suma 31 h de las 36 h del PO; la DEP-14 vuelve a aplicar en la Etapa 1, pero por el Núcleo de IA de EP-ATC-09 y no por esta épica, y la DEP-06 no la usa ninguna historia de la épica en la Etapa 1. HU-042 depende de HU-052 en lugar de HU-053.
 
 | ID | Nombre | Producto |
 |---|---|---|
@@ -98,3 +98,5 @@ Riesgos (PLT-01):
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-02 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-053 (31 h de 36 h). No se cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.4.0 · 2026-11-03 · Jesús Chávez Elías, con IA · HU-053 sigue fuera de la Etapa 1 por una razón nueva (sin índice vectorial de documentos del cliente, ADR-007 v0.9); DEP-14 ya no se declara «no aplica». No cambia texto del PO. — Revisado por: (pendiente)

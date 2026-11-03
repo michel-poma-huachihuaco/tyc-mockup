@@ -4,10 +4,10 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-09 Escalamiento, vinculación y cierre tipificado"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.8"
+version: "1.3.9"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-09", "EP-ATC-04", "HU-ATC-023", "HU-ATC-024", "HU-ATC-025"]
 tags: [dor, plt-05, g4]
 ---
@@ -66,7 +66,7 @@ Una dependencia sin desbloquear deja el criterio 6 sin cumplir. Si su responsabl
 | ADR-04 | Integraciones contract-first: adaptador + simulador; la API real se activa cuando existe | APIs externas sin fecha (R-02) | Técnico | Propuesta |
 | ADR-05 | Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY | Plazos en días hábiles y feriados | Técnico | Propuesta |
 | ADR-06 | Evidencia probatoria en S3 con Object Lock y checksum | Libro de Reclamaciones y casos sensibles | Técnico | Propuesta |
-| ADR-07 | IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide | RN-SVC-032 · RNF-SEC-009 | Funcional y técnico | Propuesta |
+| ADR-07 | IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide (v0.9, 3-nov-2026: incorpora el Núcleo de IA en la Etapa 1; pendiente de aprobación del Líder Técnico) | RN-SVC-032 · RNF-SEC-009 | Funcional y técnico | Propuesta |
 | ADR-08 | Motor de flujos configurable por tipo + subtipo + área, versionado; el ticket congela su versión | HU-043 (prioridad 1) · RN-SVC-045 | Funcional y técnico | Propuesta |
 | ADR-09 | Usuarios, roles y líderes locales en Etapa 1 detrás de una interfaz de identidad | — | Técnico | Propuesta |
 | ADR-10 | Visor 3D en el navegador (canvas isométrico) alimentado por eventos en tiempo real (WebSocket), con vista 2D alternativa | HU-067 (prioridad 3) · sin plugins ni GPU dedicada | Técnico | Propuesta |
@@ -127,3 +127,5 @@ Actualizado el 29-oct-2026 (v1.3.7) por Jesús Chávez Elías con IA (Claude): r
 Historial: 1.3.8 · 2026-10-29 · Jesús Chávez Elías, con IA · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)
 
 Actualizado el 29-oct-2026 (v1.3.8) por Jesús Chávez Elías con IA (Claude): registro del envío de la solicitud S28 a Sony Montoya el 29-oct, con copia al Líder Técnico. — Revisado por: (pendiente)
+
+Historial: 1.3.9 · 2026-11-03 · Jesús Chávez Elías, con IA · El Núcleo de IA entra en la Etapa 1 (decisión ED-29, `adr/ADR-007` v0.9, pendiente de aprobación del Líder Técnico): se actualiza la fila ADR-07. No cambian criterios, horas ni la decisión del DoR; no se borra texto del PO. — Revisado por: (pendiente)

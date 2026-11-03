@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Linaje de datos de Aybar Atiende"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.10"
+version: "0.11"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-002, ADR-003, ADR-006, ADR-012, ADR-013]
 tags: [datos, linaje, g3]
 ---
@@ -30,13 +30,13 @@ Revisión del 20-oct-2026: las tablas son las del v7 (SERVICE y las que referenc
 | Evidencia y cartas | Módulo de libro / casos | Azure Blob Storage con inmutabilidad (ADR-006, DT-07); catálogo `GOV_DOCUMENT_REPOSITORY` | La carta va en `CompanyResponseDocumentPath`, con espejo, versión y checksum en `GOV_DOCUMENT_REPOSITORY` (RF-SVC-014; RNF-CUM-007; ADR-006); se conservan 2 años desde el registro, con inmutabilidad bloqueada en PRE y producción (ED-13) | Alta |
 | Eventos de cierre y SLA | Outbox `SVC_OUTBOX_EVENT` (ADR-013; `INTG_OUTBOX_EVENT` no se usa) | KPI Engine (DEP-10), notificaciones, visor 3D, Mi Portal | Publicador → bus de eventos (tópicos `aybar.service.<evento>`, ADR-013) → consumidores; solo referencias | Referencias |
 | Auditoría técnica | Módulos | Publicador de auditoría del SDK (log, archivo o S3/MinIO; en Azure, log o archivo: no tiene destino Blob, ADR-014) | Lista blanca: solo referencias y tipos permitidos. Auditoría de fila: `CreatedDate`, `UpdatedDate`, `LastChangeLogFile` (diff en el almacén de evidencia, RNF-AUD-004) | Sin datos personales |
-| Documentos del cliente indexados | Repositorio documental y GLI (DEP-06) | Índice de búsqueda con permisos: colección del almacén de lectura que escribe el proyector, no tabla (ADR-003 y ADR-012; `SVC_SEARCH_INDEX` no es cambio al v7) | Indexación por significado con la búsqueda vectorial del almacén de lectura, vectores de `text-embedding-3-small` y filtro previo por permisos (ED-17), cuando entre HU-053 (fuera de la Etapa 1 por P-025); se indexan el almacén de evidencia de ATC y el GLI, no el correo (Q-053-1) | Alta |
+| Documentos del cliente indexados | Repositorio documental y GLI (DEP-06) | Índice de búsqueda con permisos: colección del almacén de lectura que escribe el proyector, no tabla (ADR-003 y ADR-012; `SVC_SEARCH_INDEX` no es cambio al v7) | Indexación por significado con la búsqueda vectorial del almacén de lectura, vectores de `text-embedding-3-small` y filtro previo por permisos (ED-17), cuando entre HU-053 (fuera de la Etapa 1 por P-025 y, desde el 3-nov-2026, porque los documentos del cliente no llevan índice vectorial: búsqueda por metadatos exactos, HU-052; ADR-007 v0.9); se indexan el almacén de evidencia de ATC y el GLI, no el correo (Q-053-1) | Alta |
 
 Un dato que viaja por un evento lleva solo referencias (el SDK no admite texto libre en el payload; Ley 29733).
 
 ## Eventos y métricas de analítica que piden las historias
 
-Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analítica» (PLT-04). Son 54 eventos o métricas en 62 historias; 8 historias dicen «sin evento específico». En la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`) son 50 en 57 historias: los de HU-037, 038, 048 y 053 quedan para cuando se retomen (HU-039 no tiene evento). Los nombres y la carga son los del PLT-04: **el payload solo puede llevar referencias** (sin texto libre ni datos personales), así que campos como `autor` o `motivo` viajan como identificadores. Son nombres de analítica del PLT-04, no tópicos: en el bus solo están los 5 tópicos de ADR-013 (`aybar.service.<evento>`, publicados desde `SVC_OUTBOX_EVENT`), y estas métricas se derivan de ellos o de las vistas de lectura (por ejemplo, `ticket_creado` sale de `aybar.service.ticket_created`). Las consume el KPI Engine (DEP-10; dependencia con riesgo y mitigación en el roadmap: mientras no esté, la Torre de Control lee del almacén de lectura de ATC).
+Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analítica» (PLT-04). Son 54 eventos o métricas en 62 historias; 8 historias dicen «sin evento específico». En la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`) son 50 en 57 historias: los de HU-037, 038, 048 y 053 quedan para cuando se retomen (HU-039 no tiene evento). **Actualización del 3-nov-2026 (ED-29, ADR-007 v0.9):** el evento de HU-048 vuelve a la Etapa 1 con el Núcleo de IA; los de HU-068 a HU-072 (propuestas) están por definir; la cifra «50 en 57 historias» se conserva, y la Etapa 1 son 57 HU + HU-048 + 5 propuestas. Los nombres y la carga son los del PLT-04: **el payload solo puede llevar referencias** (sin texto libre ni datos personales), así que campos como `autor` o `motivo` viajan como identificadores. Son nombres de analítica del PLT-04, no tópicos: en el bus solo están los 5 tópicos de ADR-013 (`aybar.service.<evento>`, publicados desde `SVC_OUTBOX_EVENT`), y estas métricas se derivan de ellos o de las vistas de lectura (por ejemplo, `ticket_creado` sale de `aybar.service.ticket_created`). Las consume el KPI Engine (DEP-10; dependencia con riesgo y mitigación en el roadmap: mientras no esté, la Torre de Control lee del almacén de lectura de ATC).
 
 | Historia | Evento o métrica (carga) |
 |---|---|
@@ -77,12 +77,12 @@ Cada historia de Nexora trae su evento o métrica en «Datos de prueba / analít
 | HU-045 | `rayo_marcado {motivo}` |
 | HU-046 | `reasignacion_carga` |
 | HU-047 | `guia_consultada {tipo}` |
-| HU-048 | `ia_sugerencia {decision}` (fuera de la Etapa 1, P-025) |
+| HU-048 | `ia_sugerencia {decision}` (entra en la Etapa 1 con el Núcleo de IA, ED-29; antes «fuera de la Etapa 1, P-025») |
 | HU-049 | `cliente_buscado {criterio}` |
 | HU-050 | `consulta360 {secciones, rol, fuentes_en_linea, ms}` |
 | HU-051 | `consulta_excepcion {motivo}` |
 | HU-052 | `consulta_motor {consulta}` |
-| HU-053 | `busqueda_semantica` (fuera de la Etapa 1, P-025) |
+| HU-053 | `busqueda_semantica` (fuera de la Etapa 1, P-025; sigue fuera tras ED-29) |
 | HU-054 | `tablero_visto` |
 | HU-055 | `correo_asignacion` |
 | HU-056 | `caso_resolucion {meses}` |
@@ -114,6 +114,7 @@ Actualizado el 22-oct-2026 por Jesús Chávez Elías con IA (Claude) a partir de
 | 0.8 | 2026-10-28 | Jesús Chávez Elías, con IA | ATC se adapta a PJ-05 (C1, C2, C11): `PartyID` por `CuentaPersonaPort` (puerto de ATC, sin `GRANT` acordado); mapa documento → `PartyID` como supuesto; `PARTY_SENSITIVE_DATA` no se crea en E1; correo de la cuenta del gestor; carga del catálogo cuando exista el rol `CATALOG_REGISTRAR` |
 | 0.9 | 2026-10-28 | Jesús Chávez Elías, con IA | Cruce del Líder Técnico del 28-oct (C14): sin lectura de `IDN_USER_ACCOUNT`; `PartyID` por el claim `party_id`; fuente del correo del gestor por confirmar con el área |
 | 0.10 | 2026-10-29 | Jesús Chávez Elías, con IA | revisión del Líder Técnico del 29-oct (puntos 2, 4 y 7): emisor de pruebas solo en local (R-11 en revisión); ED-03 interina sin guardar copias (S28-4 pide consulta por API); catálogo sin registrar hasta D1 a D5 |
+| 0.11 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): el evento de HU-048 vuelve a la Etapa 1; eventos de HU-068 a 072 por definir; HU-053 sigue fuera con su razón nueva; cifras de eventos sin cambio |
 
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude) a partir de la revisión del Líder Técnico del 22-oct (DT-03, DT-06 y C-11). — Revisado por: (pendiente)
 

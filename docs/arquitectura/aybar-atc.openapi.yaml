@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Aybar Atiende · Plataforma ATC
-  version: 0.7.0-borrador
+  version: 0.7.1-borrador
   license:
     name: Uso interno de Aybar (propietario)
   description: |
@@ -28,6 +28,7 @@ info:
     - '0.7.0-borrador · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo (O-02, O-01, O-07 y O-15) y decisión del coordinador sobre C-06. Diez operaciones nuevas (cambio MENOR compatible) para que las 57 historias de la Etapa 1 tengan operación: consultarVigilanciaLibro (HU-013 y HU-015), consultarCsatCes (HU-019), listarInformes (HU-031), consultarAuditoriaRegistrosParalelos (HU-032), consultarSincronizacionLegal (HU-040), listarRiesgoDenuncia (HU-041), obtenerFichaLlamada (HU-042), consultarCargaGestores (HU-046), listarAvisos (HU-046 y HU-055) y listarCasosResolucion (HU-056 a 058); verTablero suma el cierre de extremo a extremo (HU-029) y obtenerTicket el historial de estados, las interacciones y la exposición (HU-004, 005 y 041); registrarInteraccion cubre la llamada de HU-042. Etiqueta `quality`. Mi Portal sin rol: `x-roles: []` y `x-autorizacion` (cuenta CUSTOMER activa; ED-01). prorrogarPlazo deshabilitada por la Ley 31435 (15 días hábiles improrrogables; ED-28) con AYB-LRC-422. Adjuntos: máximo 3 por envío en la consola, Mi Portal y la inspección. Tipo de ticket «Validación de identidad (prospecto)» en la descripción del tipo (C-06). 69 operaciones (63 en la Etapa 1).'
     - '0.7.0-borrador · 2026-10-28 · Jesús Chávez Elías, con IA · Cruce del Líder Técnico del 28-oct (C14), misma versión y solo descripciones: el PartyID sale del claim party_id (solicitud S28-4) y no de IDN_USER_ACCOUNT; tipo y estado de la cuenta por confirmar con el área; sin cambio de x-roles, rutas ni esquemas.'
     - '0.7.0-borrador · 2026-10-28 · Jesús Chávez Elías, con IA · Recálculo en borrador, C21 (ADR-022 de PJ-05 aún en borrador, v0.1; pendiente de confirmar con el Líder Técnico), misma versión y sin cambio de rutas, esquemas ni x-roles: cambia x-permiso de 13 operaciones (marcarConflicto, retirarConflicto, armarHandoff y confirmarHandoff a una opción ACTION cada una; pedirSugerenciaIa y decidirSugerenciaIa a AI_REQUEST y AI_DECIDE; derivarTicket, reabrirTicket, reasignarEnBloque, registrarNotaEstado, marcarRayo, llamarCliente y registrarFraseAncla a la acción ver). 49 pares distintos (antes 48).'
+    - '0.7.1-borrador · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): solo descripciones; pedirSugerenciaIa y decidirSugerenciaIa entran en la Etapa 1 (HU-048 vuelve) y su módulo es assistant; sin cambio de rutas, esquemas ni x-roles; operaciones de HU-068 a HU-072: por definir.'
 x-areas-de-error:
   - { area: TKT, alcance: 'Tickets y todo lo que se registra como ticket o actúa sobre uno: bandeja, flujos, rayo, actividades, Mesa de casos sensibles (SGD), señal de conflicto y handoff, notas de estado, Entrega Fest y formularios simples (ingreso y reserva de bus son tipos de ticket del catálogo)' }
   - { area: SLA, alcance: 'Políticas y alertas de SLA; hoy ninguna operación del contrato la usa' }
@@ -46,7 +47,7 @@ tags:
   - name: sla
     description: 'Módulo `sla` (ADR-001, ADR-005): compromisos y alertas de SLA (EP-ATC-02).'
   - name: inbox
-    description: 'Módulo `inbox` (ADR-001): bandeja orquestadora, casillero, flujos por área, rayo, guía, asistencia de IA, tablero y visor 3D (EP-ATC-02, 07 y 09).'
+    description: 'Módulo `inbox` (ADR-001): bandeja orquestadora, casillero, flujos por área, rayo, guía, tablero y visor 3D (EP-ATC-02, 07 y 09). La asistencia de IA (`pedirSugerenciaIa`, `decidirSugerenciaIa`) es del módulo `assistant` (ADR-007 v0.9).'
   - name: complaintbook
     description: 'Módulo `complaintbook` (ADR-001): Libro de Reclamaciones y apelaciones (EP-ATC-03).'
   - name: customer360
@@ -931,7 +932,7 @@ paths:
       tags: [inbox]
       operationId: pedirSugerenciaIa
       summary: "Pedir una sugerencia de IA al redactar o cerrar (el texto va anonimizado; ADR-007)"
-      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-048 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
+      description: "Entra en la Etapa 1 (decisión del 3-nov-2026, ED-29; ADR-007 v0.9): HU-ATC-048 vuelve como orquestador del Núcleo de IA (módulo `assistant`; la IA propone y el gestor aprueba, RN-SVC-032). Antes estaba fuera de la Etapa 1 (P-025, 26-oct-2026). La operación se construye en la Etapa 1; sus esquemas pueden cambiar con las HU-068 a HU-072 (propuestas; operaciones nuevas: por definir) y la habilitación del proveedor (DEP-14) se cubre con el simulador."
       x-historias: [HU-048]
       x-estado: borrador
       x-permiso: "ATC.TICKETS.AI_REQUEST + ver"
@@ -964,7 +965,7 @@ paths:
       tags: [inbox]
       operationId: decidirSugerenciaIa
       summary: "Registrar si el gestor aceptó, editó o descartó la sugerencia"
-      description: "Fuera de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md` v0.8): HU-ATC-048 sale de la Etapa 1 (alcance flexible R-01 del PO) y se retoma en una etapa posterior. La operación queda documentada y no se construye en la Etapa 1."
+      description: "Entra en la Etapa 1 (decisión del 3-nov-2026, ED-29; ADR-007 v0.9): HU-ATC-048 vuelve como orquestador del Núcleo de IA (módulo `assistant`; la IA propone y el gestor aprueba, RN-SVC-032). Antes estaba fuera de la Etapa 1 (P-025, 26-oct-2026). La operación se construye en la Etapa 1; sus esquemas pueden cambiar con las HU-068 a HU-072 (propuestas; operaciones nuevas: por definir) y la habilitación del proveedor (DEP-14) se cubre con el simulador."
       x-historias: [HU-048]
       x-estado: borrador
       x-permiso: "ATC.TICKETS.AI_DECIDE + ver"

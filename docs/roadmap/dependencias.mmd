@@ -14,6 +14,7 @@ flowchart LR
     DEP11["DEP-11 · Call center<br/>21-oct · Por evaluar"]
     DEP12["DEP-12 · Herramienta de Legal<br/>26-oct · Por evaluar"]
     DEP13["DEP-13 · Motor de José<br/>23-oct · Por evaluar"]
+    DEP14["DEP-14 · Proveedor de IA (ED-17)<br/>23-oct · Pendiente · vuelve a aplicar con el Núcleo de IA (3-nov) · simulador mientras no esté (ADR-004)"]
     DEP15["DEP-15 · Proyectos<br/>29-oct · Pendiente"]
   end
   subgraph Epicas["Épicas (Etapa 1)"]
@@ -24,13 +25,12 @@ flowchart LR
     EPATC05["EP-05 · Postventa: reclamos de garantía<br/>Dev 1 · 29-oct a 30-oct"]
     EPATC06["EP-06 · Autogestión del cliente y trazabilidad (Mi Portal)<br/>Dev 4 · 30-oct a 2-nov"]
     EPATC07["EP-07 · Calidad de atención y Torre de Control CX<br/>Dev 3 · 29-oct a 2-nov"]
-    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct"]
+    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct · FT-19 con el Núcleo de IA: HU-048 y HU-068 a HU-072 (horas por estimar)"]
     EPATC10["EP-10 · Consulta 360 e integraciones operativas<br/>Dev 4 · 21-oct a 28-oct"]
     EPATC11["EP-11 · Resolución por morosidad y formularios simples<br/>Dev 4 · 28-oct a 30-oct"]
   end
   subgraph Fuera["Fuera de la Etapa 1 (P-025, 26-oct): alcance flexible R-01"]
     EPATC08["EP-08 · EntregaFest: contención y derivación en vivo<br/>Dev 1 · se retoma en una etapa posterior"]
-    DEP14["DEP-14 · Proveedor de IA<br/>no aplica en la Etapa 1 · ED-17"]
   end
   DEP01 --> EPATC01
   DEP01 --> EPATC04
@@ -67,6 +67,7 @@ flowchart LR
   DEP11 --> EPATC10
   DEP12 --> EPATC10
   DEP13 --> EPATC10
+  DEP14 --> EPATC09
   DEP15 --> EPATC11
   EPATC01 -..-> EPATC03
   EPATC01 -..-> EPATC11
@@ -92,7 +93,7 @@ flowchart LR
   class DEP11 eval
   class DEP12 eval
   class DEP13 eval
-  class DEP14 fuera
+  class DEP14 pend
   class DEP15 pend
   class EPATC01,EPATC02,EPATC03,EPATC04,EPATC05,EPATC06,EPATC07,EPATC09,EPATC10,EPATC11 ep
   class EPATC08 fuera
@@ -104,3 +105,4 @@ flowchart LR
 %% 0.9 · 2026-10-28 · Jesús Chávez Elías, con IA (Claude) · Cruce del Líder Técnico del 28-oct (C14 a C20): nodo S28 (solicitud S28-1 a S28-8, a enviar por el equipo; `arquitectura/roles-y-permisos-atc.md` §13) enlazado con DEP-16 y PJ05-DEP; DEP-16 con R-11 y R-12 en revisión: el emisor de pruebas solo vale en local, la UAT del 03-nov exige Control de acceso en DEV y no es un riesgo aceptado por el Líder Técnico (C-12). — Revisado por: (pendiente)
 %% 0.10 · 2026-10-29 · Jesús Chávez Elías, con IA (Claude) · revisión del Líder Técnico del 29-oct (puntos 1 a 7): DEP-16 sin plan B de emisor de pruebas (si Control de acceso no está en PRE para la UAT, la UAT se reprograma; el emisor de pruebas solo sirve en local); la UAT exige Control de acceso en PRE, no en DEV (texto superado de la 0.9: «exige Control de acceso en DEV»); S28 preparada el 29-oct, aún sin enviar. — Revisado por: (pendiente)
 %% 0.11 · 2026-10-29 · Jesús Chávez Elías, con IA (Claude) · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)
+%% 0.12 · 2026-11-03 · Jesús Chávez Elías, con IA (Claude) · El Núcleo de IA entra en la Etapa 1 (ED-29; ADR-007 v0.9): DEP-14 vuelve al grupo de dependencias del producto y se enlaza con EP-09 (DEP-14 → EP-09; no con EP-10, porque HU-053 sigue fuera); EP-09 incluye HU-048 y HU-068 a HU-072 (FT-19; horas por estimar por el equipo). En la Etapa 1 quedan 10 épicas, 14 dependencias del producto y 5 dependencias lógicas entre épicas. — Revisado por: (pendiente)

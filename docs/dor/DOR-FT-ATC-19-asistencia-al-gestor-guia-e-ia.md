@@ -14,7 +14,7 @@ tags: [dor, plt-05, g4]
 
 # PLT-05 - Definition of Ready (G4) - FT-ATC-19 Asistencia al gestor: guía e IA
 
-**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). Para la Etapa 1 este DoR se evalúa con HU-047 (4 h) y la condición DEP-14 no aplica: la guía no usa IA.
+**Alcance en la Etapa 1 (decisión del 3-nov-2026, reemplaza la nota de P-025):** el Núcleo de IA entra en la Etapa 1 con la arquitectura de `adr/ADR-007` v0.9 (módulo Java en el monolito, pipeline con guardianes, Azure OpenAI). HU-048 se reescribe y se suman HU-068 a HU-072 (propuestas). Las horas están **por estimar por el equipo**; R-01 queda como riesgo crítico para el PO. HU-053 sigue fuera de la Etapa 1. Pendiente: que el PO acepte las HU nuevas y que el Líder Técnico apruebe el ADR-007. Este DoR **debe reevaluarse** con las HU nuevas: las condiciones DEP-14 y DEP-16 vuelven a aplicar y el criterio 9 (estimada por el equipo) no se cumple hasta que haya horas.
 
 | Ítem evaluado | Product Owner | Líder técnico |
 |---|---|---|
@@ -127,3 +127,5 @@ Actualizado el 29-oct-2026 (v1.3.6) por Jesús Chávez Elías con IA (Claude): r
 Historial: 1.3.7 · 2026-10-29 · Jesús Chávez Elías, con IA · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)
 
 Actualizado el 29-oct-2026 (v1.3.7) por Jesús Chávez Elías con IA (Claude): registro del envío de la solicitud S28 a Sony Montoya el 29-oct, con copia al Líder Técnico. — Revisado por: (pendiente)
+
+Historial: 1.3.8 · 2026-11-03 · Jesús Chávez Elías, con IA · Nota de alcance: el Núcleo de IA entra en la Etapa 1 (`adr/ADR-007` v0.9); el DoR debe reevaluarse. No cambian criterios ni la decisión del DoR; no se borra texto del PO. — Revisado por: (pendiente)
