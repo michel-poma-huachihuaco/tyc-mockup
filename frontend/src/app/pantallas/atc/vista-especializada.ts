@@ -1722,7 +1722,7 @@ interface IngresoPendiente {
                   (valorChange)="elegirTicketAsiento($event)"
                 />
               </ay-form-field>
-              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar">
+              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar pl-atc-fila-campos pl-atc-fila-campos--reserva">
                 <ay-form-field etiqueta="Razón social">
                   <ay-input nombre="asiento-empresa" [valor]="empresaAsientoTexto()" [soloLectura]="true" />
                 </ay-form-field>
@@ -1756,7 +1756,7 @@ interface IngresoPendiente {
                   (valorChange)="asPedido.set($event)"
                 />
               </ay-form-field>
-              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar">
+              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar pl-atc-fila-campos pl-atc-fila-campos--reserva">
                 <ay-form-field etiqueta="Monto reclamado (opcional)" [error]="errorAsiento('monto')">
                   <ay-input nombre="asiento-monto"
                     [valor]="asMonto()"

@@ -140,7 +140,7 @@ const aNumero = (texto: string): number => Number(texto.trim().replace(',', '.')
 export function validarAsiento(b: BorradorAsiento): ErroresAsiento {
   const e: ErroresAsiento = {};
   if (!b.ticketNum) e.ticketNum = 'Elige el ticket del asiento.';
-  if (!b.establecimiento) e.establecimiento = 'Elige el establecimiento: el correlativo corre por establecimiento.';
+  if (!b.establecimiento) e.establecimiento = 'Elige el establecimiento.';
   if (!b.hechos.trim()) e.hechos = 'Describe los hechos que motivan el reclamo o la queja.';
   if (!b.pedido.trim()) e.pedido = 'Anota lo que pide el consumidor.';
   if (b.monto.trim()) {
