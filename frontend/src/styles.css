@@ -1905,6 +1905,13 @@ body {
   min-inline-size: 0;
 }
 
+/* Tarjetas que van lado a lado en pantalla ancha y se apilan, una sobre otra, en tablet y celular, también en tablet horizontal. */
+@media (max-width: 1279.98px) {
+  .pl-atc-marco .ay-grid--2.pl-atc-apilar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Columna lateral de Nuevo ticket: las cards se apilan con su propia altura. */
 .pl-atc-col-lateral {
   align-content: start;

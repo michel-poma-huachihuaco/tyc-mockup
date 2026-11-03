@@ -1289,7 +1289,7 @@ interface IngresoPendiente {
               Pendientes de envío: {{ nombresPendientes() }}.
             </ay-alert>
           }
-          <div ayGrid [columnas]="2" gap="md">
+          <div ayGrid [columnas]="2" gap="md" class="pl-atc-apilar">
             <ay-card variante="elevated" superficie="solid">
               <ay-card-header
                 titulo="Formulario de control de acceso (6 campos y la placa, opcional)"
