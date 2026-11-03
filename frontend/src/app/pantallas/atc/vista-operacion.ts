@@ -131,7 +131,7 @@ import { SlaConservadora } from './propuestas-sla/version-conservadora';
               Mostrar llamada
             </ay-button>
           }
-          @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+          @if (estadoProto.rolActivo() === 'SUPERVISOR' || estadoProto.esSuperadmin()) {
             <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
               Reasignación masiva por rotación
             </ay-button>
@@ -397,7 +397,7 @@ import { SlaConservadora } from './propuestas-sla/version-conservadora';
           titulo="Tu Día"
           descripcion="Tu avance de hoy: tickets atendidos, pendientes en riesgo, cumplimiento de SLA y CSAT. El supervisor ve además el avance de su equipo."
         >
-          @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+          @if (estadoProto.rolActivo() === 'SUPERVISOR' || estadoProto.esSuperadmin()) {
             <ay-button ayAcciones tamano="sm" variante="secondary" (click)="modalCeseAbierto.set(true)">
               Reasignación masiva por rotación
             </ay-button>
@@ -407,7 +407,7 @@ import { SlaConservadora } from './propuestas-sla/version-conservadora';
           </ay-button>
         </ay-page-header>
 
-        @if (estadoProto.rolActivo() === 'ADMIN_FUNCIONAL') {
+        @if (estadoProto.rolActivo() === 'ADMIN_FUNCIONAL' || estadoProto.esSuperadmin()) {
           <ay-alert tono="warning" size="sm" titulo="Sin líder inmediato en directorio organizacional (HU-ATC-055)">
             No tienes líder inmediato registrado en el directorio organizacional: los correos de asignación se te envían sin copia (CC) hasta que RRHH complete tu jerarquía.
           </ay-alert>
@@ -477,7 +477,7 @@ import { SlaConservadora } from './propuestas-sla/version-conservadora';
         </div>
 
         <!-- 2. Avance diario del equipo: solo el supervisor (HU-ATC-054 CA-02 y CA-03; ATC.DASHBOARD.TEAM) -->
-        @if (estadoProto.rolActivo() === 'SUPERVISOR') {
+        @if (estadoProto.rolActivo() === 'SUPERVISOR' || estadoProto.esSuperadmin()) {
           <div ayStack gap="2">
             <div ayStack gap="1">
               <ay-heading [nivel]="2" size="sm">Avance diario del equipo</ay-heading>
@@ -1072,7 +1072,11 @@ export class VistaOperacionComponent {
 
   readonly misTicketsPendientesHoy = computed(() =>
     this.tickets()
-      .filter((t) => !!t.owner && (this.responsablePorPerfil[this.estadoProto.rolActivo()] ?? []).includes(t.owner))
+      .filter(
+        (t) =>
+          this.estadoProto.esSuperadmin() ||
+          (!!t.owner && (this.responsablePorPerfil[this.estadoProto.rolActivo()] ?? []).includes(t.owner)),
+      )
       .filter((t) => t.state !== 'RESOLVED' && t.state !== 'CLOSED')
       .map((t) => Object.assign(t, { sla: t.resDue.getTime() })),
   );

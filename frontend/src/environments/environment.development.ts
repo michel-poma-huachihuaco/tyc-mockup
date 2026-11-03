@@ -128,6 +128,12 @@ export const environment = {
         nombre: 'Claudia Herrera · Administrador funcional',
         roles: ['ADMIN_FUNCIONAL', 'ADMIN', 'USER'],
       },
+      {
+        usuario: 'superadmin',
+        clave: 'demo-superadmin',
+        nombre: 'Superadmin · acceso total de pruebas',
+        roles: ['SUPERADMIN', 'USER'],
+      },
     ],
   },
 };

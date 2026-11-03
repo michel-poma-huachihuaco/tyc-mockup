@@ -31,6 +31,7 @@ export type RolPrototipoAtc =
   | 'REFERENTE_ATENCION'
   | 'CONTROL_ACCESO'
   | 'ADMIN_FUNCIONAL'
+  | 'SUPERADMIN'
   | 'SIN_ATENCION';
 
 export interface PerfilRolPrototipoAtc {
@@ -41,7 +42,7 @@ export interface PerfilRolPrototipoAtc {
   readonly nombre: string;
   readonly cargo: string;
   readonly area: string;
-  readonly rol360: 'gestor' | 'supervisor' | 'legal' | 'cx';
+  readonly rol360: 'gestor' | 'supervisor' | 'legal' | 'cx' | 'superadmin';
   readonly nodoInicial360: string;
   readonly vistaPrincipal: VistaAtc;
   readonly resumenPerspectiva: string;
@@ -695,6 +696,20 @@ export const ROLES_PROTOTIPO_ATC: readonly PerfilRolPrototipoAtc[] = [
       'Parametrización sin desarrollo (1 HU): configurar el flujo de trabajo de cada tipo y subtipo de ticket por área (responsable, actividades en orden y SLA).',
   },
   {
+    id: 'SUPERADMIN',
+    personaId: 'p-superadmin',
+    usuario: 'superadmin',
+    clave: 'demo-superadmin',
+    nombre: 'Superadmin',
+    cargo: '0. Superadmin · acceso total (solo para pruebas)',
+    area: 'ATC',
+    rol360: 'superadmin',
+    nodoInicial360: 'ecta',
+    vistaPrincipal: 'bandeja',
+    resumenPerspectiva:
+      'Perfil unificado del prototipo: ve todas las pantallas y puede operar todo, sin las restricciones de rol. No existe en la matriz de roles: es una ayuda para probar.',
+  },
+  {
     id: 'SIN_ATENCION',
     personaId: 'p-sin',
     usuario: 'sin-atencion',
@@ -892,6 +907,8 @@ export class EstadoPrototipoAtcService {
   }
 
   readonly rolActivo = signal<RolPrototipoAtc>('GESTOR');
+  /** El Superadmin ve y opera todo; no es un rol de la matriz (ayuda de pruebas del prototipo). */
+  readonly esSuperadmin = computed(() => this.rolActivo() === 'SUPERADMIN');
   /** Razón social que filtra toda la operación (panel de Simulación). Cada tabla afectada la muestra como chip. */
   readonly empresaFiltro = signal<string>('');
 
@@ -2188,6 +2205,7 @@ export class EstadoPrototipoAtcService {
 
   /* ── Métodos de Permisos y Menú Lateral según Rol (fiel a las 67 HU por rol) ── */
   puedeAtender(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return [
       'GESTOR',
       'SUPERVISOR',
@@ -2202,6 +2220,7 @@ export class EstadoPrototipoAtcService {
   }
 
   puedeRegistrarTicket(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return [
       'GESTOR',
       'SUPERVISOR',
@@ -2214,50 +2233,83 @@ export class EstadoPrototipoAtcService {
   }
 
   puedeMarcarRayo(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['SUPERVISOR', 'LIDER_EQUIPO', 'ADMIN_FUNCIONAL'].includes(rol);
   }
 
   puedeVerLibro(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['LEGAL_RECLAMOS', 'SUPERVISOR', 'COORDINADOR_CX', 'CLIENTE'].includes(rol);
   }
 
   puedeGestionarLibro(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return rol === 'LEGAL_RECLAMOS' || rol === 'SUPERVISOR';
   }
 
   puedeVerMesaSgd(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['MESA_SGD', 'LEGAL_RECLAMOS', 'SUPERVISOR'].includes(rol);
   }
 
   puedeOperarMesaSgd(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return rol === 'MESA_SGD' || rol === 'SUPERVISOR';
   }
 
   puedeVerMorosidad(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['ANALISTA_COBRANZA', 'RESPONSABLE_PROYECTO', 'SUPERVISOR', 'LEGAL_RECLAMOS', 'COORDINADOR_CX'].includes(
       rol,
     );
   }
 
   puedeVerGarantias(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['GESTOR_POSTVENTA', 'SUPERVISOR', 'GESTOR', 'LEGAL_RECLAMOS'].includes(rol);
   }
 
   puedeOperarGarantias(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['GESTOR_POSTVENTA', 'SUPERVISOR'].includes(rol);
   }
 
   /** Solo el personal de control de acceso (`ATC_SITE_ACCESS`) registra ingresos (HU-ATC-059). */
   puedeRegistrarIngreso(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return rol === 'CONTROL_ACCESO';
   }
 
   puedeVerBuses(rol: RolPrototipoAtc = this.rolActivo()): boolean {
+    if (rol === 'SUPERADMIN') return true;
     return ['CLIENTE', 'COORDINADOR_CX', 'MODERADOR_EVENTO', 'APOYO_CX', 'SUPERVISOR'].includes(rol);
   }
 
   vistasPermitidasParaRol(rol: RolPrototipoAtc = this.rolActivo()): readonly VistaAtc[] {
     switch (rol) {
+      case 'SUPERADMIN':
+        // Superadmin: todas las pantallas del prototipo, sin restricción de rol.
+        return [
+          'c360',
+          'vivo',
+          'bandeja',
+          'tudia',
+          'nuevo',
+          'detalle',
+          'morosidad',
+          'ingreso',
+          'buses',
+          'libro',
+          'garantias',
+          'sgd',
+          'reasignar',
+          'alertas',
+          'cierre',
+          'politicas',
+          'workflow',
+          'torre',
+          'evento',
+        ];
       case 'GESTOR':
         // #1 Gestor de tickets (HU-ATC-001, 002, 007, 026, 027, 042, 044, 047, 048, 049, 050, 051, 052, 053, 054, 055)
         return ['c360', 'vivo', 'bandeja', 'tudia', 'nuevo', 'detalle'];

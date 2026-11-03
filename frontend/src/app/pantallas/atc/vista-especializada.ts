@@ -490,7 +490,7 @@ interface IngresoPendiente {
           descripcion="En horas hábiles. Precedencia: específica (tipo + prioridad) sobre genérica por tipo, y esta sobre la genérica global. Editar una política crea una versión nueva sin tocar los tickets abiertos."
         />
 
-        @if (estadoProto.rolActivo() !== 'SUPERVISOR' && estadoProto.rolActivo() !== 'ADMIN_FUNCIONAL') {
+        @if (estadoProto.rolActivo() !== 'SUPERVISOR' && estadoProto.rolActivo() !== 'ADMIN_FUNCIONAL' && !estadoProto.esSuperadmin()) {
           <ay-card superficie="solid">
             <ay-card-body padding="md">
               <ay-empty-state
@@ -602,7 +602,7 @@ interface IngresoPendiente {
           descripcion="Pasa los tickets abiertos de un colaborador a otro o repártelos por carga. El SLA no se reinicia."
         />
 
-        @if (estadoProto.rolActivo() !== 'SUPERVISOR') {
+        @if (estadoProto.rolActivo() !== 'SUPERVISOR' && !estadoProto.esSuperadmin()) {
           <ay-card superficie="solid">
             <ay-card-body padding="md">
               <ay-empty-state
@@ -2024,7 +2024,7 @@ interface IngresoPendiente {
           }
         </div>
 
-        @if (estadoProto.rolActivo() === 'CLIENTE') {
+        @if (estadoProto.rolActivo() === 'CLIENTE' || estadoProto.esSuperadmin()) {
           <ay-card variante="elevated" superficie="solid">
             <ay-card-header
               titulo="Mi Portal · Reservar mi cupo en el bus"
@@ -2344,7 +2344,7 @@ export class VistaEspecializadaComponent {
   /* ── Pestañas de cada vista 5181 ── */
   readonly tabConfig = signal<string>('tipos');
   /** Coordinador CX consulta los flujos; el resto de pestañas y la edición son del Admin Funcional y el Supervisor. */
-  readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR'].includes(this.estadoProto.rolActivo()));
+  readonly puedeEditarWorkflow = computed(() => ['ADMIN_FUNCIONAL', 'SUPERVISOR', 'SUPERADMIN'].includes(this.estadoProto.rolActivo()));
   readonly puedeVerWorkflow = computed(() => this.puedeEditarWorkflow() || this.estadoProto.rolActivo() === 'COORDINADOR_CX');
   private readonly vistaFlujosElegida = signal<'area' | 'tabla' | null>(null);
   /** Quien edita abre en la tabla; quien solo consulta, en la vista por área. */

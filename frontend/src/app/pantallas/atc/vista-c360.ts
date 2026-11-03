@@ -1609,7 +1609,7 @@ export class VistaC360Component {
   readonly clientePedido = input<string | null>(null);
   readonly clientePedidoAtendido = output<void>();
   readonly mostrarHu = input<boolean>(false);
-  readonly rolExterno = input<'gestor' | 'supervisor' | 'legal' | 'cx'>('gestor');
+  readonly rolExterno = input<'gestor' | 'supervisor' | 'legal' | 'cx' | 'superadmin'>('gestor');
   readonly nodoFocoExterno = input<string>('lote');
   readonly fuentesCaidasExternas = input<readonly string[]>([]);
   readonly fuentesCaidasChange = output<string[]>();
@@ -1664,11 +1664,12 @@ export class VistaC360Component {
     );
   });
 
-  readonly rolesOpciones: readonly { rol: 'gestor' | 'supervisor' | 'legal' | 'cx'; etiqueta: string }[] = [
+  readonly rolesOpciones: readonly { rol: 'gestor' | 'supervisor' | 'legal' | 'cx' | 'superadmin'; etiqueta: string }[] = [
     { rol: 'gestor', etiqueta: 'Gestor de tickets' },
     { rol: 'supervisor', etiqueta: 'Supervisor ATC' },
     { rol: 'legal', etiqueta: 'Legal' },
     { rol: 'cx', etiqueta: 'Coordinador CX' },
+    { rol: 'superadmin', etiqueta: 'Superadmin (todo)' },
   ];
 
   readonly opcionesModoVista: AySegmentoOpcion[] = [
@@ -1684,7 +1685,7 @@ export class VistaC360Component {
   readonly modoRenderizado = signal<'po3d' | '2d'>('po3d');
 
   readonly clienteKey = signal<string>('eh');
-  readonly rolActivo = signal<'gestor' | 'supervisor' | 'legal' | 'cx'>('gestor');
+  readonly rolActivo = signal<'gestor' | 'supervisor' | 'legal' | 'cx' | 'superadmin'>('gestor');
   readonly nodoSeleccionadoId = signal<string>('');
   readonly nodoDrawerId = signal<string>('kyc');
   readonly fuenteInspeccionadaId = signal<string | null>(null);
@@ -2018,7 +2019,7 @@ export class VistaC360Component {
   private dispararOleadaPulsosGrafo(
     cli: Cliente360,
     caidas: readonly string[],
-    rol: 'gestor' | 'supervisor' | 'legal' | 'cx',
+    rol: 'gestor' | 'supervisor' | 'legal' | 'cx' | 'superadmin',
     activo = this.clienteSeleccionado(),
   ): void {
     const rolPermiso = rol === 'cx' ? 'supervisor' : rol;

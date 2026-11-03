@@ -2045,6 +2045,7 @@ export class ConsolaAtcComponent {
         garita: 'CONTROL_ACCESO',
         acceso: 'CONTROL_ACCESO',
         admin: 'ADMIN_FUNCIONAL',
+        superadmin: 'SUPERADMIN',
       };
       const rol = mapaUidRol[uid];
       if (rol && rol !== this.estadoProto.rolActivo()) {

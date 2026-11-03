@@ -111,7 +111,7 @@ export const funcionPorId = (id: string): EntradaIndice | undefined => INDICE_FU
 /** Una función se ofrece si el perfil la admite y su módulo está entre los que el sidebar le muestra. */
 export function funcionesVisibles(rol: RolPrototipoAtc, vistasVisibles: ReadonlySet<VistaAtc>): EntradaIndice[] {
   return INDICE_FUNCIONES.filter(
-    (f) => vistasVisibles.has(f.vista) && (f.roles ? f.roles.includes(rol) : rol !== 'CLIENTE'),
+    (f) => vistasVisibles.has(f.vista) && (rol === 'SUPERADMIN' || (f.roles ? f.roles.includes(rol) : rol !== 'CLIENTE')),
   );
 }
 
