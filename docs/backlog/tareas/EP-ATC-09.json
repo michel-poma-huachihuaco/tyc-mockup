@@ -2,11 +2,12 @@
   "epica": "EP-ATC-09",
   "generado_por_ia": true,
   "revisado_por": null,
-  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-054-T01 <- HU-ATC-046-T04 (PO: HU-ATC-046 -> HU-ATC-054); HU-ATC-045-T01 ya no lleva en depende_de HU-ATC-001-T02; HU-ATC-046-T01 ya no lleva en depende_de HU-ATC-007-T01; HU-ATC-046-T02 ya no lleva en depende_de HU-ATC-008-T01. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Cambios en este archivo: HU-ATC-048 fuera de la Etapa 1 (6 tareas, 5 h, a roadmap/alcance-diferido.md); queda HU-ATC-048-T00, de 0 h, con la dependencia del PO HU-ATC-047 -> HU-ATC-048. EP-ATC-09 en la Etapa 1: 39 h. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision interna del equipo del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28). Mismas horas por HU. Cambios en este archivo: HU-ATC-043-T02, HU-ATC-043-T04, HU-ATC-043-T07, HU-ATC-044-T01, HU-ATC-044-T02, HU-ATC-044-T03, HU-ATC-045-T01, HU-ATC-045-T02, HU-ATC-046-T02, HU-ATC-046-T04, HU-ATC-067-T02, HU-ATC-067-T03, HU-ATC-067-T04, HU-ATC-047-T04, HU-ATC-054-T01, HU-ATC-054-T03, HU-ATC-055-T01, HU-ATC-055-T04. 0.6 · 2026-10-28 · Jesus Chavez Elias, con IA · Contraste con la documentacion de Control de acceso (PJ-05): HU-ATC-043-T07 describe la carga del catalogo como la define el ADR-021 de PJ-05 (decisiones 1 a 5): la ruta para otorgar CATALOG_REGISTRAR esta en propuesta (D-171), la carga real es cuando el rol exista y la aprobacion es posterior y asincrona, fila por fila (tomar y decidir), en cada ambiente; sin 'lo carga el area'. Nuevo bloque tareas_fuera_del_plan_del_po (FPO-T01 y FPO-T02: lotes del catalogo y AlcanceDeEmpresa con su matriz; +5 a +7 h, estimacion de la revision del 28-oct, por confirmar), fuera de las historias: no cambia ninguna hora de HU, las 243 h del PO ni las 255 h 0.7 · 2026-10-28 · Jesus Chavez Elias, con IA · Cruce del Lider Tecnico del 28-oct (C14): adaptador de correo sin lectura de IDN_USER_ACCOUNT; fuente del correo por confirmar con el area (S28-4). Sin cambio de horas. — Revisado por: (pendiente) 0.8 · 2026-10-29 · Jesus Chavez Elias, con IA · Revision del Lider Tecnico del 29-oct (puntos 7 y 8): ADR-022 aprobado segun el Lider Tecnico (el recalculo C21 sigue en borrador hasta D1 a D5); no se registran las 108 tareas del catalogo hasta entonces. Sin cambio de horas, cifras ni estados; ninguna historia se integra sin G3 y G4 aprobados. — Revisado por: (pendiente)",
+  "autoria": "Generado por IA: desglose de tareas de la Etapa 1 a partir del PLT-04 v1.3 (16-oct-2026) y del backlog publicado por Daniel en Nexora (v1, 21-oct-2026), sin cambiar historias, horas, fechas ni responsables del PO; la suma de las tareas de cada HU es la de su ficha del PLT-04. Ajustado con IA (Claude, 22-oct-2026) a DT-01..DT-10 del Lider Tecnico: sin maestro local, carga de RR. HH. ni login, codigo o sesion propios de Mi Portal; integracion con Control de acceso (DEP-16) con las horas que liberan esas tareas, dentro de cada HU (lo que PJ-05 no tiene lo resolvieron las decisiones del equipo ED-01 a ED-09 del 26-oct); stack del SDK 0.7.1 (Java/Spring, Angular con @aybarcorp/ui-angular, modulos en ingles de ADR-001 v0.2, Azure). Outbox, publicador, proyector y bus (DT-02) no estan en las horas de las HU: son las 28 h tecnicas de la fundacion en EP-ATC-01.json (P-025, decidida por el equipo el 26-oct-2026). 0.2 · 2026-10-26 · Brayan Hurtado, con IA · Las 54 dependencias entre HU del PO (bloque «Depende de» de cada historia: PLT-02, PLT-03, PLT-04 y Gantt del PLT-01) estan en depende_de: 43 ya estaban entre tareas de las dos HU y las 11 que faltaban se anaden asi: la primera tarea de la HU sucesora depende de la ultima de su predecesora. Las dependencias tecnicas entre tareas son adicionales a las del PO; las que cambiarian las olas del PO (roadmap/analisis-dependencias.md 4.3) no van en depende_de y su tarea lo dice en el titulo (calendario del PO; en 4, ademas, fundacion del SDK). responsable = nombre exacto en Nexora (Dev N del PLT-01). Mismas horas por HU (PLT-04, 243 h). Cambios en este archivo: HU-ATC-054-T01 <- HU-ATC-046-T04 (PO: HU-ATC-046 -> HU-ATC-054); HU-ATC-045-T01 ya no lleva en depende_de HU-ATC-001-T02; HU-ATC-046-T01 ya no lleva en depende_de HU-ATC-007-T01; HU-ATC-046-T02 ya no lleva en depende_de HU-ATC-008-T01. 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (Brayan Hurtado, 26-oct-2026; opcion A; analisis/decisiones.md v0.8): salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01 del PLT-01 y del PLT-05): HU-ATC-037, 038 y 039 (EP-ATC-08 completa, 6 h, Dev 1), HU-ATC-048 (5 h, Dev 3) y HU-ATC-053 (5 h, Dev 4); su desglose original (24 tareas, 16 h) pasa sin cambios a roadmap/alcance-diferido.md y en backlog/tareas/ queda una tarea de 0 h por HU que lo dice (sin ella aybar paquete validar avisaria hu-sin-tareas). Las 28 h de DT-02 (outbox 6, publicador 6, proyector 10 y bus 6; ADR-012) entran como tareas tecnicas de la fundacion en EP-ATC-01.json (DT02-T01 a DT02-T06). Etapa 1: 57 HU y 227 h de HU (Brayan 55, Jesus 60, Michel 55, Daniel 57) + 28 h tecnicas = 255 h (Brayan 64, Jesus 64, Michel 64, Daniel 63; las 3 h sobre las 252 h de capacidad las absorbe el equipo, riesgo aceptado). Ninguna tarea de la Etapa 1 depende de una tarea diferida. Cambios en este archivo: HU-ATC-048 fuera de la Etapa 1 (6 tareas, 5 h, a roadmap/alcance-diferido.md); queda HU-ATC-048-T00, de 0 h, con la dependencia del PO HU-ATC-047 -> HU-ATC-048. EP-ATC-09 en la Etapa 1: 39 h. 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revision interna del equipo del 26-oct: cada endpoint que nombra una tarea es una operacion del contrato aybar-atc.openapi.yaml 0.7.0-borrador, con su metodo, su ruta y su operationId (O-02); las referencias a P-033 a P-043 ya decididas pasan a su decision (ED-01 a ED-11; O-14); prorroga deshabilitada por la Ley 31435 (ED-28); Mi Portal por cuenta CUSTOMER activa (ED-01); adjuntos maximo 3 por envio; RN-SVC-044 y 045 citadas por su criterio (O-28). Mismas horas por HU. Cambios en este archivo: HU-ATC-043-T02, HU-ATC-043-T04, HU-ATC-043-T07, HU-ATC-044-T01, HU-ATC-044-T02, HU-ATC-044-T03, HU-ATC-045-T01, HU-ATC-045-T02, HU-ATC-046-T02, HU-ATC-046-T04, HU-ATC-067-T02, HU-ATC-067-T03, HU-ATC-067-T04, HU-ATC-047-T04, HU-ATC-054-T01, HU-ATC-054-T03, HU-ATC-055-T01, HU-ATC-055-T04. 0.6 · 2026-10-28 · Jesus Chavez Elias, con IA · Contraste con la documentacion de Control de acceso (PJ-05): HU-ATC-043-T07 describe la carga del catalogo como la define el ADR-021 de PJ-05 (decisiones 1 a 5): la ruta para otorgar CATALOG_REGISTRAR esta en propuesta (D-171), la carga real es cuando el rol exista y la aprobacion es posterior y asincrona, fila por fila (tomar y decidir), en cada ambiente; sin 'lo carga el area'. Nuevo bloque tareas_fuera_del_plan_del_po (FPO-T01 y FPO-T02: lotes del catalogo y AlcanceDeEmpresa con su matriz; +5 a +7 h, estimacion de la revision del 28-oct, por confirmar), fuera de las historias: no cambia ninguna hora de HU, las 243 h del PO ni las 255 h 0.7 · 2026-10-28 · Jesus Chavez Elias, con IA · Cruce del Lider Tecnico del 28-oct (C14): adaptador de correo sin lectura de IDN_USER_ACCOUNT; fuente del correo por confirmar con el area (S28-4). Sin cambio de horas. — Revisado por: (pendiente) 0.8 · 2026-10-29 · Jesus Chavez Elias, con IA · Revision del Lider Tecnico del 29-oct (puntos 7 y 8): ADR-022 aprobado segun el Lider Tecnico (el recalculo C21 sigue en borrador hasta D1 a D5); no se registran las 108 tareas del catalogo hasta entonces. Sin cambio de horas, cifras ni estados; ninguna historia se integra sin G3 y G4 aprobados. — Revisado por: (pendiente) 0.9 · 2026-11-03 · Jesus Chavez Elias, con IA · Nucleo de IA en la Etapa 1 (decision del 3-nov-2026; adr/ADR-007 v0.9): se reemplaza HU-ATC-048-T00 (0 h, P-025) por HU-ATC-048-T01 (orquestador) y se anaden HU-ATC-068 a HU-ATC-072 (propuestas, una tarea cada una; responsable, desglose y horas por estimar por el equipo: estimacion_horas null). No se inventan ni recalculan horas; las cifras de horas_etapa_1 (39 h) y las 243 h / 227 h / 255 h quedan sin las horas del Nucleo de IA (HU-ATC-048 y HU-ATC-068 a HU-ATC-072), por estimar por el equipo; R-01 riesgo critico para el PO. Etapa 1: 57 HU + HU-ATC-048 + 5 propuestas. — Revisado por: (pendiente)",
   "titulo": "Bandeja orquestadora y asistencia al gestor",
   "responsable": "Michel Poma Huachihuaco",
   "horas": 44,
   "horas_etapa_1": 39,
+  "horas_etapa_1_nota": "39 h sin las horas del Núcleo de IA (HU-ATC-048 y HU-ATC-068 a HU-ATC-072), por estimar por el equipo; R-01 riesgo crítico para el PO",
   "ventana": "2026-10-21 -> 2026-10-29",
   "fuente": "PLT-04 Historias de usuario v1.3 (16-oct-2026) y PLT-01/PLT-02 v1.3",
   "historias": [
@@ -444,24 +445,151 @@
       "hu": "HU-ATC-048",
       "titulo": "Recibir retroalimentación de IA mientras atiendo y cierro",
       "feature": "FT-ATC-19",
-      "prioridad": "Podría",
-      "flexible": true,
-      "etapa": "fuera de la Etapa 1 (P-025)",
-      "horas": 5,
-      "iteracion": 2,
-      "inicio": "2026-10-27",
-      "fin": "2026-10-28",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; reemplaza la salida por P-025)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
       "tareas": [
         {
-          "id": "HU-ATC-048-T00",
-          "titulo": "Fuera de la Etapa 1 por decision del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. Su desglose (6 tareas, 5 h del PLT-04) esta sin cambios en roadmap/alcance-diferido.md. Tarea de 0 h que solo deja constancia; depende_de conserva la dependencia del PO (HU-ATC-047 -> HU-ATC-048) para cuando se retome",
-          "capa": "docs",
-          "actividad": "PLANIFICACION",
+          "id": "HU-ATC-048-T01",
+          "titulo": "[assistant] Orquestador del Núcleo de IA (ADR-007 v0.9): recibe el ticket, encadena los guardianes de HU-ATC-068 a HU-ATC-071 y entrega el borrador al gestor. Reemplaza la tarea de 0 h de P-025; desglose en tareas y horas por estimar por el equipo; depende_de conserva la dependencia del PO (HU-ATC-047 -> HU-ATC-048)",
+          "capa": "application",
+          "actividad": "DESARROLLO",
           "responsable": "Michel Poma Huachihuaco",
-          "estimacion_horas": 0,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
           "depende_de": [
             "HU-ATC-047-T06"
           ]
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-068",
+      "titulo": "Bloquear en la entrada los intentos de manipular a la IA",
+      "feature": "FT-ATC-19",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; HU propuesta, pendiente de aceptación del PO)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
+      "tareas": [
+        {
+          "id": "HU-ATC-068-T01",
+          "titulo": "[assistant] Guardián de seguridad de entrada (HU propuesta, ADR-007 v0.9). Desglose, responsable y horas por estimar por el equipo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
+          "depende_de": []
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-069",
+      "titulo": "Verificar cada dato del borrador contra su fuente",
+      "feature": "FT-ATC-19",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; HU propuesta, pendiente de aceptación del PO)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
+      "tareas": [
+        {
+          "id": "HU-ATC-069-T01",
+          "titulo": "[assistant] Guardián de calidad y tono (HU propuesta, ADR-007 v0.9). Desglose, responsable y horas por estimar por el equipo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
+          "depende_de": []
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-070",
+      "titulo": "Identificar de qué trata el ticket y elegir la guía y las reglas correctas",
+      "feature": "FT-ATC-19",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; HU propuesta, pendiente de aceptación del PO)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
+      "tareas": [
+        {
+          "id": "HU-ATC-070-T01",
+          "titulo": "[assistant] Clasificar y enrutar (HU propuesta, ADR-007 v0.9). Desglose, responsable y horas por estimar por el equipo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
+          "depende_de": []
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-071",
+      "titulo": "Escalar a una persona con un motivo tipificado",
+      "feature": "FT-ATC-19",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; HU propuesta, pendiente de aceptación del PO)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
+      "tareas": [
+        {
+          "id": "HU-ATC-071-T01",
+          "titulo": "[assistant] Escalar con motivo y estado (HU propuesta, ADR-007 v0.9). Desglose, responsable y horas por estimar por el equipo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
+          "depende_de": []
+        }
+      ]
+    },
+    {
+      "hu": "HU-ATC-072",
+      "titulo": "Probar cada cambio de la IA contra un set fijo",
+      "feature": "FT-ATC-19",
+      "prioridad": "Alta",
+      "flexible": false,
+      "etapa": "Etapa 1 (decisión del 3-nov-2026, Núcleo de IA; HU propuesta, pendiente de aceptación del PO)",
+      "horas": null,
+      "horas_por_estimar": true,
+      "iteracion": null,
+      "inicio": null,
+      "fin": null,
+      "tareas": [
+        {
+          "id": "HU-ATC-072-T01",
+          "titulo": "[assistant] Set de evaluación congelado (HU propuesta, ADR-007 v0.9). Desglose, responsable y horas por estimar por el equipo",
+          "capa": "application",
+          "actividad": "DESARROLLO",
+          "responsable": null,
+          "estimacion_horas": null,
+          "estimacion_por_confirmar": true,
+          "depende_de": []
         }
       ]
     },

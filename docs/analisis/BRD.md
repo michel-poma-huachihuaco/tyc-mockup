@@ -4,10 +4,10 @@ tipo: brd
 titulo: "BRD - Aybar Atiende (plataforma de atención al cliente) · Etapa 1"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.8"
+version: "0.9"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: ["AYB-0001", "RMP-001"]
 tags: [brd, intake, plt-01]
 ---
@@ -57,7 +57,7 @@ mar 03-nov es el día de UAT, demo final y Go/No-Go de la v1.0.
 | OBJ-03 | Eliminar el riesgo de doble registro del dato de cliente | Registros paralelos del dato de cliente fuera de SIGDA/TAXON | 0 | RNF-INT-007 · RN-SVC-026 |
 | OBJ-04 | Medir la experiencia del cliente de forma unificada | NPS-C = (JOU × 0,45) + (POS × 0,35) + (EVT × 0,20) | Línea base: la primera medición en la UAT (decisión del equipo, 26-oct); meta: mantenerla o mejorarla en el primer mes de operación, con la ponderación de RNF-USA-001 | RNF-USA-001 |
 | OBJ-05 | Sostener evidencia probatoria íntegra ante fiscalización | Documentos probatorios sin checksum | 0 | RNF-CUM-007 |
-| OBJ-06 | Resolver con ayuda de IA sin perder el control humano | Sugerencias de IA con datos personales · sugerencias registradas | 0 · 100 % | RNF-SEC-009 · RN-SVC-032. **Sin IA en la Etapa 1:** HU-048 y HU-053 salen por P-025 (`analisis/decisiones.md`); se mide cuando entren |
+| OBJ-06 | Resolver con ayuda de IA sin perder el control humano | Sugerencias de IA con datos personales · sugerencias registradas | 0 · 100 % | RNF-SEC-009 · RN-SVC-032. **Con el Núcleo de IA en la Etapa 1 (3-nov, ED-29; `adr/ADR-007` v0.9):** se mide con HU-048 y HU-068 a HU-072; HU-053 sigue fuera |
 
 Además, cada épica del PLT-02 v1.3 tiene una meta de negocio del PO. Estas metas sí vienen de las
 fuentes:
@@ -93,7 +93,7 @@ Dev 3 Michel 55 h y Dev 4 Daniel 57 h). Las 28 h nuevas de DT-02 (outbox 6, publ
 (64, 64, 64 y 63 h por persona). Para hacerles sitio, el equipo activó el recorte que el PO previó en su R-01: salen de la
 Etapa 1 HU-ATC-037, 038 y 039 (EP-ATC-08 y FT-ATC-15 completas), HU-ATC-048 y HU-ATC-053, 16 h; el PO conserva la decisión de
 revertirlo. **Sobrecosto real: 7 h** sobre una capacidad de 252 h (63 h por persona), con dueño el PO (`decisiones.md`,
-P-025, punto 7). Las 5 siguen documentadas en el paquete y se retoman en una etapa posterior.
+P-025, punto 7). Las 5 siguen documentadas en el paquete y se retoman en una etapa posterior. **Actualización del 3-nov-2026 (ED-29):** el Núcleo de IA entra en la Etapa 1: HU-048 vuelve (reescrita) y se suman 5 historias propuestas, HU-068 a HU-072 (FT-19); son 57 HU + HU-048 + 5 propuestas. Siguen fuera HU-037, 038, 039 y 053. Las cifras de este párrafo (227 h, 255 h, 7 h de sobrecosto) se conservan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO.
 
 | Épica | Nombre | MoSCoW | Funcionalidades | HU | Horas | Dev |
 |---|---|---|---|---|---|---|
@@ -105,11 +105,11 @@ P-025, punto 7). Las 5 siguen documentadas en el paquete y se retoman en una eta
 | EP-ATC-06 | Autogestión del cliente y trazabilidad (Mi Portal) | Debe | FT-24 | 3 | 9 | Dev 4 (Daniel) |
 | EP-ATC-07 | Calidad de atención y Torre de Control CX | Debería | FT-13, FT-14 | 4 | 16 | Dev 3 (Michel) |
 | EP-ATC-08 | EntregaFest: contención y derivación en vivo | Podría | FT-15 | 3 · **fuera de la Etapa 1 (P-025)** | 6 · 0 en la Etapa 1 | Dev 1 (Brayan) |
-| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | FT-18, FT-25, FT-19, FT-21 | 9 · 8 en la Etapa 1 (HU-048 fuera) | 44 · 39 en la Etapa 1 | Dev 3 (Michel) |
+| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | FT-18, FT-25, FT-19, FT-21 | 9 · 8 sin HU-048, que vuelve a la Etapa 1 el 3-nov, más HU-068 a HU-072 (propuestas) | 44 · 39 en la Etapa 1 sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO | Dev 3 (Michel) |
 | EP-ATC-10 | Consulta 360 e integraciones operativas | Debe | FT-20, FT-17, FT-16 | 8 · 7 en la Etapa 1 (HU-053 fuera) | 36 · 31 en la Etapa 1 | Dev 4 (Daniel) |
 | EP-ATC-11 | Resolución por morosidad y formularios simples | Debe | FT-22, FT-23 | 5 | 17 | Dev 4 (Daniel) |
 | **Total del plan del PO** | | | **23** | **62** | **243** | |
-| **Total de la Etapa 1 (P-025)** | | | **22** | **57** | **227** | |
+| **Total de la Etapa 1 (P-025)** | | | **22** | **57** (+ HU-048 y 5 propuestas, HU-068 a HU-072) | **227** (sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO) | |
 | Fundación técnica de DT-02 (P-025; no es una HU del PO) | Outbox, publicador, proyector y bus | Debe | FT-01 (tareas sobre HU-ATC-001) | — | 28 | Brayan 9 · Jesús 4 · Michel 9 · Daniel 6 |
 | **Total de horas de la Etapa 1** | | | | | **255** | 64 · 64 · 64 · 63 |
 
@@ -123,7 +123,7 @@ En resumen, la Etapa 1 cubre:
 - los reclamos de garantía de postventa;
 - la encuesta post-atención y la Torre de Control CX;
 - la bandeja orquestadora con flujos por tipo, subtipo y área;
-- la guía de solución al gestor (la retroalimentación de IA, HU-048, sale de la Etapa 1 por P-025);
+- la guía de solución al gestor y el Núcleo de IA (HU-048 reescrita y las propuestas HU-068 a HU-072: lee el ticket, redacta un borrador verificado y lo escala con un motivo; la IA propone y el gestor aprueba, RN-SVC-032; desde el 3-nov, ED-29);
 - el visor del proceso 3D;
 - la consulta 360 del cliente y las integraciones operativas (call center, Legal y motor de consultas), sin la búsqueda por significado (HU-053, fuera por P-025);
 - la fundación técnica de CQRS de DT-02: outbox, publicador, proyector y bus (28 h, P-025).
@@ -147,12 +147,12 @@ desarrollador:
 El PO los definió como lo primero que sale si el control de alcance (jue 29-oct) muestra atraso:
 
 - RF-SVC-037 a 039 (HU-ATC-037 a 039): contención verbal en EntregaFest.
-- RF-SVC-048 (HU-ATC-048): retroalimentación de IA al gestor durante la atención.
+- RF-SVC-048 (HU-ATC-048): retroalimentación de IA al gestor durante la atención. **Vuelve a la Etapa 1 el 3-nov-2026** (Núcleo de IA, ED-29) y ya no es flexible; aquí se deja como registro del 26-oct.
 - RF-SVC-053 (HU-ATC-053): búsqueda inteligente en archivos y documentos del cliente.
 
 Recortarlos no afecta la v1.0 (PLT-01 v1.3, R-01). **El equipo los sacó de la Etapa 1 el 26-oct-2026** (P-025, decidida
 por el equipo, Brayan Hurtado; `analisis/decisiones.md`) para hacer sitio a las 28 h de DT-02: activó el R-01 del PO, que
-conserva la decisión de revertirlo. Se retoman en una etapa posterior. Sus documentos siguen en el paquete con la nota «Alcance» y el desglose de sus tareas está sin cambios en
+conserva la decisión de revertirlo. Se retoman en una etapa posterior (HU-048 volvió el 3-nov; HU-053 sigue fuera por otra razón: los documentos del cliente no llevan índice vectorial, HU-052). Sus documentos siguen en el paquete con la nota «Alcance» y el desglose de sus tareas está sin cambios en
 `roadmap/alcance-diferido.md`.
 
 ### Fuera (OUT) — "Después"
@@ -161,8 +161,8 @@ conserva la decisión de revertirlo. Se retoman en una etapa posterior. Sus docu
   ticket se registra a mano o por API contra un simulador (HU-ATC-001, fuera de alcance).
 - Los requisitos del Excel que la columna «etapa» deja fuera de la Etapa 1 (RN-SVC-043): **5 RF y
   2 RNF**. No tienen historia ni fecha en este plan.
-- Las 5 historias de alcance flexible (HU-ATC-037, 038, 039, 048 y 053; EP-ATC-08 y FT-ATC-15 completas), que salen
-  de la Etapa 1 por P-025 y se retoman en una etapa posterior.
+- Las 4 historias de alcance flexible que siguen fuera (HU-ATC-037, 038, 039 y 053; EP-ATC-08 y FT-ATC-15 completas), que salen
+  de la Etapa 1 por P-025 y se retoman en una etapa posterior (HU-ATC-048 salió el 26-oct y volvió el 3-nov con el Núcleo de IA).
 - Lo que cada épica declara fuera de alcance en su sección 3 (PLT-02 v1.3), y cualquier
   funcionalidad que no esté en las 57 historias de la Etapa 1.
 
@@ -173,7 +173,7 @@ análisis completo en `docs/roadmap/analisis-dependencias.md`. Son los riesgos R
 v1.3, con dueño y mitigación, más el R-11 que suma el equipo (DEP-16, riesgo aceptado con mitigación), y las 14 dependencias vigentes: DEP-01, DEP-03 a DEP-08 y DEP-10 a DEP-16 (la numeración del PLT-01 salta
 la DEP-09 y la DEP-02 se cambió por la DEP-16). El BRD no los duplica, solo los referencia. Los más urgentes son:
 
-- **R-01**: el plan del PO tenía 243 h de 252 h (96 %), con Dev 4 al 98 %. El equipo activó su mitigación el 26-oct (P-025): sale el alcance flexible (16 h) y entran las 28 h de DT-02; el R-01 es del PO, que puede revertirlo. Quedan 255 h (64, 64, 64 y 63 h por persona) y un sobrecosto real de 7 h sobre 252 h de capacidad (con las 4 h de la reestimación de ADR-009), con dueño el PO.
+- **R-01**: el plan del PO tenía 243 h de 252 h (96 %), con Dev 4 al 98 %. El equipo activó su mitigación el 26-oct (P-025): sale el alcance flexible (16 h) y entran las 28 h de DT-02; el R-01 es del PO, que puede revertirlo. Quedan 255 h (64, 64, 64 y 63 h por persona) y un sobrecosto real de 7 h sobre 252 h de capacidad (con las 4 h de la reestimación de ADR-009), con dueño el PO. Desde el 3-nov, el Núcleo de IA (HU-048 y HU-068 a HU-072) entra en la Etapa 1: esas cifras quedan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO.
 - **R-02**: APIs externas sin fecha.
 - **R-03**: matriz SLA sin definir (mitigación del PO: matriz provisional parametrizable).
 - **R-11**: Control de acceso sin fecha en DEV (DEP-16); mitigado con el emisor de pruebas local, tokens de prueba y personas sintéticas (ED-08); en revisión del Líder Técnico, que no lo ha aceptado (revisión del 29-oct). **R-12**: criterio de corte de la UAT = reprogramarla si Control de acceso no está en PRE; no se hace con el emisor de pruebas (Líder Técnico, 29-oct, punto 2).
@@ -204,7 +204,7 @@ Nota del equipo (ED-28): el art. 24 de la Ley 29571, con el texto de la Ley 3143
 - **ED-28**: plazo del Libro de Reclamaciones de 15 días hábiles improrrogables (Ley 31435).
 - **P-022**: el Excel y los PDF quedan como los publicó el PO; las diferencias están en `correcciones-excel-v1.3.md` y en el registro (ED-18).
 - **P-024**: cada documento queda listo para la firma de su rol (ED-21).
-- **P-025** (horas): decidida por el equipo (Brayan Hurtado), 26-oct-2026, opción A. Las 28 h de DT-02 entran como fundación técnica y salen de la Etapa 1 las 5 historias de alcance flexible (16 h). Sobrecosto real: 7 h (punto 7 de P-025). Etapa 1: 57 historias, 227 h de historias más 28 h técnicas. El recorte es el R-01 del PO, que el equipo activó: el PO conserva la decisión de revertirlo. El proveedor de IA (ED-17) queda decidido, sin consumo en la Etapa 1.
+- **P-025** (horas): decidida por el equipo (Brayan Hurtado), 26-oct-2026, opción A. Las 28 h de DT-02 entran como fundación técnica y salen de la Etapa 1 las 5 historias de alcance flexible (16 h). Sobrecosto real: 7 h (punto 7 de P-025). Etapa 1: 57 historias, 227 h de historias más 28 h técnicas. El recorte es el R-01 del PO, que el equipo activó: el PO conserva la decisión de revertirlo. El proveedor de IA (ED-17) queda decidido; desde el 3-nov se consume en la Etapa 1 (Núcleo de IA, ED-29), con simulador mientras TI y Seguridad no lo habiliten (DEP-14).
 
 **No queda ninguna pendiente abierta en el registro**: lo que falta son firmas.
 
@@ -227,6 +227,7 @@ Solo cuenta como evidencia la aprobación registrada en Nexora o `estado: approv
 | 0.6 | 2026-10-26 | Brayan Hurtado, con IA | P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 en 57 historias, 22 funcionalidades y 10 épicas, con 227 h de historias (55, 60, 55 y 57) más 28 h técnicas de DT-02 = 255 h; HU-ATC-037, 038, 039, 048 y 053 fuera (alcance flexible R-01), en «Flexible» y «Fuera»; R-01 con la mitigación aplicada; OBJ-06 sin IA en la Etapa 1; no queda ninguna pendiente abierta. Sin cambiar texto del PO |
 | 0.7 | 2026-10-26 | Brayan Hurtado, con IA | Revisión interna del equipo: OBJ-02 con el plazo de 15 días hábiles improrrogables (ED-28) y nota sobre la meta de EP-ATC-03 y RES-03, sin cambiar texto del PO; el tipo de ticket de prospectos entra en la Etapa 1 (P-041, ED-09); DEP-16 con R-11 y R-12; P-025 como R-01 del PO; citas sin versión |
 | 0.8 | 2026-10-29 | Jesús Chávez Elías, con IA | Revisión del Líder Técnico del 29-oct: sin plan B del emisor de pruebas en la UAT, R-12 pasa a reprogramar la UAT (punto 2); R-11 en revisión, no aceptado; la UAT exige Control de acceso en PRE (S28-8 corregida). Sin cambiar texto del PO |
+| 0.9 | 2026-11-03 | Jesús Chávez Elías, con IA | El Núcleo de IA entra en la Etapa 1 (ED-29; ADR-007 v0.9): HU-048 vuelve y se suman HU-068 a HU-072 (propuestas); OBJ-06 se mide en la Etapa 1; HU-053, 037, 038 y 039 siguen fuera; cifras de horas conservadas y sin las horas del Núcleo (por estimar) |
 
 Generado por IA: contenido completo. Versión base de Nexora (v1, de Daniel, 15-oct, sobre el plan v1.2), actualizada a la v1.3 del PO (Etapa 1) por Brayan con IA (Claude, 21-oct-2026). Texto adaptado al alcance de la Etapa 1 (se omiten las frases de los documentos del PO que remiten a fases posteriores). — Revisado por: (pendiente)
 
@@ -241,3 +242,7 @@ Actualizado el 26-oct-2026 (v0.6) por Brayan Hurtado con IA (Claude) a partir de
 Historial: 0.7 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo: plazo del Libro sin prórroga (ED-28), tipo de ticket de prospectos en la Etapa 1 (ED-09), R-12 y R-01 del PO. — Revisado por: (pendiente)
 
 Actualizado el 29-oct-2026 (v0.8) por Jesús Chávez Elías con IA (Claude): revisión del Líder Técnico del 29-oct (punto 2; S28-8). — Revisado por: (pendiente)
+
+Actualizado el 3-nov-2026 (v0.9) por Jesús Chávez Elías con IA (Claude): el Núcleo de IA entra en la Etapa 1 (ED-29, ADR-007 v0.9). — Revisado por: (pendiente)
+
+Historial: 0.9 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1: OBJ-06, alcance, flexible y riesgos; horas del Núcleo por estimar. — Revisado por: (pendiente)

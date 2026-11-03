@@ -4,10 +4,10 @@ tipo: epica
 titulo: "Enrutamiento, SLA y alertas"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3"
+version: "1.4.0"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-03", "FT-ATC-04"]
 tags: [epica, plt-02]
 ---
@@ -83,7 +83,7 @@ Riesgos (PLT-01):
 
 | ID | Riesgo | Prob. | Impacto | Mitigación | Dueño | Estado |
 |---|---|---|---|---|---|---|
-| R-01 | Plan con poca holgura: 243 h comprometidas de 252 h de capacidad (96%); Dev 4 al 98% | Alta | Alto | Alcance «flexible» (RF-048, 053, 037-039) definido de antemano; control de alcance el jue 29-oct; las prioridades 1-3 (HU-043, 050, 067) se construyen primero | PO | Abierto |
+| R-01 | Plan con poca holgura: 243 h comprometidas de 252 h de capacidad (96%); Dev 4 al 98% | Alta | Alto | Alcance «flexible» (RF-048, 053, 037-039) definido de antemano (3-nov-2026: RF-048 deja de ser flexible y entra en la Etapa 1 con el Núcleo de IA; las 243 h quedan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO); control de alcance el jue 29-oct; las prioridades 1-3 (HU-043, 050, 067) se construyen primero | PO | Abierto |
 | R-05 | Sin QA dedicado y UAT concentrada en un día (mar 03-nov) | Media | Alto | Aceptación diaria del PO a las 17:00, pruebas E2E automatizadas desde el día 3 y usuarios clave citados para la UAT | PO · Jefe Operaciones UX | Abierto |
 
 ## 4 Aprobaciones
@@ -95,3 +95,5 @@ Riesgos (PLT-01):
 | Líder técnico | (pendiente) |  |  |
 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-02 v1.3), sin cambiar su contenido Texto adaptado al alcance de la Etapa 1 (se omiten las frases del documento que remiten a fases posteriores). — Revisado por: (pendiente)
+
+Historial: 1.4.0 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1 (`adr/ADR-007` v0.9): nota en R-01 (RF-048 ya no es flexible; 243 h sin las horas del Núcleo de IA, por estimar por el equipo). No cambia texto del PO ni cifras. — Revisado por: (pendiente)

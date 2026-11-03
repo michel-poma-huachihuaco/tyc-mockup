@@ -4,10 +4,10 @@ tipo: "adr"
 titulo: "ADR-004: Integraciones contract-first: adaptador + simulador; la API real se activa cuando existe"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.10"
+version: "0.11"
 owner: "Jesús Chávez Elías"
 aprobadores: [tech_lead]
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-003, ADR-005, ADR-009, ADR-012, ADR-014]
 tags: [adr, arquitectura, g3]
 ---
@@ -56,11 +56,11 @@ Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2
 | DEP-11 | Plataforma del call center (API o CTI) | TI / proveedor de call center | El área (TI) | 21-oct | Riesgo R-02: simulador con el contrato de ATC (Q-042-2) | 042, 049 (2) | Por evaluar · fecha vencida · mitigado |
 | DEP-12 | Herramienta de Legal | Gerencia Legal · TI | **Rosario** (PLT-01 §3: «responsable: Rosario») | 26-oct | Riesgo R-02: simulador; sincronización en línea por evento (Q-040-3) | 040, 041 (2) | Por evaluar · mitigado |
 | DEP-13 | Motor de consultas de José | José · TI | **José** (PLT-01 §3) | 23-oct | Riesgo R-02: simulador con el contrato de ATC (Q-052-1) | 049, 050, 051, 052, 053 (5) | Por evaluar · fecha vencida · mitigado |
-| DEP-14 | Proveedor de IA (ADR-007) | TI · Seguridad | El área (TI · Seguridad); proveedor decidido: Azure OpenAI Service (ED-17) | 23-oct | La habilitación es una aprobación de TI y Seguridad; mientras, simulador (ADR-007) | 047, 048, 053 (3) | Proveedor decidido · **no aplica en la Etapa 1** (P-025: HU-ATC-048 y 053 fuera; la guía de HU-ATC-047 no usa IA) |
+| DEP-14 | Proveedor de IA (ADR-007) | TI · Seguridad | El área (TI · Seguridad); proveedor decidido: Azure OpenAI Service (ED-17) | 23-oct | La habilitación es una aprobación de TI y Seguridad; mientras, simulador (ADR-007) | 047, 048, 053 (3) y, por definir, las HU-068 a HU-072 (propuestas) | Proveedor decidido · **vuelve a aplicar en la Etapa 1** (decisión del 3-nov-2026, ED-29: el Núcleo de IA de ADR-007 v0.9 entra con HU-ATC-048 y HU-068 a 072; HU-053 sigue fuera). Mientras la habilitación no esté, corre el simulador con el mismo contrato |
 | DEP-15 | Proyectos: responsable y supervisor de cada proyecto (HU-058) | Gerencia Comercial · Datos | El área (Gerencia Comercial) | 29-oct | Riesgo R-02: simulador; sin responsable, HU-058 CA-03 | 056, 057, 058 (3) | Pendiente · mitigado |
 | DEP-16 | Control de acceso (PJ-05): emisor, clientes OAuth, catálogo aprobado y gestores invitados | Área de Roles y Permisos | **Sony Montoya** | 21-oct (HU-001) | Riesgo R-11 (ED-08): emisor de pruebas local, tokens de prueba y personas sintéticas; pasar al emisor del área es cambiar `AYBAR_ISSUER_URI` | 001, 004 a 009, 026, 027, 043 a 046, 049, 050, 052 a 055, 058, 064 a 067 (24) | Pendiente · riesgo aceptado con mitigación *Cruce del Líder Técnico del 28-oct (C-12): el emisor de pruebas solo vale en local; la UAT del 03-nov exige Control de acceso en PRE (corrección de la revisión del Líder Técnico del 29-oct: el «DEV» del cruce del 28-oct estaba mal). R-11 (DEV/QA) queda en revisión; no es un riesgo aceptado por el Líder Técnico. R-12: el criterio de corte es reprogramar la UAT, no usar el emisor de pruebas (revisión del Líder Técnico del 29-oct, punto 2).* |
 
-**Alcance de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`).** HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1 y se retoman en una etapa posterior. En la columna «Historias que bloquea», la 053 cuenta en DEP-01, DEP-06, DEP-13 y DEP-16 y la 048 en DEP-14: en la Etapa 1, DEP-01 bloquea 13 historias, DEP-06 8, DEP-13 4 y DEP-16 23; DEP-14 no aplica (su adaptador y su simulador se construyen cuando entren HU-ATC-048 y 053; ADR-007). Las demás filas no cambian.
+**Alcance de la Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`).** HU-ATC-037, 038, 039 y 053 salen de la Etapa 1 y se retoman en una etapa posterior; HU-ATC-048 se queda en la Etapa 1 con el Núcleo de IA (ED-29). En la columna «Historias que bloquea», la 053 cuenta en DEP-01, DEP-06, DEP-13 y DEP-16 y la 048 en DEP-14: en la Etapa 1, DEP-01 bloquea 13 historias, DEP-06 8, DEP-13 4 y DEP-16 23; DEP-14 no aplicaba (su adaptador y su simulador se construían cuando entraran HU-ATC-048 y 053; ADR-007). **Actualización del 3-nov-2026 (ED-29, ADR-007 v0.9):** HU-ATC-048 vuelve a la Etapa 1 con el Núcleo de IA, así que **DEP-14 vuelve a aplicar**; el adaptador de Azure OpenAI y su simulador (puerto del módulo `assistant`) se construyen en la Etapa 1. Los conteos de DEP-01, DEP-06, DEP-13 y DEP-16 se conservan (HU-053 sigue fuera); el de DEP-14 (HU-048 y, por definir, HU-068 a HU-072) queda por recalcular. Las demás filas no cambian.
 
 **Qué pasa con la fecha vencida** (regla del PLT-01 §3 y del PLT-05 §2, con la decisión del equipo): la historia se construye y se prueba contra el simulador (punto 3), que no depende del externo, y su DoR registra la dependencia como riesgo aceptado con esa mitigación. La conexión a la API real es un cambio de adaptador y de configuración, sin cambiar el dominio. Cuando el responsable entregue su API, se anota en esta tabla y en el roadmap por control de cambio.
 
@@ -100,6 +100,7 @@ Fuente: PLT-01 v1.3 §3 (responsable, fecha requerida y estado), PLT-05 v1.3 §2
 | 0.8 | 2026-10-27 | Brayan Hurtado, con IA | Sin cambio de contenido: las revisiones del 26-oct se citan como internas del equipo, no del Líder Técnico (`analisis/decisiones.md`, nota del 27-oct) |
 | 0.9 | 2026-10-28 | Jesús Chávez Elías, con IA | Contraste con Control de acceso (PJ-05): DEP-01 con el mapa documento → `PartyID` como supuesto nuevo; audiencia del token que ATC pide (`aybar-access-control`); alta del cliente de servicio según D-30 y D-223, sin pedido pendiente |
 | 0.10 | 2026-10-29 | Jesús Chávez Elías, con IA | Revisión del Líder Técnico del 29-oct: nota C-12 de la DEP-16 corregida (la UAT exige Control de acceso en PRE, no en DEV; sin plan B del emisor de pruebas, punto 2; R-11 en revisión) |
+| 0.11 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): DEP-14 vuelve a aplicar en la Etapa 1 (adaptador de Azure OpenAI y simulador con el mismo contrato); HU-053 sigue fuera; conteo de historias que bloquea DEP-14 por recalcular |
 
 Generado por IA: borrador completo (Claude, 2026-10-19), versión base v3 de Nexora; actualizado con IA (Claude, 2026-10-22) a partir de la revisión del Líder Técnico del 22-oct y (Claude, 2026-10-26). — Revisado por: Brayan Manuel Hurtado Paucar, 26-oct-2026 · Aprueba: TL
 

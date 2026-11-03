@@ -1,0 +1,401 @@
+{
+  "generadoPorIa": true,
+  "revisadoPor": null,
+  "flujos": [
+    {
+      "id": "FL-ATC-01",
+      "grupo": "Registro y atención",
+      "nombre": "Núcleo de tickets omnicanal",
+      "resumen": "Cada solicitud del cliente se registra una sola vez, tipificada y con número, y se sigue con estados, interacciones e hitos hasta el cierre.",
+      "disparador": "El cliente se comunica por teléfono, WhatsApp o correo con una solicitud.",
+      "resultado": "El cliente recibe un número de ticket desde el primer contacto y puede preguntar por su caso sin repetir la historia.",
+      "fuente": "EP-ATC-01 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Registro multicanal y tipificación",
+          "q": "Permite al gestor de tickets registrar cada solicitud que llega por teléfono, WhatsApp o correo en un ticket tipificado, con número correlativo por razón social, que se entrega al cliente desde el primer contacto.",
+          "features": [
+            "FT-ATC-01"
+          ],
+          "historias": [
+            "HU-ATC-001",
+            "HU-ATC-002"
+          ]
+        },
+        {
+          "t": "Ciclo de vida, interacciones e hitos",
+          "q": "Gestiona los estados del ticket con historial inmutable, registra cada interacción marcando si es visible al cliente o nota interna (con adjuntos) y conserva los hitos temporales que prueban el cumplimiento.",
+          "features": [
+            "FT-ATC-02"
+          ],
+          "historias": [
+            "HU-ATC-004",
+            "HU-ATC-005",
+            "HU-ATC-006"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-02",
+      "grupo": "Registro y atención",
+      "nombre": "Enrutamiento, SLA y alertas",
+      "resumen": "El ticket se deriva entre las áreas con un compromiso de tiempo (SLA) por tipo y prioridad, y se avisa una sola vez si se incumple.",
+      "disparador": "Se abre un ticket que debe atenderse dentro de un plazo y, si hace falta, pasar a otra área.",
+      "resultado": "El colaborador ve su bandeja con lo que vence primero; el supervisor recibe una sola alerta por incumplimiento y puede reasignar sin perder historial.",
+      "fuente": "EP-ATC-02 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Derivación, reasignación y casillero",
+          "q": "Permite derivar tickets entre las 6 áreas del flujo (con o sin persona), reasignar en bloque cuando un colaborador cesa y ver la bandeja de pendientes por área y responsable.",
+          "features": [
+            "FT-ATC-03"
+          ],
+          "historias": [
+            "HU-ATC-007",
+            "HU-ATC-008",
+            "HU-ATC-009"
+          ]
+        },
+        {
+          "t": "Motor SLA y alertas",
+          "q": "Selecciona la política SLA vigente al abrir el ticket, congela los vencimientos en horas o días hábiles con feriados por geografía, alerta una sola vez por tipo y ciclo, recalcula solo en reaperturas y mide el cierre end-to-end.",
+          "features": [
+            "FT-ATC-04"
+          ],
+          "historias": [
+            "HU-ATC-003",
+            "HU-ATC-010",
+            "HU-ATC-011",
+            "HU-ATC-029"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-03",
+      "grupo": "Legal y reclamos",
+      "nombre": "Libro de Reclamaciones y apelaciones",
+      "resumen": "El reclamo del consumidor se registra en el Libro de Reclamaciones, se responde formalmente con número y cargo dentro del plazo legal y, si apela, se sigue hasta su resolución.",
+      "disparador": "El consumidor presenta una queja o un reclamo.",
+      "resultado": "El consumidor recibe una respuesta formal con número y cargo dentro del plazo y sabe que puede acudir a INDECOPI.",
+      "fuente": "EP-ATC-03 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Libro de Reclamaciones",
+          "q": "Crea el asiento QUEJA/RECLAMO como extensión del ticket, calcula el plazo legal y la prórroga única, registra la respuesta formal con cargo y vigila el plazo, detectando reclamos sin asiento.",
+          "features": [
+            "FT-ATC-05"
+          ],
+          "historias": [
+            "HU-ATC-012",
+            "HU-ATC-013",
+            "HU-ATC-014",
+            "HU-ATC-015"
+          ]
+        },
+        {
+          "t": "Apelaciones internas e INDECOPI",
+          "q": "Registra la apelación del consumidor en segunda instancia interna o ante INDECOPI, con número de caso, estados e historial hasta la resolución final.",
+          "features": [
+            "FT-ATC-06"
+          ],
+          "historias": [
+            "HU-ATC-016"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-04",
+      "grupo": "Legal y reclamos",
+      "nombre": "Gate legal Eje 3 y Mesa de Casos sensibles",
+      "resumen": "Los casos sensibles no se resuelven sin Legal: se frena la resolución, se entrega a Legal un paquete completo y se escala si se incumple el plazo.",
+      "disparador": "Un ticket muestra una señal de conflicto (carta notarial, INDECOPI, abogado o prensa) o ingresa un caso sensible por una de las 5 líneas.",
+      "resultado": "Legal recibe casos completos y confirmados; el cliente en conflicto es atendido por la instancia correcta sin repetir su historia.",
+      "fuente": "EP-ATC-04 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Gate de derivación a Eje 3 y handoff",
+          "q": "Impide que un ticket con señal de conflicto se resuelva en Eje 1/2, exige el paquete mínimo de handoff con confirmación de recepción de Legal y registra el estado emocional del cliente sin juicios de valor.",
+          "features": [
+            "FT-ATC-07"
+          ],
+          "historias": [
+            "HU-ATC-026",
+            "HU-ATC-027",
+            "HU-ATC-028"
+          ]
+        },
+        {
+          "t": "Mesa SGD: recepción, activación y riesgo",
+          "q": "Registra los casos sensibles de las 5 líneas de ingreso con Código Único, separa el cargo previo del cargo de activación (que inicia el SLA de línea) y calcula el riesgo con una matriz objetiva recalibrable.",
+          "features": [
+            "FT-ATC-08"
+          ],
+          "historias": [
+            "HU-ATC-020",
+            "HU-ATC-021",
+            "HU-ATC-022"
+          ]
+        },
+        {
+          "t": "Escalamiento, vinculación y cierre tipificado",
+          "q": "Escala en cadena los casos que incumplen su SLA de línea, valida si un caso nuevo está vinculado a uno existente y cierra cada caso en uno de los 8 estados homologados, con evidencia y custodia en el GLI.",
+          "features": [
+            "FT-ATC-09"
+          ],
+          "historias": [
+            "HU-ATC-023",
+            "HU-ATC-024",
+            "HU-ATC-025"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-05",
+      "grupo": "Legal y reclamos",
+      "nombre": "Postventa: reclamos de garantía",
+      "resumen": "El reclamo de garantía se vincula al Acta de Entrega, se valida contra el periodo de cobertura y se resuelve solo con inspección técnica documentada.",
+      "disparador": "Un propietario reclama por un defecto después de la entrega.",
+      "resultado": "El propietario sabe si su reclamo procede, cuándo lo inspeccionan y cómo se resolvió.",
+      "fuente": "EP-ATC-05 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Reclamos de garantía postventa",
+          "q": "Registra reclamos de garantía vinculados al Acta de Entrega, valida la vigencia contra el periodo de cobertura, documenta la inspección técnica antes de resolver y escala a Legal si hay conflicto.",
+          "features": [
+            "FT-ATC-10"
+          ],
+          "historias": [
+            "HU-ATC-033",
+            "HU-ATC-034",
+            "HU-ATC-035",
+            "HU-ATC-036"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-06",
+      "grupo": "Cliente y calidad",
+      "nombre": "Autogestión del cliente y trazabilidad (Mi Portal)",
+      "resumen": "El cliente registra su caso, ve su trazabilidad paso a paso, responde lo que le piden y confirma la solución sin llamar.",
+      "disparador": "El cliente entra a Mi Portal para registrar o seguir un caso.",
+      "resultado": "El cliente registra su caso, ve en qué paso está y cuándo vence el plazo, responde lo que le piden y confirma la solución sin llamar.",
+      "fuente": "EP-ATC-06 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Autogestión de tickets del cliente en Mi Portal",
+          "q": "Permite al cliente registrar un ticket, consultar sus tickets con su línea de tiempo (trazabilidad paso a paso) y responder, adjuntar documentos y confirmar la solución desde Mi Portal, con avisos en cada cambio de estado.",
+          "features": [
+            "FT-ATC-24"
+          ],
+          "historias": [
+            "HU-ATC-064",
+            "HU-ATC-065",
+            "HU-ATC-066"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-07",
+      "grupo": "Cliente y calidad",
+      "nombre": "Calidad de atención y Torre de Control CX",
+      "resumen": "Se mide la satisfacción al cerrar cada caso y la jefatura ve en tiempo real el SLA, el NPS y los casos en riesgo.",
+      "disparador": "Se cierra un ticket y la jefatura necesita ver cómo va la atención.",
+      "resultado": "El coordinador detecta un caso en riesgo antes de que venza y redistribuye la carga.",
+      "fuente": "EP-ATC-07 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Encuesta post-atención",
+          "q": "Dispara la encuesta POST_TRANSACTION al cerrar el ticket y permite medir CSAT/CES por tipo de ticket, área y gestor de tickets.",
+          "features": [
+            "FT-ATC-13"
+          ],
+          "historias": [
+            "HU-ATC-019"
+          ]
+        },
+        {
+          "t": "Torre de Control CX",
+          "q": "Tablero en tiempo real de tickets activos, SLA, NPS, derivaciones y casos en riesgo; informes diario y quincenal; auditoría quincenal de registros paralelos del dato de cliente.",
+          "features": [
+            "FT-ATC-14"
+          ],
+          "historias": [
+            "HU-ATC-030",
+            "HU-ATC-031",
+            "HU-ATC-032"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-08",
+      "grupo": "Cliente y calidad",
+      "nombre": "EntregaFest: contención y derivación en vivo",
+      "resumen": "Las imputaciones públicas en un evento de entrega se clasifican, se contienen con un guion y se derivan a Legal.",
+      "disparador": "Durante un evento de entrega (EntregaFest) alguien hace una imputación pública: estafa, fraude, abuso o delito.",
+      "resultado": "El moderador tiene un guion y un registro rápido para cerrar el tema en sala sin debatirlo.",
+      "fuente": "EP-ATC-08 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "EntregaFest: contención en vivo",
+          "q": "Registra la clasificación de riesgo verbal y la secuencia de Frases Ancla, detecta palabras de riesgo muy alto y deriva el caso a la Estación 4 con la etiqueta estándar.",
+          "features": [
+            "FT-ATC-15"
+          ],
+          "historias": [
+            "HU-ATC-037",
+            "HU-ATC-038",
+            "HU-ATC-039"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-09",
+      "grupo": "Gestor e integraciones",
+      "nombre": "Bandeja orquestadora y asistencia al gestor",
+      "resumen": "El gestor trabaja desde una bandeja única ordenada por urgencia, con guía y el Núcleo de IA (borrador verificado que él aprueba, o escalamiento con motivo) y su líder ve el avance y recibe cada asignación.",
+      "disparador": "Entra un ticket por cualquier canal y debe asignarse a un gestor.",
+      "resultado": "El gestor de tickets ve en una sola bandeja qué atender primero, cómo resolverlo y su avance del día; su líder se entera de cada asignación.",
+      "fuente": "EP-ATC-09 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Bandeja orquestadora y flujos por área",
+          "q": "Permite configurar flujos de trabajo por área sin desarrollo y reúne en una bandeja única los tickets de todos los canales, ordenados por rayo, SLA y prioridad, con reasignación automática por menor carga.",
+          "features": [
+            "FT-ATC-18"
+          ],
+          "historias": [
+            "HU-ATC-043",
+            "HU-ATC-044",
+            "HU-ATC-045",
+            "HU-ATC-046"
+          ]
+        },
+        {
+          "t": "Visor del proceso 3D (operación en vivo)",
+          "q": "Muestra la sede de atención en un visor 3D isométrico: cada área de la corporación es un espacio con sus gestores y su cola, y los tickets se ven entrar por los canales, pasar por la bandeja orquestadora y moverse al área que indica su flujo, con su color de SLA.",
+          "features": [
+            "FT-ATC-25"
+          ],
+          "historias": [
+            "HU-ATC-067"
+          ]
+        },
+        {
+          "t": "Asistencia al gestor: guía e IA",
+          "q": "Muestra la guía de solución de cada tipo de ticket y suma el Núcleo de IA (Etapa 1, ADR-007 v0.9 pendiente de aprobación): lee el ticket, lo clasifica, redacta un borrador verificado contra sus fuentes o lo escala con un motivo tipificado, y verifica los criterios de cierre; la IA propone y el gestor siempre aprueba.",
+          "features": [
+            "FT-ATC-19"
+          ],
+          "historias": [
+            "HU-ATC-047",
+            "HU-ATC-048",
+            "HU-ATC-068",
+            "HU-ATC-069",
+            "HU-ATC-070",
+            "HU-ATC-071",
+            "HU-ATC-072"
+          ]
+        },
+        {
+          "t": "Productividad y notificaciones del gestor",
+          "q": "Tablero de avance diario para cada gestor y su líder, y correo de asignación con copia al líder en cada asignación o reasignación.",
+          "features": [
+            "FT-ATC-21"
+          ],
+          "historias": [
+            "HU-ATC-054",
+            "HU-ATC-055"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-10",
+      "grupo": "Gestor e integraciones",
+      "nombre": "Consulta 360 e integraciones operativas",
+      "resumen": "El gestor encuentra al cliente en segundos, ve sus lotes, cuotas, correos y documentos sin salir del ticket, y la llamada y los casos de Legal quedan conectados al ticket.",
+      "disparador": "El gestor atiende un ticket o recibe una llamada y necesita ver quién es el cliente.",
+      "resultado": "El gestor encuentra al cliente en segundos, ve sus lotes, cuotas, correos y documentos sin salir del ticket y lo llama con un clic.",
+      "fuente": "EP-ATC-10 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Búsqueda y consulta 360 del cliente",
+          "q": "Motor de búsqueda del cliente por DNI, nombre, código, lote, teléfono o N.º de ticket, con consulta 360 en el ticket (lotes, cuotas, correos, documentos), manejo de excepciones, reutilización del motor de José y búsqueda semántica.",
+          "features": [
+            "FT-ATC-20"
+          ],
+          "historias": [
+            "HU-ATC-049",
+            "HU-ATC-050",
+            "HU-ATC-051",
+            "HU-ATC-052",
+            "HU-ATC-053"
+          ]
+        },
+        {
+          "t": "Integración con la plataforma del call center",
+          "q": "Conecta la plataforma telefónica del call center con el ticket: muestra la ficha del cliente al contestar, abre o ubica su ticket y registra la llamada con su grabación.",
+          "features": [
+            "FT-ATC-17"
+          ],
+          "historias": [
+            "HU-ATC-042"
+          ]
+        },
+        {
+          "t": "Integración con Legal y prevención de denuncias",
+          "q": "Sincroniza los tickets del Eje 3 con la herramienta del equipo de Legal y calcula la exposición económica (monto + interés legal referencial) de los reclamos con riesgo de denuncia para priorizarlos.",
+          "features": [
+            "FT-ATC-16"
+          ],
+          "historias": [
+            "HU-ATC-040",
+            "HU-ATC-041"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FL-ATC-11",
+      "grupo": "Gestor e integraciones",
+      "nombre": "Resolución por morosidad y formularios simples",
+      "resumen": "La resolución de contratos por morosidad avisa al cliente y al responsable del proyecto en paralelo, y los formularios simples de campo crean un ticket en un minuto.",
+      "disparador": "Un contrato acumula 3 meses impagos, o el personal de campo registra un ingreso o una reserva.",
+      "resultado": "El cliente moroso recibe aviso antes de la resolución; el responsable del proyecto se entera a tiempo; el personal de campo registra con un formulario de 1 minuto.",
+      "fuente": "EP-ATC-11 en Nexora (PJ-06, v1.3, pendiente de aprobación)",
+      "pasos": [
+        {
+          "t": "Resolución de contrato por morosidad",
+          "q": "Crea el caso de resolución cuando un contrato acumula 3 meses impagos, envía en paralelo la alerta de cancelación al cliente y la carta de alerta al responsable del proyecto con copia al supervisor, con constancia de cada envío.",
+          "features": [
+            "FT-ATC-22"
+          ],
+          "historias": [
+            "HU-ATC-056",
+            "HU-ATC-057",
+            "HU-ATC-058"
+          ]
+        },
+        {
+          "t": "Formularios simples: ingreso al proyecto y Entrega Fest",
+          "q": "Formularios de máximo 6 campos, desde celular, que crean un ticket: registro de ingreso de personas al proyecto y reserva de cupo en los buses del Entrega Fest con control de aforo.",
+          "features": [
+            "FT-ATC-23"
+          ],
+          "historias": [
+            "HU-ATC-059",
+            "HU-ATC-060"
+          ]
+        }
+      ]
+    }
+  ]
+}

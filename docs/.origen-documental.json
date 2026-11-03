@@ -3,16 +3,16 @@
   "fuente": "nexora",
   "url": "http://nexora/PJ-06",
   "proyecto": "PJ-06",
-  "traido_en": "2026-10-30T14:07:42Z",
+  "traido_en": "2026-11-03T20:09:01Z",
   "traido_por": "Claude (Daniel David Lorenzo Ramos)",
   "documentos": [
     {
       "ruta": "adr/ADR-001-monolito-modular.md",
       "id": "cd834cb0-0e08-4f8a-a867-ee2dc43e6acc",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "f4fbd04120f8d6f81e657489a76bf6d2d3ef9ee4c6a8c90e84254235ebf08dbb",
+      "huella_sha256": "b363ab5b3e4dd83c336b5c319da8331553a6c47739173bcb301d2067f47ad1e4",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -45,10 +45,10 @@
     {
       "ruta": "adr/ADR-004-integraciones-contract-first.md",
       "id": "085ed66e-f349-4ffb-8e46-d2b971f97c35",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "15e55d84d03b393078770e7e49f62068b7cc5a94ed2e75161af6b656ff099c1c",
+      "huella_sha256": "d07127fc71bf12fc751559cab14351591221ba323e8454fa9e622c20602a4cdc",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -81,10 +81,10 @@
     {
       "ruta": "adr/ADR-007-ia-solo-via-servicio-de-asistencia.md",
       "id": "dcdb8fc3-4753-41c9-8c9a-1df6b0fc594b",
-      "version": 9,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "535d42b00118a1f14279e3769fc5c702185db8ce8827df6fb58cdce40bb5efa7",
+      "huella_sha256": "a028051710de314bb425ccf5d09558bdc565a329394804abc4c880c7fe1ddf00",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -141,10 +141,10 @@
     {
       "ruta": "adr/ADR-012-stack-y-lectura-escritura.md",
       "id": "5ed80503-e777-42f0-8c18-f79241dd3407",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "af4a301fbff77a6528ae8e45ddb8a555d62b93477240c52a2ed47ce89eddd041",
+      "huella_sha256": "41cb40c4ac4e49e432a3f2acf2954896a0ff749a45542c21648e250743722af0",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -153,10 +153,10 @@
     {
       "ruta": "adr/ADR-013-outbox-de-eventos.md",
       "id": "82695b44-3843-46fb-a7ad-acf0ed1e222a",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "b3c0e288ae17744947ea4e2744c918211e9f899e7b30be8c2e0701728ec788ce",
+      "huella_sha256": "fbe2c505c22ed9ff1025a931de0aa728b33ffefe165d2810ef7e40f45bd7f70e",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -165,10 +165,10 @@
     {
       "ruta": "adr/ADR-014-plataforma-nube-emisor-servicios.md",
       "id": "ee9a9c59-10c0-4338-bc00-02411f61fe11",
-      "version": 11,
+      "version": 12,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "a5eea6c57ffca00b3dc7b49e44ac85665816c0b932319cf8db3824fe0f8bec07",
+      "huella_sha256": "9de3c6be7d2f1805603c1ca3db4944aa28927e4d1e53682a2cd2aafce232c6f9",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -177,10 +177,10 @@
     {
       "ruta": "analisis/BRD.md",
       "id": "51d41eaf-cc4c-4f45-80b4-ff74aedc39fd",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "f0f67d84b9ad56f312410d6545b8ec92197b12c6958909c843cc4527986a80db",
+      "huella_sha256": "c068a977c4b56e0ebec3aaefc8804a264f391d4b5be6f392a15c68526e8cc994",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -189,10 +189,10 @@
     {
       "ruta": "analisis/cobertura-requisitos.md",
       "id": "c661b95f-648a-4148-8aa6-92734e3d3d32",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "3a4f79cd0bd522970a33829ebe18ed4587c67ab9b28f899c948e3aa5eb5ff1d5",
+      "huella_sha256": "82f58d29225c2c2e7c3d6755fd76ce85f81bff21e549f2a118da59b18f11df1d",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -201,10 +201,10 @@
     {
       "ruta": "analisis/decisiones.md",
       "id": "ee2bf645-5dbf-46bb-b75d-2be95589dbaa",
-      "version": 12,
+      "version": 14,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "1d4e321c3272d5b07f08cc0f526341ef6fd8092f1b0cdccb014c709759789bfb",
+      "huella_sha256": "6ef872e0f254ad8faea2547622b51647ee11e89bb908d8397f001ecd206e27b9",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -213,10 +213,10 @@
     {
       "ruta": "analisis/ficha-intake.md",
       "id": "1f92573e-bb11-4844-b200-4acfd1726864",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "0f025d620ece888ebf3b27d96aa06530f1518d806c87f5acf838cfad11e533f5",
+      "huella_sha256": "a99cebc412bd965de183ab66f5e8d2a59b118e7be4335a928ce4687d599d17ec",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -237,10 +237,10 @@
     {
       "ruta": "arquitectura/aybar-atc.openapi.yaml",
       "id": "9471bfb1-c622-4121-b89f-02c2a3ecbf3b",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "9f0c5a86dc3fcef626deccb3fb9ca2c8d8e15c17d7b18bf25d0777320cefb302",
+      "huella_sha256": "a9263b4599bd249f8bbbf7db79310234c5369959333f1dd2910fe2c7b53b9cc1",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -249,10 +249,10 @@
     {
       "ruta": "arquitectura/c4-contenedores.mmd",
       "id": "788728b9-bd29-438c-9639-f0d84ac9f4bf",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "e8a4f78adc90a933e3f36207fb744f1400541c700aa1d735fc11b50e00e743e6",
+      "huella_sha256": "dffdf6efad28bf0851f4d2b8ef2069376f2b009987a2766a09c8ce42f7f0c500",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -261,10 +261,10 @@
     {
       "ruta": "arquitectura/c4-contexto.mmd",
       "id": "f9d81e94-ce7e-41d6-961e-0b1952973f6c",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "cfc293f0fe6a2450594a9b7f88a4edc160d3ddf310f2f5fabb5219c1556417b7",
+      "huella_sha256": "ccbf91d7d66810ca20addbe4e873831eb72371c00833960026c3d822c502b785",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -273,10 +273,10 @@
     {
       "ruta": "arquitectura/costo-cloud.md",
       "id": "964d5058-a1bc-496e-89da-defa570dce0d",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "466a10343838f6d9e09e1c1c3a8bf24646ebe302b0e9185c6ce2872d1e82f40f",
+      "huella_sha256": "24d02cbc64181fd28adbfa9ad4c5f6b987489330b1845cc0277cc22acf7a35da",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -285,10 +285,10 @@
     {
       "ruta": "arquitectura/diagrama-arquitectura.md",
       "id": "77408787-d683-4190-af62-50231d8b91af",
-      "version": 10,
+      "version": 12,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "92f65917fa76464f555b2ec9edd795999000bf3cba6ddf3945e62004906b86fd",
+      "huella_sha256": "69410227c95600d64160f80f25ab73961de063207c64e10054a4362926d8577d",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -297,10 +297,10 @@
     {
       "ruta": "arquitectura/migracion-y-reversion.md",
       "id": "2dd8bf66-4dd4-4c7d-a1da-d7da5a03ed5b",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "d8629f4163cffba804105d7319573553ba544702a5687195a29317782acc0046",
+      "huella_sha256": "93657ac3aafc45f1d1da416ce3385f6d8a1d034df82926eef5ed93d40065c9d0",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -309,10 +309,10 @@
     {
       "ruta": "arquitectura/modulos.mmd",
       "id": "0a2d9e35-ced3-49af-ae8b-4a1dd537e9ca",
-      "version": 5,
+      "version": 6,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "65631118341fd82abdaccd9efe35edf03505abd41fa5ea0d095131b7c702b8f3",
+      "huella_sha256": "5f9e2b9d6f4fc6f207477f15228a0d3709100f876af5f10dba2f6f8cd7b5de5b",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -321,10 +321,10 @@
     {
       "ruta": "arquitectura/operaciones-por-historia.md",
       "id": "d9e9ffd8-6222-4c3d-8e61-81063e4b26ce",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "33c71932bb9c99cb28468e60152fd6309cf830d7d0d198c52d81e51698185502",
+      "huella_sha256": "bcd8238b0a1ee6ca111d5ec6a575e44c3b3b6b9d3947bae306a9bd64b92772af",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -333,10 +333,10 @@
     {
       "ruta": "arquitectura/roles-y-permisos-atc.md",
       "id": "8eb6583f-c40c-4a64-92fc-037ad09f4107",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "26e44ac49142e9dc5ae304caf5bbe7cb8ddb1b59bac493b6d1e721a54368199d",
+      "huella_sha256": "993f514e85b1cd9019caa20a9f5eecf2b1f36afcf6a8c490195b26fa107331f3",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -345,10 +345,10 @@
     {
       "ruta": "arquitectura/seguridad.md",
       "id": "4ffc73ab-d6d8-48db-b7f7-2d891e0ceb4c",
-      "version": 11,
+      "version": 12,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "34d02a0593581278f0d4dbbff7379c398e3dcbd30b9be440a2f5f818cf7803c2",
+      "huella_sha256": "dced97b0f180123757cf3369721525284e050f261cd45f3bb53b1f4573b2f628",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -357,10 +357,10 @@
     {
       "ruta": "arquitectura/trazabilidad-historias.md",
       "id": "f38fdd20-f216-442c-abe1-5ea19ebb7c5d",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "fd9169fd140b16a1b81502b1ab14cff0cfc22beacbd4f50b584e95ad0654783b",
+      "huella_sha256": "0e461c87ace04b47be211231f3c70c8c00ccc1d142de84dbe166a65e528953d6",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -465,10 +465,10 @@
     {
       "ruta": "backlog/tareas/EP-ATC-09.json",
       "id": "6d1514d4-9146-444a-baf6-c2ae019427a8",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "654c1106ec672cd3276ca08b2913e55761652e4900818f3bd6e8f8c0473582a3",
+      "huella_sha256": "94c05e66aeaf624f036bba65f7bad0cb8ec3846ad72c06b9f9504680976584b0",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -477,10 +477,10 @@
     {
       "ruta": "backlog/tareas/EP-ATC-10.json",
       "id": "cb47f326-2e8c-459a-bcbc-f8a8e0e098e2",
-      "version": 6,
+      "version": 7,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "7a018103c00c4e8d8abffabe0ca86e0dc458a54de373ba84a14a628940631bbb",
+      "huella_sha256": "3a2f4eae3f7baff1c8fb390cf980f64a8b52350488d420240770ec6da6e3b2e5",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -501,10 +501,10 @@
     {
       "ruta": "datos/acta-validacion-arquitectura-datos.md",
       "id": "829964f8-f877-41b6-b640-459722136b54",
-      "version": 13,
+      "version": 14,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "2c990ee361f0c78276927fa5712a7326018138317258aef4adb958715fc38aaa",
+      "huella_sha256": "6d77ad72491cf658cded6eedc3bed1cc117f8cb019629e2fdb92e2b9bab5ff9e",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -513,10 +513,10 @@
     {
       "ruta": "datos/diccionario.md",
       "id": "5c105f58-c3fc-4c47-be78-7c2b6480e6ee",
-      "version": 11,
+      "version": 12,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "c55eb327fba605148ef5d74c1bbf2c3fc5ffd33c88689319a48ae992642e5fe6",
+      "huella_sha256": "337a012bc5a5c85874e6fcb84a096f2a6ace4b8c0719db3c3465c7fa9ee6b962",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -537,10 +537,10 @@
     {
       "ruta": "datos/er.md",
       "id": "c29db6ba-8996-4392-85b9-2ae062440125",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "20fa80a18fcae42908610ab6055ec829c68f5ead98df626a5b7348139b6510ba",
+      "huella_sha256": "8d697a2053346f175ce59e0889ac959bac374efe2746738e265b333da43c7d7f",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -561,10 +561,10 @@
     {
       "ruta": "datos/estados.md",
       "id": "87377044-675e-4a28-b922-fddfed2faab2",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "5717ea81116a9ce5bad6af6bbc6d22a4e8fb2f2730ca9ca418b82d6fb06309d9",
+      "huella_sha256": "c265802891aa19dc680c6f5c8d4246f96fb562025659ed297a75798b6a56c422",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -573,10 +573,10 @@
     {
       "ruta": "datos/linaje.md",
       "id": "752e9f68-3296-4b8e-84f6-cb5ebeae0989",
-      "version": 11,
+      "version": 12,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "97b577ee0e0f95b2322c45ae724a3d406f13ba87e4eb40892b40859817df930c",
+      "huella_sha256": "69f8e83502a3d801d5124778c4943d9baa019940c5f4b7d10cc33e8406a18059",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -585,10 +585,10 @@
     {
       "ruta": "datos/registro-de-tablas.md",
       "id": "c4e9337a-969e-41ae-9abc-5eab294a957f",
-      "version": 6,
+      "version": 7,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "a4aca7cb028d7cf3854e8eb1aced13b0a75c93c7ca2a0b28ce8790d5dbd42dd9",
+      "huella_sha256": "0d83d716995421c582f3c98fb864592cd94bb6db4d18a92eaefb633df9bed390",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead"
@@ -597,10 +597,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-01-registro-multicanal-y-tipificacion.md",
       "id": "f81aeca9-4084-420d-8e45-a889477172d8",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "d7656ebc5c1afd5fde3258433b67d8e6d786401704a092946e17ed04218e03aa",
+      "huella_sha256": "907cf9acb606cee495660271e992a92f12f76bf92fc6460efb4cfd86c85c3c39",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -610,10 +610,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-02-ciclo-de-vida-interacciones-e-hitos.md",
       "id": "9ae8a899-8560-4fe9-8db0-a5cbd4043299",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "1c56b2292ed55a1797b7a836fc115893c48298ddb40b3f81ce9f126a9473c35c",
+      "huella_sha256": "0388141da33040be58f568dd6f02ba98ccfda57fd3d70eec45401730c106b630",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -623,10 +623,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-03-derivacion-reasignacion-y-casillero.md",
       "id": "66e6cb0b-f820-49e6-9356-792004663adc",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "f08f758f8bf894e36210eabf8f1d6944f191877c182c8cf96a0b811773815317",
+      "huella_sha256": "89be1bd02953db39c3bb8a4de69aadb8c479c37d0c176435c99960251e4cf421",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -636,10 +636,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-04-motor-sla-y-alertas.md",
       "id": "2d8481f2-867e-4bd6-abf3-2e1c40928812",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "317132a6cc15b0284b3868fcac874fc718cdc9793b9eb1e4bb47c7b7fbc732dc",
+      "huella_sha256": "f7301d656967c90b59a0f2c8fd972dc984bcafdc837f4d68ca2c5395d9b1e883",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -649,10 +649,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-05-libro-de-reclamaciones.md",
       "id": "8d78eb19-68c0-4462-9751-020bdbcbb284",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "61f11fa0a4941fef01810dce3589ade7213e0978d043a2722590ded8f8086582",
+      "huella_sha256": "f4c2ae45c1acba312e036fd48b5337acb47801d527bf58d09bd671aa0d92d0f1",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -662,10 +662,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-06-apelaciones-internas-e-indecopi.md",
       "id": "d55f8a9a-c3c5-487d-90d0-f840be707ffd",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "c3442030385b980fd91c9709448186863d51df2d344b75733086284913f57677",
+      "huella_sha256": "2fa55d051118853b208ff094b919a402ee2109c3e4811694afc1df777e679119",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -675,10 +675,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-07-gate-de-derivacion-a-eje-3-y-handoff.md",
       "id": "cd921708-bdd3-46db-bd6b-e8b7b8ba60d3",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "a629b9cc23f64639ceb559ca7a6739d03e1012d7d986c2f6e350dda6fdb5af09",
+      "huella_sha256": "b291fd686d8f6e2b2d30b995f078196602a46add7efd1a7845da5dea977fc237",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -688,10 +688,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-08-mesa-sgd-recepcion-activacion-y-riesgo.md",
       "id": "c7a91a00-b4a2-4931-8d86-fb03be7ffa59",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "85f5bb81167f05f9dab8c94af7d69639b84b19f8220a48838172f3bee9bc78e9",
+      "huella_sha256": "e0f2fcdaf93f3fab536ed46ef4180b8a39f7a515ad1b1a19be3cb91644c6db71",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -701,10 +701,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-09-escalamiento-vinculacion-y-cierre-tipificado.md",
       "id": "49b8eb0d-af22-4616-af89-a54a27d00796",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "9c6e67b3c2d26ce475147f7f119f95d66b90acdbd812aa7da96408fb335a064e",
+      "huella_sha256": "03c415bc6c648f477628804c684bb5952699d58b7574ba3c7ee08073a12786c5",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -714,10 +714,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-10-reclamos-de-garantia-postventa.md",
       "id": "9e38895c-2a42-4b6d-8046-73886dcc675b",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "5570bee25378f5f9c65e29a8a002b5a43c89029393aeb83af0ec67b6f4fc1246",
+      "huella_sha256": "d702f292959e91a7a37c239efd9b92cfe3aaf22143431b628ab2c37daf40449f",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -727,10 +727,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-13-encuesta-post-atencion.md",
       "id": "ef9339de-fe34-4fbd-a707-bfd8b656683b",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "2d8252345eccc5ace51006a30b95b94454ff297918a61a4830d4cddc00b6e8c3",
+      "huella_sha256": "31b39b325e1368dd205c781167bf1da1d1add5057aa32ddffe16b834279db092",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -740,10 +740,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-14-torre-de-control-cx.md",
       "id": "3f4e411f-998b-46b7-bcd5-d505a7524f46",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "03169946db6ddeae2dd033ff8af56fbc7ae24352c28f5d76a4c42d5a22ae2116",
+      "huella_sha256": "96f0d927e88092750a2d0be262e71b2405bd27ba1c60cb72678dc7b8f2754f5b",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -753,10 +753,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-15-entregafest-contencion-en-vivo.md",
       "id": "1dc5d980-9414-45d8-b6bc-e06740712008",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "722fb3866a39d99bd86a6111344967d664cdcf378901c1f7bb09e8b31e7c0b20",
+      "huella_sha256": "aabadf856d50a9545768a2fabf881f80210049ed044beb46eb95004eec7d2b0f",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -766,10 +766,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-16-integracion-con-legal-y-prevencion-de-denuncias.md",
       "id": "fd0762ac-63fe-4385-b655-ee1ca4015e37",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "dd86d70b8ce29403f9c72abdb44d76cc0d65362b8a6ca5cf082766a45949dd03",
+      "huella_sha256": "c33ac8ad0efb115a7d7f8773a65811722a0b1c3e23331cccccff0a27e227c26f",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -779,10 +779,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-17-integracion-con-la-plataforma-del-call-center.md",
       "id": "3fdacf7f-6b9a-4c54-be6a-a08b9c56f6ae",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "19f496626712768b72f69277ec91ccc1f1f0409e1d211f25a75cab26006144e0",
+      "huella_sha256": "da914354b804ed6ec230bca063ff2385aa3c401468a414b45819859c8130c56e",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -792,10 +792,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-18-bandeja-orquestadora-y-flujos-por-area.md",
       "id": "56d8f57c-9601-4c91-acb7-55300653533b",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "8a5e81e93f19205fe1a3fafa0ece71c972abfb737bee155bcfb193ede8a8382c",
+      "huella_sha256": "6ae21768cd5e9196b2e4de47e730c4f11554d57553100054a866df67bc25131a",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -805,10 +805,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-19-asistencia-al-gestor-guia-e-ia.md",
       "id": "6bd64ad0-8875-4af4-a684-7afdf93bb9ea",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "4663f84143dfef3b7a7fa1c53398d348ac06ca8f195c75423dc0f3a4c528c920",
+      "huella_sha256": "589a4a7cad03571d7b4081a8abf4486cd3bc566deec354f9ad96f6afd46d5a98",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -818,10 +818,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-20-busqueda-y-consulta-360-del-cliente.md",
       "id": "b605707e-896b-4cdc-a084-04c29c4912d6",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "5a2a5d8fa2bdbf3081d9b5ef1bda29ea2c16422e673aff727fb1a6c4088a5f13",
+      "huella_sha256": "edda2554f7af77c6a7a03041ac18a1189cefcc288fa51df406ab34e0e5b45065",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -831,10 +831,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-21-productividad-y-notificaciones-del-gestor.md",
       "id": "9eebdccf-403d-4960-a33c-450176271bd2",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "c4ed69d4f8ec93027ebcec2c0d8793af04ddcf2ee0c7cb278f2aa3f933e2aa80",
+      "huella_sha256": "723df876b0fec269f3e3090e709d21b7825129052495fffb2e9b78339ac6d7fd",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -844,10 +844,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-22-resolucion-de-contrato-por-morosidad.md",
       "id": "0afd6a60-c8eb-4f9f-874b-644405a17708",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "70603d96fccca0eacbe828b3c7b4d2a15335b5a821871be86a962286fd9b89c4",
+      "huella_sha256": "9b1d2e500211144f4ee0cdea782943b61e75613dc835c55c63bef2725f3c8830",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -857,10 +857,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-23-formularios-simples-ingreso-al-proyecto-y-entrega-fest.md",
       "id": "b94345e8-39dc-44cc-8e35-0ea2c7557bc5",
-      "version": 7,
+      "version": 8,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "19372b744e837746c0289137cfe620b52d20d3b59a2c2290d3c5b99936b9ddd3",
+      "huella_sha256": "83fed6cf808a82eee36fd6fe1b8661f55a58d3784a34afa5b56e2ff51a4934ab",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -870,10 +870,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-24-autogestion-de-tickets-del-cliente-en-mi-portal.md",
       "id": "50346e7b-6fe2-4a1e-b9bf-ab6c3a026c26",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "933e4d767eae12bf8e3b79ce0ad6ae7d747035416124d5fe6227576f9643c16a",
+      "huella_sha256": "0f9fe4a2162b30b18275b8962b9d884c0e5c5fc6165952dc2ac0e1116b56d957",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -883,10 +883,10 @@
     {
       "ruta": "dor/DOR-FT-ATC-25-visor-del-proceso-3d-operacion-en-vivo.md",
       "id": "00c7a11f-0d29-4ae8-b02a-8047aab91f74",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "d4262ffd052ae738e0dd1cf60208f07a306a787ba1751b8dda803c6319380a77",
+      "huella_sha256": "f55cc5692136a745d70eaed57f82f5470cbba5daa7e4203715d4f500bde05a6b",
       "firmas": [],
       "firmas_pendientes": [
         "tech_lead",
@@ -908,10 +908,10 @@
     {
       "ruta": "epicas/EP-ATC-02-enrutamiento-sla-y-alertas.md",
       "id": "ab3e24fd-58ca-4f97-b67d-a12054aca06b",
-      "version": 1,
+      "version": 2,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "25e43752005e2e66aec66abf0f2022f90424af9b1e25cd6b2f0519fbc9f3b11e",
+      "huella_sha256": "badca0e90c22b6842a9a62662f9866228f0a4aaf31e0fcab9d1b95f544aa7409",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -992,10 +992,10 @@
     {
       "ruta": "epicas/EP-ATC-09-bandeja-orquestadora-y-asistencia-al-gestor.md",
       "id": "c53be8a9-3918-4c58-993b-0a332835ab39",
-      "version": 2,
+      "version": 3,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "b92ae033dc305d32532b920c93cd27876309649db778ec5c16227c164ace4ff2",
+      "huella_sha256": "cfd0f40505100bf10c6f3c4835a7384ee17b16e76176ac43bf9586f66ba0b3ff",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1004,10 +1004,10 @@
     {
       "ruta": "epicas/EP-ATC-10-consulta-360-e-integraciones-operativas.md",
       "id": "8480ff3b-1af1-4909-9469-4917000581e8",
-      "version": 2,
+      "version": 3,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "30cfb9dd4c4c3c2a83f4890ab8267811db9ed6cad0217d754c91c7f9b9809f07",
+      "huella_sha256": "a3e2db4474d44efc1908ccbdf9c96e1c0713ae502f8bd200e8a82a4e465ea0e2",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1220,10 +1220,10 @@
     {
       "ruta": "features/FT-ATC-19-asistencia-al-gestor-guia-e-ia.md",
       "id": "848100a5-b0ff-487b-a9f1-e39e5228e899",
-      "version": 2,
+      "version": 4,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "6834800129111fde361ce1ad5d148fd9c537da9bbb8b873473707c695f7603bf",
+      "huella_sha256": "c1386c35eafe8092ba89a3fcafab67b5608328ecb44d06339e628c67025453d4",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1232,10 +1232,10 @@
     {
       "ruta": "features/FT-ATC-20-busqueda-y-consulta-360-del-cliente.md",
       "id": "b818bd8e-af73-484c-a1ca-f0247ba329a6",
-      "version": 2,
+      "version": 3,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "f7cbaa0914e0b6c6284ba3c33d6ba1e8c037ad1dad1a9eba8762fb47173f38ae",
+      "huella_sha256": "a074dfe283daf24d0088b78137aacc19ecd433239acaa223cb4b801cfc9a3433",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1302,12 +1302,24 @@
       ]
     },
     {
-      "ruta": "gates/AYB-0001/G0.md",
-      "id": "f8ddadf3-d407-40a3-bb6d-253f88e78c60",
-      "version": 4,
+      "ruta": "flujos/flujos.json",
+      "id": "64bab674-06e3-4512-8ae1-fb01ae684fec",
+      "version": 2,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "ef06874cba45736a3c63ced6cf08d7c7a2addfa5868b058ef628684c8af4a88b",
+      "huella_sha256": "5f31d2a389351677052f20a216a3e344f6783620f9a9caca2010e2f6348f3e37",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "gates/AYB-0001/G0.md",
+      "id": "f8ddadf3-d407-40a3-bb6d-253f88e78c60",
+      "version": 5,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "46c58217ac2c7909a8a2b55723f3327053794228810085223b8353d0efe630d9",
       "firmas": [],
       "firmas_pendientes": [
         "gate_approver"
@@ -1316,10 +1328,10 @@
     {
       "ruta": "gates/AYB-0001/G1.md",
       "id": "ba254188-a930-4ded-853d-bcfbe507298e",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "05977593150423b76d7f131b5977c6eea40a637293003bf788f8f7ad67d44937",
+      "huella_sha256": "48ee3a6bc5f25e0a2fb6e309ca330ace2386977e08ec3df79a59fed3adb9fb7a",
       "firmas": [],
       "firmas_pendientes": [
         "gate_approver"
@@ -1328,10 +1340,10 @@
     {
       "ruta": "gates/AYB-0001/G2.md",
       "id": "54d79ec7-f73c-40ac-8350-da1185ee5dc2",
-      "version": 6,
+      "version": 7,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "f3789c2e5ab40b3cc208c107b12593b0b382e30f83b34ff387fd66a2b0bb6c5c",
+      "huella_sha256": "ced0c56010ac45cbff3882d56130ecb7e12c16a425e76f1476eb057dbb75f11b",
       "firmas": [],
       "firmas_pendientes": [
         "gate_approver"
@@ -1340,10 +1352,10 @@
     {
       "ruta": "gates/AYB-0001/G3.md",
       "id": "4ce81ead-d036-4895-9eff-d4866ff93a27",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "a520d1ab77ad2b2b97f673f9614de7a12c5a984c91911ce5f67c89d8101d3d11",
+      "huella_sha256": "b96d675a75de73dc91e772930e5585ac9a933150c205397b047f5f40cbc5e891",
       "firmas": [],
       "firmas_pendientes": [
         "gate_approver"
@@ -1352,10 +1364,10 @@
     {
       "ruta": "gates/AYB-0001/G4.md",
       "id": "48b8f55e-8a19-4099-a5b6-c5761fc42fee",
-      "version": 10,
+      "version": 11,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "fcb897257411d41583fd6ba0d41b4378f26c11a13cc81ca9f915d4c27fbbb94d",
+      "huella_sha256": "3086d42bc9016ad337a37abcb6830bc2b0bd1eab52c51cdd698354358844a680",
       "firmas": [],
       "firmas_pendientes": [
         "gate_approver"
@@ -1892,10 +1904,10 @@
     {
       "ruta": "historias/HU-ATC-047-consultar-la-guia-de-solucion-del-tipo-de-ticket.md",
       "id": "dd94592e-271a-492f-b855-46900c622659",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "52060eef1bcfde745b8abd4dd135f307996492b12c68c8f57d7168f523bec02a",
+      "huella_sha256": "fcfa5237a6157d24b91830cd47199766b1ca30fb58a43f29a006c6d639c01952",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1904,10 +1916,10 @@
     {
       "ruta": "historias/HU-ATC-048-recibir-retroalimentacion-de-ia-mientras-atiendo-y-cierro.md",
       "id": "d732122c-f4e5-4206-a323-e4905e835dc7",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "1fc3af09825aee9a280a9bf1e0c753c5ce3ed321b91ae18c55f212ef31ffe09c",
+      "huella_sha256": "ddf8b32786188785dc0e9c394b115da6bb4c58b16a1f805cd68ee6655d0afb25",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -1964,10 +1976,10 @@
     {
       "ruta": "historias/HU-ATC-053-buscar-documentos-del-cliente-por-significado.md",
       "id": "28fe8140-f879-4ea7-a6e0-d0cf89a9727c",
-      "version": 3,
+      "version": 4,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "d4c859b3299c1e9f8fcf9f5828ac369efd91941b375267d996da3c062c09886a",
+      "huella_sha256": "ba7d5d53c04d28a56073b6557b7e93e180f25d87c1c2cbe7ca302bccc260c490",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -2106,12 +2118,94 @@
       ]
     },
     {
-      "ruta": "roadmap/RMP-001-roadmap-aybar-atiende.md",
-      "id": "7460980e-415f-4097-8d00-eec74c788c7f",
-      "version": 10,
+      "ruta": "historias/HU-ATC-068-bloquear-en-la-entrada-los-intentos-de-manipular-a-la-ia.md",
+      "id": "536df198-f27f-4389-97d9-0c8700e8bac0",
+      "version": 1,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "54d07b36e5e08e2c80454295bc4c6dfec1c4464b749e8a88d7f6e20b8dae28cb",
+      "huella_sha256": "1705801c5117f964ff70f6cfe89381e9cc5507fcea9faa66061423dac7e928c6",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-069-verificar-cada-dato-del-borrador-contra-su-fuente.md",
+      "id": "b51982fd-afbd-4236-92de-3d616ea60ce4",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "587ac4f2627c4261bb1789c3854b910a3c0c667f51f56ca7d8e640ced718c89a",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-070-identificar-de-que-trata-el-ticket-y-elegir-la-guia.md",
+      "id": "d0537e7f-7e05-4e5c-8976-95d469223f66",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "fbf2de8b688aca710bdda3f99fffe8de4b5a6e0082f3273439272b2f55692232",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-071-escalar-a-una-persona-con-un-motivo-tipificado.md",
+      "id": "de2073cf-61c4-4d46-9303-c49fa3a3b913",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "90fd15c31d3a0efb89ff4f3cdd91359be2a1c5d1639342354ae7a54cd48e75cb",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "historias/HU-ATC-072-probar-cada-cambio-de-la-ia-contra-un-set-fijo.md",
+      "id": "52f34a8d-7da7-4872-be3d-07039a2d1485",
+      "version": 1,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "aef9d6d988c27edb238abbaabcfeeae690cba00b7494f59656867b7c80aaf9aa",
+      "firmas": [],
+      "firmas_pendientes": [
+        "product_owner"
+      ]
+    },
+    {
+      "ruta": "presentacion/Aybar Atiende.html",
+      "id": "4ec85248-fd47-40de-b7e9-0c8fd33337ed",
+      "version": 1,
+      "estado": "no-aplica",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6ed8497fa466111d9f833cfe1bce8c26c3253901dbf666b0827a31af631a00ec",
+      "firmas": [],
+      "firmas_pendientes": []
+    },
+    {
+      "ruta": "pruebas/test-plan.md",
+      "id": "97ff053c-6759-4ad1-852f-018f39e1f51b",
+      "version": 2,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "6e8b1c9d397b64c7e3d8bfe850ed97f5cc812ef8765e0b7b3b0ccedc92636023",
+      "firmas": [],
+      "firmas_pendientes": [
+        "qa_tester"
+      ]
+    },
+    {
+      "ruta": "roadmap/RMP-001-roadmap-aybar-atiende.md",
+      "id": "7460980e-415f-4097-8d00-eec74c788c7f",
+      "version": 11,
+      "estado": "pendiente",
+      "aprobado_por_rol": null,
+      "huella_sha256": "473fb24a0460ea60eb58190177ff49d7d60a35db2b94a01d8b771947939ef81d",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -2120,10 +2214,10 @@
     {
       "ruta": "roadmap/alcance-diferido.md",
       "id": "ce123300-c0eb-4ebc-9b6b-800d0850c801",
-      "version": 2,
+      "version": 3,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "d1f6951b005dcb0169fad06e2dbad11d468b70df24138577c454837c4d9e760b",
+      "huella_sha256": "1f6435a2390343f8f683a5ed666ade47f48eedefe772b1812247ad97ebb5a24a",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -2132,10 +2226,10 @@
     {
       "ruta": "roadmap/analisis-dependencias.md",
       "id": "d44b557f-c6ee-4fad-aecf-5024804aab22",
-      "version": 9,
+      "version": 10,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "6f988f52a4bdade672e3dafbbf1e86c8fd45ab4124697dffd9908de38f55634e",
+      "huella_sha256": "c657ff924740ae6bccb1e5b73d0641b494adf3a108a6339cb6448c32cec6473b",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -2144,10 +2238,10 @@
     {
       "ruta": "roadmap/dependencias.mmd",
       "id": "651f8bcc-2819-4d28-8477-e5739a0d1d4c",
-      "version": 8,
+      "version": 9,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "ef86d485051235e4317ab11001c31edcab89d06a3ab540b35890da8964a6fe59",
+      "huella_sha256": "0ef58ee155aa6dd1ba8c8ca12a89031d24d2a3746708bb3753b305eeab8757ba",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"
@@ -2156,10 +2250,10 @@
     {
       "ruta": "roadmap/olas-features.mmd",
       "id": "5780996b-892e-4de8-aa4f-c2e25f31fd89",
-      "version": 4,
+      "version": 5,
       "estado": "pendiente",
       "aprobado_por_rol": null,
-      "huella_sha256": "86d3a2875a9d6750236a761bd8132b6c60e95c8f7fcb8b386d783aa36ad4bb85",
+      "huella_sha256": "1ff2196f2f84dc2a27f95ff01723a2372737638ceb6f6ae3c521d0ea3236e7d7",
       "firmas": [],
       "firmas_pendientes": [
         "product_owner"

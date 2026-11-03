@@ -4,10 +4,10 @@ tipo: hu
 titulo: "Buscar documentos del cliente por significado"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.3.2"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-049"]
 tags: [hu, plt-04, flexible]
 ui: true
@@ -29,6 +29,8 @@ ui: true
 **La necesitan:** HU-ATC-042
 
 **Alcance:** fuera de la Etapa 1 por decisión del equipo del 26-oct-2026 (P-025): alcance flexible R-01 del PO; se retoma en una etapa posterior. En la Etapa 1, HU-042 depende de HU-052 en su lugar (FT-20 sigue siendo predecesora de FT-17).
+
+**Nota del 3-nov-2026 (Núcleo de IA, `adr/ADR-007` v0.9):** HU-053 **sigue fuera de la Etapa 1** aunque el Núcleo de IA entra. La arquitectura del Líder del equipo fija que los contratos y documentos del cliente **no llevan índice vectorial**: se buscan por metadatos exactos (HU-052), porque una búsqueda por parecido puede traer el documento de otro cliente. Esta HU debe replantearse antes de retomarse (por ejemplo, limitarla a políticas y guías, no a documentos del cliente).
 
 **Requerimiento de origen:** El sistema debe indexar con un modelo de red neuronal (búsqueda semántica) los archivos y documentos de los clientes para que el motor de búsqueda encuentre información por significado y no solo por palabras exactas. Feedback presentación · ítem 19
 
@@ -92,3 +94,5 @@ Generado por IA: transcripción al formato del paquete Definir desde los documen
 Actualizado el 26-oct-2026 por Brayan Hurtado con IA (Claude): responsable y dependencias explícitas. — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance: fuera de la Etapa 1 por P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8); sus tareas pasan sin cambios a `roadmap/alcance-diferido.md` y en `backlog/tareas/` queda una tarea de 0 h que lo dice. El bloque «Depende de / La necesitan» conserva las dependencias del PO para cuando se retome. No cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.3.2 · 2026-11-03 · Jesús Chávez Elías, con IA · Nota: sigue fuera de la Etapa 1 y debe replantearse frente a la regla «sin índice vectorial para documentos del cliente» del ADR-007 v0.9. No se cambia texto del PO. — Revisado por: (pendiente)

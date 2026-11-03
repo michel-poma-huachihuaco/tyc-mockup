@@ -4,10 +4,10 @@ tipo: intake
 titulo: "Ficha de Intake - Aybar Atiende"
 estado: draft
 producto: "Aybar Atiende (aybar-atc)"
-version: "0.5"
+version: "0.6"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-26"
+fecha: "2026-11-03"
 relacionados: ["AYB-0001"]
 tags: [intake, g0]
 ---
@@ -19,8 +19,8 @@ tags: [intake, g0]
 - Problema: hoy la atención al cliente se registra en canales y planillas sueltas (Excel, WhatsApp). Eso incluye los reclamos, las consultas, la postventa, los casos sensibles y la morosidad. No hay un número de ticket único, no se puede trazar el SLA ni el plazo legal del Libro de Reclamaciones y no hay evidencia ante una fiscalización de INDECOPI.
 - Valor esperado: toda solicitud del cliente se registra una sola vez, se atiende con un plazo trazable (el SLA se congela al abrir) y se cierra con evidencia auditable. Así desaparecen la exposición legal ante INDECOPI y los registros paralelos del dato de cliente. Se mide con los objetivos de G1 (`docs/analisis/BRD.md` §2): 0 respuestas del Libro fuera del plazo legal, cierre en ≤ 72 horas hábiles sin escalamiento, 0 registros paralelos del cliente, NPS-C y las metas de negocio de cada épica (PLT-02 v1.3).
 - Tipo: [T3] (propuesta IA; se aprueba con la firma de G0, PO y TL juntos). Motivo:
-  - Es la Etapa 1 completa del plan v1.3 del PO: 11 épicas, 23 funcionalidades y 62 historias de usuario, 243 h en 10 días hábiles de desarrollo (21-oct → 03-nov-2026). Con P-025 (decisión del equipo del 26-oct, `analisis/decisiones.md`), que activa el recorte flexible del R-01 del PO (el PO conserva la decisión de revertirlo), la Etapa 1 queda en 10 épicas, 22 funcionalidades y 57 historias, con 227 h de historias más 28 h técnicas de DT-02: salen las 5 historias de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053). Sigue siendo T3.
-  - Tiene integraciones externas: SIGDA/TAXON, Cobranza, Contratos y Activos, la plataforma del call center, la herramienta de Legal, el motor de consultas de José y el proveedor de IA (este, sin consumo en la Etapa 1: HU-048 y HU-053 salen por P-025).
+  - Es la Etapa 1 completa del plan v1.3 del PO: 11 épicas, 23 funcionalidades y 62 historias de usuario, 243 h en 10 días hábiles de desarrollo (21-oct → 03-nov-2026). Con P-025 (decisión del equipo del 26-oct, `analisis/decisiones.md`), que activa el recorte flexible del R-01 del PO (el PO conserva la decisión de revertirlo), la Etapa 1 queda en 10 épicas, 22 funcionalidades y 57 historias, con 227 h de historias más 28 h técnicas de DT-02: salen las 5 historias de alcance flexible del PO (HU-ATC-037, 038, 039, 048 y 053). **Desde el 3-nov (ED-29) el Núcleo de IA entra en la Etapa 1:** HU-048 vuelve y se suman 5 historias propuestas, HU-068 a HU-072 (57 HU + HU-048 + 5 propuestas; las cifras de 227 h y 28 h se conservan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO). Siguen fuera HU-037, 038, 039 y 053. Sigue siendo T3.
+  - Tiene integraciones externas: SIGDA/TAXON, Cobranza, Contratos y Activos, la plataforma del call center, la herramienta de Legal, el motor de consultas de José y el proveedor de IA (Azure OpenAI; con consumo en la Etapa 1 desde el 3-nov por el Núcleo de IA, HU-048 y HU-068 a HU-072, ED-29; HU-053 sigue fuera; simulador mientras TI y Seguridad no lo habiliten, DEP-14).
   - Tiene implicancias legales: la Ley 29571 (Libro de Reclamaciones) y la Ley 29733 (datos personales).
   - Toca varias áreas de negocio: ATC, Legal, Postventa, Cobranza, Comercial y TI.
   - Queda muy por encima de un cambio T1 o T2.
@@ -42,3 +42,7 @@ Actualizado el 26-oct-2026 (v0.3) por Brayan Hurtado con IA (Claude) a partir de
 Historial: 0.4 · 2026-10-26 · Brayan Hurtado, con IA · P-025 decidida por el equipo (`analisis/decisiones.md` v0.8): alcance de la Etapa 1 en 10 épicas, 22 funcionalidades y 57 historias (227 h de historias más 28 h técnicas de DT-02); EP-ATC-08 y el proveedor de IA sin uso en la Etapa 1. Tipo T3 sin cambio. — Revisado por: (pendiente)
 
 Historial: 0.5 · 2026-10-26 · Brayan Hurtado, con IA · Revisión interna del equipo: P-025 como recorte del R-01 del PO, retiro de HU-DOC-001 con una versión «RETIRADO» (ED-21) y citas sin versión. — Revisado por: (pendiente)
+
+Actualizado el 3-nov-2026 (v0.6) por Jesús Chávez Elías con IA (Claude): el Núcleo de IA entra en la Etapa 1 (ED-29; `adr/ADR-007` v0.9) y el proveedor de IA se consume. — Revisado por: (pendiente)
+
+Historial: 0.6 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1: HU-048 vuelve y HU-068 a HU-072 propuestas; proveedor de IA con consumo; tipo T3 sin cambio (por decidir: si el PO y el TL lo reevalúan con el Núcleo). — Revisado por: (pendiente)

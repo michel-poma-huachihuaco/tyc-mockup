@@ -4,17 +4,17 @@ tipo: feature
 titulo: "Asistencia al gestor: guía e IA"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.1"
+version: "1.4.0"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-16"
-relacionados: ["EP-ATC-09", "HU-ATC-047", "HU-ATC-048"]
+fecha: "2026-11-03"
+relacionados: ["EP-ATC-09", "HU-ATC-047", "HU-ATC-048", "HU-ATC-068", "HU-ATC-069", "HU-ATC-070", "HU-ATC-071", "HU-ATC-072", "ADR-007"]
 tags: [feature, plt-03, ui]
 ---
 
 # PLT-03 - FT-ATC-19 Asistencia al gestor: guía e IA
 
-**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-048 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). En la Etapa 1 la funcionalidad es HU-047 (4 h de las 9 h del PO) y la DEP-14 no aplica: la guía no usa IA.
+**Alcance en la Etapa 1 (decisión del 3-nov-2026, reemplaza la nota de P-025):** el Núcleo de IA entra en la Etapa 1 con la arquitectura de `adr/ADR-007` v0.9 (módulo Java en el monolito, pipeline con guardianes, Azure OpenAI). HU-048 se reescribe y se suman HU-068 a HU-072 (propuestas). Las horas están **por estimar por el equipo**; R-01 queda como riesgo crítico para el PO. HU-053 sigue fuera de la Etapa 1. Pendiente: que el PO acepte las HU nuevas y que el Líder Técnico apruebe el ADR-007.
 
 | ID | Nombre | Épica padre |
 |---|---|---|
@@ -28,7 +28,7 @@ tags: [feature, plt-03, ui]
 
 ## 1 Descripción y valor
 
-Muestra la guía de solución de cada tipo de ticket y usa IA para sugerir respuestas y verificar los criterios de cierre mientras el gestor atiende; el gestor siempre decide.
+Muestra la guía de solución de cada tipo de ticket y usa un **Núcleo de IA** que clasifica el ticket, redacta un borrador verificado contra los datos reales y lo deja listo para que el gestor lo apruebe, o lo escala con un motivo tipificado; el gestor siempre decide. (Texto ampliado el 3-nov-2026; el original del PO decía: «usa IA para sugerir respuestas y verificar los criterios de cierre mientras el gestor atiende».)
 
 **Beneficio:** Respuestas más uniformes y de mejor calidad, y menos tiempo de capacitación.
 
@@ -39,7 +39,7 @@ Muestra la guía de solución de cada tipo de ticket y usa IA para sugerir respu
 | ID | Requerimiento | Prioridad (MoSCoW) | Origen | Criterio de verificación | Horas | Predecesora | Estado |
 |---|---|---|---|---|---|---|---|
 | RF-SVC-047 | El sistema debe mostrar al gestor de tickets una guía de como solucionar cada tipo de ticket (pasos, plantillas de respuesta, documentos requeridos y criterios de cierre) mantenida por el administrador funcional. | Debería | PROC-SVC-018 · Gestor de tickets · Feedback presentación · ítem 7 | Guía versionada por tipo | 4 | — | Pend. DoR |
-| RF-SVC-048 (flexible) | El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. | Podría | PROC-SVC-018 · Asistente IA de atención · Feedback presentación · ítem 8 | Toda sugerencia queda registrada con su decisión | 5 | RF-SVC-047 | Pend. DoR |
+| RF-SVC-048 | El sistema debe usar IA para retroalimentar al gestor de tickets mientras atiende y al cerrar: sugerir respuesta, verificar que se cumplan los criterios de cierre de la guía y señalar tono o datos faltantes. | Debería (ya no flexible, 3-nov) | PROC-SVC-018 · Asistente IA de atención · Feedback presentación · ítem 8 | Toda sugerencia queda registrada con su decisión | 5 | RF-SVC-047 | Pend. DoR |
 
 Ruta crítica: RF-SVC-047 → RF-SVC-048 (9 h).
 
@@ -62,7 +62,7 @@ Ruta crítica: RF-SVC-047 → RF-SVC-048 (9 h).
 | RF | HU | Dependencia | Riesgo |
 |---|---|---|---|
 | RF-SVC-047 | HU-ATC-047 · Iteración 1 · Dev 3 · mar 27-oct | DEP-14 proveedor de IA aprobado | R-07 |
-| RF-SVC-048 | HU-ATC-048 · Iteración 2 · Dev 3 · mar 27-oct → mié 28-oct | DEP-14 proveedor de IA aprobado | R-07 |
+| RF-SVC-048 | HU-ATC-048 (orquestador), HU-ATC-068 a HU-ATC-072 (propuestas) · Dev 3 · fechas por definir | DEP-14 proveedor de IA habilitado (aplica en la Etapa 1; simulador mientras tanto) | R-07, R-01 |
 
 Cada RF llega a una HU, y cada criterio de la HU a un TC de `docs/pruebas/test-plan.md` (pendiente: lo define QA).
 
@@ -81,3 +81,5 @@ Una pregunta que bloquea G4 deja la feature en NO READY. Cuando se responde, la 
 Generado por IA: transcripción al formato del paquete Definir desde los documentos del PO (PLT-03 v1.3), sin cambiar su contenido — Revisado por: (pendiente)
 
 Historial: 1.3.1 · 2026-10-26 · Brayan Hurtado, con IA · Nota de alcance al inicio del cuerpo: P-025 (decisión del equipo del 26-oct-2026, `analisis/decisiones.md` v0.8). La Etapa 1 no incluye HU-048 (4 h de 9 h). No se cambia texto del PO. — Revisado por: (pendiente)
+
+Historial: 1.4.0 · 2026-11-03 · Jesús Chávez Elías, con IA · El Núcleo de IA entra en la Etapa 1 (`adr/ADR-007` v0.9, reemplaza la nota de P-025); descripción ampliada; HU-068 a HU-072 propuestas; DEP-14 vuelve a aplicar; horas por estimar. — Revisado por: (pendiente)

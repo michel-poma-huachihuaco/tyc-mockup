@@ -4,10 +4,10 @@ tipo: "roadmap"
 titulo: "Roadmap de producto - Aybar Atiende (plataforma ATC)"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.13"
+version: "0.14"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [AYB-0001]
 tags: [roadmap, plt-01, dependencias]
 ---
@@ -17,11 +17,11 @@ tags: [roadmap, plt-01, dependencias]
 Va en `docs/roadmap/`. Recoge las dependencias, los riesgos y los hitos del producto. Esta versión
 usa el plan v1.3 del PO del 16-oct (PLT-01 a PLT-05) y el Excel `ATC_requerimientos (3).xlsx`, con la
 división por etapas. **Corte de esta versión: lun 26-oct-2026, día 4 de desarrollo** (la v0.2 era del
-mié 21-oct, día 1). A esa fecha no hay ningún documento del paquete aprobado en Nexora: cada uno queda listo para la firma de su rol (`decisiones.md`, P-024 y ED-21). **v0.7 (26-oct): P-025 decidida por el equipo** (Brayan Hurtado; `decisiones.md`): las 28 h nuevas de DT-02 entran como trabajo técnico de la fundación y salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01): HU-ATC-037, 038 y 039 (EP-ATC-08 completa), 048 y 053. La Etapa 1 queda en **57 HU y 227 h** de historias, **10 épicas y 22 funcionalidades**, más **28 h técnicas**; las 5 HU se retoman en una etapa posterior. **v0.8 (26-oct, revisión interna del equipo):** el recorte del alcance flexible es el **R-01 del PO**: el equipo lo activó y el PO conserva la decisión de revertirlo (H-06); el sobrecosto real se calcula en §1; criterio de corte de la UAT en PRE (R-12); la DEP-16 suma PRE y, hasta la v0.9, el permiso de lectura sobre `IDN_USER_ACCOUNT` (ED-01; retirado el 28-oct: PJ-05 no documenta ningún `GRANT`); el plazo del Libro es de 15 días hábiles improrrogables (ED-28) y el tipo de ticket «Validación de identidad (prospecto)» entra en la Etapa 1 sin horas nuevas (ED-09). **v0.9 (28-oct, contraste con Control de acceso, PJ-05):** ATC se adapta a lo que PJ-05 documenta; la DEP-16 se parte en subdependencias `PJ05-DEP-nn` con las fechas del propio roadmap de PJ-05 (sin fecha comprometida actual); PRE y producción están fuera de la entrega E1 de PJ-05, y el Go del 03-nov vale solo para PRE con el emisor de pruebas de ATC *(texto del 28-oct, superado por la revisión del Líder Técnico del 29-oct, punto 2: sin plan B de emisor de pruebas en la UAT)*; las horas que ese contraste suma sin tarea se declaran **fuera del plan del PO** (§1), sin tocar las 243 h del PO. **v0.12 (29-oct, revisión del Líder Técnico del 29-oct, puntos 1 a 7):** se retira el plan B de la UAT (H-08, R-12: si Control de acceso no está en PRE para la UAT, la UAT se reprograma; el emisor de pruebas queda solo para desarrollo local, ED-08); la UAT exige Control de acceso en PRE (no en DEV); la DEP-16 dice una sola cosa; la solicitud S28 se envió el 29-oct a Sony Montoya, con copia al Líder Técnico (sin respuesta aún); ADR-022 aprobado según el Líder Técnico y las 108 tareas no se registran hasta que responda D1 a D5.
+mié 21-oct, día 1). A esa fecha no hay ningún documento del paquete aprobado en Nexora: cada uno queda listo para la firma de su rol (`decisiones.md`, P-024 y ED-21). **v0.7 (26-oct): P-025 decidida por el equipo** (Brayan Hurtado; `decisiones.md`): las 28 h nuevas de DT-02 entran como trabajo técnico de la fundación y salen de la Etapa 1 las 5 HU de alcance flexible del PO (R-01): HU-ATC-037, 038 y 039 (EP-ATC-08 completa), 048 y 053. La Etapa 1 queda en **57 HU y 227 h** de historias, **10 épicas y 22 funcionalidades**, más **28 h técnicas**; las 5 HU se retoman en una etapa posterior. **v0.8 (26-oct, revisión interna del equipo):** el recorte del alcance flexible es el **R-01 del PO**: el equipo lo activó y el PO conserva la decisión de revertirlo (H-06); el sobrecosto real se calcula en §1; criterio de corte de la UAT en PRE (R-12); la DEP-16 suma PRE y, hasta la v0.9, el permiso de lectura sobre `IDN_USER_ACCOUNT` (ED-01; retirado el 28-oct: PJ-05 no documenta ningún `GRANT`); el plazo del Libro es de 15 días hábiles improrrogables (ED-28) y el tipo de ticket «Validación de identidad (prospecto)» entra en la Etapa 1 sin horas nuevas (ED-09). **v0.9 (28-oct, contraste con Control de acceso, PJ-05):** ATC se adapta a lo que PJ-05 documenta; la DEP-16 se parte en subdependencias `PJ05-DEP-nn` con las fechas del propio roadmap de PJ-05 (sin fecha comprometida actual); PRE y producción están fuera de la entrega E1 de PJ-05, y el Go del 03-nov vale solo para PRE con el emisor de pruebas de ATC *(texto del 28-oct, superado por la revisión del Líder Técnico del 29-oct, punto 2: sin plan B de emisor de pruebas en la UAT)*; las horas que ese contraste suma sin tarea se declaran **fuera del plan del PO** (§1), sin tocar las 243 h del PO. **v0.12 (29-oct, revisión del Líder Técnico del 29-oct, puntos 1 a 7):** se retira el plan B de la UAT (H-08, R-12: si Control de acceso no está en PRE para la UAT, la UAT se reprograma; el emisor de pruebas queda solo para desarrollo local, ED-08); la UAT exige Control de acceso en PRE (no en DEV); la DEP-16 dice una sola cosa; la solicitud S28 se envió el 29-oct a Sony Montoya, con copia al Líder Técnico (sin respuesta aún); ADR-022 aprobado según el Líder Técnico y las 108 tareas no se registran hasta que responda D1 a D5. **v0.14 (3-nov, Núcleo de IA en la Etapa 1):** la decisión ED-29 (`adr/ADR-007` v0.9) trae a la Etapa 1 el Núcleo de IA: HU-048 vuelve (reescrita como orquestador) y se suman 5 HU propuestas, HU-068 a HU-072 (FT-ATC-19, EP-ATC-09; numeración y RF por asignar por el PO). Las cifras de más abajo (57 HU, 227 h de historias, 28 h técnicas, 243 h del PO, 255 h) **se conservan sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO**. HU-053 sigue fuera (los documentos del cliente no llevan índice vectorial); HU-037, 038 y 039 siguen fuera (P-025). La DEP-14 vuelve a aplicar.
 
 | Producto | Product Owner | Versión / Fecha |
 |---|---|---|
-| Aybar Atiende · plataforma ATC: tickets omnicanal, SLA, Libro de Reclamaciones, casos sensibles y autogestión del cliente | Eddie Huamaní | v0.9 · 2026-10-28 (plan del PO v1.3 · 16-oct-2026) |
+| Aybar Atiende · plataforma ATC: tickets omnicanal, SLA, Libro de Reclamaciones, casos sensibles y autogestión del cliente | Eddie Huamaní | v0.14 · 2026-11-03 (plan del PO v1.3 · 16-oct-2026) |
 | **Horizonte** | **Visión del producto** | **Estado** |
 | Etapa 1: diseño del jue 08 al mar 20-oct, desarrollo del mié 21-oct al mar 03-nov-2026 (iteración 1: 21–27-oct; iteración 2: 28-oct–03-nov; el 03-nov es el día de UAT y Go/No-Go) | Toda solicitud del cliente se registra una sola vez, se atiende con un plazo trazable y se cierra con evidencia, sin exposición ante INDECOPI | Borrador · en desarrollo desde el 21-oct |
 
@@ -42,18 +42,18 @@ desarrollo de cada épica (PLT-01 v1.3 §2b). Los desarrolladores son los del PL
 | EP-ATC-06 | Autogestión del cliente y trazabilidad (Mi Portal) | Debe | | | | 30-oct a 2-nov · Dev 4 (Daniel) · 9 h | Ahora (sin G4 aprobado) |
 | EP-ATC-07 | Calidad de atención y Torre de Control CX | Debería | | | | 29-oct a 2-nov · Dev 3 (Michel) · 16 h | Ahora (sin G4 aprobado) |
 | EP-ATC-08 | EntregaFest: contención y derivación en vivo | Podría | | | | Fuera de la Etapa 1 (P-025); en el PLT-01: 30-oct a 2-nov · Dev 1 (Brayan) · 6 h | Siguiente: etapa posterior (alcance flexible, R-01) |
-| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | | | | 21-oct a 29-oct · Dev 3 (Michel) · 44 h (39 h en la Etapa 1: sin HU-048, P-025) | Ahora (sin G4 aprobado) |
+| EP-ATC-09 | Bandeja orquestadora y asistencia al gestor | Debe | | | | 21-oct a 29-oct · Dev 3 (Michel) · 44 h (39 h sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO; el Núcleo de IA entra en la Etapa 1, FT-19) | Ahora (sin G4 aprobado) |
 | EP-ATC-10 | Consulta 360 e integraciones operativas | Debe | | | | 21-oct a 28-oct · Dev 4 (Daniel) · 36 h (31 h en la Etapa 1: sin HU-053, P-025) | Ahora (sin G4 aprobado) |
 | EP-ATC-11 | Resolución por morosidad y formularios simples | Debe | | | | 28-oct a 30-oct · Dev 4 (Daniel) · 17 h | Ahora (sin G4 aprobado) |
 
 **Capacidad** (PLT-01 v1.3 §2c): el equipo tiene comprometidas 243 h de una capacidad de 252 h (96 %),
 con 63 h por persona. Los días 1 a 9 tienen 7 h cada uno y el día 10 es de UAT y pase.
 
-**Tras P-025 (propuesta del equipo, 26-oct):** 227 h de historias más 28 h técnicas de DT-02 = **255 h**. El recorte del alcance flexible es el **R-01 del PO**: el equipo lo activó y el PO conserva la decisión de revertirlo (H-06). Por persona (entre paréntesis, el PLT-01):
+**Tras P-025 (propuesta del equipo, 26-oct):** 227 h de historias más 28 h técnicas de DT-02 = **255 h** (**sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO**). El recorte del alcance flexible es el **R-01 del PO**: el equipo lo activó y el PO conserva la decisión de revertirlo (H-06). Por persona (entre paréntesis, el PLT-01):
 
 - Dev 1 (Brayan): EP-01 → EP-03 → EP-05, 55 h de historias + 9 h técnicas (outbox y re-proyección) = 64 h (102 %). EP-08 sale de la Etapa 1 (PLT-01: EP-01 → EP-03 → EP-05 → EP-08, 61 h, 97 %).
 - Dev 2 (Jesús): EP-02 → EP-04, 60 h + 4 h técnicas (publicador del outbox) = 64 h (102 %) (PLT-01: 60 h, 95 %).
-- Dev 3 (Michel): EP-09 → EP-07, 55 h (sin HU-048) + 9 h técnicas (proyector, purga y métrica del outbox) = 64 h (102 %) (PLT-01: 60 h, 95 %).
+- Dev 3 (Michel): EP-09 → EP-07, 55 h (sin HU-048 ni HU-068 a HU-072: por estimar) + 9 h técnicas (proyector, purga y métrica del outbox) = 64 h (102 %) (PLT-01: 60 h, 95 %).
 - Dev 4 (Daniel): EP-10 → EP-11 → EP-06, 57 h (sin HU-053) + 6 h técnicas (bus en Event Hubs) = 63 h (100 %) (PLT-01: 62 h, 98 %).
 
 Las 28 h técnicas son la fundación de la iteración 1 (tareas DT02-T01 a DT02-T06 de `backlog/tareas/EP-ATC-01.json`, con fechas del 21 al 27-oct): bus y outbox primero, luego publicador y proyector, y la re-proyección al final. Las primeras vistas de lectura dependen del proyector (DT02-T05, hasta el 26-oct), así que HU-009, HU-044 y HU-050 no cierran en su fecha del PO (`analisis-dependencias.md`, A-15).
@@ -70,10 +70,10 @@ Las 28 h técnicas son la fundación de la iteración 1 (tareas DT02-T01 a DT02-
 
 **Horas fuera del plan del PO (revisión del 28-oct; estimación por confirmar):** el contraste con Control de acceso (PJ-05) deja trabajo de ATC sin tarea ni horas en el backlog del 26-oct. Se estima **+8 a +14 h** sobre las +7 h ya declaradas (en total, de 15 a 21 h sobre la capacidad de 252 h; cálculo marcado «estimación de la revisión del 28-oct, por confirmar», no es un dato del PO ni del equipo). Piezas: generar y versionar los dos lotes del catálogo, 2 a 3 h; `AlcanceDeEmpresa` y su matriz de pruebas global, empresa y ambos, 3 a 4 h; `AuthorizationEventPublisher` y el listener de auditoría, 1 a 2 h; emisor de pruebas operado en PRE (R-12), 2 a 4 h *(pieza sin objeto desde la revisión del Líder Técnico del 29-oct, punto 2: ya no hay emisor de pruebas en PRE; las horas no se modifican y quedan por reasignar, por confirmar)*; pruebas del criterio `aud` con `aybar-atc` (ver `roles-y-permisos-atc.md`), 0 a 1 h. Van como tareas con su estimación y una marca de origen en `backlog/tareas/EP-ATC-01.json` y `EP-ATC-09.json`, **fuera de las historias**: no cambian las 243 h del PO, las 227 h de las 57 HU ni las 255 h de la tabla de arriba (como ADR-002, «0 h fuera del plan del PO»). Daniel está al 100 % y la iteración 2 no tiene holgura: el PO decide en el control del 29-oct con la cifra completa.
 
-La iteración 1 no cabe: la demo del 27-oct no muestra todas sus historias y lo que falte pasa a la iteración 2, que solo tiene 14 h libres (Brayan, Jesús y Michel). **Dueño: el PO** (R-01), que lo acepta al firmar G4 o decide en el control de alcance del 29-oct qué más sale; si revierte el recorte, vuelven 16 h y el sobrecosto pasa a 23 h.
+La iteración 1 no cabe: la demo del 27-oct no muestra todas sus historias y lo que falte pasa a la iteración 2, que solo tiene 14 h libres (Brayan, Jesús y Michel). **Dueño: el PO** (R-01), que lo acepta al firmar G4 o decide en el control de alcance del 29-oct qué más sale; si revierte el recorte, vuelven 16 h y el sobrecosto pasa a 23 h *(cifras del 26-oct, sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO; desde el 3-nov HU-048 ya no está en ese recorte)*.
 
 La EP-ATC-08 pasa a Dev 1 para liberar a Dev 3, que construye las prioridades 1 y 3. Por iteración:
-la 1 tiene 29 historias (132 h) y la 2 tiene 33 historias (111 h). En la Etapa 1, tras P-025: la 1 tiene 28 historias (127 h; sale HU-053) y la 2 tiene 29 (100 h; salen HU-037, 038, 039 y 048).
+la 1 tiene 29 historias (132 h) y la 2 tiene 33 historias (111 h). En la Etapa 1, tras P-025: la 1 tiene 28 historias (127 h; sale HU-053) y la 2 tiene 29 (100 h; salen HU-037, 038, 039 y 048). Desde el 3-nov, la 2 suma HU-048 y las 5 propuestas HU-068 a HU-072 (57 HU + HU-048 + 5 propuestas), sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO; la iteración a la que van se define con las horas.
 
 **Orden de prioridad 1-3** (se construyen primero en su desarrollador):
 
@@ -103,7 +103,7 @@ Hitos:
 | H-03 | 2026-10-20 | Comité DoR, cierre técnico y ADR: arquitectura de desarrollo, modelo de datos, RNF con umbral, contratos de interfaz con simulador, CI/CD y ambientes DEV/QA. También las 11 ADR registradas y cada funcionalidad «Lista» o «Lista con condiciones» con fecha (PLT-01 y PLT-05) | todas |
 | H-04 | 2026-10-21 | Inicio de desarrollo con los requerimientos y las ADR cerrados (PLT-01 §2). La iteración 1 empieza por las prioridades 1-3 | todas |
 | H-05 | 2026-10-27 | Demo de la iteración 1: se muestran las 29 historias de la iteración 1 (PLT-04); 28 tras P-025, que saca HU-053 de la Etapa 1. Criterio de aceptación de la demo (decisión del equipo, 26-oct): cada historia se muestra contra sus criterios Gherkin, en local o en DEV | todas |
-| H-06 | 2026-10-29 | Control de alcance: si hay atraso, sale primero el alcance flexible (HU-ATC-037, 038, 039, 048 y 053) sin afectar la v1.0 (PLT-01 R-01). **El alcance flexible ya salió el 26-oct por P-025** (para dar cabida a las 28 h de DT-02): el equipo activó el R-01 del PO, y **el PO conserva la decisión de revertirlo** en este control o al firmar G4. El control del 29-oct revisa el avance de las 57 HU y de las tareas técnicas y el sobrecosto real (§1); un atraso se lleva al PO en ese control | todas |
+| H-06 | 2026-10-29 | Control de alcance: si hay atraso, sale primero el alcance flexible (HU-ATC-037, 038, 039, 048 y 053) sin afectar la v1.0 (PLT-01 R-01). **El alcance flexible ya salió el 26-oct por P-025** (para dar cabida a las 28 h de DT-02): el equipo activó el R-01 del PO, y **el PO conserva la decisión de revertirlo** en este control o al firmar G4. *Desde el 3-nov, HU-048 volvió a la Etapa 1 con el Núcleo de IA: el alcance flexible que sigue fuera es HU-037, 038, 039 y 053.* El control del 29-oct revisa el avance de las 57 HU y de las tareas técnicas y el sobrecosto real (§1); un atraso se lleva al PO en ese control | todas |
 | H-07 | 2026-11-02 18:00 | Congelamiento de código (PLT-01, cadencia) | todas |
 | H-08 | 2026-11-03 | UAT, demo final y Go/No-Go de la v1.0: día de UAT y pase, sin desarrollo nuevo, con capacitación (R-10). La UAT es en PRE. **Criterio de corte (revisión del Líder Técnico del 29-oct, punto 2): si Control de acceso no está en PRE para la UAT, la UAT se reprograma; no se hace con el emisor de pruebas (Líder Técnico, 29-oct).** El emisor de pruebas queda solo para desarrollo local (ED-08). Producción exige el emisor de PJ-05 (ED-08) y no tiene fecha en PJ-05, donde PRE y producción están fuera de la entrega E1. *Texto del 28-oct, superado por la revisión del Líder Técnico del 29-oct, punto 2:* «si Control de acceso no está en PRE el lun 02-nov a mediodía, corre con el emisor de pruebas de ATC operado en PRE y el PO decide el Go/No-Go con ese dato (R-12). El Go del 03-nov vale solo para PRE con el emisor de pruebas de ATC». *Cruce del Líder Técnico del 28-oct (C-12): el emisor de pruebas solo vale en local; la UAT del 03-nov exige Control de acceso en PRE (revisión del Líder Técnico del 29-oct, punto 6: el «DEV» del cruce del 28-oct estaba mal). R-11 y R-12 quedan en revisión; no son un riesgo aceptado por el Líder Técnico.* | todas |
 
@@ -120,7 +120,7 @@ Horizonte:
 - **Ahora:** las 10 épicas de la Etapa 1 (EP-ATC-08 sale por P-025), con desarrollo del 21-oct al 3-nov. **Ninguna tiene G4 cerrado**. El DoR
   del PLT-05 es «listo con condiciones» y G2 está en borrador (sin aprobar), aunque las 57 historias de la Etapa 1
   tienen pantalla.
-- **Siguiente:** el alcance flexible que sale de la Etapa 1 por P-025 (26-oct) y se retoma en una etapa posterior: EP-ATC-08 (FT-ATC-15: HU-037, 038 y 039), HU-048 (FT-19) y HU-053 (FT-20), 16 h, con sus tareas en `roadmap/alcance-diferido.md`.
+- **Siguiente:** el alcance flexible que sale de la Etapa 1 por P-025 (26-oct) y se retoma en una etapa posterior: EP-ATC-08 (FT-ATC-15: HU-037, 038 y 039) y HU-053 (FT-20), 11 h, con sus tareas en `roadmap/alcance-diferido.md` (el 26-oct eran 16 h con HU-048, que volvió a la Etapa 1 el 3-nov con el Núcleo de IA). HU-053 sigue fuera por una razón nueva: los documentos del cliente no llevan índice vectorial (HU-052) y se replantea antes de retomarla.
 - **Después:** los pendientes de producto, como los conectores automáticos de WhatsApp y correo
   (PLT-01 §2), sin épica.
 
@@ -158,7 +158,7 @@ R-08 para la DEP-05 y R-11 y R-12 para la DEP-16.
 | DEP-11 | Plataforma del call center: API/CTI para screen pop, registro de llamadas, grabación y click-to-call | Externa | EP-10 | TI / proveedor de call center | 2026-10-21 | Pendiente (PLT-01: Por evaluar) |
 | DEP-12 | Herramienta de Legal (responsable: Rosario): API o intercambio para sincronizar casos de Eje 3 | Interna | EP-10 | Gerencia Legal · TI | 2026-10-26 | Pendiente (PLT-01: Por evaluar) |
 | DEP-13 | Motor de consultas de José: contrato de API y responsable de mantenimiento | Interna | EP-10 | José · TI | 2026-10-23 | Pendiente (PLT-01: Por evaluar) |
-| DEP-14 | Proveedor de IA aprobado por TI y Seguridad, con política de datos personales | Técnica | EP-09, EP-10 | TI · Seguridad | 2026-10-23 | Pendiente · proveedor decidido por el equipo: Azure OpenAI Service en la suscripción de Azure de ATC (ED-17); la habilitación de TI y Seguridad es una aprobación y, mientras no esté, el servicio usa su simulador (R-02) (PLT-01: Por evaluar). **No aplica en la Etapa 1** (P-025): HU-048 y HU-053 salen y la guía de HU-047 no usa IA |
+| DEP-14 | Proveedor de IA aprobado por TI y Seguridad, con política de datos personales | Técnica | EP-09, EP-10 | TI · Seguridad | 2026-10-23 | Pendiente · proveedor decidido por el equipo: Azure OpenAI Service en la suscripción de Azure de ATC (ED-17); la habilitación de TI y Seguridad es una aprobación y, mientras no esté, el servicio usa su simulador con el mismo contrato (R-02, ADR-004) (PLT-01: Por evaluar). **Vuelve a aplicar en la Etapa 1** (3-nov, ED-29; ADR-007 v0.9): la necesitan HU-048 y HU-068 a HU-072 (EP-09); EP-10 solo la traía HU-053, que sigue fuera |
 | DEP-15 | Maestro de responsables de proyecto y supervisores (fuente única) | Interna | EP-11 | Gerencia Comercial · Datos | 2026-10-29 | Pendiente (PLT-01: Pendiente) |
 
 **Lo que las historias suman al PLT-01 (26-oct).** El bloque «Depende de» de cada HU (PLT-03, PLT-04 y PLT-05) suma dos épicas a la columna del PLT-01, que se deja como está: la DEP-01 alcanza también a EP-07 (HU-032, PLT-04) y la DEP-05 a EP-10 (HU-041, 8 % de RN-SVC-034, PLT-05). El PLT-01 pone la DEP-06 en EP-01, pero ninguna HU de EP-01 la nombra. La tabla se deja como la pone el PLT-01 y la diferencia queda anotada aquí. El detalle está en `analisis-dependencias.md` §2. **Estado de PJ-05 (28-oct):** «documentado y aprobado según su sello del 22-oct», no «construido ni desplegado»: su README dice «capa A construida», pero su plan de pruebas dice «nada ejecutado» y no tiene gates G5 a G9; las fechas de sus dependencias (05/10 y 07/10) ya vencieron y siguen «Pendiente» en la copia. El plan de PJ-05 (PLT-01, 01-oct) llega hasta su entrega E1 y no menciona el catálogo (FT-CAT-01) ni a los servicios consumidores; sus tareas no tienen horas. Lo que PJ-05 no documenta (adaptador de `CuentaPersonaPort`, ruta para otorgar `CATALOG_REGISTRAR`, emisor de pruebas en PRE) es **supuesto de diseño de ATC**, con su puerto o simulador (ED-08), no un acuerdo.
@@ -169,9 +169,9 @@ R-08 para la DEP-05 y R-11 y R-12 para la DEP-16.
 
 Según el PLT-01 §3, sin contrato de interfaz y simulador a la fecha requerida la historia no se marca Lista; con ellos, se construye contra el simulador y el sistema real se activa cuando su responsable lo entrega (R-02; la DEP-16, R-11). Al 26-oct ya pasó la
 fecha requerida de 9 dependencias (DEP-01, DEP-16, DEP-08 y DEP-11 del 21-oct; DEP-03 y DEP-04 del
-22-oct; DEP-06, DEP-13 y DEP-14 del 23-oct; la DEP-14 ya no aplica en la Etapa 1, P-025) y hoy vence la de DEP-05 y DEP-12. La DEP-16 está **en riesgo, mitigado** (R-11): PJ-05 no tiene fecha comprometida en ningún ambiente de ATC y el equipo acepta el riesgo con el emisor de pruebas local (P-040, ED-08). *Cruce del Líder Técnico del 28-oct (C-12): el emisor de pruebas solo vale en local; la UAT del 03-nov exige Control de acceso en PRE (revisión del Líder Técnico del 29-oct, punto 6: el «DEV» del cruce del 28-oct estaba mal). R-11 y R-12 quedan en revisión; no son un riesgo aceptado por el Líder Técnico.* El análisis completo (matriz, olas, ruta crítica y
+22-oct; DEP-06, DEP-13 y DEP-14 del 23-oct; la DEP-14 vuelve a aplicar en la Etapa 1 desde el 3-nov, con el Núcleo de IA) y hoy vence la de DEP-05 y DEP-12. La DEP-16 está **en riesgo, mitigado** (R-11): PJ-05 no tiene fecha comprometida en ningún ambiente de ATC y el equipo acepta el riesgo con el emisor de pruebas local (P-040, ED-08). *Cruce del Líder Técnico del 28-oct (C-12): el emisor de pruebas solo vale en local; la UAT del 03-nov exige Control de acceso en PRE (revisión del Líder Técnico del 29-oct, punto 6: el «DEV» del cruce del 28-oct estaba mal). R-11 y R-12 quedan en revisión; no son un riesgo aceptado por el Líder Técnico.* El análisis completo (matriz, olas, ruta crítica y
 hallazgos) está en `analisis-dependencias.md`. El diagrama está en `dependencias.mmd`: las flechas
-continuas van de dependencia a épica y las punteadas son las dependencias lógicas entre épicas. EP-08 y DEP-14 van en el grupo «Fuera de la Etapa 1», sin flechas (P-025).
+continuas van de dependencia a épica y las punteadas son las dependencias lógicas entre épicas. EP-08 va en el grupo «Fuera de la Etapa 1», sin flechas (P-025); DEP-14 vuelve al grupo de dependencias del producto y se enlaza con EP-09 (3-nov).
 
 ```mermaid
 flowchart LR
@@ -189,6 +189,7 @@ flowchart LR
     DEP11["DEP-11 · Call center<br/>21-oct · Por evaluar"]
     DEP12["DEP-12 · Herramienta de Legal<br/>26-oct · Por evaluar"]
     DEP13["DEP-13 · Motor de José<br/>23-oct · Por evaluar"]
+    DEP14["DEP-14 · Proveedor de IA (ED-17)<br/>23-oct · Pendiente · vuelve a aplicar con el Núcleo de IA (3-nov) · simulador mientras no esté (ADR-004)"]
     DEP15["DEP-15 · Proyectos<br/>29-oct · Pendiente"]
   end
   subgraph Epicas["Épicas (Etapa 1)"]
@@ -199,13 +200,12 @@ flowchart LR
     EPATC05["EP-05 · Postventa: reclamos de garantía<br/>Dev 1 · 29-oct a 30-oct"]
     EPATC06["EP-06 · Autogestión del cliente y trazabilidad (Mi Portal)<br/>Dev 4 · 30-oct a 2-nov"]
     EPATC07["EP-07 · Calidad de atención y Torre de Control CX<br/>Dev 3 · 29-oct a 2-nov"]
-    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct"]
+    EPATC09["EP-09 · Bandeja orquestadora y asistencia al gestor<br/>Dev 3 · 21-oct a 29-oct · FT-19 con el Núcleo de IA: HU-048 y HU-068 a HU-072 (horas por estimar)"]
     EPATC10["EP-10 · Consulta 360 e integraciones operativas<br/>Dev 4 · 21-oct a 28-oct"]
     EPATC11["EP-11 · Resolución por morosidad y formularios simples<br/>Dev 4 · 28-oct a 30-oct"]
   end
   subgraph Fuera["Fuera de la Etapa 1 (P-025, 26-oct): alcance flexible R-01"]
     EPATC08["EP-08 · EntregaFest: contención y derivación en vivo<br/>Dev 1 · se retoma en una etapa posterior"]
-    DEP14["DEP-14 · Proveedor de IA<br/>no aplica en la Etapa 1 · ED-17"]
   end
   DEP01 --> EPATC01
   DEP01 --> EPATC04
@@ -240,6 +240,7 @@ flowchart LR
   DEP11 --> EPATC10
   DEP12 --> EPATC10
   DEP13 --> EPATC10
+  DEP14 --> EPATC09
   DEP15 --> EPATC11
   EPATC01 -..-> EPATC03
   EPATC01 -..-> EPATC11
@@ -264,7 +265,7 @@ flowchart LR
   class DEP11 eval
   class DEP12 eval
   class DEP13 eval
-  class DEP14 fuera
+  class DEP14 pend
   class DEP15 pend
   class EPATC01,EPATC02,EPATC03,EPATC04,EPATC05,EPATC06,EPATC07,EPATC09,EPATC10,EPATC11 ep
   class EPATC08 fuera
@@ -276,7 +277,7 @@ Fuente: PLT-01 v1.3 §4, con los 10 riesgos más relevantes de la Etapa 1. El eq
 
 | ID | Riesgo | Prob. | Impacto | Nivel | Mitigación / contingencia | Dueño |
 |---|---|---|---|---|---|---|
-| R-01 | Plan con poca holgura: 243 h comprometidas de 252 h de capacidad (96 %); Dev 4 al 98 % | Alta | Alto | ALTO | Alcance «flexible» (RF-048, 053, 037-039) definido de antemano; control de alcance el jue 29-oct; las prioridades 1-3 (HU-043, 050, 067) se construyen primero | PO |
+| R-01 | Plan con poca holgura: 243 h comprometidas de 252 h de capacidad (96 %); Dev 4 al 98 % | Alta | Alto | ALTO | Alcance «flexible» (RF-048, 053, 037-039) definido de antemano (desde el 3-nov, RF-048 ya no es flexible: entra con el Núcleo de IA y sus horas están por estimar por el equipo: riesgo crítico para el PO); control de alcance el jue 29-oct; las prioridades 1-3 (HU-043, 050, 067) se construyen primero | PO |
 | R-02 | APIs externas no disponibles en el plazo (SIGDA/TAXON, call center, Legal, Cobranza, motor de José) | Alta | Alto | ALTO | Contratos de interfaz y simuladores cerrados en la etapa de diseño (20-oct); pase a producción de cada integración condicionado a su API real | Líder técnico |
 | R-03 | Matriz SLA y plazos de línea de la Mesa SGD sin definir al iniciar el motor SLA (jue 22-oct) | Alta | Alto | ALTO | Matriz provisional parametrizable firmada por Gerencia ATC al cierre de diseño (20-oct) | Gerencia ATC |
 | R-04 | Calidad del código generado con IA (errores sutiles, seguridad, deuda técnica) | Media | Alto | ALTO | Revisión de pares obligatoria, pruebas automatizadas generadas y revisadas por el desarrollador, análisis SAST y guía de prompts del equipo | Líder técnico |
@@ -298,7 +299,7 @@ Matriz de probabilidad por impacto:
 | **Baja** |  |  | R-09 |
 
 Según el PLT-01, los más urgentes son R-01 (plan con poca holgura), R-02 (APIs externas) y R-03
-(matriz SLA, que se necesitaba al cierre de diseño del 20-oct). **R-01 (26-oct, P-025):** el R-01 es del PO. El equipo activó el 26-oct el recorte del alcance flexible que el PO previó en su mitigación (salen HU-037, 038, 039, 048 y 053) para dar cabida a las 28 h de DT-02; el PO conserva la decisión de revertirlo. Queda un **sobrecosto real de 7 h** (§1), con dueño el PO; R-09 ya no tiene alcance flexible para replanificar. Los de nivel ALTO (10 de 12) se revisan
+(matriz SLA, que se necesitaba al cierre de diseño del 20-oct). **R-01 (26-oct, P-025):** el R-01 es del PO. El equipo activó el 26-oct el recorte del alcance flexible que el PO previó en su mitigación (salen HU-037, 038, 039, 048 y 053) para dar cabida a las 28 h de DT-02; el PO conserva la decisión de revertirlo. Queda un **sobrecosto real de 7 h** (§1), con dueño el PO; R-09 ya no tiene alcance flexible para replanificar. **Actualización del 3-nov:** HU-048 vuelve a la Etapa 1 y entran HU-068 a HU-072 (Núcleo de IA, ED-29); el sobrecosto de 7 h queda sin las horas del Núcleo de IA (HU-048 y HU-068 a HU-072), por estimar por el equipo; R-01 riesgo crítico para el PO (por decidir: recalcular el sobrecosto y la holgura cuando el equipo estime las horas). Los de nivel ALTO (10 de 12) se revisan
 en la daily.
 
 Supuestos (PLT-01 v1.3, del PO, autor del plan):
@@ -332,6 +333,7 @@ Nota del equipo sobre RES-03 (ED-28): el art. 24.1 de la Ley 29571, con el texto
 | v0.10 | 2026-10-28 | Jesús Chávez Elías, con IA (Claude) | Cruce del Líder Técnico del 28-oct (C14 a C20), que manda sobre «no se envían correos»: DEP-16 y `PJ05-DEP-nn` enlazadas con la solicitud S28-1 a S28-8 (a enviar por el equipo; `roles-y-permisos-atc.md` §13); claim `party_id` pedido (S28-4), sin lectura de `IDN_USER_ACCOUNT`; R-11, R-12 y H-08 con la nota C-12 (emisor de pruebas solo en local; no es riesgo aceptado por el Líder Técnico). No cambia ninguna fecha, hora ni épica | |
 | v0.12 | 2026-10-29 | Jesús Chávez Elías, con IA (Claude) | revisión del Líder Técnico del 29-oct (puntos 1 a 7): se retira el plan B de la UAT (H-08 y R-12: si Control de acceso no está en PRE la UAT se reprograma; emisor de pruebas solo en local; R-11 en revisión); la UAT exige Control de acceso en PRE (no DEV); DEP-16 con una sola lectura (texto de la v0.9 pasado a nota superada; `party_id` en S28-4, sin fecha comprometida, sin plan B); S28 preparada y aún no enviada, S28-8 corregido; ADR-022 aprobado según el Líder Técnico y 108 tareas sin registrar hasta D1 a D5. No cambia ninguna fecha, hora, cifra ni estado | |
 | v0.13 | 2026-10-29 | Jesús Chávez Elías, con IA (Claude) | Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct | |
+| v0.14 | 2026-11-03 | Jesús Chávez Elías, con IA (Claude) | El Núcleo de IA entra en la Etapa 1 (ED-29; ADR-007 v0.9): HU-048 vuelve y se suman HU-068 a HU-072 (propuestas, FT-19); «Siguiente» queda con EP-08 y HU-053 (11 h); DEP-14 vuelve a aplicar y se enlaza con EP-09; R-01 con la nota de horas por estimar. Cifras del plan (57 HU, 227 h, 243 h, 255 h) sin cambio y sin las horas del Núcleo | |
 
 Aprueba: PO. Solo `estado: approved` en `origin/main` (o la aprobación en Nexora) es evidencia.
 
@@ -366,3 +368,7 @@ Historial: 0.12 · 2026-10-29 · Jesús Chávez Elías, con IA · Revisión del 
 Actualizado el 29-oct-2026 (v0.13) por Jesús Chávez Elías con IA (Claude): registro del envío de la solicitud S28 a Sony Montoya el 29-oct, con copia al Líder Técnico. — Revisado por: (pendiente)
 
 Historial: 0.13 · 2026-10-29 · Jesús Chávez Elías, con IA · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)
+
+Actualizado el 3-nov-2026 (v0.14) por Jesús Chávez Elías con IA (Claude): el Núcleo de IA entra en la Etapa 1 (ED-29, ADR-007 v0.9); DEP-14 vuelve a aplicar; HU-048 y HU-068 a HU-072 en FT-19 con horas por estimar. — Revisado por: (pendiente)
+
+Historial: 0.14 · 2026-11-03 · Jesús Chávez Elías, con IA · Núcleo de IA en la Etapa 1: HU-048 vuelve, HU-068 a HU-072 propuestas, DEP-14 aplica, «Siguiente» con EP-08 y HU-053 (11 h), R-01 con horas por estimar. — Revisado por: (pendiente)

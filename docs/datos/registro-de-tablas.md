@@ -4,10 +4,10 @@ tipo: "spec"
 titulo: "Registro de tablas de ATC en la base única: qué crea, qué lee y qué escribe en otro dominio"
 estado: "draft"
 producto: "Aybar Atiende - Plataforma ATC"
-version: "0.9"
+version: "0.10"
 owner: "Brayan Hurtado (Dev 1)"
 aprobadores: [tech_lead, data_chief]
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: [ADR-001, ADR-003, ADR-005, ADR-008, ADR-009, ADR-013, SPEC-DATOS-DICCIONARIO, SPEC-DATOS-ACTA-F4, SPEC-ARQ-MIGRACION]
 tags: [datos, base-unica, gobierno-de-datos, f4, g3]
 ---
@@ -80,12 +80,12 @@ Las columnas que guardan a un colaborador (`CreatedByPartyID`, `CurrentOwnerPart
 
 El v7 no los trae. El equipo decidió crearlos como tablas o columnas del fragmento SERVICE, que migra ATC; van en el acta F4 (H-03), lista para la firma del Data Chief.
 
-**Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`).** HU-ATC-037, 038, 039, 048 y 053 salen de la Etapa 1. Dos cambios de esta tabla solo los usan ellas y **no se crean en la Etapa 1**: `SVC_AI_SUGGESTION_LOG` (HU-048) y el caso sensible del evento (HU-037 a 039); siguen documentados como cambio al v7 y se crean cuando entren. La búsqueda vectorial de HU-053 tampoco se activa. Los demás cambios no cambian.
+**Etapa 1 (P-025, decidida por el equipo el 26-oct-2026; `analisis/decisiones.md`; actualizada el 3-nov-2026 con ED-29).** HU-ATC-037, 038, 039 y 053 salen de la Etapa 1. **Núcleo de IA (ED-29, ADR-007 v0.9): `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) sí se crea en la Etapa 1**, con la migración de ATC (HU-048 y HU-068 a HU-072, propuestas), ampliada con `estado` y `motivo de escalamiento`: es un cambio al v7 en el acta F4, pendiente de firma del Data Chief (ED-23). El caso sensible del evento (HU-037 a 039) sigue sin crearse en la Etapa 1: se crea cuando entren esas HU. La búsqueda vectorial de HU-053 tampoco se activa, y `SVC_SEARCH_INDEX` (ENT-SVC-017) sigue como colección del almacén de lectura (HU-049); no se activa su búsqueda por significado. Los embeddings de los corpus de estilo y políticas del módulo `assistant` necesitan una tabla de fragmentos que no existe en el v7: **a definir en el acta F4**. Los demás cambios no cambian. *Texto del 26-oct, superado:* «`SVC_AI_SUGGESTION_LOG` (HU-048) no se crea en la Etapa 1».
 
 | Cambio al v7 | Para qué | Historias o ADR | Decisión |
 |---|---|---|---|
 | `SVC_OUTBOX_EVENT` (propia, fragmento 10) y la lista `SVC_OUTBOX_EVENT_TYPE` | Outbox transaccional del servicio (DT-02). ADR-013 la elige porque `INTG_OUTBOX_EVENT` del v7 es para envíos a sistemas externos y no sirve como outbox de ATC; es el cambio al v7 que se presenta. Columnas en ADR-013, punto 6, entre ellas `UserAccountID` (el `user_account_id` del token de quien hizo el cambio; nulo si el evento lo origina un job; sin FK: es una tabla técnica que se purga a los 7 días). Sin datos personales y sin `IntegrityHash`; se purga a los 7 días | ADR-013; ED-23 | Decidido (ED-23) |
-| `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) | Registro de cada sugerencia de IA y su decisión, sin datos personales | ADR-007; HU-048; ED-23 | Decidido (ED-23) · no se crea en la Etapa 1 (P-025); se crea cuando entre HU-048 |
+| `SVC_AI_SUGGESTION_LOG` (ENT-SVC-016) | Registro de cada sugerencia de IA y su decisión, sin datos personales | ADR-007 v0.9; HU-048 y HU-068 a HU-072 (propuestas); ED-23 | Decidido (ED-23) · **se crea en la Etapa 1** con la migración de ATC (ED-29), ampliada con estado y motivo de escalamiento: cambio al v7 en el acta F4, pendiente de firma del Data Chief. Columnas de ADR-007 (sin texto enviado ni devuelto); tipos y largos, en el acta F4 |
 | `SVC_WORKFLOW_DEFINITION` (ENT-SVC-014) y `SVC_WORKFLOW_ACTIVITY`, con su versión | Flujo por tipo, subtipo y área, versionado; el ticket congela su versión (HU-043 CA-02 y CA-06) | ADR-008; HU-043; ED-15 | Decidido (ED-23) |
 | `MAE_TICKET_SUBTYPE` | Subtipo del ticket | ADR-008; HU-043, HU-064; ED-15 | Decidido (ED-23) |
 | `SVC_TICKET_SLA_PAUSE` y la columna `AutoCloseBusinessDays` de `MAE_SLA_POLICY` (valor inicial 5) | Pausas del SLA (también la suspensión por reclamo) y días hábiles de espera antes del cierre automático | ADR-008; HU-066, HU-056; ED-15 | Decidido (ED-23) |
@@ -105,7 +105,7 @@ El v7 no los trae. El equipo decidió crearlos como tablas o columnas del fragme
 | `SVC_NOTIFICATION_LOG` | Constancia del correo de asignación (destinatario como `PartyID`, canal, fecha y estado de entrega), sin datos del cliente. `NEX_NOTIFICATION_LOG` no se usa: es de un fragmento sin dueño en la Etapa 1 | HU-055; ED-23 | Decidido (ED-23) |
 | Listas nuevas de SERVICE en las listas propias de ATC (`svc_generic_list_value`; ya no en `MAE_GENERIC_LIST_VALUE`, de PJ-05): `SVC_COMPLAINT_STATUS`, `SVC_COMPLAINT_TYPE`, `SVC_COMPLAINT_APPEAL_LEVEL`, `SVC_SLA_TIME_BASIS`, `SVC_CASE_CLOSURE_STATUS`, `SVC_WARRANTY_DEFECT_TYPE`, `SVC_BUS_BOOKING_STATUS`, `SVC_DEFAULT_CASE_STATUS` y `SVC_DELIVERY_STATUS`, y los valores nuevos `REASSIGNMENT_WORKLOAD` y `CALL`; semilla de `MAE_TICKET_TYPE` y `MAE_TICKET_SUBTYPE` con el catálogo del piloto (15 combinaciones, entre ellas «Validación de identidad (prospecto)», C-06) | Códigos que el Excel no da (`datos/diccionario.md`, «Listas de valores» y «Catálogo del piloto») | ED-14; ED-19; ED-26 | Decidido (ED-23 y ED-26) |
 
-**No es cambio al v7: `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05).** El índice de búsqueda de HU-049 y HU-053 no es una tabla de la base única: es una **colección del almacén de lectura**, con identificadores y metadatos de permisos y sin datos personales, que escribe el proyector (ADR-003 y ADR-012). La búsqueda por significado de HU-053 (alcance flexible, R-01; fuera de la Etapa 1 por P-025: se activa cuando entre) usa la búsqueda vectorial del mismo servicio con filtro previo por permisos, con los vectores de `text-embedding-3-small` (ADR-007 y ADR-012; ED-17).
+**No es cambio al v7: `SVC_SEARCH_INDEX` (ENT-SVC-017 del PLT-05).** El índice de búsqueda de HU-049 y HU-053 no es una tabla de la base única: es una **colección del almacén de lectura**, con identificadores y metadatos de permisos y sin datos personales, que escribe el proyector (ADR-003 y ADR-012). La búsqueda por significado de HU-053 (alcance flexible, R-01; fuera de la Etapa 1 por P-025 y, desde el 3-nov-2026, porque los documentos del cliente no llevan índice vectorial —búsqueda por metadatos exactos, HU-052; ADR-007 v0.9—: se replantea antes de retomarla; `SVC_SEARCH_INDEX` sigue como colección del almacén de lectura para HU-049) usa la búsqueda vectorial del mismo servicio con filtro previo por permisos, con los vectores de `text-embedding-3-small` (ADR-007 y ADR-012; ED-17).
 
 ### 3.1 Historial de Flyway en la base única
 
@@ -226,6 +226,7 @@ Riesgo: igual que en PJ-05 (su R-03), ATC carga con tablas de otros dominios has
 | 0.7 | 2026-10-28 | Jesús Chávez Elías, con IA | ATC se adapta a PJ-05 (C1, C2, C3, C7, C11 de la especificación del 28-oct): §4 y §4.1 sin «el dueño otorga el `SELECT` por columna» (PJ-05 solo define 4 roles `app_idn_*`; supuesto de diseño); ATC no escribe en `MAE_GENERIC_LIST_VALUE`, `MAE_CHANNEL` ni `GOV_INTEGRITY_EXCEPTION`: listas, canal y bitácora de excepciones propios de ATC (§3, §5, §6; `PARALLEL_RECORD` solo en la propia); `shedlock_atc`; mapa documento → `PartyID` y topología de red como supuestos; §1 con roles de base, listas e `IntegrityHash`, canal, estados de cuenta y nombre no creado (H-30) |
 | 0.8 | 2026-10-28 | Jesús Chávez Elías, con IA | Cruce del Líder Técnico del 28-oct (C14, C19 punto 8, C20): retirada la lectura de `IDN_USER_ACCOUNT` (§4, §4.1, §8; `PartyID` por claim `party_id`); correspondencia `MAE_AREA` ↔ `NEX_COMPANY_AREA` a Gobierno de Datos; R-11/R-12 en revisión |
 | 0.9 | 2026-10-29 | Jesús Chávez Elías, con IA | revisión del Líder Técnico del 29-oct (puntos 2, 4 y 6): emisor de pruebas solo en local, sin plan B en PRE (la UAT se reprograma); UAT exige Control de acceso en PRE (no DEV); ED-03 interina sin guardar copias (S28-4 con consulta por API); R-11 en revisión |
+| 0.10 | 2026-11-03 | Jesús Chávez Elías, con IA | Núcleo de IA en la Etapa 1 (ED-29, ADR-007 v0.9): `SVC_AI_SUGGESTION_LOG` se crea en la Etapa 1 (ampliada con estado y motivo de escalamiento; cambio al v7 en el acta F4, pendiente de firma del Data Chief); `SVC_SEARCH_INDEX` no cambia (colección del almacén de lectura, HU-049); tabla de fragmentos de embeddings a definir en el acta F4 |
 
 Generado por IA: borrador completo (Claude, 26-oct-2026) a partir de la revisión del Líder Técnico del 22-oct (C-07 y C-11; DT-03, DT-04 y DT-06), el diccionario de datos de ATC y el paquete aprobado de Control de acceso (PJ-05). — Revisado por: (pendiente)
 

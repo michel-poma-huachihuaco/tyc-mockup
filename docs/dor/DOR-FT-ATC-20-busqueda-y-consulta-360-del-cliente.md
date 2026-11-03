@@ -4,17 +4,17 @@ tipo: dor
 titulo: "Definition of Ready - FT-ATC-20 Búsqueda y consulta 360 del cliente"
 estado: draft
 producto: "Aybar Atiende · Plataforma ATC (DOM-SVC-001)"
-version: "1.3.9"
+version: "1.3.10"
 owner: "Eddie Huamaní (PO)"
 aprobadores: []
-fecha: "2026-10-29"
+fecha: "2026-11-03"
 relacionados: ["FT-ATC-20", "EP-ATC-10", "HU-ATC-049", "HU-ATC-050", "HU-ATC-051", "HU-ATC-052", "HU-ATC-053"]
 tags: [dor, plt-05, g4]
 ---
 
 # PLT-05 - Definition of Ready (G4) - FT-ATC-20 Búsqueda y consulta 360 del cliente
 
-**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; se retoma en una etapa posterior). Para la Etapa 1 este DoR se evalúa con las HU-049 a 052 (17 h); la DEP-06 y la DEP-14 solo las traía HU-053 y no aplican en la Etapa 1.
+**Alcance en la Etapa 1:** la Etapa 1 no incluye HU-053 (fuera por decisión del equipo del 26-oct-2026, P-025: alcance flexible R-01 del PO; **desde el 3-nov-2026 la razón es otra**: los documentos del cliente no llevan índice vectorial —búsqueda por metadatos exactos, HU-052— y la HU se replantea antes de retomarla). Para la Etapa 1 este DoR se evalúa con las HU-049 a 052 (17 h); la DEP-06 solo la traía HU-053 y no aplica en la Etapa 1; la DEP-14 **vuelve a aplicar en la Etapa 1** por el Núcleo de IA (FT-ATC-19; mientras no esté, simulador con el mismo contrato, ADR-004) y se evalúa en el DoR de FT-ATC-19, no en las HU-049 a 052.
 
 | Ítem evaluado | Product Owner | Líder técnico |
 |---|---|---|
@@ -75,7 +75,7 @@ Supuesto de diseño de ATC añadido el 28-oct-2026 (HU-ATC-050 y HU-ATC-051): ma
 | ADR-04 | Integraciones contract-first: adaptador + simulador; la API real se activa cuando existe | APIs externas sin fecha (R-02) | Técnico | Propuesta |
 | ADR-05 | Jobs batch idempotentes para SLA y plazo legal con calendario MAE_TIME/MAE_HOLIDAY | Plazos en días hábiles y feriados | Técnico | Propuesta |
 | ADR-06 | Evidencia probatoria en S3 con Object Lock y checksum | Libro de Reclamaciones y casos sensibles | Técnico | Propuesta |
-| ADR-07 | IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide | RN-SVC-032 · RNF-SEC-009 | Funcional y técnico | Propuesta |
+| ADR-07 | IA solo vía servicio de asistencia, con anonimización y registro; la IA sugiere, el gestor decide (v0.9, 3-nov-2026: incorpora el Núcleo de IA en la Etapa 1; pendiente de aprobación del Líder Técnico) | RN-SVC-032 · RNF-SEC-009 | Funcional y técnico | Propuesta |
 | ADR-08 | Motor de flujos configurable por tipo + subtipo + área, versionado; el ticket congela su versión | HU-043 (prioridad 1) · RN-SVC-045 | Funcional y técnico | Propuesta |
 | ADR-09 | Usuarios, roles y líderes locales en Etapa 1 detrás de una interfaz de identidad | — | Técnico | Propuesta |
 | ADR-10 | Visor 3D en el navegador (canvas isométrico) alimentado por eventos en tiempo real (WebSocket), con vista 2D alternativa | HU-067 (prioridad 3) · sin plugins ni GPU dedicada | Técnico | Propuesta |
@@ -88,7 +88,7 @@ Supuesto de diseño de ATC añadido el 28-oct-2026 (HU-ATC-050 y HU-ATC-051): ma
 | ID | Riesgo | Prob. | Impacto | Mitigación | Dueño | Estado |
 |---|---|---|---|---|---|---|
 | R-02 | APIs externas no disponibles en el plazo (SIGDA/TAXON, call center, Legal, Cobranza, motor de José) | Alta | Alto | Contratos de interfaz y simuladores cerrados en la etapa de diseño (20-oct); pase a producción de cada integración condicionado a su API real | Líder técnico | Abierto |
-| R-07 | Datos personales expuestos en bitácoras, búsqueda, Mi Portal o prompts de IA (Ley 29733) | Media | Alto | DLP (RNF-SEC-008), anonimización antes de la IA (RNF-SEC-009), permisos del origen (RNF-SEC-010) y visibilidad del cliente (RN-SVC-044) | Seguridad TI |  |
+| R-07 | Datos personales expuestos en bitácoras, búsqueda, Mi Portal o prompts de IA (Ley 29733) | Media | Alto | DLP (RNF-SEC-008), anonimización antes de la IA (RNF-SEC-009; con el Núcleo de IA en la Etapa 1, ADR-007 v0.9: anonimización antes del proveedor y guardianes de seguridad y calidad), permisos del origen (RNF-SEC-010) y visibilidad del cliente (RN-SVC-044) | Seguridad TI |  |
 
 ## 6 Decisión y aprobación
 
@@ -139,3 +139,5 @@ Actualizado el 29-oct-2026 (v1.3.8) por Jesús Chávez Elías con IA (Claude): r
 Historial: 1.3.9 · 2026-10-29 · Jesús Chávez Elías, con IA · Registrado el envío de la solicitud S28 a Sony Montoya el 29-oct. — Revisado por: (pendiente)
 
 Actualizado el 29-oct-2026 (v1.3.9) por Jesús Chávez Elías con IA (Claude): registro del envío de la solicitud S28 a Sony Montoya el 29-oct, con copia al Líder Técnico. — Revisado por: (pendiente)
+
+Historial: 1.3.10 · 2026-11-03 · Jesús Chávez Elías, con IA · El Núcleo de IA entra en la Etapa 1 (decisión ED-29, `adr/ADR-007` v0.9, pendiente de aprobación del Líder Técnico): se actualiza la fila ADR-07 y la mitigación de R-07. Nota de alcance: HU-053 sigue fuera por otra razón (sin índice vectorial); DEP-14 vuelve a aplicar. No cambian criterios, horas ni la decisión del DoR; no se borra texto del PO. — Revisado por: (pendiente)
