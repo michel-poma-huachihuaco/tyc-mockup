@@ -7,11 +7,13 @@ import {
   fmtFecha,
   fmtFechaHora,
   haceHoras,
+  restarDiasHabiles,
   sumarDiasHabiles,
   sumarHorasHabiles,
   type TicketAtc,
   type VistaAtc,
 } from './datos-atc';
+import { alertasLegalesDe, huellaSimulada } from './libro-reclamaciones';
 
 export type RolPrototipoAtc =
   | 'GESTOR'
@@ -321,19 +323,12 @@ export interface AsientoLibroDetalle {
   readonly dni: string;
   readonly registrado: Date;
   readonly registradoPor: string;
+  /** 15 días hábiles improrrogables desde el registro (Ley 31435, ED-28). */
   readonly venceOriginal: Date;
-  venceProrrogado: Date | null;
   readonly hechos: string;
   readonly pedido: string;
   readonly monto: number | null;
   readonly moneda: 'PEN' | 'USD' | null;
-  prorroga: {
-    justificacion: string;
-    canal: string;
-    fechaComunicacion: Date;
-    cargoNombre: string;
-    sha256: string;
-  } | null;
   respuesta: {
     fecha: Date;
     diasHabilesUsados: number;
@@ -357,7 +352,7 @@ export interface AsientoLibroDetalle {
   historialPlazo: {
     id: string;
     fecha: Date;
-    evento: 'PLAZO_ORIGINAL' | 'PRORROGA' | 'RESPUESTA';
+    evento: 'PLAZO_ORIGINAL' | 'RESPUESTA';
     detalle: string;
     autor: string;
   }[];
@@ -852,6 +847,133 @@ const FLUJOS_DE_SUBTIPO: FlujoTipoConfig[] = [
   flujoGeneral('ING', 'Ingreso a proyecto', 'ATC', [{ nombre: 'Atención', responsable: 'Jorge Zambrano', horas: 4 }]),
   flujoGeneral('BUS', 'Reserva de bus', 'ATC', [{ nombre: 'Atención', responsable: 'Lucía Benavides', horas: 24 }]),
 ];
+
+/** Asientos de ejemplo enlazados a tickets de Queja y Reclamo reales, en distintos puntos del plazo de 15 días hábiles. */
+export function crearAsientosLibroDetalleDemo(): AsientoLibroDetalle[] {
+  const armar = (d: {
+    id: string;
+    codigo: string;
+    empresaId: string;
+    establecimiento: string;
+    ticketNum: string;
+    tipo: 'RECLAMO' | 'QUEJA';
+    consumidor: string;
+    dni: string;
+    diasDesdeRegistro: number;
+    registradoPor: string;
+    hechos: string;
+    pedido: string;
+    monto: number | null;
+    moneda: 'PEN' | 'USD' | null;
+    respondidoHace?: number;
+    apelacion?: AsientoLibroDetalle['apelaciones'][number];
+  }): AsientoLibroDetalle => {
+    const registrado = restarDiasHabiles(AHORA_BASE, d.diasDesdeRegistro);
+    const venceOriginal = sumarDiasHabiles(registrado, 15);
+    const fechaRespuesta = d.respondidoHace === undefined ? null : restarDiasHabiles(AHORA_BASE, d.respondidoHace);
+    const carta = `Carta_Respuesta_${d.codigo}.pdf`;
+    const cargo = `Cargo_Recepcion_${d.codigo}.pdf`;
+    return {
+      id: d.id,
+      codigo: d.codigo,
+      empresaId: d.empresaId,
+      establecimiento: d.establecimiento,
+      ticketNum: d.ticketNum,
+      tipo: d.tipo,
+      consumidor: d.consumidor,
+      dni: d.dni,
+      registrado,
+      registradoPor: d.registradoPor,
+      venceOriginal,
+      hechos: d.hechos,
+      pedido: d.pedido,
+      monto: d.monto,
+      moneda: d.moneda,
+      respuesta: fechaRespuesta
+        ? {
+            fecha: fechaRespuesta,
+            diasHabilesUsados: d.diasDesdeRegistro - (d.respondidoHace ?? 0),
+            resumen: `Se atendió el ${d.tipo === 'RECLAMO' ? 'reclamo' : 'la queja'} de ${d.consumidor} y se comunicó la solución con el cargo de recepción.`,
+            firmante: 'Patricia Vílchez',
+            cartaNombre: carta,
+            cartaSha256: huellaSimulada(carta),
+            cargoNombre: cargo,
+            cargoSha256: huellaSimulada(cargo),
+            derechoIndecopi: true,
+          }
+        : null,
+      apelaciones: d.apelacion ? [d.apelacion] : [],
+      historialPlazo: [
+        {
+          id: `hp-${d.id}-1`,
+          fecha: registrado,
+          evento: 'PLAZO_ORIGINAL',
+          detalle: `Vence ${fmtFecha(venceOriginal)} (15 días hábiles improrrogables)`,
+          autor: d.registradoPor,
+        },
+        ...(fechaRespuesta
+          ? [
+              {
+                id: `hp-${d.id}-2`,
+                fecha: fechaRespuesta,
+                evento: 'RESPUESTA' as const,
+                detalle: 'Respuesta formal registrada con carta y cargo.',
+                autor: 'Patricia Vílchez',
+              },
+            ]
+          : []),
+      ],
+    };
+  };
+  return [
+    armar({
+      id: 'as-1', codigo: 'ALT-2026-0042', empresaId: 'ALT', establecimiento: 'Oficina Carabayllo', ticketNum: 'ALT-001204',
+      tipo: 'RECLAMO', consumidor: 'Jorge Mamani Ccori', dni: '7013••••', diasDesdeRegistro: 13, registradoPor: 'Lucía Benavides',
+      hechos: 'Demora en la entrega de la minuta de independización del Lote F-03 y cobro de gastos notariales no pactados.',
+      pedido: 'Entrega de la minuta firmada y devolución de los gastos notariales cobrados.', monto: 1850, moneda: 'PEN',
+    }),
+    armar({
+      id: 'as-2', codigo: 'AIN-2026-0017', empresaId: 'AIN', establecimiento: 'Caseta Villa Sol II', ticketNum: 'AIN-000483',
+      tipo: 'QUEJA', consumidor: 'Luis Paredes Soto', dni: '1098••••', diasDesdeRegistro: 4, registradoPor: 'Mateo Ríos',
+      hechos: 'Demora en la atención presencial en la caseta de Villa Sol II.',
+      pedido: 'Atención sin esperas y una disculpa formal.', monto: null, moneda: null,
+    }),
+    armar({
+      id: 'as-3', codigo: 'ALT-2026-0039', empresaId: 'ALT', establecimiento: 'Oficina Carabayllo', ticketNum: 'ALT-001188',
+      tipo: 'RECLAMO', consumidor: 'Carmen Rojas Poma', dni: '4039••••', diasDesdeRegistro: 15, registradoPor: 'Lucía Benavides',
+      hechos: 'Penalidad aplicada en la liquidación de la resolución de contrato.',
+      pedido: 'Anular la penalidad y recalcular la liquidación.', monto: 420, moneda: 'PEN', respondidoHace: 2,
+      apelacion: {
+        id: 'ap-3', instancia: 'INDECOPI', numeroCaso: '0457-2026/ILN-PS0', presentada: AHORA_BASE, estado: 'UNDER_REVIEW',
+        resolucion: null,
+        historial: [{ fecha: AHORA_BASE, cambio: 'Pendiente → En revisión', autor: 'Patricia Vílchez', nota: 'Descargos presentados ante INDECOPI.' }],
+      },
+    }),
+    armar({
+      id: 'as-4', codigo: 'AIN-2026-0108', empresaId: 'AIN', establecimiento: 'Sede Central San Isidro', ticketNum: 'AIN-000504',
+      tipo: 'QUEJA', consumidor: 'Raúl Espinoza Vera', dni: '4219••••', diasDesdeRegistro: 12, registradoPor: 'Mateo Ríos',
+      hechos: 'Demora en la conciliación del voucher pagado en el agente BCP #88231.',
+      pedido: 'Reconocimiento inmediato de la cuota 18 y constancia de no adeudo.', monto: 1250, moneda: 'PEN', respondidoHace: 1,
+      apelacion: {
+        id: 'ap-4', instancia: 'INTERNA', numeroCaso: 'AP-INT-2026-019', presentada: AHORA_BASE, estado: 'UNDER_REVIEW',
+        resolucion: null,
+        historial: [{ fecha: AHORA_BASE, cambio: 'Pendiente → En revisión', autor: 'Patricia Vílchez', nota: 'Revisión de intereses compensatorios solicitada por el titular.' }],
+      },
+    }),
+    armar({
+      id: 'as-5', codigo: 'ALT-2026-0044', empresaId: 'ALT', establecimiento: 'Oficina Carabayllo', ticketNum: 'ALT-001215',
+      tipo: 'RECLAMO', consumidor: 'Juana Rosa Cáceres', dni: '4192••••', diasDesdeRegistro: 20, registradoPor: 'Lucía Benavides',
+      hechos: 'Reclama la entrega del lote prometida para setiembre.',
+      pedido: 'Fecha cierta de entrega y compensación por la demora.', monto: null, moneda: null,
+    }),
+    armar({
+      id: 'as-6', codigo: 'AIN-2026-0109', empresaId: 'AIN', establecimiento: 'Sede Central San Isidro', ticketNum: 'AIN-000511',
+      tipo: 'RECLAMO', consumidor: 'Guillermo Tapia Flores', dni: '4381••••', diasDesdeRegistro: 2, registradoPor: 'Mateo Ríos',
+      hechos: 'Cobro duplicado de la cuota 12 en el estado de cuenta.',
+      pedido: 'Devolución del cobro duplicado.', monto: 780, moneda: 'PEN',
+    }),
+  ];
+}
 
 @Injectable({ providedIn: 'root' })
 export class EstadoPrototipoAtcService {
@@ -1864,130 +1986,10 @@ export class EstadoPrototipoAtcService {
   ]);
 
   /* ── 8. Libro de Reclamaciones (Asientos detallados, Alertas legales y Huérfanos) ── */
-  readonly asientosLibroDetalle = signal<AsientoLibroDetalle[]>([
-    {
-      id: 'as-1',
-      codigo: 'ALT-2026-0042',
-      empresaId: 'ALT',
-      establecimiento: 'Libro virtual · Mi Portal',
-      ticketNum: 'ALT-001204',
-      tipo: 'RECLAMO',
-      consumidor: 'Jorge Mamani Ccori',
-      dni: '7013••••',
-      registrado: sumarDiasHabiles(AHORA_BASE, -13),
-      registradoPor: 'Lucía Benavides',
-      venceOriginal: sumarDiasHabiles(AHORA_BASE, 2),
-      venceProrrogado: null,
-      hechos:
-        'El consumidor manifiesta demora en la entrega de minuta de independización del Lote F-03 y solicita suspensión de cobro de mora mientras se resuelve.',
-      pedido: 'Entrega de minuta firmada y exoneración de intereses moratorios de las cuotas 20 a 22.',
-      monto: 2940,
-      moneda: 'PEN',
-      prorroga: null,
-      respuesta: null,
-      apelaciones: [],
-      historialPlazo: [
-        {
-          id: 'hp-1',
-          fecha: sumarDiasHabiles(AHORA_BASE, -13),
-          evento: 'PLAZO_ORIGINAL',
-          detalle: `Vence ${fmtFecha(sumarDiasHabiles(AHORA_BASE, 2))} (15 días hábiles Ley 29571)`,
-          autor: 'Lucía Benavides',
-        },
-      ],
-    },
-    {
-      id: 'as-2',
-      codigo: 'AIN-2026-0108',
-      empresaId: 'AIN',
-      establecimiento: 'Sede Central San Isidro',
-      ticketNum: 'AIN-000471',
-      tipo: 'QUEJA',
-      consumidor: 'María Quispe Huamán',
-      dni: '4521••••',
-      registrado: sumarDiasHabiles(AHORA_BASE, -18),
-      registradoPor: 'Mateo Ríos',
-      venceOriginal: sumarDiasHabiles(AHORA_BASE, -3),
-      venceProrrogado: sumarDiasHabiles(AHORA_BASE, 12),
-      hechos: 'Demora en la conciliación del voucher pagado en agente BCP #88231.',
-      pedido: 'Reconocimiento inmediato de la cuota 18 y constancia de no adeudo.',
-      monto: 1250,
-      moneda: 'PEN',
-      prorroga: {
-        justificacion: 'Se requirió confirmación de cámara de compensación bancaria de fecha 28-sep.',
-        canal: 'Correo electrónico con acuse',
-        fechaComunicacion: sumarDiasHabiles(AHORA_BASE, -4),
-        cargoNombre: 'Cargo_Prorroga_AIN-2026-0108.pdf',
-        sha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
-      },
-      respuesta: {
-        fecha: sumarDiasHabiles(AHORA_BASE, -1),
-        diasHabilesUsados: 17,
-        resumen:
-          'Se concilió satisfactoriamente la operación #88231 y se emitió la constancia de no adeudo sin cargos adicionales.',
-        firmante: 'Patricia Vílchez',
-        cartaNombre: 'Carta_Respuesta_AIN-2026-0108.pdf',
-        cartaSha256: '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-        cargoNombre: 'Cargo_Recepcion_AIN-2026-0108.pdf',
-        cargoSha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-        derechoIndecopi: true,
-      },
-      apelaciones: [
-        {
-          id: 'ap-1',
-          instancia: 'INTERNA',
-          numeroCaso: 'AP-INT-2026-019',
-          presentada: AHORA_BASE,
-          estado: 'UNDER_REVIEW',
-          resolucion: null,
-          historial: [
-            {
-              fecha: AHORA_BASE,
-              cambio: 'Pendiente → En revisión',
-              autor: 'Patricia Vílchez',
-              nota: 'Revisión de intereses compensatorios solicitada por la titular.',
-            },
-          ],
-        },
-      ],
-      historialPlazo: [
-        {
-          id: 'hp-2',
-          fecha: sumarDiasHabiles(AHORA_BASE, -18),
-          evento: 'PLAZO_ORIGINAL',
-          detalle: `Vence ${fmtFecha(sumarDiasHabiles(AHORA_BASE, -3))}`,
-          autor: 'Mateo Ríos',
-        },
-        {
-          id: 'hp-3',
-          fecha: sumarDiasHabiles(AHORA_BASE, -4),
-          evento: 'PRORROGA',
-          detalle: `Prórroga única (+15 d hábiles) · Nuevo vencimiento ${fmtFecha(sumarDiasHabiles(AHORA_BASE, 12))}`,
-          autor: 'Patricia Vílchez',
-        },
-        {
-          id: 'hp-4',
-          fecha: sumarDiasHabiles(AHORA_BASE, -1),
-          evento: 'RESPUESTA',
-          detalle: 'Respuesta formal emitida con carta y cargo SHA-256.',
-          autor: 'Patricia Vílchez',
-        },
-      ],
-    },
-  ]);
+  readonly asientosLibroDetalle = signal<AsientoLibroDetalle[]>(crearAsientosLibroDetalleDemo());
 
-  readonly alertasLegalesLibro = signal([
-    {
-      id: 'al-leg-1',
-      asientoId: 'as-1',
-      codigoAsiento: 'ALT-2026-0042',
-      tipo: 'LEGAL_EXTENSION_WINDOW_CLOSING' as const,
-      vencimientoEvaluado: sumarDiasHabiles(AHORA_BASE, 2),
-      fecha: haceHoras(2),
-      destinatario: 'Patricia Vílchez',
-      canal: 'Consola + Correo Legal',
-    },
-  ]);
+  /** HU-015 CA-01: se calculan del plazo de cada asiento sin respuesta (a 3 d hábiles del vencimiento o vencido). */
+  readonly alertasLegalesLibro = computed(() => alertasLegalesDe(this.asientosLibroDetalle(), AHORA_BASE, diasHabilesEntre));
 
   /* ── 9. Garantías Postventa (Actas de Entrega y Reclamos de Garantía) ── */
   readonly actasEntrega: readonly ActaEntregaGarantia[] = [

@@ -205,23 +205,6 @@ export interface ContratoInmobiliarioAtc {
   readonly cronograma: readonly CuotaCronogramaContratoAtc[];
 }
 
-export interface AsientoLibro {
-  readonly n: string;
-  readonly co: string;
-  readonly est: string;
-  readonly ticket: string;
-  readonly kind: 'RECLAMO' | 'QUEJA';
-  readonly cli: string;
-  readonly reg: Date;
-  readonly amount: string | null;
-  ext: boolean;
-  extJustificacion?: string;
-  resp: Date | null;
-  respResumen?: string;
-  appeal: { to: 'INTERNA' | 'INDECOPI'; st: string; caseNo: string } | null;
-  readonly facts: string;
-}
-
 export interface CasoSgd {
   readonly code: string;
   readonly line: string;
@@ -378,6 +361,18 @@ export function sumarDiasHabiles(inicio: Date, n: number): Date {
   let k = 0;
   while (k < n) {
     d.setDate(d.getDate() + 1);
+    if (esDiaHabil(d)) k++;
+  }
+  return d;
+}
+
+/** Retrocede `n` días hábiles; `sumarDiasHabiles` no admite negativos (devuelve la misma fecha). */
+export function restarDiasHabiles(fin: Date, n: number): Date {
+  const d = new Date(fin);
+  d.setHours(0, 0, 0, 0);
+  let k = 0;
+  while (k < n) {
+    d.setDate(d.getDate() - 1);
     if (esDiaHabil(d)) k++;
   }
   return d;
@@ -2280,53 +2275,6 @@ export function crearTicketsDemo(): TicketAtc[] {
       'Barrera electrónica de garita principal requiere reinicio de sensor óptico',
       { rayo: true, frDue: new Date(AHORA_BASE.getTime() + 9 * 60000) },
     ),
-  ];
-}
-
-export function crearAsientosLibroDemo(): AsientoLibro[] {
-  return [
-    {
-      n: '0042',
-      co: 'ALT',
-      est: 'Oficina Carabayllo',
-      ticket: 'ALT-001204',
-      kind: 'RECLAMO',
-      cli: 'Jorge Mamani Ccori',
-      reg: haceHoras(24 * 9),
-      amount: 'S/ 1,850.00',
-      ext: false,
-      resp: null,
-      appeal: null,
-      facts: 'Demora en entrega de minuta; cobro de gastos notariales no pactados.',
-    },
-    {
-      n: '0017',
-      co: 'AIN',
-      est: 'Caseta Villa Sol II',
-      ticket: 'AIN-000483',
-      kind: 'QUEJA',
-      cli: 'Luis Paredes Soto',
-      reg: haceHoras(24 * 4),
-      amount: null,
-      ext: false,
-      resp: null,
-      appeal: null,
-      facts: 'Demora en atención presencial en caseta.',
-    },
-    {
-      n: '0039',
-      co: 'ALT',
-      est: 'Oficina Carabayllo',
-      ticket: 'ALT-001188',
-      kind: 'RECLAMO',
-      cli: 'Carmen Rojas Poma',
-      reg: haceHoras(24 * 26),
-      amount: 'S/ 420.00',
-      ext: true,
-      resp: haceHoras(24 * 2),
-      appeal: { to: 'INDECOPI', st: 'EN DESCARGOS LEGAL', caseNo: '0457-2026/ILN-PS0' },
-      facts: 'Penalidad aplicada en liquidación de resolución de contrato.',
-    },
   ];
 }
 

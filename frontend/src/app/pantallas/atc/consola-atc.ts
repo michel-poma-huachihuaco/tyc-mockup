@@ -66,16 +66,16 @@ import {
   CONTRATOS_ATC,
   EMPRESAS_AYBAR,
   FUENTES_360,
-  crearAsientosLibroDemo,
   crearAsistentesDemo,
   crearBusesDemo,
   crearCasosMorosidadDemo,
   crearCasosSgdDemo,
   crearGarantiasDemo,
   crearTicketsDemo,
+  fmtFecha,
   fmtFechaHora,
+  sumarDiasHabiles,
   sumarHorasHabiles,
-  type AsientoLibro,
   type ContratoInmobiliarioAtc,
   type CuotaCronogramaContratoAtc,
   type FirmanteContratoAtc,
@@ -91,9 +91,11 @@ import { AsistenteBotAtcComponent } from './asistente-bot-atc';
 import {
   EstadoPrototipoAtcService,
   ROLES_PROTOTIPO_ATC,
+  crearAsientosLibroDetalleDemo,
   type PerfilRolPrototipoAtc,
   type RolPrototipoAtc,
 } from './estado-prototipo-atc';
+import { siguienteCorrelativo } from './libro-reclamaciones';
 import { BarraFiltrosComponent } from './barra-filtros';
 import { FiltroColumnasTablaDirective } from './filtro-columnas-tabla';
 import { VacioFiltrosComponent } from './vacio-filtros';
@@ -511,7 +513,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="morosidad"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -527,7 +528,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="ingreso"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -545,7 +545,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="buses"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -562,7 +561,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="libro"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -578,7 +576,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="sgd"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -594,7 +591,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="garantias"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -610,7 +606,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="reasignar"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -626,7 +621,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="alertas"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -642,7 +636,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="cierre"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -658,7 +651,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="politicas"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -674,7 +666,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="workflow"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -690,7 +681,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="evento"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -710,7 +700,6 @@ interface ItemMenuAtc {
               <app-vista-especializada
                 subvista="torre"
                 [tickets]="ticketsVisibles()"
-                [asientosLibro]="asientosLibro()"
                 [casosSgd]="casosSgd()"
                 [casosMorosidad]="casosMorosidad()"
                 [garantias]="garantias()"
@@ -1651,7 +1640,6 @@ export class ConsolaAtcComponent {
 
   readonly tickets = signal<TicketAtc[]>(crearTicketsDemo());
   readonly ticketSeleccionadoNum = signal<string>('AIN-000482');
-  readonly asientosLibro = signal<AsientoLibro[]>(crearAsientosLibroDemo());
   readonly casosSgd = signal(crearCasosSgdDemo());
   readonly casosMorosidad = signal(crearCasosMorosidadDemo());
   readonly garantias = signal(crearGarantiasDemo());
@@ -2316,13 +2304,13 @@ export class ConsolaAtcComponent {
 
   vaciarConsolaDemo(): void {
     this.tickets.set([]);
-    this.asientosLibro.set([]);
+    this.estadoProto.asientosLibroDetalle.set([]);
     this.avisoSimulacion.set('Consola vacía: prueba los estados sin datos de cada bandeja.');
   }
 
   restaurarConsolaDemo(): void {
     this.tickets.set(crearTicketsDemo());
-    this.asientosLibro.set(crearAsientosLibroDemo());
+    this.estadoProto.asientosLibroDetalle.set(crearAsientosLibroDetalleDemo());
     this.casosSgd.set(crearCasosSgdDemo());
     this.casosMorosidad.set(crearCasosMorosidadDemo());
     this.garantias.set(crearGarantiasDemo());
@@ -2550,31 +2538,16 @@ export class ConsolaAtcComponent {
 
   /** Asiento del Libro de Reclamaciones para un ticket de tipo libro: lo reutiliza Tigo al aprobar el registro. */
   registrarAsientoLibro(ticket: TicketAtc): void {
-    const nro = String(Math.floor(50 + Math.random() * 50)).padStart(4, '0');
-    this.asientosLibro.update((prev) => [
-      {
-        n: nro,
-        co: ticket.co,
-        est: 'Sede Digital / Mi Portal',
-        ticket: ticket.num,
-        kind: ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
-        cli: ticket.cli,
-        reg: AHORA_BASE,
-        amount: null,
-        ext: false,
-        resp: null,
-        appeal: null,
-        facts: ticket.summary,
-      },
-      ...prev,
-    ]);
-    const venceOrig = sumarHorasHabiles(AHORA_BASE, 15 * 9);
+    const detalle = this.estadoProto.asientosLibroDetalle();
+    const establecimiento = 'Libro virtual · Mi Portal';
+    const { numero, codigo } = siguienteCorrelativo(detalle, ticket.co, establecimiento);
+    const venceOrig = sumarDiasHabiles(AHORA_BASE, 15);
     this.estadoProto.asientosLibroDetalle.update((prev) => [
       {
-        id: `lib-${Date.now()}`,
-        codigo: `LR-2026-${nro}`,
+        id: `lib-${numero}-${Date.now()}`,
+        codigo,
         empresaId: ticket.co,
-        establecimiento: 'Sede Digital / Mi Portal',
+        establecimiento,
         ticketNum: ticket.num,
         tipo: ticket.type === 'QUE' ? 'QUEJA' : 'RECLAMO',
         consumidor: ticket.cli,
@@ -2582,12 +2555,10 @@ export class ConsolaAtcComponent {
         registrado: AHORA_BASE,
         registradoPor: this.perspectivaActual().nombre,
         venceOriginal: venceOrig,
-        venceProrrogado: null,
         hechos: ticket.summary,
         pedido: 'Respuesta formal dentro del plazo legal INDECOPI.',
         monto: null,
         moneda: null,
-        prorroga: null,
         respuesta: null,
         apelaciones: [],
         historialPlazo: [
@@ -2595,7 +2566,7 @@ export class ConsolaAtcComponent {
             id: `hp-${Date.now()}`,
             fecha: AHORA_BASE,
             evento: 'PLAZO_ORIGINAL',
-            detalle: 'Apertura de hoja de reclamación con plazo de 15 días hábiles.',
+            detalle: `Apertura de la hoja de reclamación; vence ${fmtFecha(venceOrig)} (15 días hábiles improrrogables).`,
             autor: this.perspectivaActual().nombre,
           },
         ],

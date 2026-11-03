@@ -2937,3 +2937,8 @@ body {
 @media (max-width: 900px) {
   .pl-atc-bandeja :is(th, td):is(:nth-child(1), :nth-child(5), :nth-child(6)) { display: none; }
 }
+
+/* Error de un control suelto (casilla) que no va dentro de un ay-form-field. */
+.pl-atc-error-campo {
+  color: var(--aybar-color-feedback-danger-fg);
+}

@@ -20,6 +20,7 @@ import {
   AyCheckbox,
   AyDropdownMenu,
   AyEmptyState,
+  AyFileUpload,
   AyForm,
   AyFormField,
   AyFormGroup,
@@ -45,19 +46,20 @@ import {
   type AyOpcionSelect,
   type AySegmentoOpcion,
   type AyTabsElemento,
+  type AyUploadFile,
   type ParCardPairs,
 } from '@aybarcorp/ui-angular';
 import {
   AHORA_BASE,
   AREAS_ATC,
   EMPRESAS_AYBAR,
+  ESTADO_ES,
   PRIORIDADES_TICKET,
   TIPOS_TICKET,
   diasHabilesEntre,
   fmtFecha,
   fmtFechaHora,
   sumarDiasHabiles,
-  type AsientoLibro,
   type AsistenteProyecto,
   type BusEntregaFest,
   type CasoMorosidad,
@@ -98,6 +100,20 @@ import {
   type ReclamoGarantiaDetalle,
   type ReservaBusFestItem,
 } from './estado-prototipo-atc';
+import {
+  PLAZO_LEGAL_DIAS_HABILES,
+  evaluarPlazoLibro,
+  huellaSimulada,
+  normalizarMonto,
+  siguienteCorrelativo,
+  ticketsHuerfanos,
+  validarAsiento,
+  validarRespuesta,
+  type AlertaLegalLibro,
+  type ErroresAsiento,
+  type ErroresRespuesta,
+  type PlazoLibro,
+} from './libro-reclamaciones';
 import { IngresosHoyComponent } from './ingresos-hoy';
 import { normalizarPlaca, placaValida } from './placa-vehicular';
 import { ProtocoloFrasesComponent } from './protocolo-frases';
@@ -134,6 +150,33 @@ export type SubvistaEspecializadaAtc =
   | 'evento';
 
 /** Ingreso guardado en el celular porque no había conexión en la garita (HU-ATC-059 CA-03). */
+/** Fila de la tabla del Libro: las claves son las de las columnas, para ordenar y filtrar. */
+interface FilaLibro {
+  readonly id: string;
+  readonly asiento: string;
+  readonly ticket: string;
+  readonly kind: string;
+  readonly cli: string;
+  readonly plazo: Date;
+  readonly respuesta: string;
+  readonly detalle: AsientoLibroDetalle;
+}
+
+const ESTABLECIMIENTOS_LIBRO = [
+  'Libro virtual · Mi Portal',
+  'Sede Central San Isidro',
+  'Oficina Carabayllo',
+  'Caseta Villa Sol II',
+] as const;
+
+const APELACION_ESTADO_ES: Readonly<Record<string, string>> = {
+  PENDING: 'Pendiente',
+  UNDER_REVIEW: 'En revisión',
+  RESOLVED_FOUNDED: 'Resuelta, fundada',
+  RESOLVED_UNFOUNDED: 'Resuelta, infundada',
+  WITHDRAWN: 'Retirada',
+};
+
 interface IngresoPendiente {
   readonly nombre: string;
   readonly dni: string;
@@ -165,6 +208,7 @@ interface IngresoPendiente {
     AyCheckbox,
     AyDropdownMenu,
     AyEmptyState,
+    AyFileUpload,
     AyForm,
     AyFormField,
     AyFormGroup,
@@ -1440,9 +1484,14 @@ interface IngresoPendiente {
       <div ayStack gap="6">
         <ay-page-header
           titulo="Libro de Reclamaciones"
-          descripcion="Ley 29571, art. 24: respuesta en 15 días hábiles desde el registro, prorrogables una sola vez por 15 si se comunica antes del vencimiento."
-        
-          [conPestanas]="true">
+          descripcion="Ley 29571, art. 24 (modificado por la Ley 31435): se responde en 15 días hábiles improrrogables desde el registro, con carta y cargo de recepción."
+          [conPestanas]="true"
+        >
+          @if (estadoProto.puedeGestionarLibro()) {
+            <ay-button ayAcciones tamano="sm" variante="primary" (click)="abrirRegistroAsiento()">
+              + Registrar asiento
+            </ay-button>
+          }
           <ay-tabs
             ayPestanas
             etiqueta="Secciones del Libro de Reclamaciones"
@@ -1456,87 +1505,117 @@ interface IngresoPendiente {
         @if (tabLibro() === 'asientos') {
           <ay-card variante="elevated" superficie="solid">
             <ay-card-body padding="sm" gap="sm">
-              <ay-table
-                leyenda="Asientos del Libro de Reclamaciones regulado"
-                [columnas]="columnasLibro"
-                [filas]="asientosLibro()"
-                [cabeceraFija]="true"
-                [rayada]="true"
-              >
-                <ng-template ayCelda="n" let-fila>
-                  @let b = comoAsiento(fila);
-                  <div ayStack gap="1">
-                    <strong ayText="mono" size="xs">{{ b.co }}-2026-{{ b.n }}</strong>
-                    <span ayText="body" size="xs">{{ b.est }}</span>
-                  </div>
-                </ng-template>
-                <ng-template ayCelda="ticket" let-fila>
-                  @let b = comoAsiento(fila);
-                  <ay-button
-                    tamano="sm"
-                    variante="secondary"
-                    [disabled]="!b.ticket"
-                    (click)="b.ticket && seleccionarTicket.emit(b.ticket)"
-                  >
-                    {{ b.ticket || 'Sin ticket' }}
-                  </ay-button>
-                </ng-template>
-                <ng-template ayCelda="kind" let-fila>
-                  @let b = comoAsiento(fila);
-                  <div ayStack gap="1">
-                    <ay-badge size="sm" [tono]="b.kind === 'RECLAMO' ? 'warning' : 'neutral'">
-                      {{ etiqueta(asientoTipoEs, b.kind) }}
-                    </ay-badge>
-                    <span ayText="body" size="xs">{{ b.amount ?? 'Sin monto' }}</span>
-                  </div>
-                </ng-template>
-                <ng-template ayCelda="cli" let-fila>
-                  @let b = comoAsiento(fila);
-                  <div ayStack gap="1">
-                    <strong>{{ b.cli }}</strong>
-                    <span ayText="body" size="xs">{{ b.facts }}</span>
-                  </div>
-                </ng-template>
-                <ng-template ayCelda="reg" let-fila>
-                  @let b = comoAsiento(fila);
-                  <div ayStack gap="1">
-                    <ay-badge size="sm" [tono]="plazoLibro(b).tono">{{ plazoLibro(b).texto }}</ay-badge>
-                    <span ayText="mono" size="xs">Vence: {{ plazoLibro(b).vence }}</span>
-                  </div>
-                </ng-template>
-                <ng-template ayCelda="prorroga" let-fila>
-                  @let b = comoAsiento(fila);
-                  <ay-button
-                    tamano="sm"
-                    variante="secondary"
-                    [disabled]="b.ext || !!b.resp || !estadoProto.puedeGestionarLibro()"
-                    (click)="!b.ext && !b.resp && estadoProto.puedeGestionarLibro() && aplicarProrrogaUnica(b)"
-                  >
-                    {{ b.ext ? 'Prórroga aplicada' : 'Prorrogar 15 días' }}
-                  </ay-button>
-                </ng-template>
-                <ng-template ayCelda="respuesta" let-fila>
-                  @let b = comoAsiento(fila);
-                  <div class="pl-atc-acciones-celda">
+              @if (filasLibro().length === 0) {
+                <ay-alert tono="info" size="sm" titulo="Aún no hay asientos en el Libro">
+                  Registra el primero con «+ Registrar asiento».
+                </ay-alert>
+              } @else {
+                <ay-table
+                  leyenda="Asientos del Libro de Reclamaciones regulado"
+                  class="pl-atc-bandeja"
+                  [columnas]="columnasLibro"
+                  [filas]="filasLibro()"
+                  [cabeceraFija]="true"
+                  [rayada]="true"
+                >
+                  <ng-template ayCelda="asiento" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    <div ayStack gap="1">
+                      <strong ayText="mono" size="xs">{{ d.codigo }}</strong>
+                      <span ayText="body" size="xs">{{ d.establecimiento }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="ticket" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
                     <ay-button
                       tamano="sm"
                       variante="secondary"
-                      [disabled]="!!b.resp || !estadoProto.puedeGestionarLibro()"
-                      (click)="!b.resp && estadoProto.puedeGestionarLibro() && emitirRespuestaConCargo(b)"
+                      [attr.aria-label]="'Ver el ticket ' + d.ticketNum"
+                      (click)="seleccionarTicket.emit(d.ticketNum)"
                     >
-                      {{ b.resp ? 'Carta emitida (' + fmtDia(b.resp) + ')' : 'Emitir carta + cargo' }}
+                      {{ d.ticketNum }}
                     </ay-button>
-                    <ay-button
-                      tamano="sm"
-                      variante="secondary"
-                      [disabled]="!b.resp || !!b.appeal || !estadoProto.puedeGestionarLibro()"
-                      (click)="b.resp && !b.appeal && estadoProto.puedeGestionarLibro() && registrarApelacionIndecopi(b)"
-                    >
-                      {{ b.appeal ? 'INDECOPI ' + b.appeal.caseNo : 'Apelación INDECOPI' }}
-                    </ay-button>
-                  </div>
-                </ng-template>
-              </ay-table>
+                  </ng-template>
+                  <ng-template ayCelda="kind" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    <div ayStack gap="1">
+                      <ay-badge size="sm" [tono]="d.tipo === 'RECLAMO' ? 'warning' : 'neutral'">
+                        {{ etiqueta(asientoTipoEs, d.tipo) }}
+                      </ay-badge>
+                      <span ayText="body" size="xs">{{ montoTexto(d) }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="cli" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    <div ayStack gap="1">
+                      <strong>{{ d.consumidor }}</strong>
+                      <span ayText="body" size="xs">{{ d.hechos }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="plazo" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    @let p = plazoLibro(d);
+                    <div ayStack gap="1">
+                      <ay-badge size="sm" [tono]="p.tono">{{ p.texto }}</ay-badge>
+                      <span ayText="mono" size="xs">Vence: {{ fmtDia(d.venceOriginal) }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="respuesta" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    @if (d.respuesta; as r) {
+                      <div ayStack gap="1">
+                        <ay-badge size="sm" tono="success">Respondido</ay-badge>
+                        <span ayText="body" size="xs">En {{ r.diasHabilesUsados }} d hábiles</span>
+                        @if (apelacionTexto(d); as ap) {
+                          <span ayText="body" size="xs">{{ ap }}</span>
+                        }
+                      </div>
+                    } @else {
+                      <ay-badge size="sm" tono="neutral">Sin respuesta</ay-badge>
+                    }
+                  </ng-template>
+                  <ng-template ayCelda="acciones" let-fila>
+                    @let d = comoFilaLibro(fila).detalle;
+                    <div class="pl-atc-acciones-celda">
+                      @if (!d.respuesta && estadoProto.puedeGestionarLibro()) {
+                        <ay-button
+                          tamano="sm"
+                          variante="primary"
+                          [attr.aria-label]="'Responder el asiento ' + d.codigo"
+                          (click)="abrirRespuesta(d)"
+                        >
+                          Responder
+                        </ay-button>
+                      } @else {
+                        <ay-button
+                          tamano="sm"
+                          variante="primary"
+                          [attr.aria-label]="'Ver el asiento ' + d.codigo"
+                          (click)="verAsiento(d)"
+                        >
+                          Ver asiento
+                        </ay-button>
+                      }
+                      <ay-dropdown-menu
+                        colocacion="bottom-end"
+                        [items]="itemsMasAccionesLibro(d)"
+                        (elegido)="elegirMasAccionLibro($event, d)"
+                      >
+                        <ay-icon-button
+                          ayDisparador
+                          variante="ghost"
+                          tamano="sm"
+                          [etiqueta]="'Más acciones del asiento ' + d.codigo"
+                        >
+                          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" />
+                          </svg>
+                        </ay-icon-button>
+                      </ay-dropdown-menu>
+                    </div>
+                  </ng-template>
+                </ay-table>
+              }
             </ay-card-body>
           </ay-card>
         }
@@ -1545,19 +1624,18 @@ interface IngresoPendiente {
           <ay-card superficie="solid">
             <ay-card-header
               titulo="Alertas del plazo legal (Ley 29571)"
-              subtitulo="Se generan a 3 días hábiles del vencimiento sin prórroga y cuando el plazo vence sin respuesta."
+              subtitulo="Se generan a 3 días hábiles del vencimiento y cuando el plazo vence sin respuesta. El plazo no se prorroga."
               nivel="h2"
               [separador]="true"
             />
             <ay-card-body padding="sm">
-              <ay-card-pairs
-                [pares]="
-                  estadoProto.alertasLegalesLibro().map(a => ({
-                    clave: a.codigoAsiento + ' · ' + a.tipo,
-                    valor: 'Vence ' + fmtDia(a.vencimientoEvaluado) + ' · Para: ' + a.destinatario + ' (' + a.canal + ')'
-                  }))
-                "
-              />
+              @if (estadoProto.alertasLegalesLibro().length === 0) {
+                <ay-alert tono="success" size="sm" titulo="Sin alertas del plazo legal">
+                  Ningún asiento sin respuesta está a 3 días hábiles de vencer ni vencido.
+                </ay-alert>
+              } @else {
+                <ay-card-pairs [pares]="paresAlertasLibro()" />
+              }
             </ay-card-body>
           </ay-card>
         }
@@ -1565,18 +1643,218 @@ interface IngresoPendiente {
         @if (tabLibro() === 'huerfanos') {
           <ay-card superficie="solid">
             <ay-card-header
-              titulo="Control diario de integridad (Tickets huérfanos)"
-              subtitulo="Tickets activos de Queja o Reclamo que exigen asiento en el Libro de Reclamaciones."
+              titulo="Control diario de integridad (tickets huérfanos)"
+              subtitulo="Tickets activos de un tipo que exige el Libro (Queja o Reclamo) y que no tienen asiento. Lo decisivo es que exista el asiento, no el tipo del ticket."
               nivel="h2"
               [separador]="true"
             />
-            <ay-card-body padding="md">
-              <ay-alert tono="success" size="sm" titulo="0 tickets huérfanos hoy">
-                Todos los tickets activos de tipo Queja (QUE) y Reclamo (REC) cuentan con su asiento correlativo vinculado.
-              </ay-alert>
+            <ay-card-body padding="md" gap="md">
+              @if (huerfanosLibro().length === 0) {
+                <ay-alert tono="success" size="sm" titulo="0 tickets huérfanos hoy">
+                  Todos los tickets activos de tipo Queja y Reclamo tienen su asiento en el Libro.
+                </ay-alert>
+              } @else {
+                <ay-alert tono="warning" size="sm" [titulo]="huerfanosLibro().length + ' tickets huérfanos hoy'">
+                  Cada uno queda como excepción de integridad (ORPHAN_REFERENCE) hasta que se registre su asiento.
+                </ay-alert>
+                <ay-table
+                  leyenda="Tickets huérfanos del Libro de Reclamaciones"
+                  class="pl-atc-bandeja"
+                  [columnas]="columnasHuerfanos"
+                  [filas]="huerfanosLibro()"
+                  [rayada]="true"
+                >
+                  <ng-template ayCelda="num" let-fila>
+                    <strong ayText="mono" size="xs">{{ comoTicket(fila).num }}</strong>
+                  </ng-template>
+                  <ng-template ayCelda="cli" let-fila>
+                    @let t = comoTicket(fila);
+                    <div ayStack gap="1">
+                      <strong>{{ t.cli }}</strong>
+                      <span ayText="body" size="xs">{{ t.summary }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ayCelda="state" let-fila>
+                    <ay-badge size="sm" tono="neutral">{{ estadoTicketEs(comoTicket(fila).state) }}</ay-badge>
+                  </ng-template>
+                  <ng-template ayCelda="acciones" let-fila>
+                    @let t = comoTicket(fila);
+                    <div class="pl-atc-acciones-celda">
+                      <ay-button
+                        tamano="sm"
+                        variante="primary"
+                        [disabled]="!estadoProto.puedeGestionarLibro()"
+                        [attr.aria-label]="'Registrar el asiento del ticket ' + t.num"
+                        (click)="abrirRegistroAsiento(t.num)"
+                      >
+                        Registrar asiento
+                      </ay-button>
+                      <ay-button tamano="sm" variante="ghost" (click)="seleccionarTicket.emit(t.num)">Ver ticket</ay-button>
+                    </div>
+                  </ng-template>
+                </ay-table>
+              }
             </ay-card-body>
           </ay-card>
         }
+
+        <!-- Registrar asiento (HU-012) -->
+        <ay-modal
+          [abierto]="registrandoAsiento()"
+          (abiertoChange)="!$event && registrandoAsiento.set(false)"
+          titulo="Registrar asiento en el Libro de Reclamaciones"
+          size="lg"
+        >
+          <ay-form (enviar)="guardarAsiento()">
+            <div ayStack gap="3">
+              @if (huerfanosLibro().length === 0) {
+                <ay-alert tono="info" size="sm" titulo="No hay tickets pendientes de asiento">
+                  Todos los tickets abiertos de Queja o Reclamo ya tienen su asiento.
+                </ay-alert>
+              }
+              <p ayText="body" size="xs">
+                El asiento nace de un ticket de Queja o Reclamo. Su razón social es la del ticket y no se puede cambiar después (RN-SVC-013). El plazo de {{ plazoDias }} días hábiles corre desde hoy y no se prorroga.
+              </p>
+              <ay-form-field etiqueta="Ticket padre" obligatorio [error]="errorAsiento('ticketNum')">
+                <ay-select nombre="asiento-ticket"
+                  [opciones]="opcionesTicketAsiento()"
+                  [valor]="asTicket()"
+                  (valorChange)="elegirTicketAsiento($event)"
+                />
+              </ay-form-field>
+              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar">
+                <ay-form-field etiqueta="Razón social">
+                  <ay-input nombre="asiento-empresa" [valor]="empresaAsientoTexto()" [soloLectura]="true" />
+                </ay-form-field>
+                <ay-form-field etiqueta="Establecimiento" obligatorio [error]="errorAsiento('establecimiento')">
+                  <ay-select nombre="asiento-establecimiento"
+                    [opciones]="opcionesEstablecimiento"
+                    [valor]="asEstablecimiento()"
+                    (valorChange)="asEstablecimiento.set($event)"
+                  />
+                </ay-form-field>
+              </div>
+              <ay-form-field etiqueta="Tipo de asiento" obligatorio>
+                <ay-select nombre="asiento-tipo"
+                  [opciones]="opcionesTipoAsiento"
+                  [valor]="asTipo()"
+                  (valorChange)="asTipo.set($event)"
+                />
+              </ay-form-field>
+              <span ayText="subtitle" size="xs">Correlativo que se asignará: {{ correlativoAsiento() }}</span>
+              <ay-form-field etiqueta="Hechos" obligatorio [error]="errorAsiento('hechos')">
+                <ay-textarea nombre="asiento-hechos"
+                  [filas]="3"
+                  [valor]="asHechos()"
+                  (valorChange)="asHechos.set($event)"
+                />
+              </ay-form-field>
+              <ay-form-field etiqueta="Pedido del consumidor" obligatorio [error]="errorAsiento('pedido')">
+                <ay-textarea nombre="asiento-pedido"
+                  [filas]="2"
+                  [valor]="asPedido()"
+                  (valorChange)="asPedido.set($event)"
+                />
+              </ay-form-field>
+              <div ayGrid [columnas]="2" gap="sm" class="pl-atc-apilar">
+                <ay-form-field etiqueta="Monto reclamado (opcional)" [error]="errorAsiento('monto')">
+                  <ay-input nombre="asiento-monto"
+                    [valor]="asMonto()"
+                    (valorChange)="asMonto.set($event)"
+                    placeholder="Sin monto"
+                  />
+                </ay-form-field>
+                <ay-form-field etiqueta="Moneda" [error]="errorAsiento('moneda')">
+                  <ay-select nombre="asiento-moneda"
+                    [opciones]="opcionesMoneda"
+                    [valor]="asMoneda()"
+                    (valorChange)="asMoneda.set($event)"
+                  />
+                </ay-form-field>
+              </div>
+              <div ayRow gap="2" justificar="end">
+                <ay-button variante="ghost" (click)="registrandoAsiento.set(false)">Cancelar</ay-button>
+                <ay-button tipo="submit" variante="primary">Registrar asiento</ay-button>
+              </div>
+            </div>
+          </ay-form>
+        </ay-modal>
+
+        <!-- Responder con carta y cargo (HU-014) -->
+        <ay-modal
+          [abierto]="respondiendo() !== null"
+          (abiertoChange)="!$event && respondiendo.set(null)"
+          [titulo]="respondiendo() ? 'Responder el asiento ' + respondiendo()!.codigo : 'Responder'"
+          size="lg"
+        >
+          @if (respondiendo(); as asiento) {
+            <ay-form (enviar)="guardarRespuesta()">
+              <div ayStack gap="3">
+                @let plazoR = plazoLibro(asiento);
+                <ay-alert [tono]="plazoR.estado === 'VENCIDO' ? 'danger' : plazoR.estado === 'POR_VENCER' ? 'warning' : 'info'" size="sm" [titulo]="plazoR.texto">
+                  Vence el {{ fmtDia(asiento.venceOriginal) }}. @if (plazoR.estado === 'VENCIDO') { Responder ahora queda fuera del plazo legal. }
+                </ay-alert>
+                <ay-form-field etiqueta="Resumen de la respuesta" obligatorio [error]="errorRespuesta('resumen')">
+                  <ay-textarea nombre="respuesta-resumen"
+                    [filas]="3"
+                    [valor]="rpResumen()"
+                    (valorChange)="rpResumen.set($event)"
+                  />
+                </ay-form-field>
+                <ay-file-upload
+                  etiqueta="Carta de respuesta (PDF)"
+                  formatos=".pdf"
+                  requisitos="PDF, hasta 10 MB. Entra al sello de integridad del asiento."
+                  [pesoMaximo]="10485760"
+                  [archivos]="rpCartaLista()"
+                  [error]="errorRespuesta('carta')"
+                  (anadir)="anadirCarta($event)"
+                  (quitarArchivo)="rpCarta.set(null)"
+                />
+                <ay-file-upload
+                  etiqueta="Cargo de recepción del consumidor"
+                  formatos=".pdf,.jpg,.jpeg,.png"
+                  requisitos="Sin cargo la respuesta no vale ante INDECOPI (RN-SVC-010)."
+                  [pesoMaximo]="10485760"
+                  [archivos]="rpCargoLista()"
+                  [error]="errorRespuesta('cargo')"
+                  (anadir)="anadirCargo($event)"
+                  (quitarArchivo)="rpCargo.set(null)"
+                />
+                <ay-form-field etiqueta="Firmante">
+                  <ay-input nombre="respuesta-firmante" [valor]="estadoProto.perfilActivo().nombre" [soloLectura]="true" />
+                </ay-form-field>
+                <ay-checkbox [marcado]="rpDerecho()" (marcadoChange)="rpDerecho.set($event)">
+                  Se informó al consumidor su derecho a acudir a INDECOPI
+                </ay-checkbox>
+                @if (errorRespuesta('derechoIndecopi'); as e) {
+                  <span ayText="body" size="xs" role="alert" class="pl-atc-error-campo">{{ e }}</span>
+                }
+                <div ayRow gap="2" justificar="end">
+                  <ay-button variante="ghost" (click)="respondiendo.set(null)">Cancelar</ay-button>
+                  <ay-button tipo="submit" variante="primary">Registrar respuesta</ay-button>
+                </div>
+              </div>
+            </ay-form>
+          }
+        </ay-modal>
+
+        <!-- Ver asiento -->
+        <ay-modal
+          [abierto]="asientoVisto() !== null"
+          (abiertoChange)="!$event && asientoVistoId.set(null)"
+          [titulo]="asientoVisto() ? 'Asiento ' + asientoVisto()!.codigo : 'Asiento'"
+          size="lg"
+        >
+          @if (asientoVisto()) {
+            <div ayStack gap="3">
+              <ay-card-pairs [pares]="paresAsientoVisto()" />
+              <div ayRow gap="2" justificar="end">
+                <ay-button variante="ghost" (click)="asientoVistoId.set(null)">Cerrar</ay-button>
+              </div>
+            </div>
+          }
+        </ay-modal>
       </div>
     }
 
@@ -2366,7 +2644,6 @@ export class VistaEspecializadaComponent {
 
   readonly subvista = input.required<SubvistaEspecializadaAtc>();
   readonly tickets = input<TicketAtc[]>([]);
-  readonly asientosLibro = input.required<AsientoLibro[]>();
   readonly casosSgd = input.required<CasoSgd[]>();
   readonly casosMorosidad = input.required<CasoMorosidad[]>();
   readonly garantias = input.required<ReclamoGarantia[]>();
@@ -2432,10 +2709,165 @@ export class VistaEspecializadaComponent {
 
   readonly tabLibro = signal<string>('asientos');
   readonly tabsLibro = computed<AyTabsElemento[]>(() => [
-    { value: 'asientos', label: 'Asientos', contador: this.asientosLibro().length },
+    { value: 'asientos', label: 'Asientos', contador: this.estadoProto.asientosLibroDetalle().length },
     { value: 'alertas', label: 'Alertas legales', contador: this.estadoProto.alertasLegalesLibro().length },
-    { value: 'huerfanos', label: 'Huérfanos', contador: 0 },
+    { value: 'huerfanos', label: 'Huérfanos', contador: this.huerfanosLibro().length },
   ]);
+
+  readonly plazoDias = PLAZO_LEGAL_DIAS_HABILES;
+  readonly opcionesEstablecimiento: AyOpcionSelect[] = [
+    { value: '', label: 'Elige el establecimiento' },
+    ...ESTABLECIMIENTOS_LIBRO.map((e) => ({ value: e, label: e })),
+  ];
+  readonly opcionesTipoAsiento: AyOpcionSelect[] = [
+    { value: 'RECLAMO', label: 'Reclamo' },
+    { value: 'QUEJA', label: 'Queja' },
+  ];
+  readonly opcionesMoneda: AyOpcionSelect[] = [
+    { value: '', label: 'Sin moneda' },
+    { value: 'PEN', label: 'Soles (S/)' },
+    { value: 'USD', label: 'Dólares (US$)' },
+  ];
+
+  readonly filasLibro = computed<FilaLibro[]>(() =>
+    this.estadoProto.asientosLibroDetalle().map((d) => ({
+      id: d.id,
+      asiento: d.codigo,
+      ticket: d.ticketNum,
+      kind: ASIENTO_TIPO_ES[d.tipo],
+      cli: d.consumidor,
+      plazo: d.venceOriginal,
+      respuesta: d.respuesta ? 'Con respuesta' : 'Sin respuesta',
+      detalle: d,
+    })),
+  );
+
+  /** HU-015 CA-02: tickets activos de un tipo con Libro que no tienen asiento. */
+  readonly huerfanosLibro = computed(() => {
+    const conLibro = new Set(this.estadoProto.tiposTicket().filter((t) => t.libro && t.activo).map((t) => t.id));
+    return ticketsHuerfanos(this.tickets(), conLibro, this.estadoProto.asientosLibroDetalle());
+  });
+
+  readonly paresAlertasLibro = computed<ParCardPairs[]>(() =>
+    this.estadoProto.alertasLegalesLibro().map((a: AlertaLegalLibro) => ({
+      clave: a.codigoAsiento + ' · ' + (a.tipo === 'LEGAL_RESPONSE_OVERDUE' ? 'Plazo vencido sin respuesta' : 'Vence en 3 días hábiles o menos'),
+      valor:
+        (a.restantes < 0 ? 'Venció el ' : 'Vence el ') + this.fmtDia(a.vencimientoEvaluado) +
+        ' · Para: Responsable legal de reclamos (consola y correo)',
+    })),
+  );
+
+  /* Registrar asiento (HU-012) */
+  readonly registrandoAsiento = signal(false);
+  readonly asIntento = signal(false);
+  readonly asTicket = signal('');
+  readonly asEstablecimiento = signal('');
+  readonly asTipo = signal('RECLAMO');
+  readonly asHechos = signal('');
+  readonly asPedido = signal('');
+  readonly asMonto = signal('');
+  readonly asMoneda = signal('');
+  readonly asErrores = computed(() =>
+    validarAsiento({
+      ticketNum: this.asTicket(),
+      establecimiento: this.asEstablecimiento(),
+      hechos: this.asHechos(),
+      pedido: this.asPedido(),
+      monto: this.asMonto(),
+      moneda: this.asMoneda(),
+    }),
+  );
+  /** Tickets de Queja o Reclamo que aún no tienen asiento: los demás nacen con su asiento desde «Nuevo ticket». */
+  readonly opcionesTicketAsiento = computed<AyOpcionSelect[]>(() => [
+    { value: '', label: this.huerfanosLibro().length ? 'Elige el ticket' : 'No hay tickets sin asiento' },
+    ...this.huerfanosLibro().map((t) => ({ value: t.num, label: `${t.num} · ${t.cli}` })),
+  ]);
+  readonly ticketAsiento = computed(() => this.tickets().find((t) => t.num === this.asTicket()) ?? null);
+  readonly empresaAsientoTexto = computed(() => {
+    const t = this.ticketAsiento();
+    if (!t) return 'Se toma del ticket';
+    return EMPRESAS_AYBAR.find((e) => e.id === t.co)?.nombre ?? t.co;
+  });
+  readonly correlativoAsiento = computed(() => {
+    const t = this.ticketAsiento();
+    if (!t || !this.asEstablecimiento()) return 'Elige el ticket y el establecimiento';
+    return siguienteCorrelativo(this.estadoProto.asientosLibroDetalle(), t.co, this.asEstablecimiento()).codigo;
+  });
+
+  /* Responder con carta y cargo (HU-014) */
+  readonly respondiendo = signal<AsientoLibroDetalle | null>(null);
+  readonly rpIntento = signal(false);
+  readonly rpResumen = signal('');
+  readonly rpCarta = signal<AyUploadFile | null>(null);
+  readonly rpCargo = signal<AyUploadFile | null>(null);
+  readonly rpDerecho = signal(false);
+  readonly rpCartaLista = computed(() => (this.rpCarta() ? [this.rpCarta()!] : []));
+  readonly rpCargoLista = computed(() => (this.rpCargo() ? [this.rpCargo()!] : []));
+  readonly rpErrores = computed(() =>
+    validarRespuesta({
+      resumen: this.rpResumen(),
+      carta: this.rpCarta()?.nombre ?? null,
+      cargo: this.rpCargo()?.nombre ?? null,
+      derechoIndecopi: this.rpDerecho(),
+    }),
+  );
+
+  /* Ver asiento */
+  readonly asientoVistoId = signal<string | null>(null);
+  readonly asientoVisto = computed(() => this.estadoProto.asientosLibroDetalle().find((a) => a.id === this.asientoVistoId()) ?? null);
+  readonly paresAsientoVisto = computed<ParCardPairs[]>(() => {
+    const a = this.asientoVisto();
+    if (!a) return [];
+    const p = this.plazoLibro(a);
+    const pares: ParCardPairs[] = [
+      { clave: 'Establecimiento', valor: a.establecimiento },
+      { clave: 'Ticket padre', valor: a.ticketNum },
+      { clave: 'Tipo', valor: ASIENTO_TIPO_ES[a.tipo] + ' · ' + this.montoTexto(a) },
+      { clave: 'Consumidor', valor: a.consumidor + ' (DNI ' + a.dni + ')' },
+      { clave: 'Registrado', valor: this.fmtDia(a.registrado) + ' por ' + a.registradoPor },
+      { clave: 'Plazo legal', valor: 'Vence el ' + this.fmtDia(a.venceOriginal) + ' · ' + p.texto + ' · 15 d hábiles improrrogables' },
+      { clave: 'Hechos', valor: a.hechos },
+      { clave: 'Pedido', valor: a.pedido },
+    ];
+    if (a.respuesta) {
+      const r = a.respuesta;
+      pares.push(
+        { clave: 'Respuesta', valor: this.fmtDia(r.fecha) + ' · ' + r.diasHabilesUsados + ' d hábiles · firmada por ' + r.firmante },
+        { clave: 'Resumen de la respuesta', valor: r.resumen },
+        { clave: 'Carta con sello', valor: r.cartaNombre + ' · SHA-256 ' + r.cartaSha256.slice(0, 16) + '…' },
+        { clave: 'Cargo con sello', valor: r.cargoNombre + ' · SHA-256 ' + r.cargoSha256.slice(0, 16) + '…' },
+        { clave: 'Derecho a INDECOPI', valor: r.derechoIndecopi ? 'Consta que se informó al consumidor' : 'No consta' },
+      );
+    }
+    for (const ap of a.apelaciones) {
+      pares.push({
+        clave: 'Apelación ' + etiqueta(APELACION_INSTANCIA_ES, ap.instancia),
+        valor: (ap.numeroCaso ?? 'Expediente por asignar') + ' · ' + (APELACION_ESTADO_ES[ap.estado] ?? ap.estado),
+      });
+    }
+    return pares;
+  });
+
+  /** Una lista por combinación: el input de ay-dropdown-menu no debe cambiar entre ciclos de detección. */
+  private readonly menuLibro: Record<string, AyMenuItem[]> = Object.fromEntries(
+    [false, true].flatMap((puede) =>
+      [false, true].flatMap((respondido) =>
+        [false, true].map((conIndecopi) => [
+          `${puede}${respondido}${conIndecopi}`,
+          [
+            { tipo: 'item', value: 'ver', label: 'Ver asiento' },
+            { tipo: 'item', value: 'ticket', label: 'Ver ticket padre' },
+            {
+              tipo: 'item',
+              value: 'apelar',
+              label: conIndecopi ? 'Apelación INDECOPI ya registrada' : 'Registrar apelación INDECOPI',
+              disabled: !puede || !respondido || conIndecopi,
+            },
+          ] as AyMenuItem[],
+        ]),
+      ),
+    ),
+  );
 
   readonly tabSgd = signal<string>('casos');
   readonly tabsMesaSgd = computed<AyTabsElemento[]>(() => [
@@ -2577,13 +3009,20 @@ export class VistaEspecializadaComponent {
   ];
 
   readonly columnasLibro: readonly AyColumna[] = [
-    { clave: 'asiento', cabecera: 'Asiento / Establecimiento', ancho: '13rem', ordenable: true },
-    { clave: 'ticket', cabecera: 'Ticket Padre', ancho: '8rem', ordenable: true },
-    { clave: 'kind', cabecera: 'Tipo / Monto', ancho: '9rem', ordenable: true },
-    { clave: 'cli', cabecera: 'Cliente y Hechos', ordenable: true },
-    { clave: 'plazo', cabecera: 'Plazo Legal (15 d)', ancho: '11rem', ordenable: true },
-    { clave: 'prorroga', cabecera: 'Prórroga Única', ancho: '11rem', ordenable: true },
-    { clave: 'respuesta', cabecera: 'Acciones / Apelación', alineacion: 'end', ancho: '16rem' },
+    { clave: 'asiento', cabecera: 'Asiento', ancho: '11rem', ordenable: true },
+    { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
+    { clave: 'kind', cabecera: 'Tipo / Monto', ancho: '8rem', ordenable: true },
+    { clave: 'cli', cabecera: 'Consumidor y hechos', ordenable: true },
+    { clave: 'plazo', cabecera: 'Plazo legal', ancho: '10rem', ordenable: true },
+    { clave: 'respuesta', cabecera: 'Respuesta', ancho: '10rem', ordenable: true },
+    { clave: 'acciones', cabecera: 'Acciones', alineacion: 'end', ancho: '9rem' },
+  ];
+
+  readonly columnasHuerfanos: readonly AyColumna[] = [
+    { clave: 'num', cabecera: 'Ticket', ancho: '9rem', ordenable: true },
+    { clave: 'cli', cabecera: 'Cliente y asunto', ordenable: true },
+    { clave: 'state', cabecera: 'Estado', ancho: '10rem', ordenable: true },
+    { clave: 'acciones', cabecera: 'Acciones', alineacion: 'end', ancho: '16rem' },
   ];
 
   readonly columnasSgd: readonly AyColumna[] = [
@@ -2987,8 +3426,8 @@ export class VistaEspecializadaComponent {
   comoEncuesta(e: unknown): EncuestaCxItem {
     return e as EncuestaCxItem;
   }
-  comoAsiento(fila: unknown): AsientoLibro {
-    return fila as AsientoLibro;
+  comoFilaLibro(fila: unknown): FilaLibro {
+    return fila as FilaLibro;
   }
   comoSgd(fila: unknown): CasoSgd {
     return fila as CasoSgd;
@@ -3467,38 +3906,213 @@ export class VistaEspecializadaComponent {
   }
 
   /* ── Acciones de Libro, SGD, Garantías, Evento y Torre ── */
-  plazoLibro(b: AsientoLibro): { tono: 'success' | 'warning' | 'danger'; texto: string; vence: string } {
-    const diasPlazo = b.ext ? 30 : 15;
-    const venceDate = sumarDiasHabiles(b.reg, diasPlazo);
-    if (b.resp) {
-      return { tono: 'success', texto: 'Respondido en plazo', vence: fmtFecha(venceDate) };
-    }
-    const rest = diasHabilesEntre(AHORA_BASE, venceDate);
-    if (rest < 0) return { tono: 'danger', texto: `Vencido (${Math.abs(rest)} d)`, vence: fmtFecha(venceDate) };
-    if (rest <= 5) return { tono: 'warning', texto: `Quedan ${rest} d hábiles`, vence: fmtFecha(venceDate) };
-    return { tono: 'success', texto: `Quedan ${rest} d hábiles`, vence: fmtFecha(venceDate) };
+  plazoLibro(a: AsientoLibroDetalle): PlazoLibro {
+    return evaluarPlazoLibro(a, AHORA_BASE, diasHabilesEntre);
   }
 
-  aplicarProrrogaUnica(b: AsientoLibro): void {
-    b.ext = true;
-    b.extJustificacion =
-      'Complejidad pericial / conciliación histórica comunicada al consumidor dentro de los primeros 15 días.';
-    this.avisoOperacion.set(`Prórroga única (+15 días hábiles) registrada para el asiento ${b.co}-2026-${b.n}.`);
+  montoTexto(a: AsientoLibroDetalle): string {
+    if (a.monto === null) return 'Sin monto';
+    return `${a.moneda === 'USD' ? 'US$' : 'S/'} ${a.monto.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
   }
 
-  emitirRespuestaConCargo(b: AsientoLibro): void {
-    b.resp = AHORA_BASE;
-    b.respResumen = 'Carta formal emitida con cargo de entrega custodiado en GLI.';
-    this.avisoOperacion.set(`Respuesta formal con cargo registrada para ${b.co}-2026-${b.n}.`);
+  estadoTicketEs(estado: string): string {
+    return ESTADO_ES[estado] ?? estado;
   }
 
-  registrarApelacionIndecopi(b: AsientoLibro): void {
-    b.appeal = {
-      to: 'INDECOPI',
-      st: 'EN DESCARGOS LEGAL',
-      caseNo: `0891-2026/ILN-PS0`,
-    };
-    this.avisoOperacion.set(`Apelación ante INDECOPI registrada con expediente ${b.appeal.caseNo}.`);
+  /** Última apelación del asiento, corta para la celda de la tabla. */
+  apelacionTexto(a: AsientoLibroDetalle): string | null {
+    const ap = a.apelaciones[a.apelaciones.length - 1];
+    if (!ap) return null;
+    return `${ap.instancia === 'INDECOPI' ? 'INDECOPI' : 'Interna'}: ${(APELACION_ESTADO_ES[ap.estado] ?? ap.estado).toLowerCase()}`;
+  }
+
+  itemsMasAccionesLibro(a: AsientoLibroDetalle): AyMenuItem[] {
+    const conIndecopi = a.apelaciones.some((x) => x.instancia === 'INDECOPI');
+    return this.menuLibro[`${this.estadoProto.puedeGestionarLibro()}${!!a.respuesta}${conIndecopi}`];
+  }
+
+  elegirMasAccionLibro(valor: string, a: AsientoLibroDetalle): void {
+    if (valor === 'ver') this.verAsiento(a);
+    else if (valor === 'ticket') this.seleccionarTicket.emit(a.ticketNum);
+    else if (valor === 'apelar') this.registrarApelacionIndecopi(a);
+  }
+
+  verAsiento(a: AsientoLibroDetalle): void {
+    this.asientoVistoId.set(a.id);
+  }
+
+  errorAsiento(campo: keyof ErroresAsiento): string | undefined {
+    return this.asIntento() ? this.asErrores()[campo] : undefined;
+  }
+
+  errorRespuesta(campo: keyof ErroresRespuesta): string | undefined {
+    return this.rpIntento() ? this.rpErrores()[campo] : undefined;
+  }
+
+  /** Abre el formulario de HU-012; con un ticket huérfano llega ya elegido. */
+  abrirRegistroAsiento(ticketNum = ''): void {
+    this.asIntento.set(false);
+    this.asTicket.set('');
+    this.asEstablecimiento.set('');
+    this.asTipo.set('RECLAMO');
+    this.asHechos.set('');
+    this.asPedido.set('');
+    this.asMonto.set('');
+    this.asMoneda.set('');
+    if (ticketNum) this.elegirTicketAsiento(ticketNum);
+    this.registrandoAsiento.set(true);
+  }
+
+  /** Al elegir el ticket se propone el tipo de asiento y los hechos del ticket. */
+  elegirTicketAsiento(num: string): void {
+    this.asTicket.set(num);
+    const t = this.tickets().find((x) => x.num === num);
+    if (!t) return;
+    this.asTipo.set(t.type === 'QUE' ? 'QUEJA' : 'RECLAMO');
+    if (!this.asHechos().trim()) this.asHechos.set(t.summary);
+  }
+
+  guardarAsiento(): void {
+    this.asIntento.set(true);
+    const t = this.ticketAsiento();
+    if (!t || Object.keys(this.asErrores()).length > 0) return;
+    const detalle = this.estadoProto.asientosLibroDetalle();
+    const { numero, codigo } = siguienteCorrelativo(detalle, t.co, this.asEstablecimiento());
+    const registrado = AHORA_BASE;
+    const vence = sumarDiasHabiles(registrado, PLAZO_LEGAL_DIAS_HABILES);
+    const autor = this.estadoProto.perfilActivo().nombre;
+    const m = normalizarMonto(this.asMonto(), this.asMoneda());
+    this.estadoProto.asientosLibroDetalle.update((prev) => [
+      {
+        id: `lib-${numero}-${Date.now()}`,
+        codigo,
+        empresaId: t.co,
+        establecimiento: this.asEstablecimiento(),
+        ticketNum: t.num,
+        tipo: this.asTipo() === 'QUEJA' ? 'QUEJA' : 'RECLAMO',
+        consumidor: t.cli,
+        dni: t.dni.slice(0, 4) + '••••',
+        registrado,
+        registradoPor: autor,
+        venceOriginal: vence,
+        hechos: this.asHechos().trim(),
+        pedido: this.asPedido().trim(),
+        monto: m.monto,
+        moneda: m.moneda,
+        respuesta: null,
+        apelaciones: [],
+        historialPlazo: [
+          {
+            id: `hp-${numero}-${Date.now()}`,
+            fecha: registrado,
+            evento: 'PLAZO_ORIGINAL',
+            detalle: `Vence ${fmtFecha(vence)} (${PLAZO_LEGAL_DIAS_HABILES} días hábiles improrrogables)`,
+            autor,
+          },
+        ],
+      },
+      ...prev,
+    ]);
+    this.registrandoAsiento.set(false);
+    this.tabLibro.set('asientos');
+    this.avisoOperacion.set(`Asiento ${codigo} registrado para ${t.num}. Responde antes del ${fmtFecha(vence)}.`);
+  }
+
+  /** Abre el formulario de HU-014 para el asiento. */
+  abrirRespuesta(a: AsientoLibroDetalle): void {
+    this.rpIntento.set(false);
+    this.rpResumen.set('');
+    this.rpCarta.set(null);
+    this.rpCargo.set(null);
+    this.rpDerecho.set(false);
+    this.respondiendo.set(a);
+  }
+
+  anadirCarta(archivos: File[]): void {
+    const f = archivos[0];
+    if (f) this.rpCarta.set({ id: `${f.name}-${f.size}`, nombre: f.name, peso: f.size, estado: 'done' });
+  }
+
+  anadirCargo(archivos: File[]): void {
+    const f = archivos[0];
+    if (f) this.rpCargo.set({ id: `${f.name}-${f.size}`, nombre: f.name, peso: f.size, estado: 'done' });
+  }
+
+  /** HU-014: la respuesta solo vale con carta y cargo, y deja constancia del derecho a INDECOPI. */
+  guardarRespuesta(): void {
+    this.rpIntento.set(true);
+    const a = this.respondiendo();
+    const carta = this.rpCarta();
+    const cargo = this.rpCargo();
+    if (!a || !carta || !cargo || Object.keys(this.rpErrores()).length > 0) return;
+    const fecha = AHORA_BASE;
+    const usados = diasHabilesEntre(a.registrado, fecha);
+    const firmante = this.estadoProto.perfilActivo().nombre;
+    const fuera = diasHabilesEntre(fecha, a.venceOriginal) < 0;
+    this.estadoProto.asientosLibroDetalle.update((prev) =>
+      prev.map((x) =>
+        x.id !== a.id
+          ? x
+          : {
+              ...x,
+              respuesta: {
+                fecha,
+                diasHabilesUsados: usados,
+                resumen: this.rpResumen().trim(),
+                firmante,
+                cartaNombre: carta.nombre,
+                cartaSha256: huellaSimulada(carta.nombre),
+                cargoNombre: cargo.nombre,
+                cargoSha256: huellaSimulada(cargo.nombre),
+                derechoIndecopi: true,
+              },
+              historialPlazo: [
+                ...x.historialPlazo,
+                {
+                  id: `hp-${x.id}-${Date.now()}`,
+                  fecha,
+                  evento: 'RESPUESTA' as const,
+                  detalle: 'Respuesta formal registrada con carta y cargo.',
+                  autor: firmante,
+                },
+              ],
+            },
+      ),
+    );
+    this.respondiendo.set(null);
+    this.avisoOperacion.set(
+      fuera
+        ? `Respuesta de ${a.codigo} registrada FUERA de plazo (${usados} días hábiles).`
+        : `Respuesta de ${a.codigo} registrada en ${usados} días hábiles, con carta y cargo.`,
+    );
+  }
+
+  /** El número de expediente lo asigna INDECOPI: queda por asignar hasta que llegue. */
+  registrarApelacionIndecopi(a: AsientoLibroDetalle): void {
+    if (!a.respuesta || a.apelaciones.some((x) => x.instancia === 'INDECOPI')) return;
+    const autor = this.estadoProto.perfilActivo().nombre;
+    this.estadoProto.asientosLibroDetalle.update((prev) =>
+      prev.map((x) =>
+        x.id !== a.id
+          ? x
+          : {
+              ...x,
+              apelaciones: [
+                ...x.apelaciones,
+                {
+                  id: `ap-${x.id}-${Date.now()}`,
+                  instancia: 'INDECOPI' as const,
+                  numeroCaso: null,
+                  presentada: AHORA_BASE,
+                  estado: 'PENDING' as const,
+                  resolucion: null,
+                  historial: [{ fecha: AHORA_BASE, cambio: 'Registrada', autor, nota: 'Apelación registrada ante INDECOPI.' }],
+                },
+              ],
+            },
+      ),
+    );
+    this.avisoOperacion.set(`Apelación ante INDECOPI registrada para ${a.codigo}; el expediente se asigna al recibirlo.`);
   }
 
   activarCargoSgd(s: CasoSgd): void {

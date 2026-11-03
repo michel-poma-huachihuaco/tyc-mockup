@@ -138,30 +138,6 @@ export function extraerValorYEtiquetaColumna(
   }
 
   switch (clave) {
-    case 'asiento':
-      if ('co' in fila && 'n' in fila) {
-        const v = `${fila['co']}-2026-${fila['n']}`;
-        return { valor: v, etiqueta: v };
-      }
-      break;
-    case 'plazo':
-      if ('reg' in fila) {
-        const v = fila['resp'] ? 'RESPONDIDO' : fila['ext'] ? 'PRORROGA_30D' : 'ORDINARIO_15D';
-        const et = fila['resp']
-          ? 'Respondido en plazo'
-          : fila['ext']
-            ? 'Con prórroga (30 d)'
-            : 'En plazo ordinario (15 d)';
-        return { valor: v, etiqueta: et };
-      }
-      break;
-    case 'prorroga':
-      if ('ext' in fila) {
-        return fila['ext']
-          ? { valor: 'SI', etiqueta: 'Con prórroga (+15 d)' }
-          : { valor: 'NO', etiqueta: 'Sin prórroga (15 d)' };
-      }
-      break;
     case 'cargo':
       if ('act' in fila) {
         return fila['act']
