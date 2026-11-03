@@ -1715,7 +1715,7 @@ interface IngresoPendiente {
               <p ayText="body" size="xs">
                 El asiento nace de un ticket de Queja o Reclamo. Su razón social es la del ticket y no se puede cambiar después (RN-SVC-013). El plazo de {{ plazoDias }} días hábiles corre desde hoy y no se prorroga.
               </p>
-              <ay-form-field etiqueta="Ticket padre" obligatorio [error]="errorAsiento('ticketNum')">
+              <ay-form-field etiqueta="Ticket asociado" obligatorio [error]="errorAsiento('ticketNum')">
                 <ay-select nombre="asiento-ticket"
                   [opciones]="opcionesTicketAsiento()"
                   [valor]="asTicket()"
@@ -2821,7 +2821,7 @@ export class VistaEspecializadaComponent {
     const p = this.plazoLibro(a);
     const pares: ParCardPairs[] = [
       { clave: 'Establecimiento', valor: a.establecimiento },
-      { clave: 'Ticket padre', valor: a.ticketNum },
+      { clave: 'Ticket asociado', valor: a.ticketNum },
       { clave: 'Tipo', valor: ASIENTO_TIPO_ES[a.tipo] + ' · ' + this.montoTexto(a) },
       { clave: 'Consumidor', valor: a.consumidor + ' (DNI ' + a.dni + ')' },
       { clave: 'Registrado', valor: this.fmtDia(a.registrado) + ' por ' + a.registradoPor },
@@ -2856,7 +2856,7 @@ export class VistaEspecializadaComponent {
           `${puede}${respondido}${conIndecopi}`,
           [
             { tipo: 'item', value: 'ver', label: 'Ver asiento' },
-            { tipo: 'item', value: 'ticket', label: 'Ver ticket padre' },
+            { tipo: 'item', value: 'ticket', label: 'Ver ticket asociado' },
             {
               tipo: 'item',
               value: 'apelar',

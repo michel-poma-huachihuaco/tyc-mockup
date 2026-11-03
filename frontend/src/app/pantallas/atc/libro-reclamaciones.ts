@@ -139,7 +139,7 @@ const aNumero = (texto: string): number => Number(texto.trim().replace(',', '.')
 /** HU-012 CA-02: con monto hace falta la moneda; sin monto, ambos quedan vacíos. */
 export function validarAsiento(b: BorradorAsiento): ErroresAsiento {
   const e: ErroresAsiento = {};
-  if (!b.ticketNum) e.ticketNum = 'Elige el ticket padre del asiento.';
+  if (!b.ticketNum) e.ticketNum = 'Elige el ticket del asiento.';
   if (!b.establecimiento) e.establecimiento = 'Elige el establecimiento: el correlativo corre por establecimiento.';
   if (!b.hechos.trim()) e.hechos = 'Describe los hechos que motivan el reclamo o la queja.';
   if (!b.pedido.trim()) e.pedido = 'Anota lo que pide el consumidor.';
