@@ -1563,7 +1563,7 @@ interface IngresoPendiente {
                   <ng-template ayCelda="respuesta" let-fila>
                     @let d = comoFilaLibro(fila).detalle;
                     @if (d.respuesta; as r) {
-                      <div ayStack gap="1">
+                      <div ayStack gap="1" class="pl-atc-celda-compacta">
                         <ay-badge size="sm" tono="success">Respondido</ay-badge>
                         <span ayText="body" size="xs">En {{ r.diasHabilesUsados }} d hábiles</span>
                         @if (apelacionTexto(d); as ap) {
@@ -3009,10 +3009,10 @@ export class VistaEspecializadaComponent {
   ];
 
   readonly columnasLibro: readonly AyColumna[] = [
-    { clave: 'asiento', cabecera: 'Asiento', ancho: '11rem', ordenable: true },
+    { clave: 'asiento', cabecera: 'Asiento del Libro', ancho: '11rem', ordenable: true },
     { clave: 'ticket', cabecera: 'Ticket', ancho: '8rem', ordenable: true },
     { clave: 'kind', cabecera: 'Tipo / Monto', ancho: '8rem', ordenable: true },
-    { clave: 'cli', cabecera: 'Consumidor y hechos', ordenable: true },
+    { clave: 'cli', cabecera: 'Consumidor', ordenable: true },
     { clave: 'plazo', cabecera: 'Plazo legal', ancho: '10rem', ordenable: true },
     { clave: 'respuesta', cabecera: 'Respuesta', ancho: '10rem', ordenable: true },
     { clave: 'acciones', cabecera: 'Acciones', alineacion: 'end', ancho: '9rem' },

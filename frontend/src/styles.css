@@ -2942,3 +2942,8 @@ body {
 .pl-atc-error-campo {
   color: var(--aybar-color-feedback-danger-fg);
 }
+
+/* Celda con varios textos seguidos: sin el margen que el estilo de texto pone entre dos párrafos. */
+.pl-atc-celda-compacta > .ay-text.ay-text {
+  margin-block: 0;
+}
