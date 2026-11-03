@@ -18,11 +18,13 @@ import {
   AyCardPairs,
   AyCelda,
   AyCheckbox,
+  AyDropdownMenu,
   AyEmptyState,
   AyForm,
   AyFormField,
   AyFormGroup,
   AyGrid,
+  AyIconButton,
   AyInput,
   AyList,
   AyListItem,
@@ -39,6 +41,7 @@ import {
   AyTextarea,
   AyText,
   type AyColumna,
+  type AyMenuItem,
   type AyOpcionSelect,
   type AySegmentoOpcion,
   type AyTabsElemento,
@@ -156,11 +159,13 @@ interface IngresoPendiente {
     AyCardPairs,
     AyCelda,
     AyCheckbox,
+    AyDropdownMenu,
     AyEmptyState,
     AyForm,
     AyFormField,
     AyFormGroup,
     AyGrid,
+    AyIconButton,
     AyInput,
     AyList,
     AyListItem,
@@ -1813,103 +1818,131 @@ interface IngresoPendiente {
         </ay-page-header>
 
         @if (estadoProto.rolActivo() !== 'CLIENTE' && tabEventoActiva() === 'casos') {
-          @if (imputacionPenalDetectada()) {
-            <ay-alert
-              tono="danger"
-              titulo="Palabra de riesgo muy alto: derivación inmediata a la Estación 4"
-            >
-              La descripción contiene una palabra de riesgo muy alto («estafa», «fraude», «abuso» o «delito»). No se debate en sala: el caso se registra con la etiqueta «{{ etiquetaCasoEvento }}» y se deriva de inmediato a la Estación 4 (Legal).
-            </ay-alert>
-          }
-          @if (reaperturaBloqueada(); as motivo) {
-            <ay-alert tono="warning" titulo="No se puede reabrir el caso">
-              {{ motivo }}
-            </ay-alert>
-          }
-
           <div ayStack gap="4">
-            @if (casoAbierto(); as c) {
-              <ay-card superficie="solid">
-                <ay-card-header
-                  [titulo]="'Caso ' + c.codigo + ' · ' + c.cliente"
-                  subtitulo="Los pasos de contención, el registro y el cierre del tema en sala son de este caso."
-                  nivel="h2"
-                  [separador]="true"
-                />
-                <ay-card-body padding="md" gap="md">
-                  <div ayRow gap="2" [ajuste]="true">
-                    <ay-badge size="sm" tono="neutral">{{ etiquetaCasoEvento }}</ay-badge>
-                    <ay-badge size="sm" [tono]="c.imputacionPenal ? 'danger' : 'neutral'">
-                      {{ c.imputacionPenal ? 'Riesgo muy alto (imputación penal)' : 'Sin palabra de riesgo' }}
-                    </ay-badge>
-                    <ay-badge size="sm" [tono]="c.estacion4 ? 'success' : 'warning'">
-                      {{ c.estacion4 ? 'Derivado a la Estación 4' : 'No derivado a la Estación 4' }}
-                    </ay-badge>
-                    <ay-badge size="sm" [tono]="c.tema === 'CERRADO' ? 'success' : 'warning'">
-                      {{ c.tema === 'CERRADO' ? 'Tema cerrado en sala' : 'Tema en sala' }}
-                    </ay-badge>
-                  </div>
-
-                  @if (c.frases.includes(6) && !c.registroCompleto && c.tema === 'EN_SALA') {
-                    <ay-alert tono="warning" titulo="Paso 3 aplicado: completa el registro del caso">
-                      El compromiso formal exige registrar el caso para poder cerrar el tema en sala.
-                    </ay-alert>
-                  }
-
-                  @if (c.registroCompleto) {
-                    <div ayStack gap="1">
-                      <strong ayText="label" size="sm">Resumen del caso</strong>
-                      <span ayText="body" size="sm">{{ c.resumen }}</span>
-                    </div>
-                  } @else if (c.tema === 'EN_SALA') {
-                    <ay-form-field etiqueta="Resumen del caso" obligatorio>
-                      <ay-textarea nombre="resumen-caso-evento"
-                        [filas]="2"
-                        [valor]="resumenEdicion()"
-                        (valorChange)="resumenEdicion.set($event)"
-                      />
-                    </ay-form-field>
-                    <div ayRow gap="2">
-                      <ay-button tamano="sm" variante="secondary" (click)="completarRegistroCaso()">
-                        Completar el registro del caso
-                      </ay-button>
-                    </div>
-                  }
-
-                  <app-protocolo-frases
-                    [frases]="estadoProto.frasesAnclaEvento"
-                    [aplicadas]="c.frases"
-                    [bloqueado]="c.tema === 'CERRADO'"
-                    (aplicar)="aplicarFrase($event)"
+            <ay-card superficie="solid">
+              <ay-card-header
+                titulo="Abrir un caso del evento"
+                subtitulo="Escribe lo que manifiesta el propietario. Con «estafa», «fraude», «abuso» o «delito» el caso nace derivado a la Estación 4."
+                nivel="h2"
+                [separador]="true"
+              />
+              <ay-card-body padding="md" gap="md">
+                <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de palabras de riesgo muy alto)">
+                  <ay-textarea nombre="texto-evento"
+                    [filas]="2"
+                    [valor]="textoEvento()"
+                    (valorChange)="textoEvento.set($event)"
+                    placeholder="Escribe aquí lo manifestado por el asistente..."
                   />
+                </ay-form-field>
+                <div ayRow gap="2">
+                  <ay-button tamano="sm" variante="primary" (click)="abrirCasoDelEvento()">
+                    + Abrir caso del evento
+                  </ay-button>
+                </div>
+              </ay-card-body>
+            </ay-card>
+            @if (imputacionPenalDetectada()) {
+              <ay-alert
+                tono="danger"
+                titulo="Palabra de riesgo muy alto: derivación inmediata a la Estación 4"
+              >
+                La descripción contiene una palabra de riesgo muy alto («estafa», «fraude», «abuso» o «delito»). No se debate en sala: el caso se registra con la etiqueta «{{ etiquetaCasoEvento }}» y se deriva de inmediato a la Estación 4 (Legal).
+              </ay-alert>
+            }
+            @if (reaperturaBloqueada() || casoAbierto()) {
+              <div ayStack gap="4" id="zona-caso-evento">
+                @if (reaperturaBloqueada(); as motivo) {
+                  <ay-alert tono="warning" titulo="No se puede reabrir el caso">
+                    {{ motivo }}
+                  </ay-alert>
+                }
 
-                  <div ayRow gap="3" justificar="between" [ajuste]="true">
-                    <span ayText="subtitle" size="xs">
-                      {{ c.frases.length > 0 ? 'Pasos aplicados: ' + pasosTexto(c.frases) + '.' : 'Aún no se aplicó ningún paso.' }}
-                      El texto que dice el moderador en cada paso está por definir con el PO.
-                    </span>
-                    <div ayRow gap="2">
-                      <ay-button tamano="sm" variante="ghost" (click)="casoAbiertoId.set(null)">Cerrar el panel</ay-button>
-                      @if (!c.estacion4 && c.tema === 'EN_SALA') {
-                        <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
-                          Derivar a Estación 4
-                        </ay-button>
+                @if (casoAbierto(); as c) {
+                  <ay-card superficie="solid">
+                    <ay-card-header
+                      [titulo]="'Caso ' + c.codigo + ' · ' + c.cliente"
+                      subtitulo="Los pasos de contención, el registro y el cierre del tema en sala son de este caso."
+                      nivel="h2"
+                      [separador]="true"
+                    />
+                    <ay-card-body padding="md" gap="md">
+                      <div ayRow gap="2" [ajuste]="true">
+                        <ay-badge size="sm" tono="neutral">{{ etiquetaCasoEvento }}</ay-badge>
+                        <ay-badge size="sm" [tono]="c.imputacionPenal ? 'danger' : 'neutral'">
+                          {{ c.imputacionPenal ? 'Riesgo muy alto (imputación penal)' : 'Sin palabra de riesgo' }}
+                        </ay-badge>
+                        <ay-badge size="sm" [tono]="c.estacion4 ? 'success' : 'warning'">
+                          {{ c.estacion4 ? 'Derivado a la Estación 4' : 'No derivado a la Estación 4' }}
+                        </ay-badge>
+                        <ay-badge size="sm" [tono]="c.tema === 'CERRADO' ? 'success' : 'warning'">
+                          {{ c.tema === 'CERRADO' ? 'Tema cerrado en sala' : 'Tema en sala' }}
+                        </ay-badge>
+                      </div>
+
+                      @if (c.frases.includes(6) && !c.registroCompleto && c.tema === 'EN_SALA') {
+                        <ay-alert tono="warning" titulo="Paso 3 aplicado: completa el registro del caso">
+                          El compromiso formal exige registrar el caso para poder cerrar el tema en sala.
+                        </ay-alert>
                       }
-                      @if (c.tema === 'EN_SALA') {
-                        <ay-button
-                          tamano="sm"
-                          variante="primary"
-                          [disabled]="!puedeCerrarTema()"
-                          [attr.title]="puedeCerrarTema() ? null : 'Aplica algún paso o deriva el caso; si llegaste al paso 3, completa antes el registro'"
-                          (click)="cerrarTemaEnSala()"
-                        >
-                          Cerrar el tema en sala
-                        </ay-button>
+
+                      @if (c.registroCompleto) {
+                        <div ayStack gap="1">
+                          <strong ayText="label" size="sm">Resumen del caso</strong>
+                          <span ayText="body" size="sm">{{ c.resumen }}</span>
+                        </div>
+                      } @else if (c.tema === 'EN_SALA') {
+                        <ay-form-field etiqueta="Resumen del caso" obligatorio>
+                          <ay-textarea nombre="resumen-caso-evento"
+                            [filas]="2"
+                            [valor]="resumenEdicion()"
+                            (valorChange)="resumenEdicion.set($event)"
+                          />
+                        </ay-form-field>
+                        <div ayRow gap="2">
+                          <ay-button tamano="sm" variante="secondary" (click)="completarRegistroCaso()">
+                            Completar el registro del caso
+                          </ay-button>
+                        </div>
                       }
-                    </div>
-                  </div>
-                </ay-card-body>
-              </ay-card>
+
+                      <app-protocolo-frases
+                        [frases]="estadoProto.frasesAnclaEvento"
+                        [aplicadas]="c.frases"
+                        [bloqueado]="c.tema === 'CERRADO'"
+                        (aplicar)="aplicarFrase($event)"
+                      />
+
+                      <div ayRow gap="3" justificar="between" [ajuste]="true">
+                        <span ayText="subtitle" size="xs">
+                          {{ c.frases.length > 0 ? 'Pasos aplicados: ' + pasosTexto(c.frases) + '.' : 'Aún no se aplicó ningún paso.' }}
+                          El texto que dice el moderador en cada paso está por definir con el PO.
+                        </span>
+                        <div ayRow gap="2">
+                          <ay-button tamano="sm" variante="ghost" (click)="casoAbiertoId.set(null)">Cerrar el panel</ay-button>
+                          @if (!c.estacion4 && c.tema === 'EN_SALA') {
+                            <ay-button tamano="sm" variante="secondary" (click)="derivarCasoAEstacion4(c)">
+                              Derivar a Estación 4
+                            </ay-button>
+                          }
+                          @if (c.tema === 'EN_SALA') {
+                            <ay-button
+                              tamano="sm"
+                              variante="primary"
+                              [disabled]="!puedeCerrarTema()"
+                              [attr.title]="puedeCerrarTema() ? null : 'Aplica algún paso o deriva el caso; si llegaste al paso 3, completa antes el registro'"
+                              (click)="cerrarTemaEnSala()"
+                            >
+                              Cerrar el tema en sala
+                            </ay-button>
+                          }
+                        </div>
+                      </div>
+                    </ay-card-body>
+                  </ay-card>
+                }
+
+              </div>
             }
 
             <ay-card variante="elevated" superficie="solid">
@@ -1922,6 +1955,7 @@ interface IngresoPendiente {
               <ay-card-body padding="sm">
                 <ay-table
                   leyenda="Casos del evento EntregaFest"
+                  class="pl-atc-bandeja"
                   [columnas]="columnasCasosEvento"
                   [filas]="estadoProto.casosEventoFest()"
                   [rayada]="true"
@@ -1966,51 +2000,36 @@ interface IngresoPendiente {
                   <ng-template ayCelda="situacion" let-fila>
                     @let c = comoCasoEvento(fila);
                     <div class="pl-atc-acciones-celda">
-                      @if (c.tema === 'EN_SALA') {
-                        <ay-button tamano="sm" variante="secondary" (click)="abrirCaso(c)">Atender caso</ay-button>
-                      } @else if (c.estacion4) {
-                        <ay-button tamano="sm" variante="secondary" (click)="intentarReabrirCaso(c)">
-                          Intentar reabrir
-                        </ay-button>
-                      } @else {
-                        <ay-button tamano="sm" variante="secondary" (click)="abrirCaso(c)">Ver caso</ay-button>
-                      }
+                      <ay-button
+                        tamano="sm"
+                        variante="primary"
+                        [attr.aria-label]="(c.tema === 'EN_SALA' ? 'Atender caso ' : 'Ver caso ') + c.codigo"
+                        (click)="verCaso(c)"
+                      >
+                        {{ c.tema === 'EN_SALA' ? 'Atender caso' : 'Ver caso' }}
+                      </ay-button>
+                      <ay-dropdown-menu
+                        colocacion="bottom-end"
+                        [items]="itemsMasAccionesCaso(c)"
+                        (elegido)="elegirMasAccionCaso($event, c)"
+                      >
+                        <ay-icon-button
+                          ayDisparador
+                          variante="ghost"
+                          tamano="sm"
+                          [etiqueta]="'Más acciones del caso ' + c.codigo"
+                        >
+                          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" />
+                          </svg>
+                        </ay-icon-button>
+                      </ay-dropdown-menu>
                     </div>
                   </ng-template>
                 </ay-table>
               </ay-card-body>
             </ay-card>
 
-            <ay-card superficie="solid">
-              <ay-card-header
-                titulo="Abrir un caso del evento"
-                subtitulo="Escribe lo que manifiesta el propietario. Con «estafa», «fraude», «abuso» o «delito» el caso nace derivado a la Estación 4."
-                nivel="h2"
-                [separador]="true"
-              />
-              <ay-card-body padding="md" gap="md">
-                <ay-form-field etiqueta="Simular transcripción verbal en mesa (detector de palabras de riesgo muy alto)">
-                  <ay-textarea nombre="texto-evento"
-                    [filas]="2"
-                    [valor]="textoEvento()"
-                    (valorChange)="textoEvento.set($event)"
-                    placeholder="Escribe aquí lo manifestado por el asistente..."
-                  />
-                </ay-form-field>
-                <div ayRow gap="2">
-                  <ay-button
-                    tamano="sm"
-                    variante="danger"
-                    (click)="textoEvento.set('Exijo mi minuta hoy mismo, esto es una estafa')"
-                  >
-                    Probar frase con palabra de riesgo
-                  </ay-button>
-                  <ay-button tamano="sm" variante="primary" (click)="abrirCasoDelEvento()">
-                    + Abrir caso del evento
-                  </ay-button>
-                </div>
-              </ay-card-body>
-            </ay-card>
           </div>
         }
 
@@ -2507,11 +2526,11 @@ export class VistaEspecializadaComponent {
   readonly columnasCasosEvento: readonly AyColumna[] = [
     { clave: 'codigo', cabecera: 'Caso', ancho: '8rem', ordenable: true },
     { clave: 'cliente', cabecera: 'Cliente / Proyecto', ordenable: true },
-    { clave: 'etiqueta', cabecera: 'Etiqueta', ancho: '12rem' },
-    { clave: 'riesgo', cabecera: 'Riesgo verbal y pasos', ancho: '13rem', ordenable: true },
-    { clave: 'derivado', cabecera: '¿Derivado a la Estación 4?', ancho: '10rem', ordenable: true },
-    { clave: 'tema', cabecera: 'Tema', ancho: '7rem', ordenable: true },
-    { clave: 'situacion', cabecera: 'Acción', alineacion: 'end', ancho: '11rem' },
+    { clave: 'etiqueta', cabecera: 'Etiqueta', ancho: '10rem' },
+    { clave: 'riesgo', cabecera: 'Riesgo verbal y pasos', ancho: '12rem', ordenable: true },
+    { clave: 'derivado', cabecera: '¿Derivado a Est. 4?', ancho: '9rem', ordenable: true },
+    { clave: 'tema', cabecera: 'Tema', ancho: '8rem', ordenable: true },
+    { clave: 'situacion', cabecera: 'Acciones', alineacion: 'end', ancho: '13rem' },
   ];
 
   /** Etiqueta estándar de todo caso del evento (HU-ATC-039 CA-01): se escribe literalmente así. */
@@ -3536,6 +3555,38 @@ export class VistaEspecializadaComponent {
     this.reaperturaBloqueada.set(null);
   }
 
+  /** «Atender caso» y «Ver caso»: abre el panel del caso y lo deja a la vista. */
+  verCaso(c: CasoEventoFestItem): void {
+    this.abrirCaso(c);
+    this.irAZonaCaso();
+  }
+
+  /** Menú ⋯ de la fila: reabrir un caso cerrado y derivar uno que sigue en sala. */
+  itemsMasAccionesCaso(c: CasoEventoFestItem): AyMenuItem[] {
+    return [
+      { tipo: 'item', value: 'reabrir', label: 'Intentar reabrir', disabled: c.tema !== 'CERRADO' },
+      { tipo: 'item', value: 'derivar', label: 'Derivar a Estación 4', disabled: c.tema !== 'EN_SALA' || !!c.estacion4 },
+    ] as AyMenuItem[];
+  }
+
+  elegirMasAccionCaso(id: string, c: CasoEventoFestItem): void {
+    if (id === 'reabrir') this.intentarReabrirCaso(c);
+    if (id === 'derivar') {
+      this.abrirCaso(c);
+      this.derivarCasoAEstacion4(c);
+      this.irAZonaCaso();
+    }
+  }
+
+  /** Baja o sube hasta el panel del caso o el aviso de reapertura, que están sobre la tabla. */
+  private irAZonaCaso(): void {
+    setTimeout(() => {
+      const zona = globalThis.document?.getElementById('zona-caso-evento');
+      const reducido = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      zona?.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth', block: 'start' });
+    }, 0);
+  }
+
   /** «4 → 5 → 6» del guion se muestra como los pasos «1 → 2 → 3» de la contención. */
   pasosTexto(frases: readonly number[]): string {
     return frases.map((n) => n - 3).join(' → ');
@@ -3567,9 +3618,17 @@ export class VistaEspecializadaComponent {
 
   /** Un caso derivado a la Estación 4 no se reabre desde el evento (HU-ATC-038 CA-02). */
   intentarReabrirCaso(c: CasoEventoFestItem): void {
-    this.reaperturaBloqueada.set(
-      `El caso ${c.codigo} ya fue derivado a la Estación 4: el moderador no puede reabrirlo. Queda con el especialista de Legal.`,
-    );
+    if (c.estacion4) {
+      this.casoAbiertoId.set(null);
+      this.reaperturaBloqueada.set(
+        `El caso ${c.codigo} ya fue derivado a la Estación 4: el moderador no puede reabrirlo. Queda con el especialista de Legal.`,
+      );
+    } else {
+      this.actualizarCasoEvento(c.id, { tema: 'EN_SALA' });
+      this.abrirCaso(c);
+      this.avisoOperacion.set(`Caso ${c.codigo} reabierto: vuelve a estar en sala.`);
+    }
+    this.irAZonaCaso();
   }
 
   /** Aplica el siguiente paso de la contención al caso abierto: la siguiente Frase del guion, 4, 5 o 6 (HU-ATC-037). */
