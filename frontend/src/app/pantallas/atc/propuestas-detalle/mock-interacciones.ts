@@ -1,4 +1,4 @@
-import type { InteraccionTicket, TicketAtc } from '../datos-atc';
+import { ESTADO_ES, type InteraccionTicket, type TicketAtc } from '../datos-atc';
 import { AREA_ES, MOTIVO_ES, etiqueta, traducirCodigos } from '../etiquetas-es';
 
 /**
@@ -309,7 +309,24 @@ function deDefecto(t: TicketAtc): InteraccionMock[] {
     fecha: it.fecha,
     texto: traducirCodigos(it.texto),
   }));
-  return [...desdeLog, ...desdeHilo].sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
+  // cambios de estado (Tigo o el equipo); el primer hito OPEN es el alta y ya sale como «Registrado» desde la bitácora
+  const desdeEstado: InteraccionMock[] = t.status
+    .map((h, i) => ({ h, i }))
+    .filter(({ h, i }) => !(i === 0 && h.estado === 'OPEN'))
+    .map(({ h, i }) => ({
+      id: `e${i}`,
+      tipo: 'cambio_estado',
+      origen: 'sistema',
+      canal: t.ch,
+      visible: true,
+      autor: h.autor,
+      area,
+      fecha: h.fecha,
+      texto: `Estado: ${ESTADO_ES[h.estado] ?? h.estado} (${h.autor}).`,
+      textoCliente: `Tu caso pasó a «${ESTADO_PASO[h.estado] ?? 'En atención'}».`,
+      paso: ESTADO_PASO[h.estado] ?? 'En atención',
+    }));
+  return [...desdeLog, ...desdeHilo, ...desdeEstado].sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
 }
 
 /** Interacciones de prueba del ticket, de la más antigua a la más reciente. */

@@ -32,7 +32,7 @@ export interface DerivacionEvento {
  * Los 6 elementos del paquete mínimo de handoff, tal como los define la HU-ATC-027 (CA-01). Deben estar
  * completos antes de enviar una derivación a Legal (RN-SVC-022).
  */
-const PAQUETE_MINIMO = [
+export const PAQUETE_MINIMO = [
   { k: 'id', label: 'ID del ticket y del cliente' },
   { k: 'kyc', label: 'KYC del cliente validado' },
   { k: 'proyecto', label: 'Proyecto y lote' },

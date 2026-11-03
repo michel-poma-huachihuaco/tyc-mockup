@@ -24,6 +24,7 @@ export type VistaAtc =
   | 'workflow'
   | 'urbemind'
   | 'torre'
+  | 'tigo'
   | 'evento';
 
 export interface EmpresaAybar {

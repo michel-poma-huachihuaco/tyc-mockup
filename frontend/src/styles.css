@@ -1325,20 +1325,37 @@ body {
   inset-block-start: var(--pl-atc-navbar-alto, 0px);
   z-index: calc(var(--aybar-z-sticky, 200) - 1);
   align-self: start;
-  min-block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
+  /* alto fijo al viewport: el scroll de la lista de módulos es propio, independiente del main */
+  block-size: calc(100dvh - var(--pl-atc-navbar-alto, 0px));
   min-inline-size: 0;
+  /* el buscador (absoluto) queda sobre este fondo, fuera de la zona que hace scroll */
+  background: var(--aybar-color-primary-800);
+  border-inline-end: var(--aybar-border-width-thin) solid var(--aybar-color-primary-700);
 }
 
 .pl-atc-lateral:has(.pt-herr__panel) {
   z-index: calc(var(--aybar-z-modal, 1000) + 1);
 }
 
+/* Reserva arriba el hueco del buscador; la lista scrollea debajo y el pie queda anclado abajo. */
 .pl-atc-lateral .ay-sidebar {
   box-sizing: border-box;
-  min-block-size: calc(100dvh - var(--aybar-space-0, 0px) - var(--pl-atc-navbar-alto, 0px));
-  block-size: auto;
+  margin-block-start: calc(var(--aybar-space-4) + var(--aybar-space-8) + var(--aybar-space-3));
+  block-size: calc(100% - var(--aybar-space-4) - var(--aybar-space-8) - var(--aybar-space-3));
+  padding-block: 0 0;
+  border-inline-end: 0;
   overflow-x: clip;
-  overflow-y: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.pl-atc-lateral .ay-sidebar__footer {
+  position: sticky;
+  inset-block-end: 0;
+  /* sticky abre contexto de apilado: por encima del buscador para que el panel de Herramientas lo tape */
+  z-index: 2;
+  padding-block-end: var(--aybar-space-4);
+  background: var(--aybar-color-bg-surface);
 }
 
 .pl-atc-marco .ay-sidepanel:not([data-compacto]) {
@@ -2229,8 +2246,8 @@ body {
   inline-size: var(--aybar-space-5);
   aspect-ratio: 1;
   background: currentColor;
-  -webkit-mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
-  mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 18) var(--aybar-space-5) no-repeat;
+  -webkit-mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 19) var(--aybar-space-5) no-repeat;
+  mask: url('/iconos-menu.svg') calc(var(--aybar-space-5) * var(--pl-i) * -1) 0 / calc(var(--aybar-space-5) * 19) var(--aybar-space-5) no-repeat;
 }
 
 .ay-sidebar__item[href='#vista:c360'] .ay-sidebar__icon,
@@ -2267,6 +2284,8 @@ body {
 .pl-nav-movil__item[data-href='#vista:torre'] .ay-sidebar__icon { --pl-i: 15; }
 .ay-sidebar__item[href='#vista:politicas'] .ay-sidebar__icon,
 .pl-nav-movil__item[data-href='#vista:politicas'] .ay-sidebar__icon { --pl-i: 16; }
+.ay-sidebar__item[href='#vista:tigo'] .ay-sidebar__icon,
+.pl-nav-movil__item[data-href='#vista:tigo'] .ay-sidebar__icon { --pl-i: 18; }
 .ay-sidebar__item[href='#vista:configuracion'] .ay-sidebar__icon,
 .pl-nav-movil__item[data-href='#vista:configuracion'] .ay-sidebar__icon { --pl-i: 17; }
 

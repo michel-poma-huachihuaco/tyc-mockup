@@ -21,7 +21,9 @@ import { BannerConflicto } from './banner-conflicto';
 import { DerivarTicket } from './derivar-ticket';
 import { GuiaSolucion } from './guia-solucion';
 import { RecorridoFlujo } from './recorrido-flujo';
+import { CintaTigo } from '../tigo/cinta-tigo';
 import { RegistroInteracciones } from './registro-interacciones';
+import { TigoEstadoService } from '../tigo/tigo-estado';
 import { EstadoPrototipoAtcService } from '../estado-prototipo-atc';
 import {
   DetalleDemo,
@@ -43,6 +45,7 @@ import {
   standalone: true,
   imports: [
     RecorridoFlujo,
+    CintaTigo,
     BannerConflicto,
     DerivarTicket,
     GuiaSolucion,
@@ -125,6 +128,8 @@ import {
 
       <app-recorrido-flujo [d]="d" />
 
+      <app-cinta-tigo [ticket]="t" />
+
       <app-banner-conflicto [ticket]="t" [area]="d.area()" [retirada]="d.senalRetirada()" [handoffConfirmado]="d.handoffConfirmado()" (retirar)="d.senalRetirada.set($event)" (confirmarRecepcion)="d.handoffConfirmado.set(true)" />
 
       <div class="c1-columnas">
@@ -164,7 +169,7 @@ import {
             </ay-card-body>
           </ay-card>
 
-          <app-registro-interacciones [ticket]="t" [sugerenciaIa]="d.guia()?.versionActual != null ? d.plantillaIa() : null" />
+          <app-registro-interacciones [ticket]="t" [sugerenciaIa]="tigo.tieneTigo(t.num) ? null : d.guia()?.versionActual != null ? d.plantillaIa() : null" />
         </div>
 
         <div ayStack gap="4">
@@ -227,7 +232,8 @@ import {
 })
 export class DetalleConservadora {
   readonly ticket = input.required<TicketAtc>();
-  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService));
+  protected readonly tigo = inject(TigoEstadoService);
+  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService), this.tigo);
 
   protected readonly estadoEs = estadoEs;
   protected readonly tonoEstado = tonoEstado;

@@ -22,8 +22,10 @@ import { BannerConflicto } from './banner-conflicto';
 import { DerivarTicket, type DerivacionEvento } from './derivar-ticket';
 import { GuiaSolucion } from './guia-solucion';
 import { RecorridoFlujo } from './recorrido-flujo';
+import { CintaTigo } from '../tigo/cinta-tigo';
 import { crearInteraccionesMock } from './mock-interacciones';
 import { RegistroInteracciones } from './registro-interacciones';
+import { TigoEstadoService } from '../tigo/tigo-estado';
 import { EstadoPrototipoAtcService } from '../estado-prototipo-atc';
 import {
   DetalleDemo,
@@ -48,6 +50,7 @@ import {
   standalone: true,
   imports: [
     RecorridoFlujo,
+    CintaTigo,
     BannerConflicto,
     DerivarTicket,
     GuiaSolucion,
@@ -92,6 +95,8 @@ import {
 
       <app-recorrido-flujo [d]="d" [conAccion]="true" (completar)="completarActividad()" />
 
+      <app-cinta-tigo [ticket]="t" />
+
       <app-banner-conflicto [ticket]="t" [area]="d.area()" [retirada]="d.senalRetirada()" [handoffConfirmado]="d.handoffConfirmado()" (retirar)="d.senalRetirada.set($event)" (confirmarRecepcion)="d.handoffConfirmado.set(true)" />
 
       <div class="c3-cuerpo">
@@ -100,7 +105,7 @@ import {
             @switch (pestana()) {
               @case ('interacciones') {
                 <div class="c3-panel">
-                  <app-registro-interacciones [ticket]="t" [sugerenciaIa]="guiaLista() ? d.plantillaIa() : null" />
+                  <app-registro-interacciones [ticket]="t" [sugerenciaIa]="tigo.tieneTigo(t.num) ? null : guiaLista() ? d.plantillaIa() : null" />
                 </div>
               }
 
@@ -216,7 +221,8 @@ export class DetalleCreativa {
   readonly elevarAComite = output<void>();
   /** La derivación se refleja aquí (bitácora y área) y se avisa a quien aloja la vista para que actualice el ticket. */
   readonly derivado = output<DerivacionEvento>();
-  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService));
+  protected readonly tigo = inject(TigoEstadoService);
+  protected readonly d = new DetalleDemo(this.ticket, inject(EstadoPrototipoAtcService), this.tigo);
   /** `?tab=guia|bitacora` abre directamente esa pestaña. */
   protected readonly pestana = signal(
     ['guia', 'bitacora'].includes(new URLSearchParams(globalThis.location?.search ?? '').get('tab') ?? '')

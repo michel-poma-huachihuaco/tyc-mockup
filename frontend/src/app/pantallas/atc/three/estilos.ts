@@ -146,6 +146,29 @@ const CSS = `
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s;
 }
 
+.pt-bot__fabcaja {
+  position: relative;
+  inline-size: var(--pt-bot-fab);
+  margin-inline-start: auto;
+}
+
+.pt-bot__insignia {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--aybar-space-1));
+  inset-inline-end: calc(-1 * var(--aybar-space-1));
+  min-inline-size: var(--aybar-space-5);
+  block-size: var(--aybar-space-5);
+  padding-inline: var(--aybar-space-1);
+  display: grid;
+  place-items: center;
+  border-radius: var(--aybar-radius-full);
+  background: var(--aybar-color-feedback-danger-border);
+  color: var(--aybar-color-fg-on-accent);
+  font-size: var(--aybar-font-size-xs);
+  font-weight: var(--aybar-font-weight-bold);
+  pointer-events: none;
+}
+
 .pt-bot__fab:hover {
   transform: translateY(calc(-1 * var(--aybar-space-1)));
   border-color: var(--v3-acc);
@@ -179,7 +202,7 @@ const CSS = `
 .pt-bot__panel {
   position: absolute;
   inset-inline-end: 0;
-  inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-3));
+  inset-block-end: 0;
   inline-size: min(25.5rem, calc(100vw - var(--aybar-space-8)));
   block-size: min(38.5rem, calc(100dvh - 9.5rem));
   display: flex;
@@ -455,6 +478,11 @@ const CSS = `
 
 @media (max-width: 639.98px) {
   
+  .pt-bot__insignia {
+    inset-block-start: 0;
+    inset-inline-end: 0;
+  }
+
   .pt-bot {
     inset-inline-end: var(--aybar-space-3);
     inset-block-end: var(--aybar-space-3);
@@ -467,7 +495,6 @@ const CSS = `
   }
 
   .pt-bot__panel {
-    inset-block-end: calc(var(--pt-bot-fab) + var(--aybar-space-2));
     inline-size: calc(100vw - var(--aybar-space-6));
     block-size: min(32rem, calc(100dvh - 7.5rem));
   }
