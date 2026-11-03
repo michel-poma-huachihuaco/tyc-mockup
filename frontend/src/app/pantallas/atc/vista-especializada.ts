@@ -1796,6 +1796,11 @@ interface IngresoPendiente {
           [conPestanas]="estadoProto.rolActivo() !== 'CLIENTE'"
         >
           @if (estadoProto.rolActivo() !== 'CLIENTE') {
+            <ay-button ayAcciones tamano="sm" variante="primary" (click)="irAAbrirCaso()">
+              + Abrir caso del evento
+            </ay-button>
+          }
+          @if (estadoProto.rolActivo() !== 'CLIENTE') {
             <ay-tabs
               ayPestanas
               etiqueta="Secciones de EntregaFest en vivo"
@@ -3472,6 +3477,17 @@ export class VistaEspecializadaComponent {
 
   private actualizarCasoEvento(id: string, cambio: Partial<CasoEventoFestItem>): void {
     this.estadoProto.casosEventoFest.update((lista) => lista.map((c) => (c.id === id ? { ...c, ...cambio } : c)));
+  }
+
+  /** Lleva al formulario «Abrir un caso del evento», que está debajo de la tabla, y deja el cursor en el texto. */
+  irAAbrirCaso(): void {
+    this.tabEventoElegida.set('casos');
+    setTimeout(() => {
+      const texto = globalThis.document?.querySelector<HTMLTextAreaElement>('textarea[name="texto-evento"]');
+      const reducido = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      texto?.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth', block: 'center' });
+      texto?.focus({ preventScroll: true });
+    }, 0);
   }
 
   /**
