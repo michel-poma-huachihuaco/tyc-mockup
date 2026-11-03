@@ -2033,8 +2033,8 @@ interface IngresoPendiente {
               [separador]="true"
             />
             <ay-card-body padding="md" gap="md">
-              <ay-form (enviar)="confirmarReservaBusCliente()">
-                <div ayGrid [columnas]="3" gap="sm">
+              <ay-form class="pl-atc-form-ancho" (enviar)="confirmarReservaBusCliente()">
+                <div ayGrid [columnas]="3" gap="sm" class="pl-atc-fila-campos pl-atc-fila-campos--reserva">
                   <ay-form-field etiqueta="Bus y horario" obligatorio>
                     <ay-select nombre="form-bus-id"
                       [opciones]="opcionesBusesSelect()"

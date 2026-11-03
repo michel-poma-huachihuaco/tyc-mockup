@@ -1709,7 +1709,7 @@ export class ConsolaAtcComponent {
             {
               href: '#vista:evento',
               icono: 'evento',
-              etiqueta: 'EntregaFest y reserva de bus',
+              etiqueta: 'EntregaFest en vivo',
               actual: activa === 'evento' || activa === 'buses',
             },
             {

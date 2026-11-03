@@ -81,7 +81,7 @@ export const INDICE_FUNCIONES: readonly EntradaIndice[] = [
   { id: 'nuevo-cliente', etiqueta: 'Registrar una nueva solicitud', grupo: 'Registrar nueva solicitud', vista: 'nuevo', sinonimos: ['solicitud', 'crear', 'registrar ticket'], roles: CLI },
   { id: 'evento-padron', etiqueta: 'Control de padrón por QR o DNI', grupo: 'EntregaFest en vivo', vista: 'evento', sinonimos: ['padron', 'qr', 'dni'] },
   { id: 'evento-frases', etiqueta: 'Frases ancla y riesgo verbal', grupo: 'EntregaFest en vivo', vista: 'evento', sinonimos: ['frases ancla', 'moderacion'] },
-  { id: 'evento-bus', etiqueta: 'Reservar mi cupo en el bus', grupo: 'EntregaFest y reserva de bus', vista: 'evento', sinonimos: ['bus', 'cupo', 'reserva', 'transporte'], roles: CLI },
+  { id: 'evento-bus', etiqueta: 'Reservar mi cupo en el bus', grupo: 'EntregaFest en vivo', vista: 'evento', sinonimos: ['bus', 'cupo', 'reserva', 'transporte'], roles: CLI },
   { id: 'ingreso-garita', etiqueta: 'Registrar ingreso de personas a un proyecto', grupo: 'Ingreso a proyectos', vista: 'ingreso', sinonimos: ['garita', 'visita', 'acceso'] },
   { id: 'libro-asiento', etiqueta: 'Registrar asiento en el Libro', grupo: 'Libro de reclamaciones', vista: 'libro', sinonimos: ['queja', 'reclamo', 'nuevo asiento'] },
   { id: 'libro-plazo', etiqueta: 'Plazo legal de 15 días y prórroga', grupo: 'Libro de reclamaciones', vista: 'libro', sinonimos: ['plazo', 'prorroga', 'vencimiento', 'indecopi'] },
